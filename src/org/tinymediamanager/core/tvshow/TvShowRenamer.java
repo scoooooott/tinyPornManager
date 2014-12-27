@@ -44,7 +44,12 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Myron Boyle
  */
 public class TvShowRenamer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowRenamer.class);
+  private static final Logger         LOGGER                   = LoggerFactory.getLogger(TvShowRenamer.class);
+  private static final TvShowSettings SETTINGS                 = Globals.settings.getTvShowSettings();
+
+  // the regexp to find the episode relevant tokens which have to be repeated on multi ep files
+  private static final Pattern        multiEpisodeTokenPattern = Pattern
+                                                                   .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$E|\\$T)+?.*(\\$1|\\$2|\\$E|\\$T)?");
 
   /**
    * add leadingZero if only 1 char
@@ -58,23 +63,6 @@ public class TvShowRenamer {
   }
 
   /**
-   * replaces all the invalid filename character from a string
-   * 
-   * @param name
-   *          the string to clean
-   * @return the cleaned string
-   */
-  private static String cleanForFilename(String name) {
-    String cleanedName = name.replaceAll("([\"\\:<>|/?*])", "").replaceAll(" +", " ").trim();
-
-    if (Globals.settings.getTvShowSettings().isRenamerSpaceSubstitution()) {
-      cleanedName = cleanedName.replaceAll(" ", Globals.settings.getTvShowSettings().getRenamerSpaceReplacement());
-    }
-
-    return cleanedName;
-  }
-
-  /**
    * renames the TvSHow root folder and updates all mediaFiles
    * 
    * @param show
@@ -83,7 +71,7 @@ public class TvShowRenamer {
   public static void renameTvShowRoot(TvShow show) {
     LOGGER.debug("TV show year: " + show.getYear());
     LOGGER.debug("TV show path: " + show.getPath());
-    String newPathname = generateTvShowDir(show);
+    String newPathname = generateTvShowDir(SETTINGS.getRenamerTvShowFoldername(), show);
     String oldPathname = show.getPath();
 
     if (!newPathname.isEmpty()) {
@@ -202,7 +190,7 @@ public class TvShowRenamer {
 
     // create SeasonDir
     // String seasonName = "Season " + String.valueOf(ep.getSeason());
-    String seasonName = generateSeasonDir(Globals.settings.getTvShowSettings().getRenamerSeasonFolder(), ep);
+    String seasonName = generateSeasonDir(SETTINGS.getRenamerSeasonFoldername(), ep);
     File seasonDir = new File(show.getPath(), seasonName);
     if (!seasonDir.exists()) {
       seasonDir.mkdir();
@@ -331,7 +319,22 @@ public class TvShowRenamer {
    * @return the file name for the media file
    */
   public static String generateFilename(TvShow tvShow, MediaFile mf) {
-    return generateName(tvShow, mf, true);
+    return generateName("", tvShow, mf, true);
+  }
+
+  /**
+   * generates the filename of a TvShow MediaFile according to settings <b>(without path)</b>
+   * 
+   * @param template
+   *          the renaming template
+   * @param tvShow
+   *          the tvShow
+   * @param mf
+   *          the MF for multiepisode
+   * @return the file name for the media file
+   */
+  public static String generateFilename(String template, TvShow tvShow, MediaFile mf) {
+    return generateName(template, tvShow, mf, true);
   }
 
   /**
@@ -345,21 +348,11 @@ public class TvShowRenamer {
    * @return the file name for media file
    */
   public static String generateFolderename(TvShow tvShow, MediaFile mf) {
-    return generateName(tvShow, mf, false);
+    return generateName("", tvShow, mf, false);
   }
 
-  private static String generateName(TvShow tvShow, MediaFile mf, boolean forFile) {
+  private static String generateName(String template, TvShow tvShow, MediaFile mf, boolean forFile) {
     String filename = "";
-    String s = "";
-    String e = "";
-    String delim = "";
-
-    TvShowEpisodeNaming form = Globals.settings.getTvShowSettings().getRenamerFormat();
-    String separator = Globals.settings.getTvShowSettings().getRenamerSeparator();
-    if (separator.isEmpty()) {
-      separator = "_";
-    }
-
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
     if (eps == null || eps.size() == 0) {
       // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
@@ -374,59 +367,11 @@ public class TvShowRenamer {
       return "";
     }
 
-    String show = cleanForFilename(eps.get(0).getTvShow().getTitle());
-    if (Globals.settings.getTvShowSettings().getRenamerAddShow()) {
-      filename = filename + show;
+    if (StringUtils.isBlank(template)) {
+      filename = createDestination(SETTINGS.getRenamerFilename(), tvShow, eps);
     }
-
-    // generate SEE-title string appended
-    for (int i = 0; i < eps.size(); i++) {
-      TvShowEpisode ep = eps.get(i);
-
-      filename = filename + separator;
-      switch (form) {
-        case WITH_SE:
-          s = "S" + lz(ep.getSeason());
-          e = "E" + lz(ep.getEpisode());
-          break;
-        case WITH_X:
-          s = String.valueOf(ep.getSeason());
-          e = lz(ep.getEpisode());
-          delim = "x";
-          break;
-        case WITH_0X:
-          s = lz(ep.getSeason());
-          e = lz(ep.getEpisode());
-          delim = "x";
-          break;
-        case NUMBER:
-          s = String.valueOf(ep.getSeason());
-          e = lz(ep.getEpisode());
-          break;
-        default:
-          break;
-      }
-      if (Globals.settings.getTvShowSettings().getRenamerAddSeason()) {
-        filename = filename + s;
-      }
-      filename = filename + delim;
-      filename = filename + e;
-
-      if (Globals.settings.getTvShowSettings().getRenamerAddTitle() && eps.size() < 3) {
-        String epTitle = cleanForFilename(ep.getTitle());
-        if (epTitle.matches("[0-9]+.*") && separator.equals(".")) {
-          // EP title starts with a number, so "S01E01.1 Day in..." could be misleading parsed
-          // as sub-episode E01.1 - override separator for that hardcoded!
-          filename = filename + '_';
-        }
-        else {
-          filename = filename + separator;
-        }
-        filename = filename + epTitle;
-      }
-    }
-    if (filename.startsWith(separator)) {
-      filename = filename.substring(separator.length());
+    else {
+      filename = createDestination(template, tvShow, eps);
     }
 
     // since we can use this method for folders too, use the next options solely for files
@@ -471,7 +416,7 @@ public class TvShowRenamer {
     } // end forFile
 
     // ASCII replacement
-    if (Globals.settings.getTvShowSettings().isAsciiReplacement()) {
+    if (SETTINGS.isAsciiReplacement()) {
       filename = StrgUtils.convertToAscii(filename, false);
     }
 
@@ -485,22 +430,23 @@ public class TvShowRenamer {
 
     seasonDir = seasonDir.replace("$1", String.valueOf(episode.getSeason()));
     seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
+
     // only allow empty season dir if the season is in the filename
-    if (seasonDir.isEmpty() && !Globals.settings.getTvShowSettings().getRenamerAddSeason()) {
+    if (seasonDir.isEmpty() && (!SETTINGS.getRenamerFilename().contains("$1") && !SETTINGS.getRenamerFilename().contains("$2"))) {
       seasonDir = "Season " + String.valueOf(episode.getSeason());
     }
     return seasonDir;
   }
 
   public static String generateTvShowDir(TvShow tvShow) {
+    return generateTvShowDir(SETTINGS.getRenamerTvShowFoldername(), tvShow);
+  }
+
+  public static String generateTvShowDir(String template, TvShow tvShow) {
     String newPathname;
-    if (Globals.settings.getTvShowSettings().isRenamerTvShowFolder()) {
-      if (Globals.settings.getTvShowSettings().isRenamerTvShowFolderYear()) {
-        newPathname = tvShow.getDataSource() + File.separator + createDestination("$T ($Y)", tvShow);
-      }
-      else {
-        newPathname = tvShow.getDataSource() + File.separator + createDestination("$T", tvShow);
-      }
+
+    if (StringUtils.isNotBlank(SETTINGS.getRenamerTvShowFoldername())) {
+      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow, new ArrayList<TvShowEpisode>());
     }
     else {
       newPathname = tvShow.getPath();
@@ -516,26 +462,62 @@ public class TvShowRenamer {
    *          the template
    * @param show
    *          the TV show
+   * @param spieode
+   *          the TV show episode; nullable for TV show root foldername
    * @return the string
    */
-  public static String createDestination(String template, TvShow show) {
+  public static String createDestination(String template, TvShow show, List<TvShowEpisode> episodes) {
     String newDestination = template;
+    TvShowEpisode firstEp = null;
 
-    // replace token title ($T)
-    if (newDestination.contains("$T")) {
-      newDestination = replaceToken(newDestination, "$T", show.getTitle());
+    // replace token show title ($N)
+    if (newDestination.contains("$N")) {
+      newDestination = replaceToken(newDestination, "$N", show.getTitle());
     }
 
-    // replace token first letter of title ($1)
-    if (newDestination.contains("$1")) {
-      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(show.getTitle()) ? show.getTitle().substring(0, 1).toUpperCase()
-          : "");
+    // parse out episode depended tokens - for multi EP naming
+    Matcher matcher = multiEpisodeTokenPattern.matcher(template);
+    String episodeTokens = "";
+
+    if (matcher.find()) {
+      episodeTokens = matcher.group(0);
     }
 
-    // replace token first letter of sort title ($2)
-    if (newDestination.contains("$2")) {
-      newDestination = replaceToken(newDestination, "$2", StringUtils.isNotBlank(show.getTitleSortable()) ? show.getTitleSortable().substring(0, 1)
-          .toUpperCase() : "");
+    String combinedEpisodeParts = "";
+    for (TvShowEpisode episode : episodes) {
+      String episodePart = episodeTokens;
+
+      // remember first episode for media file tokens
+      if (firstEp == null) {
+        firstEp = episode;
+      }
+
+      // Season w/o leading zeros ($1)
+      if (episodePart.contains("$1")) {
+        episodePart = replaceToken(episodePart, "$1", String.valueOf(episode.getSeason()));
+      }
+
+      // Season leading zeros ($2)
+      if (episodePart.contains("$2")) {
+        episodePart = replaceToken(episodePart, "$2", lz(episode.getSeason()));
+      }
+
+      // episode number
+      if (episodePart.contains("$E")) {
+        episodePart = replaceToken(episodePart, "$E", lz(episode.getEpisode()));
+      }
+
+      // episode title
+      if (episodePart.contains("$T")) {
+        episodePart = replaceToken(episodePart, "$T", episode.getTitle());
+      }
+
+      combinedEpisodeParts += episodePart + " ";
+    }
+
+    // and now fill in the (multiple) episode parts
+    if (StringUtils.isNotBlank(episodeTokens)) {
+      newDestination = newDestination.replace(episodeTokens, combinedEpisodeParts);
     }
 
     // replace token year ($Y)
@@ -548,19 +530,34 @@ public class TvShowRenamer {
       }
     }
 
-    // replace token orignal title ($O)
-    if (newDestination.contains("$O")) {
-      newDestination = replaceToken(newDestination, "$O", show.getOriginalTitle());
-    }
+    if (firstEp != null && firstEp.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+      MediaFile mf = firstEp.getMediaFiles(MediaFileType.VIDEO).get(0);
+      // replace token resolution ($R)
+      if (newDestination.contains("$R")) {
+        newDestination = replaceToken(newDestination, "$R", mf.getVideoResolution());
+      }
 
-    // replace token IMDBid ($I)
-    if (newDestination.contains("$I")) {
-      newDestination = replaceToken(newDestination, "$I", show.getImdbId());
-    }
+      // replace token audio codec + channels ($A)
+      if (newDestination.contains("$A")) {
+        newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
+      }
 
-    // replace token sort title ($E)
-    if (newDestination.contains("$E")) {
-      newDestination = replaceToken(newDestination, "$E", show.getTitleSortable());
+      // replace token video codec + format ($V)
+      if (newDestination.contains("$V")) {
+        newDestination = replaceToken(newDestination, "$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
+      }
+
+      // replace token video format ($F)
+      if (newDestination.contains("$F")) {
+        newDestination = replaceToken(newDestination, "$F", mf.getVideoFormat());
+      }
+    }
+    else {
+      // no mediafiles; remove at least token (if available)
+      newDestination = newDestination.replace("$R", "");
+      newDestination = newDestination.replace("$A", "");
+      newDestination = newDestination.replace("$V", "");
+      newDestination = newDestination.replace("$F", "");
     }
 
     // replace empty brackets
@@ -579,12 +576,17 @@ public class TvShowRenamer {
     }
 
     // ASCII replacement
-    if (Globals.settings.getTvShowSettings().isAsciiReplacement()) {
+    if (SETTINGS.isAsciiReplacement()) {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
     // trim out unnecessary whitespaces
     newDestination = newDestination.trim();
+
+    // any whitespace replacements?
+    if (SETTINGS.isRenamerSpaceSubstitution()) {
+      newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
+    }
 
     return newDestination.trim();
   }

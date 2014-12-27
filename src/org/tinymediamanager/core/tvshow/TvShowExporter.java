@@ -111,7 +111,7 @@ public class TvShowExporter extends MediaEntityExporter {
       for (MediaEntity me : tvShowsToExport) {
         TvShow show = (TvShow) me;
         // create a TV show dir
-        File showDir = new File(pathToExport + File.separator + TvShowRenamer.createDestination("$T ($Y)", show));
+        File showDir = new File(pathToExport + File.separator + TvShowRenamer.createDestination("$T ($Y)", show, new ArrayList<TvShowEpisode>()));
         if (showDir.exists()) {
           FileUtils.deleteQuietly(showDir);
         }

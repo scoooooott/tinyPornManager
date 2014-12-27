@@ -18,8 +18,6 @@ package org.tinymediamanager.core.tvshow;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -42,12 +40,8 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String SCRAPE_BEST_IMAGE           = "scrapeBestImage";
   private final static String SCRAPER_LANGU               = "scraperLanguage";
   private final static String CERTIFICATION_COUNTRY       = "certificationCountry";
-  private final static String RENAMER_ADD_SHOW            = "renamerAddShow";
-  private final static String RENAMER_ADD_SEASON          = "renamerAddSeason";
-  private final static String RENAMER_ADD_TITLE           = "renamerAddTitle";
-  private final static String RENAMER_FORMAT              = "renamerFormat";
   private final static String RENAMER_SEPARATOR           = "renamerSeparator";
-  private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFolder";
+  private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFoldername";
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
   private final static String IMAGE_SCRAPER_TVDB          = "imageScraperTvdb";
   private final static String IMAGE_SCRAPER_FANART_TV     = "imageScraperFanartTv";
@@ -60,13 +54,9 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean             scrapeBestImage             = true;
   private MediaLanguages      scraperLanguage             = MediaLanguages.en;
   private CountryCode         certificationCountry        = CountryCode.US;
-  private boolean             renamerTvShowFolder         = true;
-  private boolean             renamerTvShowFolderYear     = false;
-  private boolean             renamerAddShow              = true;
-  private boolean             renamerAddSeason            = true;
-  private boolean             renamerAddTitle             = true;
-  private String              renamerSeparator            = "_";
-  private String              renamerSeasonFolder         = "Season $1";
+  private String              renamerTvShowFoldername     = "$N ($Y)";
+  private String              renamerSeasonFoldername     = "Season $1";
+  private String              renamerFilename             = "$N - S$2E$E - $T";
   private boolean             buildImageCacheOnImport     = false;
   private boolean             imageScraperTvdb            = true;
   private boolean             imageScraperFanartTv        = true;
@@ -75,9 +65,6 @@ public class TvShowSettings extends AbstractModelObject {
   private String              renamerSpaceReplacement     = "_";
   private boolean             syncTrakt                   = false;
   private boolean             dvdOrder                    = false;
-
-  @Enumerated(EnumType.STRING)
-  private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
 
   public TvShowSettings() {
   }
@@ -140,67 +127,34 @@ public class TvShowSettings extends AbstractModelObject {
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 
-  /** add TV show name to filename? */
-  /** add season number to filename? */
-  /** add title (if 1 EP) to filename? */
-  public boolean getRenamerAddShow() {
-    return renamerAddShow;
+  public String getRenamerSeasonFoldername() {
+    return renamerSeasonFoldername;
   }
 
-  public void setRenamerAddShow(boolean newValue) {
-    boolean oldValue = this.renamerAddShow;
-    this.renamerAddShow = newValue;
-    firePropertyChange(RENAMER_ADD_SHOW, oldValue, newValue);
-  }
-
-  public boolean getRenamerAddSeason() {
-    return renamerAddSeason;
-  }
-
-  public void setRenamerAddSeason(boolean newValue) {
-    boolean oldValue = this.renamerAddSeason;
-    this.renamerAddSeason = newValue;
-    firePropertyChange(RENAMER_ADD_SEASON, oldValue, newValue);
-  }
-
-  public boolean getRenamerAddTitle() {
-    return renamerAddTitle;
-  }
-
-  public void setRenamerAddTitle(boolean newValue) {
-    boolean oldValue = this.renamerAddTitle;
-    this.renamerAddTitle = newValue;
-    firePropertyChange(RENAMER_ADD_TITLE, oldValue, newValue);
-  }
-
-  public TvShowEpisodeNaming getRenamerFormat() {
-    return renamerFormat;
-  }
-
-  public void setRenamerFormat(TvShowEpisodeNaming newValue) {
-    TvShowEpisodeNaming oldValue = this.renamerFormat;
-    this.renamerFormat = newValue;
-    firePropertyChange(RENAMER_FORMAT, oldValue, newValue);
-  }
-
-  public String getRenamerSeparator() {
-    return renamerSeparator;
-  }
-
-  public void setRenamerSeparator(String newValue) {
-    String oldValue = this.renamerSeparator;
-    this.renamerSeparator = newValue;
-    firePropertyChange(RENAMER_SEPARATOR, oldValue, newValue);
-  }
-
-  public String getRenamerSeasonFolder() {
-    return renamerSeasonFolder;
-  }
-
-  public void setRenamerSeasonFolder(String newValue) {
-    String oldValue = this.renamerSeasonFolder;
-    this.renamerSeasonFolder = newValue;
+  public void setRenamerSeasonFoldername(String newValue) {
+    String oldValue = this.renamerSeasonFoldername;
+    this.renamerSeasonFoldername = newValue;
     firePropertyChange(RENAMER_SEASON_FOLDER, oldValue, newValue);
+  }
+
+  public String getRenamerTvShowFoldername() {
+    return renamerTvShowFoldername;
+  }
+
+  public void setRenamerTvShowFoldername(String newValue) {
+    String oldValue = this.renamerTvShowFoldername;
+    this.renamerTvShowFoldername = newValue;
+    firePropertyChange("renamerTvShowFoldername", oldValue, newValue);
+  }
+
+  public String getRenamerFilename() {
+    return renamerFilename;
+  }
+
+  public void setRenamerFilename(String newValue) {
+    String oldValue = this.renamerFilename;
+    this.renamerFilename = newValue;
+    firePropertyChange("renamerFilename", oldValue, newValue);
   }
 
   public boolean isBuildImageCacheOnImport() {
@@ -241,26 +195,6 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.asciiReplacement;
     this.asciiReplacement = newValue;
     firePropertyChange(ASCII_REPLACEMENT, oldValue, newValue);
-  }
-
-  public boolean isRenamerTvShowFolder() {
-    return renamerTvShowFolder;
-  }
-
-  public boolean isRenamerTvShowFolderYear() {
-    return renamerTvShowFolderYear;
-  }
-
-  public void setRenamerTvShowFolder(boolean newValue) {
-    boolean oldValue = this.renamerTvShowFolder;
-    this.renamerTvShowFolder = newValue;
-    firePropertyChange("renamerTvShowFolder", oldValue, newValue);
-  }
-
-  public void setRenamerTvShowFolderYear(boolean newValue) {
-    boolean oldValue = this.renamerTvShowFolderYear;
-    this.renamerTvShowFolderYear = newValue;
-    firePropertyChange("renamerTvShowFolderYear", oldValue, newValue);
   }
 
   public String getRenamerSpaceReplacement() {

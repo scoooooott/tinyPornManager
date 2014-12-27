@@ -64,11 +64,16 @@ public class TvShowTest {
 
   /**
    * Test TV renamer
+   * 
+   * @throws Exception
    */
   @Test
-  public void testRenamerParams() {
+  public void testRenamerParams() throws Exception {
     // setup dummy
     MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
+
+    TmmModuleManager.getInstance().startUp();
+    TvShowModuleManager.getInstance().startUp();
 
     TvShow show = new TvShow();
     show.setTitle("showname");
@@ -92,24 +97,12 @@ public class TvShowTest {
     TvShowList.getInstance().addTvShow(show);
     // setup done
 
-    // parameters (global)
-    Globals.settings.getTvShowSettings().setRenamerAddSeason(true);
-    Globals.settings.getTvShowSettings().setRenamerAddShow(true);
-    Globals.settings.getTvShowSettings().setRenamerAddTitle(true);
-    Globals.settings.getTvShowSettings().setRenamerFormat(TvShowEpisodeNaming.WITH_SE);
-    Globals.settings.getTvShowSettings().setRenamerSeparator(".");
-
     // display renamed EP name :)
+    System.out.println(TvShowRenamer.createDestination(Globals.settings.getTvShowSettings().getRenamerFilename(), show, show.getEpisodes()));
     System.out.println(TvShowRenamer.generateFilename(show, dmf));
 
-    Globals.settings.getTvShowSettings().setRenamerAddTitle(false);
-    System.out.println(TvShowRenamer.generateFilename(show, dmf));
-
-    Globals.settings.getTvShowSettings().setRenamerAddShow(false);
-    System.out.println(TvShowRenamer.generateFilename(show, dmf));
-
-    Globals.settings.getTvShowSettings().setRenamerAddSeason(false);
-    System.out.println(TvShowRenamer.generateFilename(show, dmf));
+    TvShowModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
   }
 
   /**

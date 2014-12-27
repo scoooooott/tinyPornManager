@@ -28,13 +28,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
@@ -42,21 +41,34 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeNaming;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.ScrollablePanel;
+import org.tinymediamanager.ui.components.ZebraJTable;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -69,55 +81,47 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowRenamerSettingsPanel extends ScrollablePanel implements HierarchyListener {
-  private static final long           serialVersionUID = 5189531235704401313L;
+  private static final long               serialVersionUID = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
-  private static final String         SPACE            = "<space>";
+  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowSettings              settings         = Settings.getInstance().getTvShowSettings();
-
-  private List<String>                separators       = new ArrayList<String>(Arrays.asList(SPACE, ".", "_", "-", " - "));
-  private List<String>                spaceReplacement = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
+  private List<String>                    spaceReplacement = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private EventList<TvShowRenamerExample> exampleEventList = null;
 
   /**
    * UI components
    */
-  private JTextPane                   txtpntAsciiHint;
-  private JSeparator                  separator_1;
-  private JLabel                      lblTvShow;
-  private JLabel                      lblEpisodes;
-  private JTextPane                   txtpnSeasonHint;
-  private JLabel                      lblSeasonFolderName;
-  private final ButtonGroup           buttonGroup      = new ButtonGroup();
-  private JLabel                      lblSeparator;
-  private JLabel                      lblExample;
-  private JComboBox                   cbTvShowForPreview;
-  private JCheckBox                   chckbxAddSeason;
-  private JCheckBox                   chckbxAddShow;
-  private JCheckBox                   chckbxAddEpisodeTitle;
-  private JRadioButton                rdbtnRawNumber;
-  private JRadioButton                rdbtnSeasonEpisode;
-  private JRadioButton                rdbtnSxe;
-  private JComboBox                   cbSeparator;
-  private JTextField                  tfSeasonFoldername;
-  private JRadioButton                rdbtn0Sxe;
-  private JCheckBox                   chckbxAsciiReplacement;
-  private JCheckBox                   chckbxTvShowFolder;
-  private JCheckBox                   chckbxYear;
-
-  private ActionListener              renamerActionListener;
-  private JLabel                      lblSeparatorHint;
-  private JComboBox                   cbSpaceReplacement;
-  private JLabel                      lblSpaceReplacementHint;
-  private JCheckBox                   chckbxSpaceReplacement;
+  private JTextPane                       txtpntAsciiHint;
+  private JLabel                          lblSeasonFolderName;
+  private JLabel                          lblExample;
+  private JComboBox                       cbTvShowForPreview;
+  private JTextField                      tfSeasonFoldername;
+  private JCheckBox                       chckbxAsciiReplacement;
+  private JComboBox                       cbSpaceReplacement;
+  private JHintCheckBox                   chckbxSpaceReplacement;
+  private JPanel                          panelExample;
+  private JComboBox                       cbEpisodeForPreview;
+  private JScrollPane                     scrollPane;
+  private JTable                          tableExamples;
+  private JLabel                          lblTvShowFolder;
+  private JTextField                      tfTvShowFolder;
+  private JTextField                      tfEpisodeFilename;
+  private JLabel                          lblEpisodeFileName;
 
   public TvShowRenamerSettingsPanel() {
     setLayout(new FormLayout(
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    exampleEventList = GlazedLists.threadSafeList(new ObservableElementList<TvShowRenamerExample>(new BasicEventList<TvShowRenamerExample>(),
+        GlazedLists.beanConnector(TvShowRenamerExample.class)));
+    DefaultEventTableModel<TvShowRenamerExample> exampleTableModel = new DefaultEventTableModel<TvShowRenamerExample>(
+        GlazedListsSwing.swingThreadProxyList(exampleEventList), new TvShowRenamerExampleTableFormat());
 
     // the panel renamer
-    renamerActionListener = new ActionListener() {
+    ActionListener renamerActionListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         checkChanges();
@@ -125,98 +129,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
       }
     };
 
-    JPanel panelRenamer = new JPanel();
-    panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-
-    add(panelRenamer, "2, 2, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), RowSpec.decode("40px"), FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
-    chckbxAddSeason.addActionListener(renamerActionListener);
-
-    lblTvShow = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
-    panelRenamer.add(lblTvShow, "2, 2");
-
-    chckbxTvShowFolder = new JCheckBox(BUNDLE.getString("tvshow.renamer.tvshowfolder")); //$NON-NLS-1$
-    chckbxTvShowFolder.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxTvShowFolder, "2, 4, 3, 1");
-
-    chckbxYear = new JCheckBox(BUNDLE.getString("tvshow.renamer.tvshowfolder.year")); //$NON-NLS-1$
-    chckbxYear.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxYear, "6, 4");
-
-    separator_1 = new JSeparator();
-    panelRenamer.add(separator_1, "2, 6, 7, 1");
-
-    lblEpisodes = new JLabel(BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
-    panelRenamer.add(lblEpisodes, "2, 8");
-    panelRenamer.add(chckbxAddSeason, "2, 10, 3, 1");
-
-    rdbtnSeasonEpisode = new JRadioButton("S01E01");
-    rdbtnSeasonEpisode.addActionListener(renamerActionListener);
-    buttonGroup.add(rdbtnSeasonEpisode);
-    panelRenamer.add(rdbtnSeasonEpisode, "6, 10");
-
-    chckbxAddShow = new JCheckBox(BUNDLE.getString("Settings.tvshowtofilename")); //$NON-NLS-1$
-    chckbxAddShow.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxAddShow, "2, 12, 3, 1");
-
-    rdbtnSxe = new JRadioButton("1x01");
-    rdbtnSxe.addActionListener(renamerActionListener);
-    buttonGroup.add(rdbtnSxe);
-    panelRenamer.add(rdbtnSxe, "6, 12");
-
-    chckbxAddEpisodeTitle = new JCheckBox(BUNDLE.getString("Settings.tvshowepisodetofilename")); //$NON-NLS-1$
-    chckbxAddEpisodeTitle.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxAddEpisodeTitle, "2, 14, 3, 1");
-
-    rdbtn0Sxe = new JRadioButton("01x01");
-    rdbtn0Sxe.addActionListener(renamerActionListener);
-    buttonGroup.add(rdbtn0Sxe);
-    panelRenamer.add(rdbtn0Sxe, "6, 14");
-
-    rdbtnRawNumber = new JRadioButton("101");
-    rdbtnRawNumber.addActionListener(renamerActionListener);
-    buttonGroup.add(rdbtnRawNumber);
-    panelRenamer.add(rdbtnRawNumber, "6, 16");
-
-    lblSeparator = new JLabel(BUNDLE.getString("Settings.separator")); //$NON-NLS-1$
-    panelRenamer.add(lblSeparator, "2, 18, right, default");
-
-    cbSeparator = new JComboBox(separators.toArray());
-    panelRenamer.add(cbSeparator, "4, 18, fill, default");
-
-    lblSeparatorHint = new JLabel(BUNDLE.getString("Settings.separator.hint")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblSeparatorHint, 0.833);
-    panelRenamer.add(lblSeparatorHint, "6, 18, fill, default");
-
-    chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
-    chckbxSpaceReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxSpaceReplacement, "2, 20, fill, default");
-
-    cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
-    panelRenamer.add(cbSpaceReplacement, "4, 20, fill, default");
-
-    lblSpaceReplacementHint = new JLabel(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblSpaceReplacementHint, 0.833);
-    panelRenamer.add(lblSpaceReplacementHint, "6, 20, fill, default");
-
-    lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
-    panelRenamer.add(lblSeasonFolderName, "2, 22, right, top");
-
-    tfSeasonFoldername = new JTextField();
-    panelRenamer.add(tfSeasonFoldername, "4, 22, fill, top");
-    tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
+    DocumentListener documentListener = new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent arg0) {
         createRenamerExample();
@@ -231,85 +144,132 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
       public void changedUpdate(DocumentEvent arg0) {
         createRenamerExample();
       }
-    });
+    };
 
-    txtpnSeasonHint = new JTextPane();
-    txtpnSeasonHint.setOpaque(false);
-    TmmFontHelper.changeFont(txtpnSeasonHint, 0.833);
-    txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
-    panelRenamer.add(txtpnSeasonHint, "6, 22, fill, fill");
+    JPanel panelRenamer = new JPanel();
+    panelRenamer.setBorder(new TitledBorder(null,
+        BUNDLE.getString("Settings.tvshow.renamer.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+
+    add(panelRenamer, "2, 2, fill, fill");
+    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
+    panelRenamer.add(lblTvShowFolder, "2, 2, right, default");
+
+    tfTvShowFolder = new JTextField();
+    panelRenamer.add(tfTvShowFolder, "4, 2, 3, 1, fill, default");
+    tfTvShowFolder.getDocument().addDocumentListener(documentListener);
+
+    lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
+    panelRenamer.add(lblSeasonFolderName, "2, 4, right, default");
+
+    tfSeasonFoldername = new JTextField();
+    panelRenamer.add(tfSeasonFoldername, "4, 4, 3, 1, fill, default");
+    tfSeasonFoldername.getDocument().addDocumentListener(documentListener);
+
+    lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));//$NON-NLS-1$
+    panelRenamer.add(lblEpisodeFileName, "2, 6, right, default");
+
+    tfEpisodeFilename = new JTextField();
+    panelRenamer.add(tfEpisodeFilename, "4, 6, 3, 1, fill, default");
+    tfEpisodeFilename.getDocument().addDocumentListener(documentListener);
 
     chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
     chckbxAsciiReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxAsciiReplacement, "2, 24, 5, 1");
+
+    chckbxSpaceReplacement = new JHintCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
+    chckbxSpaceReplacement.setHintIcon(IconManager.HINT);
+    chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
+    chckbxSpaceReplacement.addActionListener(renamerActionListener);
+    panelRenamer.add(chckbxSpaceReplacement, "2, 10, right, default");
+
+    cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
+    panelRenamer.add(cbSpaceReplacement, "4, 10, fill, default");
+    cbSpaceReplacement.addActionListener(renamerActionListener);
+    panelRenamer.add(chckbxAsciiReplacement, "2, 12, 9, 1");
 
     txtpntAsciiHint = new JTextPane();
     txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
     txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtpntAsciiHint, "2, 26, 7, 1, fill, fill");
+    panelRenamer.add(txtpntAsciiHint, "2, 14, 7, 1, fill, fill");
 
-    JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
-    panelRenamer.add(lblExampleT, "2, 28, right, default");
+    panelExample = new JPanel();
+    panelExample.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.example"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelExample, "2, 4, fill, fill");
+    panelExample.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
+    panelExample.add(lblExampleTvShowT, "2, 2, right, default");
 
     cbTvShowForPreview = new JComboBox();
     cbTvShowForPreview.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        buildAndInstallEpisodeArray();
         createRenamerExample();
       }
     });
-    panelRenamer.add(cbTvShowForPreview, "4, 28, 3, 1, fill, default");
+    panelExample.add(cbTvShowForPreview, "4, 2");
+
+    JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
+    panelExample.add(lblExampleEpisodeT, "2, 4, right, default");
+
+    cbEpisodeForPreview = new JComboBox();
+    cbEpisodeForPreview.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        createRenamerExample();
+      }
+    });
+    panelExample.add(cbEpisodeForPreview, "4, 4, fill, default");
 
     lblExample = new JLabel("");
-    panelRenamer.add(lblExample, "2, 30, 7, 1");
+    panelExample.add(lblExample, "2, 6, 3, 1");
+
+    tableExamples = new ZebraJTable(exampleTableModel);
+    scrollPane = ZebraJTable.createStripedJScrollPane(tableExamples);
+    scrollPane.setViewportView(tableExamples);
+    panelExample.add(scrollPane, "2, 8, 3, 1, fill, fill");
 
     initDataBindings();
 
-    // set radio buttons and white space separator
-    String separator = settings.getRenamerSeparator();
-    int index = -1;
-    if (" ".equals(separator)) {
-      index = separators.indexOf(SPACE);
-    }
-    else {
-      index = separators.indexOf(separator);
-    }
-    if (index >= 0) {
-      cbSeparator.setSelectedIndex(index);
-    }
-    cbSeparator.addActionListener(renamerActionListener);
-
     String spaceReplacement = settings.getRenamerSpaceReplacement();
-    index = this.spaceReplacement.indexOf(spaceReplacement);
+    int index = this.spaceReplacement.indexOf(spaceReplacement);
     if (index >= 0) {
       cbSpaceReplacement.setSelectedIndex(index);
     }
-    cbSpaceReplacement.addActionListener(renamerActionListener);
 
-    switch (settings.getRenamerFormat()) {
-      case NUMBER:
-        rdbtnRawNumber.setSelected(true);
-        break;
+    // examples
+    exampleEventList.add(new TvShowRenamerExample("$T"));
+    exampleEventList.add(new TvShowRenamerExample("$1"));
+    exampleEventList.add(new TvShowRenamerExample("$2"));
+    exampleEventList.add(new TvShowRenamerExample("$E"));
+    exampleEventList.add(new TvShowRenamerExample("$Y"));
+    exampleEventList.add(new TvShowRenamerExample("$N"));
+    exampleEventList.add(new TvShowRenamerExample("$R"));
+    exampleEventList.add(new TvShowRenamerExample("$A"));
+    exampleEventList.add(new TvShowRenamerExample("$V"));
+    exampleEventList.add(new TvShowRenamerExample("$F"));
 
-      case WITH_SE:
-        rdbtnSeasonEpisode.setSelected(true);
-        break;
-
-      case WITH_X:
-        rdbtnSxe.setSelected(true);
-        break;
-
-      case WITH_0X:
-        rdbtn0Sxe.setSelected(true);
-        break;
-    }
   }
 
   @Override
   public void hierarchyChanged(HierarchyEvent arg0) {
     if (isShowing()) {
       buildAndInstallTvShowArray();
+      buildAndInstallEpisodeArray();
     }
   }
 
@@ -336,20 +296,52 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     }
   }
 
+  private void buildAndInstallEpisodeArray() {
+    cbEpisodeForPreview.removeAllItems();
+    Object obj = cbTvShowForPreview.getSelectedItem();
+    if (obj != null && obj instanceof TvShowPreviewContainer) {
+      TvShowPreviewContainer c = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
+      for (TvShowEpisode episode : c.tvShow.getEpisodes()) {
+        TvShowEpisodePreviewContainer container = new TvShowEpisodePreviewContainer();
+        container.episode = episode;
+        cbEpisodeForPreview.addItem(container);
+      }
+    }
+  }
+
   private void createRenamerExample() {
     TvShow tvShow = null;
+    TvShowEpisode episode = null;
 
     if (cbTvShowForPreview.getSelectedItem() instanceof TvShowPreviewContainer) {
       TvShowPreviewContainer container = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
       tvShow = container.tvShow;
     }
 
-    if (tvShow != null && tvShow.getEpisodes().size() > 0 && tvShow.getEpisodes().get(0) != null) {
-      TvShowEpisode episode = tvShow.getEpisodes().get(0);
-      String tvShowDir = TvShowRenamer.generateTvShowDir(tvShow);
-      String filename = TvShowRenamer.generateFilename(tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
+    if (cbEpisodeForPreview.getSelectedItem() instanceof TvShowEpisodePreviewContainer) {
+      TvShowEpisodePreviewContainer container = (TvShowEpisodePreviewContainer) cbEpisodeForPreview.getSelectedItem();
+      episode = container.episode;
+    }
+
+    if (tvShow != null && episode != null) {
+      String tvShowDir = TvShowRenamer.generateTvShowDir(tfTvShowFolder.getText(), tvShow);
+      String filename = TvShowRenamer.generateFilename(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
       String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
-      lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
+      if (StringUtils.isBlank(seasonDir)) {
+        lblExample.setText(tvShowDir + File.separator + filename);
+      }
+      else {
+        lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
+      }
+      // create examples
+      for (TvShowRenamerExample example : exampleEventList) {
+        example.createExample(episode);
+      }
+      try {
+        TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
+      }
+      catch (Exception e) {
+      }
     }
     else {
       lblExample.setText("");
@@ -357,29 +349,8 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
   }
 
   private void checkChanges() {
-    String separator = (String) cbSeparator.getSelectedItem();
-    if (SPACE.equals(separator)) {
-      settings.setRenamerSeparator(" ");
-    }
-    else {
-      settings.setRenamerSeparator(separator);
-    }
-
     String spaceReplacement = (String) cbSpaceReplacement.getSelectedItem();
     settings.setRenamerSpaceReplacement(spaceReplacement);
-
-    if (rdbtnRawNumber.isSelected()) {
-      settings.setRenamerFormat(TvShowEpisodeNaming.NUMBER);
-    }
-    else if (rdbtnSeasonEpisode.isSelected()) {
-      settings.setRenamerFormat(TvShowEpisodeNaming.WITH_SE);
-    }
-    else if (rdbtnSxe.isSelected()) {
-      settings.setRenamerFormat(TvShowEpisodeNaming.WITH_X);
-    }
-    else if (rdbtn0Sxe.isSelected()) {
-      settings.setRenamerFormat(TvShowEpisodeNaming.WITH_0X);
-    }
   }
 
   /*************************************************************
@@ -394,6 +365,15 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     }
   }
 
+  private class TvShowEpisodePreviewContainer {
+    TvShowEpisode episode;
+
+    @Override
+    public String toString() {
+      return episode.getSeason() + "." + episode.getEpisode() + " " + episode.getTitle();
+    }
+  }
+
   private class TvShowComparator implements Comparator<TvShow> {
     @Override
     public int compare(TvShow arg0, TvShow arg1) {
@@ -401,52 +381,119 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     }
   }
 
+  @SuppressWarnings("unused")
+  private class TvShowRenamerExample extends AbstractModelObject {
+    private String token;
+    private String description;
+    private String example = "";
+
+    public TvShowRenamerExample(String token) {
+      this.token = token;
+      try {
+        this.description = BUNDLE.getString("Settings.tvshow.renamer." + token); //$NON-NLS-1$
+      }
+      catch (Exception e) {
+        this.description = "";
+      }
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public void setDescription(String description) {
+      this.description = description;
+    }
+
+    public String getExample() {
+      return example;
+    }
+
+    public void setExample(String example) {
+      this.example = example;
+    }
+
+    private void createExample(TvShowEpisode episode) {
+      String oldValue = example;
+      if (episode == null) {
+        example = "";
+      }
+      else {
+        example = TvShowRenamer.createDestination(token, episode.getTvShow(), Arrays.asList(episode));
+      }
+      firePropertyChange("example", oldValue, example);
+    }
+  }
+
+  private class TvShowRenamerExampleTableFormat implements TableFormat<TvShowRenamerExample> {
+    @Override
+    public int getColumnCount() {
+      return 3;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0:
+          return null;
+
+        case 1:
+          return BUNDLE.getString("Settings.renamer.token"); //$NON-NLS-1$
+
+        case 2:
+          return BUNDLE.getString("Settings.renamer.value"); //$NON-NLS-1$
+
+      }
+      return null;
+    }
+
+    @Override
+    public Object getColumnValue(TvShowRenamerExample baseObject, int column) {
+      switch (column) {
+        case 0:
+          return baseObject.token;
+
+        case 1:
+          return baseObject.description;
+
+        case 2:
+          return baseObject.example;
+
+        default:
+          break;
+      }
+      return null;
+    }
+  }
+
   protected void initDataBindings() {
-    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty = BeanProperty.create("renamerAddSeason");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty, chckbxAddSeason, jCheckBoxBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("renamerAddShow");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, chckbxAddShow, jCheckBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("renamerAddTitle");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxAddEpisodeTitle, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<TvShowSettings, String> settingsBeanProperty_3 = BeanProperty.create("renamerSeasonFolder");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
-    autoBinding_3.bind();
-    //
     BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_6 = BeanProperty.create("asciiReplacement");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, chckbxAsciiReplacement, jCheckBoxBeanProperty);
     autoBinding_5.bind();
-    //
-    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("renamerTvShowFolder");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_7, chckbxTvShowFolder, jCheckBoxBeanProperty);
-    autoBinding_6.bind();
     //
     BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("renamerSpaceSubstitution");
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty, chckbxSpaceReplacement, jCheckBoxBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_1 = BeanProperty.create("renamerTvShowFolderYear");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        tvShowSettingsBeanProperty_1, chckbxYear, jCheckBoxBeanProperty);
-    autoBinding_7.bind();
+    BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_1 = BeanProperty.create("renamerTvShowFoldername");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<TvShowSettings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_1, tfTvShowFolder, jTextFieldBeanProperty_1);
+    autoBinding.bind();
     //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
-        settingsBeanProperty_7, chckbxYear, jCheckBoxBeanProperty_1);
-    autoBinding_8.bind();
+    BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_2 = BeanProperty.create("renamerFilename");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
+    AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_2, tfEpisodeFilename, jTextFieldBeanProperty_2);
+    autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_3 = BeanProperty.create("renamerSeasonFoldername");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
+    autoBinding_2.bind();
   }
 }
