@@ -72,12 +72,14 @@ public class TvShowChangeToAiredOrderAction extends AbstractAction {
     }
 
     for (TvShowEpisode episode : selectedEpisodes) {
-      episode.setDvdOrder(false);
-      episode.setAiredSeason(episode.getDvdSeason());
-      episode.setAiredEpisode(episode.getDvdEpisode());
-      episode.setDvdEpisode(-1);
-      episode.setDvdSeason(-1);
-      episode.saveToDb();
+      if (episode.isDvdOrder()) {
+        episode.setDvdOrder(false);
+        episode.setAiredSeason(episode.getDvdSeason());
+        episode.setAiredEpisode(episode.getDvdEpisode());
+        episode.setDvdEpisode(-1);
+        episode.setDvdSeason(-1);
+        episode.saveToDb();
+      }
     }
   }
 }

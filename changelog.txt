@@ -1,5 +1,9 @@
 Version 2.6.5
 =======================
++ enhanced TV show and movie renamer (http://goo.gl/8pbkFj)
+  IMPORTANT: REVIEW YOUR TV SHOW RENAMER SETTINGS!
+  
++ DVD ordering of episodes (http://goo.gl/YBD5qJ)
 + write thumb url into the NFO for multi episode files
 + added h265 logo
 + (experimental) added Rotten Tomates scraper

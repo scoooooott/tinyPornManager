@@ -16,6 +16,7 @@
 
 package org.tinymediamanager.ui.tvshows.settings;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -59,7 +60,6 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
-import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -80,7 +80,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowRenamerSettingsPanel extends ScrollablePanel implements HierarchyListener {
+public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long               serialVersionUID = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     panelExample.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
@@ -236,6 +236,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     panelExample.add(cbEpisodeForPreview, "4, 4, fill, default");
 
     lblExample = new JLabel("");
+    TmmFontHelper.changeFont(lblExample, Font.BOLD);
     panelExample.add(lblExample, "2, 6, 3, 1");
 
     tableExamples = new ZebraJTable(exampleTableModel);
