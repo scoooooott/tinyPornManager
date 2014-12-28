@@ -16,7 +16,10 @@
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -267,6 +270,21 @@ public class TmmWindowSaver implements AWTEventListener {
     rect.y = getInteger(name + "Y");
     rect.width = getInteger(name + "W");
     rect.height = getInteger(name + "H");
+
+    // check if the stored sizes fit the actual screen
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    // screen insets / taskbar
+    Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(MainWindow.getActiveInstance().getGraphicsConfiguration());
+
+    if ((rect.x + rect.width) > (screenSize.getWidth() - scnMax.left - scnMax.right)) {
+      rect.x = scnMax.left;
+      rect.width = (int) screenSize.getWidth() - scnMax.right;
+    }
+
+    if ((rect.y + rect.height) > (screenSize.getHeight() - scnMax.top - scnMax.bottom)) {
+      rect.y = scnMax.top;
+      rect.height = (int) screenSize.getHeight() - scnMax.bottom;
+    }
 
     return rect;
   }
