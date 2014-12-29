@@ -8,6 +8,7 @@ Version 2.6.5
 + added h265 logo
 + (experimental) added Rotten Tomates scraper
 + added downloading of custom image-urls in the image chooser
++ added genre to the movie renamer
 x added some workarounds for failing TVDB searches
 x proper handling of the watched state in the NFO
 x catching some NFO parsing problems
@@ -15,6 +16,7 @@ x improved parsing of imdb plot
 x fixed some minor issues with the command line version
 x fixed Mac OSX startup script
 x fixed some export template issues
+x fixed some performance issues with movie set artwork detection
 
 Version 2.6.4 
 =======================

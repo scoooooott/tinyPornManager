@@ -41,6 +41,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -851,13 +852,24 @@ public class MovieRenamer {
       newDestination = replaceToken(newDestination, "$L", movie.getSpokenLanguages());
     }
 
-    // replace certification ($C)
+    // replace token certification ($C)
     if (newDestination.contains("$C")) {
       if (movie.getCertification() != Certification.NOT_RATED) {
         newDestination = replaceToken(newDestination, "$C", movie.getCertification().getName());
       }
       else {
         newDestination = newDestination.replace("$C", "");
+      }
+    }
+
+    // replace token genre ($G)
+    if (newDestination.contains("$G")) {
+      if (!movie.getGenres().isEmpty()) {
+        MediaGenres genre = movie.getGenres().get(0);
+        newDestination = replaceToken(newDestination, "$G", genre.getLocalizedName());
+      }
+      else {
+        newDestination = newDestination.replace("$G", "");
       }
     }
 
