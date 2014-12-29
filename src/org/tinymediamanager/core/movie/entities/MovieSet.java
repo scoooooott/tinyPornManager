@@ -170,6 +170,17 @@ public class MovieSet extends MediaEntity {
     // try to get from the artwork folder if enabled
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()) {
       File artworkDir = new File(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder());
+
+      // performance trick: look if the desired file is in the image cache
+      for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+        String artworkFileName = artworkDir.getAbsolutePath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-"
+            + type.name().toLowerCase() + "." + fileType;
+        if (ImageCache.isImageCached(artworkFileName)) {
+          return artworkFileName;
+        }
+      }
+
+      // search the folder for the image
       if (artworkDir.exists()) {
         // File.listFiles is really slow on some bigger folders; stick to the old fashioned search
         for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
@@ -194,6 +205,16 @@ public class MovieSet extends MediaEntity {
     List<Movie> movies = new ArrayList<Movie>(this.movies);
     for (Movie movie : movies) {
       File movieDir = new File(movie.getPath());
+
+      // performance trick: look if the desired file is in the image cache
+      for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+        String artworkFileName = movieDir.getAbsolutePath() + File.separator + "movieset-" + type.name().toLowerCase() + "." + fileType;
+        if (ImageCache.isImageCached(artworkFileName)) {
+          return artworkFileName;
+        }
+      }
+
+      // search the movie dirs
       if (movieDir.exists()) {
         // File.listFiles is really slow on some bigger folders; stick to the old fashioned search
         for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {

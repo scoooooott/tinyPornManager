@@ -348,6 +348,26 @@ public class ImageCache {
   }
 
   /**
+   * Check whether the original image is in the image cache or not
+   * 
+   * @param path
+   *          the path to the original image
+   * @return
+   */
+  public static boolean isImageCached(String path) {
+    if (!Globals.settings.isImageCache()) {
+      return false;
+    }
+
+    File cachedFile = new File(CACHE_DIR, ImageCache.getCachedFileName(path) + ".jpg");
+    if (cachedFile.exists()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * clear the image cache for all graphics within the given media entity
    * 
    * @param entity
