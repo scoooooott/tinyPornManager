@@ -330,7 +330,6 @@ public class MovieEditorDialog extends TmmDialog {
     }
     {
       cbMovieSet = new JComboBox();
-      cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       details1Panel.add(cbMovieSet, "4, 18, 9, 1, fill, default");
     }
     {
@@ -873,7 +872,7 @@ public class MovieEditorDialog extends TmmDialog {
           cbMovieSet.setSelectedItem(movieSet);
         }
       }
-
+      cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       toggleSorttitle();
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
@@ -919,6 +918,7 @@ public class MovieEditorDialog extends TmmDialog {
     Object obj = cbMovieSet.getSelectedItem();
     if (obj instanceof String) {
       tfSorttitle.setEnabled(true);
+      tfSorttitle.setText("");
     }
     else {
       tfSorttitle.setEnabled(false);
