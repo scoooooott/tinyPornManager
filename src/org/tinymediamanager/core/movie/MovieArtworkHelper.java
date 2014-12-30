@@ -127,9 +127,17 @@ public class MovieArtworkHelper {
       posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
     }
     else if (movie.isDisc()) {
-      // override poster naming for disc files
-      posternames.add(MoviePosterNaming.POSTER_JPG);
-      posternames.add(MoviePosterNaming.POSTER_PNG);
+      // override poster naming for disc files - allowed is poster.jpg/png or folder.jpg/png;
+      // crosscheck with settings
+      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER_JPG)) {
+        posternames.add(MoviePosterNaming.FOLDER_JPG);
+        posternames.add(MoviePosterNaming.FOLDER_PNG);
+      }
+
+      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER_JPG) || posternames.isEmpty()) {
+        posternames.add(MoviePosterNaming.POSTER_JPG);
+        posternames.add(MoviePosterNaming.POSTER_PNG);
+      }
     }
     else {
       posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
