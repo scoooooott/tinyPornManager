@@ -769,8 +769,18 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       trackConnections();
       info = tmdb.getCollectionInfo(tmdbId, options.getLanguage().name());
       if (StringUtils.isBlank(info.getOverview())) {
+        String title = "";
+        // store the title in the desired language if availbable
+        if (StringUtils.isNotBlank(info.getName())) {
+          title = info.getName();
+        }
         // fallback to en
         info = tmdb.getCollectionInfo(tmdbId, "en");
+
+        // restore title
+        if (StringUtils.isNotBlank(title)) {
+          info.setName(title);
+        }
       }
     }
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
