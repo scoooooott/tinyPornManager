@@ -317,7 +317,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
       case  HDCLEARART:        mat = MediaArtworkType.CLEARART; break;
       case  TVPOSTER:          mat = MediaArtworkType.POSTER; break;
       case  TVBANNER:          mat = MediaArtworkType.BANNER; break;
-      case  SEASONPOSTER:      mat = MediaArtworkType.POSTER; break;
+      case  SEASONPOSTER:      mat = MediaArtworkType.SEASON; break;
       case  SEASONBANNER:      mat = MediaArtworkType.BANNER; break;
       // Movie Artwork Types
       case  MOVIELOGO:         mat = MediaArtworkType.LOGO; break;

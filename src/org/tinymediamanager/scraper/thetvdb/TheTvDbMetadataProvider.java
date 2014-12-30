@@ -54,6 +54,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
 import com.omertron.thetvdbapi.model.Banner;
+import com.omertron.thetvdbapi.model.BannerType;
 import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
 import com.omertron.thetvdbapi.model.Series;
@@ -561,6 +562,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
           break;
 
         case season:
+          if (banner.getBannerType2() == BannerType.SeasonWide) {
+            // we do not use season wide banners at the moment
+            continue;
+          }
+
           ma.setType(MediaArtworkType.SEASON);
           ma.setSeason(banner.getSeason());
           break;
