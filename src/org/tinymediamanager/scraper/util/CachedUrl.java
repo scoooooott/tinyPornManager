@@ -157,7 +157,7 @@ public class CachedUrl extends Url {
    */
   private static boolean isExpired(File cachedFile, long expirySecs) {
     long diff = (System.currentTimeMillis() - cachedFile.lastModified()) / 1000;
-    boolean expired = (diff > expirySecs);
+    boolean expired = (diff > expirySecs) || (diff < 0); // lastModified in the future.. who does that? well there are users doing this.
     if (expired) {
       LOGGER.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified()
           + "; Current Time: " + System.currentTimeMillis() + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
