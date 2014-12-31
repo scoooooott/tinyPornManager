@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -40,24 +41,44 @@ public class TmmSettingsContainerPanel extends JPanel {
       JTabbedPane tabbedPanePages = new JTabbedPane(JTabbedPane.TOP);
       add(tabbedPanePages, BorderLayout.CENTER);
       {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(new GeneralSettingsPanel());
+        final JScrollPane scrollPane = new JScrollPane(new GeneralSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.general"), null, scrollPane, null); //$NON-NLS-1$
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
       }
       {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(new FileTypesSettingsPanel());
+        final JScrollPane scrollPane = new JScrollPane(new FileTypesSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.filetypes"), null, scrollPane, null); //$NON-NLS-1$
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
       }
       {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(new ExternalDevicesSettingsPanel());
+        final JScrollPane scrollPane = new JScrollPane(new ExternalDevicesSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.externaldevices"), null, scrollPane, null); //$NON-NLS-1$
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
       }
       {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(new ExternalServicesSettingsPanel());
+        final JScrollPane scrollPane = new JScrollPane(new ExternalServicesSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.externalservices"), null, scrollPane, null); //$NON-NLS-1$
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
       }
     }
   }

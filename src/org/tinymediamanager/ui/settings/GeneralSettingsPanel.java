@@ -19,13 +19,18 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -34,10 +39,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.io.FileUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -69,6 +76,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
+  private static Pattern              MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
   private Settings                    settings           = Settings.getInstance();
   private List<LocaleComboBox>        locales            = new ArrayList<LocaleComboBox>();
@@ -82,7 +90,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JLabel                      lblLoglevel;
   private JComboBox                   cbLogLevel;
   private JPanel                      panelCache;
-  private JPanel                      panelLogger;
   private JLabel                      lblImageCacheQuality;
   private JComboBox                   cbImageCacheQuality;
   private JCheckBox                   chckbxBuildImageCache;
@@ -103,8 +110,14 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbFontSize;
   private JComboBox                   cbFontFamily;
   private JLabel                      lblFontChangeHint;
-  private JPanel                      panelTrash;
   private JCheckBox                   chckbxDeleteTrash;
+  private JSlider                     sliderMemory;
+  private JPanel                      panelMemory;
+  private JLabel                      lblMemoryT;
+  private JLabel                      lblMemory;
+  private JTextPane                   tpMemoryHint;
+  private JLabel                      lblMb;
+  private JPanel                      panelMisc;
 
   /**
    * Instantiates a new general settings panel.
@@ -113,8 +126,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min):grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, }));
 
     panelUI = new JPanel();
@@ -269,7 +281,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     panelMediaPlayer = new JPanel();
     panelMediaPlayer.setBorder(new TitledBorder(null, "MediaPlayer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelMediaPlayer, "2, 6, 3, 1, fill, fill");
+    add(panelMediaPlayer, "2, 6, fill, fill");
     panelMediaPlayer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -297,36 +309,68 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     });
     panelMediaPlayer.add(btnSearchMediaPlayer, "4, 4");
 
-    panelLogger = new JPanel();
-    add(panelLogger, "2, 8, fill, fill");
-    panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
-
-    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));//$NON-NLS-1$
-    panelLogger.add(lblLoglevel, "2, 2");
+    panelMisc = new JPanel();
+    panelMisc.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.misc"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelMisc, "4, 6, fill, fill");
+    panelMisc.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
 
     Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
     Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
+
+    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));
+    panelMisc.add(lblLoglevel, "2, 2");
     cbLogLevel = new JComboBox(levels);
-    panelLogger.add(cbLogLevel, "4, 2");
+    panelMisc.add(cbLogLevel, "4, 2");
     cbLogLevel.setSelectedItem(actualLevel);
 
-    panelTrash = new JPanel();
-    add(panelTrash, "2, 10, fill, fill");
-    panelTrash.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
+    panelMisc.add(chckbxDeleteTrash, "2, 4, 3, 1");
+    cbLogLevel.addItemListener(listener);
 
-    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash")); //$NON-NLS-1$
-    panelTrash.add(chckbxDeleteTrash, "2, 2, left, top");
+    panelMemory = new JPanel();
+    panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelMemory, "2, 8, fill, fill");
+    panelMemory.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow(4)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(20dlu;default)"), ColumnSpec.decode("left:default:grow(5)"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
+    panelMemory.add(lblMemoryT, "2, 1");
+
+    sliderMemory = new JSlider();
+    sliderMemory.setPaintLabels(true);
+    sliderMemory.setPaintTicks(true);
+    sliderMemory.setSnapToTicks(true);
+    sliderMemory.setMajorTickSpacing(512);
+    sliderMemory.setMinorTickSpacing(128);
+    sliderMemory.setMinimum(256);
+    sliderMemory.setMaximum(2048);
+    sliderMemory.setValue(512);
+    panelMemory.add(sliderMemory, "4, 1, fill, default");
+
+    lblMemory = new JLabel("512"); //$NON-NLS-1$
+    panelMemory.add(lblMemory, "6, 1, right, default");
+
+    lblMb = new JLabel("MB");
+    panelMemory.add(lblMb, "7, 1, left, default");
+
+    tpMemoryHint = new JTextPane();
+    tpMemoryHint.setOpaque(false);
+    tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(tpMemoryHint, 0.833);
+    panelMemory.add(tpMemoryHint, "2, 3, 6, 1, fill, fill");
 
     initDataBindings();
 
     cbLanguage.addItemListener(listener);
-    cbLogLevel.addItemListener(listener);
     cbFontFamily.addItemListener(listener);
     cbFontSize.addItemListener(listener);
+
+    initMemorySlider();
   }
 
   /**
@@ -370,6 +414,76 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     @Override
     public String toString() {
       return loc.getDisplayLanguage(loc);
+    }
+  }
+
+  private void initMemorySlider() {
+    File file = new File("extra.txt");
+    int maxMemory = 512;
+    if (file.exists()) {
+      // parse out memory option from extra.txt
+      try {
+        String extraTxt = FileUtils.readFileToString(file);
+        Matcher matcher = MEMORY_PATTERN.matcher(extraTxt);
+        if (matcher.find()) {
+          maxMemory = Integer.parseInt(matcher.group(1));
+          String dimension = matcher.group(2);
+          if ("k".equalsIgnoreCase(dimension)) {
+            maxMemory /= 1024;
+          }
+          if ("g".equalsIgnoreCase(dimension)) {
+            maxMemory *= 1024;
+          }
+        }
+      }
+      catch (Exception e) {
+        maxMemory = 512;
+      }
+    }
+
+    sliderMemory.setValue(maxMemory);
+
+    // add a listener to write the actual memory state to extra.txt
+    addHierarchyListener(new HierarchyListener() {
+      private boolean oldState = false;
+
+      @Override
+      public void hierarchyChanged(HierarchyEvent e) {
+        if (oldState != isShowing()) {
+          oldState = isShowing();
+          if (!isShowing()) {
+            writeMemorySettings();
+          }
+        }
+      }
+    });
+  }
+
+  private void writeMemorySettings() {
+    String jvmArg = "-Xmx" + sliderMemory.getValue() + "m";
+    File file = new File("extra.txt");
+    // new file
+    if (!file.exists()) {
+      try {
+        FileUtils.write(file, jvmArg);
+      }
+      catch (IOException e) {
+      }
+    }
+    else {
+      try {
+        String extraTxt = FileUtils.readFileToString(file);
+        Matcher matcher = MEMORY_PATTERN.matcher(extraTxt);
+        if (matcher.find()) {
+          extraTxt = extraTxt.replace(matcher.group(0), jvmArg);
+        }
+        else {
+          extraTxt += "\r\n" + jvmArg;
+        }
+        FileUtils.write(file, extraTxt);
+      }
+      catch (Exception e) {
+      }
     }
   }
 
@@ -435,5 +549,11 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, chckbxDeleteTrash, jCheckBoxBeanProperty);
     autoBinding_10.bind();
+    //
+    BeanProperty<JSlider, Integer> jSliderBeanProperty = BeanProperty.create("value");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<JSlider, Integer, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, sliderMemory, jSliderBeanProperty,
+        lblMemory, jLabelBeanProperty);
+    autoBinding_11.bind();
   }
 }
