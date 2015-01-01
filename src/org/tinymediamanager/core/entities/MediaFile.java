@@ -248,7 +248,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.TRAILER;
       }
 
-      if (name.contains("sample") || foldername.contains("sample")) {
+      // we have some false positives too - make a more precise check
+      if (basename.matches("(?i).*[_.-]sample$") // end with sample
+          || foldername.equalsIgnoreCase("sample")) { // sample folder name
         return MediaFileType.SAMPLE;
       }
 
