@@ -45,6 +45,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -76,7 +77,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
-  private static Pattern              MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
+  private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
   private Settings                    settings           = Settings.getInstance();
   private List<LocaleComboBox>        locales            = new ArrayList<LocaleComboBox>();
@@ -460,17 +461,24 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   }
 
   private void writeMemorySettings() {
-    String jvmArg = "-Xmx" + sliderMemory.getValue() + "m";
+    int memoryAmount = sliderMemory.getValue();
+    String jvmArg = "-Xmx" + memoryAmount + "m";
+
+    // no need of putting the default value in the file
+    if (memoryAmount == 512) {
+      jvmArg = "";
+    }
+
     File file = new File("extra.txt");
-    // new file
-    if (!file.exists()) {
+    // new file - do not write when 512MB is set
+    if (memoryAmount != 512 && !file.exists()) {
       try {
         FileUtils.write(file, jvmArg);
       }
       catch (IOException e) {
       }
     }
-    else {
+    else if (file.exists()) {
       try {
         String extraTxt = FileUtils.readFileToString(file);
         Matcher matcher = MEMORY_PATTERN.matcher(extraTxt);
@@ -480,7 +488,15 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         else {
           extraTxt += "\r\n" + jvmArg;
         }
-        FileUtils.write(file, extraTxt);
+        // nothing in the file?
+        if (StringUtils.isBlank(extraTxt)) {
+          // yes -> delete it
+          FileUtils.deleteQuietly(file);
+        }
+        else {
+          // no -> rewrite it
+          FileUtils.write(file, extraTxt);
+        }
       }
       catch (Exception e) {
       }
