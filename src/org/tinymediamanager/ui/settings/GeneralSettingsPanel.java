@@ -318,7 +318,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
+    Level[] levels = new Level[] { Level.TRACE, Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
     Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
 
     lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));
