@@ -38,15 +38,16 @@ public enum MovieMediaSource {
   // and our fallback
   UNKNOWN("Unknown");  // @formatter:on
 
-  private static Pattern blurayPattern = Pattern.compile("[ .-_/\\\\\\[\\(](bluray|blueray|bdrip|bd25|bd50|bdmv)[ .-_/\\\\\\]\\)]?");
-  private static Pattern hddvdPattern  = Pattern.compile("[ .-_/\\\\\\[\\(](hddvd)[ .-_/\\\\\\]\\)]?");
-  private static Pattern dvdPattern    = Pattern.compile("[ .-_/\\\\\\[\\(](dvd|video_ts|dvdrip|dvdr)[ .-_/\\\\\\]\\)]?");
-  private static Pattern tvPattern     = Pattern.compile("[ .-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv)[ .-_/\\\\\\]\\)]?");
-  private static Pattern vhsPattern    = Pattern.compile("[ .-_/\\\\\\[\\(](vhs)[ .-_/\\\\\\]\\)]?");
-  private static Pattern camPattern    = Pattern.compile("[ .-_/\\\\\\[\\(](cam)[ .-_/\\\\\\]\\)]?");
-  private static Pattern tsPattern     = Pattern.compile("[ .-_/\\\\\\[\\(](ts|telesync|hdts)[ .-_/\\\\\\]\\)]?");
-  private static Pattern dvdscrPattern = Pattern.compile("[ .-_/\\\\\\[\\(](dvdscr)[ .-_/\\\\\\]\\)]?");
-  private static Pattern webripPattern = Pattern.compile("[ .-_/\\\\\\[\\(](webrip)[ .-_/\\\\\\]\\)]?");
+  // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
+  private static Pattern blurayPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern hddvdPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hddvd|hddvdrip)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern dvdPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvd|video_ts|dvdrip|dvdr|r5)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern tvPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv|hdtvrip|hdrip|tvrip|dvbrip)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern vhsPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](vhs)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern camPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](cam)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern tsPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](ts|telesync|hdts)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern dvdscrPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvdscr)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern webripPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](webrip)[ .\\-_/\\\\\\]\\)]?");
 
   private String         title;
 
