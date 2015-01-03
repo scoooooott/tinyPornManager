@@ -87,141 +87,142 @@ import org.tinymediamanager.scraper.MediaTrailer;
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed",
     "dateadded", "keywords", "poster", "url", "languages", "unsupportedElements" })
 public class MovieToXbmcNfoConnector {
-  private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
-  private static JAXBContext  context        = initContext();
+  private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");
+  private static JAXBContext   context               = initContext();
 
   @XmlElement
-  private String              title          = "";
+  private String               title                 = "";
 
   @XmlElement
-  private String              originaltitle  = "";
+  private String               originaltitle         = "";
 
   @XmlElement
-  private String              year           = "";
+  private String               year                  = "";
 
   @XmlElement
-  private String              outline        = "";
+  private String               outline               = "";
 
   @XmlElement
-  private String              plot           = "";
+  private String               plot                  = "";
 
   @XmlElement
-  private String              tagline        = "";
+  private String               tagline               = "";
 
   @XmlElement
-  private String              runtime        = "";
+  private String               runtime               = "";
 
   @XmlElement
-  private String              thumb          = "";
+  private String               thumb                 = "";
 
   @XmlElement
-  private String              fanart         = "";
+  private String               fanart                = "";
 
   @XmlElement
-  private String              id             = "";
+  private String               id                    = "";
 
   @XmlElementWrapper(name = "ids")
-  private Map<String, Object> ids;
+  private Map<String, Object>  ids;
 
   @XmlElement
-  private String              studio         = "";
+  private String               studio                = "";
 
   @XmlElement
-  private String              country        = "";
+  private String               country               = "";
 
   @XmlElement
-  private String              mpaa           = "";
+  private String               mpaa                  = "";
 
   @XmlElement(name = "certification")
-  private String              certifications = "";
+  private String               certifications        = "";
 
   @XmlElement
-  private String              trailer        = "";
+  private String               trailer               = "";
 
   @XmlElement
-  private String              set            = "";
+  private String               set                   = "";
 
   @XmlElement
-  private String              sorttitle      = "";
+  private String               sorttitle             = "";
 
   @XmlElement
-  private boolean             watched        = false;
+  private boolean              watched               = false;
 
   @XmlElement
-  private float               rating         = 0;
+  private float                rating                = 0;
 
   @XmlElement
-  private int                 votes          = 0;
+  private int                  votes                 = 0;
 
   @XmlElement
-  private int                 playcount      = 0;
+  private int                  playcount             = 0;
 
   @XmlElement
-  private int                 tmdbId         = 0;
+  private int                  tmdbId                = 0;
 
   @XmlElement
-  private Fileinfo            fileinfo;
+  private Fileinfo             fileinfo;
 
   @XmlElement
-  private String              premiered      = "";
+  private String               premiered             = "";
 
   @XmlElement(name = "director")
-  private List<String>        director;
+  private List<String>         director;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        actors;
+  private List<Object>         actors;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        producers;
+  private List<Object>         producers;
 
   @XmlElement(name = "genre")
-  private List<String>        genres;
+  private List<String>         genres;
 
   @XmlElement(name = "credits")
-  private List<String>        credits;
+  private List<String>         credits;
 
   @XmlElement(name = "tag")
-  private List<String>        tags;
+  private List<String>         tags;
 
   @XmlElement
-  private String              top250;
+  private String               top250;
 
   @XmlElement
-  private String              languages;
+  private String               languages;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        unsupportedElements;
+  private List<Object>         unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  private String              epbookmark;
+  private String               epbookmark;
 
   @XmlElement
-  private String              lastplayed;
+  private String               lastplayed;
 
   @XmlElement
-  private String              status;
+  private String               status;
 
   @XmlElement
-  private String              code;
+  private String               code;
 
   @XmlElement
-  private String              aired;
+  private String               aired;
 
   @XmlElement
-  private Object              resume;
+  private Object               resume;
 
   @XmlElement
-  private String              dateadded;
+  private String               dateadded;
 
   @XmlElement
-  private Object              keywords;
+  private Object               keywords;
 
   @XmlElement
-  private Object              poster;
+  private Object               poster;
 
   @XmlElement
-  private Object              url;
+  private Object               url;
 
   // @XmlElement(name = "rotten-tomatoes")
   // private Object rottentomatoes;
@@ -716,16 +717,23 @@ public class MovieToXbmcNfoConnector {
 
     try {
       Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
-      return (MovieToXbmcNfoConnector) um.unmarshal(in);
+      MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+      return xbmc;
     }
     catch (UnmarshalException e) {
       LOGGER.error("tried to unmarshal; now trying to clean xml stream");
     }
+    catch (IllegalArgumentException e) {
+      LOGGER.warn("tried to unmarshal; now trying to clean xml stream");
+    }
 
     // now trying to parse it via string
     String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
-    completeNFO = completeNFO.replace("<movie>",
-        "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+    Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
+    if (matcher.find()) {
+      completeNFO = matcher
+          .replaceFirst("<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+    }
     Reader in = new StringReader(completeNFO);
     return (MovieToXbmcNfoConnector) um.unmarshal(in);
   }
