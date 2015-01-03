@@ -310,7 +310,17 @@ public class Movie extends MediaEntity {
    * 
    * @return the trailers
    */
+  @Deprecated
   public List<MediaTrailer> getTrailers() {
+    return this.trailer;
+  }
+
+  /**
+   * Gets the trailers
+   * 
+   * @return the trailers
+   */
+  public List<MediaTrailer> getTrailer() {
     return this.trailer;
   }
 
