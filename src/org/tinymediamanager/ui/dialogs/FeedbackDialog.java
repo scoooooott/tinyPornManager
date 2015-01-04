@@ -164,6 +164,7 @@ public class FeedbackDialog extends TmmDialog {
           message.append(textArea.getText());
 
           nameValuePairs.add(new BasicNameValuePair("message", message.toString()));
+          nameValuePairs.add(new BasicNameValuePair("sender", tfEmail.getText()));
           post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
           HttpResponse response = client.execute(post);

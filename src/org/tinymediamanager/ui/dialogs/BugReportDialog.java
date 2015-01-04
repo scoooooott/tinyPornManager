@@ -47,6 +47,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
@@ -192,6 +193,7 @@ public class BugReportDialog extends TmmDialog {
 
           MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
           mpEntity.addPart("message", new StringBody(message.toString(), Charset.forName("UTF-8")));
+          mpEntity.addPart("sender", new StringBody(tfEmail.getText(), ContentType.TEXT_PLAIN));
 
           // attach files
           if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() /*
