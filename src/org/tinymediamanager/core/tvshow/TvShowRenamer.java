@@ -191,9 +191,15 @@ public class TvShowRenamer {
     // create SeasonDir
     // String seasonName = "Season " + String.valueOf(ep.getSeason());
     String seasonName = generateSeasonDir(SETTINGS.getRenamerSeasonFoldername(), ep);
-    File seasonDir = new File(show.getPath(), seasonName);
-    if (!seasonDir.exists()) {
-      seasonDir.mkdir();
+    File seasonDir = null;
+    if (StringUtils.isNotBlank(seasonName)) {
+      seasonDir = new File(show.getPath(), seasonName);
+      if (!seasonDir.exists()) {
+        seasonDir.mkdir();
+      }
+    }
+    else {
+      seasonDir = new File(show.getPath());
     }
 
     // rename epFolder accordingly
