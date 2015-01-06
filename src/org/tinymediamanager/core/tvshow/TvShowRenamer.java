@@ -432,7 +432,7 @@ public class TvShowRenamer {
     seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
 
     // only allow empty season dir if the season is in the filename
-    if (seasonDir.isEmpty() && (!SETTINGS.getRenamerFilename().contains("$1") && !SETTINGS.getRenamerFilename().contains("$2"))) {
+    if (StringUtils.isBlank(seasonDir) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2"))) {
       seasonDir = "Season " + String.valueOf(episode.getSeason());
     }
     return seasonDir;

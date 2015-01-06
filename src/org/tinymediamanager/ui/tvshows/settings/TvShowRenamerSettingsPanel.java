@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -311,42 +312,48 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   private void createRenamerExample() {
-    TvShow tvShow = null;
-    TvShowEpisode episode = null;
+    // need to start it async, that binding will transfer changes to settings first
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        TvShow tvShow = null;
+        TvShowEpisode episode = null;
 
-    if (cbTvShowForPreview.getSelectedItem() instanceof TvShowPreviewContainer) {
-      TvShowPreviewContainer container = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
-      tvShow = container.tvShow;
-    }
+        if (cbTvShowForPreview.getSelectedItem() instanceof TvShowPreviewContainer) {
+          TvShowPreviewContainer container = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
+          tvShow = container.tvShow;
+        }
 
-    if (cbEpisodeForPreview.getSelectedItem() instanceof TvShowEpisodePreviewContainer) {
-      TvShowEpisodePreviewContainer container = (TvShowEpisodePreviewContainer) cbEpisodeForPreview.getSelectedItem();
-      episode = container.episode;
-    }
+        if (cbEpisodeForPreview.getSelectedItem() instanceof TvShowEpisodePreviewContainer) {
+          TvShowEpisodePreviewContainer container = (TvShowEpisodePreviewContainer) cbEpisodeForPreview.getSelectedItem();
+          episode = container.episode;
+        }
 
-    if (tvShow != null && episode != null) {
-      String tvShowDir = TvShowRenamer.generateTvShowDir(tfTvShowFolder.getText(), tvShow);
-      String filename = TvShowRenamer.generateFilename(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
-      String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
-      if (StringUtils.isBlank(seasonDir)) {
-        lblExample.setText(tvShowDir + File.separator + filename);
+        if (tvShow != null && episode != null) {
+          String tvShowDir = TvShowRenamer.generateTvShowDir(tfTvShowFolder.getText(), tvShow);
+          String filename = TvShowRenamer.generateFilename(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
+          String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
+          if (StringUtils.isBlank(seasonDir)) {
+            lblExample.setText(tvShowDir + File.separator + filename);
+          }
+          else {
+            lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
+          }
+          // create examples
+          for (TvShowRenamerExample example : exampleEventList) {
+            example.createExample(episode);
+          }
+          try {
+            TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
+          }
+          catch (Exception e) {
+          }
+        }
+        else {
+          lblExample.setText("");
+        }
       }
-      else {
-        lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
-      }
-      // create examples
-      for (TvShowRenamerExample example : exampleEventList) {
-        example.createExample(episode);
-      }
-      try {
-        TableColumnResizer.adjustColumnPreferredWidths(tableExamples, 7);
-      }
-      catch (Exception e) {
-      }
-    }
-    else {
-      lblExample.setText("");
-    }
+    });
   }
 
   private void checkChanges() {
