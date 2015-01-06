@@ -64,9 +64,9 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -105,13 +105,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
   private ITvShowMetadataProvider     metadataProvider;
   private List<IMediaArtworkProvider> artworkProviders;
-  private List<IMediaTrailerProvider> trailerProviders;
   private boolean                     continueQueue         = true;
 
   /** UI components */
   private final JPanel                contentPanel          = new JPanel();
   private JTextField                  textFieldSearchString;
   private JComboBox                   cbScraper;
+  private JComboBox                   cbLanguage;
   private JTable                      table;
   private JTextArea                   lblTvShowName;
   private JTextPane                   tpTvShowOverview;
@@ -168,7 +168,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "2, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -195,6 +196,21 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           }
         });
         getRootPane().setDefaultButton(btnSearch);
+      }
+      {
+        JLabel lblLanguage = new JLabel("Language");
+        panelSearchField.add(lblLanguage, "2, 3, right, default");
+      }
+      {
+        cbLanguage = new JComboBox(MediaLanguages.values());
+        cbLanguage.setSelectedItem(Globals.settings.getTvShowSettings().getScraperLanguage());
+        cbLanguage.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            searchTvShow(textFieldSearchString.getText());
+          }
+        });
+        panelSearchField.add(cbLanguage, "4, 3, fill, default");
       }
     }
     {
@@ -472,16 +488,18 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   }
 
   private class SearchTask extends SwingWorker<Void, Void> {
-    private String searchTerm;
+    private String         searchTerm;
+    private MediaLanguages language;
 
     public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
+      this.language = (MediaLanguages) cbLanguage.getSelectedItem();
     }
 
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, metadataProvider);
+      List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, metadataProvider, language);
       tvShowsFound.clear();
       if (searchResult.size() == 0) {
         // display empty result
@@ -493,7 +511,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           if (mpFromResult == null) {
             mpFromResult = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
           }
-          tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkProviders, trailerProviders, result));
+          tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkProviders, result, language));
         }
       }
 

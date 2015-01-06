@@ -31,6 +31,7 @@ import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -44,71 +45,32 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant logger. */
   private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
-
-  /** The Constant emptyResult. */
   public static final MovieChooserModel emptyResult      = new MovieChooserModel();
 
-  /** The metadata provider. */
   private IMediaMetadataProvider        metadataProvider = null;
-
-  /** The artwork provider. */
   private List<IMediaArtworkProvider>   artworkProviders = null;
-
-  /** The trailer provider. */
   private List<IMediaTrailerProvider>   trailerProviders = null;
 
-  /** The result. */
+  private MediaLanguages                language         = null;
   private MediaSearchResult             result           = null;
-
-  /** The metadata. */
   private MediaMetadata                 metadata         = null;
-
-  /** The name. */
   private String                        name             = "";
-
-  /** The overview. */
   private String                        overview         = "";
-
-  /** The year. */
   private String                        year             = "";
-
-  /** The combined name. */
   private String                        combinedName     = "";
-
-  /** The poster url. */
   private String                        posterUrl        = "";
-
-  /** The tagline. */
   private String                        tagline          = "";
-
-  /** The scraped. */
   private boolean                       scraped          = false;
 
-  /* new scraper logic */
-  /**
-   * Instantiates a new movie chooser model.
-   * 
-   * @param metadataProvider
-   *          the metadata provider
-   * @param artworkProviders
-   *          the artwork providers
-   * @param trailerProviders
-   *          the trailer providers
-   * @param result
-   *          the result
-   */
   public MovieChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
-      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
+      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result, MediaLanguages language) {
     this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
     this.trailerProviders = trailerProviders;
     this.result = result;
+    this.language = language;
 
     // name
     setName(result.getTitle());
@@ -126,107 +88,52 @@ public class MovieChooserModel extends AbstractModelObject {
     combinedName = name;
   }
 
-  /**
-   * Sets the name.
-   * 
-   * @param name
-   *          the new name
-   */
   public void setName(String name) {
     String oldValue = this.name;
     this.name = name;
     firePropertyChange("name", oldValue, name);
   }
 
-  /**
-   * Sets the overview.
-   * 
-   * @param overview
-   *          the new overview
-   */
   public void setOverview(String overview) {
     String oldValue = this.overview;
     this.overview = overview;
     firePropertyChange("overview", oldValue, overview);
   }
 
-  /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Gets the overview.
-   * 
-   * @return the overview
-   */
   public String getOverview() {
-    // if (metadata == null) {
-    // scrapeMetaData();
-    // }
     return overview;
   }
 
-  /**
-   * Gets the poster url.
-   * 
-   * @return the poster url
-   */
   public String getPosterUrl() {
     return posterUrl;
   }
 
-  /**
-   * Sets the poster url.
-   * 
-   * @param newValue
-   *          the new poster url
-   */
   public void setPosterUrl(String newValue) {
     String oldValue = posterUrl;
     posterUrl = newValue;
     firePropertyChange("posterUrl", oldValue, newValue);
   }
 
-  /**
-   * Gets the year.
-   * 
-   * @return the year
-   */
   public String getYear() {
     return year;
   }
 
-  /**
-   * Sets the year.
-   * 
-   * @param year
-   *          the new year
-   */
   public void setYear(String year) {
     String oldValue = this.year;
     this.year = year;
     firePropertyChange("year", oldValue, year);
   }
 
-  /**
-   * Sets the combined name.
-   */
   public void setCombinedName() {
     String oldValue = this.combinedName;
     this.combinedName = getName() + " (" + getYear() + ")";
     firePropertyChange("combinedName", oldValue, this.combinedName);
   }
 
-  /**
-   * Gets the combined name.
-   * 
-   * @return the combined name
-   */
   public String getCombinedName() {
     return combinedName;
   }
@@ -241,7 +148,7 @@ public class MovieChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setResult(result);
-      options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+      options.setLanguage(language);
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       options.setScrapeCollectionInfo(Globals.settings.getMovieScraperMetadataConfig().isCollection());
       options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
@@ -264,11 +171,6 @@ public class MovieChooserModel extends AbstractModelObject {
     }
   }
 
-  /**
-   * Gets the artwork.
-   * 
-   * @return the artwork
-   */
   public List<MediaArtwork> getArtwork() {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
@@ -283,7 +185,7 @@ public class MovieChooserModel extends AbstractModelObject {
     catch (Exception e) {
       options.setTmdbId(0);
     }
-    options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    options.setLanguage(language);
     options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
     options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
@@ -299,11 +201,6 @@ public class MovieChooserModel extends AbstractModelObject {
     return artwork;
   }
 
-  /**
-   * Gets the trailers.
-   * 
-   * @return the trailers
-   */
   public List<MediaTrailer> getTrailers() {
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
 
@@ -316,7 +213,7 @@ public class MovieChooserModel extends AbstractModelObject {
     catch (Exception e) {
       options.setTmdbId(0);
     }
-    options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    options.setLanguage(language);
     options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
     options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
@@ -334,41 +231,20 @@ public class MovieChooserModel extends AbstractModelObject {
     return trailers;
   }
 
-  /**
-   * Gets the metadata.
-   * 
-   * @return the metadata
-   */
   public MediaMetadata getMetadata() {
     return metadata;
   }
 
-  /**
-   * Checks if is scraped.
-   * 
-   * @return true, if is scraped
-   */
   public boolean isScraped() {
     return scraped;
   }
 
-  /**
-   * Sets the tagline.
-   * 
-   * @param newValue
-   *          the new tagline
-   */
   public void setTagline(String newValue) {
     String oldValue = this.tagline;
     this.tagline = newValue;
     firePropertyChange("tagline", oldValue, newValue);
   }
 
-  /**
-   * Gets the tagline.
-   * 
-   * @return the tagline
-   */
   public String getTagline() {
     return tagline;
   }

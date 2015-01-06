@@ -69,6 +69,7 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
@@ -130,6 +131,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private JLabel                                                            lblTagline;
   private JButton                                                           okButton;
   private JLabel                                                            lblPath;
+  private JComboBox                                                         cbLanguage;
 
   private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
   private AutoBinding<JTable, String, JLabel, String>                       autoBinding;
@@ -186,7 +188,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "2, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:max(100px;default)"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:max(100px;default)"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -214,6 +217,19 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           }
         });
         getRootPane().setDefaultButton(btnSearch);
+      }
+      {
+        JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+        panelSearchField.add(lblLanguage, "2, 3, right, default");
+        cbLanguage = new JComboBox(MediaLanguages.values());
+        cbLanguage.setSelectedItem(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+        cbLanguage.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            searchMovie(textFieldSearchString.getText(), null);
+          }
+        });
+        panelSearchField.add(cbLanguage, "4, 3, fill, default");
       }
     }
     {
@@ -637,17 +653,19 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     private String                  searchTerm;
     private Movie                   movie;
     private List<MediaSearchResult> searchResult;
+    private MediaLanguages          language;
     boolean                         cancel = false;
 
     public SearchTask(String searchTerm, Movie movie) {
       this.searchTerm = searchTerm;
       this.movie = movie;
+      this.language = (MediaLanguages) cbLanguage.getSelectedItem();
     }
 
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider);
+      searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider, language);
       return null;
     }
 
@@ -669,7 +687,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
             if (mpFromResult == null) {
               mpFromResult = MovieList.getInstance().getMetadataProvider(result.getProviderId());
             }
-            moviesFound.add(new MovieChooserModel(mpFromResult, artworkProviders, trailerProviders, result));
+            moviesFound.add(new MovieChooserModel(mpFromResult, artworkProviders, trailerProviders, result, language));
             // get metadataProvider from searchresult
           }
         }

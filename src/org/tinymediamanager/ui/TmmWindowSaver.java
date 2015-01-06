@@ -274,16 +274,18 @@ public class TmmWindowSaver implements AWTEventListener {
     // check if the stored sizes fit the actual screen
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     // screen insets / taskbar
-    Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(MainWindow.getActiveInstance().getGraphicsConfiguration());
+    Insets scnMax = null;
+    if (MainWindow.getActiveInstance() != null) {
+      scnMax = Toolkit.getDefaultToolkit().getScreenInsets(MainWindow.getActiveInstance().getGraphicsConfiguration());
+      if ((rect.x + rect.width) > (screenSize.getWidth() - scnMax.left - scnMax.right)) {
+        rect.x = scnMax.left;
+        rect.width = (int) screenSize.getWidth() - scnMax.right;
+      }
 
-    if ((rect.x + rect.width) > (screenSize.getWidth() - scnMax.left - scnMax.right)) {
-      rect.x = scnMax.left;
-      rect.width = (int) screenSize.getWidth() - scnMax.right;
-    }
-
-    if ((rect.y + rect.height) > (screenSize.getHeight() - scnMax.top - scnMax.bottom)) {
-      rect.y = scnMax.top;
-      rect.height = (int) screenSize.getHeight() - scnMax.bottom;
+      if ((rect.y + rect.height) > (screenSize.getHeight() - scnMax.top - scnMax.bottom)) {
+        rect.y = scnMax.top;
+        rect.height = (int) screenSize.getHeight() - scnMax.bottom;
+      }
     }
 
     return rect;
