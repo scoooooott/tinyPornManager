@@ -70,8 +70,8 @@ public class MediaInfoTest {
   @Test
   public void mediaFile() {
     MediaFile mf = new MediaFile();
-    mf.setPath("/path/to/mediafile/");
-    mf.setFilename("movie.avi");
+    mf.setPath("");
+    mf.setFilename("");
 
     mf.gatherMediaInformation();
 
@@ -95,7 +95,7 @@ public class MediaInfoTest {
    */
   @Test
   public void testDirect() throws Exception {
-    String FileName = "/home/manuel/Downloads/Modern Family - S01E03 - Come Fly with Me.dutch.srt";
+    String FileName = "";
     String To_Display = "";
 
     // Info about the library

@@ -1171,7 +1171,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         for (int i = 0; i < streams; i++) {
           MediaFileAudioStream stream = new MediaFileAudioStream();
           String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
-          stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+          audioCodec = audioCodec.replaceAll("\\p{Punct}", "");
+
+          String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
+          if ("dts".equalsIgnoreCase(audioCodec) && StringUtils.isNotBlank(audioAddition)) {
+            if (audioAddition.contains("ES")) {
+              audioCodec = "DTS-ES";
+            }
+            if (audioAddition.contains("HRA")) {
+              audioCodec = "DTS-HRA";
+            }
+            if (audioAddition.contains("MA")) {
+              audioCodec = "DTS-MA";
+            }
+          }
+          stream.setCodec(audioCodec);
+
           String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
           stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
           try {
