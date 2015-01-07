@@ -700,30 +700,41 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the audio codec
    */
   public String getAudioCodec() {
-    if (audioStreams.size() > 0) {
-      return audioStreams.get(0).getCodec();
+    String codec = "";
+
+    // get audio stream with highest channel count
+    MediaFileAudioStream highestStream = getBestAudioStream();
+    if (highestStream != null) {
+      codec = highestStream.getCodec();
     }
-    return "";
+
+    return codec;
+  }
+
+  private MediaFileAudioStream getBestAudioStream() {
+    MediaFileAudioStream highestStream = null;
+    for (MediaFileAudioStream stream : audioStreams) {
+      if (highestStream == null) {
+        highestStream = stream;
+      }
+      else if (highestStream.getChannelsAsInt() < stream.getChannelsAsInt()) {
+        highestStream = stream;
+      }
+    }
+    return highestStream;
   }
 
   public String getAudioLanguage() {
-    if (audioStreams.size() > 0) {
-      return audioStreams.get(0).getLanguage();
-    }
-    return "";
-  }
+    String language = "";
 
-  // /**
-  // * Sets the audio codec.
-  // *
-  // * @param newValue
-  // * the new audio codec
-  // */
-  // public void setAudioCodec(String newValue) {
-  // String oldValue = this.audioCodec;
-  // this.audioCodec = newValue;
-  // firePropertyChange("audioCodec", oldValue, newValue);
-  // }
+    // get audio stream with highest channel count
+    MediaFileAudioStream highestStream = getBestAudioStream();
+    if (highestStream != null) {
+      language = highestStream.getLanguage();
+    }
+
+    return language;
+  }
 
   /**
    * returns the container format extensions (e.g. avi, mkv mka mks, OGG, etc.)
@@ -815,10 +826,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   public String getAudioChannels() {
-    if (audioStreams.size() > 0) {
-      return audioStreams.get(0).getChannels();
+    String channels = "";
+
+    // get audio stream with highest channel count
+    MediaFileAudioStream highestStream = getBestAudioStream();
+    if (highestStream != null) {
+      channels = highestStream.getChannels();
     }
-    return "";
+
+    return channels;
   }
 
   // /**
