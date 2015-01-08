@@ -971,9 +971,8 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
-    // replace trailing dots and spaces and illegal characters
+    // replace trailing dots and spaces
     newDestination = newDestination.replaceAll("[ \\.]+$", "");
-    newDestination = replaceInvalidCharacters(newDestination);
 
     return newDestination.trim();
   }

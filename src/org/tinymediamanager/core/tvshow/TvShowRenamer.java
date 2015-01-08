@@ -594,9 +594,8 @@ public class TvShowRenamer {
       newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
     }
 
-    // replace trailing dots and spaces and illegal characters
+    // replace trailing dots and spaces
     newDestination = newDestination.replaceAll("[ \\.]+$", "");
-    newDestination = replaceInvalidCharacters(newDestination);
 
     return newDestination.trim();
   }
