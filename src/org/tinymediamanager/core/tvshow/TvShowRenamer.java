@@ -594,6 +594,9 @@ public class TvShowRenamer {
       newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
     }
 
+    // replace trailing punctuation
+    newDestination = newDestination.replaceAll("\\p{Punct}$", "");
+
     return newDestination.trim();
   }
 

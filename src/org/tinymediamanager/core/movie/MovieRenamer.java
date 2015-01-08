@@ -971,6 +971,9 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
+    // replace trailing punctuation
+    newDestination = newDestination.replaceAll("\\p{Punct}$", "");
+
     return newDestination.trim();
   }
 
