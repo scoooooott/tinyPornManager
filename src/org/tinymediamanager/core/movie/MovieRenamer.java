@@ -971,8 +971,9 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
-    // replace trailing punctuation
-    newDestination = newDestination.replaceAll("\\p{Punct}$", "");
+    // replace trailing dots and spaces and illegal characters
+    newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    newDestination = replaceInvalidCharacters(newDestination);
 
     return newDestination.trim();
   }
@@ -995,7 +996,7 @@ public class MovieRenamer {
    * @return cleaned string
    */
   public static String replaceInvalidCharacters(String source) {
-    return source.replaceAll("([\"\\:<>|/?*])", "");
+    return source.replaceAll("([\"\\\\:<>|/?*])", "");
   }
 
   /**
