@@ -293,7 +293,7 @@ public class MovieToMpNfoConnector {
         newNfos.add(new MediaFile(f));
       }
       catch (Exception e) {
-        LOGGER.error("setData", e);
+        LOGGER.error("setData " + movie.getPath() + File.separator + nfoFilename, e);
         MessageManager.instance
             .pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { e.getLocalizedMessage() }));
       }
@@ -403,12 +403,12 @@ public class MovieToMpNfoConnector {
 
     }
     catch (UnmarshalException e) {
-      LOGGER.error("getData " + e.getMessage());
+      LOGGER.error("getData " + nfoFilename.getAbsolutePath(), e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
-      LOGGER.error("getData", e);
+      LOGGER.error("getData " + nfoFilename.getAbsolutePath(), e);
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }

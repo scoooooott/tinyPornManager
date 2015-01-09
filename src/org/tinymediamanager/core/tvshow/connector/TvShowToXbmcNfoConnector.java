@@ -139,7 +139,7 @@ public class TvShowToXbmcNfoConnector {
         xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
       }
       catch (Exception e) {
-        LOGGER.error("failed to parse " + nfoFilename + "; " + e.getMessage());
+        LOGGER.error("failed to parse " + nfoFile.getAbsolutePath() + "; " + e.getMessage());
       }
     }
 
@@ -222,7 +222,7 @@ public class TvShowToXbmcNfoConnector {
     }
     catch (Exception e) {
       e.printStackTrace();
-      LOGGER.error(nfoFilename + " " + e.getMessage());
+      LOGGER.error(nfoFile.getAbsolutePath() + " " + e.getMessage());
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":",
           e.getLocalizedMessage() }));
     }
@@ -275,12 +275,12 @@ public class TvShowToXbmcNfoConnector {
       tvShow.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));
     }
     catch (UnmarshalException e) {
-      LOGGER.error("failed to parse " + nfo + " " + e.getMessage());
+      LOGGER.error("failed to parse " + nfo.getAbsolutePath() + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
-      LOGGER.error(nfo + " " + e.getMessage());
+      LOGGER.error(nfo.getAbsolutePath() + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }

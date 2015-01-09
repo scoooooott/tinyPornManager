@@ -506,7 +506,7 @@ public class MovieToXbmcNfoConnector {
         newNfos.add(new MediaFile(f));
       }
       catch (Exception e) {
-        LOGGER.error("setData", e.getMessage());
+        LOGGER.error("setData " + movie.getPath() + File.separator + nfoFilename, e);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":",
             e.getLocalizedMessage() }));
       }
@@ -692,11 +692,11 @@ public class MovieToXbmcNfoConnector {
 
     }
     catch (UnmarshalException e) {
-      LOGGER.error("getData " + e.getMessage());
+      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e.getMessage());
       return null;
     }
     catch (Exception e) {
-      LOGGER.error("getData", e);
+      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e);
       return null;
     }
 

@@ -280,7 +280,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
       }
       catch (Exception e) {
-        LOGGER.error("setData", e.getMessage());
+        LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
             e.getLocalizedMessage() }));
       }
@@ -294,7 +294,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
     }
     catch (Exception e) {
-      LOGGER.error("setData", e.getMessage());
+      LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
           e.getLocalizedMessage() }));
     }
@@ -778,12 +778,12 @@ public class TvShowEpisodeToXbmcNfoConnector {
             xbmcConnectors.add(xbmc);
           }
           catch (UnmarshalException e) {
-            LOGGER.error("failed to parse " + nfoFile.getName());
+            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath());
             // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
             return null;
           }
           catch (Exception e) {
-            LOGGER.error("failed to parse " + nfoFile.getName(), e);
+            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
             // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
           }
 
