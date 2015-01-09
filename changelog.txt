@@ -12,6 +12,7 @@ Version 2.6.5
 + added genre to the movie renamer
 + now also allowing folder.jpg/png for disc images
 + option to change the language while scraping (movie and TV show chooser)
++ added several DTS profiles to mediainfo detection (+logos)
 x added some workarounds for failing TVDB searches
 x proper handling of the watched state in the NFO
 x catching some NFO parsing problems
