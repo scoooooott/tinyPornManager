@@ -331,16 +331,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       btnScrape.setMinimumSize(new Dimension(100, 23));
       btnScrape.setActionCommand("Scrape");
       btnScrape.addActionListener(this);
-      bottomPanel.add(btnScrape, "4, 2, left, default");
+      bottomPanel.add(btnScrape, "4, 2, left, fill");
 
       JButton btnSearch = new JButton(BUNDLE.getString("tvshowepisodechooser.search")); //$NON-NLS-1$
-      btnSearch.setPreferredSize(new Dimension(100, 23));
-      btnSearch.setMinimumSize(new Dimension(100, 23));
-      btnSearch.setMaximumSize(new Dimension(0, 0));
       btnSearch.setActionCommand("Search");
       btnSearch.addActionListener(this);
       btnSearch.setIcon(IconManager.SEARCH);
-      bottomPanel.add(btnSearch, "6, 2, left, default");
+      bottomPanel.add(btnSearch, "6, 2, left, fill");
       {
         JPanel buttonPane = new JPanel();
         bottomPanel.add(buttonPane, "8, 2, fill, fill");

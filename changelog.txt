@@ -27,6 +27,7 @@ x fixed some export template issues
 x fixed some performance issues with movie set artwork detection
 x fixed sort title generation for movie sets
 x respect max. screen resolution when opening dialogs
+x enabled double click in the episode chooser dialog
 
 Version 2.6.4 
 =======================

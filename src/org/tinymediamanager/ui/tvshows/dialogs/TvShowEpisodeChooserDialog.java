@@ -15,10 +15,11 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -79,12 +80,14 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     this.episode = ep;
     this.metadataProvider = mp;
     this.metadata = new MediaEpisode(mp.getProviderInfo().getId());
-
-    getContentPane().setLayout(new BorderLayout(0, 0));
+    getContentPane().setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:405px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+                RowSpec.decode("fill:37px"), FormFactory.RELATED_GAP_ROWSPEC, }));
     {
 
       JSplitPane splitPane = new JSplitPane();
-      getContentPane().add(splitPane, BorderLayout.CENTER);
+      getContentPane().add(splitPane, "2, 2, fill, fill");
 
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setMinimumSize(new Dimension(200, 23));
@@ -101,10 +104,11 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       taPlot.setWrapStyleWord(true);
       taPlot.setLineWrap(true);
       scrollPane_1.setViewportView(taPlot);
+      splitPane.setDividerLocation(300);
 
     }
     JPanel bottomPanel = new JPanel();
-    getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+    getContentPane().add(bottomPanel, "2, 4, fill, top");
 
     bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
@@ -115,7 +119,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     EqualsLayout layout = new EqualsLayout(5);
     layout.setMinWidth(100);
     buttonPane.setLayout(layout);
-    JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+    final JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
     okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
     okButton.setIcon(IconManager.APPLY);
     buttonPane.add(okButton);
@@ -140,6 +144,32 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
     SearchTask task = new SearchTask();
     task.execute();
+
+    MouseListener mouseListener = new MouseListener() {
+      @Override
+      public void mouseReleased(MouseEvent e) {
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() >= 2) {
+          actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
+        }
+      }
+    };
+    table.addMouseListener(mouseListener);
   }
 
   @Override
