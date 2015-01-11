@@ -3,4 +3,5 @@
 # Launch the updater of tmm
 #####################################################################################
 
+cd "$(dirname "$0")"
 java -Djava.net.preferIPv4Stack=true -jar getdown.jar .
