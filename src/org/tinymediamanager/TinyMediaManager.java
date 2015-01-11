@@ -33,9 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Properties;
@@ -45,7 +43,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
@@ -480,112 +477,14 @@ public class TinyMediaManager {
        * Does some tasks at startup
        */
       private void doStartupTasks() {
-        // self updater
-        File file = new File("getdown-new.jar");
-        if (file.exists() && file.length() > 100000) {
-          File cur = new File("getdown.jar");
-          if (file.length() != cur.length() || !cur.exists()) {
-            try {
-              FileUtils.copyFile(file, cur);
-            }
-            catch (IOException e) {
-              LOGGER.error("Could not update the updater!");
-            }
-          }
-        }
-        if (Platform.isWindows()) {
-          file = new File("tinyMediaManager.new");
-          if (file.exists() && file.length() > 10000 && file.length() < 50000) {
-            File cur = new File("tinyMediaManager.exe");
-            // if (file.length() != cur.length() || !cur.exists()) {
-            try {
-              FileUtils.copyFile(file, cur);
-            }
-            catch (IOException e) {
-              LOGGER.error("Could not update tmm!");
-            }
-            // }
-          }
-          file = new File("tinyMediaManagerUpd.new");
-          if (file.exists() && file.length() > 10000 && file.length() < 50000) {
-            File cur = new File("tinyMediaManagerUpd.exe");
-            // if (file.length() != cur.length() || !cur.exists()) {
-            try {
-              FileUtils.copyFile(file, cur);
-            }
-            catch (IOException e) {
-              LOGGER.error("Could not update the updater!");
-            }
-            // }
-          }
-          file = new File("tinyMediaManagerCMD.new");
-          if (file.exists() && file.length() > 10000 && file.length() < 50000) {
-            File cur = new File("tinyMediaManagerCMD.exe");
-            // if (file.length() != cur.length() || !cur.exists()) {
-            try {
-              FileUtils.copyFile(file, cur);
-            }
-            catch (IOException e) {
-              LOGGER.error("Could not update CMD TMM!");
-            }
-            // }
-          }
-        }
-
-        if (Platform.isMac()) {
-          file = new File("JavaApplicationStub.new");
-          if (file.exists() && file.length() > 0) {
-            File cur = new File("../../MacOS/JavaApplicationStub");
-            if (file.length() != cur.length() || !cur.exists()) {
-              try {
-                FileUtils.copyFile(file, cur);
-              }
-              catch (IOException e) {
-                LOGGER.error("Could not update JavaApplicationStub");
-              }
-            }
-          }
-        }
+        // rename downloaded files
+        UpgradeTasks.renameDownloadedFiles();
 
         // check if a .desktop file exists
         if (Platform.isLinux()) {
-          File desktop = new File("tinyMediaManager.desktop");
+          File desktop = new File(TmmOsUtils.DESKTOP_FILE);
           if (!desktop.exists()) {
-            // create .desktop
-            // String path = this.getClass().getClassLoader().getResource(".").getPath();
-
-            // get the path in a safe way
-            String path = new File(TinyMediaManager.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-            try {
-              path = URLDecoder.decode(path, "UTF-8");
-            }
-            catch (UnsupportedEncodingException e1) {
-              path = URLDecoder.decode(path);
-            }
-            StringBuilder sb = new StringBuilder(60);
-            sb.append("[Desktop Entry]\n");
-            sb.append("Type=Application\n");
-            sb.append("Name=tinyMediaManager\n");
-            sb.append("Path=");
-            sb.append(path);
-            sb.append('\n');
-            sb.append("Exec=/bin/sh \"");
-            sb.append(path);
-            sb.append("/tinyMediaManager.sh\"\n");
-            sb.append("Icon=");
-            sb.append(path);
-            sb.append("/tmm.png\n");
-            sb.append("Categories=Application;Multimedia;");
-            FileWriterWithEncoding writer;
-            try {
-              writer = new FileWriterWithEncoding(desktop, "UTF-8");
-              writer.write(sb.toString());
-              writer.close();
-              desktop.setExecutable(true);
-            }
-            catch (IOException e) {
-              LOGGER.warn(e.getMessage());
-            }
+            TmmOsUtils.createDesktopFileForLinux(desktop);
           }
         }
 
