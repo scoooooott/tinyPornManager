@@ -322,6 +322,7 @@ public class MovieSet extends MediaEntity {
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
       movie.saveToDb();
+      movie.writeNFO();
     }
 
     synchronized (movies) {
