@@ -43,7 +43,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$,
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
     RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$,
-    RUNTIME(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$,
+    RUNTIME(BUNDLE.getString("metatag.runtime")), //$NON-NLS-1$,
+    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")); //$NON-NLS-1$,
 
     private String title;
 
@@ -51,11 +52,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       this.title = title;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
       return title;
@@ -72,11 +68,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       this.title = title;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
       return title;
@@ -93,11 +84,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       this.title = title;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
       return title;
@@ -114,35 +100,17 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       this.title = title;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
       return title;
     }
   }
 
-  /**
-   * Instantiates a new movie extended comparator.
-   * 
-   * @param sortColumn
-   *          the sort column
-   * @param sortAscending
-   *          the sort ascending
-   */
   public MovieExtendedComparator(SortColumn sortColumn, boolean sortAscending) {
     this.sortColumn = sortColumn;
     this.sortAscending = sortAscending;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-   */
   @Override
   public int compare(Movie movie1, Movie movie2) {
     int sortOrder = 0;
@@ -176,6 +144,12 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           Integer runtime1 = Integer.valueOf(movie1.getRuntime());
           Integer runtime2 = Integer.valueOf(movie2.getRuntime());
           sortOrder = runtime1.compareTo(runtime2);
+          break;
+
+        case VIDEO_BITRATE:
+          Integer videoBitrate1 = Integer.valueOf(movie1.getMediaInfoVideoBitrate());
+          Integer videoBitrate2 = Integer.valueOf(movie2.getMediaInfoVideoBitrate());
+          sortOrder = videoBitrate1.compareTo(videoBitrate2);
           break;
       }
     }

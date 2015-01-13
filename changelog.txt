@@ -1,3 +1,11 @@
+Version 2.6.6
+=======================
++ new sort order for movies: video bitrate
++ bulk editing of media source for movies
+x better rewriting of movie NFO after movie set editing
+x HDRIP is now being recognized as BluRay (more common source than TV)
+x change writing of .desktop files for linux
+
 Version 2.6.5
 =======================
 + enhanced TV show and movie renamer (http://goo.gl/8pbkFj)
