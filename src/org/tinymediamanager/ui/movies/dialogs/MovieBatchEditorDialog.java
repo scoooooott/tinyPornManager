@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -93,7 +94,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "2, 2, right, default");
@@ -308,6 +309,32 @@ public class MovieBatchEditorDialog extends TmmDialog {
         }
       });
       panelContent.add(btnVideo3D, "6, 12");
+
+      JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      panelContent.add(lblMediasource, "2, 14, right, default");
+
+      final JComboBox cbMediaSource = new JComboBox(MovieMediaSource.values());
+      panelContent.add(cbMediaSource, "4, 14, fill, default");
+
+      JButton btnMediaSource = new JButton("");
+      btnMediaSource.setMargin(new Insets(2, 2, 2, 2));
+      btnMediaSource.setIcon(IconManager.APPLY);
+      btnMediaSource.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          changed = true;
+          Object obj = cbMediaSource.getSelectedItem();
+          if (obj instanceof MovieMediaSource) {
+            MovieMediaSource mediaSource = (MovieMediaSource) obj;
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            for (Movie movie : moviesToEdit) {
+              movie.setMediaSource(mediaSource);
+            }
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+        }
+      });
+      panelContent.add(btnMediaSource, "6, 14");
     }
 
     {
