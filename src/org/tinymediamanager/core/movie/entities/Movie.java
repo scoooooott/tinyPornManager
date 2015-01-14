@@ -1598,6 +1598,16 @@ public class Movie extends MediaEntity {
     return "";
   }
 
+  public int getMediaInfoVideoBitrate() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getOverallBitRate();
+    }
+
+    return 0;
+  }
+
   /**
    * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
    */
