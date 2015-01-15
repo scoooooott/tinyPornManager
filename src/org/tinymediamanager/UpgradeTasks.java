@@ -34,12 +34,12 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaTrailer;
 
 import com.sun.jna.Platform;
 
@@ -121,7 +121,7 @@ public class UpgradeTasks {
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
-        for (MediaTrailer trailer : movie.getTrailers()) {
+        for (MovieTrailer trailer : movie.getTrailers()) {
           // 720p (mp4)
           String quality = trailer.getQuality().split(" ")[0];
           trailer.setQuality(quality);

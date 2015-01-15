@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -201,8 +202,8 @@ public class MovieChooserModel extends AbstractModelObject {
     return artwork;
   }
 
-  public List<MediaTrailer> getTrailers() {
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+  public List<MovieTrailer> getTrailers() {
+    List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setMetadata(metadata);
@@ -221,7 +222,10 @@ public class MovieChooserModel extends AbstractModelObject {
     for (IMediaTrailerProvider trailerProvider : trailerProviders) {
       try {
         List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
-        trailers.addAll(foundTrailers);
+        for (MediaTrailer mediaTrailer : foundTrailers) {
+          MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);
+          trailers.add(movieTrailer);
+        }
       }
       catch (Exception e) {
         LOGGER.warn(e.getMessage());

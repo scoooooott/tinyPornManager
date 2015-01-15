@@ -63,6 +63,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -71,7 +72,6 @@ import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -109,8 +109,8 @@ public class MovieEditorDialog extends TmmDialog {
                                                                                          .observableList(new ArrayList<MovieProducer>());
   private List<MediaGenres>                                         genres           = ObservableCollections
                                                                                          .observableList(new ArrayList<MediaGenres>());
-  private List<MediaTrailer>                                        trailers         = ObservableCollections
-                                                                                         .observableList(new ArrayList<MediaTrailer>());
+  private List<MovieTrailer>                                        trailers         = ObservableCollections
+                                                                                         .observableList(new ArrayList<MovieTrailer>());
   private List<String>                                              tags             = ObservableCollections.observableList(new ArrayList<String>());
   private List<String>                                              extrathumbs      = new ArrayList<String>();
   private List<String>                                              extrafanarts     = new ArrayList<String>();
@@ -160,7 +160,7 @@ public class MovieEditorDialog extends TmmDialog {
 
   private JTableBinding<MovieActor, List<MovieActor>, JTable>       jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>       jListBinding;
-  private JTableBinding<MediaTrailer, List<MediaTrailer>, JTable>   jTableBinding_1;
+  private JTableBinding<MovieTrailer, List<MovieTrailer>, JTable>   jTableBinding_1;
   private JComboBoxBinding<String, MovieList, JComboBox>            jComboBinding;
   private JListBinding<String, List<String>, JList>                 jListBinding_1;
   private JTableBinding<MovieProducer, List<MovieProducer>, JTable> jTableBinding_2;
@@ -852,7 +852,7 @@ public class MovieEditorDialog extends TmmDialog {
         genres.add(genre);
       }
 
-      for (MediaTrailer trailer : movie.getTrailers()) {
+      for (MovieTrailer trailer : movie.getTrailers()) {
         trailers.add(trailer);
       }
 
@@ -897,10 +897,10 @@ public class MovieEditorDialog extends TmmDialog {
         // click on the checkbox
         if (arg0.getColumn() == 0) {
           int row = arg0.getFirstRow();
-          MediaTrailer changedTrailer = trailers.get(row);
+          MovieTrailer changedTrailer = trailers.get(row);
           // if flag inNFO was changed, change all other trailers flags
           if (changedTrailer.getInNfo()) {
-            for (MediaTrailer trailer : trailers) {
+            for (MovieTrailer trailer : trailers) {
               if (trailer != changedTrailer) {
                 trailer.setInNfo(Boolean.FALSE);
               }
@@ -1033,7 +1033,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setGenres(genres);
 
       movieToEdit.removeAllTrailers();
-      for (MediaTrailer trailer : trailers) {
+      for (MovieTrailer trailer : trailers) {
         movieToEdit.addTrailer(trailer);
       }
 
@@ -1213,7 +1213,7 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaTrailer trailer = new MediaTrailer();
+      MovieTrailer trailer = new MovieTrailer();
       trailer.setName("unknown");
       trailer.setProvider("unknown");
       trailer.setQuality("unknown");
@@ -1407,19 +1407,19 @@ public class MovieEditorDialog extends TmmDialog {
     //
     jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
     //
-    BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
+    BeanProperty<MovieTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
+    BeanProperty<MovieTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
+    BeanProperty<MovieTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_2);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
+    BeanProperty<MovieTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_3);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
+    BeanProperty<MovieTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
     jTableBinding_1.bind();

@@ -40,10 +40,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -77,8 +77,8 @@ public class MovieTrailerPanel extends JPanel {
 
   private MovieSelectionModel                  movieSelectionModel;
   private JTable                               table;
-  private EventList<MediaTrailer>              trailerEventList  = null;
-  private DefaultEventTableModel<MediaTrailer> trailerTableModel = null;
+  private EventList<MovieTrailer>              trailerEventList  = null;
+  private DefaultEventTableModel<MovieTrailer> trailerTableModel = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -91,9 +91,9 @@ public class MovieTrailerPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<MediaTrailer>(new BasicEventList<MediaTrailer>(), GlazedLists
-        .beanConnector(MediaTrailer.class)));
-    trailerTableModel = new DefaultEventTableModel<MediaTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
+    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieTrailer>(new BasicEventList<MovieTrailer>(), GlazedLists
+        .beanConnector(MovieTrailer.class)));
+    trailerTableModel = new DefaultEventTableModel<MovieTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
@@ -129,7 +129,7 @@ public class MovieTrailerPanel extends JPanel {
 
   }
 
-  private class TrailerTableFormat implements AdvancedTableFormat<MediaTrailer> {
+  private class TrailerTableFormat implements AdvancedTableFormat<MovieTrailer> {
     public TrailerTableFormat() {
     }
 
@@ -165,7 +165,7 @@ public class MovieTrailerPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MediaTrailer trailer, int column) {
+    public Object getColumnValue(MovieTrailer trailer, int column) {
       if (trailer == null) {
         return null;
       }
@@ -247,7 +247,7 @@ public class MovieTrailerPanel extends JPanel {
       // click on the download button
       if (col == 0) {
         row = table.convertRowIndexToModel(row);
-        MediaTrailer trailer = trailerEventList.get(row);
+        MovieTrailer trailer = trailerEventList.get(row);
 
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
           if (Globals.isDonator()) {
@@ -265,7 +265,7 @@ public class MovieTrailerPanel extends JPanel {
       if (col == 1) {
         // try to open the browser
         row = table.convertRowIndexToModel(row);
-        MediaTrailer trailer = trailerEventList.get(row);
+        MovieTrailer trailer = trailerEventList.get(row);
         String url = trailer.getUrl();
         try {
           TmmUIHelper.browseUrl(url);

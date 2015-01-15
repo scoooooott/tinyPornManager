@@ -48,11 +48,11 @@ import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -656,7 +656,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case TRAILER:
             LOGGER.debug("parsing trailer " + mf.getFilename());
             mf.gatherMediaInformation(); // do this exceptionally here, to set quality in one rush
-            MediaTrailer mt = new MediaTrailer();
+            MovieTrailer mt = new MovieTrailer();
             mt.setName(mf.getFilename());
             mt.setProvider("downloaded");
             mt.setQuality(mf.getVideoFormat());

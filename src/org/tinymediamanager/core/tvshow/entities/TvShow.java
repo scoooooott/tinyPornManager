@@ -71,7 +71,6 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class TvShow.
@@ -106,9 +105,6 @@ public class TvShow extends MediaEntity {
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>(0);
 
   @Enumerated(EnumType.STRING)
   private Certification               certification      = Certification.NOT_RATED;
@@ -1184,34 +1180,6 @@ public class TvShow extends MediaEntity {
     }
 
     firePropertyChange(ACTORS, null, this.getActors());
-  }
-
-  /**
-   * Gets the trailers.
-   * 
-   * @return the trailers
-   */
-  public List<MediaTrailer> getTrailers() {
-    return this.trailer;
-  }
-
-  /**
-   * Adds the trailer.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addTrailer(MediaTrailer obj) {
-    trailer.add(obj);
-    firePropertyChange(TRAILER, null, trailer);
-  }
-
-  /**
-   * Removes the all trailers.
-   */
-  public void removeAllTrailers() {
-    trailer.clear();
-    firePropertyChange(TRAILER, null, trailer);
   }
 
   /**

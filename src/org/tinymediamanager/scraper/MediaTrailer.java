@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,65 +15,24 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-
-import javax.persistence.Embeddable;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.util.Url;
-import org.tinymediamanager.scraper.util.UrlUtil;
-import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
 /**
  * The Class Trailer.
  * 
  * @author Manuel Laggner
  */
-@Embeddable
-public class MediaTrailer extends AbstractModelObject implements Comparable<MediaTrailer> {
-
-  /** The Constant LOGGER. */
-  private static final Logger LOGGER   = LoggerFactory.getLogger(MediaTrailer.class);
-
-  /** The name. */
-  private String              name     = "";
-
-  /** The url. */
-  private String              url      = "";
-
-  /** The quality. */
-  private String              quality  = "";
-
-  /** The provider. */
-  private String              provider = "";
-
-  /** The inNfo. */
-  private Boolean             inNfo    = Boolean.FALSE;
-
-  /** The size (as string). */
-  private String              size     = "";
-
-  /** The date (as string). */
-  private String              date     = "";
+public class MediaTrailer implements Comparable<MediaTrailer> {
+  private String name     = "";
+  private String url      = "";
+  private String quality  = "";
+  private String provider = "";
+  private String size     = "";
+  private String date     = "";
 
   /**
-   * Instantiates a new trailer.
-   */
-  public MediaTrailer() {
-  }
-
-  /**
-   * Gets the name.
-   * 
    * @return the name
    */
   public String getName() {
@@ -81,20 +40,14 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Sets the name.
-   * 
-   * @param newValue
-   *          the new name
+   * @param name
+   *          the name to set
    */
-  public void setName(String newValue) {
-    String oldValue = this.name;
-    this.name = newValue;
-    firePropertyChange("name", oldValue, newValue);
+  public void setName(String name) {
+    this.name = name;
   }
 
   /**
-   * Gets the url.
-   * 
    * @return the url
    */
   public String getUrl() {
@@ -102,20 +55,14 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Sets the url.
-   * 
-   * @param newValue
-   *          the new url
+   * @param url
+   *          the url to set
    */
-  public void setUrl(String newValue) {
-    String oldValue = this.url;
-    this.url = newValue;
-    firePropertyChange("url", oldValue, newValue);
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   /**
-   * Gets the quality.
-   * 
    * @return the quality
    */
   public String getQuality() {
@@ -123,20 +70,14 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Sets the quality.
-   * 
-   * @param newValue
-   *          the new quality
+   * @param quality
+   *          the quality to set
    */
-  public void setQuality(String newValue) {
-    String oldValue = this.quality;
-    this.quality = newValue;
-    firePropertyChange("quality", oldValue, newValue);
+  public void setQuality(String quality) {
+    this.quality = quality;
   }
 
   /**
-   * Gets the provider.
-   * 
    * @return the provider
    */
   public String getProvider() {
@@ -144,45 +85,14 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Sets the provider.
-   * 
-   * @param newValue
-   *          the new provider
+   * @param provider
+   *          the provider to set
    */
-  public void setProvider(String newValue) {
-    String oldValue = this.provider;
-    this.provider = newValue;
-    firePropertyChange("provider", oldValue, newValue);
+  public void setProvider(String provider) {
+    this.provider = provider;
   }
 
   /**
-   * Gets the in nfo.
-   * 
-   * @return the in nfo
-   */
-  public Boolean getInNfo() {
-    return inNfo;
-  }
-
-  /**
-   * Sets the in nfo.
-   * 
-   * @param newValue
-   *          the new in nfo
-   */
-  public void setInNfo(Boolean newValue) {
-    if (this.url.startsWith("file")) {
-      // local trailers never in url
-      newValue = false;
-    }
-    Boolean oldValue = this.inNfo;
-    this.inNfo = newValue;
-    firePropertyChange("inNfo", oldValue, newValue);
-  }
-
-  /**
-   * Gets the size.
-   * 
    * @return the size
    */
   public String getSize() {
@@ -190,8 +100,14 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Gets the date.
-   * 
+   * @param size
+   *          the size to set
+   */
+  public void setSize(String size) {
+    this.size = size;
+  }
+
+  /**
    * @return the date
    */
   public String getDate() {
@@ -199,27 +115,11 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   }
 
   /**
-   * Sets the size.
-   * 
-   * @param newValue
-   *          the new size
+   * @param date
+   *          the date to set
    */
-  public void setSize(String newValue) {
-    String oldValue = this.size;
-    this.size = newValue;
-    firePropertyChange("size", oldValue, newValue);
-  }
-
-  /**
-   * Sets the date.
-   * 
-   * @param newValue
-   *          the new date
-   */
-  public void setDate(String newValue) {
-    String oldValue = this.date;
-    this.date = newValue;
-    firePropertyChange("date", oldValue, newValue);
+  public void setDate(String date) {
+    this.date = date;
   }
 
   /**
@@ -232,60 +132,7 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
    */
   @Override
   public String toString() {
-    return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
-      @Override
-      protected boolean accept(Field f) {
-        return super.accept(f) && !f.getName().equals("propertyChangeSupport");
-      }
-    }).toString();
-  }
-
-  /**
-   * Downloads Trailer to specified file.
-   * 
-   * @param file
-   *          the absolute file on file system, overwrites existing trailer!
-   * @throws IOException
-   *           if url is not valid or network error
-   * @throws URISyntaxException
-   *           if url is not valid
-   * @throws InterruptedException
-   */
-  public void downloadTo(String file) throws IOException, URISyntaxException, InterruptedException {
-    LOGGER.info("Downloading " + this.getUrl() + " to " + file);
-
-    Url u = new Url(UrlUtil.getURIEncoded(this.getDownloadUrl()).toASCIIString());
-    if ("apple".equalsIgnoreCase(getProvider())) {
-      u.setUserAgent("QuickTime");
-    }
-    FileOutputStream outputStream = new FileOutputStream(file);
-    InputStream is = u.getInputStream();
-    IOUtils.copy(is, outputStream);
-    outputStream.close();
-    is.close();
-  }
-
-  /**
-   * gets the real download url - provider based implementation
-   * 
-   * @return real url
-   */
-  public String getDownloadUrl() {
-    String url = getUrl();
-
-    if ("youtube".equalsIgnoreCase(getProvider())) {
-      try {
-        YoutubeLinkExtractor yt = new YoutubeLinkExtractor(url);
-        url = yt.extractVideoUrl();
-      }
-      catch (IOException e) {
-        LOGGER.error("Error extracting Youtube url: " + e.getMessage());
-      }
-      catch (InterruptedException e) {
-      }
-    }
-
-    return url;
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
   @Override

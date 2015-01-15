@@ -18,9 +18,9 @@ package org.tinymediamanager.core.movie.tasks;
 import java.io.File;
 
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.DownloadTask;
-import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * A task for downloading movie trailers
@@ -29,7 +29,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
  */
 public class MovieTrailerDownloadTask extends DownloadTask {
 
-  public MovieTrailerDownloadTask(MediaTrailer trailer, Movie movie) {
+  public MovieTrailerDownloadTask(MovieTrailer trailer, Movie movie) {
     super(trailer.getDownloadUrl(), new File(movie.getPath(), movie.getTrailerBasename() + "-trailer"), movie, MediaFileType.TRAILER);
     if ("apple".equalsIgnoreCase(trailer.getProvider())) {
       setSpecialUserAgent("QuickTime");

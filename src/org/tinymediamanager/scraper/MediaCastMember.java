@@ -18,8 +18,6 @@ package org.tinymediamanager.scraper;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Embeddable;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -29,7 +27,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MediaCastMember {
 
   /**

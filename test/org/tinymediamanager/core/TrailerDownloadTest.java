@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.junit.Test;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.MediaTrailer;
 
 public class TrailerDownloadTest {
 
@@ -15,7 +15,7 @@ public class TrailerDownloadTest {
     Movie m = new Movie();
     m.addToMediaFiles(mf);
 
-    MediaTrailer t = new MediaTrailer();
+    MovieTrailer t = new MovieTrailer();
     t.setUrl("http://de.clip-1.filmtrailer.com/9507_31566_a_1.wmv?log_var=72|491100001-1|-");
     m.addTrailer(t);
 
