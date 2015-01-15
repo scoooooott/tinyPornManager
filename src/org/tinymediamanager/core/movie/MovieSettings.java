@@ -17,6 +17,7 @@ package org.tinymediamanager.core.movie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -595,18 +596,23 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public void addBadWord(String badWord) {
-    if (!badWords.contains(badWord)) {
-      badWords.add(badWord);
+    if (!badWords.contains(badWord.toLowerCase())) {
+      badWords.add(badWord.toLowerCase());
       firePropertyChange(BAD_WORDS, null, badWords);
     }
   }
 
   public void removeBadWord(String badWord) {
-    badWords.remove(badWord);
+    badWords.remove(badWord.toLowerCase());
     firePropertyChange(BAD_WORDS, null, badWords);
   }
 
   public List<String> getBadWords() {
+    // convert to lowercase for easy contains checking
+    ListIterator<String> iterator = badWords.listIterator();
+    while (iterator.hasNext()) {
+      iterator.set(iterator.next().toLowerCase());
+    }
     return badWords;
   }
 

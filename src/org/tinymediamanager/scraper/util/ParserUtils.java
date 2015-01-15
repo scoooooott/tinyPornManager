@@ -121,7 +121,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i])) {
+        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
           name = name + s[i] + " ";
         }
       }
