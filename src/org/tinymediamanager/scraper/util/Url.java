@@ -242,7 +242,7 @@ public class Url {
       EntityUtils.consume(entity);
     }
     catch (InterruptedIOException e) {
-      LOGGER.info("aborted request: " + logUrl);
+      LOGGER.info("aborted request (" + e.getMessage() + "): " + logUrl);
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {

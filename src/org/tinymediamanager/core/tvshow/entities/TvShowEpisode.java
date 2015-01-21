@@ -379,6 +379,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the new metadata
    */
   public void setMetadata(MediaMetadata metadata) {
+    // check against null metadata (e.g. aborted request)
+    if (metadata == null) {
+      LOGGER.error("metadata was null");
+      return;
+    }
+
     boolean writeNewThumb = false;
 
     setTitle(metadata.getStringValue(MediaMetadata.TITLE));

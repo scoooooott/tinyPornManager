@@ -550,6 +550,12 @@ public class TvShow extends MediaEntity {
    *          the config
    */
   public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
+    // check against null metadata (e.g. aborted request)
+    if (metadata == null) {
+      LOGGER.error("metadata was null");
+      return;
+    }
+
     // check if metadata has at least a name
     if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
