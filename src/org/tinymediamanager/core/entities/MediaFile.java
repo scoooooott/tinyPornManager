@@ -593,7 +593,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
       }
       catch (Exception e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
+        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+      }
+      // sometimes also an error is thrown
+      catch (Error e) {
+        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
       }
 
       miSnapshot = mediaInfo.snapshot();
