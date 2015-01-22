@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -166,9 +169,13 @@ public class MovieChooserModel extends AbstractModelObject {
     }
     catch (IOException e) {
       LOGGER.error("scrapeMedia", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
   }
 

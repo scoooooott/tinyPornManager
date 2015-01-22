@@ -197,7 +197,8 @@ public class TvShowScrapeTask extends TmmThreadPool {
 
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowScraper", "message.scrape.threadcrashed"));
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowScraper", "message.scrape.threadcrashed", new String[] { ":",
+            e.getLocalizedMessage() }));
       }
     }
 

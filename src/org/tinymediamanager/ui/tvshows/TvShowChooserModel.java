@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -164,9 +167,13 @@ public class TvShowChooserModel extends AbstractModelObject {
     }
     catch (IOException e) {
       LOGGER.error("scrapeMedia", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
   }
 

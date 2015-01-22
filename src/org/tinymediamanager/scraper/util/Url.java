@@ -243,10 +243,11 @@ public class Url {
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request (" + e.getMessage() + "): " + logUrl);
-      throw new InterruptedException();
+      throw e;
     }
     catch (UnknownHostException e) {
       LOGGER.error("proxy or host not found/reachable", e);
+      throw e;
     }
     catch (Exception e) {
       LOGGER.error("Exception getting url " + logUrl, e);
