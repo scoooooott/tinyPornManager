@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -293,5 +294,40 @@ public class MovieRenamerTest {
       return delimiter + "CD" + mf.getStacking();
     }
     return "";
+  }
+
+  @Test
+  public void testPattern() {
+    testAll(getRegexForPattern("$T($Y)"));
+    testAll(getRegexForPattern("$T.($Y)"));
+    testAll(getRegexForPattern("$T ($$$$)"));
+  }
+
+  private void testAll(String regex) {
+    testRegex(regex, "this is the title (2012)");
+    testRegex(regex, "this.is.the.scene.title (2012)");
+    testRegex(regex, "this_is_another_title (2012)");
+    testRegex(regex, "this is the title(2012)");
+    testRegex(regex, "blabla [r12] (2012)");
+    System.out.println();
+  }
+
+  private void testRegex(String regex, String text) {
+    System.out.println("Test:  " + text + " -> " + text.matches(regex));
+  }
+
+  public String getRegexForPattern(String p) {
+    Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^\\\\|]");
+    System.out.println("Start: " + p);
+
+    p = SPECIAL_REGEX_CHARS.matcher(p).replaceAll("\\\\$0");
+    System.out.println("RegEx: " + p);
+
+    p = p.replaceAll("\\$T", "([\\\\s\\\\w\\\\.]+)"); // alphanum+_ & whitespaces & dots
+    p = p.replaceAll("\\$Y", "(\\\\d{4})");
+    p = p.replaceAll("\\$1", "(\\\\w)");
+    System.out.println("Patrn: " + p);
+
+    return p;
   }
 }
