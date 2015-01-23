@@ -111,7 +111,7 @@ public final class Constants {
   public final static String ZELLULOIDID            = "zelluloid";
   public final static String TMDBID                 = "tmdbId";
   public final static String TVDBID                 = "tvdbId";
-  public final static String TRAKTTV                = "traktTv";
+  public final static String TRAKTID                = "traktId";
   public final static String IMDBID                 = "imdbId";
   public final static String TVRAGEID               = "tvrageId";
   public final static String ROTTENTOMATOESID       = "rottentomatoesId";

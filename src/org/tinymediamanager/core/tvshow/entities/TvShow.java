@@ -869,6 +869,62 @@ public class TvShow extends MediaEntity {
   }
 
   /**
+   * Gets the TraktTV id.
+   * 
+   * @return the TraktTV id
+   */
+  public int getTraktId() {
+    int id = 0;
+    try {
+      id = Integer.valueOf(String.valueOf(ids.get(TRAKTID)));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
+  }
+
+  /**
+   * Sets the TvRage id.
+   * 
+   * @param newValue
+   *          the new TraktTV id
+   */
+  public void setTraktId(int newValue) {
+    int oldValue = getTraktId();
+    ids.put(TRAKTID, newValue);
+    firePropertyChange(TRAKTID, oldValue, newValue);
+  }
+
+  /**
+   * Gets the TvRage id.
+   * 
+   * @return the TvRage id
+   */
+  public int getTvRageId() {
+    int id = 0;
+    try {
+      id = Integer.valueOf(String.valueOf(ids.get(TVRAGEID)));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
+  }
+
+  /**
+   * Sets the TvRage id.
+   * 
+   * @param newValue
+   *          the new TvRage id
+   */
+  public void setTvRageId(int newValue) {
+    int oldValue = getTvRageId();
+    ids.put(TVRAGEID, newValue);
+    firePropertyChange(TVRAGEID, oldValue, newValue);
+  }
+
+  /**
    * Gets the studio.
    * 
    * @return the studio

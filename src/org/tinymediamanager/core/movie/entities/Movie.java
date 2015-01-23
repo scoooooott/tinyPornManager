@@ -609,6 +609,34 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * Gets the TraktTV id.
+   * 
+   * @return the TraktTV id
+   */
+  public int getTraktId() {
+    int id = 0;
+    try {
+      id = Integer.valueOf(String.valueOf(ids.get(TRAKTID)));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
+  }
+
+  /**
+   * Sets the TraktTV id.
+   * 
+   * @param newValue
+   *          the new TraktTV id
+   */
+  public void setTraktId(int newValue) {
+    int oldValue = getTraktId();
+    ids.put(TRAKTID, newValue);
+    firePropertyChange(TRAKTID, oldValue, newValue);
+  }
+
+  /**
    * Gets the votes.
    * 
    * @return the votes
