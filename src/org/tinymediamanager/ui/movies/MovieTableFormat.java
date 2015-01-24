@@ -37,11 +37,12 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   private Comparator<Movie>           movieComparator  = new MovieComparator();
   private Comparator<String>          stringComparator = new StringComparator();
+  private Comparator<Float>           floatComparator  = new FloatComparator();
   private Comparator<ImageIcon>       imageComparator  = new ImageComparator();
 
   @Override
   public int getColumnCount() {
-    return 7;
+    return 8;
   }
 
   @Override
@@ -54,18 +55,21 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return BUNDLE.getString("metatag.year"); //$NON-NLS-1$
 
       case 2:
-        return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.rating"); //$NON-NLS-1$
 
       case 3:
-        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
       case 4:
-        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
 
       case 5:
-        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
 
       case 6:
+        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+
+      case 7:
         return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
     }
 
@@ -82,30 +86,33 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return movie.getYear();
 
       case 2:
+        return movie.getRating();
+
+      case 3:
         if (movie.getHasNfoFile()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 3:
+      case 4:
         if (movie.getHasImages()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 4:
+      case 5:
         if (movie.getHasTrailer()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 5:
+      case 6:
         if (movie.hasSubtitles()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 6:
+      case 7:
         if (movie.isWatched()) {
           return IconManager.CHECKMARK;
         }
@@ -126,10 +133,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return String.class;
 
       case 2:
+        return Float.class;
+
       case 3:
       case 4:
       case 5:
       case 6:
+      case 7:
         return ImageIcon.class;
     }
 
@@ -147,10 +157,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return stringComparator;
 
       case 2:
+        return floatComparator;
+
       case 3:
       case 4:
       case 5:
       case 6:
+      case 7:
         return imageComparator;
     }
 
@@ -167,6 +180,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return 1;
       }
       return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+    }
+  }
+
+  private static class FloatComparator implements Comparator<Float> {
+    @Override
+    public int compare(Float arg0, Float arg1) {
+      return arg0.compareTo(arg1);
     }
   }
 

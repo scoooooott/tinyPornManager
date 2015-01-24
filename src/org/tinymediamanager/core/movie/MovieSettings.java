@@ -145,6 +145,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       runtimeFromMediaInfo                     = false;
   private boolean                       asciiReplacement                         = false;
   private boolean                       yearColumnVisible                        = true;
+  private boolean                       ratingColumnVisible                      = true;
   private boolean                       nfoColumnVisible                         = true;
   private boolean                       imageColumnVisible                       = true;
   private boolean                       trailerColumnVisible                     = true;
@@ -624,6 +625,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.yearColumnVisible;
     this.yearColumnVisible = newValue;
     firePropertyChange(YEAR_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isRatingColumnVisible() {
+    return ratingColumnVisible;
+  }
+
+  public void setRatingColumnVisible(boolean newValue) {
+    boolean oldValue = this.ratingColumnVisible;
+    this.ratingColumnVisible = newValue;
+    firePropertyChange("yearColumnVisible", oldValue, newValue);
   }
 
   public boolean isNfoColumnVisible() {
