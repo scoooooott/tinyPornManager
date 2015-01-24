@@ -148,22 +148,22 @@ public class MediaEntityImageFetcherTask implements Runnable {
         }
       }
     }
-    catch (InterruptedException e) {
-      LOGGER.warn("interrupted image download");
+
+    catch (Throwable e) { // Errors and Exceptions
+      if (e instanceof InterruptedException) {
+        // only warning
+        LOGGER.warn("interrupted image download");
+      }
+      else {
+        LOGGER.error("fetch image", e);
+      }
+
       // remove temp file
       File tempFile = new File(entity.getPath(), filename + ".part");
       if (tempFile.exists()) {
         FileUtils.deleteQuietly(tempFile);
       }
-      return;
-    }
-    catch (Exception e) {
-      LOGGER.debug("fetch image", e);
-      // remove temp file
-      File tempFile = new File(entity.getPath(), filename + ".part");
-      if (tempFile.exists()) {
-        FileUtils.deleteQuietly(tempFile);
-      }
+
       // fallback
       if (firstImage && StringUtils.isNotBlank(oldFilename)) {
         switch (type) {
@@ -188,4 +188,5 @@ public class MediaEntityImageFetcherTask implements Runnable {
           e.getLocalizedMessage() }));
     }
   }
+
 }

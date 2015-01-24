@@ -112,7 +112,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     return artwork;
   }
 
-  // http://webservice.fanart.tv/v3/movies/559?api_key=9314fc8f4c7d4a8b80079da114794891
+  // http://webservice.fanart.tv/v3/movies/559?api_key=<API_KEY>
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
     MediaLanguages language = options.getLanguage();
@@ -124,14 +124,23 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     int tmdbId = options.getTmdbId();
     if (imdbId != null && !imdbId.isEmpty()) {
       LOGGER.debug("getArtwork with IMDB id: " + imdbId);
-      movieImages = ftv.getMovieArtwork(imdbId);
+      try {
+        movieImages = ftv.getMovieArtwork(imdbId);
+      }
+      catch (Exception e) {
+      }
     }
-    else if (tmdbId != 0) {
+    if (movieImages == null && tmdbId != 0) {
       LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
-      movieImages = ftv.getMovieArtwork(String.valueOf(tmdbId));
+      try {
+        movieImages = ftv.getMovieArtwork(String.valueOf(tmdbId));
+      }
+      catch (Exception e) {
+      }
     }
-    else {
-      LOGGER.warn("neither imdb/tmdb set");
+
+    if (movieImages == null) {
+      LOGGER.warn("nothing found");
       return returnArtwork;
     }
 
@@ -154,7 +163,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     return returnArtwork;
   }
 
-  // http://webservice.fanart.tv/v3/tv/79349?api_key=9314fc8f4c7d4a8b80079da114794891
+  // http://webservice.fanart.tv/v3/tv/79349?api_key=<API_KEY>
   private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
     MediaLanguages language = options.getLanguage();
@@ -178,10 +187,14 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
 
     if (tvdbId > 0) {
-      tvShowImages = ftv.getTvArtwork(String.valueOf(tvdbId));
+      try {
+        tvShowImages = ftv.getTvArtwork(String.valueOf(tvdbId));
+      }
+      catch (Exception e) {
+      }
     }
-    else {
-      LOGGER.warn("not tvdbId set");
+    if (tvShowImages == null) {
+      LOGGER.warn("nothing found");
       return returnArtwork;
     }
 
