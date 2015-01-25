@@ -70,6 +70,7 @@ import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class MovieTompNfoConnector.
@@ -440,7 +441,7 @@ public class MovieToMpNfoConnector {
     String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
     completeNFO = completeNFO.replace("<movie>",
         "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-    Reader in = new StringReader(completeNFO);
+    Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
     return (MovieToMpNfoConnector) um.unmarshal(in);
   }
 

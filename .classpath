@@ -56,5 +56,6 @@
 	<classpathentry kind="lib" path="lib/image-viewer.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
 	<classpathentry kind="lib" path="lib/rottentomatoesapi.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

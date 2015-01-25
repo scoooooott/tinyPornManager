@@ -53,6 +53,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class tvShowEpisodeEpisodeToXbmcNfoConnector.
@@ -768,25 +769,16 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
           // read out each episode
           try {
-            Unmarshaller um = context.createUnmarshaller();
-            if (um == null) {
-              continue;
-            }
-
-            Reader in = new StringReader(sb.toString());
-            TvShowEpisodeToXbmcNfoConnector xbmc = (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
+            TvShowEpisodeToXbmcNfoConnector xbmc = parseNfoPart(sb.toString());
             xbmcConnectors.add(xbmc);
           }
           catch (UnmarshalException e) {
-            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath());
-            // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
-            return null;
+            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
+            // clean and retry to parse
           }
           catch (Exception e) {
             LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
-            // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
           }
-
         }
       }
       catch (IOException e) {
@@ -795,5 +787,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
 
     return xbmcConnectors;
+  }
+
+  private static TvShowEpisodeToXbmcNfoConnector parseNfoPart(String part) throws Exception {
+    Unmarshaller um = context.createUnmarshaller();
+    if (um == null) {
+      throw new Exception("could not create unmarshaller");
+    }
+    try {
+      Reader in = new StringReader(part);
+      return (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
+    }
+    catch (UnmarshalException e) {
+      LOGGER.error("tried to unmarshal; now trying to clean xml stream");
+    }
+    catch (IllegalArgumentException e) {
+      LOGGER.warn("tried to unmarshal; now trying to clean xml stream");
+    }
+
+    // clean NFO string and retry
+    StringReader in = new StringReader(ParserUtils.cleanNfo(part));
+    return (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
   }
 }

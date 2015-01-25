@@ -55,6 +55,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class TvShowToXbmcNfoConnector.
@@ -309,7 +310,7 @@ public class TvShowToXbmcNfoConnector {
 
     // now trying to parse it via string
     String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
-    Reader in = new StringReader(completeNFO);
+    Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
     return (TvShowToXbmcNfoConnector) um.unmarshal(in);
   }
 

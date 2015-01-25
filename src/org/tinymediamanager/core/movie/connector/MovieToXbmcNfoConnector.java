@@ -66,14 +66,15 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class MovieToXbmcNfoConnector.
@@ -734,7 +735,7 @@ public class MovieToXbmcNfoConnector {
       completeNFO = matcher
           .replaceFirst("<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
     }
-    Reader in = new StringReader(completeNFO);
+    Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
     return (MovieToXbmcNfoConnector) um.unmarshal(in);
   }
 

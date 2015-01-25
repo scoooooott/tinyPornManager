@@ -21,6 +21,7 @@ jackson-annotations-2.1.2.jar
 jackson-core-2.1.2.jar
 jackson-databind-2.1.2.jar
 jcl-over-slf4j-1.7.5.jar
+jtidy-r938.jar
 jdom.jar
 jgoodies-common-1.8.0.jar
 jmte-unbundled-3.1.jar

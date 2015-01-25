@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.w3c.tidy.Tidy;
 
 /**
  * The Class ParserUtils.
@@ -212,5 +215,36 @@ public class ParserUtils {
     }
 
     return new Pair<String, String>(title, null);
+  }
+
+  /**
+   * Try to clean the NFO(XML) content with JTidy.
+   * 
+   * @param sourceNfoContent
+   *          the XML content to be cleaned
+   * @return the cleaned XML content (or the source, if any Exceptions occur)
+   */
+  public static String cleanNfo(String sourceNfoContent) {
+    try {
+      Tidy tidy = new Tidy();
+      tidy.setInputEncoding("UTF-8");
+      tidy.setOutputEncoding("UTF-8");
+      tidy.setWraplen(Integer.MAX_VALUE);
+      tidy.setXmlOut(true);
+      tidy.setSmartIndent(true);
+      tidy.setXmlTags(true);
+      tidy.setMakeClean(true);
+      tidy.setForceOutput(true);
+      tidy.setQuiet(true);
+      tidy.setShowWarnings(false);
+      StringReader in = new StringReader(sourceNfoContent);
+      StringWriter out = new StringWriter();
+      tidy.parse(in, out);
+
+      return out.toString();
+    }
+    catch (Exception e) {
+    }
+    return sourceNfoContent;
   }
 }
