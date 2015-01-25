@@ -54,139 +54,144 @@ public class MediaEntityImageFetcherTask implements Runnable {
 
   @Override
   public void run() {
-    String oldFilename = null;
     try {
-      // store old filename at the first image
-      if (firstImage) {
-        switch (type) {
-          case POSTER:
-          case BACKGROUND:
-          case BANNER:
-          case THUMB:
-          case CLEARART:
-          case DISC:
-          case LOGO:
-            oldFilename = entity.getArtworkFilename(MediaArtworkType.getMediaFileType(type));
-            entity.removeAllMediaFiles(MediaArtworkType.getMediaFileType(type));
-            break;
+      String oldFilename = null;
+      try {
+        // store old filename at the first image
+        if (firstImage) {
+          switch (type) {
+            case POSTER:
+            case BACKGROUND:
+            case BANNER:
+            case THUMB:
+            case CLEARART:
+            case DISC:
+            case LOGO:
+              oldFilename = entity.getArtworkFilename(MediaArtworkType.getMediaFileType(type));
+              entity.removeAllMediaFiles(MediaArtworkType.getMediaFileType(type));
+              break;
 
-          default:
-            return;
+            default:
+              return;
+          }
+        }
+
+        // debug message
+        LOGGER.debug("writing " + type + " " + filename);
+
+        // check if old and new file are the same (possible if you select it in the imagechooser)
+        boolean sameFile = false;
+        if (url.startsWith("file:")) {
+          String newUrl = url.replace("file:/", "");
+          File file = new File(newUrl);
+          File destFile = new File(entity.getPath(), filename);
+          if (file.equals(destFile)) {
+            sameFile = true;
+          }
+        }
+
+        // fetch and store images
+        if (!sameFile) {
+          Url url1 = new Url(url);
+          File tempFile = new File(entity.getPath(), filename + ".part");
+          FileOutputStream outputStream = new FileOutputStream(tempFile);
+          InputStream is = url1.getInputStream();
+          IOUtils.copy(is, outputStream);
+          outputStream.flush();
+          try {
+            outputStream.getFD().sync(); // wait until file has been completely written
+          }
+          catch (Exception e) {
+            // empty here -> just not let the thread crash
+          }
+          outputStream.close();
+          is.close();
+
+          // check if the file has been downloaded
+          if (!tempFile.exists() || tempFile.length() == 0) {
+            throw new Exception("0byte file downloaded: " + filename);
+          }
+
+          // delete the old one if exisiting
+          File destinationFile = new File(entity.getPath(), filename);
+          FileUtils.deleteQuietly(destinationFile);
+
+          // move the temp file to the expected filename
+          if (!Utils.moveFileSafe(tempFile, destinationFile)) {
+            throw new Exception("renaming temp file failed: " + filename);
+          }
+        }
+
+        // has tmm been shut down?
+        if (Thread.interrupted()) {
+          return;
+        }
+
+        // set the new image if its the first image
+        if (firstImage) {
+          LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
+          ImageCache.invalidateCachedImage(entity.getPath() + File.separator + filename);
+          switch (type) {
+            case POSTER:
+            case BACKGROUND:
+            case BANNER:
+            case THUMB:
+            case CLEARART:
+            case DISC:
+            case LOGO:
+              entity.setArtwork(new File(entity.getPath(), filename), MediaArtworkType.getMediaFileType(type));
+              entity.saveToDb();
+              entity.callbackForWrittenArtwork(type);
+              break;
+
+            default:
+              return;
+          }
         }
       }
 
-      // debug message
-      LOGGER.debug("writing " + type + " " + filename);
-
-      // check if old and new file are the same (possible if you select it in the imagechooser)
-      boolean sameFile = false;
-      if (url.startsWith("file:")) {
-        String newUrl = url.replace("file:/", "");
-        File file = new File(newUrl);
-        File destFile = new File(entity.getPath(), filename);
-        if (file.equals(destFile)) {
-          sameFile = true;
+      catch (Exception e) {
+        if (e instanceof InterruptedException) {
+          // only warning
+          LOGGER.warn("interrupted image download");
         }
-      }
+        else {
+          LOGGER.error("fetch image", e);
+        }
 
-      // fetch and store images
-      if (!sameFile) {
-        Url url1 = new Url(url);
+        // remove temp file
         File tempFile = new File(entity.getPath(), filename + ".part");
-        FileOutputStream outputStream = new FileOutputStream(tempFile);
-        InputStream is = url1.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.flush();
-        try {
-          outputStream.getFD().sync(); // wait until file has been completely written
-        }
-        catch (Exception e) {
-          // empty here -> just not let the thread crash
-        }
-        outputStream.close();
-        is.close();
-
-        // check if the file has been downloaded
-        if (!tempFile.exists() || tempFile.length() == 0) {
-          throw new Exception("0byte file downloaded: " + filename);
+        if (tempFile.exists()) {
+          FileUtils.deleteQuietly(tempFile);
         }
 
-        // delete the old one if exisiting
-        File destinationFile = new File(entity.getPath(), filename);
-        FileUtils.deleteQuietly(destinationFile);
+        // fallback
+        if (firstImage && StringUtils.isNotBlank(oldFilename)) {
+          switch (type) {
+            case POSTER:
+            case BACKGROUND:
+            case BANNER:
+            case THUMB:
+            case CLEARART:
+            case DISC:
+            case LOGO:
+              entity.setArtwork(new File(oldFilename), MediaArtworkType.getMediaFileType(type));
+              entity.saveToDb();
+              entity.callbackForWrittenArtwork(type);
+              break;
 
-        // move the temp file to the expected filename
-        if (!Utils.moveFileSafe(tempFile, destinationFile)) {
-          throw new Exception("renaming temp file failed: " + filename);
+            default:
+              return;
+          }
         }
+
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":",
+            e.getLocalizedMessage() }));
       }
 
-      // has tmm been shut down?
-      if (Thread.interrupted()) {
-        return;
-      }
-
-      // set the new image if its the first image
-      if (firstImage) {
-        LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
-        ImageCache.invalidateCachedImage(entity.getPath() + File.separator + filename);
-        switch (type) {
-          case POSTER:
-          case BACKGROUND:
-          case BANNER:
-          case THUMB:
-          case CLEARART:
-          case DISC:
-          case LOGO:
-            entity.setArtwork(new File(entity.getPath(), filename), MediaArtworkType.getMediaFileType(type));
-            entity.saveToDb();
-            entity.callbackForWrittenArtwork(type);
-            break;
-
-          default:
-            return;
-        }
-      }
     }
-
-    catch (Throwable e) { // Errors and Exceptions
-      if (e instanceof InterruptedException) {
-        // only warning
-        LOGGER.warn("interrupted image download");
-      }
-      else {
-        LOGGER.error("fetch image", e);
-      }
-
-      // remove temp file
-      File tempFile = new File(entity.getPath(), filename + ".part");
-      if (tempFile.exists()) {
-        FileUtils.deleteQuietly(tempFile);
-      }
-
-      // fallback
-      if (firstImage && StringUtils.isNotBlank(oldFilename)) {
-        switch (type) {
-          case POSTER:
-          case BACKGROUND:
-          case BANNER:
-          case THUMB:
-          case CLEARART:
-          case DISC:
-          case LOGO:
-            entity.setArtwork(new File(oldFilename), MediaArtworkType.getMediaFileType(type));
-            entity.saveToDb();
-            entity.callbackForWrittenArtwork(type);
-            break;
-
-          default:
-            return;
-        }
-      }
-
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+    catch (Exception e) {
+      LOGGER.error("crashed thread: ", e);
     }
   }
-
 }
