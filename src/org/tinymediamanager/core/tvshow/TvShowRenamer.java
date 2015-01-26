@@ -79,7 +79,8 @@ public class TvShowRenamer {
       File srcDir = new File(oldPathname);
       File destDir = new File(newPathname);
       // move directory if needed
-      if (!srcDir.equals(destDir)) {
+      // if (!srcDir.equals(destDir)) {
+      if (!srcDir.getAbsolutePath().equals(destDir.getAbsolutePath())) {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
@@ -221,7 +222,8 @@ public class TvShowRenamer {
         File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
 
         try {
-          if (!epFolder.equals(newEpFolder)) {
+          // if (!epFolder.equals(newEpFolder)) {
+          if (!epFolder.getAbsolutePath().equals(newEpFolder.getAbsolutePath())) {
             boolean ok = false;
             try {
               ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
@@ -270,7 +272,8 @@ public class TvShowRenamer {
         File newFile = new File(seasonDir, filename);
 
         try {
-          if (!mf.getFile().equals(newFile)) {
+          // if (!mf.getFile().equals(newFile)) {
+          if (!mf.getFile().getAbsolutePath().equals(newFile.getAbsolutePath())) {
             File oldMfFile = mf.getFile();
             boolean ok = false;
             try {
@@ -472,8 +475,8 @@ public class TvShowRenamer {
    *          the template
    * @param show
    *          the TV show
-   * @param spieode
-   *          the TV show episode; nullable for TV show root foldername
+   * @param episodes
+   *          the TV show episodes; nullable for TV show root foldername
    * @return the string
    */
   public static String createDestination(String template, TvShow show, List<TvShowEpisode> episodes) {
