@@ -514,7 +514,7 @@ public class Utils {
     if (!srcDir.isDirectory()) {
       throw new IOException("Source '" + srcDir + "' is not a directory");
     }
-    if (destDir.exists()) {
+    if (destDir.exists() && !srcDir.equals(destDir)) { // extra check for windows, where the File.equals is case insensitive
       throw new FileExistsException("Destination '" + destDir + "' already exists");
     }
     if (!destDir.getParentFile().exists()) {

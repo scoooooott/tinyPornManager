@@ -192,7 +192,8 @@ public class MovieRenamer {
       File srcDir = new File(oldPathname);
       File destDir = new File(newPathname);
       // move directory if needed
-      if (!srcDir.equals(destDir)) {
+      // if (!srcDir.equals(destDir)) {
+      if (!srcDir.getAbsolutePath().equals(destDir.getAbsolutePath())) {
         if (!movie.isMultiMovieDir()) {
           boolean ok = false;
           try {
