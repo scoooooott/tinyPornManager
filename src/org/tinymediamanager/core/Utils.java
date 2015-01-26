@@ -584,7 +584,8 @@ public class Utils {
     if (destFile == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    if (!srcFile.equals(destFile)) {
+    // if (!srcFile.equals(destFile)) {
+    if (!srcFile.getAbsolutePath().equals(destFile.getAbsolutePath())) {
       LOGGER.debug("try to move file " + srcFile.getPath() + " to " + destFile.getPath());
       if (!srcFile.exists()) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
@@ -592,7 +593,7 @@ public class Utils {
       if (srcFile.isDirectory()) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (destFile.exists()) {
+      if (destFile.exists() && !srcFile.equals(destFile)) { // extra check for windows, where the File.equals is case insensitive
         throw new FileExistsException("Destination '" + destFile + "' already exists");
       }
       if (destFile.isDirectory()) {
