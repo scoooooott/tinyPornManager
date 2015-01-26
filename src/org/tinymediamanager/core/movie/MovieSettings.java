@@ -634,7 +634,7 @@ public class MovieSettings extends AbstractModelObject {
   public void setRatingColumnVisible(boolean newValue) {
     boolean oldValue = this.ratingColumnVisible;
     this.ratingColumnVisible = newValue;
-    firePropertyChange("yearColumnVisible", oldValue, newValue);
+    firePropertyChange("ratingColumnVisible", oldValue, newValue);
   }
 
   public boolean isNfoColumnVisible() {

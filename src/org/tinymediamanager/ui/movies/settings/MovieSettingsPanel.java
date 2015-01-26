@@ -98,6 +98,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxRuntimeFromMf;
   private JCheckBox                   chckbxTraktTv;
   private JCheckBox                   chckbxWatched;
+  private JCheckBox                   chckbxRating;
 
   /**
    * Instantiates a new movie settings panel.
@@ -113,11 +114,12 @@ public class MovieSettingsPanel extends ScrollablePanel {
     add(panelGeneral, "2, 2, fill, fill");
     panelGeneral.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblVisiblecolumns = new JLabel(BUNDLE.getString("Settings.movie.visiblecolumns")); //$NON-NLS-1$
     panelGeneral.add(lblVisiblecolumns, "2, 2, right, default");
@@ -125,11 +127,14 @@ public class MovieSettingsPanel extends ScrollablePanel {
     chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     panelGeneral.add(chckbxYear, "4, 2");
 
+    chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+    panelGeneral.add(chckbxRating, "6, 2");
+
     chckbxNfo = new JCheckBox(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
-    panelGeneral.add(chckbxNfo, "6, 2");
+    panelGeneral.add(chckbxNfo, "8, 2");
 
     chckbxImages = new JCheckBox(BUNDLE.getString("metatag.images")); //$NON-NLS-1$
-    panelGeneral.add(chckbxImages, "8, 2");
+    panelGeneral.add(chckbxImages, "10, 2");
 
     chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
     panelGeneral.add(chckbxTrailer, "4, 4");
@@ -148,7 +153,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(chckbxImageCache, 0.833);
-    panelGeneral.add(chckbxImageCache, "4, 8, 5, 1");
+    panelGeneral.add(chckbxImageCache, "4, 8, 7, 1");
 
     JLabel lblRuntimeFromMedia = new JLabel(BUNDLE.getString("Settings.runtimefrommediafile"));
     panelGeneral.add(lblRuntimeFromMedia, "2, 10, right, default");
@@ -439,5 +444,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieSettings.ratingColumnVisible");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxRating, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }
