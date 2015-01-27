@@ -247,7 +247,21 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         else {
           // compare score based on names
-          sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+          float score = MetadataUtil.calculateScore(searchString, movie.getTitle());
+
+          // score adaption based on the year
+          int resultYear = 0;
+          try {
+            Integer.parseInt(sr.getYear());
+          }
+          catch (NumberFormatException e) {
+          }
+          if (year != 0 && year != resultYear) {
+            LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
+            score = score - 0.01f;
+          }
+
+          sr.setScore(score);
         }
         resultList.add(sr);
       }

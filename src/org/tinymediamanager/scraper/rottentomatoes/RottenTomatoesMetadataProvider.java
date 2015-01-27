@@ -215,6 +215,7 @@ public class RottenTomatoesMetadataProvider implements IMediaMetadataProvider {
     LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
+    int year = 0;
 
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
       searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
@@ -223,6 +224,15 @@ public class RottenTomatoesMetadataProvider implements IMediaMetadataProvider {
     if (StringUtils.isEmpty(searchString)) {
       LOGGER.debug("RT Scraper: empty searchString");
       return resultList;
+    }
+
+    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
+      try {
+        Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
+      }
+      catch (Exception e) {
+        year = 0;
+      }
     }
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
@@ -314,7 +324,22 @@ public class RottenTomatoesMetadataProvider implements IMediaMetadataProvider {
       }
       else {
         // compare score based on names
-        sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+        // sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+        float score = MetadataUtil.calculateScore(searchString, movie.getTitle());
+
+        // score adaption based on the year
+        int resultYear = 0;
+        try {
+          Integer.parseInt(sr.getYear());
+        }
+        catch (NumberFormatException e) {
+        }
+        if (year != 0 && year != resultYear) {
+          LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
+          score = score - 0.01f;
+        }
+
+        sr.setScore(score);
       }
 
       resultList.add(sr);
