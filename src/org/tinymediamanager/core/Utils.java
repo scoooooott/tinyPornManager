@@ -73,30 +73,31 @@ public class Utils {
   private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
 
   /**
-   * Map of all known language/country/abbreviations, key is LOWERCASE
+   * Map of all known English/UserLocalized String to base locale, key is LOWERCASE
    */
   public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP = generateSubtitleLanguageArray();
 
   private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
     Map<String, Locale> langArray = new HashMap<String, Locale>();
 
-    Locale intl = new Locale("en");
+    Locale intl = Locale.ENGLISH;
     Locale locales[] = Locale.getAvailableLocales();
     // all possible variants of language/country/prefixes/non-iso style
     for (Locale locale : locales) {
-      langArray.put(locale.getDisplayLanguage(intl), locale);
-      langArray.put(locale.getDisplayLanguage(), locale);
+      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
+      langArray.put(base.getDisplayLanguage(intl), base);
+      langArray.put(base.getDisplayLanguage(), base);
       try {
-        langArray.put(locale.getDisplayLanguage(intl).substring(0, 3), locale); // eg German -> Ger, where iso3=deu
+        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
       }
       catch (Exception e) {
         // ignore
       }
-      langArray.put(locale.getISO3Language(), locale);
-      langArray.put(locale.getCountry(), locale);
+      langArray.put(base.getISO3Language(), base);
+      langArray.put(base.getCountry(), base);
       try {
-        String c = locale.getISO3Country();
-        langArray.put(c, locale);
+        String c = base.getISO3Country();
+        langArray.put(c, base);
       }
       catch (MissingResourceException e) {
         // tjo... not available, see javadoc

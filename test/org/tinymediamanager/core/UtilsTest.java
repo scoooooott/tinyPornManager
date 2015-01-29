@@ -2,9 +2,9 @@ package org.tinymediamanager.core;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -93,8 +93,13 @@ public class UtilsTest {
 
   @Test
   public void locale() {
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-    System.out.println(langArray);
+    for (Locale l : Locale.getAvailableLocales()) {
+      // System.out.println(l);
+    }
+    System.out.println();
+    for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
+      System.out.println(s + " - " + Utils.KEY_TO_LOCALE_MAP.get(s));
+    }
   }
 
   @Test
