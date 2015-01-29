@@ -239,8 +239,12 @@ public class TinyMediaManager {
             Globals.settings.setProxy();
           }
 
-          // set native dir (needs to be absolute)
-          // String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+          // MediaInfo /////////////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading MediaInfo libs", 20);
+            splash.update();
+          }
+
           String nativepath = "native/";
           if (Platform.isWindows()) {
             nativepath += "windows-";
@@ -252,16 +256,25 @@ public class TinyMediaManager {
             nativepath += "mac-";
           }
           nativepath += System.getProperty("os.arch");
-          System.setProperty("jna.library.path", nativepath);
 
-          // MediaInfo /////////////////////////////////////////////////////
-          if (g2 != null) {
-            updateProgress(g2, "loading MediaInfo libs", 20);
-            splash.update();
+          String miv = "";
+          // need that, since we cannot try and reload/unload a Class
+          // MI does not load over UNC, so copy to temp
+          if (System.getProperty("user.dir", "").startsWith("\\\\")) {
+            LOGGER.debug("We're on a network UNC path!");
+            File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
+            File nativeDir = new File(tmpDir, nativepath);
+            FileUtils.copyDirectory(new File(nativepath), nativeDir); // same structure
+
+            System.setProperty("jna.library.path", nativeDir.getAbsolutePath());
+            LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.getAbsolutePath());
+            miv = MediaInfo.version(); // load class
           }
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
-          // load libMediainfo
-          String miv = MediaInfo.version();
+          else {
+            LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
+            miv = MediaInfo.version(); // load class
+          }
+
           if (!StringUtils.isEmpty(miv)) {
             LOGGER.info("Using " + miv);
           }
