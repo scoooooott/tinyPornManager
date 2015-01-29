@@ -260,7 +260,7 @@ public class TinyMediaManager {
           String miv = "";
           // need that, since we cannot try and reload/unload a Class
           // MI does not load over UNC, so copy to temp
-          if (System.getProperty("user.dir", "").startsWith("\\\\")) {
+          if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
             LOGGER.debug("We're on a network UNC path!");
             File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
             File nativeDir = new File(tmpDir, nativepath);
