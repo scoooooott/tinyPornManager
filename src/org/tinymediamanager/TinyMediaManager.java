@@ -271,6 +271,7 @@ public class TinyMediaManager {
             miv = MediaInfo.version(); // load class
           }
           else {
+            System.setProperty("jna.library.path", nativepath);
             LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
             miv = MediaInfo.version(); // load class
           }
