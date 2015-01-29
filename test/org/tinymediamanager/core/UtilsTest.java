@@ -45,14 +45,6 @@ public class UtilsTest {
   }
 
   @Test
-  public void testLoc() {
-    Assert.assertEquals("German", Utils.getDisplayLanguage("deu"));
-    Assert.assertEquals("German", Utils.getDisplayLanguage("AUT"));
-    Assert.assertEquals("German", Utils.getDisplayLanguage("GER"));
-    Assert.assertEquals("German", Utils.getDisplayLanguage("ger"));
-  }
-
-  @Test
   public void detectStackingMarkers() {
     System.out.println(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"));
     System.out.println(Utils.getStackingMarker("Movie Name (2013)-PaRt1.mkv"));
@@ -93,8 +85,9 @@ public class UtilsTest {
 
   @Test
   public void locale() {
-    for (Locale l : Locale.getAvailableLocales()) {
-      // System.out.println(l);
+    for (String s : Locale.getISOLanguages()) {
+      Locale l = new Locale(s);
+      System.out.println(l.getISO3Language());
     }
     System.out.println();
     for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {

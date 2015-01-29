@@ -126,6 +126,20 @@ public class Utils {
   }
 
   /**
+   * uses our localized language mapping table, to get the iso3 code
+   * 
+   * @param text
+   * @return 3 chars or empty string
+   */
+  public static String getIso3LanguageFromLocalizedString(String text) {
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    if (l != null) {
+      return l.getISO3Language();
+    }
+    return "";
+  }
+
+  /**
    * returns the relative path of 2 absolute file paths
    * 
    * @param parent
@@ -175,34 +189,6 @@ public class Utils {
    */
   public static String relPath(File parent, File child) {
     return parent.toURI().relativize(child.toURI()).getPath();
-  }
-
-  /**
-   * gets a locale from specific string
-   * 
-   * @param text
-   * @return Locale or NULL
-   */
-  public static Locale getLocaleFromCountry(String text) {
-    String lang = text.toLowerCase().split("[_.-]")[0];
-    return KEY_TO_LOCALE_MAP.get(lang);
-  }
-
-  /**
-   * gets the localized DisplayLanguage , derived from specific string
-   * 
-   * @param text
-   * @return the displayLanguage or empty string
-   */
-  public static String getDisplayLanguage(String text) {
-    Locale l = getLocaleFromCountry(text);
-    if (l == null) {
-      return "";
-    }
-    else {
-      // return l.getDisplayLanguage(new Locale("en")); // name in english
-      return l.getDisplayLanguage(); // local name
-    }
   }
 
   /**

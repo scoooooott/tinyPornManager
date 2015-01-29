@@ -61,6 +61,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
@@ -436,18 +437,24 @@ public class MovieToXbmcNfoConnector {
     xbmc.sorttitle = movie.getSortTitle();
 
     // fileinfo
+    Fileinfo info = new Fileinfo();
     for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
       if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
         break;
       }
 
-      // if (xbmc.fileinfo == null) {
-      Fileinfo info = new Fileinfo();
       info.streamdetails.video.codec = mediaFile.getVideoCodec();
       info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
       info.streamdetails.video.width = mediaFile.getVideoWidth();
       info.streamdetails.video.height = mediaFile.getVideoHeight();
       info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
+      // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
+      if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
+        info.streamdetails.video.stereomode = "left_right";
+      }
+      else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
+        info.streamdetails.video.stereomode = "top_bottom"; // maybe?
+      }
 
       for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
         Audio audio = new Audio();
@@ -456,10 +463,22 @@ public class MovieToXbmcNfoConnector {
         audio.channels = String.valueOf(as.getChannelsAsInt());
         info.streamdetails.audio.add(audio);
       }
-      xbmc.fileinfo = info;
+      for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
+        Subtitle sub = new Subtitle();
+        sub.language = ss.getLanguage();
+        info.streamdetails.subtitle.add(sub);
+      }
       break;
-      // }
     }
+    // add external subtitles to NFO
+    for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.SUBTITLE)) {
+      for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
+        Subtitle sub = new Subtitle();
+        sub.language = ss.getLanguage();
+        info.streamdetails.subtitle.add(sub);
+      }
+    }
+    xbmc.fileinfo = info;
 
     // add all unsupported tags again
     xbmc.unsupportedElements.addAll(unsupportedTags);
@@ -887,14 +906,18 @@ public class MovieToXbmcNfoConnector {
    */
   static class Streamdetails {
     @XmlElement
-    private Video       video;
+    private Video          video;
 
     @XmlElement
-    private List<Audio> audio;
+    private List<Audio>    audio;
+
+    @XmlElement
+    private List<Subtitle> subtitle;
 
     public Streamdetails() {
       video = new Video();
       audio = new ArrayList<Audio>();
+      subtitle = new ArrayList<Subtitle>();
     }
   }
 
@@ -916,6 +939,9 @@ public class MovieToXbmcNfoConnector {
 
     @XmlElement
     private int    durationinseconds;
+
+    @XmlElement
+    private String stereomode;
   }
 
   /*
@@ -930,5 +956,13 @@ public class MovieToXbmcNfoConnector {
 
     @XmlElement
     private String channels;
+  }
+
+  /*
+   * inner class holding details of the subtitle stream
+   */
+  static class Subtitle {
+    @XmlElement
+    private String language;
   }
 }

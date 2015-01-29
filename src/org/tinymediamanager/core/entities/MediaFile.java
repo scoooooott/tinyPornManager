@@ -202,12 +202,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       sub.setForced(true);
       shortname = shortname.replaceAll("\\p{Punct}*forced", "");
     }
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-    for (String l : langArray) {
-      if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
-        String lang = Utils.getDisplayLanguage(l);
-        LOGGER.debug("found language '" + l + "' in subtitle '" + this.getFilename() + "'; displaying it as '" + lang + "'");
-        sub.setLanguage(lang);
+    for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
+      if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+        LOGGER.debug("found language '" + s + "' in subtitle '" + this.getFilename());
+        sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
         break;
       }
     }
@@ -1205,27 +1203,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               // try to parse from filename
               String shortname = getBasename().toLowerCase();
               Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-              for (String l : langArray) {
-                if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
-                  String lang = Utils.getDisplayLanguage(l);
-                  LOGGER.debug("found language '" + l + "' in filename '" + this.getFilename() + "'; displaying it as '" + lang + "'");
-                  stream.setLanguage(lang);
+              for (String s : langArray) {
+                if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+                  LOGGER.debug("found language '" + s + "' in filename '" + this.getFilename());
+                  stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
                   break;
                 }
               }
             }
           }
           else {
-            // map locale
-            String l = Utils.getDisplayLanguage(language);
-            if (l.isEmpty()) {
-              // could not map locale, use detected
-              stream.setLanguage(language);
-            }
-            else {
-              // set our localized name
-              stream.setLanguage(l);
-            }
+            stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
           }
           audioStreams.add(stream);
         }
@@ -1260,7 +1248,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
           String codec = getMediaInfo(StreamKind.Text, i, "CodecID/Hint", "Format");
           stream.setCodec(codec.replaceAll("\\p{Punct}", ""));
-          stream.setLanguage(getMediaInfo(StreamKind.Text, i, "Language/String"));
+          String lang = getMediaInfo(StreamKind.Text, i, "Language/String");
+          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
 
           String forced = getMediaInfo(StreamKind.Text, i, "Forced");
           boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
@@ -1312,26 +1301,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           // try to parse from filename
           String shortname = getBasename().toLowerCase();
           Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-          for (String l : langArray) {
-            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
-              String lang = Utils.getDisplayLanguage(l);
-              LOGGER.debug("found language '" + l + "' in audiofile '" + this.getFilename() + "'; displaying it as '" + lang + "'");
-              stream.setLanguage(lang);
+          for (String s : langArray) {
+            if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+              LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
+              stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
               break;
             }
           }
         }
         else {
-          // map locale
-          String l = Utils.getDisplayLanguage(language);
-          if (l.isEmpty()) {
-            // could not map locale, use detected
-            stream.setLanguage(language);
-          }
-          else {
-            // set our localized name
-            stream.setLanguage(l);
-          }
+          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
         }
         audioStreams.clear();
         audioStreams.add(stream);

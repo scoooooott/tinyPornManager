@@ -31,11 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -241,6 +244,59 @@ public class UpgradeTasks {
       if (SystemUtils.IS_OS_LINUX) {
         TmmOsUtils.createDesktopFileForLinux(new File(TmmOsUtils.DESKTOP_FILE));
       }
+
+      // upgrade ALL String languages to ISO3
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
+      for (Movie movie : movieList.getMovies()) {
+        for (MediaFile mf : movie.getMediaFiles()) {
+          for (MediaFileAudioStream mfa : mf.getAudioStreams()) {
+            if (!StringUtils.isEmpty(mfa.getLanguage())) {
+              mfa.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfa.getLanguage()));
+            }
+          }
+          for (MediaFileSubtitle mfs : mf.getSubtitles()) {
+            if (!StringUtils.isEmpty(mfs.getLanguage())) {
+              mfs.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfs.getLanguage()));
+            }
+          }
+        }
+      }
+      entityManager.getTransaction().commit();
+
+      // TV Shows
+      entityManager.getTransaction().begin();
+      for (TvShow show : tvShowList.getTvShows()) {
+        // show MFs
+        for (MediaFile mf : show.getMediaFiles()) {
+          for (MediaFileAudioStream mfa : mf.getAudioStreams()) {
+            if (!StringUtils.isEmpty(mfa.getLanguage())) {
+              mfa.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfa.getLanguage()));
+            }
+          }
+          for (MediaFileSubtitle mfs : mf.getSubtitles()) {
+            if (!StringUtils.isEmpty(mfs.getLanguage())) {
+              mfs.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfs.getLanguage()));
+            }
+          }
+        }
+        // Episode MFs
+        for (TvShowEpisode episode : show.getEpisodes()) {
+          for (MediaFile mf : episode.getMediaFiles()) {
+            for (MediaFileAudioStream mfa : mf.getAudioStreams()) {
+              if (!StringUtils.isEmpty(mfa.getLanguage())) {
+                mfa.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfa.getLanguage()));
+              }
+            }
+            for (MediaFileSubtitle mfs : mf.getSubtitles()) {
+              if (!StringUtils.isEmpty(mfs.getLanguage())) {
+                mfs.setLanguage(Utils.getIso3LanguageFromLocalizedString(mfs.getLanguage()));
+              }
+            }
+          }
+        }
+      }
+      entityManager.getTransaction().commit();
     }
 
   }
