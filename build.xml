@@ -1,301 +1,341 @@
 <project default="create_tmm_jar" name="Tiny Media Manager">
 
-    <!-- software revision number -->
-    <property name="version" value="2.6.6" />
+	<!-- software revision number -->
+	<property name="version" value="2.6.6" />
 
-    <!-- build directories -->
-    <property name="lib.dir" value="lib" />
-    <property name="bin.dir" value="bin" />
-    <property name="build.dir" value="build-tmp" /><!-- temp dir, will then be moved to /build -->
-    <property name="dist.dir" value="dist" />
-    <property name="getdown" value="getdown.txt" />  <!-- set as property to override in jenkins --> 
+	<!-- build directories -->
+	<property name="lib.dir" value="lib" />
+	<property name="bin.dir" value="bin" />
+	<property name="build.dir" value="build-tmp" />
+	<!-- temp dir, will then be moved to /build -->
+	<property name="dist.dir" value="dist" />
+	<property name="getdown" value="getdown.txt" />
+	<!-- set as property to override in jenkins -->
 
-    <tstamp>
-        <format property="today" pattern="dd/MM/yyyy" />
-    </tstamp>
+	<tstamp>
+		<format property="today" pattern="dd/MM/yyyy" />
+	</tstamp>
 
-    <path id="classpath.default">
-        <fileset dir="${lib.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+	<path id="classpath.default">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
-    <path id="svntask.classpth">
-        <fileset dir="buildsupport/svntask">
-            <include name="*.jar"/>
-         </fileset>
-    </path>
-    <taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svntask.classpth"/>
+	<path id="svntask.classpth">
+		<fileset dir="buildsupport/svntask">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svntask.classpth" />
 
-    <target name="clean">
-        <delete dir="${bin.dir}" />
-        <delete dir="${build.dir}" />
-        <delete dir="${dist.dir}" />
-    </target>
+	<target name="clean">
+		<delete dir="${bin.dir}" />
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
 
-    <target name="init" depends="clean">
-        <mkdir dir="${bin.dir}" />
-        <mkdir dir="${build.dir}" />
-        <mkdir dir="${dist.dir}" />
-    </target>
+	<target name="init" depends="clean">
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
 
-    <target name="compile" depends="init">
-        <echo message="${ant.project.name}: ${ant.file}" />
-        <javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.6" target="1.6" encoding="UTF-8">
-            <src path="src" />
-            <classpath refid="classpath.default" />
-        </javac>
-        <!-- enhance several classes for objectdb -->
-        <java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
-            <arg line="-s"/>
-            <arg line="${bin.dir}/org/tinymediamanager/core/*"/>
-        </java>
-        <!-- copy non java files -->
-        <copy includeemptydirs="false" todir="${bin.dir}">
-            <fileset dir="src" excludes="**/*.java" />
-        </copy>
-    </target>
+	<target name="compile" depends="init">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.6" target="1.6" encoding="UTF-8">
+			<src path="src" />
+			<classpath refid="classpath.default" />
+		</javac>
+		<!-- enhance several classes for objectdb -->
+		<java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
+			<arg line="-s" />
+			<arg line="${bin.dir}/org/tinymediamanager/core/*" />
+		</java>
+		<!-- copy non java files -->
+		<copy includeemptydirs="false" todir="${bin.dir}">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
 
-    <target name="javadoc">
-        <mkdir dir="reports/javadoc" />
-        <javadoc access="public" destdir="reports/javadoc" author="true"
-         version="true" use="true" windowtitle="${ant.project.name}">
-            <classpath refid="classpath.default" />
-            <fileset dir="src" defaultexcludes="yes">
-                <include name="**/*.java" />
-            </fileset>
-        </javadoc>
-    </target>
+	<target name="javadoc">
+		<mkdir dir="reports/javadoc" />
+		<javadoc access="public" destdir="reports/javadoc" author="true" version="true" use="true" windowtitle="${ant.project.name}">
+			<classpath refid="classpath.default" />
+			<fileset dir="src" defaultexcludes="yes">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
 
-    <target name="create_resource_jar">
-        <jar destfile="${lib.dir}/resources.jar" basedir="resources" includes="*/**" />
-    </target>
+	<target name="create_resource_jar">
+		<jar destfile="${lib.dir}/resources.jar" basedir="resources" includes="*/**" />
+	</target>
 
-    <target name="create_tmm_jar" description="creates the jar" depends="compile, setNightly, setPreRelease">
+	<target name="create_tmm_jar" description="creates the jar" depends="compile, setNightly, setPreRelease">
 
-        <svn>
-            <info path="." />
-            <!-- svn.info.url
+		<svn>
+			<info path="." />
+			<!-- svn.info.url
                  svn.info.repositoryRootUrl
                  svn.info.revision
                  svn.info.author
                  svn.info.committedDate
                  svn.info.committedRevision -->
-        </svn>
-        <echo message="Building revision ${svn.info.revision} - ${svn.info.author} - ${svn.info.committedDate}" />
+		</svn>
+		<echo message="Building revision ${svn.info.revision} - ${svn.info.author} - ${svn.info.committedDate}" />
 
-        <!-- set manifest Class-Path accordingly; fake jarFile parameter only used for relative path -->
-        <manifestclasspath property="jar.classpath" jarfile="tmm.jar">
-            <classpath refid="classpath.default" />
-        </manifestclasspath>
+		<!-- set manifest Class-Path accordingly; fake jarFile parameter only used for relative path -->
+		<manifestclasspath property="jar.classpath" jarfile="tmm.jar">
+			<classpath refid="classpath.default" />
+		</manifestclasspath>
 
-        <jar destfile="${build.dir}/tmm.jar">
-            <manifest>
-                <attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
-                <attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
-                <attribute name="Class-Path" value=". locale/ ${jar.classpath} lib/swt.jar" />
-                <attribute name="Implementation-Title" value="tinyMediaManager"/>
-                <attribute name="Implementation-Version" value="${version} (r${svn.info.revision})"/> 
-                <attribute name="Build-Date" value="${DSTAMP}-${TSTAMP}"/>
-                <attribute name="Build-By" value="${user.name}"/>
-            </manifest>
-            <fileset dir="${bin.dir}" />
-        </jar>
+		<jar destfile="${build.dir}/tmm.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
+				<attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
+				<attribute name="Class-Path" value=". locale/ ${jar.classpath} lib/swt.jar" />
+				<attribute name="Implementation-Title" value="tinyMediaManager" />
+				<attribute name="Implementation-Version" value="${version} (r${svn.info.revision})" />
+				<attribute name="Build-Date" value="${DSTAMP}-${TSTAMP}" />
+				<attribute name="Build-By" value="${user.name}" />
+			</manifest>
+			<fileset dir="${bin.dir}" />
+		</jar>
 
-        <copy todir="${build.dir}/lib">
-            <fileset dir="${lib.dir}"/>
-        </copy>
+		<copy todir="${build.dir}/lib">
+			<fileset dir="${lib.dir}" />
+		</copy>
 
-        <!-- set SVN revision here - is not set anymore since nightly/prerel -->
-        <!-- Only works, if rev is not set to nightly/prerel - so should be fine for release build -->
-        <echo message="Rev: ${rev}"/>
-        <property name="rev" value="${svn.info.revision}" />
-        <echo message="Rev: ${rev}"/>
+		<!-- set SVN revision here - is not set anymore since nightly/prerel -->
+		<!-- Only works, if rev is not set to nightly/prerel - so should be fine for release build -->
+		<echo message="Rev: ${rev}" />
+		<property name="rev" value="${svn.info.revision}" />
+		<echo message="Rev: ${rev}" />
 
-        <!-- buildinfo -->
-        <propertyfile file="${build.dir}/version" comment="This file is automatically generated - DO NOT EDIT">
-            <entry key="version" value="${version}" />
-            <entry key="build" value="${rev}" />
-            <entry key="date" value="${today}" />
-        </propertyfile>
-    </target>
-  
-    <target name="setNightly" if="nightly">
-        <property name="rev" value="nightly" />
-    </target>
-    <target name="setPreRelease" if="prerelease">
-        <property name="rev" value="prerelease" />
-    </target>
+		<!-- buildinfo -->
+		<propertyfile file="${build.dir}/version" comment="This file is automatically generated - DO NOT EDIT">
+			<entry key="version" value="${version}" />
+			<entry key="build" value="${rev}" />
+			<entry key="date" value="${today}" />
+		</propertyfile>
+	</target>
 
-    <target name="downloadLocale">
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" 
-             dest="locale/messages_${lang}.properties" username="tmm" password="tmm" ignoreerrors="true"/>
-    </target> 
+	<target name="setNightly" if="nightly">
+		<property name="rev" value="nightly" />
+	</target>
+	<target name="setPreRelease" if="prerelease">
+		<property name="rev" value="prerelease" />
+	</target>
 
-    <target name="downloadLocales">
-        <antcall target="downloadLocale"><param name="lang" value="cs"/></antcall>
-        <!--<antcall target="downloadLocale"><param name="lang" value="da"/></antcall>-->
-        <antcall target="downloadLocale"><param name="lang" value="de"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="es"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="fr"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="hu"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="it"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="ko"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="nl"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="no"/></antcall>
-        <!--<antcall target="downloadLocale"><param name="lang" value="pl"/></antcall>-->
-        <antcall target="downloadLocale"><param name="lang" value="pt"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="ru"/></antcall>
-        <!--<antcall target="downloadLocale"><param name="lang" value="ro"/></antcall>-->
-        <antcall target="downloadLocale"><param name="lang" value="sk"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="sv"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="tr"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="vi"/></antcall>
-        <antcall target="downloadLocale"><param name="lang" value="zh"/></antcall>
-    </target>
+	<target name="downloadLocale">
+		<get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" dest="locale/messages_${lang}.properties" username="tmm" password="tmm" ignoreerrors="true" />
+	</target>
 
-    <target name='package-app' description="builds the packages" depends='create_tmm_jar, downloadLocales'>
-        <!-- default files, to include in dist -->
-        <copy file="objectdb.conf" todir="${build.dir}" />
-        <copy file="changelog.txt" todir="${build.dir}"/>
-        <copy file="AppBundler/getdown.jar" todir="${build.dir}" />
-        <copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
-        <copy todir="${build.dir}/native">
-             <fileset dir="native"/>
-         </copy>
-         <copy todir="${build.dir}/templates">
-             <fileset dir="templates"/>
-         </copy>
-         <copy todir="${build.dir}/locale">
-             <fileset dir="locale"/>
-         </copy>
-        <replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}"/>
+	<target name="downloadLocales">
+		<antcall target="downloadLocale">
+			<param name="lang" value="cs" />
+		</antcall>
+		<!--<antcall target="downloadLocale"><param name="lang" value="da"/></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="de" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="es" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="fr" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="hu" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="it" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="ko" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="nl" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="no" />
+		</antcall>
+		<!--<antcall target="downloadLocale"><param name="lang" value="pl"/></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="pt" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="ru" />
+		</antcall>
+		<!--<antcall target="downloadLocale"><param name="lang" value="ro"/></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="sk" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="sv" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="tr" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="vi" />
+		</antcall>
+		<antcall target="downloadLocale">
+			<param name="lang" value="zh" />
+		</antcall>
+	</target>
 
-        <pathconvert property="gd.code" refid="classpath.default" pathsep="">
-            <mapper>
-                <chainedmapper>
-                    <flattenmapper /> <!-- remove absolute path -->
-                    <!-- add GD + lib/ prefix + newline ;) -->
-                    <globmapper from="*" to="code = lib/*${line.separator}" />
-                </chainedmapper>
-            </mapper>
-        </pathconvert>
-        <!-- echo message="${gd.code}" /-->
-        <replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}"/>
+	<target name='package-app' description="builds the packages" depends='create_tmm_jar, downloadLocales'>
+		<!-- default files, to include in dist -->
+		<copy file="objectdb.conf" todir="${build.dir}" />
+		<copy file="changelog.txt" todir="${build.dir}" />
+		<copy file="AppBundler/getdown.jar" todir="${build.dir}" />
+		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
+		<copy todir="${build.dir}/native">
+			<fileset dir="native" />
+		</copy>
+		<copy todir="${build.dir}/templates">
+			<fileset dir="templates" />
+		</copy>
+		<copy todir="${build.dir}/locale">
+			<fileset dir="locale" />
+		</copy>
+		<replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}" />
 
-        <copy file="AppBundler/launch.jnlp" tofile="${build.dir}/launch.jnlp" />
-        <pathconvert property="webstart" refid="classpath.default" pathsep="">
-            <mapper>
-                <chainedmapper>
-                    <flattenmapper />
-                    <globmapper from="*" to="        &lt;jar href=&quot;lib/*&quot; />${line.separator}" />
-                </chainedmapper>
-            </mapper>
-        </pathconvert>
-        <!-- echo message="${gd.code}" /-->
-        <replace file="${build.dir}/launch.jnlp" token="%WEBSTARTLIBS%" value="${webstart}"/>
+		<pathconvert property="gd.code" refid="classpath.default" pathsep="">
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<!-- remove absolute path -->
+					<!-- add GD + lib/ prefix + newline ;) -->
+					<globmapper from="*" to="code = lib/*${line.separator}" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+		<!-- echo message="${gd.code}" /-->
+		<replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}" />
 
-        <pathconvert property="gd.locale" pathsep="">
-            <mapper>
-                <chainedmapper>
-                    <flattenmapper />
-                    <globmapper from="*" to="resource = locale/*${line.separator}" />
-                </chainedmapper>
-            </mapper>
-            <path>
-                <fileset dir="locale">
-                    <include name="**/*.properties" />
-                </fileset>
-            </path>
-        </pathconvert>
-        <!-- echo message="${gd.locale}" /-->
-        <replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}"/>
+		<copy file="AppBundler/launch.jnlp" tofile="${build.dir}/launch.jnlp" />
+		<pathconvert property="webstart" refid="classpath.default" pathsep="">
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*" to="        &lt;jar href=&quot;lib/*&quot; />${line.separator}" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+		<!-- echo message="${gd.code}" /-->
+		<replace file="${build.dir}/launch.jnlp" token="%WEBSTARTLIBS%" value="${webstart}" />
 
-        <copy file="AppBundler/LICENSE" todir="${build.dir}" />
-        <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
-        <copy file="AppBundler/tmm.png" todir="${build.dir}" />
-        <copy file="AppBundler/env.txt" todir="${build.dir}" />
+		<pathconvert property="gd.locale" pathsep="">
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*" to="resource = locale/*${line.separator}" />
+				</chainedmapper>
+			</mapper>
+			<path>
+				<fileset dir="locale">
+					<include name="**/*.properties" />
+				</fileset>
+			</path>
+		</pathconvert>
+		<!-- echo message="${gd.locale}" /-->
+		<replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}" />
 
-        <!-- Mac OSX -->
-        <mkdir dir="${dist.dir}/mac" />
-        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
-        <jarbundler dir="${dist.dir}/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" 
-                    mainclass="com.threerings.getdown.launcher.Getdown" arguments="." 
-                    bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" 
-                    jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" 
-                    vmoptions="">
-          <jarfileset dir="${build.dir}">
-            <include name="**/*" />
-          	<exclude name="native/windows*/**" />
-          	<exclude name="native/linux*/**" />
-          </jarfileset>
-        </jarbundler>
-        <copy file="AppBundler/JavaApplicationStub.new" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" />
-        <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
-        <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
-        <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
-      	
-        <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
-            <zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
-            <zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
-        </zip> 
+		<copy file="AppBundler/LICENSE" todir="${build.dir}" />
+		<copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
+		<copy file="AppBundler/tmm.png" todir="${build.dir}" />
+		<copy file="AppBundler/env.txt" todir="${build.dir}" />
 
-        <!-- Windows -->
-        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" 
-                 classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
-        <launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}"
-                  outfile="${dist.dir}/tinyMediaManager.exe"/>
-        <launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_r${svn.info.revision}"
-                          outfile="${dist.dir}/tinyMediaManagerUpd.exe"/>
-        <launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}"
-                  outfile="${dist.dir}/tinyMediaManagerCMD.exe"/>
-        <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
-            <zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
-            <zipfileset filemode="755" dir="${dist.dir}" includes="*.exe"/>
-        </zip>
+		<!-- Mac OSX -->
+		<mkdir dir="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS" />
+		<mkdir dir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java" />
+		<copy file="AppBundler/osx/Info.plist.template" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" />
+		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%VERSION%" value="${version}" />
+		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%SVNREV%" value="${svn.info.revision}" />
+		<copy file="AppBundler/osx/PkgInfo" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/PkgInfo" />
+		<copy file="AppBundler/osx/tmm.icns" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/tmm.icns" />
+		<copy todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/">
+			<fileset dir="${build.dir}">
+				<include name="**/*" />
+				<exclude name="native/windows*/**" />
+				<exclude name="native/linux*/**" />
+			</fileset>
+		</copy>
 
-        <!-- Linux -->
-        <copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
-        <copy file="AppBundler/tinyMediaManagerUpdater.sh" todir="${dist.dir}" />
-        <copy file="AppBundler/tinyMediaManagerCMD.sh" todir="${dist.dir}" />
-        <chmod file="${dist.dir}/tinyMediaManager.sh" perm="ugo+rx" />
-        <chmod file="${dist.dir}/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
-        <chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
-        <tar compression="gzip" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz" >
-            <tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**"/>
-            <tarfileset filemode="755" dir="${dist.dir}" includes="*.sh"/>
-        </tar>
+		<copy file="AppBundler/JavaApplicationStub.new" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" />
+		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
+		<copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
+		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
 
-        <!-- default files, NOT to include in dist, but in getdown updater -->
-        <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
-        <copy file="${dist.dir}/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
-        <copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
-        <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
-        <copy file="${dist.dir}/tinyMediaManagerUpdater.sh" tofile="${build.dir}/tinyMediaManagerUpdater.sh" />
-        <copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
-        <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${build.dir}/tinyMediaManagerOSX.sh" />
-        <copy file="AppBundler/JavaApplicationStub.new" tofile="${build.dir}/JavaApplicationStub.new" />
-        <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
+		<!-- Windows -->
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
+		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManager.exe" />
+		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
 
-        <!-- finally create checksums -->
-        <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 
-                 classpath="AppBundler/getdown.jar" />
-        <digest appdir="${build.dir}" />
+		<!-- Linux -->
+		<copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
+		<copy file="AppBundler/tinyMediaManagerUpdater.sh" todir="${dist.dir}" />
+		<copy file="AppBundler/tinyMediaManagerCMD.sh" todir="${dist.dir}" />
+		<chmod file="${dist.dir}/tinyMediaManager.sh" perm="ugo+rx" />
+		<chmod file="${dist.dir}/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
+		<chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
 
-        <!-- done, move dir -->
-        <delete dir="build" />
-        <move file="${build.dir}" tofile="build"/>
-    </target>
 
-    <!--target name="analyze" description="Run analyzers" depends="compile"-->
-    <target name="analyze" description="Run analyzers">
-        <delete dir="reports" />
-        <mkdir dir="reports" />
-        <ant antfile="buildsupport/analyze.xml">
-            <property name="source" value="src"/>
-            <property name="classpath" refid="classpath.default"/>
-            <property name="build" value="${bin.dir}"/>
-            <!--property name="testsource" value="test"/-->
-        </ant>
-    </target>
+		<!-- default files, NOT to include in dist, but in getdown updater -->
+		<copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
+		<copy file="${dist.dir}/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
+		<copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
+		<copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
+		<copy file="${dist.dir}/tinyMediaManagerUpdater.sh" tofile="${build.dir}/tinyMediaManagerUpdater.sh" />
+		<copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
+		<copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${build.dir}/tinyMediaManagerOSX.sh" />
+		<copy file="AppBundler/JavaApplicationStub.new" tofile="${build.dir}/JavaApplicationStub.new" />
+		<copy file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" tofile="${build.dir}/Info.plist" />
+		<copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
+
+		<!-- finally create checksums -->
+		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="AppBundler/getdown.jar" />
+		<digest appdir="${build.dir}" />
+
+		<!-- copy digest.txt and create zip files -->
+    <copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
+		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
+      <zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+      <zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+    </zip>
+		
+		<!-- windows -->
+		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
+		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
+			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
+			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
+		</zip>
+		
+		<!-- linux -->
+		<tar compression="gzip" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz">
+			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**" />
+			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
+		</tar>
+		
+
+    <!-- done, move build dir -->
+    <delete dir="build" />
+    <move file="${build.dir}" tofile="build" />
+	</target>
+
+	<!--target name="analyze" description="Run analyzers" depends="compile"-->
+	<target name="analyze" description="Run analyzers">
+		<delete dir="reports" />
+		<mkdir dir="reports" />
+		<ant antfile="buildsupport/analyze.xml">
+			<property name="source" value="src" />
+			<property name="classpath" refid="classpath.default" />
+			<property name="build" value="${bin.dir}" />
+			<!--property name="testsource" value="test"/-->
+		</ant>
+	</target>
 </project>

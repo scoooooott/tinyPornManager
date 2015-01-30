@@ -34,6 +34,7 @@ resource = [!windows] tinyMediaManager.sh
 resource = [!windows] tinyMediaManagerUpdater.sh
 resource = [mac os x] tinyMediaManagerOSX.sh
 resource = [mac os x] JavaApplicationStub.new               #rename to new, for self-update
+resource = [mac os x] Info.plist
 resource = getdown-new.jar
 resource = version
 resource = splashscreen.png

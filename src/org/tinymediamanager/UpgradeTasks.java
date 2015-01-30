@@ -352,38 +352,32 @@ public class UpgradeTasks {
       file = new File("tinyMediaManager.new");
       if (file.exists() && file.length() > 10000 && file.length() < 50000) {
         File cur = new File("tinyMediaManager.exe");
-        // if (file.length() != cur.length() || !cur.exists()) {
         try {
           FileUtils.copyFile(file, cur);
         }
         catch (IOException e) {
           LOGGER.error("Could not update tmm!");
         }
-        // }
       }
       file = new File("tinyMediaManagerUpd.new");
       if (file.exists() && file.length() > 10000 && file.length() < 50000) {
         File cur = new File("tinyMediaManagerUpd.exe");
-        // if (file.length() != cur.length() || !cur.exists()) {
         try {
           FileUtils.copyFile(file, cur);
         }
         catch (IOException e) {
           LOGGER.error("Could not update the updater!");
         }
-        // }
       }
       file = new File("tinyMediaManagerCMD.new");
       if (file.exists() && file.length() > 10000 && file.length() < 50000) {
         File cur = new File("tinyMediaManagerCMD.exe");
-        // if (file.length() != cur.length() || !cur.exists()) {
         try {
           FileUtils.copyFile(file, cur);
         }
         catch (IOException e) {
           LOGGER.error("Could not update CMD TMM!");
         }
-        // }
       }
     }
 
@@ -392,13 +386,25 @@ public class UpgradeTasks {
       file = new File("JavaApplicationStub.new");
       if (file.exists() && file.length() > 0) {
         File cur = new File("../../MacOS/JavaApplicationStub");
-        if (file.length() != cur.length() || !cur.exists()) {
-          try {
-            FileUtils.copyFile(file, cur);
-          }
-          catch (IOException e) {
-            LOGGER.error("Could not update JavaApplicationStub");
-          }
+        try {
+          FileUtils.copyFile(file, cur);
+        }
+        catch (IOException e) {
+          LOGGER.error("Could not update JavaApplicationStub");
+        }
+      }
+    }
+
+    // OSX Info.plist
+    if (Platform.isMac()) {
+      file = new File("Info.plist");
+      if (file.exists() && file.length() > 0) {
+        File cur = new File("../../Info.plist");
+        try {
+          FileUtils.copyFile(file, cur);
+        }
+        catch (IOException e) {
+          LOGGER.error("Could not update JavaApplicationStub");
         }
       }
     }
