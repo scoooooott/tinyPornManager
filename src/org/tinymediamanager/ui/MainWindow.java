@@ -83,6 +83,7 @@ import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
+import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
@@ -224,6 +225,18 @@ public class MainWindow extends JFrame {
         JDialog logDialog = new LogDialog();
         logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         logDialog.setVisible(true);
+      }
+    });
+
+    JMenuItem tmmMessages = new JMenuItem(BUNDLE.getString("tmm.messages")); //$NON-NLS-1$
+    tmmMessages.setMnemonic(KeyEvent.VK_L);
+    tools.add(tmmMessages);
+    tmmMessages.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        JDialog messageDialog = new MessageHistoryDialog();
+        messageDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        messageDialog.setVisible(true);
       }
     });
 
@@ -400,6 +413,7 @@ public class MainWindow extends JFrame {
       }
     });
     MessageManager.instance.addListener(new UIMessageListener());
+    MessageManager.instance.addListener(TmmUIMessageCollector.instance);
 
     // mouse event listener for context menu
     Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
