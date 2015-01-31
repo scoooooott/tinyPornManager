@@ -293,7 +293,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setAiredEpisode(int newValue) {
     int oldValue = this.episode;
     this.episode = newValue;
-    firePropertyChange(EPISODE, oldValue, newValue);
+    if (!isDvdOrder) {
+      firePropertyChange(EPISODE, oldValue, newValue);
+    }
     firePropertyChange(AIRED_EPISODE, oldValue, newValue);
   }
 
@@ -321,7 +323,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setAiredSeason(int newValue) {
     int oldValue = this.season;
     this.season = newValue;
-    firePropertyChange(SEASON, oldValue, newValue);
+    if (!isDvdOrder) {
+      firePropertyChange(SEASON, oldValue, newValue);
+    }
     firePropertyChange(AIRED_SEASON, oldValue, newValue);
   }
 
@@ -1057,7 +1061,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setDvdSeason(int newValue) {
     int oldValue = this.dvdSeason;
     this.dvdSeason = newValue;
-    firePropertyChange(SEASON, oldValue, newValue);
+    if (isDvdOrder) {
+      firePropertyChange(SEASON, oldValue, newValue);
+    }
     firePropertyChange(DVD_SEASON, oldValue, newValue);
   }
 
@@ -1068,7 +1074,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setDvdEpisode(int newValue) {
     int oldValue = this.dvdEpisode;
     this.dvdEpisode = newValue;
-    firePropertyChange(EPISODE, oldValue, newValue);
+    if (isDvdOrder) {
+      firePropertyChange(EPISODE, oldValue, newValue);
+    }
     firePropertyChange(DVD_EPISODE, oldValue, newValue);
   }
 
