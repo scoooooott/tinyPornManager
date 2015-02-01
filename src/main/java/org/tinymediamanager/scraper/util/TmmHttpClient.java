@@ -1,0 +1,171 @@
+/*
+ * Copyright 2012 - 2014 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.tinymediamanager.scraper.util;
+
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.UnknownHostException;
+
+import javax.net.ssl.SSLException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
+
+/**
+ * The class HttpClient. To construct our HTTP client for internet access
+ * 
+ * @author Manuel Laggner
+ */
+public class TmmHttpClient {
+  private static CloseableHttpClient client = createHttpClient();
+
+  /**
+   * instantiates a new CloseableHttpClient
+   * 
+   * @return CloseableHttpClient
+   */
+  public static CloseableHttpClient createHttpClient() {
+    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+    // Increase default max connection per route to 5
+    connectionManager.setMaxTotal(5);
+
+    HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
+    httpClientBuilder.setConnectionManager(connectionManager);
+
+    // my own retry handler
+    HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
+      @Override
+      public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+        if (executionCount >= 5) {
+          // Do not retry if over max retry count
+          return false;
+        }
+        if (exception instanceof InterruptedIOException) {
+          // Timeout
+          return false;
+        }
+        if (exception instanceof UnknownHostException) {
+          // Unknown host
+          return false;
+        }
+        if (exception instanceof ConnectTimeoutException) {
+          // Connection refused
+          return false;
+        }
+        if (exception instanceof SSLException) {
+          // SSL handshake exception
+          return false;
+        }
+        HttpClientContext clientContext = HttpClientContext.adapt(context);
+        HttpRequest request = clientContext.getRequest();
+        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
+        if (idempotent) {
+          // Retry if the request is considered idempotent
+          return true;
+        }
+        return false;
+      }
+
+    };
+    httpClientBuilder.setRetryHandler(myRetryHandler);
+
+    // set proxy if needed
+    if ((ProxySettings.INSTANCE.useProxy())) {
+      setProxy(httpClientBuilder);
+    }
+
+    return httpClientBuilder.build();
+  }
+
+  /**
+   * Gets the preconfigured http client.
+   * 
+   * @return the http client
+   */
+  public static CloseableHttpClient getHttpClient() {
+    return client;
+  }
+
+  /**
+   * proxy settings have been changed in the class ProxySettings
+   */
+  static void changeProxy() {
+    // recreate a new client instance
+    client = createHttpClient();
+  }
+
+  private static void setProxy(HttpClientBuilder httpClientBuilder) {
+    HttpHost proxyHost = null;
+
+    if (ProxySettings.INSTANCE.getPort() > 0) {
+      proxyHost = new HttpHost(ProxySettings.INSTANCE.getHost(), ProxySettings.INSTANCE.getPort());
+    }
+    else if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getHost())) {
+      proxyHost = new HttpHost(ProxySettings.INSTANCE.getHost());
+    }
+    else {
+      // no proxy settings found. return
+      return;
+    }
+
+    // authenticate
+    if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getUsername()) && StringUtils.isNotBlank(ProxySettings.INSTANCE.getPassword())) {
+      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+      if (ProxySettings.INSTANCE.getUsername().contains("\\")) {
+        // use NTLM
+        int offset = ProxySettings.INSTANCE.getUsername().indexOf("\\");
+        String domain = ProxySettings.INSTANCE.getUsername().substring(0, offset);
+        String username = ProxySettings.INSTANCE.getUsername().substring(offset + 1, ProxySettings.INSTANCE.getUsername().length());
+
+        credentialsProvider.setCredentials(AuthScope.ANY, new NTCredentials(username, ProxySettings.INSTANCE.getPassword(), "", domain));
+      }
+      else {
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ProxySettings.INSTANCE.getUsername(),
+            ProxySettings.INSTANCE.getPassword()));
+      }
+
+      httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+    }
+
+    // set proxy
+    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
+    httpClientBuilder.setRoutePlanner(routePlanner);
+
+    // try to get proxy settings from JRE - is probably added in HttpClient 4.3; fixed with 4.3.3
+    // (https://issues.apache.org/jira/browse/HTTPCLIENT-1457)
+    // SystemDefaultCredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
+    // httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+    // SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+    // httpClientBuilder.setRoutePlanner(routePlanner);
+  }
+}
