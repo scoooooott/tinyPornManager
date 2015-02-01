@@ -1,10 +1,23 @@
 Version 2.6.6
 =======================
-+ new sort order for movies: video bitrate
++ new sort order for movies: video bit rate
 + bulk editing of media source for movies
++ added rating column to the movie table
++ double click in movie set/TV show tree opens the editor
++ added a message history window (menu tools - show message history)
+x fixed the season template in the TV show renamer
+x fixed renamer (movie & tv shows) for case insensitive file systems
 x better rewriting of movie NFO after movie set editing
 x HDRIP is now being recognized as BluRay (more common source than TV)
 x change writing of .desktop files for linux
+x fixed OSX app (now tinyMediaManager is launch able without Java 6)
+x bad words are now checked case insensitive
+x fixed search score calculation for tmdb/rottentomatoes scraper
+x enhanced NFO parsing to be more tolerant
+x fixed subtitle writing for Kodi NFOs
+x improved loading of mediainfo on network shares
+x fixed an UI glitch, where episodes disappeared after scraping 
+x fixed various smaller issues
 
 Version 2.6.5
 =======================
