@@ -5,8 +5,37 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.tinymediamanager.scraper.moviemeternl.model.Film;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmJson;
+import org.tinymediamanager.scraper.moviemeternl.model.SearchJson;
 
 public class MoviemeterMetadataProviderTest {
+
+  // //////////////
+  // V2 JSON API
+  // //////////////
+
+  @Test
+  public void JsonTestV2() {
+    MoviemeterJSONApi mm = new MoviemeterJSONApi();
+    SearchJson[] result = mm.filmSearch("avatar");
+    for (SearchJson movie : result) {
+      System.out.println(movie);
+    }
+
+    FilmJson movie = mm.filmDetail(17552); // avatar
+    System.out.println(movie);
+
+    FilmJson movie2 = mm.filmDetail("tt0499549"); // avatar
+    for (FilmJson.MMActors a : movie2.getActors()) {
+      System.out.println(a.getName());
+    }
+
+  }
+
+  // //////////////
+  // OLD V1 API
+  // //////////////
+
   @Test
   public void listMethods() {
     MoviemeterApi mm = new MoviemeterApi();
