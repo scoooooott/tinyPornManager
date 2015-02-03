@@ -132,7 +132,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
       try {
-        Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
+        year = Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
       }
       catch (Exception e) {
         year = 0;
@@ -252,7 +252,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
           // score adaption based on the year
           int resultYear = 0;
           try {
-            Integer.parseInt(sr.getYear());
+            resultYear = Integer.parseInt(sr.getYear());
           }
           catch (NumberFormatException e) {
           }
