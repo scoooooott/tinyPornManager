@@ -16,20 +16,27 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.scraper.trakttv.TraktTv;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -51,7 +58,6 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private Settings                    settings         = Settings.getInstance();
 
   private JTextField                  tfTraktUsername;
-  private JPasswordField              tfTraktPassword;
   private JTextField                  tfTraktAPIKey;
   private final JPanel                panelFanartTv    = new JPanel();
   private JTextField                  tfFanartClientKey;
@@ -65,9 +71,10 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       panelTrakttv.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.trakttv"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
       add(panelTrakttv, "2, 2, fill, fill");
       panelTrakttv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(125dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(25dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
+          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+          FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+          FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblTraktUsername = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
         panelTrakttv.add(lblTraktUsername, "2, 2, right, default");
@@ -78,21 +85,36 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
         tfTraktUsername.setColumns(10);
       }
       {
-        JLabel lblTraktPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-        panelTrakttv.add(lblTraktPassword, "2, 4, right, default");
-      }
-      {
-        tfTraktPassword = new JPasswordField();
-        panelTrakttv.add(tfTraktPassword, "4, 4, fill, default");
-        tfTraktPassword.setColumns(10);
+        JButton btnTraktRequestAuthToken = new JButton(BUNDLE.getString("Settings.trakttv.requesttoken")); //$NON-NLS-1$
+        btnTraktRequestAuthToken.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (StringUtils.isNotBlank(tfTraktUsername.getText())) {
+
+              try {
+                String url = TraktTv.getAccessTokenRequestUrl(tfTraktUsername.getText());
+                TmmUIHelper.browseUrl(url);
+
+                String accessToken = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(ExternalServicesSettingsPanel.this),
+                    BUNDLE.getString("Settings.trakttv.popup")); //$NON-NLS-1$
+                String authToken = TraktTv.getAccessToken(accessToken);
+                tfTraktAPIKey.setText(authToken);
+              }
+              catch (Exception e1) {
+              }
+            }
+          }
+        });
+        panelTrakttv.add(btnTraktRequestAuthToken, "6, 2");
+
       }
       {
         JLabel lblTraktAPIKey = new JLabel(BUNDLE.getString("Settings.trakttv.apikey")); //$NON-NLS-1$
-        panelTrakttv.add(lblTraktAPIKey, "2, 6, right, default");
+        panelTrakttv.add(lblTraktAPIKey, "2, 4, right, default");
       }
       {
         tfTraktAPIKey = new JTextField();
-        panelTrakttv.add(tfTraktAPIKey, "4, 6, fill, default");
+        panelTrakttv.add(tfTraktAPIKey, "4, 4, 3, 1, fill, default");
         tfTraktAPIKey.setColumns(10);
       }
       panelFanartTv.setBorder(new TitledBorder(null, "Fanart.tv", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -112,7 +134,6 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
 
       if (!Globals.isDonator()) {
         tfTraktUsername.setEnabled(false);
-        tfTraktPassword.setEnabled(false);
         tfTraktAPIKey.setEnabled(false);
         tfFanartClientKey.setEnabled(false);
         String msg = "<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"; //$NON-NLS-1$
@@ -135,12 +156,6 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, tfTraktUsername, jTextFieldBeanProperty);
     autoBinding.bind();
-    //
-    BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("traktPassword");
-    BeanProperty<JPasswordField, String> jPasswordFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JPasswordField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, tfTraktPassword, jPasswordFieldBeanProperty);
-    autoBinding_1.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_2 = BeanProperty.create("traktAPI");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");

@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.trakttv;
 
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -39,16 +40,16 @@ public class ClearTraktTvTask extends TmmTask {
 
   @Override
   protected void doInBackground() {
-    TraktTv traktTV = new TraktTv();
+    TraktTv traktTV = new TraktTv(Globals.settings.getTraktAPI());
 
     if (clearMovies) {
       publishState(BUNDLE.getString("trakt.clear.movies"), 0); //$NON-NLS-1$
-      traktTV.clearTraktMovieCollection();
+      traktTV.clearTraktMovies();
     }
 
     if (clearTvShows) {
       publishState(BUNDLE.getString("trakt.clear.tvshows"), 0); //$NON-NLS-1$
-      traktTV.clearTraktTvShowCollection();
+      traktTV.clearTraktTvShows();
     }
   }
 }

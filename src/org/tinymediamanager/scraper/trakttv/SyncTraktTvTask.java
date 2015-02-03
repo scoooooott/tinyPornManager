@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -63,10 +64,10 @@ public class SyncTraktTvTask extends TmmTask {
 
   @Override
   protected void doInBackground() {
-    TraktTv traktTV = new TraktTv();
+    TraktTv traktTV = new TraktTv(Globals.settings.getTraktAPI());
 
     if (syncMovies) {
-      publishState(BUNDLE.getString("trakt.sync.moviewatched"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.sync.movie"), 0); //$NON-NLS-1$
       if (movies.isEmpty()) {
         traktTV.syncTraktMovieCollection();
       }
@@ -91,18 +92,18 @@ public class SyncTraktTvTask extends TmmTask {
         traktTV.syncTraktTvShowCollection();
       }
       else {
-        traktTV.syncTraktTvShowCollection(tvShows);
+        traktTV.syncTraktTvShows(tvShows);
       }
     }
 
-    if (syncTvShowsWatched) {
-      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0); //$NON-NLS-1$
-      if (tvShows.isEmpty()) {
-        traktTV.syncTraktTvShowWatched();
-      }
-      else {
-        traktTV.syncTraktTvShowWatched(tvShows);
-      }
-    }
+    // if (syncTvShowsWatched) {
+    //      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0); //$NON-NLS-1$
+    // if (tvShows.isEmpty()) {
+    // traktTV.syncTraktTvShowWatched();
+    // }
+    // else {
+    // traktTV.syncTraktTvShowWatched(tvShows);
+    // }
+    // }
   }
 }
