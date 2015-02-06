@@ -286,8 +286,8 @@ public class TraktTv {
     try {
       traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
       LOGGER.info("You have " + traktCollection.size() + " movies in your Trakt.tv collection");
-      traktCollection = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
-      LOGGER.info("You have " + traktCollection.size() + " movies watched");
+      traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
+      LOGGER.info("You have " + traktWatched.size() + " movies watched");
     }
     catch (RetrofitError e) {
       handleRetrofitError(e);
@@ -914,22 +914,29 @@ public class TraktTv {
    */
   private void printStatus(SyncResponse resp) {
     if (resp != null) {
-      if (resp.added != null) {
-        LOGGER.info("Added       : " + getStatusString(resp.added));
+      String info = getStatusString(resp.added);
+      if (!info.isEmpty()) {
+        LOGGER.info("Added       : " + info);
       }
-      if (resp.existing != null) {
-        LOGGER.info("Existing    : " + getStatusString(resp.existing));
+      info = getStatusString(resp.existing);
+      if (!info.isEmpty()) {
+        LOGGER.info("Existing    : " + info);
       }
-      if (resp.deleted != null) {
-        LOGGER.info("Deleted     : " + getStatusString(resp.deleted));
+      info = getStatusString(resp.deleted);
+      if (!info.isEmpty()) {
+        LOGGER.info("Deleted     : " + info);
       }
-      if (resp.not_found != null) {
-        LOGGER.error("Errors      : " + getStatusString(resp.not_found));
+      info = getStatusString(resp.not_found);
+      if (!info.isEmpty()) {
+        LOGGER.error("Errors      : " + info);
       }
     }
   }
 
   private String getStatusString(SyncStats ss) {
+    if (ss == null) {
+      return "";
+    }
     StringBuilder sb = new StringBuilder(50);
 
     if (ss.movies != null && ss.movies > 0) {
@@ -949,6 +956,9 @@ public class TraktTv {
   }
 
   private String getStatusString(SyncErrors ss) {
+    if (ss == null) {
+      return "";
+    }
     StringBuilder sb = new StringBuilder(50);
 
     // TODO: iterate over error array and display which did not work
