@@ -27,7 +27,6 @@ public class TraktTvTest {
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
-    // t.getManager().setIsDebug(true); // http debug
   }
 
   @AfterClass

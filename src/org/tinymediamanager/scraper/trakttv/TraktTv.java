@@ -482,77 +482,6 @@ public class TraktTv {
     syncTraktMovieWatched(MovieList.getInstance().getMovies());
   }
 
-  // /**
-  // * simple class to ease diff
-  // *
-  // * @author Myron Boyle
-  // *
-  // */
-  // private class SimpleShow {
-  // private String title = "";
-  // private int year = 0;
-  // private int tvdb = 0;
-  // private int trakt = 0;
-  // private List<Pair<Integer, Integer>> collection = new ArrayList<Pair<Integer, Integer>>(); // season/episode
-  // private List<Pair<Integer, Integer>> watched = new ArrayList<Pair<Integer, Integer>>(); // season/episode
-  //
-  // public SimpleShow(TvShow show) {
-  // this.title = show.getTitle();
-  // if (!show.getYear().isEmpty()) {
-  // try {
-  // this.year = Integer.valueOf(show.getYear());
-  // }
-  // catch (Exception e) {
-  // this.year = 0;
-  // }
-  // }
-  // if (!show.getTvdbId().isEmpty()) {
-  // try {
-  // this.tvdb = Integer.valueOf(show.getTvdbId());
-  // }
-  // catch (Exception e) {
-  // this.tvdb = 0;
-  // }
-  // }
-  // if (show.getTraktId() != 0) {
-  // try {
-  // this.trakt = Integer.valueOf(show.getTraktId());
-  // }
-  // catch (Exception e) {
-  // this.trakt = 0;
-  // }
-  // }
-  // this.collection = buildSeasonEpArray(show, false);
-  // this.watched = buildSeasonEpArray(show, true);
-  // }
-  // }
-  //
-  // /**
-  // * Helper function to build simple list of all to-update seasons/episodes from tvshow
-  // *
-  // * @param show
-  // * the tvshow
-  // * @param watched
-  // * only watched, or all?
-  // * @return a list of tupels of season/episode pairs
-  // */
-  // private synchronized List<Pair<Integer, Integer>> buildSeasonEpArray(TvShow show, boolean watched) {
-  // List<Pair<Integer, Integer>> tv = new ArrayList<Pair<Integer, Integer>>();
-  // for (TvShowEpisode ep : show.getEpisodes()) {
-  // if (watched) {
-  // // add only watched
-  // if (ep.isWatched()) {
-  // tv.add(new Pair<Integer, Integer>(ep.getSeason(), ep.getEpisode()));
-  // }
-  // }
-  // else {
-  // // add all
-  // tv.add(new Pair<Integer, Integer>(ep.getSeason(), ep.getEpisode()));
-  // }
-  // }
-  // return tv;
-  // }
-
   /**
    * Syncs Trakt.tv collection (add all TMM shows to Trakt)<br>
    * Syncs watched status from Trakt, and sends back the COMPLETE watched status<br>
@@ -579,12 +508,15 @@ public class TraktTv {
       LOGGER.info("Trakt add-to-library status:");
       printStatus(response);
     }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+    }
     catch (OAuthUnauthorizedException e) {
       e.printStackTrace();
     }
 
     // *****************************************************************************
-    // 2) sync back all the missing show IDs (always good to have ;)
+    // 2) sync back ALL missing show IDs (always good to have ;)
     // *****************************************************************************
     List<BaseShow> traktShows = new ArrayList<BaseShow>();
     try {
@@ -592,7 +524,8 @@ public class TraktTv {
       LOGGER.info("You have now " + traktShows.size() + " TvShows in your Trakt.tv collection");
       for (BaseShow traktShow : traktShows) {
         for (TvShow tmmShow : tvShows) {
-          if ((traktShow.show.ids.tvdb != null && traktShow.show.ids.tvdb != 0 && traktShow.show.ids.tvdb.equals(tmmShow.getTvdbId()))
+          if ((traktShow.show.ids.tvdb != null && traktShow.show.ids.tvdb != 0 && !StringUtils.isEmpty(tmmShow.getTvdbId()) && traktShow.show.ids.tvdb
+              .intValue() == Integer.valueOf(tmmShow.getTvdbId()))
               || (traktShow.show.ids.trakt != null && traktShow.show.ids.trakt.equals(tmmShow.getTraktId()))
               || (traktShow.show.ids.tvrage != null && traktShow.show.ids.tvrage.equals(tmmShow.getTvRageId()))) {
             // ok, we have a show match
@@ -656,110 +589,6 @@ public class TraktTv {
   }
 
   /**
-   * Syncs Trakt.tv collection (all given TvShows)<br>
-   * Gets all Trakt shows/episodes from collection, matches them to ours, and sends ONLY the new ones back to Trakt
-   */
-  public void syncTraktTvShowCollectionOld(List<TvShow> tvShows) {
-    if (!isEnabled()) {
-      return;
-    }
-
-    // our simple list of TMM shows
-    List<SyncShow> tmmShows = new ArrayList<SyncShow>();
-    for (TvShow show : tvShows) {
-      tmmShows.add(toSyncShow(show));
-    }
-
-    // *****************************************************************************
-    // 1) get all Trakt TvShows/episodes in collection remove from our temp array
-    // *****************************************************************************
-    List<BaseShow> traktShows = new ArrayList<BaseShow>();
-    try {
-      traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-      LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
-      // Extended.DEFAULT adds url, poster, fanart, banner, genres
-      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      e.printStackTrace();
-    }
-
-    // // loop over all watched shows on trakt
-    // for (BaseShow traktShow : traktShows) {
-    //
-    // // loop over TMM shows, and check if TvDB match
-    // for (int i = tmmShows.size() - 1; i >= 0; i--) {
-    // SimpleShow tmmShow = tmmShows.get(i);
-    // // boolean dirty = false;
-    // if ((traktShow.show.ids.tvdb != null && traktShow.show.ids.tvdb != 0 && traktShow.show.ids.tvdb.equals(tmmShow.tvdb))
-    // || traktShow.show.ids.trakt != null && traktShow.show.ids.trakt.equals(tmmShow.trakt)) {
-    //
-    // // shows matches, so remove episodes already in tmm
-    // for (BaseSeason traktSeason : traktShow.seasons) {
-    // for (BaseEpisode traktEp : traktSeason.episodes) {
-    //
-    // Pair<Integer, Integer> p = new Pair<Integer, Integer>(traktSeason.number, traktEp.number);
-    // if (tmmShow.collection.contains(p)) {
-    // // FIXME: use size() - 1; i >= 0; i-- loop?
-    // tmmShow.collection.remove(p);
-    // }
-    // }
-    // }
-    //
-    // if (tmmShow.collection.size() == 0) {
-    // LOGGER.debug("all Episodes already on Trakt - removing show '" + tmmShow.title + "' from update");
-    // tmmShows.remove(i);
-    // }
-    //
-    // } // end tvdb_id matches
-    // } // end loop tmmShows
-    // } // end loop traktShow
-    //
-    // if (tmmShows.size() == 0) {
-    // LOGGER.info("no new TvShows for Trakt collection sync found.");
-    // return;
-    // }
-    //
-    // // *****************************************************************************
-    // // 2) add additionally shows/episodes to your collection
-    // // *****************************************************************************
-    // LOGGER.debug("prepare " + tmmShows.size() + " TvShows for Trakt.tv collection sync");
-    // for (SimpleShow tmmShow : tmmShows) {
-    //
-    // List<SyncShow> syncShows = new ArrayList<SyncShow>();
-    // SyncShow ss = new SyncShow();
-    //
-    // // add episodes
-    // List<com.jakewharton.trakt.services.ShowService.Episodes.Episode> traktEpList = new
-    // ArrayList<com.jakewharton.trakt.services.ShowService.Episodes.Episode>();
-    // for (Pair<Integer, Integer> p : tmmShow.collection) {
-    // traktEpList.add(new com.jakewharton.trakt.services.ShowService.Episodes.Episode(p.first(), p.second()));
-    // }
-    //
-    // ShowService.Episodes traktObj = new ShowService.Episodes(tmmShow.tvdb, traktEpList);
-    // traktObj.title = tmmShow.title;
-    // traktObj.year = tmmShow.year;
-    //
-    // // phew - we have now our not-yet-in-trakt array, lets do the update :)
-    // try {
-    // LOGGER.info("Adding " + traktEpList.size() + " episodes of show '" + tmmShow.title + "' to Trakt.tv collection");
-    // com.jakewharton.trakt.entities.Response response = TRAKT.showService().episodeLibrary(traktObj);
-    // printStatus(response);
-    // }
-    // catch (RetrofitError e) {
-    // handleRetrofitError(e);
-    // }
-    // catch (OAuthUnauthorizedException e) {
-    // e.printStackTrace();
-    // }
-    // } // end show loop
-  }
-
-  /**
    * Syncs Trakt.tv collection (all TvShows you have)<br>
    * Gets all Trakt shows/episodes from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
@@ -784,8 +613,8 @@ public class TraktTv {
     try {
       traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
       LOGGER.info("You have " + traktCollection.size() + " shows in your Trakt.tv collection");
-      traktCollection = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
-      LOGGER.info("You have " + traktCollection.size() + " shows watched");
+      traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
+      LOGGER.info("You have " + traktWatched.size() + " shows watched");
     }
     catch (RetrofitError e) {
       handleRetrofitError(e);
