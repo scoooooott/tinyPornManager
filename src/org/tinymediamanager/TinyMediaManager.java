@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -84,8 +85,8 @@ public class TinyMediaManager {
   public static void main(String[] args) {
     // simple parse command line
     if (args != null && args.length > 0) {
+      LOGGER.debug("TMM started with: " + Arrays.toString(args));
       TinyMediaManagerCMD.parseParams(args);
-
       System.setProperty("java.awt.headless", "true");
     }
     else {
