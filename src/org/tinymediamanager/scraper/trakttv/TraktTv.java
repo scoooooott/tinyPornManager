@@ -154,6 +154,15 @@ public class TraktTv {
     return TRAKT;
   }
 
+  // @formatter:off
+  // ███╗   ███╗ ██████╗ ██╗   ██╗██╗███████╗███████╗
+  // ████╗ ████║██╔═══██╗██║   ██║██║██╔════╝██╔════╝
+  // ██╔████╔██║██║   ██║██║   ██║██║█████╗  ███████╗
+  // ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██║██╔══╝  ╚════██║
+  // ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ██║███████╗███████║
+  // ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚═╝╚══════╝╚══════╝
+  // @formatter:oon
+
   /**
    * Syncs Trakt.tv collection (specified movies)<br>
    * Gets all Trakt movies from collection, matches them to ours, and sends ONLY the new ones back to Trakt
@@ -397,6 +406,7 @@ public class TraktTv {
             // save Trakt watched status
             LOGGER.info("Marking movie '" + tmmMovie.getTitle() + "' as watched");
             tmmMovie.setWatched(true);
+            tmmMovie.setLastWatched(traktWatched.last_watched_at.toDate());
             dirty = true;
           }
 
@@ -481,6 +491,15 @@ public class TraktTv {
     }
     syncTraktMovieWatched(MovieList.getInstance().getMovies());
   }
+
+  // @formatter:off
+  //  ████████╗██╗   ██╗███████╗██╗  ██╗ ██████╗ ██╗    ██╗███████╗
+  //  ╚══██╔══╝██║   ██║██╔════╝██║  ██║██╔═══██╗██║    ██║██╔════╝
+  //     ██║   ██║   ██║███████╗███████║██║   ██║██║ █╗ ██║███████╗
+  //     ██║   ╚██╗ ██╔╝╚════██║██╔══██║██║   ██║██║███╗██║╚════██║
+  //     ██║    ╚████╔╝ ███████║██║  ██║╚██████╔╝╚███╔███╔╝███████║
+  //     ╚═╝     ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝
+  // @formatter:oon
 
   /**
    * Syncs Trakt.tv collection (add all TMM shows to Trakt)<br>
@@ -669,9 +688,14 @@ public class TraktTv {
     }
   }
 
-  // *****************************
-  // HELPER METHODS
-  // *****************************
+  // @formatter:off
+  // ██╗   ██╗████████╗██╗██╗     ███████╗
+  // ██║   ██║╚══██╔══╝██║██║     ██╔════╝
+  // ██║   ██║   ██║   ██║██║     ███████╗
+  // ██║   ██║   ██║   ██║██║     ╚════██║
+  // ╚██████╔╝   ██║   ██║███████╗███████║
+  //  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
+  // @formatter:oon
 
   private SyncMovie toSyncMovie(Movie tmmMovie) {
     // MovieIds
@@ -684,7 +708,7 @@ public class TraktTv {
       ids.trakt = tmmMovie.getTraktId();
     }
 
-    SyncMovie movie = new SyncMovie().id(ids).collectedAt(new DateTime(tmmMovie.getDateAdded()));
+    SyncMovie movie = new SyncMovie().id(ids).collectedAt(new DateTime(tmmMovie.getDateAdded())).watchedAt(new DateTime(tmmMovie.getLastWatched()));
     return movie;
   }
 
@@ -713,7 +737,7 @@ public class TraktTv {
     for (TvShowSeason tmmSeason : tmmShow.getSeasons()) {
       ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
       for (TvShowEpisode tmmEp : tmmSeason.getEpisodes()) {
-        se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())));
+        se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())).watchedAt(new DateTime(tmmEp.getLastWatched())));
       }
       ss.add(new SyncSeason().number(tmmSeason.getSeason()).episodes(se));
     }

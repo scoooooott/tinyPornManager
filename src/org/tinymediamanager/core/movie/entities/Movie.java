@@ -101,6 +101,7 @@ public class Movie extends MediaEntity {
   private String              writer          = "";
   private String              dataSource      = "";
   private boolean             watched         = false;
+  private Date                lastWatched     = null;
   private MovieSet            movieSet;
   private boolean             isDisc          = false;
   private String              spokenLanguages = "";
@@ -1787,6 +1788,14 @@ public class Movie extends MediaEntity {
    */
   public void setReleaseDate(String dateAsString) throws ParseException {
     setReleaseDate(org.tinymediamanager.scraper.util.StrgUtils.parseDate(dateAsString));
+  }
+
+  public Date getLastWatched() {
+    return lastWatched;
+  }
+
+  public void setLastWatched(Date lastWatched) {
+    this.lastWatched = lastWatched;
   }
 
   @Override

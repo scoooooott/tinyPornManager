@@ -67,29 +67,30 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
-  private static final Logger LOGGER     = LoggerFactory.getLogger(TvShowEpisode.class);
+  private static final Logger LOGGER      = LoggerFactory.getLogger(TvShowEpisode.class);
 
   @ManyToOne
-  private TvShow              tvShow     = null;
-  private int                 episode    = -1;
-  private int                 season     = -1;
-  private int                 dvdSeason  = -1;
-  private int                 dvdEpisode = -1;
-  private Date                firstAired = null;
-  private String              director   = "";
-  private String              writer     = "";
-  private boolean             disc       = false;
-  private boolean             watched    = false;
-  private int                 votes      = 0;
-  private boolean             subtitles  = false;
-  private boolean             isDvdOrder = false;
+  private TvShow              tvShow      = null;
+  private int                 episode     = -1;
+  private int                 season      = -1;
+  private int                 dvdSeason   = -1;
+  private int                 dvdEpisode  = -1;
+  private Date                firstAired  = null;
+  private String              director    = "";
+  private String              writer      = "";
+  private boolean             disc        = false;
+  private boolean             watched     = false;
+  private Date                lastWatched = null;
+  private int                 votes       = 0;
+  private boolean             subtitles   = false;
+  private boolean             isDvdOrder  = false;
 
   @Transient
-  private boolean             newlyAdded = false;
+  private boolean             newlyAdded  = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<TvShowActor>   actors     = new ArrayList<TvShowActor>(0);
-  private List<String>        tags       = new ArrayList<String>(0);
+  private List<TvShowActor>   actors      = new ArrayList<TvShowActor>(0);
+  private List<String>        tags        = new ArrayList<String>(0);
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -649,6 +650,14 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     boolean oldValue = this.watched;
     this.watched = newValue;
     firePropertyChange(WATCHED, oldValue, newValue);
+  }
+
+  public Date getLastWatched() {
+    return lastWatched;
+  }
+
+  public void setLastWatched(Date lastWatched) {
+    this.lastWatched = lastWatched;
   }
 
   /**
