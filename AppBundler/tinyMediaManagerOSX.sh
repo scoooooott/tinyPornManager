@@ -24,6 +24,17 @@ elif [ -x /usr/libexec/java_home ]; then
 fi
 JAVACMD="${JAVA_HOME}/bin/java"
 
+if [ ! -f $JAVACMD || ! -x $JAVACMD ]; then
+  # display error message with applescript
+  osascript -e "tell application \"System Events\" to display dialog \"ERROR launching tinyMediaManager!\n\nYou need to have JAVA installed on your Mac!\nVisit http://java.com for more information...\" with title \"tinyMediaManager\" buttons {\" OK \"} default button 1 with icon path to resource \"tmm.icns\" in bundle (path to me)"
+  
+  # and open java.com
+  open http://java.com
+  
+  # exit with error
+  exit 1
+fi
+
 # have a look if we need to launch the updater or tmm directly
 if [ -f tmm.jar ]; then
   ARGS="-Dsilent=noupdate"
