@@ -43,6 +43,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -156,12 +157,24 @@ public class MovieSet extends MediaEntity {
   @Override
   @Deprecated
   public String getFanart() {
+    // first look in the mediafiles if an artwork filename is there;
+    // after that look in the artwork dir/movie dirs
+    List<MediaFile> fanarts = getMediaFiles(MediaFileType.FANART);
+    if (fanarts != null && fanarts.size() > 0) {
+      return fanarts.get(0).getFile().getPath();
+    }
     return getArtworkFilename(MediaFileType.FANART);
   }
 
   @Override
   @Deprecated
   public String getPoster() {
+    // first look in the mediafiles if an artwork filename is there;
+    // after that look in the artwork dir/movie dirs
+    List<MediaFile> posters = getMediaFiles(MediaFileType.POSTER);
+    if (posters != null && posters.size() > 0) {
+      return posters.get(0).getFile().getPath();
+    }
     return getArtworkFilename(MediaFileType.POSTER);
   }
 
@@ -187,6 +200,9 @@ public class MovieSet extends MediaEntity {
           String artworkFileName = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
           File artworkFile = new File(artworkDir, artworkFileName);
           if (artworkFile.exists()) {
+            // add this artwork to the media files
+            addToMediaFiles(new MediaFile(artworkFile, type));
+            saveToDb();
             return artworkFile.getPath();
           }
           else if (type == MediaFileType.POSTER) {
@@ -194,6 +210,9 @@ public class MovieSet extends MediaEntity {
             artworkFileName = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder." + fileType;
             artworkFile = new File(artworkDir, artworkFileName);
             if (artworkFile.exists()) {
+              // add this artwork to the media files
+              addToMediaFiles(new MediaFile(artworkFile, type));
+              saveToDb();
               return artworkFile.getPath();
             }
           }
@@ -221,6 +240,9 @@ public class MovieSet extends MediaEntity {
           String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
           File artworkFile = new File(movieDir, artworkFileName);
           if (artworkFile.exists()) {
+            // add this artwork to the media files
+            addToMediaFiles(new MediaFile(artworkFile, type));
+            saveToDb();
             return artworkFile.getPath();
           }
           else if (type == MediaFileType.POSTER) {
@@ -228,6 +250,9 @@ public class MovieSet extends MediaEntity {
             artworkFileName = "movieset-folder." + fileType;
             artworkFile = new File(movieDir, artworkFileName);
             if (artworkFile.exists()) {
+              // add this artwork to the media files
+              addToMediaFiles(new MediaFile(artworkFile, type));
+              saveToDb();
               return artworkFile.getPath();
             }
           }
