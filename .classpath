@@ -56,13 +56,9 @@
 	<classpathentry kind="lib" path="lib/jtidy.jar"/>
 	<classpathentry kind="lib" path="lib/json-20131018.jar"/>
 	<classpathentry kind="lib" path="lib/quaqua-filechooser-only.jar"/>
-	<classpathentry kind="lib" path="lib/okhttp-urlconnection.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.oltu.oauth2.client.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.oltu.oauth2.common.jar"/>
 	<classpathentry kind="lib" path="lib/trakt-java.jar"/>
 	<classpathentry kind="lib" path="lib/gson.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time.jar"/>
-	<classpathentry kind="lib" path="lib/okhttp.jar"/>
 	<classpathentry kind="lib" path="lib/retrofit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

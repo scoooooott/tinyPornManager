@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,9 +37,10 @@ import org.tinymediamanager.core.entities.MediaFile;
  * @author Manuel Laggner
  */
 public class TvShowSeason extends AbstractModelObject {
-  private int                    season   = -1;
+  private int                    season      = -1;
   private TvShow                 tvShow;
-  private List<TvShowEpisode>    episodes = new ArrayList<TvShowEpisode>();
+  private List<TvShowEpisode>    episodes    = new ArrayList<TvShowEpisode>();
+  private Date                   lastWatched = null;
   private PropertyChangeListener listener;
 
   public TvShowSeason(int season, TvShow tvShow) {
@@ -137,5 +139,13 @@ public class TvShowSeason extends AbstractModelObject {
       }
     }
     return false;
+  }
+
+  public Date getLastWatched() {
+    return lastWatched;
+  }
+
+  public void setLastWatched(Date lastWatched) {
+    this.lastWatched = lastWatched;
   }
 }

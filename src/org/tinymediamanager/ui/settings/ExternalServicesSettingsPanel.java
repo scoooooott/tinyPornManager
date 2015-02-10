@@ -22,10 +22,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +33,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.scraper.trakttv.TraktTv;
-import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -91,17 +87,17 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
           public void actionPerformed(ActionEvent e) {
             if (StringUtils.isNotBlank(tfTraktUsername.getText())) {
 
-              try {
-                String url = TraktTv.getAccessTokenRequestUrl(tfTraktUsername.getText());
-                TmmUIHelper.browseUrl(url);
-
-                String accessToken = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(ExternalServicesSettingsPanel.this),
-                    BUNDLE.getString("Settings.trakttv.popup")); //$NON-NLS-1$
-                String authToken = TraktTv.getAccessToken(accessToken);
-                tfTraktAPIKey.setText(authToken);
-              }
-              catch (Exception e1) {
-              }
+              // try {
+              // String url = TraktTv.getAccessTokenRequestUrl(tfTraktUsername.getText());
+              // TmmUIHelper.browseUrl(url);
+              //
+              // String accessToken = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(ExternalServicesSettingsPanel.this),
+              //                    BUNDLE.getString("Settings.trakttv.popup")); //$NON-NLS-1$
+              // String authToken = TraktTv.getAccessToken(accessToken);
+              // tfTraktAPIKey.setText(authToken);
+              // }
+              // catch (Exception e1) {
+              // }
             }
           }
         });

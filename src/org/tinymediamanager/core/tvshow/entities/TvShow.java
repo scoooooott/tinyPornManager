@@ -92,6 +92,7 @@ public class TvShow extends MediaEntity {
   private String                      status             = "";
   private String                      studio             = "";
   private boolean                     watched            = false;
+  private Date                        lastWatched        = null;
   private String                      sortTitle          = "";
 
   private List<String>                genres             = new ArrayList<String>(1);
@@ -1594,6 +1595,14 @@ public class TvShow extends MediaEntity {
     boolean oldValue = this.watched;
     this.watched = newValue;
     firePropertyChange(WATCHED, oldValue, newValue);
+  }
+
+  public Date getLastWatched() {
+    return lastWatched;
+  }
+
+  public void setLastWatched(Date lastWatched) {
+    this.lastWatched = lastWatched;
   }
 
   /**

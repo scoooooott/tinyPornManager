@@ -17,15 +17,11 @@ package org.tinymediamanager.scraper.trakttv;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +52,8 @@ import com.uwetrottmann.trakt.v2.entities.SyncSeason;
 import com.uwetrottmann.trakt.v2.entities.SyncShow;
 import com.uwetrottmann.trakt.v2.entities.SyncStats;
 import com.uwetrottmann.trakt.v2.enums.Extended;
-import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
+import com.uwetrottmann.trakt.v2.exceptions.LoginException;
+import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
 
 /**
  * Sync your collection and watched status with Trakt.tv<br>
@@ -67,65 +64,28 @@ import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
  * 
  */
 public class TraktTv {
-  private static final String  CLIENT_ID     = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
-  private static final String  CLIENT_SECRET = "ab297a186a44a374c91ade21b9b76a7709c6411bf5bab8c9480ef4a3488426b1";
-  private static final String  REDIRECT_URI  = "urn:ietf:wg:oauth:2.0:oob";
+  private static final String  CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
-  private static final Logger  LOGGER        = LoggerFactory.getLogger(TraktTv.class);
-  private static final TraktV2 TRAKT         = new TraktV2();
+  private static final Logger  LOGGER    = LoggerFactory.getLogger(TraktTv.class);
+  private static final TraktV2 TRAKT     = new TraktV2();
 
   private SyncResponse         response;
-  private String               authToken;
 
   /**
    * gets a new Trakt object with custom values (user / passAsSHA1)
    */
-  public TraktTv(String authToken) {
-    this.authToken = authToken;
-
+  public TraktTv() {
     TRAKT.setApiKey(CLIENT_ID);
-    TRAKT.setAccessToken(authToken);
-
+    try {
+      TRAKT.setLoginData(Globals.settings.getTraktUsername(), Globals.settings.getTraktPassword());
+    }
+    catch (LoginException e) {
+      LOGGER.error("Error logging in to Trakt:" + e);
+    }
     if (LOGGER.isTraceEnabled()) {
-      // when we are on TRACE, show some Trakt debug settings...
+      // when we are on TRACE, show some Trakt debug settings... (need to set after login)
       TRAKT.setIsDebug(true);
     }
-  }
-
-  /**
-   * retrieve the url for the authorization
-   * 
-   * @param username
-   * @return
-   * @throws Exception
-   */
-  public static String getAccessTokenRequestUrl(String username) throws Exception {
-    String sampleState = new BigInteger(130, new SecureRandom()).toString(32);
-    OAuthClientRequest request = TraktV2.getAuthorizationRequest(CLIENT_ID, REDIRECT_URI, sampleState, username);
-
-    if (request == null || !request.getLocationUri().startsWith(TraktV2.OAUTH2_AUTHORIZATION_URL)) {
-      return "";
-    }
-
-    LOGGER.debug("got authorization request url: " + request.getLocationUri());
-    return request.getLocationUri();
-  }
-
-  /**
-   * get the access token
-   * 
-   * @param authCode
-   * @return
-   * @throws Exception
-   */
-  public static String getAccessToken(String authCode) throws Exception {
-    if (StringUtils.isBlank(authCode)) {
-      return "";
-    }
-
-    OAuthAccessTokenResponse response = TraktV2.getAccessToken(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, authCode);
-    LOGGER.debug("Retrieved access token: " + response.getAccessToken());
-    return response.getAccessToken();
   }
 
   /**
@@ -134,8 +94,8 @@ public class TraktTv {
    * @return true/false if trakt could be called
    */
   private boolean isEnabled() {
-    if (StringUtils.isBlank(authToken)) {
-      LOGGER.warn("Can't spawn TRAKT.TV - Settings empty.");
+    if (!TRAKT.isTokenSet()) {
+      LOGGER.warn("Can't spawn TRAKT.TV - not logged in");
       return false;
     }
     if (!Globals.isDonator()) {
@@ -161,7 +121,7 @@ public class TraktTv {
   // ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██║██╔══╝  ╚════██║
   // ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ██║███████╗███████║
   // ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚═╝╚══════╝╚══════╝
-  // @formatter:oon
+  // @formatter:on
 
   /**
    * Syncs Trakt.tv collection (specified movies)<br>
@@ -190,7 +150,7 @@ public class TraktTv {
       handleRetrofitError(e);
       return;
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -218,6 +178,14 @@ public class TraktTv {
             tmmMovie.setTraktId((int) traktMovie.movie.ids.trakt);
             dirty = true;
           }
+          if (traktMovie.collected_at != null && !(traktMovie.collected_at.toDate().equals(tmmMovie.getDateAdded()))) {
+            // always set from trakt, if not matched (Trakt = master)
+            LOGGER.debug("Marking movie '" + tmmMovie.getTitle() + "' as collected on " + traktMovie.collected_at.toDate() + " (was "
+                + tmmMovie.getDateAddedAsString() + ")");
+            tmmMovie.setDateAdded(traktMovie.collected_at.toDate());
+            dirty = true;
+          }
+
           if (dirty) {
             tmmMovie.saveToDb();
           }
@@ -261,13 +229,13 @@ public class TraktTv {
       LOGGER.info("Adding " + movies.size() + " movies to Trakt.tv collection");
       SyncItems items = new SyncItems().movies(movies);
       response = TRAKT.sync().addItemsToCollection(items);
-
       LOGGER.info("Trakt add-to-library status:");
       printStatus(response);
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
+
   }
 
   /**
@@ -302,7 +270,7 @@ public class TraktTv {
       handleRetrofitError(e);
       return;
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -323,7 +291,7 @@ public class TraktTv {
         handleRetrofitError(e);
         return;
       }
-      catch (OAuthUnauthorizedException e) {
+      catch (UnauthorizedException e) {
         e.printStackTrace();
       }
     }
@@ -345,7 +313,7 @@ public class TraktTv {
         handleRetrofitError(e);
         return;
       }
-      catch (OAuthUnauthorizedException e) {
+      catch (UnauthorizedException e) {
         e.printStackTrace();
       }
     }
@@ -375,7 +343,7 @@ public class TraktTv {
       handleRetrofitError(e);
       return;
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -397,7 +365,7 @@ public class TraktTv {
             tmmMovie.setTmdbId((int) traktWatched.movie.ids.tmdb);
             dirty = true;
           }
-          if (tmmMovie.getTraktId() == 0) { // TODO: TEST and get/set
+          if (tmmMovie.getTraktId() == 0) {
             tmmMovie.setTraktId((int) traktWatched.movie.ids.trakt);
             dirty = true;
           }
@@ -406,6 +374,12 @@ public class TraktTv {
             // save Trakt watched status
             LOGGER.info("Marking movie '" + tmmMovie.getTitle() + "' as watched");
             tmmMovie.setWatched(true);
+            dirty = true;
+          }
+          if (traktWatched.last_watched_at != null && !(traktWatched.last_watched_at.toDate().equals(tmmMovie.getLastWatched()))) {
+            // always set from trakt, if not matched (Trakt = master)
+            LOGGER.debug("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + traktWatched.last_watched_at.toDate() + " (was "
+                + tmmMovie.getLastWatched() + ")");
             tmmMovie.setLastWatched(traktWatched.last_watched_at.toDate());
             dirty = true;
           }
@@ -449,8 +423,9 @@ public class TraktTv {
     List<SyncMovie> movies = new ArrayList<SyncMovie>();
     int nosync = 0;
     for (Movie tmmMovie : tmmWatchedMovies) {
-      if (tmmMovie.getImdbId().isEmpty() && tmmMovie.getTmdbId() == 0) {
-        // do not add to Trakt if we have no IDs
+      // FIXME: remove that? we are always syncing at least the trakt id - there cannot be none...?
+      if (tmmMovie.getTraktId() == 0 && tmmMovie.getImdbId().isEmpty() && tmmMovie.getTmdbId() == 0) {
+        // we should now ALWAYS have a traktId, if not, at least imdb/tmdb
         nosync++;
         continue;
       }
@@ -475,7 +450,7 @@ public class TraktTv {
     catch (RetrofitError e) {
       handleRetrofitError(e);
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
   }
@@ -499,7 +474,7 @@ public class TraktTv {
   //     ██║   ╚██╗ ██╔╝╚════██║██╔══██║██║   ██║██║███╗██║╚════██║
   //     ██║    ╚████╔╝ ███████║██║  ██║╚██████╔╝╚███╔███╔╝███████║
   //     ╚═╝     ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝
-  // @formatter:oon
+  // @formatter:on
 
   /**
    * Syncs Trakt.tv collection (add all TMM shows to Trakt)<br>
@@ -530,7 +505,7 @@ public class TraktTv {
     catch (RetrofitError e) {
       handleRetrofitError(e);
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -593,7 +568,7 @@ public class TraktTv {
       handleRetrofitError(e);
       return;
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -639,7 +614,7 @@ public class TraktTv {
       handleRetrofitError(e);
       return;
     }
-    catch (OAuthUnauthorizedException e) {
+    catch (UnauthorizedException e) {
       e.printStackTrace();
     }
 
@@ -660,7 +635,7 @@ public class TraktTv {
         handleRetrofitError(e);
         return;
       }
-      catch (OAuthUnauthorizedException e) {
+      catch (UnauthorizedException e) {
         e.printStackTrace();
       }
     }
@@ -682,7 +657,7 @@ public class TraktTv {
         handleRetrofitError(e);
         return;
       }
-      catch (OAuthUnauthorizedException e) {
+      catch (UnauthorizedException e) {
         e.printStackTrace();
       }
     }
@@ -695,7 +670,7 @@ public class TraktTv {
   // ██║   ██║   ██║   ██║██║     ╚════██║
   // ╚██████╔╝   ██║   ██║███████╗███████║
   //  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
-  // @formatter:oon
+  // @formatter:on
 
   private SyncMovie toSyncMovie(Movie tmmMovie) {
     // MovieIds
@@ -737,7 +712,8 @@ public class TraktTv {
     for (TvShowSeason tmmSeason : tmmShow.getSeasons()) {
       ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
       for (TvShowEpisode tmmEp : tmmSeason.getEpisodes()) {
-        se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())).watchedAt(new DateTime(tmmEp.getLastWatched())));
+        se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded()))
+            .watchedAt(new DateTime(tmmEp.getLastWatched())));
       }
       ss.add(new SyncSeason().number(tmmSeason.getSeason()).episodes(se));
     }
@@ -751,11 +727,12 @@ public class TraktTv {
     for (BaseSeason baseSeason : baseShow.seasons) {
       ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
       for (BaseEpisode baseEp : baseSeason.episodes) {
-        se.add(new SyncEpisode().number(baseEp.number));
+        se.add(new SyncEpisode().number(baseEp.number).collectedAt(new DateTime(baseEp.collected_at)));
       }
       ss.add(new SyncSeason().number(baseSeason.number).episodes(se));
     }
-    SyncShow show = new SyncShow().id(baseShow.show.ids).collectedAt(new DateTime(baseShow.collected_at)).seasons(ss);
+    SyncShow show = new SyncShow().id(baseShow.show.ids).collectedAt(new DateTime(baseShow.last_collected_at))
+        .watchedAt(new DateTime(baseShow.last_watched_at)).seasons(ss);
     return show;
   }
 
