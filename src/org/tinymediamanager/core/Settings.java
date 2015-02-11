@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -984,43 +983,15 @@ public class Settings extends AbstractModelObject {
     firePropertyChange("traktUsername", oldValue, newValue);
   }
 
-  /**
-   * Password is SHA1 encoded!
-   * 
-   * @return trakt sha1 password
-   */
+  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
   public String getTraktPassword() {
     return traktPassword;
   }
 
-  /**
-   * sets the password as SHA1
-   * 
-   * @param newValue
-   *          the password; either plaintext or already sha1
-   */
-  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
   public void setTraktPassword(String newValue) {
     String oldValue = this.traktPassword;
-    if (newValue != null && !newValue.matches("[a-fA-F0-9]{40}")) {
-      // plaintext - convert to sha1
-      this.traktPassword = DigestUtils.shaHex(newValue.trim());
-    }
-    else {
-      // already sha1 - set it 1:1
-      this.traktPassword = newValue;
-    }
+    this.traktPassword = newValue;
     firePropertyChange("traktPassword", oldValue, newValue);
-  }
-
-  public String getTraktAPI() {
-    return traktAPI.trim();
-  }
-
-  public void setTraktAPI(String newValue) {
-    String oldValue = this.traktAPI;
-    this.traktAPI = newValue.trim();
-    firePropertyChange("traktAPI", oldValue, newValue);
   }
 
   public String getFanartClientKey() {

@@ -16,17 +16,14 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -54,7 +51,7 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private Settings                    settings         = Settings.getInstance();
 
   private JTextField                  tfTraktUsername;
-  private JTextField                  tfTraktAPIKey;
+  private JPasswordField              tfTraktPassword;
   private final JPanel                panelFanartTv    = new JPanel();
   private JTextField                  tfFanartClientKey;
 
@@ -74,45 +71,17 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       {
         JLabel lblTraktUsername = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
         panelTrakttv.add(lblTraktUsername, "2, 2, right, default");
-      }
-      {
         tfTraktUsername = new JTextField();
         panelTrakttv.add(tfTraktUsername, "4, 2, fill, default");
         tfTraktUsername.setColumns(10);
       }
       {
-        JButton btnTraktRequestAuthToken = new JButton(BUNDLE.getString("Settings.trakttv.requesttoken")); //$NON-NLS-1$
-        btnTraktRequestAuthToken.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (StringUtils.isNotBlank(tfTraktUsername.getText())) {
-
-              // try {
-              // String url = TraktTv.getAccessTokenRequestUrl(tfTraktUsername.getText());
-              // TmmUIHelper.browseUrl(url);
-              //
-              // String accessToken = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(ExternalServicesSettingsPanel.this),
-              //                    BUNDLE.getString("Settings.trakttv.popup")); //$NON-NLS-1$
-              // String authToken = TraktTv.getAccessToken(accessToken);
-              // tfTraktAPIKey.setText(authToken);
-              // }
-              // catch (Exception e1) {
-              // }
-            }
-          }
-        });
-        panelTrakttv.add(btnTraktRequestAuthToken, "6, 2");
-
+        JLabel lblTraktPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
+        panelTrakttv.add(lblTraktPassword, "2, 4, right, default");
+        tfTraktPassword = new JPasswordField();
       }
-      {
-        JLabel lblTraktAPIKey = new JLabel(BUNDLE.getString("Settings.trakttv.apikey")); //$NON-NLS-1$
-        panelTrakttv.add(lblTraktAPIKey, "2, 4, right, default");
-      }
-      {
-        tfTraktAPIKey = new JTextField();
-        panelTrakttv.add(tfTraktAPIKey, "4, 4, 3, 1, fill, default");
-        tfTraktAPIKey.setColumns(10);
-      }
+      panelTrakttv.add(tfTraktPassword, "4, 4, fill, default");
+      tfTraktPassword.setColumns(10);
       panelFanartTv.setBorder(new TitledBorder(null, "Fanart.tv", TitledBorder.LEADING, TitledBorder.TOP, null, null));
       add(panelFanartTv, "2, 5, fill, fill");
       panelFanartTv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -130,7 +99,7 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
 
       if (!Globals.isDonator()) {
         tfTraktUsername.setEnabled(false);
-        tfTraktAPIKey.setEnabled(false);
+        tfTraktPassword.setEnabled(false);
         tfFanartClientKey.setEnabled(false);
         String msg = "<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"; //$NON-NLS-1$
         JLabel lblTraktDonator = new JLabel(msg);
@@ -153,11 +122,11 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
         settingsBeanProperty, tfTraktUsername, jTextFieldBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_2 = BeanProperty.create("traktAPI");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, tfTraktAPIKey, jTextFieldBeanProperty_1);
-    autoBinding_2.bind();
+    BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("traktPassword");
+    BeanProperty<JPasswordField, String> jPasswordFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<Settings, String, JPasswordField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, tfTraktPassword, jPasswordFieldBeanProperty);
+    autoBinding_1.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("fanartClientKey");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
