@@ -1,5 +1,8 @@
 Version 2.6.6
 =======================
++ updated trakt.tv library to the new API
+  IMPORTANT: please re-enter your login data for trakt.tv
+  
 + new sort order for movies: video bit rate
 + bulk editing of media source for movies
 + added rating column to the movie table
@@ -16,7 +19,8 @@ x fixed search score calculation for tmdb/rottentomatoes scraper
 x enhanced NFO parsing to be more tolerant
 x fixed subtitle writing for Kodi NFOs
 x improved loading of mediainfo on network shares
-x fixed an UI glitch, where episodes disappeared after scraping 
+x fixed an UI glitch, where episodes disappeared after scraping
+x performance fix for offline movie set artwork 
 x fixed various smaller issues
 
 Version 2.6.5
