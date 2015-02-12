@@ -91,18 +91,18 @@ public class SyncTraktTvTask extends TmmTask {
         traktTV.syncTraktTvShowCollection();
       }
       else {
-        traktTV.syncTraktTvShows(tvShows);
+        traktTV.syncTraktTvShowCollection(tvShows);
       }
     }
 
-    // if (syncTvShowsWatched) {
-    //      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0); //$NON-NLS-1$
-    // if (tvShows.isEmpty()) {
-    // traktTV.syncTraktTvShowWatched();
-    // }
-    // else {
-    // traktTV.syncTraktTvShowWatched(tvShows);
-    // }
-    // }
+    if (syncTvShowsWatched) {
+      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0); //$NON-NLS-1$
+      if (tvShows.isEmpty()) {
+        traktTV.syncTraktTvShowWatched();
+      }
+      else {
+        traktTV.syncTraktTvShowWatched(tvShows);
+      }
+    }
   }
 }

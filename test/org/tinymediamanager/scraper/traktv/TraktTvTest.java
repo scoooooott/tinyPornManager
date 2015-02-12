@@ -48,7 +48,7 @@ public class TraktTvTest {
 
   @Test
   public void syncTraktTvShowWatched() {
-    // t.syncTraktTvShowWatched();
+    t.syncTraktTvShowWatched();
   }
 
   // @Test
@@ -68,7 +68,7 @@ public class TraktTvTest {
 
   @Test
   public void clearTvShows() {
-    // t.clearTraktTvShowCollection();
+    t.clearTraktTvShows();
   }
 
   @Test
