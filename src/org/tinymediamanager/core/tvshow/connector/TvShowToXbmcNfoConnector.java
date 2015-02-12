@@ -46,6 +46,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -158,8 +159,8 @@ public class TvShowToXbmcNfoConnector {
     }
 
     // set data
-    if (tvShow.getTvdbId() != null) {
-      String tvdbid = tvShow.getTvdbId();
+    String tvdbid = tvShow.getIdAsString(Constants.TVDBID);
+    if (tvdbid.isEmpty()) {
       xbmc.setId(tvdbid);
       xbmc.episodeguide.url.cache = tvdbid + ".xml";
       xbmc.episodeguide.url.url = "http://www.thetvdb.com/api/1D62F2F90030C444/series/" + tvdbid + "/all/"

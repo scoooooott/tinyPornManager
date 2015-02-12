@@ -39,7 +39,7 @@ public class ClearTraktTvTask extends TmmTask {
 
   @Override
   protected void doInBackground() {
-    TraktTv traktTV = new TraktTv();
+    TraktTv traktTV = TraktTv.getInstance();
 
     if (clearMovies) {
       publishState(BUNDLE.getString("trakt.clear.movies"), 0); //$NON-NLS-1$

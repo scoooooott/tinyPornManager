@@ -59,6 +59,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -607,13 +608,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tfSorttitle.setText(tvShow.getSortTitle());
       tfImdbId.setText(tvShow.getImdbId());
 
-      Object obj = tvShow.getTvdbId();
-      if (obj == null) {
-        tfTvdbId.setText("");
-      }
-      else {
-        tfTvdbId.setText(obj.toString());
-      }
+      tfTvdbId.setText(tvShow.getIdAsString(Constants.TVDBID));
       tpPlot.setText(tvShow.getPlot());
       lblPoster.setImagePath(tvShow.getPoster());
       lblThumb.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.THUMB));

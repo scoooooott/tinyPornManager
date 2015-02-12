@@ -10,7 +10,7 @@ import org.tinymediamanager.scraper.trakttv.TraktTv;
 
 public class TraktTvTest {
 
-  private static final TraktTv t = new TraktTv();
+  private static final TraktTv t = TraktTv.getInstance();
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {

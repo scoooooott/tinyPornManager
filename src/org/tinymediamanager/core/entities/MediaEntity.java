@@ -492,6 +492,31 @@ public abstract class MediaEntity extends AbstractModelObject {
     return ids.get(key);
   }
 
+  /**
+   * any ID as String or empty
+   */
+  public String getIdAsString(String key) {
+    Object obj = ids.get(key);
+    if (obj == null) {
+      return "";
+    }
+    return String.valueOf(obj);
+  }
+
+  /**
+   * any ID as int or 0
+   */
+  public int getIdAsInt(String key) {
+    int id = 0;
+    try {
+      id = Integer.valueOf(String.valueOf(ids.get(key)));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
+  }
+
   public void addToMediaFiles(MediaFile mediaFile) {
     // synchronized (mediaFiles) {
 

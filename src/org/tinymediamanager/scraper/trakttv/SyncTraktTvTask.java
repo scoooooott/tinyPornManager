@@ -63,7 +63,7 @@ public class SyncTraktTvTask extends TmmTask {
 
   @Override
   protected void doInBackground() {
-    TraktTv traktTV = new TraktTv();
+    TraktTv traktTV = TraktTv.getInstance();
 
     if (syncMovies) {
       publishState(BUNDLE.getString("trakt.sync.movie"), 0); //$NON-NLS-1$
