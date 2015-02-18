@@ -38,10 +38,10 @@ import ca.odell.glazedlists.matchers.Matcher;
  * 
  * @author Manuel Laggner
  */
-public class MoviesExtendedMatcher implements Matcher<Movie> {
+public class MovieExtendedMatcher implements Matcher<Movie> {
   public enum SearchOptions {
     DUPLICATES, WATCHED, GENRE, CERTIFICATION, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA,
-    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES, MEDIA_SOURCE
+    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES, MEDIA_SOURCE, YEAR
   }
 
   private HashMap<SearchOptions, Object> searchOptions;
@@ -52,15 +52,10 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
    * @param searchOptions
    *          the search options
    */
-  public MoviesExtendedMatcher(HashMap<SearchOptions, Object> searchOptions) {
+  public MovieExtendedMatcher(HashMap<SearchOptions, Object> searchOptions) {
     this.searchOptions = searchOptions;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.matchers.Matcher#matches(java.lang.Object)
-   */
   @Override
   public boolean matches(Movie movie) {
     // not null
@@ -198,6 +193,14 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
       MovieMediaSource mediaSource = (MovieMediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE);
       if (movie.getMediaSource() != mediaSource) {
+        return false;
+      }
+    }
+
+    // check against year
+    if (searchOptions.containsKey(SearchOptions.YEAR)) {
+      Integer year = (Integer) searchOptions.get(SearchOptions.YEAR);
+      if (!movie.getYear().equals(year.toString())) {
         return false;
       }
     }

@@ -222,7 +222,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param filter
    *          the filter
    */
-  public void filterMovies(HashMap<MoviesExtendedMatcher.SearchOptions, Object> filter) {
+  public void filterMovies(HashMap<MovieExtendedMatcher.SearchOptions, Object> filter) {
     matcherEditor.filterMovies(filter);
   }
 

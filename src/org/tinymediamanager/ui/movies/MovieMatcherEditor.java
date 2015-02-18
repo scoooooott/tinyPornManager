@@ -41,8 +41,8 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
    * @param filter
    *          the filter
    */
-  public void filterMovies(HashMap<MoviesExtendedMatcher.SearchOptions, Object> filter) {
-    Matcher<Movie> matcher = new MoviesExtendedMatcher(filter);
+  public void filterMovies(HashMap<MovieExtendedMatcher.SearchOptions, Object> filter) {
+    Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
     fireChanged(matcher);
   }
 }
