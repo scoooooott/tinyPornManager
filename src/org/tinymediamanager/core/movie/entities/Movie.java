@@ -1224,42 +1224,43 @@ public class Movie extends MediaEntity {
     switch (nfo) {
       case FILENAME_NFO:
         if (isDisc()) {
-          // if NFO filename is activated, we generate them accordingly MF(1)
+          // if filename is activated, we generate them accordingly MF(1)
           // but if disc, fixtate this
           if (new File(path, "VIDEO_TS.ifo").exists() || new File(path, "VIDEO_TS").exists()) {
-            return "VIDEO_TS.nfo";
+            filename = "VIDEO_TS.nfo";
           }
-          else {
-            // ohm... there is no official naming, lets write an index file...
-            return "index.nfo";
+          else if (new File(path, "index.bdmv").exists()) {
+            filename = "index.nfo";
+          }
+          else if (new File(path, "BDMV").exists()) {
+            filename = "BDMV.nfo";
           }
         }
-        String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-        filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
+        else {
+          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
+          filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
+        }
         break;
       case MOVIE_NFO:
         filename += "movie.nfo";
         break;
       case DISC_NFO:
-        // detect if this directory is a DVD or BR directory
-        // info for that file naming: http://wiki.xbmc.org/index.php?title=NFO_files/movies
-        File dir = new File(path, "VIDEO_TS.ifo");
-        if (dir.exists()) {
-          return "VIDEO_TS.nfo";// DVD w/o video_ts folder
-        }
-        dir = new File(path, "VIDEO_TS");
-        if (dir.exists() && dir.isDirectory()) {
-          return "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
-        }
-        dir = new File(path, "BDMV");
-        if (dir.exists() && dir.isDirectory()) {
-          return "BDMV" + File.separator + "index.nfo";
+        if (isDisc()) {
+          File dir = new File(path, "VIDEO_TS");
+          if (dir.exists() && dir.isDirectory()) {
+            filename = "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
+          }
+          dir = new File(path, "BDMV");
+          if (dir.exists() && dir.isDirectory()) {
+            filename = "BDMV" + File.separator + "index.nfo";
+          }
         }
         break;
       default:
         filename = "";
         break;
     }
+    LOGGER.trace("Renaming '" + newMovieFilename + "' with NFO name " + nfo + " to '" + filename + "'");
     return filename;
   }
 

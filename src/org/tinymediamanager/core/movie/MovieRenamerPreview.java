@@ -170,12 +170,12 @@ public class MovieRenamerPreview {
         }
         else {
           nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-          if (movie.isDisc()) {
-            nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
-          }
         }
         for (MovieNfoNaming name : nfonames) {
           newFilename = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
+          if (newFilename.isEmpty()) {
+            continue;
+          }
           MediaFile nfo = new MediaFile(mf);
           nfo.setFile(new File(movieDir + newFilename));
           newFiles.add(nfo);

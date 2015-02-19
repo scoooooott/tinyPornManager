@@ -23,14 +23,13 @@ package org.tinymediamanager.core.movie;
  */
 public enum MovieNfoNaming {
 
-  /** [filename].nfo */
+  /** [filename].nfo (and/or VIDEO:TS.nfo in root) */
   FILENAME_NFO,
-  /** movie.nfo */
+  /** movie.nfo (in root) */
   MOVIE_NFO,
   /**
-   * DVD/Bluray style - used internally only when isDisc()<br>
-   * <b>do not use/present/save that - it's added automatically</b>
+   * DVD/Bluray style<br>
+   * <b>this is the nfo INSIDE the disc FOLDER</b>
    */
-  @Deprecated
   DISC_NFO
 }

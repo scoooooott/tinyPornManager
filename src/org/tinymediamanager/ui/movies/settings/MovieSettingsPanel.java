@@ -86,6 +86,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbNfoFormat;
   private JCheckBox                   cbMovieNfoFilename1;
   private JCheckBox                   cbMovieNfoFilename2;
+  private JCheckBox                   cbMovieNfoFilename3;
   private JCheckBox                   chckbxMultipleMoviesPerFolder;
   private JCheckBox                   chckbxImageCache;
   private JTextField                  tfAddBadword;
@@ -195,7 +196,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
         FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -274,6 +275,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 11, 3, 1");
 
+    cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle") + ".nfo"); //$NON-NLS-1$
+    panelMovieDataSources.add(cbMovieNfoFilename3, "4, 12, 3, 1");
+
     JPanel panelBadWords = new JPanel();
     panelBadWords.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.movie.badwords"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelBadWords, "4, 2, 1, 3, fill, fill");
@@ -330,9 +334,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
       cbMovieNfoFilename1.setSelected(true);
     }
-
     if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
       cbMovieNfoFilename2.setSelected(true);
+    }
+    if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
+      cbMovieNfoFilename3.setSelected(true);
     }
 
     // item listener
@@ -343,6 +349,12 @@ public class MovieSettingsPanel extends ScrollablePanel {
       }
     });
     cbMovieNfoFilename2.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    });
+    cbMovieNfoFilename3.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
@@ -370,6 +382,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     }
     if (cbMovieNfoFilename2.isSelected()) {
       settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+    }
+    if (cbMovieNfoFilename3.isSelected()) {
+      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
     }
   }
 

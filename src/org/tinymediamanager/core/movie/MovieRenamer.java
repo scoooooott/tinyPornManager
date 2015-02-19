@@ -236,14 +236,12 @@ public class MovieRenamer {
 
     // cleanup with old movie name
     for (MovieNfoNaming s : MovieNfoNaming.values()) {
-      if (!movie.isDisc() && s == MovieNfoNaming.DISC_NFO) {
-        // this is a corner case
-        // nfoNaming returns an empty string if no disc, so the filename == movie pathname!!
-        // skip that to not accidently delete the movie dir :p
+      String nfoFilename = movie.getNfoFilename(s);
+      if (nfoFilename.isEmpty()) {
         continue;
       }
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)), MediaFileType.NFO);
+      MediaFile del = new MediaFile(new File(movie.getPath(), nfoFilename), MediaFileType.NFO);
       cleanup.add(del);
     }
     for (MoviePosterNaming s : MoviePosterNaming.values()) {
@@ -372,18 +370,18 @@ public class MovieRenamer {
 
       List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
       if (movie.isMultiMovieDir()) {
-        // Fixate the name regardless of setting
+        // Fixate the name regardless of setting - it can only be that
         nfonames.add(MovieNfoNaming.FILENAME_NFO);
       }
       else {
         nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-        if (movie.isDisc()) {
-          nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
-        }
       }
       for (MovieNfoNaming name : nfonames) {
         MediaFile newMF = new MediaFile(mf);
         newFilename = movie.getNfoFilename(name, newMovieFilename);
+        if (newFilename.isEmpty()) {
+          continue;
+        }
         File newFile = new File(newPathname, newFilename);
         try {
           boolean ok = copyFile(mf.getFile(), newFile);

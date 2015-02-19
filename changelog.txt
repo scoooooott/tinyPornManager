@@ -9,6 +9,7 @@ Version 2.6.6
 + double click in movie set/TV show tree opens the editor
 + added a message history window (menu tools - show message history)
 + added filter option for year (movie)
+x reworked NFO naming. Now be able to add NFO inside DISC folders separately
 x fixed the season template in the TV show renamer
 x fixed renamer (movie & tv shows) for case insensitive file systems
 x better rewriting of movie NFO after movie set editing

@@ -494,13 +494,13 @@ public class MovieToXbmcNfoConnector {
     }
     else {
       nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-      if (movie.isDisc()) {
-        nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
-      }
     }
     for (MovieNfoNaming name : nfonames) {
       try {
         nfoFilename = movie.getNfoFilename(name);
+        if (nfoFilename.isEmpty()) {
+          continue;
+        }
 
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
