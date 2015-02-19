@@ -1084,8 +1084,9 @@ public class TraktTv {
       if (r.getBody() != null && r.getBody().length() > 0) {
         try {
           InputStream in = r.getBody().in();
-          msg += " - " + IOUtils.toString(in, "UTF-8");
+          String body = " - " + IOUtils.toString(in, "UTF-8");
           in.close();
+          LOGGER.trace(body);
         }
         catch (IOException e1) {
           LOGGER.warn("IOException on Trakt error", e1);
