@@ -879,32 +879,32 @@ public class TraktTv {
   }
 
   private boolean matches(TvShow tmmShow, ShowIds ids) {
-    if (ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(Constants.TRAKTID)) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(Constants.TRAKTID)) {
       return true;
     }
     if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmShow.getIdAsString(Constants.IMDBID))) {
       return true;
     }
-    if (ids.tmdb != 0 && ids.tmdb == tmmShow.getIdAsInt(Constants.TMDBID)) {
+    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmShow.getIdAsInt(Constants.TMDBID)) {
       return true;
     }
-    if (ids.tvdb != 0 && ids.tvdb == tmmShow.getIdAsInt(Constants.TVDBID)) {
+    if (ids.tvdb != null && ids.tvdb != 0 && ids.tvdb == tmmShow.getIdAsInt(Constants.TVDBID)) {
       return true;
     }
-    if (ids.tvrage != 0 && ids.tvrage == tmmShow.getIdAsInt(Constants.TVRAGEID)) {
+    if (ids.tvrage != null && ids.tvrage != 0 && ids.tvrage == tmmShow.getIdAsInt(Constants.TVRAGEID)) {
       return true;
     }
     return false;
   }
 
   private boolean matches(Movie tmmMovie, MovieIds ids) {
-    if (ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(Constants.TRAKTID)) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(Constants.TRAKTID)) {
       return true;
     }
     if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmMovie.getIdAsString(Constants.IMDBID))) {
       return true;
     }
-    if (ids.tmdb != 0 && ids.tmdb == tmmMovie.getIdAsInt(Constants.TMDBID)) {
+    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmMovie.getIdAsInt(Constants.TMDBID)) {
       return true;
     }
     return false;
