@@ -93,6 +93,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
@@ -153,6 +154,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionExport                  = new TvShowExportAction();
   private final Action                actionSyncTrakt               = new TvShowSyncTraktTvAction();
   private final Action                actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
+  private final Action                actionSyncSelectedTrakt       = new TvShowSyncSelectedTraktTvAction();
   private final Action                actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
   private final Action                actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
 
@@ -579,6 +581,7 @@ public class TvShowPanel extends JPanel {
     menuItem.setMnemonic(KeyEvent.VK_T);
     menuItem = menu.add(actionSyncWatchedTrakt);
     menuItem.setMnemonic(KeyEvent.VK_W);
+    menuItem = menu.add(actionSyncSelectedTrakt);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -607,6 +610,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);
+    popupMenu.add(actionSyncSelectedTrakt);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.add(actionDelete2);

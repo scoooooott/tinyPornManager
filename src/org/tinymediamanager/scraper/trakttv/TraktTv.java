@@ -200,7 +200,7 @@ public class TraktTv {
 
           if (traktMovie.collected_at != null && !(traktMovie.collected_at.toDate().equals(tmmMovie.getDateAdded()))) {
             // always set from trakt, if not matched (Trakt = master)
-            LOGGER.debug("Marking movie '" + tmmMovie.getTitle() + "' as collected on " + traktMovie.collected_at.toDate() + " (was "
+            LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as collected on " + traktMovie.collected_at.toDate() + " (was "
                 + tmmMovie.getDateAddedAsString() + ")");
             tmmMovie.setDateAdded(traktMovie.collected_at.toDate());
             dirty = true;
@@ -617,7 +617,7 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(show);
         response = TRAKT.sync().addItemsToCollection(items);
 
-        LOGGER.info("Trakt add-to-library status: " + tvShow.getTitle());
+        LOGGER.debug("Trakt add-to-library status: " + tvShow.getTitle());
         printStatus(response);
       }
       catch (RetrofitError e) {
@@ -682,7 +682,7 @@ public class TraktTv {
           // update watched date from trakt (show)
           if (traktShow.last_watched_at != null && !(traktShow.last_watched_at.toDate().equals(tmmShow.getLastWatched()))) {
             // always set from trakt, if not matched (Trakt = master)
-            LOGGER.debug("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + traktShow.last_watched_at.toDate() + " (was "
+            LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + traktShow.last_watched_at.toDate() + " (was "
                 + tmmShow.getLastWatched() + ")");
             tmmShow.setDateAdded(traktShow.last_watched_at.toDate());
             dirty = true;
@@ -726,7 +726,7 @@ public class TraktTv {
         SyncItems items = new SyncItems().shows(sync);
         response = TRAKT.sync().addItemsToWatchedHistory(items);
 
-        LOGGER.info("Trakt add-to-library status: " + show.getTitle());
+        LOGGER.debug("Trakt add-to-library status: " + show.getTitle());
         printStatus(response);
       }
       catch (RetrofitError e) {
@@ -794,7 +794,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
         TRAKT.sync().deleteItemsFromCollection(items);
-        LOGGER.info("removed " + showToRemove.size() + " shows from your trakt.tv collection");
+        LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv collection");
       }
       catch (RetrofitError e) {
         handleRetrofitError(e);
@@ -817,7 +817,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
         TRAKT.sync().deleteItemsFromWatchedHistory(items);
-        LOGGER.info("removed " + showToRemove.size() + " shows from your trakt.tv watched");
+        LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv watched");
       }
       catch (RetrofitError e) {
         handleRetrofitError(e);
@@ -1031,19 +1031,19 @@ public class TraktTv {
     if (resp != null) {
       String info = getStatusString(resp.added);
       if (!info.isEmpty()) {
-        LOGGER.info("Added       : " + info);
+        LOGGER.debug("Added       : " + info);
       }
       info = getStatusString(resp.existing);
       if (!info.isEmpty()) {
-        LOGGER.info("Existing    : " + info);
+        LOGGER.debug("Existing    : " + info);
       }
       info = getStatusString(resp.deleted);
       if (!info.isEmpty()) {
-        LOGGER.info("Deleted     : " + info);
+        LOGGER.debug("Deleted     : " + info);
       }
       info = getStatusString(resp.not_found);
       if (!info.isEmpty()) {
-        LOGGER.error("Errors      : " + info);
+        LOGGER.debug("Errors      : " + info);
       }
     }
   }
