@@ -694,8 +694,9 @@ public class TraktTv {
               // update ep IDs - NOT YET POSSIBLE
               // boolean dirty = updateIDs(tmmEP, be.ids);
 
-              if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getDateAdded()))) {
-                tmmEP.setDateAdded(be.last_watched_at.toDate());
+              if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getLastWatched()))) {
+                tmmEP.setLastWatched(be.last_watched_at.toDate());
+                tmmEP.setWatched(true);
                 dirty = true;
               }
             }
@@ -704,7 +705,6 @@ public class TraktTv {
           if (dirty) {
             tmmShow.saveToDb();
           }
-
         }
       }
     }
@@ -714,7 +714,13 @@ public class TraktTv {
     // *****************************************************************************
     List<SyncShow> tmmShows = new ArrayList<SyncShow>();
     for (TvShow show : tvShows) {
-      tmmShows.add(toSyncShow(show, true));
+      // get items to sync
+      SyncShow sync = toSyncShow(show, true);
+
+      // do we have any items to sync for this show?
+      if (sync != null) {
+        tmmShows.add(sync);
+      }
     }
 
     try {
@@ -924,9 +930,20 @@ public class TraktTv {
       ids.trakt = tmmMovie.getIdAsInt(Constants.TRAKTID);
     }
 
-    if (!watched || (watched && tmmMovie.isWatched())) {
-      movie = new SyncMovie().id(ids).collectedAt(new DateTime(tmmMovie.getDateAdded())).watchedAt(new DateTime(tmmMovie.getLastWatched()));
+    // we have to decide what we send; trakt behaves differenty when sending data to
+    // sync collection and sync history.
+    if (watched) {
+      // sync history
+      if (tmmMovie.isWatched() && tmmMovie.getLastWatched() == null) {
+        // watched in tmm and not in trakt -> sync
+        movie = new SyncMovie().id(ids).watchedAt(new DateTime(tmmMovie.getLastWatched()));
+      }
     }
+    else {
+      // sync collection
+      movie = new SyncMovie().id(ids).collectedAt(new DateTime(tmmMovie.getDateAdded()));
+    }
+
     return movie;
   }
 
@@ -960,9 +977,19 @@ public class TraktTv {
       boolean foundEP = false;
       ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
       for (TvShowEpisode tmmEp : tmmSeason.getEpisodes()) {
-        if (!watched || (watched && tmmEp.isWatched())) {
-          se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded()))
-              .watchedAt(new DateTime(tmmEp.getLastWatched())));
+        // we have to decide what we send; trakt behaves differenty when sending data to
+        // sync collection and sync history.
+        if (watched) {
+          // sync history
+          if (tmmEp.isWatched() && tmmEp.getLastWatched() == null) {
+            // watched in tmm and not in trakt -> sync
+            se.add(new SyncEpisode().number(tmmEp.getEpisode()).watchedAt(new DateTime(tmmEp.getLastWatched())));
+            foundEP = true;
+          }
+        }
+        else {
+          // sync collection
+          se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())));
           foundEP = true;
         }
       }

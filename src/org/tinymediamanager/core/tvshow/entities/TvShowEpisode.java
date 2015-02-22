@@ -80,13 +80,15 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private String              writer      = "";
   private boolean             disc        = false;
   private boolean             watched     = false;
-  private Date                lastWatched = null;
   private int                 votes       = 0;
   private boolean             subtitles   = false;
   private boolean             isDvdOrder  = false;
 
   @Transient
   private boolean             newlyAdded  = false;
+
+  @Transient
+  private Date                lastWatched = null;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<TvShowActor>   actors      = new ArrayList<TvShowActor>(0);
