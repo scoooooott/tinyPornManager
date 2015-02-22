@@ -605,26 +605,27 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add all our shows to Trakt collection (we have the physical file)
     // *****************************************************************************
-    List<SyncShow> tmmShows = new ArrayList<SyncShow>();
-    for (TvShow show : tvShows) {
-      tmmShows.add(toSyncShow(show, false));
-    }
+    LOGGER.info("Adding " + tvShows.size() + " TvShows to Trakt.tv collection");
+    // send show per show; sending all together may result too often in a timeout
+    for (TvShow tvShow : tvShows) {
+      SyncShow show = toSyncShow(tvShow, false);
+      if (show == null) {
+        continue;
+      }
 
-    try {
-      LOGGER.info("Adding " + tmmShows.size() + " TvShows to Trakt.tv collection");
-      SyncItems items = new SyncItems().shows(tmmShows);
-      response = TRAKT.sync().addItemsToCollection(items);
+      try {
+        SyncItems items = new SyncItems().shows(show);
+        response = TRAKT.sync().addItemsToCollection(items);
 
-      LOGGER.info("Trakt add-to-library status:");
-      printStatus(response);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (UnauthorizedException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
-      return;
+        LOGGER.info("Trakt add-to-library status: " + tvShow.getTitle());
+        printStatus(response);
+      }
+      catch (RetrofitError e) {
+        handleRetrofitError(e);
+      }
+      catch (UnauthorizedException e) {
+        handleRetrofitError((RetrofitError) e.getCause());
+      }
     }
   }
 
@@ -712,32 +713,28 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add all our shows to Trakt watched
     // *****************************************************************************
-    List<SyncShow> tmmShows = new ArrayList<SyncShow>();
+    LOGGER.info("Adding " + tvShows.size() + " TvShows as watched on Trakt.tv");
+    // send show per show; sending all together may result too often in a timeout
     for (TvShow show : tvShows) {
       // get items to sync
       SyncShow sync = toSyncShow(show, true);
-
-      // do we have any items to sync for this show?
-      if (sync != null) {
-        tmmShows.add(sync);
+      if (sync == null) {
+        continue;
       }
-    }
 
-    try {
-      LOGGER.info("Adding " + tmmShows.size() + " TvShows as watched on Trakt.tv");
-      SyncItems items = new SyncItems().shows(tmmShows);
-      response = TRAKT.sync().addItemsToWatchedHistory(items);
+      try {
+        SyncItems items = new SyncItems().shows(sync);
+        response = TRAKT.sync().addItemsToWatchedHistory(items);
 
-      LOGGER.info("Trakt add-to-library status:");
-      printStatus(response);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (UnauthorizedException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
-      return;
+        LOGGER.info("Trakt add-to-library status: " + show.getTitle());
+        printStatus(response);
+      }
+      catch (RetrofitError e) {
+        handleRetrofitError(e);
+      }
+      catch (UnauthorizedException e) {
+        handleRetrofitError((RetrofitError) e.getCause());
+      }
     }
   }
 
@@ -1004,6 +1001,7 @@ public class TraktTv {
       // we have at least one season/episode, so add it
       show = new SyncShow().id(ids).collectedAt(new DateTime(tmmShow.getDateAdded())).seasons(ss);
     }
+
     // if nothing added, do NOT send an empty show (to add all)
     return show;
   }
