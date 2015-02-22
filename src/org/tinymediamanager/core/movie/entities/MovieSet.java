@@ -488,7 +488,7 @@ public class MovieSet extends MediaEntity {
         String providedFiletype = FilenameUtils.getExtension(url);
         if (type == MediaFileType.POSTER) {
           // poster should be written als "folder"
-          writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder."
+          writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-poster."
               + providedFiletype);
         }
         else {
