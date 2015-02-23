@@ -450,8 +450,8 @@ public class TraktTv {
     // ...and subtract the already watched from Trakt
     for (int i = tmmWatchedMovies.size() - 1; i >= 0; i--) {
       for (BaseMovie traktWatched : traktMovies) {
-        if ((StringUtils.isNotEmpty(traktWatched.movie.ids.imdb) && traktWatched.movie.ids.imdb.equals(tmmWatchedMovies.get(i).getImdbId()))
-            || (traktWatched.movie.ids.tmdb != 0 && traktWatched.movie.ids.tmdb == tmmWatchedMovies.get(i).getTmdbId())) {
+        Movie tmmMovie = tmmWatchedMovies.get(i);
+        if (matches(tmmMovie, traktWatched.movie.ids)) {
           tmmWatchedMovies.remove(i);
           break;
         }
