@@ -101,7 +101,6 @@ public class Movie extends MediaEntity {
   private String              writer          = "";
   private String              dataSource      = "";
   private boolean             watched         = false;
-  private Date                lastWatched     = null;
   private MovieSet            movieSet;
   private boolean             isDisc          = false;
   private String              spokenLanguages = "";
@@ -135,6 +134,9 @@ public class Movie extends MediaEntity {
 
   @Transient
   private boolean             newlyAdded      = false;
+
+  @Transient
+  private Date                lastWatched     = null;
 
   @Transient
   private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);

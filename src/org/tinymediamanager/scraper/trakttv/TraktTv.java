@@ -422,7 +422,7 @@ public class TraktTv {
           }
           if (traktWatched.last_watched_at != null && !(traktWatched.last_watched_at.toDate().equals(tmmMovie.getLastWatched()))) {
             // always set from trakt, if not matched (Trakt = master)
-            LOGGER.debug("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + traktWatched.last_watched_at.toDate() + " (was "
+            LOGGER.trace("Marking movie '" + tmmMovie.getTitle() + "' as watched on " + traktWatched.last_watched_at.toDate() + " (was "
                 + tmmMovie.getLastWatched() + ")");
             tmmMovie.setLastWatched(traktWatched.last_watched_at.toDate());
             dirty = true;
@@ -574,7 +574,7 @@ public class TraktTv {
           // update collection date from trakt (show)
           if (traktShow.last_collected_at != null && !(traktShow.last_collected_at.toDate().equals(tmmShow.getDateAdded()))) {
             // always set from trakt, if not matched (Trakt = master)
-            LOGGER.debug("Marking TvShow '" + tmmShow.getTitle() + "' as collected on " + traktShow.last_collected_at.toDate() + " (was "
+            LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as collected on " + traktShow.last_collected_at.toDate() + " (was "
                 + tmmShow.getDateAddedAsString() + ")");
             tmmShow.setDateAdded(traktShow.last_collected_at.toDate());
             dirty = true;
@@ -684,7 +684,7 @@ public class TraktTv {
             // always set from trakt, if not matched (Trakt = master)
             LOGGER.trace("Marking TvShow '" + tmmShow.getTitle() + "' as watched on " + traktShow.last_watched_at.toDate() + " (was "
                 + tmmShow.getLastWatched() + ")");
-            tmmShow.setDateAdded(traktShow.last_watched_at.toDate());
+            tmmShow.setLastWatched(traktShow.last_watched_at.toDate());
             dirty = true;
           }
 

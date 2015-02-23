@@ -92,7 +92,6 @@ public class TvShow extends MediaEntity {
   private String                      status             = "";
   private String                      studio             = "";
   private boolean                     watched            = false;
-  private Date                        lastWatched        = null;
   private String                      sortTitle          = "";
 
   private List<String>                genres             = new ArrayList<String>(1);
@@ -121,6 +120,9 @@ public class TvShow extends MediaEntity {
 
   @Transient
   private String                      titleSortable      = "";
+
+  @Transient
+  private Date                        lastWatched        = null;
 
   @Transient
   private PropertyChangeListener      propertyChangeListener;
