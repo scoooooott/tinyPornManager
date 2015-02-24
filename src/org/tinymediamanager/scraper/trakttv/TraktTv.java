@@ -147,10 +147,13 @@ public class TraktTv {
    * Syncs Trakt.tv collection (specified movies)<br>
    * Gets all Trakt movies from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
-  public void syncTraktMovieCollection(List<Movie> tmmMovies) {
+  public void syncTraktMovieCollection(List<Movie> moviesInTmm) {
     if (!isEnabled()) {
       return;
     }
+
+    // create a local copy of the list
+    List<Movie> tmmMovies = new ArrayList<Movie>(moviesInTmm);
     // *****************************************************************************
     // 1) get diff of TMM <-> Trakt collection
     // *****************************************************************************
@@ -366,10 +369,13 @@ public class TraktTv {
    * Gets all watched movies from Trakt, and sets the "watched" flag on TMM movies.<br>
    * Then update the remaining TMM movies on Trakt as 'seen'.
    */
-  public void syncTraktMovieWatched(List<Movie> tmmMovies) {
+  public void syncTraktMovieWatched(List<Movie> moviesInTmm) {
     if (!isEnabled()) {
       return;
     }
+
+    // create a local copy of the list
+    List<Movie> tmmMovies = new ArrayList<Movie>(moviesInTmm);
 
     // *****************************************************************************
     // 1) get all Trakt watched movies and update our "watched" status
@@ -528,11 +534,13 @@ public class TraktTv {
    * Syncs Trakt.tv collection (gets all IDs & dates, and adds all TMM shows to Trakt)<br>
    * Do not send diffs, since this is too complicated currently :|
    */
-  public void syncTraktTvShowCollection(List<TvShow> tvShows) {
+  public void syncTraktTvShowCollection(List<TvShow> tvShowsInTmm) {
     if (!isEnabled()) {
       return;
     }
 
+    // create a local copy of the list
+    List<TvShow> tvShows = new ArrayList<TvShow>(tvShowsInTmm);
     // *****************************************************************************
     // 1) sync ALL missing show IDs & dates from trakt
     // *****************************************************************************
@@ -640,10 +648,13 @@ public class TraktTv {
     syncTraktTvShowCollection(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
   }
 
-  public void syncTraktTvShowWatched(List<TvShow> tvShows) {
+  public void syncTraktTvShowWatched(List<TvShow> tvShowsInTmm) {
     if (!isEnabled()) {
       return;
     }
+
+    // create a local copy of the list
+    List<TvShow> tvShows = new ArrayList<TvShow>(tvShowsInTmm);
 
     List<BaseShow> traktShows = new ArrayList<BaseShow>();
     try {
