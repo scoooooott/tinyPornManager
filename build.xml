@@ -323,6 +323,14 @@
 		</tar>
 
 
+		<!-- create a whole archive of /build for transfer to mirrors -->
+		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
+			<tarfileset dir="${build.dir}" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="*.exe" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="*.sh" />			
+		</tar>
+
 		<!-- done, move build dir -->
 		<delete dir="build" />
 		<move file="${build.dir}" tofile="build" />
