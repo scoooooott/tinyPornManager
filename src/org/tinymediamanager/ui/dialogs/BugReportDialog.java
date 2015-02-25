@@ -184,6 +184,10 @@ public class BugReportDialog extends TmmDialog {
           message.append(System.getProperty("os.name"));
           message.append(" ");
           message.append(System.getProperty("os.version"));
+          message.append("\nJDK: ");
+          message.append(System.getProperty("java.version"));
+          message.append(" ");
+          message.append(System.getProperty("java.vendor"));
           message.append("\nUUID: ");
           message.append(System.getProperty("tmm.uuid"));
           message.append("\n\n");
