@@ -144,6 +144,9 @@
 			<param name="lang" value="es" />
 		</antcall>
 		<antcall target="downloadLocale">
+			<param name="lang" value="el" />
+		</antcall>
+		<antcall target="downloadLocale">
 			<param name="lang" value="fr" />
 		</antcall>
 		<antcall target="downloadLocale">
@@ -178,9 +181,7 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="tr" />
 		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="vi" />
-		</antcall>
+		<!--<antcall target="downloadLocale"><param name="lang" value="vi" /></antcall>-->
 		<antcall target="downloadLocale">
 			<param name="lang" value="zh" />
 		</antcall>
@@ -302,29 +303,29 @@
 		<digest appdir="${build.dir}" />
 
 		<!-- copy digest.txt and create zip files -->
-    <copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
+		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
-      <zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
-      <zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
-    </zip>
-		
+			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+		</zip>
+
 		<!-- windows -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
 		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
 			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
 		</zip>
-		
+
 		<!-- linux -->
 		<tar compression="gzip" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz">
 			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**" />
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>
-		
 
-    <!-- done, move build dir -->
-    <delete dir="build" />
-    <move file="${build.dir}" tofile="build" />
+
+		<!-- done, move build dir -->
+		<delete dir="build" />
+		<move file="${build.dir}" tofile="build" />
 	</target>
 
 	<!--target name="analyze" description="Run analyzers" depends="compile"-->
