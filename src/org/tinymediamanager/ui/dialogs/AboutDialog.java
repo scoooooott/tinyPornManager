@@ -156,8 +156,7 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblXzener, "6, 24");
     }
     {
-      JLabel lblXzener = new JLabel(
-          "                              otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh");
+      JLabel lblXzener = new JLabel("         espiman, beonex, otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh");
       contentPanel.add(lblXzener, "6, 26");
     }
     {
