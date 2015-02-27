@@ -24,7 +24,7 @@ elif [ -x /usr/libexec/java_home ]; then
 fi
 JAVACMD="${JAVA_HOME}/bin/java"
 
-if [ ! -f $JAVACMD || ! -x $JAVACMD ]; then
+if [ ! -f "$JAVACMD" -o ! -x "$JAVACMD" ]; then
   # display error message with applescript
   osascript -e "tell application \"System Events\" to display dialog \"ERROR launching tinyMediaManager!\n\nYou need to have JAVA installed on your Mac!\nVisit http://java.com for more information...\" with title \"tinyMediaManager\" buttons {\" OK \"} default button 1 with icon path to resource \"tmm.icns\" in bundle (path to me)"
   
