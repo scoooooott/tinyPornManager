@@ -595,7 +595,7 @@ public class TraktTv {
               // update ep IDs - NOT YET POSSIBLE
               // boolean dirty = updateIDs(tmmEP, be.ids);
 
-              if (be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
+              if (tmmEP != null && be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
                 tmmEP.setDateAdded(be.collected_at.toDate());
                 dirty = true;
               }
