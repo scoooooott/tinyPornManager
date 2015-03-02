@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,21 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.Similarity;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * The Class MetadataUtil.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MetadataUtil {
-
-  /** The Constant log. */
   private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUtil.class);
 
   /**
@@ -118,7 +117,7 @@ public class MetadataUtil {
    * @return true, if is valid imdb id
    */
   public static boolean isValidImdbId(String imdbId) {
-    if (StringUtils.isEmpty(imdbId)) {
+    if (StringUtils.isBlank(imdbId)) {
       return false;
     }
 

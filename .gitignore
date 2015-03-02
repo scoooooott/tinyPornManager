@@ -11,6 +11,17 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-.idea
+#Maven
 target
-api-scraper.iml
+release.properties
+pom.xml.*
+
+#IntelliJ IDEA
+.idea/
+*.iml
+
+#Eclipse
+.classpath
+.project
+.settings
+bin

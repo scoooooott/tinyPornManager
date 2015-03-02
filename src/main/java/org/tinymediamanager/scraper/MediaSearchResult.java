@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,19 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Class MediaSearchResult.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private String              providerId;
@@ -221,12 +222,11 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    */
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    // return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
-    // @Override
-    // protected boolean accept(Field f) {
-    // return super.accept(f) && !f.getName().equals("metadata");
-    // }
-    // }).toString();
+    return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
+      @Override
+      protected boolean accept(Field f) {
+        return super.accept(f) && !f.getName().equals("metadata");
+      }
+    }).toString();
   }
 }

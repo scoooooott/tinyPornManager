@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.Map;
 public class MediaSearchOptions {
   public enum SearchParam {
     QUERY, TITLE, YEAR, IMDBID, TMDBID, SEASON, EPISODE, LANGUAGE, COUNTRY, COLLECTION_INFO, IMDB_FOREIGN_LANGUAGE
-  };
+  }
 
   private Map<SearchParam, String> options = new HashMap<SearchParam, String>();
   private MediaType                type;
@@ -59,7 +59,6 @@ public class MediaSearchOptions {
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer("SearchQuery; Type: ").append(type.name()).append("; ");
-    ;
     for (SearchParam k : options.keySet()) {
       sb.append(k.name()).append(":").append(options.get(k)).append(";");
     }

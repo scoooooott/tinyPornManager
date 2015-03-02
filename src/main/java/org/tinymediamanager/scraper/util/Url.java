@@ -15,24 +15,6 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -48,6 +30,15 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.*;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
@@ -120,6 +111,12 @@ public class Url {
   }
 
   /**
+   * A constructor for inherited classes which needs a special setup
+   */
+  protected Url() {
+  }
+
+  /**
    * morph the url (string) to an URI to check the syntax and escape the path
    * 
    * @param urlToMorph
@@ -128,7 +125,7 @@ public class Url {
    * @throws MalformedURLException
    * @throws URISyntaxException
    */
-  private URI morphStringToUri(String urlToMorph) throws MalformedURLException, URISyntaxException {
+  protected URI morphStringToUri(String urlToMorph) throws MalformedURLException, URISyntaxException {
     URL url = new URL(urlToMorph);
     return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
   }
@@ -166,7 +163,7 @@ public class Url {
       return;
     }
 
-    // LOGGER.debug("add HTTP header: " + key + "=" + value);
+    LOGGER.trace("add HTTP header: " + key + "=" + value);
 
     // check for duplicates
     for (int i = headersRequest.size() - 1; i >= 0; i--) {

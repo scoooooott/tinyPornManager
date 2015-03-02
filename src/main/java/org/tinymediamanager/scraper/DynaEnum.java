@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,26 +30,16 @@ import java.util.Map;
  * @param <E>
  *          the element type
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class DynaEnum<E extends DynaEnum<E>> {
-
-  /** The elements. */
   private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>> elements = new LinkedHashMap<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>>();
-
-  /** The name. */
   private final String                                                       name;
+  protected final int                                                        ordinal;
 
-  /**
-   * Name.
-   * 
-   * @return the string
-   */
   public final String name() {
     return name;
   }
-
-  /** The ordinal. */
-  protected final int ordinal;
 
   /**
    * Ordinal.
@@ -89,53 +79,26 @@ public class DynaEnum<E extends DynaEnum<E>> {
     return (Class<? extends DynaEnum<?>>) getClass();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
   @Override
   public String toString() {
     return name;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   @Override
   public final boolean equals(Object other) {
     return this == other;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#hashCode()
-   */
   @Override
   public final int hashCode() {
     return super.hashCode();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#clone()
-   */
   @Override
   protected final Object clone() throws CloneNotSupportedException {
     throw new CloneNotSupportedException();
   }
 
-  /**
-   * Compare to.
-   * 
-   * @param other
-   *          the other
-   * @return the int
-   */
   public final int compareTo(E other) {
     DynaEnum<?> self = this;
     if (self.getClass() != other.getClass() && // optimization
@@ -144,11 +107,6 @@ public class DynaEnum<E extends DynaEnum<E>> {
     return self.ordinal - other.ordinal;
   }
 
-  /**
-   * Gets the declaring class.
-   * 
-   * @return the declaring class
-   */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public final Class<E> getDeclaringClass() {
     Class clazz = getClass();
@@ -195,15 +153,6 @@ public class DynaEnum<E extends DynaEnum<E>> {
   @SuppressWarnings("unused")
   private void readObjectNoData() throws ObjectStreamException {
     throw new InvalidObjectException("can't deserialize enum");
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#finalize()
-   */
-  @Override
-  protected final void finalize() {
   }
 
   /**

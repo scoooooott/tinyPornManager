@@ -30,23 +30,12 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    * Gets the metadata for the given TV show
    * 
    * @param options
-   *          the scrape options (containing the ID of the TV show)
+   *          the scrape options (containing the type (TV_SHOW or TV_EPISODE) and the ID of the TV show)
    * @return the metadata
    * @throws Exception
    * 
    */
-  public MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception;
-
-  /**
-   * Gets the metadata for the given episode
-   * 
-   * @param options
-   *          the scrape options (containing the ID of the TV show and season/episode number)
-   * @return the metadata
-   * @throws Exception
-   * 
-   */
-  public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception;
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   /**
    * Search for a TV show

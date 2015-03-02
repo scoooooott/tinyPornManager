@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.tinymediamanager.scraper;
  * The Enum MediaType.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public enum MediaType {
   TV_SHOW, TV_EPISODE, MOVIE, MOVIE_SET;

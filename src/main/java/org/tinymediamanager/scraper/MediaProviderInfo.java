@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,20 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.net.URL;
+
 /**
  * The Class ProviderInfo.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MediaProviderInfo {
-
-  /** The id. */
-  private String id;
-
-  /** The name. */
-  private String name;
-
-  /** The description. */
-  private String description;
+  private static final URL EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
+  private String           id;
+  private String           name;
+  private String           description;
+  private URL              providerLogo;
 
   /**
    * Instantiates a new provider info.
@@ -49,6 +48,25 @@ public class MediaProviderInfo {
     this.id = id;
     this.name = name;
     this.description = description;
+  }
+
+  /**
+   * Instantiates a new provider info.
+   *
+   * @param id
+   *          the id of the provider
+   * @param name
+   *          the name of the provider
+   * @param description
+   *          a description of the provider
+   * @param providerLogo
+   *          the URL to the (embedded) provider logo
+   */
+  public MediaProviderInfo(String id, String name, String description, URL providerLogo) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.providerLogo = providerLogo;
   }
 
   /**
@@ -109,9 +127,32 @@ public class MediaProviderInfo {
   }
 
   /**
+   * Get the URL to the (embedded) provider logo
+   * 
+   * @return the URL to the logo
+   */
+  public URL getProviderLogo() {
+    if (providerLogo != null) {
+      return providerLogo;
+    }
+    else {
+      return EMPTY_LOGO;
+    }
+  }
+
+  /**
+   * Set the URL to the (embedded) provider logo
+   * 
+   * @param providerLogo
+   *          the URL to the logo
+   */
+  public void setProviderLogo(URL providerLogo) {
+    this.providerLogo = providerLogo;
+  }
+
+  /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

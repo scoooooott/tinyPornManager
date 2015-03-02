@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2015 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * The Class Trailer.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MediaTrailer implements Comparable<MediaTrailer> {
   private String name     = "";
