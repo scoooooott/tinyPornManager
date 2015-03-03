@@ -27,9 +27,6 @@ import java.util.List;
  */
 public enum Certification {
 
-
-
-
   // @formatter:off
   US_G     (CountryCode.US, "G", new String[] { "G", "Rated G" }),
   US_PG    (CountryCode.US, "PG", new String[] { "PG", "Rated PG" }),

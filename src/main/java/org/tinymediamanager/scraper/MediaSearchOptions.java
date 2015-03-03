@@ -22,6 +22,7 @@ import java.util.Map;
  * The Class SearchQuery. Pass arguments to the scraper searches
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MediaSearchOptions {
   public enum SearchParam {

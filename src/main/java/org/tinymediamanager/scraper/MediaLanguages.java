@@ -25,7 +25,6 @@ package org.tinymediamanager.scraper;
 public enum MediaLanguages {
 
 
-
   //@formatter:off
   cs("Český"),
   de("Deutsch"),

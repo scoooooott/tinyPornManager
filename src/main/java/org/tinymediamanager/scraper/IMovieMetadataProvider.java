@@ -18,7 +18,7 @@ package org.tinymediamanager.scraper;
 import java.util.List;
 
 /**
- * The Interface IMovieMetadataProvider.
+ * The Interface IMovieMetadataProvider. All scrapers providing movie meta data must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0

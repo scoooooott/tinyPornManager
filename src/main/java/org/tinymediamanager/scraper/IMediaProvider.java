@@ -15,7 +15,13 @@
  */
 package org.tinymediamanager.scraper;
 
-public interface IMediaProvider {
+/**
+ * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces
+ *
+ * @author Manuel Laggner
+ * @since 1.0
+ */
+public abstract interface IMediaProvider {
   /**
    * Gets a general information about the metadata provider
    * 

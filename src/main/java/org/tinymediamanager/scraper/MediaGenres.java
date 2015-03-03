@@ -15,21 +15,17 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
 /**
- * The Class MediaGenres2.
+ * The Class MediaGenres.
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class MediaGenres extends DynaEnum<MediaGenres> {
 
@@ -78,10 +74,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War");
   public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western");
 
-  /** The name. */
   private String                  name;
-
-  /** The alternate names. */
   private String[]                alternateNames;
 
   /**
@@ -97,15 +90,9 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   private MediaGenres(String enumName, int ordinal, String name) {
     super(enumName, ordinal);
     this.name = name;
-    // System.out.println(enumName + " - " + name);
     this.alternateNames = loadAlternateNames(enumName);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.DynaEnum#toString()
-   */
   @Override
   public String toString() {
     return this.getLocalizedName();
@@ -132,7 +119,6 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
       }
       ResourceBundle b = ApiResourceBundle.getResourceBundle(loc); //$NON-NLS-1$
       try {
-        // System.out.println(" " + loc.getLanguage() + "-" + b.getString("Genres." + propName));
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }
       catch (Exception e) {
@@ -237,8 +223,6 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
 
   /**
    * Comparator for sorting our MediaGenres in a localized fashion
-   * 
-   * @author Myron
    */
   public static class MediaGenresComparator implements Comparator<MediaGenres> {
     @Override

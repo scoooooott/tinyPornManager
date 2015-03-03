@@ -19,7 +19,7 @@ package org.tinymediamanager.scraper;
 import java.util.List;
 
 /**
- * The Interface IMovieTrailerProvider.
+ * The Interface IMovieTrailerProvider. All scrapers providing movie trailers must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0

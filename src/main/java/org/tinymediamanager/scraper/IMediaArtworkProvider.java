@@ -19,7 +19,7 @@ package org.tinymediamanager.scraper;
 import java.util.List;
 
 /**
- * The Interface IMediaArtworkProvider.
+ * The Interface IMediaArtworkProvider. All media providers for Artwork must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0
