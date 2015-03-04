@@ -1,3 +1,8 @@
+Upcoming version
+=======================
+x renamer: exchange colon with a dash. (even better than removing completely)
+
+
 Version 2.6.6
 =======================
 + updated trakt.tv library to the new API
