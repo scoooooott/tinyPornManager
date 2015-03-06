@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = https://invalid.tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-nightly/ws/tinyMediaManager/build/
+appbase = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-nightly/ws/tinyMediaManager/build/
 mirror = http://www.google.com/build
 mirror = http://dsafsd/
 mirror = http://nightly.tinymediamanager.org/build/
