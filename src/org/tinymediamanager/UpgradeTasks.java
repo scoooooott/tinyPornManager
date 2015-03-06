@@ -299,6 +299,25 @@ public class UpgradeTasks {
       entityManager.getTransaction().commit();
     }
 
+    if (compareVersion(v, "2.6.7") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.6.7");
+      Globals.settings.removeSubtitleFileType("idx");
+
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
+      for (Movie movie : movieList.getMovies()) {
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.SUBTITLE)) {
+          if (mf.getExtension().equalsIgnoreCase("sub")) {
+            mf.setContainerFormat(""); // empty, to reload MI on next UDS
+          }
+          else if (mf.getExtension().equalsIgnoreCase("idx")) {
+            movie.removeFromMediaFiles(mf); // idx not needed as MF
+          }
+        }
+      }
+      entityManager.getTransaction().commit();
+    }
+
   }
 
   /**

@@ -115,6 +115,8 @@ public class TvShowTest {
 
     // ************************************************************************
     // various real world examples
+    Assert.assertEquals("S:1 E:3", detectEpisode("The.Odd.Couple.2015.S01E03.720p.HDTV"));
+    Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("Stargate Universe (01x01_01x02_01x03) - Air (1)(2)(3)"));
     Assert.assertEquals("S:-1 E:11", detectEpisode("Episode.11.Ocean.Deep.BluRay.720p.x264-x264Crew.mkv"));
     Assert.assertEquals("S:1 E:1", detectEpisode("tvs-castle-dl-ituneshd-xvid-101.avi"));
     Assert.assertEquals("S:2 E:9", detectEpisode("440 - 2x09 - .avi"));

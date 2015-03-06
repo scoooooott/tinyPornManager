@@ -125,6 +125,17 @@ public class MovieRenamer {
       try {
         boolean ok = Utils.moveFileSafe(sub.getFile(), newFile);
         if (ok) {
+          if (sub.getFilename().endsWith(".sub")) {
+            // when having a .sub, also rename .idx (don't care if error)
+            try {
+              File oldidx = new File(sub.getPath(), sub.getFilename().replaceFirst("sub$", "idx"));
+              File newidx = new File(newFile.getParent(), newSubName.replaceFirst("sub$", "idx"));
+              Utils.moveFileSafe(oldidx, newidx);
+            }
+            catch (Exception e) {
+              // no idx found or error - ignore
+            }
+          }
           m.removeFromMediaFiles(sub);
           MediaFile mf = new MediaFile(newFile);
           MediaFileSubtitle mfs = new MediaFileSubtitle();
@@ -596,8 +607,8 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename THUMBNAILS
     // ######################################################################
-    for (MediaFile unk : movie.getMediaFiles(MediaFileType.THUMB)) {
-      needed.add(unk); // keep all unknown
+    for (MediaFile thumb : movie.getMediaFiles(MediaFileType.THUMB)) {
+      needed.add(thumb); // keep all thumbs
     }
 
     // ######################################################################

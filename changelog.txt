@@ -1,6 +1,7 @@
 Upcoming version
 =======================
 x renamer: exchange colon with a dash. (even better than removing completely)
+x subtitles: language detection for SUB ones
 
 
 Version 2.6.6

@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,44 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 
 public class MovieRenamerTest {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamerTest.class);
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    TmmModuleManager.getInstance().startUp();
+    MovieModuleManager.getInstance().startUp();
+    TvShowModuleManager.getInstance().startUp();
+  }
+
+  @AfterClass
+  public static void tearDownAfterClass() throws Exception {
+    TvShowModuleManager.getInstance().shutDown();
+    MovieModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
+  }
+
+  @Test
+  public void special() {
+    System.out.println(MovieRenamer.replaceInvalidCharacters("jb: the bla"));
+    System.out.println(MovieRenamer.replaceInvalidCharacters("jb : the bla"));
+    System.out.println(MovieRenamer.replaceInvalidCharacters("2:22"));
+    System.out.println(MovieRenamer.replaceInvalidCharacters("2 :22"));
+  }
+
+  @Test
+  public void checkPathConsistency() {
+    // get all movie paths
+    // check whether path contains another
+    //
+    // ds/file1.mkv <- MultiMovieDir
+    // ds/file2.mkv <- MultiMovieDir
+    // ds/A/file3.mkv <- single, but since we have another movie deeper, this MUST be a MultiMovieDir
+    // ds/A/title/file5.mkv single
+
+  }
 
   @Test
   public void checkDiff() {
@@ -183,12 +220,12 @@ public class MovieRenamerTest {
         }
         else {
           nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-          if (movie.isDisc()) {
-            nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
-          }
         }
         for (MovieNfoNaming name : nfonames) {
           newFilename = movie.getNfoFilename(name, videoFileName);
+          if (newFilename.isEmpty()) {
+            continue;
+          }
           MediaFile nfo = new MediaFile(mf);
           nfo.setFile(new File(movieDir + newFilename));
           newFiles.add(nfo);

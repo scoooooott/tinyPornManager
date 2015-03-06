@@ -869,7 +869,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   /**
    * Find additional episode files.<br>
    * adds everything which starts with "videoFile name"<br>
-   * scans subs/sample/subtitle directories aswell
+   * scans subs/subtitle directories aswell
    * 
    * @param episode
    *          the episode
@@ -902,7 +902,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         episode.addToMediaFiles(mf);
       }
       else {
-        if (file.getName().equalsIgnoreCase("sample") || file.getName().equalsIgnoreCase("subs") || file.getName().equalsIgnoreCase("subtitle")) {
+        if (file.getName().equalsIgnoreCase("subs") || file.getName().equalsIgnoreCase("subtitle")) {
           File[] subDirContent = file.listFiles();
           for (File subDirFile : subDirContent) {
             if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {

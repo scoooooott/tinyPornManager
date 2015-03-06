@@ -367,6 +367,9 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void removeSubtitleFileType(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
     subtitleFileTypes.remove(type);
     firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
   }
@@ -554,7 +557,7 @@ public class Settings extends AbstractModelObject {
     addSubtitleFileTypes(".ssa");
     addSubtitleFileTypes(".svcd");
     addSubtitleFileTypes(".usf");
-    addSubtitleFileTypes(".idx");
+    // addSubtitleFileTypes(".idx"); // not a subtitle! just index for .sub
     addSubtitleFileTypes(".ass");
     addSubtitleFileTypes(".pgs");
     addSubtitleFileTypes(".vobsub");

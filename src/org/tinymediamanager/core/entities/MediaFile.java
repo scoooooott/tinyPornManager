@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.core.entities;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -49,6 +53,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
@@ -207,6 +212,36 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         LOGGER.debug("found language '" + s + "' in subtitle '" + this.getFilename());
         sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
         break;
+      }
+    }
+    if (sub.getLanguage().isEmpty() && this.filename.endsWith(".sub")) {
+      // not found in name, try to parse from idx
+      BufferedReader br;
+      try {
+        File idx = new File(this.path, this.filename.replaceFirst("sub$", "idx"));
+        br = new BufferedReader(new FileReader(idx));
+        String line;
+        while ((line = br.readLine()) != null) {
+          String lang = "";
+          // System.out.println("line: " + line);
+          if (line.startsWith("id:")) {
+            lang = StrgUtils.substr(line, "id: (.*?),");
+          }
+          if (line.startsWith("# alt:")) {
+            lang = StrgUtils.substr(line, "^# alt: (.*?)$");
+          }
+          if (!lang.isEmpty()) {
+            sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
+            break;
+          }
+        }
+        br.close();
+      }
+      catch (FileNotFoundException e) {
+        // ignore
+      }
+      catch (IOException e) {
+        // ignore
       }
     }
     sub.setCodec(getExtension());
@@ -1279,7 +1314,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       case SUBTITLE:
-        if (subtitles == null || subtitles.size() == 0 || force) {
+        if (subtitles == null || subtitles.size() == 0 || getContainerFormat().isEmpty() || force) {
           gatherSubtitleInformation();
         }
         break;
