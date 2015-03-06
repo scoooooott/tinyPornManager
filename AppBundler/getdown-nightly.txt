@@ -1,5 +1,6 @@
 # The URL from which the client is downloaded
 appbase = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-nightly/ws/tinyMediaManager/build/
+mirror = http://nightly.tinymediamanager.org/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
