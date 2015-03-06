@@ -996,6 +996,7 @@ public class MovieRenamer {
    */
   public static String replaceInvalidCharacters(String source) {
     source = source.replaceAll(": ", " - "); // nicer
+    source = source.replaceAll(":", "-"); // nicer
     return source.replaceAll("([\"\\\\:<>|/?*])", "");
   }
 
