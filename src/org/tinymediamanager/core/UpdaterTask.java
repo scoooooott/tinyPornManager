@@ -30,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -74,7 +75,11 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       // try to download from all our mirrors
       for (String uu : updateUrls) {
         try {
-          Url upd = new Url(uu + "/digest.txt");
+          if (!uu.endsWith("/")) {
+            uu += '/';
+          }
+          Url upd = new Url(uu + "digest.txt");
+          LOGGER.trace("Checking " + uu);
           remoteDigest = IOUtils.toString(upd.getInputStream(), "UTF-8");
           if (remoteDigest != null && remoteDigest.contains("tmm.jar")) {
             valid = true; // bingo!
@@ -127,14 +132,15 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         Url upd = new Url(fallback);
         String gd = IOUtils.toString(upd.getInputStream(), "UTF-8");
         if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
-          // download corrupted; or a 404 html page downloaded (since we do not use that yet :p)
-          return false;
+          throw new Exception("could not even download our fallback");
         }
         FileUtils.writeStringToFile(new File("getdown.txt"), gd);
         return true;
       }
       catch (Exception e2) {
         LOGGER.error("Update fallback failed!" + e.getMessage());
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, "Please reinstal tinyMediaManager!", "Update check failed very badly :("));
       }
     }
     return false;
