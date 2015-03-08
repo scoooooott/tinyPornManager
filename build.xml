@@ -263,6 +263,7 @@
 				<include name="**/*" />
 				<exclude name="native/windows*/**" />
 				<exclude name="native/linux*/**" />
+				<exclude name="version_new" /><!-- connection check temp file -->
 			</fileset>
 		</copy>
 
@@ -312,13 +313,13 @@
 		<!-- windows -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
 		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
-			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
+			<zipfileset filemode="755" dir="${build.dir}" excludes="version_new, env.txt, native/linux*/**, native/mac*/**" />
 			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
 		</zip>
 
 		<!-- linux -->
 		<tar compression="gzip" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz">
-			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**" />
+			<tarfileset dir="${build.dir}" excludes="version_new, env.txt, native/windows*/**, native/mac*/**" />
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>
 
