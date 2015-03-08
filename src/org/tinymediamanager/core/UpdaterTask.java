@@ -15,9 +15,13 @@
  */
 package org.tinymediamanager.core;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingWorker;
 
@@ -26,7 +30,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -47,41 +50,57 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
 
   @Override
   public Boolean doInBackground() {
-    try {
-      if (ReleaseInfo.getVersion().equals("SVN")) {
-        return false;
-      }
+    if (ReleaseInfo.getVersion().equals("SVN")) {
+      return false;
+    }
 
+    ArrayList<String> updateUrls = new ArrayList<String>();
+    try {
       Thread.currentThread().setName("updateThread");
       LOGGER.info("Checking for updates...");
       File file = new File("getdown.txt");
-      if (!file.exists()) {
-        // we are a live instance and have no getdown.txt file? WTF?
-        // we _might_ use an fallback here... but for now inform the user
-        LOGGER.warn("getdown.txt not found - please reinstal TMM!");
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Please reinstal tinyMediaManager!", "Update check failed badly"));
-        return false;
+
+      // read getdown.txt (IOEx on any error)
+      for (String line : readLines(new FileReader(file))) {
+        String[] kv = line.split("=");
+        if ("appbase".equals(kv[0].trim()) || "mirror".equals(kv[0].trim())) {
+          updateUrls.add(kv[1].trim());
+        }
       }
 
-      // get update url
-      Properties prop = new Properties();
-      prop.load(new FileInputStream(file));
-      String updateUrl = prop.getProperty("appbase");
-      prop.clear();
-
-      // download remote checksum file
-      Url upd = new Url(updateUrl + "/digest.txt");
-      String online = IOUtils.toString(upd.getInputStream(), "UTF-8");
-      if (online == null || !online.contains("tmm.jar")) {
-        throw new Exception("Error downloading remote checksum information."); // for fallback
+      boolean valid = false;
+      String remoteDigest = "";
+      String remoteUrl = "";
+      // try to download from all our mirrors
+      for (String uu : updateUrls) {
+        try {
+          Url upd = new Url(uu + "/digest.txt");
+          remoteDigest = IOUtils.toString(upd.getInputStream(), "UTF-8");
+          if (remoteDigest != null && remoteDigest.contains("tmm.jar")) {
+            valid = true; // bingo!
+            remoteUrl = uu;
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("Unable to download from mirror: " + e.getMessage());
+        }
+        if (valid) {
+          break; // no exception - step out :)
+        }
       }
 
-      // and compare with our local
+      if (!valid) {
+        // we failed to download from all mirrors
+        // last chance: throw ex and try really hardcoded mirror
+        throw new Exception("Error downloading remote checksum information.");
+      }
+
+      // compare with our local
       String local = FileUtils.readFileToString(new File("digest.txt"), "UTF-8");
-      if (!local.equals(online)) {
+      if (!local.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
         // download changelog.txt for preview
-        upd = new Url(updateUrl + "/changelog.txt");
+        Url upd = new Url(remoteUrl + "/changelog.txt");
         changelog = IOUtils.toString(upd.getInputStream(), "UTF-8");
         return true;
       }
@@ -90,23 +109,21 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
     }
     catch (Exception e) {
-      LOGGER.error("Update task failed! " + e.getMessage());
-
-      // when eg google shuts down suddenly, or we have a corrupted HTML download,
-      // try a "backup url" for GD.txt, where we could specify a new location :)
-      String fallback = "http://www.tinymediamanager.org/";
-      if (ReleaseInfo.isPreRelease()) {
-        fallback += "getdown_prerelease.txt";
-      }
-      else if (ReleaseInfo.isNightly()) {
-        fallback += "getdown_nightly.txt";
-      }
-      else {
-        fallback += "getdown.txt";
-      }
+      LOGGER.error("Update task failed badly! " + e.getMessage());
 
       try {
-        LOGGER.info("Trying fallback");
+        // try a hardcoded "backup url" for GD.txt, where we could specify a new location :)
+        LOGGER.info("Trying fallback...");
+        String fallback = "http://www.tinymediamanager.org/";
+        if (ReleaseInfo.isPreRelease()) {
+          fallback += "getdown_prerelease.txt";
+        }
+        else if (ReleaseInfo.isNightly()) {
+          fallback += "getdown_nightly.txt";
+        }
+        else {
+          fallback += "getdown.txt";
+        }
         Url upd = new Url(fallback);
         String gd = IOUtils.toString(upd.getInputStream(), "UTF-8");
         if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
@@ -121,6 +138,30 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
     }
     return false;
+  }
+
+  /**
+   * Reads the contents of the supplied input stream into a list of lines. Closes the reader on successful or failed completion.
+   */
+  private static List<String> readLines(Reader in) throws IOException {
+    List<String> lines = new ArrayList<String>();
+    try {
+      BufferedReader bin = new BufferedReader(in);
+      for (String line = null; (line = bin.readLine()) != null; lines.add(line)) {
+      }
+    }
+    finally {
+      if (in != null) {
+        try {
+          in.close();
+        }
+        catch (IOException var2) {
+          // ok
+        }
+      }
+
+    }
+    return lines;
   }
 
   public String getChangelog() {
