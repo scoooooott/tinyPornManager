@@ -10,7 +10,7 @@ if [ -f tmm.jar ]; then
   ARGS="-Dsilent=noupdate"
 fi
 
-ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
+ARGS="$ARGS -Djava.net.preferIPv4Stack=true -Dappbase=http://www.tinymediamanager.org/"
 
 # execute it :)
 java $ARGS -jar getdown.jar .   

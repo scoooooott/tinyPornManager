@@ -20,6 +20,7 @@
     <maxHeapSize>512</maxHeapSize>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Dfile.encoding=UTF-8</opt>
+    <opt>-Dappbase=http://www.tinymediamanager.org/</opt><!-- backup url for getdown.txt -->
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>
