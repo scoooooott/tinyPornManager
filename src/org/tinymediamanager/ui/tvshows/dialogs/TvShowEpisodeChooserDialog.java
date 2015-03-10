@@ -177,13 +177,15 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     // assign episode
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
-      row = table.convertRowIndexToModel(row);
-      TvShowEpisodeChooserModel episode = episodesFound.get(row);
-      if (episode != TvShowEpisodeChooserModel.emptyResult) {
-        metadata = episode.getMediaEpisode();
-      }
+      if (row >= 0) {
+        row = table.convertRowIndexToModel(row);
+        TvShowEpisodeChooserModel episode = episodesFound.get(row);
+        if (episode != TvShowEpisodeChooserModel.emptyResult) {
+          metadata = episode.getMediaEpisode();
+        }
 
-      setVisible(false);
+        setVisible(false);
+      }
     }
 
     // cancel
