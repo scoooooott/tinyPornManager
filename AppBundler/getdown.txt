@@ -1,5 +1,6 @@
 # The URL from which the client is downloaded
 appbase = http://tinymediamanager.googlecode.com/svn/dist
+mirror = http://release.tinymediamanager.org/build/
 
 # UI Configuration
 ui.name = tinyMediaManager

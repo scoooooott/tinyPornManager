@@ -1,5 +1,6 @@
 Upcoming version
 =======================
++ Mirror support: TMM now distibuted on several mirrors for better availability (and error handling for network blockages)
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
 
