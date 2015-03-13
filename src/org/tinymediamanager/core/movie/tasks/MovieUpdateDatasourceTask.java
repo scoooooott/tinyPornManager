@@ -48,8 +48,8 @@ import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -359,6 +359,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       // check if we have more than one movie in dir
       HashSet<String> h = new HashSet<String>();
       LOGGER.debug("Checking for multi-movie dir; parsing all video files in " + movieDir);
+
+      // no need to check files == null; NPE is caught
       for (File file : files) {
         MediaFile mf = new MediaFile(file);
         if (mf.isDiscFile()) { // MacOS ignore
@@ -602,6 +604,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     ArrayList<MediaFile> mv = new ArrayList<MediaFile>();
 
     File[] list = dir.listFiles();
+    if (list == null) {
+      LOGGER.error("Whops. Cannot access directory: " + dir.getName());
+      return mv;
+    }
+
     for (File file : list) {
       if (file.isFile()) {
         if (!file.getName().startsWith("._")) { // MacOS ignore

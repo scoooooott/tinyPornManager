@@ -147,18 +147,20 @@ public class TvShowExporter extends MediaEntityExporter {
 
     // copy all non .jtme/template.conf files to destination dir
     File[] templateContent = templateDir.listFiles();
-    for (File fileInTemplateDir : templateContent) {
-      if (fileInTemplateDir.getName().endsWith(".jmte")) {
-        continue;
-      }
-      if (fileInTemplateDir.getName().endsWith("template.conf")) {
-        continue;
-      }
-      if (fileInTemplateDir.isFile()) {
-        FileUtils.copyFileToDirectory(fileInTemplateDir, exportDir);
-      }
-      if (fileInTemplateDir.isDirectory()) {
-        FileUtils.copyDirectoryToDirectory(fileInTemplateDir, exportDir);
+    if (templateContent != null) {
+      for (File fileInTemplateDir : templateContent) {
+        if (fileInTemplateDir.getName().endsWith(".jmte")) {
+          continue;
+        }
+        if (fileInTemplateDir.getName().endsWith("template.conf")) {
+          continue;
+        }
+        if (fileInTemplateDir.isFile()) {
+          FileUtils.copyFileToDirectory(fileInTemplateDir, exportDir);
+        }
+        if (fileInTemplateDir.isDirectory()) {
+          FileUtils.copyDirectoryToDirectory(fileInTemplateDir, exportDir);
+        }
       }
     }
   }

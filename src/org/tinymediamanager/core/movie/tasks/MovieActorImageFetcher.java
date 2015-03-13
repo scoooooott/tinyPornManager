@@ -85,25 +85,27 @@ public class MovieActorImageFetcher implements Runnable {
       };
 
       File[] imageFiles = actorsDir.listFiles(filter);
-      for (File file : imageFiles) {
-        boolean found = false;
-        // check if there is an actor for this file
-        String name = FilenameUtils.getBaseName(file.getName()).replace("_", " ");
-        for (MovieActor actor : movie.getActors()) {
-          if (actor.getName().equals(name)) {
-            found = true;
+      if (imageFiles != null) {
+        for (File file : imageFiles) {
+          boolean found = false;
+          // check if there is an actor for this file
+          String name = FilenameUtils.getBaseName(file.getName()).replace("_", " ");
+          for (MovieActor actor : movie.getActors()) {
+            if (actor.getName().equals(name)) {
+              found = true;
 
-            // trick it to get rid of wrong extensions
-            if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumbUrl()))) {
-              found = false;
+              // trick it to get rid of wrong extensions
+              if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumbUrl()))) {
+                found = false;
+              }
+              break;
             }
-            break;
           }
-        }
 
-        // delete image if not found
-        if (!found) {
-          FileUtils.deleteQuietly(file);
+          // delete image if not found
+          if (!found) {
+            FileUtils.deleteQuietly(file);
+          }
         }
       }
 
