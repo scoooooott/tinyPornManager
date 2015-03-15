@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.Utils;
@@ -163,6 +164,10 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the genre
    */
   public static MediaGenres getGenre(String name) {
+    if (StringUtils.isBlank(name)) {
+      return null;
+    }
+
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
       if (genre.name().equals(name)) {
