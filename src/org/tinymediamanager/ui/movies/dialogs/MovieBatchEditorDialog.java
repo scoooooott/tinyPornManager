@@ -34,6 +34,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -168,6 +169,10 @@ public class MovieBatchEditorDialog extends TmmDialog {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           String tag = (String) cbTags.getSelectedItem();
+          if (StringUtils.isBlank(tag)) {
+            return;
+          }
+
           for (Movie movie : moviesToEdit) {
             movie.addToTags(tag);
           }

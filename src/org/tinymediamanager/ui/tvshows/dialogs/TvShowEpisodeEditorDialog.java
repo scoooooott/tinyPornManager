@@ -624,6 +624,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     @Override
     public void actionPerformed(ActionEvent e) {
       String newTag = (String) cbTags.getSelectedItem();
+      if (StringUtils.isBlank(newTag)) {
+        return;
+      }
+
       boolean tagFound = false;
 
       // search if this tag already has been added

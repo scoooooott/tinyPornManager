@@ -63,11 +63,11 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
@@ -1260,6 +1260,10 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       String newTag = (String) cbTags.getSelectedItem();
+      if (StringUtils.isBlank(newTag)) {
+        return;
+      }
+
       boolean tagFound = false;
 
       // do not continue with empty tags
