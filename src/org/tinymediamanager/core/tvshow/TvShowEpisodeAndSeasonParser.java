@@ -307,15 +307,17 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
-    // parse Roman
-    regex = romanPattern;
-    m = regex.matcher(basename);
-    while (m.find()) {
-      int ep = 0;
-      ep = decodeRoman(m.group(2));
-      if (ep > 0 && !result.episodes.contains(ep)) {
-        result.episodes.add(ep);
-        LOGGER.trace("add found EP " + ep);
+    // parse Roman only when not found anything else!!
+    if (result.episodes.isEmpty()) {
+      regex = romanPattern;
+      m = regex.matcher(basename);
+      while (m.find()) {
+        int ep = 0;
+        ep = decodeRoman(m.group(2));
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
       }
     }
 
