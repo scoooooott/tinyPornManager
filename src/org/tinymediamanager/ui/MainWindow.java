@@ -444,6 +444,7 @@ public class MainWindow extends JFrame {
     if (confirm == JOptionPane.YES_OPTION) {
       LOGGER.info("bye bye");
       try {
+        Utils.trackEvent("shutdown");
         // send shutdown signal
         TmmTaskManager.getInstance().shutdown();
         // save unsaved settings
