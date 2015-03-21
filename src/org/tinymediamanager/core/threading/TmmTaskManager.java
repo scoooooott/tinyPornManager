@@ -18,10 +18,14 @@ package org.tinymediamanager.core.threading;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
 import org.tinymediamanager.core.threading.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.ui.UTF8Control;
@@ -32,31 +36,42 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TmmTaskManager implements TmmTaskListener {
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static TmmTaskManager instance         = new TmmTaskManager();
-  private final Set<TmmTaskListener>  taskListener     = new CopyOnWriteArraySet<TmmTaskListener>();
-  private final Set<TmmTaskHandle>    runningTasks     = new CopyOnWriteArraySet<TmmTaskHandle>();
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static TmmTaskManager    instance         = new TmmTaskManager();
+  private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<TmmTaskListener>();
+  private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<TmmTaskHandle>();
 
   // we have some "named" queues, holding different types of tasks
   // image download/subtitle download are rather small/fast tasks - we only queue them in a queue and provide to abort the complete queue
-  private ThreadPoolExecutor          imageDownloadExecutor;
+  private ThreadPoolExecutor             imageDownloadExecutor;
 
   // this is a queue which holds "other" tasks
-  private ThreadPoolExecutor          unnamedTaskExecutor;
+  private ThreadPoolExecutor             unnamedTaskExecutor;
 
   // trailer download are rather big/long running tasks; only x at a time can be run and they are able to be cancelled individually
-  private ThreadPoolExecutor          downloadExecutor;
+  private ThreadPoolExecutor             downloadExecutor;
 
   // main tasks (update datasource, scraping, renaming) are queueable tasks, but only one at a time can run; they can be cancelled individually
-  private final ThreadPoolExecutor    mainTaskExecutor = createMainTaskQueue();
+  private final ThreadPoolExecutor       mainTaskExecutor = createMainTaskQueue();
 
   // fake task handles to manage queues
-  private TmmTaskHandle               imageQueueHandle;
-  private TmmTaskHandle               unnamedQueueHandle;
+  private TmmTaskHandle                  imageQueueHandle;
+  private TmmTaskHandle                  unnamedQueueHandle;
+
+  // scheduled threads
+  private final ScheduledExecutorService scheduler        = Executors.newScheduledThreadPool(1);
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
     unnamedQueueHandle = new UnnamedQueueTaskHandle();
+
+    // GA session keep-alive every 20 min
+    ScheduledFuture keepalive = scheduler.scheduleWithFixedDelay(new Runnable() {
+      @Override
+      public void run() {
+        Utils.trackEvent("ping-pong");
+      }
+    }, 20, 20, TimeUnit.MINUTES);
   }
 
   public static TmmTaskManager getInstance() {
@@ -234,6 +249,9 @@ public class TmmTaskManager implements TmmTaskListener {
     if (mainTaskExecutor != null) {
       mainTaskExecutor.shutdown();
     }
+    if (scheduler != null) {
+      scheduler.shutdown();
+    }
     for (TmmTaskHandle task : runningTasks) {
       task.cancel();
     }
@@ -264,6 +282,9 @@ public class TmmTaskManager implements TmmTaskListener {
     }
     if (mainTaskExecutor != null && !mainTaskExecutor.isTerminated()) {
       mainTaskExecutor.shutdownNow();
+    }
+    if (scheduler != null && !scheduler.isTerminated()) {
+      scheduler.shutdownNow();
     }
   }
 

@@ -354,7 +354,8 @@ public class Utils {
   }
 
   /**
-   * Starts a thread and does a "ping" on our tracking server, sending the event (and the random UUID + some env vars).
+   * Starts a thread and does a "ping" on our tracking server, sending the event (and the random UUID + some env vars).<br>
+   * use "startup" / "shutdown" for tracking sessions
    * 
    * @param event
    *          The event for the GET request
@@ -375,6 +376,14 @@ public class Utils {
             String uuid = FileUtils.readFileToString(uuidFile);
             System.setProperty("tmm.uuid", uuid);
 
+            String session = "";
+            if ("startup".equals(event)) {
+              session = "&sc=start";
+            }
+            else if ("shutdown".equals(event)) {
+              session = "&sc=end";
+            }
+
             // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
             // @formatter:off
             String ga = "v=1"
@@ -387,6 +396,7 @@ public class Utils {
                 + "&ea=" + event 
                 + "&aip=1" 
                 + "&je=1"
+                + session
                 + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
                 + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
                 + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 

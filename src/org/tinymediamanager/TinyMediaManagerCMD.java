@@ -24,6 +24,7 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.UpdaterTask;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -150,6 +151,8 @@ public class TinyMediaManagerCMD {
       if (scrapeNew || scrapeUnscraped) {
         // only do an update check when we are scraping online
         // no need for a "forced" check for just updating the datasource
+        Utils.trackEvent("cmd");
+
         final SwingWorker<Boolean, Void> updateWorker = new UpdaterTask();
         updateWorker.run();
         updateAvailable = updateWorker.get(); // blocking

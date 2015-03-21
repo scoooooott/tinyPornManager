@@ -363,6 +363,7 @@ public class TinyMediaManager {
 
             // show changelog
             if (newVersion) {
+              Utils.trackEvent("updated");
               showChangelog();
             }
           }
