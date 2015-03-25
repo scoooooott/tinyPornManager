@@ -63,21 +63,21 @@ public class MessageDialog extends JDialog {
     if (owner != null) {
       setIconImages(owner.getIconImages());
     }
-    setMinimumSize(new Dimension(300, 150));
+    setMinimumSize(new Dimension(300, 100));
     setResizable(false);
     setModal(true);
     getContentPane().setLayout(new BorderLayout(0, 0));
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default"),
+      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(10dlu;default)"),
           FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         lblImage = new JLabel("");
         lblImage.setVisible(false);
-        panelContent.add(lblImage, "2, 2, 1, 3");
+        panelContent.add(lblImage, "2, 2, 1, 3, fill, fill");
       }
       {
         lblText = new JLabel("");

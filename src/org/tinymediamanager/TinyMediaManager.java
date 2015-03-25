@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -57,10 +58,12 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
@@ -395,7 +398,17 @@ public class TinyMediaManager {
         catch (javax.persistence.PersistenceException e) {
           LOGGER.error("PersistenceException", e);
           if (!GraphicsEnvironment.isHeadless()) {
-            MessageDialog.showExceptionWindow(e);
+            // MessageDialog.showExceptionWindow(e);
+            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+            MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+            dialog.setImage(IconManager.ERROR);
+            dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
+            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
+            dialog.setResizable(true);
+            dialog.pack();
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+
             System.exit(1);
           }
         }
