@@ -42,6 +42,7 @@ public abstract class TmmDialog extends JDialog {
     setName(id);
     setIconImage(MainWindow.LOGO);
     setModal(true);
+    setModalityType(ModalityType.APPLICATION_MODAL);
   }
 
   @Override
