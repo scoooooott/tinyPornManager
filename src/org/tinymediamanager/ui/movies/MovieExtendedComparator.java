@@ -19,6 +19,7 @@ import java.text.RuleBasedCollator;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -39,6 +40,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   public enum SortColumn {
     TITLE(BUNDLE.getString("metatag.title")), //$NON-NLS-1$,
+    SORT_TITLE(BUNDLE.getString("metatag.sorttitle")), //$NON-NLS-1$,
     YEAR(BUNDLE.getString("metatag.year")), //$NON-NLS-1$,
     DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$,
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
@@ -120,6 +122,12 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       switch (sortColumn) {
         case TITLE:
           sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
+          break;
+
+        case SORT_TITLE:
+          String title1 = StringUtils.isNotBlank(movie1.getSortTitle()) ? movie1.getSortTitle() : movie1.getTitleSortable();
+          String title2 = StringUtils.isNotBlank(movie2.getSortTitle()) ? movie2.getSortTitle() : movie2.getTitleSortable();
+          sortOrder = stringCollator.compare(title1.toLowerCase(), title2.toLowerCase());
           break;
 
         case YEAR:
