@@ -1,42 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.tinymediamanager</groupId>
+
+  <parent>
+    <groupId>org.tinymediamanager</groupId>
+    <artifactId>tmm-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
   <artifactId>scraper-tmdb</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>TheMovieDB scraper</name>
   <description>A scraper for TheMovieDB</description>
+
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Specification-Title>${project.name}</Specification-Title>
-              <Specification-Version>${project.version}</Specification-Version>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.6.1</version>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -59,17 +37,9 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.omertron:themoviedbapi</include>
+                  <include>com.uwetrottmann:tmdb-java</include>
                 </includes>
               </artifactSet>
-              <filters>
-                <filter>
-                  <artifact>com.omertron:themoviedbapi</artifact>
-                  <includes>
-                    <include>com/omertron/themoviedbapi/**</include>
-                  </includes>
-                </filter>
-              </filters>
             </configuration>
           </execution>
         </executions>
@@ -84,22 +54,12 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.omertron</groupId>
-      <artifactId>themoviedbapi</artifactId>
-      <version>3.11</version>
+      <groupId>com.uwetrottmann</groupId>
+      <artifactId>tmdb-java</artifactId>
+      <version>0.9.0</version>
     </dependency>
+
     <!-- TESTS -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.10</version>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
