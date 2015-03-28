@@ -15,19 +15,15 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.*;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The Class UrlUtil.
@@ -79,6 +75,7 @@ public class UrlUtil {
    * gets the BaseName (w/o extension) of an URL (better than commons-io)
    * 
    * @param url
+   *          the to get the base name from
    * @return BaseName
    * @throws URISyntaxException
    */
@@ -90,6 +87,7 @@ public class UrlUtil {
    * gets the Extension of an URL (better than commons-io)
    * 
    * @param url
+   *          the to get the extension from
    * @return BaseName
    * @throws URISyntaxException
    */
@@ -101,8 +99,8 @@ public class UrlUtil {
    * gets the FileName (with extension) of an URL (better than commons-io)
    * 
    * @param url
+   *          the to get the file name from
    * @return BaseName
-   * @throws URISyntaxException
    */
   public static String getFilename(String url) {
     return getFileNameArray(url)[2];
@@ -209,22 +207,16 @@ public class UrlUtil {
     String[] pathContents = path.split("[\\\\/]");
     if (pathContents != null) {
       int pathContentsLength = pathContents.length;
-      // System.out.println("Path Contents Length: " + pathContentsLength);
-      // for (int i = 0; i < pathContents.length; i++) {
-      // System.out.println("Path " + i + ": " + pathContents[i]);
-      // }
-      // // lastPart: s659629384_752969_4472.jpg
+      // lastPart: s659629384_752969_4472.jpg
       String lastPart = pathContents[pathContentsLength - 1];
       String[] lastPartContents = lastPart.split("\\.");
       if (lastPartContents != null && lastPartContents.length > 1) {
         int lastPartContentLength = lastPartContents.length;
-        // System.out.println("Last Part Length: " + lastPartContentLength);
         // filenames can contain . , so we assume everything before
         // the last . is the name, everything after the last . is the
         // extension
         String name = "";
         for (int i = 0; i < lastPartContentLength; i++) {
-          // System.out.println("Last Part " + i + ": " + lastPartContents[i]);
           if (i < (lastPartContents.length - 1)) {
             name += lastPartContents[i];
             if (i < (lastPartContentLength - 2)) {
@@ -234,9 +226,6 @@ public class UrlUtil {
         }
         String extension = lastPartContents[lastPartContentLength - 1];
         filename = name + "." + extension;
-        // System.out.println("Name: " + name);
-        // System.out.println("Extension: " + extension);
-        // System.out.println("Filename: " + filename);
         ret = new String[] { name, extension, filename };
       }
       else {
@@ -306,7 +295,7 @@ public class UrlUtil {
     Locale l = getLocaleFromLanguage(language);
 
     // @formatter:off
-    String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:26.0) Gecko/20100101 Firefox/26.0", 
+    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:26.0) Gecko/20100101 Firefox/26.0",
         hardcodeOS,
         System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
@@ -314,7 +303,6 @@ public class UrlUtil {
         l.getLanguage(),
         l.getCountry());
     // @formatter:on
-    return ua;
   }
 
   /**

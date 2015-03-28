@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.util;
 
-import net.xeoh.plugins.base.Plugin;
+import java.util.Collections;
 
 /**
- * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces
- *
+ * The class ListUtils is a helper class, providing some special functions for Lists
+ * 
  * @author Manuel Laggner
  * @since 1.0
  */
-public abstract interface IMediaProvider extends Plugin {
+public class ListUtils {
+
   /**
-   * Gets a general information about the metadata provider
+   * Get a nullsafe Iterable. You can pass here any iterable collection and get a iterable collection back. Also works with null
    * 
-   * @return the provider info containing metadata of the provider
+   * @param it
+   *          the iterable collection or null
+   * @return the same iterable collection (if <i>it</i> was not null) or an empty iterable collection of the same type
    */
-  public MediaProviderInfo getProviderInfo();
+  public static <T> Iterable<T> nullSafe(Iterable<T> it) {
+    return it != null ? it : Collections.<T> emptySet();
+  }
 }

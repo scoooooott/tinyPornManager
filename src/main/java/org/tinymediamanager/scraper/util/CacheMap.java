@@ -68,6 +68,7 @@ public class CacheMap<K, T> {
               Thread.sleep(cleanupInterval * 1000);
             }
             catch (InterruptedException ex) {
+              break;
             }
             cleanup();
           }
@@ -83,7 +84,9 @@ public class CacheMap<K, T> {
    * Put a new object to the map
    * 
    * @param key
+   *          the key of the entry
    * @param value
+   *          the value of the entry
    */
   public void put(K key, T value) {
     readWriteLock.writeLock().lock();
@@ -95,7 +98,8 @@ public class CacheMap<K, T> {
    * Get the specified object from the map (or null if no object is found)
    * 
    * @param key
-   * @return
+   *          the key of the entry to get
+   * @return the entry (if found) or null
    */
   public T get(K key) {
     readWriteLock.readLock().lock();
@@ -115,6 +119,7 @@ public class CacheMap<K, T> {
    * Removes the specified object from the map
    * 
    * @param key
+   *          the key of the entry
    */
   public void remove(K key) {
     readWriteLock.writeLock().lock();
@@ -125,7 +130,7 @@ public class CacheMap<K, T> {
   /**
    * Get the actual size of the map
    * 
-   * @return
+   * @return the actual size of the map
    */
   public int size() {
     readWriteLock.readLock().lock();
@@ -138,6 +143,16 @@ public class CacheMap<K, T> {
    * Cleanup the map checking the time to live for each entry
    */
   public void cleanup() {
+    cleanup(false);
+  }
+
+  /**
+   * Cleanup the map checking the time to live for each entry or force cleaning
+   * 
+   * @param force
+   *          force cleanup
+   */
+  public void cleanup(boolean force) {
     long now = System.currentTimeMillis();
     ArrayList<K> deleteKey = new ArrayList<K>((cacheMap.size() / 2) + 1);
 
@@ -146,7 +161,7 @@ public class CacheMap<K, T> {
       K key = entry.getKey();
       CacheObject c = entry.getValue();
 
-      if (c != null && (now > (timeToLive + c.lastAccessed))) {
+      if (c != null && ((now > (timeToLive + c.lastAccessed)) || force)) {
         deleteKey.add(key);
       }
     }

@@ -145,7 +145,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         return (List<Locale>) method.invoke(obj);
       }
     }
-    catch (Exception e) {
+    catch (Exception ignored) {
     }
     return Arrays.asList(new Locale("en", "US"));
   }

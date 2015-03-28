@@ -15,16 +15,16 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
@@ -54,6 +54,7 @@ public class MediaMetadata {
   public static final String      SPOKEN_LANGUAGES    = "spokenLanguages";
   public static final String      COUNTRY             = "country";
   public static final String      POSTER_URL          = "posterUrl";
+  public static final String      BACKGROUND_URL      = "backgroundUrl";
   public static final String      STATUS              = "status";
 
   // TV
@@ -72,6 +73,7 @@ public class MediaMetadata {
   private List<MediaGenres>       genres              = new ArrayList<MediaGenres>();
   private List<Certification>     certifications      = new ArrayList<Certification>();
   private List<MediaTrailer>      trailers            = new ArrayList<MediaTrailer>();
+  private List<MediaMetadata>     subItems            = new ArrayList<MediaMetadata>();
 
   /**
    * new infrastructure
@@ -95,10 +97,8 @@ public class MediaMetadata {
    * 
    * @param md
    *          other MediaMetadata
-   * @return MediaMetadata
    */
   public void mergeFrom(MediaMetadata md) {
-
     HashMap<String, Object> delta = md.getIds();
     delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we have in our array
     ids.putAll(delta); // so no dupe on adding while not overwriting
@@ -182,7 +182,7 @@ public class MediaMetadata {
       try {
         return Integer.parseInt(String.valueOf(data));
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 
@@ -207,7 +207,7 @@ public class MediaMetadata {
       try {
         return Float.parseFloat(String.valueOf(data));
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 
@@ -232,7 +232,7 @@ public class MediaMetadata {
       try {
         return Double.parseDouble(String.valueOf(data));
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 
@@ -373,6 +373,25 @@ public class MediaMetadata {
    */
   public List<MediaArtwork> getFanart() {
     return fanart;
+  }
+
+  /**
+   * Add a sub item
+   *
+   * @param item
+   *          the subitem to be added
+   */
+  public void addSubItem(MediaMetadata item) {
+    subItems.add(item);
+  }
+
+  /**
+   * Get all subitems
+   * 
+   * @return a list of all sub items
+   */
+  public List<MediaMetadata> getSubItems() {
+    return subItems;
   }
 
   /**

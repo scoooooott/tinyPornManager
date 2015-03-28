@@ -15,10 +15,6 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.UnsupportedEncodingException;
-import java.security.SecureRandom;
-import java.security.spec.KeySpec;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -26,6 +22,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
 
 /**
  * A class providing some classes helping to encrypt/decrypt data into AES
@@ -85,8 +84,7 @@ public class AesUtil {
     try {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), hex(salt), iterationCount, keySize);
-      SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-      return key;
+      return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
     catch (Exception e) {
       throw fail(e);

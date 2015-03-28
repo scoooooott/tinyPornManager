@@ -94,9 +94,6 @@ public class ProxySettings {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (StringUtils.isNotBlank(INSTANCE.host)) {
-      return true;
-    }
-    return false;
+    return StringUtils.isNotBlank(INSTANCE.host);
   }
 }

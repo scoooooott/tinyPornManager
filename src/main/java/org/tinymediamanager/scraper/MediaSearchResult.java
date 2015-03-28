@@ -53,7 +53,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    * 
    * @param msr
    *          other MediaSerachResult
-   * @return MediaSerachResult
    */
   public void mergeFrom(MediaSearchResult msr) {
     url = StringUtils.isEmpty(url) ? msr.getUrl() : url;

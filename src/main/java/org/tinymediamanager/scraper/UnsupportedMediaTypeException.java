@@ -15,19 +15,21 @@
  */
 package org.tinymediamanager.scraper;
 
-import net.xeoh.plugins.base.Plugin;
-
 /**
- * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces
- *
+ * The UnsupportedMediaTypeException is used to indicate that the given media type cannot be used for the chosen meta data provider
+ * 
  * @author Manuel Laggner
  * @since 1.0
  */
-public abstract interface IMediaProvider extends Plugin {
-  /**
-   * Gets a general information about the metadata provider
-   * 
-   * @return the provider info containing metadata of the provider
-   */
-  public MediaProviderInfo getProviderInfo();
+public class UnsupportedMediaTypeException extends Exception {
+  private MediaType type;
+
+  public UnsupportedMediaTypeException(MediaType type) {
+    this.type = type;
+  }
+
+  @Override
+  public String toString() {
+    return "The media type " + type.name() + " is not supported by this meta data provider";
+  }
 }

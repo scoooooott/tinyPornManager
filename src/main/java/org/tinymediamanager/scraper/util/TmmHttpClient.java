@@ -15,95 +15,52 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.UnknownHostException;
-
-import javax.net.ssl.SSLException;
-
+import com.squareup.okhttp.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
+
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The class HttpClient. To construct our HTTP client for internet access
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class TmmHttpClient {
-  private static CloseableHttpClient client = createHttpClient();
+  private static OkHttpClient client = createHttpClient();
 
   /**
-   * instantiates a new CloseableHttpClient
+   * instantiates a new OkHttpClient
    * 
-   * @return CloseableHttpClient
+   * @return OkHttpClient
    */
-  public static CloseableHttpClient createHttpClient() {
-    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-    // Increase default max connection per route to 5
-    connectionManager.setMaxTotal(5);
+  public static OkHttpClient createHttpClient() {
+    OkHttpClient client = new OkHttpClient();
 
-    HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
-    httpClientBuilder.setConnectionManager(connectionManager);
+    // pool
+    client.setConnectionPool(new ConnectionPool(5, 5000));
 
-    // my own retry handler
-    HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
-      @Override
-      public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-        if (executionCount >= 5) {
-          // Do not retry if over max retry count
-          return false;
-        }
-        if (exception instanceof InterruptedIOException) {
-          // Timeout
-          return false;
-        }
-        if (exception instanceof UnknownHostException) {
-          // Unknown host
-          return false;
-        }
-        if (exception instanceof ConnectTimeoutException) {
-          // Connection refused
-          return false;
-        }
-        if (exception instanceof SSLException) {
-          // SSL handshake exception
-          return false;
-        }
-        HttpClientContext clientContext = HttpClientContext.adapt(context);
-        HttpRequest request = clientContext.getRequest();
-        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
-        if (idempotent) {
-          // Retry if the request is considered idempotent
-          return true;
-        }
-        return false;
-      }
+    // timeouts
+    client.setConnectTimeout(10, TimeUnit.SECONDS);
+    client.setWriteTimeout(10, TimeUnit.SECONDS);
+    client.setReadTimeout(30, TimeUnit.SECONDS);
 
-    };
-    httpClientBuilder.setRetryHandler(myRetryHandler);
-
-    // set proxy if needed
-    if ((ProxySettings.INSTANCE.useProxy())) {
-      setProxy(httpClientBuilder);
+    // default caching (cache/url - 5mb)
+    try {
+      client.setCache(new Cache(new File("cache/url"), 5000000));
+    }
+    catch (Exception ignored) {
     }
 
-    return httpClientBuilder.build();
+    // proxy
+    if ((ProxySettings.INSTANCE.useProxy())) {
+      setProxy(client);
+    }
+
+    return client;
   }
 
   /**
@@ -111,7 +68,7 @@ public class TmmHttpClient {
    * 
    * @return the http client
    */
-  public static CloseableHttpClient getHttpClient() {
+  public static OkHttpClient getHttpClient() {
     return client;
   }
 
@@ -123,49 +80,35 @@ public class TmmHttpClient {
     client = createHttpClient();
   }
 
-  private static void setProxy(HttpClientBuilder httpClientBuilder) {
-    HttpHost proxyHost = null;
+  private static void setProxy(OkHttpClient client) {
+    Proxy proxyHost;
 
     if (ProxySettings.INSTANCE.getPort() > 0) {
-      proxyHost = new HttpHost(ProxySettings.INSTANCE.getHost(), ProxySettings.INSTANCE.getPort());
+      proxyHost = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(ProxySettings.INSTANCE.getHost(), ProxySettings.INSTANCE.getPort()));
     }
     else if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getHost())) {
-      proxyHost = new HttpHost(ProxySettings.INSTANCE.getHost());
+      proxyHost = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(ProxySettings.INSTANCE.getHost(), 80));
     }
     else {
       // no proxy settings found. return
       return;
     }
 
+    client.setProxy(proxyHost);
     // authenticate
     if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getUsername()) && StringUtils.isNotBlank(ProxySettings.INSTANCE.getPassword())) {
-      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+      client.setAuthenticator(new Authenticator() {
+        @Override
+        public Request authenticate(Proxy proxy, Response response) {
+          return null; // Null indicates no attempt to authenticate.
+        }
 
-      if (ProxySettings.INSTANCE.getUsername().contains("\\")) {
-        // use NTLM
-        int offset = ProxySettings.INSTANCE.getUsername().indexOf("\\");
-        String domain = ProxySettings.INSTANCE.getUsername().substring(0, offset);
-        String username = ProxySettings.INSTANCE.getUsername().substring(offset + 1, ProxySettings.INSTANCE.getUsername().length());
-
-        credentialsProvider.setCredentials(AuthScope.ANY, new NTCredentials(username, ProxySettings.INSTANCE.getPassword(), "", domain));
-      }
-      else {
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(ProxySettings.INSTANCE.getUsername(),
-            ProxySettings.INSTANCE.getPassword()));
-      }
-
-      httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+        @Override
+        public Request authenticateProxy(Proxy proxy, Response response) {
+          String credential = Credentials.basic(ProxySettings.INSTANCE.getUsername(), ProxySettings.INSTANCE.getPassword());
+          return response.request().newBuilder().header("Proxy-Authorization", credential).build();
+        }
+      });
     }
-
-    // set proxy
-    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
-    httpClientBuilder.setRoutePlanner(routePlanner);
-
-    // try to get proxy settings from JRE - is probably added in HttpClient 4.3; fixed with 4.3.3
-    // (https://issues.apache.org/jira/browse/HTTPCLIENT-1457)
-    // SystemDefaultCredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
-    // httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-    // SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
-    // httpClientBuilder.setRoutePlanner(routePlanner);
   }
 }

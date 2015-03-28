@@ -1,5 +1,9 @@
 package org.tinymediamanager.scraper.util;
 
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,10 +13,6 @@ import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
-
-import org.apache.commons.codec.binary.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SubtitleUtils {
 
@@ -26,6 +26,7 @@ public class SubtitleUtils {
    * Returns SubDB hash or empty string if error
    * 
    * @param file
+   *          the file to compute the DB hash
    * @return hash
    */
   @SuppressWarnings("resource")
@@ -72,6 +73,7 @@ public class SubtitleUtils {
    * Returns OpenSubtitle hash or empty string if error
    * 
    * @param file
+   *          the file to compute the hash
    * @return hash
    */
   @SuppressWarnings("resource")

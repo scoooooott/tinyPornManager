@@ -15,20 +15,13 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.UnknownHostException;
-
-import org.apache.http.Header;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.protocol.BasicHttpContext;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.UnknownHostException;
 
 /**
  * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).
@@ -36,9 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class StreamingUrl extends Url {
-  private static final Logger   LOGGER = LoggerFactory.getLogger(StreamingUrl.class);
-
-  private CloseableHttpResponse response;
+  private static final Logger LOGGER = LoggerFactory.getLogger(StreamingUrl.class);
 
   public StreamingUrl(String url) throws IOException {
     super(url);
@@ -50,7 +41,7 @@ public class StreamingUrl extends Url {
    * @return the InputStream of the content
    */
   @Override
-  public InputStream getInputStream() throws IOException {
+  public InputStream getInputStream() throws IOException, InterruptedException {
     // workaround for local files
     if (url.startsWith("file:")) {
       String newUrl = url.replace("file:", "");
@@ -58,29 +49,35 @@ public class StreamingUrl extends Url {
       return new FileInputStream(file);
     }
 
-    BasicHttpContext localContext = new BasicHttpContext();
-
     // replace our API keys for logging...
     String logUrl = url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
     LOGGER.debug("getting " + logUrl);
-    HttpGet httpget = new HttpGet(url);
-    RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
-    httpget.setConfig(requestConfig);
+    Request.Builder requestBuilder = new Request.Builder();
+    requestBuilder.url(url);
+
+    InputStream is = null;
 
     // set custom headers
-    for (Header header : headersRequest) {
-      httpget.addHeader(header);
+    for (Pair header : headersRequest) {
+      requestBuilder.addHeader(header.first().toString(), header.second().toString());
     }
 
-    try {
-      response = client.execute(httpget, localContext);
-      headersResponse = response.getAllHeaders();
-      entity = response.getEntity();
-      responseStatus = response.getStatusLine();
-      if (entity != null) {
-        return entity.getContent();
-      }
+    Request request = requestBuilder.build();
 
+    Response response = null;
+    try {
+      response = client.newCall(request).execute();
+      headersResponse = response.headers();
+      responseCode = response.code();
+      responseMessage = response.message();
+      responseCharset = response.body().contentType().charset();
+      responseContentType = response.body().contentType().type();
+      is = response.body().byteStream();
+
+    }
+    catch (InterruptedIOException e) {
+      LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
+      throw new InterruptedException();
     }
     catch (UnknownHostException e) {
       LOGGER.error("proxy or host not found/reachable", e);
@@ -88,52 +85,6 @@ public class StreamingUrl extends Url {
     catch (Exception e) {
       LOGGER.error("Exception getting url " + logUrl, e);
     }
-    return new ByteArrayInputStream("".getBytes());
-  }
-
-  public long getContentLength() {
-    if (response == null) {
-      return 0;
-    }
-
-    Header headers[] = response.getHeaders("Content-Length");
-    if (headers.length > 0) {
-      try {
-        long size = Long.parseLong(headers[0].getValue());
-        return size;
-      }
-      catch (NumberFormatException e) {
-      }
-    }
-
-    return 0;
-  }
-
-  public String getContentType() {
-    if (response == null) {
-      return "";
-    }
-
-    Header headers[] = response.getHeaders("Content-Type");
-    if (headers.length > 0) {
-      return headers[0].getValue();
-    }
-
-    return "";
-  }
-
-  /**
-   * Proper closing of the connection and resources
-   */
-  public void closeConnection() {
-    if (response != null) {
-      try {
-        response.close();
-      }
-
-      catch (Exception e) {
-        LOGGER.warn("could not close connection " + e.getMessage());
-      }
-    }
+    return is;
   }
 }

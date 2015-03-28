@@ -15,9 +15,8 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import com.squareup.okhttp.Headers;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.StatusLine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +25,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -67,31 +68,58 @@ public class CachedUrl extends Url {
       IOUtils.closeQuietly(outputStream);
 
       // and now fill the CachedRequest object with the result
-      cachedRequest = new CachedRequest();
-      cachedRequest.url = url.url;
-      cachedRequest.uri = url.uri;
-      cachedRequest.content = outputStream.toByteArray();
-      cachedRequest.responseStatus = url.responseStatus;
-      cachedRequest.headersResponse = url.headersResponse;
-      cachedRequest.headersRequest = url.headersRequest;
+      cachedRequest = new CachedRequest(url, outputStream.toByteArray());
+      if(url.responseCode >= 200 && url.responseCode < 300){
+        CACHE.put(this.url, cachedRequest);
+      }
     }
 
-    responseStatus = cachedRequest.responseStatus;
-    headersResponse = cachedRequest.headersResponse;
+    this.responseCode = cachedRequest.responseCode;
+    this.responseMessage = cachedRequest.responseMessage;
+    this.responseCharset = cachedRequest.responseCharset;
+    this.responseContentType = cachedRequest.responseContentType;
+    this.responseContentLength = cachedRequest.responseContentLength;
 
-    GZIPInputStream inputStream = new GZIPInputStream(new ByteArrayInputStream(cachedRequest.content));
-    return inputStream;
+    this.headersResponse = cachedRequest.headersResponse;
+    this.headersRequest.addAll(cachedRequest.headersRequest);
+
+    return new GZIPInputStream(new ByteArrayInputStream(cachedRequest.content));
+  }
+
+  public static void clearCache() {
+    CACHE.cleanup(true);
   }
 
   /**
    * A inner class for representing cached entries
    */
   private static class CachedRequest {
-    String       url;
-    byte[]       content;
-    StatusLine   responseStatus;
-    Header[]     headersResponse;
-    List<Header> headersRequest;
-    URI          uri;
+    String     url;
+    URI        uri;
+    byte[]     content;
+
+    int        responseCode          = 0;
+    String     responseMessage       = "";
+    Charset    responseCharset       = null;
+    String     responseContentType   = "";
+    long       responseContentLength = -1;
+
+    Headers    headersResponse       = null;
+    List<Pair> headersRequest        = new ArrayList<Pair>();
+
+    CachedRequest(Url url, byte[] content){
+      this.url = url.url;
+      this.uri = url.uri;
+      this.content = content;
+
+      this.responseCode = url.responseCode;
+      this.responseMessage = url.responseMessage;
+      this.responseCharset = url.responseCharset;
+      this.responseContentType = url.responseContentType;
+      this.responseContentLength = url.responseContentLength;
+
+      this.headersResponse = url.headersResponse;
+      this.headersRequest.addAll(url.headersRequest);
+    }
   }
 }

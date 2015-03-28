@@ -237,7 +237,7 @@ public class MediaArtwork {
   /**
    * amount of likes (or other, for ordering)
    * 
-   * @param likes
+   * @param likes set the amount of likes
    */
   public void setLikes(int likes) {
     this.likes = likes;

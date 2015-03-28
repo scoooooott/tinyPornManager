@@ -95,7 +95,7 @@ public class PropertiesUtils {
         try {
           os.flush();
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
         os.close();
       }

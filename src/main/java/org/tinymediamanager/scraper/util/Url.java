@@ -15,30 +15,20 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
@@ -47,15 +37,20 @@ import java.util.regex.Pattern;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Url {
-  private static final Logger          LOGGER          = LoggerFactory.getLogger(Url.class);
-  protected static CloseableHttpClient client;
+  private static final Logger   LOGGER                = LoggerFactory.getLogger(Url.class);
+  protected static OkHttpClient client;
 
-  protected StatusLine                 responseStatus  = null;
-  protected String                     url             = null;
-  protected Header[]                   headersResponse = null;
-  protected List<Header>               headersRequest  = new ArrayList<Header>();
-  protected HttpEntity                 entity          = null;
-  protected URI                        uri             = null;
+  protected static final String USER_AGENT            = "User-Agent";
+  protected int                 responseCode          = 0;
+  protected String              responseMessage       = "";
+  protected Charset             responseCharset       = null;
+  protected String              responseContentType   = "";
+  protected long                responseContentLength = -1;
+
+  protected String              url                   = null;
+  protected Headers             headersResponse       = null;
+  protected List<Pair>          headersRequest        = new ArrayList<Pair>();
+  protected URI                 uri                   = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -69,12 +64,13 @@ public class Url {
     if (headersResponse == null) {
       return "";
     }
-    for (Header h : headersResponse) {
-      if (h.getName().equalsIgnoreCase(header)) {
-        return h.getValue();
-      }
+
+    String h = headersResponse.get(header);
+
+    if (StringUtils.isBlank(h)) {
+      return "";
     }
-    return "";
+    return h;
   }
 
   /**
@@ -82,7 +78,7 @@ public class Url {
    * 
    * @return the response headers
    */
-  public Header[] getHeadersResponse() {
+  public Headers getHeadersResponse() {
     return headersResponse;
   }
 
@@ -107,7 +103,7 @@ public class Url {
     }
 
     // default user agent
-    addHeader(HttpHeaders.USER_AGENT, UrlUtil.generateUA());
+    addHeader(USER_AGENT, UrlUtil.generateUA());
   }
 
   /**
@@ -134,9 +130,10 @@ public class Url {
    * set a specified User-Agent
    * 
    * @param userAgent
+   *          the user agent to be set
    */
   public void setUserAgent(String userAgent) {
-    addHeader(HttpHeaders.USER_AGENT, userAgent);
+    addHeader(USER_AGENT, userAgent);
   }
 
   /**
@@ -166,15 +163,18 @@ public class Url {
     LOGGER.trace("add HTTP header: " + key + "=" + value);
 
     // check for duplicates
+    // FIXME looks like there is no need for duplicate check since some headers can occur several times
+    // Typically HTTP headers work like a Map<String, String>: each field has one value or none. But some headers permit multiple values, like Guava's
+    // Multimap. For example, it's legal and common for an HTTP response to supply multiple Vary headers.
     for (int i = headersRequest.size() - 1; i >= 0; i--) {
-      Header header = headersRequest.get(i);
-      if (key.equals(header.getName())) {
+      Pair header = headersRequest.get(i);
+      if (key.equals(header.first())) {
         headersRequest.remove(i);
       }
     }
 
     // and add the new one
-    headersRequest.add(new BasicHeader(key, value));
+    headersRequest.add(new Pair(key, value));
   }
 
   /**
@@ -183,7 +183,7 @@ public class Url {
    * @param header
    *          the header
    */
-  public void addHeader(Header header) {
+  public void addHeader(Pair header) {
     headersRequest.add(header);
   }
 
@@ -193,7 +193,7 @@ public class Url {
    * @param headers
    *          the headers
    */
-  public void addHeaders(List<Header> headers) {
+  public void addHeaders(List<Pair> headers) {
     headersRequest.addAll(headers);
   }
 
@@ -212,31 +212,32 @@ public class Url {
       return new FileInputStream(file);
     }
 
-    BasicHttpContext localContext = new BasicHttpContext();
-    ByteArrayInputStream is = null;
+    InputStream is = null;
 
     // replace our API keys for logging...
     String logUrl = url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
     LOGGER.debug("getting " + logUrl);
-    HttpGet httpget = new HttpGet(uri);
-    RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
-    httpget.setConfig(requestConfig);
+
+    Request.Builder requestBuilder = new Request.Builder();
+    requestBuilder.url(url);
 
     // set custom headers
-    for (Header header : headersRequest) {
-      httpget.addHeader(header);
+    for (Pair header : headersRequest) {
+      requestBuilder.addHeader(header.first().toString(), header.second().toString());
     }
 
-    CloseableHttpResponse response = null;
+    Request request = requestBuilder.build();
+
+    Response response = null;
     try {
-      response = client.execute(httpget, localContext);
-      headersResponse = response.getAllHeaders();
-      entity = response.getEntity();
-      responseStatus = response.getStatusLine();
-      if (entity != null) {
-        is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
-      }
-      EntityUtils.consume(entity);
+      response = client.newCall(request).execute();
+      headersResponse = response.headers();
+      responseCode = response.code();
+      responseMessage = response.message();
+      responseCharset = response.body().contentType().charset();
+      responseContentType = response.body().contentType().type();
+      is = response.body().byteStream();
+
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
@@ -248,11 +249,6 @@ public class Url {
     catch (Exception e) {
       LOGGER.error("Exception getting url " + logUrl, e);
     }
-    finally {
-      if (response != null) {
-        response.close();
-      }
-    }
     return is;
   }
 
@@ -262,21 +258,21 @@ public class Url {
    * @return true/false
    */
   public boolean isFault() {
-    return (responseStatus != null && responseStatus.getStatusCode() >= 400) ? true : false;
+    return (responseCode >= 400);
   }
 
   /**
    * http status code
    */
   public int getStatusCode() {
-    return responseStatus != null ? responseStatus.getStatusCode() : 0;
+    return responseCode;
   }
 
   /**
    * http status string
    */
   public String getStatusLine() {
-    return responseStatus != null ? responseStatus.toString() : "";
+    return responseMessage;
   }
 
   /**
@@ -299,30 +295,10 @@ public class Url {
    * @return the charset
    */
   public Charset getCharset() {
-    Charset charset = null;
-    if (entity == null || entity.getContentType() == null) {
+    if (responseCharset == null) {
       return Charset.defaultCharset();
     }
-
-    String contentType = entity.getContentType().getValue();
-    if (contentType != null) {
-      // changed 'charset' to 'harset' in regexp because some sites send 'Charset'
-      Matcher m = Pattern.compile("harset *=[ '\"]*([^ ;'\"]+)[ ;'\"]*").matcher(contentType);
-      if (m.find()) {
-        String encoding = m.group(1);
-        try {
-          charset = Charset.forName(encoding);
-        }
-        catch (UnsupportedCharsetException e) {
-          // there will be used default charset
-        }
-      }
-    }
-    if (charset == null) {
-      charset = Charset.defaultCharset();
-    }
-
-    return charset;
+    return responseCharset;
   }
 
   /**
@@ -331,11 +307,7 @@ public class Url {
    * @return the content encoding
    */
   public String getContentEncoding() {
-    if (entity == null || entity.getContentEncoding() == null) {
-      return null;
-    }
-
-    return entity.getContentEncoding().getValue();
+    return responseContentType;
   }
 
   /**
@@ -345,11 +317,7 @@ public class Url {
    * @return the content length
    */
   public long getContentLength() {
-    if (entity == null) {
-      return -1;
-    }
-
-    return entity.getContentLength();
+    return responseContentLength;
   }
 
   @Override
