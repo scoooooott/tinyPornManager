@@ -886,7 +886,7 @@ public abstract class ImdbParser {
         options.setLanguage(language);
         options.setCountry(certificationCountry);
         options.setImdbId(imdbId);
-        return tmdb.getLocalizedContent(options, null);
+        return tmdb.getMetadata(options);
       }
       catch (Exception e) {
         return null;

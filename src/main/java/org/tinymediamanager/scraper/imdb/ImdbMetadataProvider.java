@@ -15,13 +15,23 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,21 +41,21 @@ import java.util.concurrent.Executors;
  * 
  * @author Manuel Laggner
  */
-@SuppressWarnings("PMD")
+@PluginImplementation
 public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
-  private static final Logger    LOGGER          = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  private static final Logger    LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
-  static final MediaProviderInfo providerInfo    = new MediaProviderInfo(MediaMetadata.IMDBID, "imdb.com",
-                                                     "Scraper for imdb which is able to scrape movie metadata");
+  static final MediaProviderInfo providerInfo  = new MediaProviderInfo(MediaMetadata.IMDBID, "imdb.com",
+                                                   "Scraper for imdb which is able to scrape movie metadata");
 
-  static final ExecutorService   executor        = Executors.newFixedThreadPool(4);
+  static final ExecutorService   executor      = Executors.newFixedThreadPool(4);
 
-  public static final String     CAT_ALL         = "&s=all";
-  public static final String     CAT_TITLE       = "&s=tt";
-  public static final String     CAT_MOVIES      = "&s=tt&ttype=ft&ref_=fn_ft";
-  public static final String     CAT_TV          = "&s=tt&ttype=tv&ref_=fn_tv";
-  public static final String     CAT_EPISODE     = "&s=tt&ttype=ep&ref_=fn_ep";
-  public static final String     CAT_VIDEOGAME   = "&s=tt&ttype=vg&ref_=fn_vg";
+  public static final String     CAT_ALL       = "&s=all";
+  public static final String     CAT_TITLE     = "&s=tt";
+  public static final String     CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
+  public static final String     CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
+  public static final String     CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
+  public static final String     CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
 
   private ImdbSiteDefinition     imdbSite;
 
@@ -73,7 +83,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
         return (new ImdbTvShowParser(imdbSite)).getEpisodeMetadata(options);
 
       default:
-        throw new IllegalArgumentException();
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
 
@@ -89,7 +99,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
         return (new ImdbTvShowParser(imdbSite)).search(query);
 
       default:
-        return new ArrayList<MediaSearchResult>(0);
+        throw new UnsupportedMediaTypeException(query.getMediaType());
     }
   }
 
@@ -115,7 +125,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     String newString = StringUtils.trim(oldString.replace(String.valueOf((char) 160), " "));
 
     // if there is a leading AND trailing quotation marks (e.g. at TV shows) - remove them
-    if(newString.startsWith("\"") && newString.endsWith("\"")){
+    if (newString.startsWith("\"") && newString.endsWith("\"")) {
       newString = StringUtils.stripEnd(StringUtils.stripStart(newString, "\""), "\"");
     }
 

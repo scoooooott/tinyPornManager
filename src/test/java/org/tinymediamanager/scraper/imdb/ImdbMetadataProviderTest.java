@@ -1,16 +1,39 @@
 package org.tinymediamanager.scraper.imdb;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.*;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import static org.junit.Assert.*;
 
 public class ImdbMetadataProviderTest {
+  private static final String CRLF = "\n";
+
+  @BeforeClass
+  public static void setUp() {
+    StringBuilder config = new StringBuilder("handlers = java.util.logging.ConsoleHandler\n");
+    config.append(".level = ALL").append(CRLF);
+    config.append("java.util.logging.ConsoleHandler.level = ALL").append(CRLF);
+    // Only works with Java 7 or later
+    config.append("java.util.logging.SimpleFormatter.format = [%1$tH:%1$tM:%1$tS %4$6s] %2$s - %5$s %6$s%n").append(CRLF);
+    // Exclude http logging
+    config.append("sun.net.www.protocol.http.HttpURLConnection.level = OFF").append(CRLF);
+    InputStream ins = new ByteArrayInputStream(config.toString().getBytes());
+    try {
+      LogManager.getLogManager().readConfiguration(ins);
+    }
+    catch (IOException ignored) {
+    }
+  }
 
   @Test
   public void testMovieSearch() {
@@ -142,7 +165,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
-      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setLanguage(MediaLanguages.en);
       options.setCountry(CountryCode.US);
       options.setId(mp.getProviderInfo().getId(), "tt0491738");
@@ -244,7 +267,7 @@ public class ImdbMetadataProviderTest {
       e.printStackTrace();
       fail();
     }
-    //S3E12
+    // S3E12
     try {
       mp = new ImdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.TV_EPISODE);
@@ -259,7 +282,8 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       assertEquals("Earth, Wind and... Wait for It", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.", md.getStringValue(MediaMetadata.PLOT));
+      assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.",
+          md.getStringValue(MediaMetadata.PLOT));
       assertEquals("23 January 2009", md.getStringValue(MediaMetadata.RELEASE_DATE));
     }
     catch (Exception e) {
