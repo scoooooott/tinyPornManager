@@ -8,8 +8,23 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>scraper-ofdb</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>OFDb scraper</name>
+  <description>A scraper for the Online Filmdatenbank (OFDb)</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>false</skipTests>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>

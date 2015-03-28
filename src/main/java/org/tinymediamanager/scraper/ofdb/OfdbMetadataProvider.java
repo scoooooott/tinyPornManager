@@ -78,6 +78,10 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
 
+    if (options.getType() != MediaType.MOVIE) {
+      throw new UnsupportedMediaTypeException(options.getType());
+    }
+
     // we have 3 entry points here
     // a) getMetadata has been called with an ofdbId
     // b) getMetadata has been called with an imdbId
@@ -454,6 +458,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
+
+    if (options.getMediaType() != MediaType.MOVIE) {
+      throw new UnsupportedMediaTypeException(options.getMediaType());
+    }
+
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
     String searchQuery = "";
