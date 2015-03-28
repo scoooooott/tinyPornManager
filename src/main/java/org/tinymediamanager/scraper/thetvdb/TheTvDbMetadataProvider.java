@@ -75,7 +75,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       case TV_EPISODE:
         return getEpisodeMetadata(mediaScrapeOptions);
     }
-    throw new Exception("invalid type");
+    throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
   }
 
   @Override
@@ -84,7 +84,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
     if (options.getMediaType() != MediaType.TV_SHOW) {
-      throw new Exception("wrong media type for this scraper");
+      throw new UnsupportedMediaTypeException(options.getMediaType());
     }
 
     // detect the string to search
@@ -202,7 +202,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return sr;
   }
 
-  public MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
 
@@ -291,7 +291,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return md;
   }
 
-  public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
+  private MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     boolean useDvdOrder = false;
