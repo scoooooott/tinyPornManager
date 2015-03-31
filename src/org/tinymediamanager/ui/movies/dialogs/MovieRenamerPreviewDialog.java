@@ -392,7 +392,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       emptyResult = new MovieRenamerPreviewContainer(new Movie());
     }
 
-    public void setSelectedResult(MovieRenamerPreviewContainer newValue) {
+    public synchronized void setSelectedResult(MovieRenamerPreviewContainer newValue) {
       if (newValue == null) {
         selectedResult = emptyResult;
       }
@@ -415,7 +415,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           container.mediaFile = mf;
 
           for (MediaFile mf2 : selectedResult.getNewMediaFiles()) {
-            if (mf.getFilename().equals(mf2.getFilename())) {
+            if (mf2 != null && mf.getFilename().equals(mf2.getFilename())) {
               found = true;
               break;
             }

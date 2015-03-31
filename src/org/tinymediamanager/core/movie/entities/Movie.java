@@ -1262,7 +1262,7 @@ public class Movie extends MediaEntity {
         filename = "";
         break;
     }
-    LOGGER.trace("Renaming '" + newMovieFilename + "' with NFO name " + nfo + " to '" + filename + "'");
+    // LOGGER.trace("getNfoFilename: '" + newMovieFilename + "' / " + nfo + " -> '" + filename + "'");
     return filename;
   }
 

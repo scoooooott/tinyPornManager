@@ -21,11 +21,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
@@ -46,7 +44,7 @@ public class MovieRenamerPreview {
     // VIDEO needs to be renamed first, since all others depend on that name!!!
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       oldFiles.add(new MediaFile(mf));
-      MediaFile ftr = generateFilename(movie, mf, newVideoBasename).get(0); // there can be only one
+      MediaFile ftr = MovieRenamer.generateFilename(movie, mf, newVideoBasename).get(0); // there can be only one
       newFiles.add(ftr);
       if (newVideoBasename.isEmpty()) {
         // so remember first renamed video file basename (w/o stacking or extension)
@@ -57,18 +55,23 @@ public class MovieRenamerPreview {
     // all the other MFs...
     for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
       oldFiles.add(new MediaFile(mf));
-      newFiles.addAll(generateFilename(movie, mf, newVideoBasename)); // N:M
+      newFiles.addAll(MovieRenamer.generateFilename(movie, mf, newVideoBasename)); // N:M
     }
 
     // movie folder needs a rename?
     File oldMovieFolder = new File(movie.getPath());
-    container.newPath = MovieRenamer.createDestinationForFoldername(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname(), movie)
-        + File.separator;
+    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname();
+    if (pattern.isEmpty()) {
+      // same
+      container.newPath = Utils.relPath(movie.getDataSource(), movie.getPath());
+    }
+    else {
+      container.newPath = MovieRenamer.createDestinationForFoldername(pattern, movie);
+    }
     File newMovieFolder = new File(movie.getDataSource(), container.newPath);
 
     if (!oldMovieFolder.equals(newMovieFolder)) {
       container.needsRename = true;
-
       // update already the "old" files with new path, so we can simply do a contains check ;)
       for (MediaFile omf : oldFiles) {
         omf.replacePathForRenamedFolder(oldMovieFolder, newMovieFolder);
@@ -78,6 +81,7 @@ public class MovieRenamerPreview {
     // change status of MFs, if they have been added or not
     for (MediaFile mf : newFiles) {
       if (!oldFiles.contains(mf)) {
+        // System.out.println(mf);
         container.needsRename = true;
         break;
       }
@@ -85,6 +89,7 @@ public class MovieRenamerPreview {
 
     for (MediaFile mf : oldFiles) {
       if (!newFiles.contains(mf)) {
+        // System.out.println(mf);
         container.needsRename = true;
         break;
       }
@@ -92,194 +97,5 @@ public class MovieRenamerPreview {
 
     container.newMediaFiles.addAll(newFiles);
     return container;
-  }
-
-  /**
-   * generates renamed filename(s) per MF
-   * 
-   * @param movie
-   *          the movie (for datasource, path)
-   * @param mf
-   *          the MF
-   * @param videoFileName
-   *          the basename of the renamed videoFileName (saved earlier)
-   * @return list of renamed filename
-   */
-  private static ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
-    // return list of all generated MFs
-    ArrayList<MediaFile> newFiles = new ArrayList<MediaFile>();
-
-    String newPathname = MovieRenamer.createDestinationForFoldername(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname(), movie);
-    String movieDir = movie.getDataSource() + File.separatorChar + newPathname + File.separatorChar;
-
-    String newFilename = videoFileName;
-    if (newFilename == null || newFilename.isEmpty()) {
-      newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
-    }
-
-    switch (mf.getType()) {
-      case VIDEO:
-        MediaFile vid = new MediaFile(mf);
-        if (movie.isDisc() || mf.isDiscFile()) {
-          // just replace new path and return file (do not change names!)
-          vid.replacePathForRenamedFolder(new File(movie.getPath()), new File(movieDir));
-        }
-        else {
-          newFilename += getStackingString(mf);
-          newFilename += "." + mf.getExtension();
-          vid.setFile(new File(movieDir + newFilename));
-        }
-        newFiles.add(vid);
-        break;
-
-      case TRAILER:
-        MediaFile trail = new MediaFile(mf);
-        newFilename += "-trailer." + mf.getExtension();
-        trail.setFile(new File(movieDir + newFilename));
-        newFiles.add(trail);
-        break;
-
-      case SUBTITLE:
-        String lang = "";
-        String forced = "";
-        List<MediaFileSubtitle> mfsl = mf.getSubtitles();
-
-        if (mfsl != null && mfsl.size() > 0) {
-          MediaFileSubtitle mfs = mfsl.get(0);
-          lang = mfs.getLanguage();
-          if (mfs.isForced()) {
-            forced = ".forced";
-          }
-        }
-        newFilename += getStackingString(mf);
-        newFilename += forced;
-        if (!lang.isEmpty()) {
-          newFilename += "." + lang;
-        }
-        newFilename += "." + mf.getExtension();
-        MediaFile sub = new MediaFile(mf);
-        sub.setFile(new File(movieDir + newFilename));
-        newFiles.add(sub);
-        break;
-
-      case NFO:
-        List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
-        if (movie.isMultiMovieDir()) {
-          // Fixate the name regardless of setting
-          nfonames.add(MovieNfoNaming.FILENAME_NFO);
-        }
-        else {
-          nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-        }
-        for (MovieNfoNaming name : nfonames) {
-          newFilename = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
-          if (newFilename.isEmpty()) {
-            continue;
-          }
-          MediaFile nfo = new MediaFile(mf);
-          nfo.setFile(new File(movieDir + newFilename));
-          newFiles.add(nfo);
-        }
-        break;
-
-      case POSTER:
-        List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
-        if (movie.isMultiMovieDir()) {
-          // Fixate the name regardless of setting
-          posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-          posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
-        }
-        else {
-          posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
-        }
-        for (MoviePosterNaming name : posternames) {
-          newFilename = MovieArtworkHelper.getPosterFilename(name, movie, newFilename + ".avi"); // dirty hack, but full filename needed
-          if (newFilename != null && !newFilename.isEmpty()) {
-            String curExt = mf.getExtension();
-            if (curExt.equalsIgnoreCase("tbn")) {
-              String cont = mf.getContainerFormat();
-              if (cont.equalsIgnoreCase("PNG")) {
-                curExt = "png";
-              }
-              else if (cont.equalsIgnoreCase("JPEG")) {
-                curExt = "jpg";
-              }
-            }
-            if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
-              // match extension to not rename PNG to JPG and vice versa
-              continue;
-            }
-          }
-          MediaFile pos = new MediaFile(mf);
-          pos.setFile(new File(movieDir + newFilename));
-          newFiles.add(pos);
-        }
-        break;
-
-      case FANART:
-        List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
-        if (movie.isMultiMovieDir()) {
-          // Fixate the name regardless of setting
-          fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-          fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
-        }
-        else {
-          fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
-        }
-        for (MovieFanartNaming name : fanartnames) {
-          newFilename = MovieArtworkHelper.getFanartFilename(name, movie, newFilename + ".avi");// dirty hack, but full filename needed
-          if (newFilename != null && !newFilename.isEmpty()) {
-            String curExt = mf.getExtension();
-            if (curExt.equalsIgnoreCase("tbn")) {
-              String cont = mf.getContainerFormat();
-              if (cont.equalsIgnoreCase("PNG")) {
-                curExt = "png";
-              }
-              else if (cont.equalsIgnoreCase("JPEG")) {
-                curExt = "jpg";
-              }
-            }
-            if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
-              // match extension to not rename PNG to JPG and vice versa
-              continue;
-            }
-          }
-          MediaFile fan = new MediaFile(mf);
-          fan.setFile(new File(movieDir + newFilename));
-          newFiles.add(fan);
-        }
-        break;
-
-      default:
-        // return 1:1, only with renamed path
-        MediaFile def = new MediaFile(mf);
-        def.replacePathForRenamedFolder(new File(movie.getPath()), new File(movieDir));
-        newFiles.add(def);
-        break;
-    }
-
-    return newFiles;
-  }
-
-  /**
-   * returns "delimiter + stackingString" for use in filename
-   * 
-   * @param mf
-   *          a mediaFile
-   * @return eg ".CD1" dependent of settings
-   */
-  private static String getStackingString(MediaFile mf) {
-    String stacking = Utils.getStackingMarker(mf.getFilename());
-    String delimiter = " ";
-    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
-      delimiter = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();
-    }
-    if (!stacking.isEmpty()) {
-      return delimiter + stacking;
-    }
-    else if (mf.getStacking() != 0) {
-      return delimiter + "CD" + mf.getStacking();
-    }
-    return "";
   }
 }

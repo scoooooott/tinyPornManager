@@ -633,11 +633,25 @@ public abstract class MediaEntity extends AbstractModelObject {
     return mf;
   }
 
-  public List<MediaFile> getMediaFiles(MediaFileType type) {
+  /**
+   * gets all MediaFiles from specific type<br>
+   * <b>Can be one or multiple types!</b>
+   * 
+   * @param types
+   *          1-N types
+   * @return list of MF (may be empty, but never null)
+   */
+  public List<MediaFile> getMediaFiles(MediaFileType... types) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
-      if (mediaFile.getType().equals(type)) {
+      boolean match = false;
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          match = true;
+        }
+      }
+      if (match) {
         mf.add(mediaFile);
       }
     }
@@ -645,11 +659,46 @@ public abstract class MediaEntity extends AbstractModelObject {
     return mf;
   }
 
-  public List<MediaFile> getMediaFilesExceptType(MediaFileType type) {
+  /**
+   * From all MediaFiles of specified type, get the newest one (according to MI filedate)
+   * 
+   * @param type
+   * @return NULL or MF
+   */
+  public MediaFile getNewestMediaFilesOfType(MediaFileType type) {
+    MediaFile mf = null;
+    readWriteLock.readLock().lock();
+    for (MediaFile mediaFile : mediaFiles) {
+      if (mediaFile.getType().equals(type)) {
+        if (mf == null || mediaFile.getFiledate() >= mf.getFiledate()) {
+          // get the latter one
+          mf = new MediaFile(mediaFile);
+        }
+      }
+    }
+    readWriteLock.readLock().unlock();
+    return mf;
+  }
+
+  /**
+   * gets all MediaFiles EXCEPT from specific type<br>
+   * <b>Can be one or multiple types!</b>
+   * 
+   * @param types
+   *          1-N types
+   * @return list of MF (may be empty, but never null)
+   */
+  public List<MediaFile> getMediaFilesExceptType(MediaFileType... types) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
-      if (!mediaFile.getType().equals(type)) {
+      boolean match = false;
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          match = true;
+        }
+      }
+      if (!match) {
         mf.add(mediaFile);
       }
     }

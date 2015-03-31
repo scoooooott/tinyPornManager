@@ -15,10 +15,10 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -37,7 +37,7 @@ public class MovieRenamerPreviewContainer {
 
   public MovieRenamerPreviewContainer(Movie movie) {
     this.movie = movie;
-    this.oldPath = new File(movie.getDataSource()).toURI().relativize(new File(movie.getPath()).toURI()).getPath();
+    this.oldPath = Utils.relPath(movie.getDataSource(), movie.getPath());
   }
 
   public Movie getMovie() {

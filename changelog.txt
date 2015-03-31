@@ -1,6 +1,8 @@
 Upcoming version
 =======================
-+ Mirror support: TMM now distibuted on several mirrors for better availability (and error handling for network blockages)
++ Mirror support: TMM now distributed on several mirrors for better availability (and error handling for network blockages)
++ Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
++ Movie renamer: possible to "downgrade" a movie, when having no distinct folder. (CHECK YOUR FOLDER RENAMER SETTINGS!)
 + added sort option via sort title 
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
