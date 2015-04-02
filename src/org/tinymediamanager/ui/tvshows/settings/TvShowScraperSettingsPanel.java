@@ -25,6 +25,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
@@ -72,15 +73,19 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxImagesFanartTv;
   private JCheckBox                   chckbxImagesTvDB;
   private JTextPane                   lblTvShowScraperCountryHint;
+  private JSeparator                  separator_1;
+  private JRadioButton                rdbtnThumbWithPostfix;
+  private JRadioButton                rdbtnThumbWoPostfix;
+  private JLabel                      lblNewLabel;
+  private ButtonGroup                 btnGroupThumbFilenaming;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public TvShowScraperSettingsPanel() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
     JPanel panelTvShowScrapers = new JPanel();
     panelTvShowScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -121,11 +126,16 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     lblTvShowScraperCountryHint.setText(BUNDLE.getString("Settings.tvshow.certifactioncountry.hint")); //$NON-NLS-1$
     panelTvShowScrapers.add(lblTvShowScraperCountryHint, "3, 12");
 
+    btnGroupThumbFilenaming = new ButtonGroup();
+
     panelArtworkScrapers = new JPanel();
     panelArtworkScrapers.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.images"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelArtworkScrapers, "2, 4, fill, fill");
-    panelArtworkScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    add(panelArtworkScrapers, "4, 2, fill, fill");
+    panelArtworkScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     chckbxImagesTvDB = new JCheckBox("The TV Database");
     panelArtworkScrapers.add(chckbxImagesTvDB, "2, 2");
@@ -133,10 +143,23 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     chckbxImagesFanartTv = new JCheckBox("Fanart.tv");
     panelArtworkScrapers.add(chckbxImagesFanartTv, "2, 4");
 
+    separator_1 = new JSeparator();
+    panelArtworkScrapers.add(separator_1, "2, 6");
+
+    lblNewLabel = new JLabel(BUNDLE.getString("image.thumb.naming")); //$NON-NLS-1$
+    panelArtworkScrapers.add(lblNewLabel, "2, 8");
+    rdbtnThumbWithPostfix = new JRadioButton("<dynamic>-thumb.ext");
+    btnGroupThumbFilenaming.add(rdbtnThumbWithPostfix);
+    panelArtworkScrapers.add(rdbtnThumbWithPostfix, "2, 10");
+
+    rdbtnThumbWoPostfix = new JRadioButton("<dynamic>.ext");
+    btnGroupThumbFilenaming.add(rdbtnThumbWoPostfix);
+    panelArtworkScrapers.add(rdbtnThumbWoPostfix, "2, 12");
+
     panelScraperMetadataContainer = new JPanel();
     panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
         .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
-    add(panelScraperMetadataContainer, "2, 6, fill, top");
+    add(panelScraperMetadataContainer, "2, 4, fill, top");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -158,18 +181,20 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       default:
         cbScraperTvdb.setSelected(true);
     }
-    cbScraperTvdb.addItemListener(new ItemListener() {
+
+    ItemListener itemListener = new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
-    });
-    chckbxAnidb.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent arg0) {
-        checkChanges();
-      }
-    });
+    };
+    rdbtnThumbWithPostfix.setSelected(settings.getTvShowSettings().isUseRenamerThumbPostfix());
+    rdbtnThumbWoPostfix.setSelected(!settings.getTvShowSettings().isUseRenamerThumbPostfix());
+    rdbtnThumbWithPostfix.addItemListener(itemListener);
+    rdbtnThumbWoPostfix.addItemListener(itemListener);
+
+    cbScraperTvdb.addItemListener(itemListener);
+    chckbxAnidb.addItemListener(itemListener);
   }
 
   /**
@@ -183,6 +208,9 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     if (chckbxAnidb.isSelected()) {
       settings.getTvShowSettings().setTvShowScraper(TvShowScrapers.ANIDB);
     }
+
+    settings.getTvShowSettings().setUseRenamerThumbPostfix(rdbtnThumbWithPostfix.isSelected());
+
   }
 
   protected void initDataBindings() {

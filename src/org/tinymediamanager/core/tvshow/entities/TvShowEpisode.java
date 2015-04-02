@@ -43,6 +43,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
@@ -371,7 +372,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       // create correct filename
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
-      String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
+      String filename;
+      if (Globals.settings.getTvShowSettings().isUseRenamerThumbPostfix()) {
+        filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
+      }
+      else {
+        filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(getThumbUrl());
+      }
 
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getThumbUrl(), MediaArtworkType.THUMB, filename, firstImage);

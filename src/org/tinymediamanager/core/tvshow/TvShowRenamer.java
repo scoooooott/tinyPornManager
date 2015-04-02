@@ -386,7 +386,10 @@ public class TvShowRenamer {
     // since we can use this method for folders too, use the next options solely for files
     if (forFile) {
       if (mf.getType().equals(MediaFileType.THUMB)) {
-        filename = filename + "-thumb";
+        if (SETTINGS.isUseRenamerThumbPostfix()) {
+          filename = filename + "-thumb";
+        }
+        // else let the filename as is
       }
       if (mf.getType().equals(MediaFileType.FANART)) {
         filename = filename + "-fanart";

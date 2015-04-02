@@ -4,6 +4,7 @@ Upcoming version
 + Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
 + Movie renamer: possible to "downgrade" a movie, when having no distinct folder. (CHECK YOUR FOLDER RENAMER SETTINGS!)
 + added sort option via sort title 
++ added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players) 
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
 

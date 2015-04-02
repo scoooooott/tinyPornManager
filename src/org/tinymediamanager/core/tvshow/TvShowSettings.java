@@ -40,7 +40,6 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String SCRAPE_BEST_IMAGE           = "scrapeBestImage";
   private final static String SCRAPER_LANGU               = "scraperLanguage";
   private final static String CERTIFICATION_COUNTRY       = "certificationCountry";
-  private final static String RENAMER_SEPARATOR           = "renamerSeparator";
   private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFoldername";
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
   private final static String IMAGE_SCRAPER_TVDB          = "imageScraperTvdb";
@@ -57,6 +56,7 @@ public class TvShowSettings extends AbstractModelObject {
   private String              renamerTvShowFoldername     = "$N ($Y)";
   private String              renamerSeasonFoldername     = "Season $1";
   private String              renamerFilename             = "$N - S$2E$E - $T";
+  private boolean             useRenamerThumbPostfix      = true;
   private boolean             buildImageCacheOnImport     = false;
   private boolean             imageScraperTvdb            = true;
   private boolean             imageScraperFanartTv        = true;
@@ -235,5 +235,15 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.dvdOrder;
     this.dvdOrder = newValue;
     firePropertyChange("dvdOrder", oldValue, newValue);
+  }
+
+  public boolean isUseRenamerThumbPostfix() {
+    return useRenamerThumbPostfix;
+  }
+
+  public void setUseRenamerThumbPostfix(boolean newValue) {
+    boolean oldValue = this.useRenamerThumbPostfix;
+    this.useRenamerThumbPostfix = newValue;
+    firePropertyChange("useRenamerThumbPostfix", oldValue, newValue);
   }
 }
