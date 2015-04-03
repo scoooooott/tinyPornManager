@@ -413,7 +413,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                 // is NFO, but parsing exception. try to find at least imdb id within
                 try {
                   String imdb = FileUtils.readFileToString(mf.getFile());
-                  imdb = StrgUtils.substr(imdb, ".*(tt\\d{7}).*");
+                  imdb = ParserUtils.detectImdbId(imdb);
                   if (!imdb.isEmpty()) {
                     LOGGER.debug("Found IMDB id: " + imdb);
                     movie.setImdbId(imdb);

@@ -149,10 +149,16 @@ public class ParserUtils {
    *          a string
    * @return imdbid or empty
    */
-  public static String detectImdbId(String filename) {
+  public static String detectImdbId(String text) {
     String imdb = "";
-    if (filename != null && !filename.isEmpty()) {
-      imdb = StrgUtils.substr(filename, ".*(tt\\d{7}).*");
+    if (text != null && !text.isEmpty()) {
+      imdb = StrgUtils.substr(text, ".*(tt\\d{7}).*");
+      if (imdb.isEmpty()) {
+        imdb = StrgUtils.substr(text, ".*imdb\\.com\\/Title\\?(\\d{7}).*");
+        if (!imdb.isEmpty()) {
+          imdb = "tt" + imdb;
+        }
+      }
     }
     return imdb;
   }
