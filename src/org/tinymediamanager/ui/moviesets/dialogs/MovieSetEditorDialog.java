@@ -473,7 +473,6 @@ public class MovieSetEditorDialog extends TmmDialog {
           movie.setMovieSet(null);
           movie.saveToDb();
           movieSetToEdit.removeMovie(movie);
-          movie.writeNFO();
         }
       }
 
@@ -489,7 +488,6 @@ public class MovieSetEditorDialog extends TmmDialog {
         movie.removeFromMovieSet();
         movie.saveToDb();
         movieSetToEdit.removeMovie(movie);
-        movie.writeNFO();
       }
 
       MovieList.getInstance().sortMoviesInMovieSet(movieSetToEdit);

@@ -462,9 +462,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
 
-    // write NFO
-    writeNFO();
-
     // update DB
     saveToDb();
 
@@ -487,9 +484,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
-    for (TvShowEpisode episode : episodesInNfo) {
-      episode.saveToDb();
-    }
+    // for (TvShowEpisode episode : episodesInNfo) {
+    // episode.saveToDb();
+    // }
   }
 
   /**
@@ -865,6 +862,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
     readWriteLock.readLock().unlock();
+
+    writeNFO();
   }
 
   @Override

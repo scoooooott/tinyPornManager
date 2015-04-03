@@ -916,7 +916,6 @@ public class TvShowEditorDialog extends TmmDialog {
       }
 
       tvShowToEdit.saveToDb();
-      tvShowToEdit.writeNFO();
 
       if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
         TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));

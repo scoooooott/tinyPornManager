@@ -470,8 +470,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       }
 
       episodeToEdit.setTags(tags);
-
-      episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
 
       setVisible(false);

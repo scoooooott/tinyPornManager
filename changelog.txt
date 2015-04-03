@@ -7,6 +7,7 @@ Upcoming version
 + added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players) 
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
+x the NFO files has not been updated in some cases
 
 
 Version 2.6.6

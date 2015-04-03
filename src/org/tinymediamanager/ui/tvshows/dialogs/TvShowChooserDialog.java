@@ -420,16 +420,6 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             }
           }
 
-          // TODO do we need trailers?
-          // // get trailers?
-          // if (scraperMetadataConfig.isTrailer()) {
-          // List<MediaTrailer> trailers = model.getTrailers();
-          // tvShowToScrape.setTrailers(trailers);
-          // }
-
-          // rewrite the complete NFO
-          tvShowToScrape.writeNFO();
-
           // scrape episodes
           if (scraperMetadataConfig.isEpisodes()) {
             tvShowToScrape.scrapeAllEpisodes();

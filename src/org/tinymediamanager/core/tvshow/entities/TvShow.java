@@ -663,9 +663,6 @@ public class TvShow extends MediaEntity {
     // set scraped
     setScraped(true);
 
-    // write NFO
-    writeNFO();
-
     // update DB
     saveToDb();
   }
@@ -1544,6 +1541,9 @@ public class TvShow extends MediaEntity {
       }
     }
     readWriteLock.readLock().unlock();
+
+    // rewrite NFO
+    writeNFO();
   }
 
   @Override

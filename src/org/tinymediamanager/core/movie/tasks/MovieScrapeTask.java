@@ -194,7 +194,6 @@ public class MovieScrapeTask extends TmmThreadPool {
             if (scraperMetadataConfig.isTrailer()) {
               movie.setTrailers(getTrailers(movie, md, trailerProviders));
             }
-            movie.writeNFO();
           }
           catch (Exception e) {
             LOGGER.error("movie.setMetadata", e);

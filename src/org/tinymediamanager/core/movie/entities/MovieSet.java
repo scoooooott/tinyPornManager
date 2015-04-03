@@ -347,7 +347,6 @@ public class MovieSet extends MediaEntity {
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
       movie.saveToDb();
-      movie.writeNFO();
     }
 
     synchronized (movies) {
@@ -590,7 +589,6 @@ public class MovieSet extends MediaEntity {
     for (Movie movie : new ArrayList<Movie>(movies)) {
       movie.setSortTitleFromMovieSet();
       movie.saveToDb();
-      movie.writeNFO();
     }
   }
 

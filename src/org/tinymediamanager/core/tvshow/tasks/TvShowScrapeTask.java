@@ -182,11 +182,6 @@ public class TvShowScrapeTask extends TmmThreadPool {
               tvShow.setArtwork(getArtwork(tvShow, md, artworkProviders), scraperMetadataConfig);
             }
 
-            // // scrape trailer if wanted
-            // if (scraperMetadataConfig.isTrailer()) {
-            // tvShow.setTrailers(getTrailers(tvShow, md, trailerProviders));
-            // }
-            tvShow.writeNFO();
           }
           catch (Exception e) {
             LOGGER.error("tvShow.setMetadata", e);

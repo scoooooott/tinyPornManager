@@ -955,10 +955,6 @@ public class Movie extends MediaEntity {
         }
       }
     }
-
-    // write NFO
-    writeNFO();
-
   }
 
   /**
@@ -1822,6 +1818,8 @@ public class Movie extends MediaEntity {
       }
     }
     readWriteLock.readLock().unlock();
+
+    writeNFO();
   }
 
   @Override
