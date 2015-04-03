@@ -1,5 +1,8 @@
 Upcoming version
 =======================
+IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
+           If you are still using Java6, please update.
+           
 + Mirror support: TMM now distributed on several mirrors for better availability (and error handling for network blockages)
 + Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
 + Movie renamer: possible to "downgrade" a movie, when having no distinct folder. (CHECK YOUR FOLDER RENAMER SETTINGS!)

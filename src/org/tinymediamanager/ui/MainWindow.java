@@ -15,45 +15,15 @@
  */
 package org.tinymediamanager.ui;
 
-import java.awt.AWTEvent;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingWorker.StateValue;
-import javax.swing.Timer;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-import javax.swing.text.JTextComponent;
-
+import ch.swingfx.twinkle.NotificationBuilder;
+import ch.swingfx.twinkle.window.Positions;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -89,13 +59,25 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
-import ch.swingfx.twinkle.NotificationBuilder;
-import ch.swingfx.twinkle.window.Positions;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The Class MainWindow.
@@ -428,6 +410,16 @@ public class MainWindow extends JFrame {
         }
       }
     }, AWTEvent.MOUSE_EVENT_MASK);
+
+    // temp info for users using Java 6
+    if (SystemUtils.IS_JAVA_1_6){
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("tmm.java6")); //$NON-NLS-1$
+        }
+      });
+    }
   }
 
   public void closeTmm() {
