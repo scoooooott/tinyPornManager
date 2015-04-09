@@ -35,6 +35,14 @@ public class TheTvDbMetadataProviderTest {
     }
   }
 
+  @Test
+  public void encode() {
+    System.out.println(TheTvDbMetadataProvider.clearSearchString("винни пух"));
+    System.out.println(TheTvDbMetadataProvider.clearSearchString("test s äöüÄÖÜ dus"));
+    System.out.println(TheTvDbMetadataProvider.clearSearchString("wtf ¡¢£¤¥¦¨©ª¬®²³µ¿æ!§-\"\\/$%&\\(\\)="));
+    System.out.println(TheTvDbMetadataProvider.clearSearchString("Звёздный"));
+  }
+
   private void searchShow(String title, String language, String id) throws Exception {
     MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW);
 

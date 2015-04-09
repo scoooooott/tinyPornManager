@@ -186,15 +186,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
   /*
    * clear the search string to minimize search problem with the API
    */
-  private String clearSearchString(String searchString) {
+  public static String clearSearchString(String searchString) {
 
-    // replace all kinds of accent characters with their base variant
+    // This will separate all of the accent marks from the characters
     String cleanedString = Normalizer.normalize(searchString, Normalizer.Form.NFD);
-    cleanedString = cleanedString.replaceAll("\\p{M}", "");
+    // For unicode, \\P{M} matches the base glyph and \\p{M} (lowercase) matches each accent.
+    cleanedString = cleanedString.replaceAll("\\p{M}", ""); // remove accents
 
     // cleanedString = cleanedString.replaceAll("\\p{Punct}", ""); // too much?
-    // better: just keep chars which are not a-zA-Z0-9 AND the space and dash
-    cleanedString = cleanedString.replaceAll("[^\\p{Alnum}\\s\\-]", "");
+    // cleanedString = cleanedString.replaceAll("[^\\p{Alnum}\\s\\-]", ""); // damn - removes ALL cyrillic chars
+
+    // next try: punctuation !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ plus §, but not !-
+    cleanedString = cleanedString.replaceAll("(?![\\-!])[\\p{Punct}§]", "");
 
     return cleanedString;
   }

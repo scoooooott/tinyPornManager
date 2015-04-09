@@ -11,6 +11,7 @@ IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
 x the NFO files has not been updated in some cases
+x TheTvDB search cleans out too much "special" characters
 
 
 Version 2.6.6
