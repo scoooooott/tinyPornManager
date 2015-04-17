@@ -49,8 +49,8 @@ resource = [!windows] env.txt                       #still distribute an empty e
 # mediainfo native libs
 resource = [linux-amd64] native/linux-amd64/libmediainfo.so
 resource = [linux-amd64] native/linux-amd64/libzen.so
-resource = [linux-arm] native/linux-arm/libmediainfo.so
-resource = [linux-arm] native/linux-arm/libzen.so
+#resource = [linux-arm] native/linux-arm/libmediainfo.so
+#resource = [linux-arm] native/linux-arm/libzen.so
 resource = [linux-i386] native/linux-i386/libmediainfo.so
 resource = [linux-i386] native/linux-i386/libzen.so
 resource = [linux-i686] native/linux-i686/libmediainfo.so
