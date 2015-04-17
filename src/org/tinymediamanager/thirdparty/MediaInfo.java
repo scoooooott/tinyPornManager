@@ -33,14 +33,15 @@ import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
 /**
- * The Class MediaInfo.
+ * The Class MediaInfo.<br>
+ * http://sourceforge.net/p/mediainfo/code/HEAD/tree/MediaInfoLib/tags/v0.7.73/Source/MediaInfoDLL/MediaInfoDLL.JNA.java
  * 
  * @author Myron Boyle
  */
 public class MediaInfo implements Closeable {
 
-  /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfo.class);
+  private static final Logger LOGGER      = LoggerFactory.getLogger(MediaInfo.class);
+  static String               LibraryPath = "mediainfo";
 
   static {
     try {
@@ -50,7 +51,30 @@ public class MediaInfo implements Closeable {
         // libs are (e.g. Java Web Start Cache).
         // If we do not, the system will look for dependencies, but only in the
         // library path.
-        NativeLibrary.getInstance("zen");
+        // NativeLibrary.getInstance("zen");
+        final ClassLoader loader = MediaInfo.class.getClassLoader();
+        final String LocalPath;
+        if (loader != null) {
+          LocalPath = loader.getResource(MediaInfo.class.getName().replace('.', '/') + ".class").getPath().replace("MediaInfo.class", "");
+          try {
+            NativeLibrary.getInstance(LocalPath + "libzen.so.0"); // Local path
+          }
+          catch (LinkageError e) {
+            NativeLibrary.getInstance("zen"); // Default path
+          }
+        }
+        else {
+          LocalPath = "";
+          NativeLibrary.getInstance("zen"); // Default path
+        }
+        if (LocalPath.length() > 0) {
+          try {
+            NativeLibrary.getInstance(LocalPath + "libmediainfo.so.0"); // Local path
+            LibraryPath = LocalPath + "libmediainfo.so.0";
+          }
+          catch (LinkageError e) {
+          }
+        }
       }
     }
     catch (Throwable e) {
@@ -128,6 +152,101 @@ public class MediaInfo implements Closeable {
    */
   public String option(String option) {
     return option(option, "");
+  }
+
+  /**
+   * Get a piece of information about a file (parameter is a string).
+   *
+   * @param StreamKind
+   *          Kind of Stream (general, video, audio...)
+   * @param StreamNumber
+   *          Stream number in Kind of Stream (first, second...)
+   * @param parameter
+   *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
+   * @return a string about information you search, an empty string if there is a problem
+   */
+  public String Get(StreamKind StreamKind, int StreamNumber, String parameter) {
+    return Get(StreamKind, StreamNumber, parameter, InfoKind.Text, InfoKind.Name);
+  }
+
+  /**
+   * Get a piece of information about a file (parameter is a string).
+   *
+   * @param StreamKind
+   *          Kind of Stream (general, video, audio...)
+   * @param StreamNumber
+   *          Stream number in Kind of Stream (first, second...)
+   * @param parameter
+   *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
+   * @param infoKind
+   *          Kind of information you want about the parameter (the text, the measure, the help...)
+   * @param searchKind
+   *          Where to look for the parameter
+   */
+  public String Get(StreamKind StreamKind, int StreamNumber, String parameter, InfoKind infoKind) {
+    return Get(StreamKind, StreamNumber, parameter, infoKind, InfoKind.Name);
+  }
+
+  /**
+   * Get a piece of information about a file (parameter is a string).
+   *
+   * @param StreamKind
+   *          Kind of Stream (general, video, audio...)
+   * @param StreamNumber
+   *          Stream number in Kind of Stream (first, second...)
+   * @param parameter
+   *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
+   * @param infoKind
+   *          Kind of information you want about the parameter (the text, the measure, the help...)
+   * @param searchKind
+   *          Where to look for the parameter
+   * @return a string about information you search, an empty string if there is a problem
+   */
+  public String Get(StreamKind StreamKind, int StreamNumber, String parameter, InfoKind infoKind, InfoKind searchKind) {
+    if (isLoaded()) {
+      return MediaInfoLibrary.INSTANCE.Get(handle, StreamKind.ordinal(), StreamNumber, new WString(parameter), infoKind.ordinal(),
+          searchKind.ordinal()).toString();
+    }
+    else {
+      return "";
+    }
+  }
+
+  /**
+   * Get a piece of information about a file (parameter is an integer).
+   *
+   * @param StreamKind
+   *          Kind of Stream (general, video, audio...)
+   * @param StreamNumber
+   *          Stream number in Kind of Stream (first, second...)
+   * @param parameter
+   *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
+   * @return a string about information you search, an empty string if there is a problem
+   */
+  public String get(StreamKind StreamKind, int StreamNumber, int parameterIndex) {
+    return Get(StreamKind, StreamNumber, parameterIndex, InfoKind.Text);
+  }
+
+  /**
+   * Get a piece of information about a file (parameter is an integer).
+   * 
+   * @param StreamKind
+   *          Kind of Stream (general, video, audio...)
+   * @param StreamNumber
+   *          Stream number in Kind of Stream (first, second...)
+   * @param parameter
+   *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
+   * @param infoKind
+   *          Kind of information you want about the parameter (the text, the measure, the help...)
+   * @return a string about information you search, an empty string if there is a problem
+   */
+  public String Get(StreamKind StreamKind, int StreamNumber, int parameterIndex, InfoKind infoKind) {
+    if (isLoaded()) {
+      return MediaInfoLibrary.INSTANCE.GetI(handle, StreamKind.ordinal(), StreamNumber, parameterIndex, infoKind.ordinal()).toString();
+    }
+    else {
+      return "";
+    }
   }
 
   /**
@@ -214,21 +333,6 @@ public class MediaInfo implements Closeable {
    *          the stream number
    * @param parameterIndex
    *          the parameter index
-   * @return the string
-   */
-  public String get(StreamKind streamKind, int streamNumber, int parameterIndex) {
-    return get(streamKind, streamNumber, parameterIndex, InfoKind.Text);
-  }
-
-  /**
-   * Gets the.
-   * 
-   * @param streamKind
-   *          the stream kind
-   * @param streamNumber
-   *          the stream number
-   * @param parameterIndex
-   *          the parameter index
    * @param infoKind
    *          the info kind
    * @return the string
@@ -251,11 +355,16 @@ public class MediaInfo implements Closeable {
    */
   public int streamCount(StreamKind streamKind) {
     if (isLoaded()) {
-      // return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), -1);
-      // We should use NativeLong for -1, but it fails on 64-bit
-      // so we use slower Get() with a character string
       try {
-        return Integer.parseInt(get(streamKind, 0, "StreamCount").toString());
+        // We should use NativeLong for -1, but it fails on 64-bit
+        // int Count_Get(Pointer Handle, int StreamKind, NativeLong StreamNumber);
+        // return MediaInfoDLL_Internal.INSTANCE.Count_Get(Handle, StreamKind.ordinal(), -1);
+        // so we use slower Get() with a character string
+        String StreamCount = get(streamKind, 0, "StreamCount");
+        if (StreamCount == null || StreamCount.length() == 0) {
+          return 0;
+        }
+        return Integer.parseInt(StreamCount);
       }
       catch (Exception e) {
         return 0;
@@ -370,21 +479,9 @@ public class MediaInfo implements Closeable {
    * @author Manuel Laggner
    */
   public enum StreamKind {
-
-    /** The General. */
-    General,
-    /** The Video. */
-    Video,
-    /** The Audio. */
-    Audio,
-    /** The Text. */
-    Text,
-    /** The Chapters. */
-    Chapters,
-    /** The Image. */
-    Image,
-    /** The Menu. */
-    Menu;
+    General, Video, Audio, Text, Other, Image, Menu, @Deprecated
+    Chapters; // replaced by 'other'
+    ;
   }
 
   /**
