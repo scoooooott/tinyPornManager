@@ -874,18 +874,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return channels;
   }
 
-  // /**
-  // * Sets the audio channels.
-  // *
-  // * @param newValue
-  // * the new audio channels
-  // */
-  // public void setAudioChannels(String newValue) {
-  // String oldValue = this.audioChannels;
-  // this.audioChannels = newValue;
-  // firePropertyChange("audioChannels", oldValue, newValue);
-  // }
-
   /**
    * returns the exact video resolution.
    * 
@@ -1224,7 +1212,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
           stream.setCodec(audioCodec);
 
-          String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
+          // AAC sometimes codes channels into Channel(s)_Original
+          String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)_Original", "Channel(s)");
           stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
           try {
             String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
