@@ -109,6 +109,7 @@ public class Movie extends MediaEntity {
   private Date                releaseDate     = null;
   private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
   private int                 top250          = 0;
+  // missed to set @Enumerated(EnumType.STRING); we must not change it now because it can break databases
   private MovieMediaSource    mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
   private boolean             videoIn3D       = false;
 
