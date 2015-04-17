@@ -3,11 +3,15 @@ Upcoming version
 IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
            If you are still using Java6, please update.
            
++ updated mediainfo to 0.7.73 (ARM users now have to install the system version of mediainfo for better compatibility)           
 + Mirror support: TMM now distributed on several mirrors for better availability (and error handling for network blockages)
 + Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
 + Movie renamer: possible to "downgrade" a movie, when having no distinct folder. (CHECK YOUR FOLDER RENAMER SETTINGS!)
 + added sort option via sort title 
-+ added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players) 
++ added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players)
+x changed detection of DTS-HD codecs (Kodi will display the right logo now after NFO export)
+x fixed multichannel AAC detection
+x added a warning message when doing an update data source and no data source specified 
 x renamer: exchange colon with a dash. (even better than removing completely)
 x subtitles: language detection for SUB ones
 x the NFO files has not been updated in some cases
