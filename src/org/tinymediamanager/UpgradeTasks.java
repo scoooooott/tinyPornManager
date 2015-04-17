@@ -303,6 +303,7 @@ public class UpgradeTasks {
       LOGGER.info("Performing upgrade tasks to version 2.6.7");
       Globals.settings.removeSubtitleFileType("idx");
 
+      // movies
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -314,10 +315,38 @@ public class UpgradeTasks {
             movie.removeFromMediaFiles(mf); // idx not needed as MF
           }
         }
+        for (MediaFile mf : movie.getMediaFiles()) {
+          updateDtsCodec(mf);
+        }
+      }
+      entityManager.getTransaction().commit();
+
+      // TV shows
+      entityManager.getTransaction().begin();
+      for (TvShow show : tvShowList.getTvShows()) {
+        // Episode MFs
+        for (TvShowEpisode episode : show.getEpisodes()) {
+          for (MediaFile mf : episode.getMediaFiles()) {
+            updateDtsCodec(mf);
+          }
+        }
       }
       entityManager.getTransaction().commit();
     }
+  }
 
+  private static void updateDtsCodec(MediaFile mf) {
+    for (MediaFileAudioStream audioStream : mf.getAudioStreams()) {
+      if ("DTS-ES".equalsIgnoreCase(audioStream.getCodec())) {
+        audioStream.setCodec("DTSHD-ES");
+      }
+      if ("DTS-MA".equalsIgnoreCase(audioStream.getCodec())) {
+        audioStream.setCodec("DTSHD-MA");
+      }
+      if ("DTS-HRA".equalsIgnoreCase(audioStream.getCodec())) {
+        audioStream.setCodec("DTSHD-HRA");
+      }
+    }
   }
 
   /**

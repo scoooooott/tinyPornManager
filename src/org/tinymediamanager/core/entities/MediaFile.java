@@ -1201,13 +1201,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String audioAddition = getMediaInfo(StreamKind.Audio, i, "Format_Profile");
           if ("dts".equalsIgnoreCase(audioCodec) && StringUtils.isNotBlank(audioAddition)) {
             if (audioAddition.contains("ES")) {
-              audioCodec = "DTS-ES";
+              audioCodec = "DTSHD-ES";
             }
             if (audioAddition.contains("HRA")) {
-              audioCodec = "DTS-HRA";
+              audioCodec = "DTSHD-HRA";
             }
             if (audioAddition.contains("MA")) {
-              audioCodec = "DTS-MA";
+              audioCodec = "DTSHD-MA";
             }
           }
           stream.setCodec(audioCodec);
