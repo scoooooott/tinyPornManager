@@ -127,6 +127,8 @@ public class TvShowEpisodeAndSeasonParser {
       basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
     }
     basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
+    basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
+
     // parse foldername
     regex = Pattern.compile("(.*[\\/\\\\])");
     m = regex.matcher(basename);

@@ -111,10 +111,11 @@ public class TvShowTest {
   @Test
   public void testEpisodeMatching() {
     // detectEpisode("");
-    Assert.assertEquals("S:-1", detectEpisode(""));
 
     // ************************************************************************
     // various real world examples
+    Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen [2001]"));
+    Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen (2001)"));
     Assert.assertEquals("S:1 E:25", detectEpisode("Cowboy Bebop - S01E25 - The Real Folk Blues Part II.mkv")); // roman mixed with normal
     Assert.assertEquals("S:1 E:3", detectEpisode("The.Odd.Couple.2015.S01E03.720p.HDTV"));
     Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("Stargate Universe (01x01_01x02_01x03) - Air (1)(2)(3)"));
