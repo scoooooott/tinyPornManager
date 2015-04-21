@@ -781,7 +781,25 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       return getSeason() - otherTvShowEpisode.getSeason();
     }
 
-    return getEpisode() - otherTvShowEpisode.getEpisode();
+    if (getEpisode() != otherTvShowEpisode.getEpisode()) {
+      return getEpisode() - otherTvShowEpisode.getEpisode();
+    }
+
+    // still nothing found? wtf - maybe some of those -1/-1 eps
+    String filename1 = "";
+    try {
+      filename1 = getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
+    }
+    catch (Exception ignored) {
+    }
+
+    String filename2 = "";
+    try {
+      filename2 = otherTvShowEpisode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
+    }
+    catch (Exception ignored) {
+    }
+    return filename1.compareTo(filename2);
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {

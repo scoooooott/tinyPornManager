@@ -80,7 +80,10 @@ public class TvShowTreeModel implements TreeModel {
         // added a season
         if (ADDED_SEASON.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShowSeason) {
           TvShowSeason season = (TvShowSeason) evt.getNewValue();
-          addTvShowSeason(season, season.getTvShow());
+          // need to lock it here, because of nested calls
+          synchronized (root) {
+            addTvShowSeason(season, season.getTvShow());
+          }
         }
 
         // added an episode
@@ -224,31 +227,32 @@ public class TvShowTreeModel implements TreeModel {
    *          the tv show
    */
   private void addTvShowSeason(TvShowSeason season, TvShow tvShow) {
-    synchronized (root) {
-      // get the tv show node
-      TvShowTreeNode parent = (TvShowTreeNode) nodeMap.get(tvShow);
-      TvShowSeasonTreeNode child = new TvShowSeasonTreeNode(season);
-      if (parent != null) {
-        parent.add(child);
-        nodeMap.put(season, child);
+    // since we can call this from addEpisode, we have to lock it at calling
+    // synchronized (root) {
+    // get the tv show node
+    TvShowTreeNode parent = (TvShowTreeNode) nodeMap.get(tvShow);
+    TvShowSeasonTreeNode child = new TvShowSeasonTreeNode(season);
+    if (parent != null) {
+      parent.add(child);
+      nodeMap.put(season, child);
 
-        int index = getIndexOfChild(parent, child);
+      int index = getIndexOfChild(parent, child);
 
-        // inform listeners (tv show)
-        if (index > -1) {
-          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-          for (TreeModelListener listener : listeners) {
-            listener.treeNodesInserted(event);
-          }
-        }
-
-        // inform listeners (root - to update the sum)
-        TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
+      // inform listeners (tv show)
+      if (index > -1) {
+        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
         for (TreeModelListener listener : listeners) {
-          listener.treeNodesChanged(event);
+          listener.treeNodesInserted(event);
         }
       }
+
+      // inform listeners (root - to update the sum)
+      TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
+      for (TreeModelListener listener : listeners) {
+        listener.treeNodesChanged(event);
+      }
     }
+    // }
   }
 
   /**
@@ -263,6 +267,11 @@ public class TvShowTreeModel implements TreeModel {
     synchronized (root) {
       // get the tv show season node
       TvShowSeasonTreeNode parent = (TvShowSeasonTreeNode) nodeMap.get(season);
+      // no parent (season) here - recreate it
+      if (parent == null) {
+        addTvShowSeason(season, episode.getTvShow());
+        parent = (TvShowSeasonTreeNode) nodeMap.get(season);
+      }
       TvShowEpisodeTreeNode child = new TvShowEpisodeTreeNode(episode);
       if (parent != null) {
         parent.add(child);
