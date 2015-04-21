@@ -119,7 +119,7 @@ public class TinyMediaManager {
     }
 
     LOGGER.info("=====================================================");
-    LOGGER.info("=== tinyMediaManager (c) 2012-2014 Manuel Laggner ===");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2015 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
 

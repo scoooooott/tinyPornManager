@@ -118,7 +118,7 @@ public class TinyMediaManagerCMD {
     // @formatter:off
     System.out.println("\n" +
         "=====================================================\n" +
-        "=== tinyMediaManager (c) 2012-2014 Manuel Laggner ===\n" +
+        "=== tinyMediaManager (c) 2012-2015 Manuel Laggner ===\n" +
         "=====================================================\n" +
         "\n" +
         "    SYNTAX: java -jar tmm.jar <parameters>\n" +
