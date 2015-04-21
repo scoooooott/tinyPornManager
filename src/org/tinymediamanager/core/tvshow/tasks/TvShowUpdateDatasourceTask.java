@@ -127,7 +127,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public void doInBackground() {
     // check if there is at least one DS to update
     Utils.removeEmptyStringsFromList(dataSources);
-    if (dataSources.isEmpty()) {
+    if (dataSources.isEmpty() && tvShowFolders.isEmpty()) {
       LOGGER.info("no datasource to update");
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
       return;
