@@ -583,6 +583,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       tmdbId = getTmdbIdFromImdbId(imdbId);
     }
 
+    if (tmdbId == 0) {
+      // still no tmdbId - abort
+      LOGGER.info("no tmdbID found");
+      return new ArrayList<MediaArtwork>();
+    }
+
     List<Artwork> movieImages = null;
     synchronized (tmdb) {
       trackConnections();
