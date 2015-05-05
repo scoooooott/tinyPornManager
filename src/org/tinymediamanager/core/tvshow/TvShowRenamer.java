@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -150,6 +151,14 @@ public class TvShowRenamer {
       eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
     }
     if (eps == null || eps.size() == 0) {
+      // FIXME: workaround for r1972
+      // when moving video file, all NFOs get deleted and a new gets created.
+      // so this OLD NFO is not found anylonger - just delete it
+      if (mf.getType() == MediaFileType.NFO) {
+        FileUtils.deleteQuietly(mf.getFile());
+        return;
+      }
+
       LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
     }

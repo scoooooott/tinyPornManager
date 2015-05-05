@@ -13,6 +13,7 @@ x changed detection of DTS-HD codecs (Kodi will display the right logo now after
 x fixed multichannel AAC detection
 x added a warning message when doing an update data source and no data source specified 
 x renamer: exchange colon with a dash. (even better than removing completely)
+x TvShow renamer: remove old/left-over NFOs
 x subtitles: language detection for SUB ones
 x the NFO files has not been updated in some cases
 x TheTvDB search cleans out too much "special" characters
