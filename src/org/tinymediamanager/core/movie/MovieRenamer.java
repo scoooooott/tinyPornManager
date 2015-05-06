@@ -934,6 +934,14 @@ public class MovieRenamer {
       }
     }
 
+    // replace token director ($D)
+    if (newDestination.contains("$D")) {
+      newDestination = replaceToken(newDestination, "$D", movie.getDirector());
+    }
+    else {
+      newDestination = newDestination.replace("$D", "");
+    }
+
     if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
       MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
       // replace token resolution ($R)
