@@ -349,14 +349,14 @@ public class ImdbMetadataProviderTest {
       List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Christopher Plummer");
-      cm.setCharacter("#1 (voice)");
+      cm.setCharacter("#1");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SX400_.jpg");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
       cm = new MediaCastMember();
       cm.setName("Martin Landau");
-      cm.setCharacter("#2 (voice)");
+      cm.setCharacter("#2");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SX400_.jpg");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
@@ -422,7 +422,7 @@ public class ImdbMetadataProviderTest {
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
-      checkCastMembers(castMembers, 86, md);
+      checkCastMembers(castMembers, 85, md);
 
       // check production company
       checkProductionCompany("Universal Pictures, Atlas Entertainment, Classico", md);
