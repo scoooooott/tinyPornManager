@@ -19,11 +19,21 @@ import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.Configuration;
 import com.uwetrottmann.tmdb.entities.Genre;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ApiKey;
-import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
@@ -38,16 +48,21 @@ import java.util.List;
  */
 @PluginImplementation
 public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider, IMovieTrailerProvider, ITvShowMetadataProvider {
-  static final Logger           LOGGER            = LoggerFactory.getLogger(TmdbMetadataProvider.class);
-  static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
-
-  static Tmdb                   api;
-  static MediaProviderInfo      providerInfo      = new MediaProviderInfo(MediaMetadata.TMDBID, "themoviedb.org",
-                                                      "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
-  static Configuration          configuration;
+  static Tmdb              api;
+  static MediaProviderInfo providerInfo = createMediaProviderInfo();
+  static Configuration     configuration;
 
   public TmdbMetadataProvider() throws Exception {
-    initAPI();
+  }
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo(
+        "tmdb",
+        "themoviedb.org",
+        "<html><h3>The Movie Database (TMDb)</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
+        TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
+
+    return providerInfo;
   }
 
   // thread safe initialization of the API
@@ -76,6 +91,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     List<MediaSearchResult> searchResults;
     switch (query.getMediaType()) {
       case MOVIE:
@@ -102,6 +120,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     switch (options.getType()) {
       case TV_SHOW:
         return new TmdbTvShowMetadataProvider(api).getEpisodeList(options);
@@ -113,6 +134,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     switch (options.getType()) {
       case MOVIE:
         return new TmdbMovieMetadataProvider(api).getMetadata(options);
@@ -131,11 +155,17 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     return new TmdbArtworkProvider(api).getArtwork(options);
   }
 
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     switch (options.getType()) {
       case MOVIE:
 
@@ -145,6 +175,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
   }
 
   public int getTmdbIdFromImdbId(String imdbId) throws Exception {
+    // lazy initialization of the api
+    initAPI();
+
     return new TmdbMovieMetadataProvider(api).getTmdbIdFromImdbId(imdbId);
   }
 
