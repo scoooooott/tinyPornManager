@@ -46,21 +46,20 @@ import java.util.regex.Pattern;
  */
 @PluginImplementation
 public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrailerProvider {
-  private static final Logger         LOGGER       = LoggerFactory.getLogger(OfdbMetadataProvider.class);
-  private static final String         BASE_URL     = "http://www.ofdb.de";
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(OfdbMetadataProvider.class);
+  private static final String      BASE_URL     = "http://www.ofdb.de";
 
-  private static OfdbMetadataProvider instance;
-  private static MediaProviderInfo    providerInfo = new MediaProviderInfo("ofdb", "ofdb.de",
-                                                       "Scraper for german ofdb.de which is able to scrape movie metadata");
-
-  public static synchronized OfdbMetadataProvider getInstance() {
-    if (instance == null) {
-      instance = new OfdbMetadataProvider();
-    }
-    return instance;
-  }
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
   public OfdbMetadataProvider() {
+  }
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo("ofdb", "Online Filmdatenbank (OFDb.de)",
+        "<html><h3>Online Filmdatenbank (OFDb)</h3><br />A german movie database driven by the community.<br /><br />Available languages: DE</html>",
+        OfdbMetadataProvider.class.getResource("/ofdb_de.png"));
+
+    return providerInfo;
   }
 
   @Override
