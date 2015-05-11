@@ -10,6 +10,7 @@ IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
 + added sort option via sort title 
 + added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players)
 + added director to movie renamer tokens
++ added DVD order renamer tokens ($3, $4, $D)
 x changed detection of DTS-HD codecs (Kodi will display the right logo now after NFO export)
 x fixed multichannel AAC detection
 x added a warning message when doing an update data source and no data source specified 

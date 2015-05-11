@@ -50,7 +50,7 @@ public class TvShowRenamer {
 
   // the regexp to find the episode relevant tokens which have to be repeated on multi ep files
   private static final Pattern        multiEpisodeTokenPattern = Pattern
-                                                                   .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$E|\\$T)+?.*(\\$1|\\$2|\\$E|\\$T)?");
+                                                                   .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)?");
 
   /**
    * add leadingZero if only 1 char
@@ -452,12 +452,16 @@ public class TvShowRenamer {
     // replace $1 and $2 as the only episode specific tokens
     seasonDir = seasonDir.replace("$1", String.valueOf(episode.getSeason()));
     seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
+    seasonDir = seasonDir.replace("$1", String.valueOf(episode.getDvdSeason()));
+    seasonDir = seasonDir.replace("$2", lz(episode.getDvdSeason()));
 
     // replace all other tokens
     seasonDir = createDestination(seasonDir, episode.getTvShow(), new ArrayList<TvShowEpisode>());
 
     // only allow empty season dir if the season is in the filename
-    if (StringUtils.isBlank(seasonDir) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2"))) {
+    if (StringUtils.isBlank(seasonDir)
+        && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
+            || SETTINGS.getRenamerFilename().contains("$3") || SETTINGS.getRenamerFilename().contains("$4"))) {
       seasonDir = "Season " + String.valueOf(episode.getSeason());
     }
     return seasonDir;
@@ -528,9 +532,24 @@ public class TvShowRenamer {
           episodePart = replaceToken(episodePart, "$2", lz(episode.getSeason()));
         }
 
+        // DVD-Season w/o leading zeros ($3)
+        if (episodePart.contains("$3")) {
+          episodePart = replaceToken(episodePart, "$3", String.valueOf(episode.getDvdSeason()));
+        }
+
+        // DVD-Season leading zeros ($4)
+        if (episodePart.contains("$4")) {
+          episodePart = replaceToken(episodePart, "$4", lz(episode.getDvdSeason()));
+        }
+
         // episode number
         if (episodePart.contains("$E")) {
           episodePart = replaceToken(episodePart, "$E", lz(episode.getEpisode()));
+        }
+
+        // DVD-episode number
+        if (episodePart.contains("$D")) {
+          episodePart = replaceToken(episodePart, "$D", lz(episode.getDvdEpisode()));
         }
 
         // episode title
