@@ -22,7 +22,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,14 +45,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -1611,26 +1608,7 @@ public class TvShow extends MediaEntity {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    String fn = getPath();
-    // inject backup path
-    fn = fn.replace(getDataSource(), getDataSource() + File.separator + Constants.BACKUP_FOLDER);
-
-    // create path
-    File backup = new File(fn);
-    if (!backup.getParentFile().exists()) {
-      backup.getParentFile().mkdirs();
-    }
-
-    // backup
-    try {
-      // overwrite backup file by deletion prior
-      FileUtils.deleteQuietly(backup);
-      return Utils.moveDirectorySafe(new File(getPath()), backup);
-    }
-    catch (IOException e) {
-      LOGGER.warn("could not delete tv show files: " + e.getMessage());
-      return false;
-    }
+    return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
   }
 
   @Override

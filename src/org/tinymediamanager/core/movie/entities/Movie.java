@@ -50,7 +50,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -1942,42 +1941,18 @@ public class Movie extends MediaEntity {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    String fn = getPath();
-    // inject backup path
-    fn = fn.replace(getDataSource(), getDataSource() + File.separator + Constants.BACKUP_FOLDER);
-
     // backup
-    try {
-      if (isMultiMovieDir()) {
-        // create deletedBy folder
-        File backup = new File(fn);
-        if (!backup.exists()) {
-          backup.mkdirs();
+    if (isMultiMovieDir()) {
+      boolean ok = true;
+      for (MediaFile mf : getMediaFiles()) {
+        if (!mf.deleteSafely(getDataSource())) {
+          ok = false;
         }
-        boolean ok = true;
-        for (MediaFile mf : getMediaFiles()) {
-          // overwrite backup file by deletion prior
-          FileUtils.deleteQuietly(new File(backup, mf.getFilename()));
-          if (!Utils.moveFileSafe(mf.getFile(), new File(backup, mf.getFilename()))) {
-            ok = false;
-          }
-        }
-        return ok;
       }
-      else {
-        // create path
-        File backup = new File(fn);
-        if (!backup.getParentFile().exists()) {
-          backup.getParentFile().mkdirs();
-        }
-        // overwrite backup file by deletion prior
-        FileUtils.deleteQuietly(backup);
-        return Utils.moveDirectorySafe(new File(getPath()), backup);
-      }
+      return ok;
     }
-    catch (IOException e) {
-      LOGGER.warn("could not delete movie files: " + e.getMessage());
-      return false;
+    else {
+      return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
     }
   }
 

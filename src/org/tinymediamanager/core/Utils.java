@@ -631,6 +631,88 @@ public class Utils {
   }
 
   /**
+   * <b>PHYSICALLY</b> deletes a file by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;filename&gt;<br>
+   * maintaining its originating directory
+   * 
+   * @param file
+   * @param datasource
+   *          the datasource of this file
+   * @return true/false if successful
+   */
+  public static boolean deleteFileSafely(File file, String datasource) {
+    String fn = file.getAbsolutePath();
+    if (file.isDirectory()) {
+      LOGGER.warn("could not delete file '" + fn + "': file is a directory!");
+      return false;
+    }
+    if (!fn.startsWith(datasource)) { // safety
+      LOGGER.warn("could not delete file '" + fn + "': datasource '" + datasource + "' does not match");
+      return false;
+    }
+
+    // inject backup path
+    fn = fn.replace(datasource, datasource + File.separator + Constants.BACKUP_FOLDER);
+
+    // backup
+    try {
+      // create path
+      File backup = new File(fn);
+      if (!backup.getParentFile().exists()) {
+        backup.getParentFile().mkdirs();
+      }
+      // overwrite backup file by deletion prior
+      FileUtils.deleteQuietly(backup);
+      return Utils.moveFileSafe(file, backup);
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not delete file: " + e.getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * <b>PHYSICALLY</b> deletes a complete directory by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;foldername&gt;<br>
+   * maintaining its originating directory
+   * 
+   * @param folder
+   * @param datasource
+   *          the datasource of this folder
+   * @return true/false if successful
+   */
+  public static boolean deleteDirectorySafely(File folder, String datasource) {
+    String fn = folder.getAbsolutePath();
+    if (folder.isFile()) {
+      LOGGER.warn("could not delete folder '" + fn + "': folder is a file, NOT a directory!");
+      return false;
+    }
+    if (!fn.startsWith(datasource)) { // safety
+      LOGGER.warn("could not delete folder '" + fn + "': datasource '" + datasource + "' does not match");
+      return false;
+    }
+
+    // inject backup path
+    fn = fn.replace(datasource, datasource + File.separator + Constants.BACKUP_FOLDER);
+
+    // backup
+    try {
+      // create path
+      File backup = new File(fn);
+      if (!backup.getParentFile().exists()) {
+        backup.getParentFile().mkdirs();
+      }
+      // overwrite backup file by deletion prior
+      FileUtils.deleteDirectory(backup);
+      return Utils.moveDirectorySafe(folder, backup);
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not delete file: " + e.getMessage());
+      return false;
+    }
+  }
+
+  /**
    * returns a list of all available GUI languages
    * 
    * @return List of Locales

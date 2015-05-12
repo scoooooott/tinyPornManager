@@ -464,15 +464,16 @@ public class MovieRenamer {
           // return; // rename failed
           continue;
         }
+
         if (cl.getFile().exists()) { // unneeded, but for not displaying wrong deletes in logger...
           LOGGER.debug("Deleting " + cl.getFile());
-          FileUtils.deleteQuietly(cl.getFile()); // delete cleanup file
+          Utils.deleteFileSafely(cl.getFile(), movie.getDataSource());
         }
         File[] list = cl.getFile().getParentFile().listFiles();
         if (list != null && list.length == 0) {
           // if directory is empty, delete it as well
           LOGGER.debug("Deleting empty Directory " + cl.getFile().getParentFile().getAbsolutePath());
-          FileUtils.deleteQuietly(cl.getFile().getParentFile());
+          FileUtils.deleteQuietly(cl.getFile().getParentFile()); // no need for backup ;)
         }
       }
     }
@@ -492,7 +493,7 @@ public class MovieRenamer {
             }
             if (!supported) {
               LOGGER.debug("Deleting " + file);
-              FileUtils.deleteQuietly(file);
+              Utils.deleteFileSafely(file, movie.getDataSource());
             }
           }
         }

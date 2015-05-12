@@ -1485,6 +1485,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return getFile().exists();
   }
 
+  /**
+   * <b>PHYSICALLY</b> deletes a MF by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;filename&gt;<br>
+   * maintaining its orginating directory
+   * 
+   * @param datasource
+   * @return true/false if successful
+   */
+  public boolean deleteSafely(String datasource) {
+    return Utils.deleteFileSafely(getFile(), datasource);
+  }
+
   @Override
   public boolean equals(Object mf2) {
     if ((mf2 != null) && (mf2 instanceof MediaFile)) {
