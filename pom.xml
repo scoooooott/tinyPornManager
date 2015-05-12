@@ -2,51 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.tinymediamanager</groupId>
-    <artifactId>tmm-parent</artifactId>
+    <parent>
+        <groupId>org.tinymediamanager</groupId>
+        <artifactId>tmm-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>scraper-imdb</artifactId>
     <version>1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>scraper-imdb</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>IMDb scraper</name>
-  <description>A scraper for IMDb</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>false</skipTests>
-          <testFailureIgnore>true</testFailureIgnore>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <name>IMDb scraper</name>
+    <description>A scraper for IMDb</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.tinymediamanager</groupId>
-      <artifactId>api-scraper</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.tinymediamanager</groupId>
-      <artifactId>scraper-tmdb</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <!-- TEST -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.10</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>api-scraper</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>scraper-tmdb</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope><!-- bundle this? or use version on classpath? -->
+        </dependency>
+    </dependencies>
 
 </project>
