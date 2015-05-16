@@ -2,27 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>tmm-parent</artifactId>
-        <groupId>org.tinymediamanager</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>scraper-ofdb</artifactId>
+  <parent>
+    <artifactId>tmm-parent</artifactId>
+    <groupId>org.tinymediamanager</groupId>
     <version>1.0-SNAPSHOT</version>
+  </parent>
 
-    <name>OFDb scraper</name>
-    <description>A scraper for the german Online Filmdatenbank (OFDb)</description>
+  <artifactId>scraper-ofdb</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>OFDb.de scraper</name>
+  <description>A scraper for the german Online Filmdatenbank (OFDb)</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.tinymediamanager</groupId>
-            <artifactId>api-scraper</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.tinymediamanager</groupId>
+      <artifactId>api-scraper</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
