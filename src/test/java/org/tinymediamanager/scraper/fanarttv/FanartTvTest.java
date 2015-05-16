@@ -59,23 +59,23 @@ public class FanartTvTest {
 
       assertThat(images).isNotNull();
       assertThat(images.hdmovielogo).isNotNull();
-      assertThat(images.hdmovielogo.size()).isEqualTo(7);
+      assertThat(images.hdmovielogo.size()).isGreaterThan(0);
       assertThat(images.movieposter).isNotNull();
-      assertThat(images.movieposter.size()).isEqualTo(19);
+      assertThat(images.movieposter.size()).isGreaterThan(0);
       assertThat(images.movielogo).isNotNull();
-      assertThat(images.movielogo.size()).isEqualTo(3);
+      assertThat(images.movielogo.size()).isGreaterThan(0);
       assertThat(images.movieart).isNotNull();
-      assertThat(images.movieart.size()).isEqualTo(2);
+      assertThat(images.movieart.size()).isGreaterThan(0);
       assertThat(images.hdmovieclearart).isNotNull();
-      assertThat(images.hdmovieclearart.size()).isEqualTo(12);
+      assertThat(images.hdmovieclearart.size()).isGreaterThan(0);
       assertThat(images.moviedisc).isNotNull();
-      assertThat(images.moviedisc.size()).isEqualTo(27);
+      assertThat(images.moviedisc.size()).isGreaterThan(0);
       assertThat(images.moviebackground).isNotNull();
-      assertThat(images.moviebackground.size()).isEqualTo(31);
+      assertThat(images.moviebackground.size()).isGreaterThan(0);
       assertThat(images.moviebanner).isNotNull();
-      assertThat(images.moviebanner.size()).isEqualTo(10);
+      assertThat(images.moviebanner.size()).isGreaterThan(0);
       assertThat(images.moviethumb).isNotNull();
-      assertThat(images.moviethumb.size()).isEqualTo(12);
+      assertThat(images.moviethumb.size()).isGreaterThan(0);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -88,23 +88,23 @@ public class FanartTvTest {
 
       assertThat(images).isNotNull();
       assertThat(images.hdmovielogo).isNotNull();
-      assertThat(images.hdmovielogo.size()).isEqualTo(7);
+      assertThat(images.hdmovielogo.size()).isGreaterThan(0);
       assertThat(images.movieposter).isNotNull();
-      assertThat(images.movieposter.size()).isEqualTo(19);
+      assertThat(images.movieposter.size()).isGreaterThan(0);
       assertThat(images.movielogo).isNotNull();
-      assertThat(images.movielogo.size()).isEqualTo(3);
+      assertThat(images.movielogo.size()).isGreaterThan(0);
       assertThat(images.movieart).isNotNull();
-      assertThat(images.movieart.size()).isEqualTo(2);
+      assertThat(images.movieart.size()).isGreaterThan(0);
       assertThat(images.hdmovieclearart).isNotNull();
-      assertThat(images.hdmovieclearart.size()).isEqualTo(12);
+      assertThat(images.hdmovieclearart.size()).isGreaterThan(0);
       assertThat(images.moviedisc).isNotNull();
-      assertThat(images.moviedisc.size()).isEqualTo(27);
+      assertThat(images.moviedisc.size()).isGreaterThan(0);
       assertThat(images.moviebackground).isNotNull();
-      assertThat(images.moviebackground.size()).isEqualTo(31);
+      assertThat(images.moviebackground.size()).isGreaterThan(0);
       assertThat(images.moviebanner).isNotNull();
-      assertThat(images.moviebanner.size()).isEqualTo(10);
+      assertThat(images.moviebanner.size()).isGreaterThan(0);
       assertThat(images.moviethumb).isNotNull();
-      assertThat(images.moviethumb.size()).isEqualTo(12);
+      assertThat(images.moviethumb.size()).isGreaterThan(0);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -122,29 +122,29 @@ public class FanartTvTest {
 
       assertThat(images).isNotNull();
       assertThat(images.hdtvlogo).isNotNull();
-      assertThat(images.hdtvlogo.size()).isEqualTo(6);
+      assertThat(images.hdtvlogo.size()).isGreaterThan(0);
       assertThat(images.tvposter).isNotNull();
-      assertThat(images.tvposter.size()).isEqualTo(6);
+      assertThat(images.tvposter.size()).isGreaterThan(0);
       assertThat(images.seasonposter).isNotNull();
-      assertThat(images.seasonposter.size()).isEqualTo(6);
+      assertThat(images.seasonposter.size()).isGreaterThan(0);
       assertThat(images.clearlogo).isNotNull();
-      assertThat(images.clearlogo.size()).isEqualTo(9);
+      assertThat(images.clearlogo.size()).isGreaterThan(0);
       assertThat(images.clearart).isNotNull();
-      assertThat(images.clearart.size()).isEqualTo(11);
+      assertThat(images.clearart.size()).isGreaterThan(0);
       assertThat(images.hdclearart).isNotNull();
-      assertThat(images.hdclearart.size()).isEqualTo(17);
+      assertThat(images.hdclearart.size()).isGreaterThan(0);
       assertThat(images.characterart).isNotNull();
-      assertThat(images.characterart.size()).isEqualTo(3);
+      assertThat(images.characterart.size()).isGreaterThan(0);
       assertThat(images.tvthumb).isNotNull();
-      assertThat(images.tvthumb.size()).isEqualTo(12);
+      assertThat(images.tvthumb.size()).isGreaterThan(0);
       assertThat(images.seasonthumb).isNotNull();
-      assertThat(images.seasonthumb.size()).isEqualTo(12);
+      assertThat(images.seasonthumb.size()).isGreaterThan(0);
       assertThat(images.showbackground).isNotNull();
-      assertThat(images.showbackground.size()).isEqualTo(41);
+      assertThat(images.showbackground.size()).isGreaterThan(0);
       assertThat(images.tvbanner).isNotNull();
-      assertThat(images.tvbanner.size()).isEqualTo(8);
+      assertThat(images.tvbanner.size()).isGreaterThan(0);
       assertThat(images.seasonbanner).isNotNull();
-      assertThat(images.seasonbanner.size()).isEqualTo(5);
+      assertThat(images.seasonbanner.size()).isGreaterThan(0);
     }
     catch (Exception e) {
       e.printStackTrace();
