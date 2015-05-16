@@ -473,14 +473,14 @@ public class ImdbMetadataProviderTest {
       List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Kelly Macdonald");
-      cm.setCharacter("Merida (voice)");
+      cm.setCharacter("Merida");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMjE0ODMzMjMyOV5BMl5BanBnXkFtZTcwMTYzNTA0NA@@._V1._SX400_.jpg");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
       cm = new MediaCastMember();
       cm.setName("Billy Connolly");
-      cm.setCharacter("Fergus (voice)");
+      cm.setCharacter("Fergus");
       cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTQzMzM2MTA4Ml5BMl5BanBnXkFtZTYwMzIxNTM1._V1._SX400_.jpg");
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
