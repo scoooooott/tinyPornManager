@@ -67,7 +67,10 @@ public class MediaScrapeOptions {
   public String getImdbId() {
     Object obj = ids.get(MediaMetadata.IMDBID);
     if (obj == null) {
-      return "";
+      obj = ids.get("imdb");
+      if (obj == null) {
+        return "";
+      }
     }
     return obj.toString();
   }
@@ -77,8 +80,14 @@ public class MediaScrapeOptions {
     try {
       id = Integer.parseInt(ids.get(MediaMetadata.TMDBID));
     }
-    catch (Exception e) {
-      return 0;
+    catch (Exception ignored) {
+    }
+    if (id == 0) {
+      try {
+        id = Integer.parseInt(ids.get("tmdb"));
+      }
+      catch (Exception ignored) {
+      }
     }
     return id;
   }
