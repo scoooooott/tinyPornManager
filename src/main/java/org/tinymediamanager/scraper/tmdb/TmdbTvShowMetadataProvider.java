@@ -67,7 +67,6 @@ public class TmdbTvShowMetadataProvider {
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
 
     String searchString = "";
-    int year = 0;
 
     // check type
     if (query.getMediaType() != MediaType.TV_SHOW) {
@@ -82,15 +81,6 @@ public class TmdbTvShowMetadataProvider {
       searchString = query.get(MediaSearchOptions.SearchParam.TITLE);
     }
 
-    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
-      try {
-        year = Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
-      }
-      catch (Exception e) {
-        year = 0;
-      }
-    }
-
     if (StringUtils.isEmpty(searchString)) {
       LOGGER.debug("TMDB Scraper: empty searchString");
       return resultList;
@@ -98,8 +88,6 @@ public class TmdbTvShowMetadataProvider {
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     String language = query.get(MediaSearchOptions.SearchParam.LANGUAGE);
-    String imdbId = "";
-    int tmdbId = 0;
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
@@ -255,7 +243,9 @@ public class TmdbTvShowMetadataProvider {
     md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, complete.original_name);
     md.storeMetadata(MediaMetadata.RATING, complete.vote_average);
     md.storeMetadata(MediaMetadata.VOTE_COUNT, complete.vote_count);
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, complete.first_air_date);
+    if (complete.first_air_date != null){
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, (new SimpleDateFormat("dd-MM-yyyy").format(complete.first_air_date)));
+    }
     md.storeMetadata(MediaMetadata.PLOT, complete.overview);
     md.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
 
@@ -349,7 +339,10 @@ public class TmdbTvShowMetadataProvider {
     md.storeMetadata(MediaMetadata.PLOT, episode.overview);
     md.storeMetadata(MediaMetadata.RATING, episode.vote_average);
     md.storeMetadata(MediaMetadata.VOTE_COUNT, episode.vote_count);
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.air_date);
+
+    if (episode.air_date != null){
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, (new SimpleDateFormat("dd-MM-yyyy").format(episode.air_date)));
+    }
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
       MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -9,10 +10,8 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.tinymediamanager</groupId>
   <artifactId>scraper-tmdb</artifactId>
   <version>1.0-SNAPSHOT</version>
-
   <name>TheMovieDB scraper</name>
   <description>A scraper for TheMovieDB</description>
 
@@ -27,14 +26,6 @@
       <groupId>com.uwetrottmann</groupId>
       <artifactId>tmdb-java</artifactId>
       <version>0.9.0</version>
-    </dependency>
-
-    <!-- TEST -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.10</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -60,15 +51,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>false</skipTests>
-          <testFailureIgnore>true</testFailureIgnore>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-
 </project>
