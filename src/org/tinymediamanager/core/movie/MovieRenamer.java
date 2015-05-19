@@ -280,10 +280,6 @@ public class MovieRenamer {
       newPathname = movie.getPath();
     }
 
-    // if empty, do not rename file, but DO move them to movie root
-    // FIXME: what? when?
-    boolean renameFiles = !MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().isEmpty();
-
     // ######################################################################
     // ## mark ALL existing and known files for cleanup (clone!!)
     // ######################################################################
@@ -316,8 +312,15 @@ public class MovieRenamer {
 
     // BASENAME
     String newVideoBasename = "";
-    MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
-    newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {
+      // we are NOT renaming any files, so we keep the same name on renaming ;)
+      newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+    }
+    else {
+      // since we rename, generate the new basename
+      MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
+      newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
+    }
     LOGGER.trace("Our new basename for renaming: " + newVideoBasename);
 
     // ######################################################################

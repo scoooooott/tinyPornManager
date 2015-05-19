@@ -40,16 +40,21 @@ public class MovieRenamerPreview {
     Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
 
     String newVideoBasename = "";
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {
+      // we are NOT renaming any files, so we keep the same name on renaming ;)
+      newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+    }
+    else {
+      // since we rename, generate the new basename
+      MediaFile ftr = MovieRenamer.generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0);
+      newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
+    }
 
     // VIDEO needs to be renamed first, since all others depend on that name!!!
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       oldFiles.add(new MediaFile(mf));
       MediaFile ftr = MovieRenamer.generateFilename(movie, mf, newVideoBasename).get(0); // there can be only one
       newFiles.add(ftr);
-      if (newVideoBasename.isEmpty()) {
-        // so remember first renamed video file basename (w/o stacking or extension)
-        newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
-      }
     }
 
     // all the other MFs...

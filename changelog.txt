@@ -1,4 +1,8 @@
-Upcoming version
+2.6.8
+=======================
+x Movie renamer: fix renaming with empty settings
+
+2.6.7
 =======================
 IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
            If you are still using Java6, please update.
