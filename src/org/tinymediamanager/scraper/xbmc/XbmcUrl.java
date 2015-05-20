@@ -12,7 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 import org.w3c.dom.Document;
@@ -25,7 +26,7 @@ import org.w3c.dom.Element;
  * 
  */
 public class XbmcUrl {
-  private static final Logger LOGGER = Logger.getLogger(XbmcUrl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(XbmcUrl.class);
 
   private String              urlString;
   // private URL url;

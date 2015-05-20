@@ -11,7 +11,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,7 +23,7 @@ import org.w3c.dom.NodeList;
 
 public class XbmcScraperProcessor {
   public static final String  FUNCTION_SETTINGS = "GetSettings";
-  private static final Logger LOGGER               = Logger.getLogger(XbmcScraperProcessor.class);
+  private static final Logger LOGGER            = LoggerFactory.getLogger(XbmcScraperProcessor.class);
   private boolean             truncateLogging   = true;
 
   private XbmcScraper         scraper           = null;

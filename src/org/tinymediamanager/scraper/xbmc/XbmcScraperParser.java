@@ -8,7 +8,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,7 +17,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XbmcScraperParser {
-  private static final Logger LOGGER = Logger.getLogger(XbmcScraperParser.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(XbmcScraperParser.class);
 
   public XbmcScraper parseScraper(XbmcScraper scraper, List<File> common) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

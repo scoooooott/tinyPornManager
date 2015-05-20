@@ -14,7 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -34,7 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class XbmcMetadataProvider implements IMediaMetadataProvider {
-  private static final Logger                 LOGGER                  = Logger.getLogger(XbmcMetadataProvider.class);
+  private static final Logger                 LOGGER                  = LoggerFactory.getLogger(XbmcMetadataProvider.class);
   private static final DocumentBuilderFactory factory                 = DocumentBuilderFactory.newInstance();
 
   private static MediaProviderInfo            providerInfo            = new MediaProviderInfo("xbmc", "xbmc.org", "Generic XBMC type scraper");

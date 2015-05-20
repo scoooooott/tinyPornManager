@@ -5,7 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -16,7 +17,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * 
  */
 public class XbmcMovieProcessor {
-  private static final Logger  LOGGER                       = Logger.getLogger(XbmcMovieProcessor.class);
+  private static final Logger  LOGGER                       = LoggerFactory.getLogger(XbmcMovieProcessor.class);
 
   public static final String   FUNCTION_SETTINGS            = "GetSettings";
   public static final String   FUNCTION_NFO_URL             = "NfoUrl";
