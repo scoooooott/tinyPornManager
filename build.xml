@@ -1,7 +1,7 @@
 <project default="create_tmm_jar" name="Tiny Media Manager">
 
 	<!-- software revision number -->
-	<property name="version" value="2.6.7" /><!-- CHECK UPGRADE TASKS FOR CORRECT VERSION -->
+	<property name="version" value="2.6.8" /><!-- CHECK UPGRADE TASKS FOR CORRECT VERSION -->
 
 	<!-- build directories -->
 	<property name="lib.dir" value="lib" />
