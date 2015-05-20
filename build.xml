@@ -334,6 +334,12 @@
 		<!-- done, move build dir -->
 		<delete dir="build" />
 		<move file="${build.dir}" tofile="build" />
+		
+    <!-- cleanup dist -->
+    <delete includeemptydirs="true">
+      <fileset dir="${dist.dir}" includes="**/*" excludes="*.zip,*.tar.gz" />
+      <dirset dir="${dist.dir}" includes="**/*" />
+    </delete>
 	</target>
 
 	<!--target name="analyze" description="Run analyzers" depends="compile"-->
