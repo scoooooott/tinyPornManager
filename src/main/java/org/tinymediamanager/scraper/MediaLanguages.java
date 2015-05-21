@@ -43,7 +43,8 @@ public enum MediaLanguages {
   sl("Slovenščina"),
   sk("Slovenčina"),
   sv("Svenska"),
-  tr("Türkçe");
+  tr("Türkçe"),
+  zh("Chinese");
   //@formatter:on
 
   private String title;
