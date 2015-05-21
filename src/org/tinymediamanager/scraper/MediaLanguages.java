@@ -27,6 +27,7 @@ public enum MediaLanguages {
 
 
 
+
   //@formatter:off
   cs("Český"),
   de("Deutsch"),
@@ -45,7 +46,8 @@ public enum MediaLanguages {
   sl("Slovenščina"),
   sk("Slovenčina"),
   sv("Svenska"),
-  tr("Türkçe");
+  tr("Türkçe"),
+  zh("Chinese");
   //@formatter:on
 
   /** The title. */
