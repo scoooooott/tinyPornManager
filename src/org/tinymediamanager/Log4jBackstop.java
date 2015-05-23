@@ -35,6 +35,10 @@ class Log4jBackstop implements Thread.UncaughtExceptionHandler {
       return;
     }
     LOGGER.error("Uncaught exception in thread: " + t.getName(), ex);
+    // do not show drawing problems of the JTree (which may occur)
+    if ("Null child not allowed".equals(ex.getMessage())) {
+      return;
+    }
     if (!GraphicsEnvironment.isHeadless()) {
       MessageDialog.showExceptionWindow(ex);
     }
