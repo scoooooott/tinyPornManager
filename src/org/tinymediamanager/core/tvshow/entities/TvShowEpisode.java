@@ -474,6 +474,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void writeNFO() {
     List<TvShowEpisode> episodesInNfo = new ArrayList<TvShowEpisode>(1);
 
+    LOGGER.debug("write nfo: " + getTvShow().getTitle() + " S" + getSeason() + "E" + getEpisode());
     // worst case: multi episode in multiple files
     // e.g. warehouse13.s01e01e02.Part1.avi/warehouse13.s01e01e02.Part2.avi
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
@@ -863,6 +864,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public void saveToDb() {
+    // rewrite NFO (needed before saving)
+    if (dirty) {
+      writeNFO();
+    }
+
     // update/insert this movie to the database
     final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
@@ -876,9 +882,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         entityManager.persist(this);
       }
     }
+    dirty = false;
     readWriteLock.readLock().unlock();
-
-    writeNFO();
   }
 
   @Override

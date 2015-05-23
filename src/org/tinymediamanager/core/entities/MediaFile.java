@@ -198,6 +198,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.type == MediaFileType.SUBTITLE) {
       gatherSubtitleInformation();
     }
+
+    // set containerformat for non MI files
+    if (!isValidMediainfoFormat() && StringUtils.isBlank(getContainerFormat())) {
+      setContainerFormat(getExtension());
+    }
   }
 
   private void gatherSubtitleInformation() {

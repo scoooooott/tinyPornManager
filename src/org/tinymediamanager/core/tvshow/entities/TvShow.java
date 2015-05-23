@@ -1524,6 +1524,11 @@ public class TvShow extends MediaEntity {
 
   @Override
   public void saveToDb() {
+    // rewrite NFO (needed before save)
+    if (dirty) {
+      writeNFO();
+    }
+
     // update/insert this movie to the database
     final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
@@ -1537,10 +1542,8 @@ public class TvShow extends MediaEntity {
         entityManager.persist(this);
       }
     }
+    dirty = false;
     readWriteLock.readLock().unlock();
-
-    // rewrite NFO
-    writeNFO();
   }
 
   @Override
