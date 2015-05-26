@@ -120,8 +120,8 @@ public class ParserUtils {
           LOGGER.trace("removed token '" + s[i] + "'- seems to be year");
           year = s[i];
           s[i] = "";
+          break;
         }
-        break;
       }
     }
 
