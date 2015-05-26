@@ -322,10 +322,6 @@ public class MovieRenamer {
       newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
     }
     LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
-    if (newVideoBasename.length() < 3) {
-      LOGGER.warn("Title seems pretty short; better NOT rename it!");
-      return;
-    }
 
     // ######################################################################
     // ## test VIDEO rename
