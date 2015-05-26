@@ -399,6 +399,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.info("Movie not found; parsing directory" + movieDir);
           movie = new Movie();
           String bdinfoTitle = ""; // title parsed out of BDInfo
+          String[] videoName = { "", "" }; // title from file
 
           // first round - try to parse NFO(s) first
           for (MediaFile mf : mfs) {
@@ -442,6 +443,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                 }
               }
             }
+            else if (mf.getType().equals(MediaFileType.VIDEO)) {
+              videoName = ParserUtils.detectCleanMovienameAndYear(mf.getBasename());
+            }
           }
 
           if (movie.getTitle().isEmpty()) {
@@ -449,20 +453,40 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             String[] folder = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
             String[] bdiName = ParserUtils.detectCleanMovienameAndYear(bdinfoTitle);
 
-            // set the longer title / prefer folder name
+            // set the longer title / prefer fileName over folderName over bdinfoName
             if (folder[0].length() >= bdiName[0].length()) {
-              movie.setTitle(folder[0]);
+              if (videoName[0].length() > folder[0].length()) {
+                movie.setTitle(videoName[0]);
+              }
+              else {
+                movie.setTitle(folder[0]);
+              }
             }
             else {
-              movie.setTitle(bdiName[0]);
+              if (videoName[0].length() > bdiName[0].length()) {
+                movie.setTitle(videoName[0]);
+              }
+              else {
+                movie.setTitle(bdiName[0]);
+              }
             }
 
-            // set the longer year / prefer folder year
+            // set the year if not 0 / prefer fileName over folderName over bdinfoName
             if (folder[1].length() >= bdiName[1].length()) {
-              movie.setYear(folder[1]);
+              if (videoName[1].length() > folder[1].length()) {
+                movie.setYear(videoName[1]);
+              }
+              else {
+                movie.setYear(folder[1]);
+              }
             }
             else {
-              movie.setYear(bdiName[1]);
+              if (videoName[1].length() > bdiName[1].length()) {
+                movie.setYear(videoName[1]);
+              }
+              else {
+                movie.setYear(bdiName[1]);
+              }
             }
           }
 

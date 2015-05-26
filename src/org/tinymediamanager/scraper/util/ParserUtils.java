@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,9 +113,14 @@ public class ParserUtils {
     String year = "";
     for (int i = s.length - 1; i > 0; i--) {
       if (!s[i].isEmpty() && s[i].matches("\\d{4}")) {
-        LOGGER.trace("removed token '" + s[i] + "'- seems to be year");
-        year = s[i];
-        s[i] = "";
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int parsedYear = Integer.parseInt(s[i]);
+        if (parsedYear > 1800 && parsedYear < currentYear + 5) {
+          // well, limit the year a bit...
+          LOGGER.trace("removed token '" + s[i] + "'- seems to be year");
+          year = s[i];
+          s[i] = "";
+        }
         break;
       }
     }
