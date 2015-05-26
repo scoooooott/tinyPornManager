@@ -321,7 +321,11 @@ public class MovieRenamer {
       MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
       newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
     }
-    LOGGER.trace("Our new basename for renaming: " + newVideoBasename);
+    LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
+    if (newVideoBasename.length() < 3) {
+      LOGGER.warn("Title seems pretty short; better NOT rename it!");
+      return;
+    }
 
     // ######################################################################
     // ## test VIDEO rename
