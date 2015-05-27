@@ -874,6 +874,8 @@ public class MovieEditorDialog extends TmmDialog {
       }
       cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       toggleSorttitle();
+
+      tfSorttitle.setText(movieToEdit.getSortTitle());
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
