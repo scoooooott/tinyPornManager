@@ -1,7 +1,8 @@
 <project default="create_tmm_jar" name="Tiny Media Manager">
 
 	<!-- software revision number -->
-	<property name="version" value="2.6.8" /><!-- CHECK UPGRADE TASKS FOR CORRECT VERSION -->
+	<property name="version" value="2.6.8" />
+	<!-- CHECK UPGRADE TASKS FOR CORRECT VERSION -->
 
 	<!-- build directories -->
 	<property name="lib.dir" value="lib" />
@@ -263,8 +264,13 @@
 				<include name="**/*" />
 				<exclude name="native/windows*/**" />
 				<exclude name="native/linux*/**" />
+				<exclude name="templates/*.jar" />
 			</fileset>
 		</copy>
+		<!-- extract templates -->
+		<unjar dest="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/templates">
+			<fileset dir="${build.dir}/templates" includes="*.jar" />
+		</unjar>
 
 		<copy file="AppBundler/JavaApplicationStub.new" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" />
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
@@ -302,6 +308,28 @@
 		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="AppBundler/getdown.jar" />
 		<digest appdir="${build.dir}" />
 
+		<!-- create a whole archive of /build for transfer to mirrors -->
+		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
+			<tarfileset dir="${build.dir}" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="*.exe" />
+			<tarfileset filemode="755" dir="${build.dir}" includes="*.sh" />
+		</tar>
+
+		<!-- done, move build dir -->
+		<delete dir="build" />
+		<copy todir="build">
+			<fileset dir="${build.dir}" />
+		</copy>
+
+		<!-- extract templates -->
+		<unjar dest="${build.dir}/templates">
+			<fileset dir="${build.dir}/templates" includes="*.jar" />
+		</unjar>
+		<delete>
+			<fileset dir="${build.dir}/templates" includes="*.jar" />
+		</delete>
+
 		<!-- copy digest.txt and create zip files -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
@@ -322,24 +350,14 @@
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>
 
+		<!-- cleanup build -->
+		<delete dir="${build.dir}" />
 
-		<!-- create a whole archive of /build for transfer to mirrors -->
-		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
-			<tarfileset dir="${build.dir}" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="*.exe" />
-			<tarfileset filemode="755" dir="${build.dir}" includes="*.sh" />			
-		</tar>
-
-		<!-- done, move build dir -->
-		<delete dir="build" />
-		<move file="${build.dir}" tofile="build" />
-		
-    <!-- cleanup dist -->
-    <delete includeemptydirs="true">
-      <fileset dir="${dist.dir}" includes="**/*" excludes="*.zip,*.tar.gz" />
-      <dirset dir="${dist.dir}" includes="**/*" />
-    </delete>
+		<!-- cleanup dist -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" includes="**/*" excludes="*.zip,*.tar.gz" />
+			<dirset dir="${dist.dir}" includes="**/*" />
+		</delete>
 	</target>
 
 	<!--target name="analyze" description="Run analyzers" depends="compile"-->
