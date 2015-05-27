@@ -478,6 +478,9 @@ public class TvShowTreeModel implements TreeModel {
   }
 
   private int getChildCountInternal(Object node) {
+    if (node == null) {
+      return 0;
+    }
     return ((TreeNode) node).getChildCount();
   }
 
