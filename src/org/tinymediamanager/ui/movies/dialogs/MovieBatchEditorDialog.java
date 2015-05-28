@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
@@ -51,9 +52,9 @@ import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -74,6 +75,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
   private JComboBox                   cbTags;
   private JComboBox                   cbMovieSet;
   private JCheckBox                   chckbxWatched;
+  private JTextField                  tfLanguage;
 
   /**
    * Instantiates a new movie batch editor.
@@ -89,13 +91,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+          FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+          FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
+          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "2, 2, right, default");
@@ -340,6 +342,29 @@ public class MovieBatchEditorDialog extends TmmDialog {
         }
       });
       panelContent.add(btnMediaSource, "6, 14");
+
+      JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      panelContent.add(lblLanguage, "2, 16, right, default");
+
+      tfLanguage = new JTextField();
+      panelContent.add(tfLanguage, "4, 16, fill, default");
+      tfLanguage.setColumns(10);
+
+      JButton btnLanguage = new JButton("");
+      btnLanguage.setMargin(new Insets(2, 2, 2, 2));
+      btnLanguage.setIcon(IconManager.APPLY);
+      btnLanguage.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSpokenLanguages(tfLanguage.getText());
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+      });
+      panelContent.add(btnLanguage, "6, 16");
     }
 
     {
