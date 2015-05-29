@@ -180,6 +180,12 @@ public class MovieRenamer {
       return;
     }
 
+    // already scraped? do not rename if not...
+    if (!movie.isScraped()) {
+      LOGGER.error("won't rename movie '" + movie.getPath() + "' / '" + movie.getTitle() + "' since it appears to not have been scraped yet!");
+      return;
+    }
+
     // all the good & needed mediafiles
     ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
     ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
