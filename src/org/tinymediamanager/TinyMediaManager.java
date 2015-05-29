@@ -96,6 +96,7 @@ public class TinyMediaManager {
       // no cmd params found, but if we are headless - display syntax
       String head = System.getProperty("java.awt.headless");
       if (head != null && head.equals("true")) {
+        LOGGER.info("TMM started 'headless', and without params -> displaying syntax ");
         TinyMediaManagerCMD.printSyntax();
         System.exit(0);
       }
