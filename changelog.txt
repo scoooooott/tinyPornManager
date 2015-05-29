@@ -1,6 +1,14 @@
 2.6.8
 =======================
++ added language code ZH (Chinese) to the scraper languages 
++ added language to the movie bulk editor
 x Movie renamer: fix renaming with empty settings
+x Movie renamer: fix renaming of unscraped movies
+x made writing of movie NFO less aggressive
+x fix occasional error where media information did not get stored
+x better detection of movie name/year on update
+x fixed sorttitle editing
+ 
 
 2.6.7
 =======================
