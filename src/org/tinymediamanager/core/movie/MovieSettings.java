@@ -47,6 +47,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           IMAGE_EXTRATHUMBS_COUNT                  = "imageExtraThumbsCount";
   private final static String           IMAGE_EXTRAFANART                        = "imageExtraFanart";
   private final static String           IMAGE_EXTRAFANART_COUNT                  = "imageExtraFanartCount";
+  private final static String           ENABLE_MOVIESET_ARTWORK_MOVIE_FOLDER     = "enableMovieSetArtworkMovieFolder";
   private final static String           ENABLE_MOVIESET_ARTWORK_FOLDER           = "enableMovieSetArtworkFolder";
   private final static String           MOVIESET_ARTWORK_FOLDER                  = "movieSetArtworkFolder";
   private final static String           MOVIE_CONNECTOR                          = "movieConnector";
@@ -123,6 +124,7 @@ public class MovieSettings extends AbstractModelObject {
   private int                           imageExtraThumbsCount                    = 5;
   private boolean                       imageExtraFanart                         = false;
   private int                           imageExtraFanartCount                    = 5;
+  private boolean                       enableMovieSetArtworkMovieFolder         = true;
   private boolean                       enableMovieSetArtworkFolder              = false;
   private String                        movieSetArtworkFolder                    = "MoviesetArtwork";
   private boolean                       scrapeBestImage                          = true;
@@ -327,6 +329,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.imageExtraFanart;
     this.imageExtraFanart = newValue;
     firePropertyChange(IMAGE_EXTRAFANART, oldValue, newValue);
+  }
+
+  public boolean isEnableMovieSetArtworkMovieFolder() {
+    return enableMovieSetArtworkMovieFolder;
+  }
+
+  public void setEnableMovieSetArtworkMovieFolder(boolean newValue) {
+    boolean oldValue = this.enableMovieSetArtworkMovieFolder;
+    this.enableMovieSetArtworkMovieFolder = newValue;
+    firePropertyChange(ENABLE_MOVIESET_ARTWORK_MOVIE_FOLDER, oldValue, newValue);
   }
 
   public boolean isEnableMovieSetArtworkFolder() {

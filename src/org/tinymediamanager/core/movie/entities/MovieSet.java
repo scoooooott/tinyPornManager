@@ -293,7 +293,9 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
     movies.add(movie);
-    writeImagesToMovieFolder(movies);
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+      writeImagesToMovieFolder(movies);
+    }
 
     firePropertyChange("addedMovie", null, movie);
     firePropertyChange("movies", null, movies);
@@ -324,7 +326,9 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
     movies.add(movie);
-    writeImagesToMovieFolder(movies);
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+      writeImagesToMovieFolder(movies);
+    }
 
     firePropertyChange("addedMovie", null, movie);
     firePropertyChange("movies", null, movies);
@@ -445,7 +449,10 @@ public class MovieSet extends MediaEntity {
   }
 
   public void rewriteAllImages() {
-    writeImagesToMovieFolder(movies);
+    // write to movie Folder
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+      writeImagesToMovieFolder(movies);
+    }
 
     // write to artwork folder
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()

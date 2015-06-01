@@ -53,6 +53,7 @@ import org.tinymediamanager.ui.components.ScrollablePanel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -61,109 +62,46 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieImageSettingsPanel extends ScrollablePanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 7312645402037806284L;
-
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  /** The settings. */
   private Settings                    settings         = Settings.getInstance();
 
-  /** The cb image tmdb poster size. */
   private JComboBox                   cbImagePosterSize;
-
-  /** The cb image tmdb fanart size. */
   private JComboBox                   cbImageFanartSize;
-
-  /** The cb movie poster filename2. */
   private JCheckBox                   cbMoviePosterFilename2;
-
-  /** The cb movie poster filename4. */
   private JCheckBox                   cbMoviePosterFilename4;
-
-  /** The cb movie poster filename6. */
   private JCheckBox                   cbMoviePosterFilename6;
-
-  /** The cb movie poster filename7. */
   private JCheckBox                   cbMoviePosterFilename7;
-
-  /** The cb movie fanart filename1. */
   private JCheckBox                   cbMovieFanartFilename1;
-
-  /** The cb movie fanart filename2. */
   private JCheckBox                   cbMovieFanartFilename2;
-
-  /** The cb movie poster filename8. */
   private JCheckBox                   cbMoviePosterFilename8;
-
-  /** The chckbx fanarttv. */
   private JCheckBox                   chckbxFanarttv;
-
-  /** The chckbx the movie database. */
   private JCheckBox                   chckbxTheMovieDatabase;
-
-  /** The lbl attention fanart tv. */
   private JLabel                      lblAttentionFanartTv;
-
-  /** The cb actor images. */
   private JCheckBox                   cbActorImages;
-
-  /** The tp file naming hint. */
   private JTextPane                   tpFileNamingHint;
-
-  /** The chckbx enable extrathumbs. */
   private JCheckBox                   chckbxEnableExtrathumbs;
-
-  /** The chckbx enable extrafanart. */
   private JCheckBox                   chckbxEnableExtrafanart;
-
-  /** The separator. */
-  private JSeparator                  separator;
-
-  /** The chckbx resize extrathumbs to. */
   private JCheckBox                   chckbxResizeExtrathumbsTo;
-
-  /** The sp extrathumb width. */
   private JSpinner                    spExtrathumbWidth;
-
-  /** The lbl download. */
   private JLabel                      lblDownload;
-
-  /** The sp download count extrathumbs. */
   private JSpinner                    spDownloadCountExtrathumbs;
-
-  /** The lbl download count. */
   private JLabel                      lblDownloadCount;
-
-  /** The sp download count extrafanart. */
   private JSpinner                    spDownloadCountExtrafanart;
-
-  /** The chckbx store movieset artwork. */
   private JCheckBox                   chckbxStoreMoviesetArtwork;
-
-  /** The tf movie set artwork folder. */
   private JTextField                  tfMovieSetArtworkFolder;
-
-  /** The lbl foldername. */
   private JLabel                      lblFoldername;
-
-  /** The btn select folder. */
   private JButton                     btnSelectFolder;
-
-  /** The separator_2. */
-  private JSeparator                  separator_2;
   private JCheckBox                   cbMovieFanartFilename3;
-  private JSeparator                  separator_3;
   private JCheckBox                   chckbxBanner;
   private JCheckBox                   chckbxLogo;
   private JCheckBox                   chckbxThumb;
   private JCheckBox                   chckbxDiscArt;
   private JCheckBox                   chckbxClearArt;
   private JPanel                      panelExtraArtwork;
-  private JSeparator                  separator_1;
-  private JSeparator                  separator_4;
+  private JCheckBox                   chckbxMovieSetArtwork;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -200,7 +138,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     TmmFontHelper.changeFont(lblAttentionFanartTv, 0.833);
     panelMovieImages.add(lblAttentionFanartTv, "4, 5, 3, 1");
 
-    separator = new JSeparator();
+    JSeparator separator = new JSeparator();
     panelMovieImages.add(separator, "1, 7, 8, 1");
 
     JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size"));
@@ -215,8 +153,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     cbImageFanartSize = new JComboBox(FanartSizes.values());
     panelMovieImages.add(cbImageFanartSize, "4, 11");
 
-    separator_2 = new JSeparator();
-    panelMovieImages.add(separator_2, "2, 13, 7, 1");
+    separator = new JSeparator();
+    panelMovieImages.add(separator, "2, 13, 7, 1");
 
     JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblPosterFilename, "2, 15");
@@ -258,16 +196,16 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelExtraArtwork
         .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.extraartwork"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelExtraArtwork, "2, 4, 3, 1, default, fill");
-    panelExtraArtwork.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelExtraArtwork.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     chckbxBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner"));
     panelExtraArtwork.add(chckbxBanner, "2, 2");
@@ -284,8 +222,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     chckbxDiscArt = new JCheckBox(BUNDLE.getString("mediafiletype.discart"));
     panelExtraArtwork.add(chckbxDiscArt, "10, 2");
 
-    separator_3 = new JSeparator();
-    panelExtraArtwork.add(separator_3, "2, 4, 9, 1");
+    separator = new JSeparator();
+    panelExtraArtwork.add(separator, "2, 4, 9, 1");
 
     chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));
     panelExtraArtwork.add(chckbxEnableExtrathumbs, "2, 6, 3, 1");
@@ -314,27 +252,30 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelExtraArtwork.add(spDownloadCountExtrafanart, "10, 12");
     spDownloadCountExtrafanart.setPreferredSize(new Dimension(49, 20));
 
-    separator_1 = new JSeparator();
-    panelExtraArtwork.add(separator_1, "2, 14, 9, 1");
+    separator = new JSeparator();
+    panelExtraArtwork.add(separator, "2, 14, 9, 1");
 
     cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
     panelExtraArtwork.add(cbActorImages, "2, 16, 9, 1");
 
-    separator_4 = new JSeparator();
-    panelExtraArtwork.add(separator_4, "2, 18, 9, 1");
+    separator = new JSeparator();
+    panelExtraArtwork.add(separator, "2, 18, 9, 1");
 
-    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store"));
-    panelExtraArtwork.add(chckbxStoreMoviesetArtwork, "2, 20, 9, 1");
+    chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie")); //$NON-NLS-1$
+    panelExtraArtwork.add(chckbxMovieSetArtwork, "2, 20, 9, 1");
 
-    lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
-    panelExtraArtwork.add(lblFoldername, "2, 22, 3, 1, right, default");
+    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store")); //$NON-NLS-1$
+    panelExtraArtwork.add(chckbxStoreMoviesetArtwork, "2, 22, 9, 1");
+
+    lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername")); //$NON-NLS-1$
+    panelExtraArtwork.add(lblFoldername, "2, 24, 3, 1, right, default");
 
     tfMovieSetArtworkFolder = new JTextField();
-    panelExtraArtwork.add(tfMovieSetArtworkFolder, "6, 22, 3, 1");
+    panelExtraArtwork.add(tfMovieSetArtworkFolder, "6, 24, 3, 1");
     tfMovieSetArtworkFolder.setColumns(10);
 
     btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect")); //$NON-NLS-1$
-    panelExtraArtwork.add(btnSelectFolder, "10, 22");
+    panelExtraArtwork.add(btnSelectFolder, "10, 24");
     btnSelectFolder.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
@@ -549,5 +490,10 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_17, chckbxDiscArt, jCheckBoxBeanProperty);
     autoBinding_21.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_18 = BeanProperty.create("movieSettings.enableMovieSetArtworkMovieFolder");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_18, chckbxMovieSetArtwork, jCheckBoxBeanProperty);
+    autoBinding_22.bind();
   }
 }
