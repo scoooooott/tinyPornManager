@@ -149,6 +149,8 @@ public class Movie extends MediaEntity {
    * Instantiates a new movie. To initialize the propertychangesupport after loading
    */
   public Movie() {
+    // register for dirty flag listener
+    super();
   }
 
   /**

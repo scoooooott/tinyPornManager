@@ -132,6 +132,9 @@ public class TvShow extends MediaEntity {
    * Instantiates a tv show. To initialize the propertychangesupport after loading
    */
   public TvShow() {
+    // register for dirty flag listener
+    super();
+
     // give tag events from episodes up to the TvShowList
     propertyChangeListener = new PropertyChangeListener() {
       @Override

@@ -77,6 +77,8 @@ public class MovieSet extends MediaEntity {
    * Instantiates a new movieset. To initialize the propertychangesupport after loading
    */
   public MovieSet() {
+    // register for dirty flag listener
+    super();
   }
 
   @Override

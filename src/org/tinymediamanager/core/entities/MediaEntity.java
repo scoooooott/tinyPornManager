@@ -109,14 +109,17 @@ public abstract class MediaEntity extends AbstractModelObject {
   @Transient
   protected ReadWriteLock                 readWriteLock          = new ReentrantReadWriteLock();
 
+  public MediaEntity() {
+    // add this ME to the dirty listener
+    addPropertyChangeListener(propertyChangeListener);
+  }
+
   /**
    * Initialize after loading from database.
    */
   public void initializeAfterLoading() {
     sortMediaFiles();
 
-    // add this ME to the dirty listener
-    addPropertyChangeListener(propertyChangeListener);
   }
 
   protected void sortMediaFiles() {

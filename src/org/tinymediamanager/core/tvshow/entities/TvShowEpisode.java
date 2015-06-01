@@ -100,6 +100,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Instantiates a new tv show episode. To initialize the propertychangesupport after loading
    */
   public TvShowEpisode() {
+    // register for dirty flag listener
+    super();
   }
 
   /**
