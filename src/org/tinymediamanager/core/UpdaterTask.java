@@ -27,6 +27,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
@@ -39,9 +40,10 @@ import org.tinymediamanager.scraper.util.Url;
  * @author Myron BOyle
  */
 public class UpdaterTask extends SwingWorker<Boolean, Void> {
-  private static final Logger LOGGER    = LoggerFactory.getLogger(UpdaterTask.class);
-
-  private String              changelog = "";
+  private static final Logger LOGGER       = LoggerFactory.getLogger(UpdaterTask.class);
+  private static final String REGULAR_PATH = "/build";
+  private static final String LEGACY_PATH  = "/java6";
+  private String              changelog    = "";
 
   /**
    * Instantiates a new updater task.
@@ -55,14 +57,16 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       return false;
     }
 
+    File getdownFile = new File("getdown.txt");
+    File digestFile = new File("digest.txt");
+
     ArrayList<String> updateUrls = new ArrayList<String>();
     try {
       Thread.currentThread().setName("updateThread");
       LOGGER.info("Checking for updates...");
-      File file = new File("getdown.txt");
 
       // read getdown.txt (IOEx on any error)
-      for (String line : readLines(new FileReader(file))) {
+      for (String line : readLines(new FileReader(getdownFile))) {
         String[] kv = line.split("=");
         if ("appbase".equals(kv[0].trim()) || "mirror".equals(kv[0].trim())) {
           updateUrls.add(kv[1].trim());
@@ -70,6 +74,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
 
       boolean valid = false;
+      boolean changeReleasePath = false;
       String remoteDigest = "";
       String remoteUrl = "";
       // try to download from all our mirrors
@@ -78,6 +83,22 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
           if (!uu.endsWith("/")) {
             uu += '/';
           }
+
+          // we're on legacy update path, but no java6 -> use regular release
+          if (uu.contains(LEGACY_PATH)) {
+            if (!SystemUtils.IS_JAVA_1_6) {
+              changeReleasePath = true;
+              uu = uu.replace(LEGACY_PATH, REGULAR_PATH);
+            }
+          }
+          else {
+            // we're on regular update path, but java6 -> use legacy release
+            if (SystemUtils.IS_JAVA_1_6) {
+              changeReleasePath = true;
+              uu = uu.replace(REGULAR_PATH, LEGACY_PATH);
+            }
+          }
+
           Url upd = new Url(uu + "digest.txt");
           LOGGER.trace("Checking " + uu);
           remoteDigest = IOUtils.toString(upd.getInputStream(), "UTF-8");
@@ -101,11 +122,21 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
 
       // compare with our local
-      String local = FileUtils.readFileToString(new File("digest.txt"), "UTF-8");
-      if (!local.equals(remoteDigest)) {
+      String localDigest = FileUtils.readFileToString(digestFile, "UTF-8");
+      if (!localDigest.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
+
+        if (changeReleasePath) {
+          // we're up/downgrading dist - DL txts..
+          LOGGER.debug("Switching distribution due to java versoin, preloading correct files.");
+          Url gd = new Url(remoteUrl + "getdown.txt");
+          String remoteGD = IOUtils.toString(gd.getInputStream(), "UTF-8");
+          FileUtils.writeStringToFile(getdownFile, remoteGD, "UTF-8");
+          FileUtils.writeStringToFile(digestFile, remoteDigest, "UTF-8");
+        }
+
         // download changelog.txt for preview
-        Url upd = new Url(remoteUrl + "/changelog.txt");
+        Url upd = new Url(remoteUrl + "changelog.txt");
         changelog = IOUtils.toString(upd.getInputStream(), "UTF-8");
         return true;
       }
@@ -119,22 +150,25 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       try {
         // try a hardcoded "backup url" for GD.txt, where we could specify a new location :)
         LOGGER.info("Trying fallback...");
-        String fallback = "http://www.tinymediamanager.org/";
+        String fallback = "http://www.tinymediamanager.org";
+        if (SystemUtils.IS_JAVA_1_6) {
+          fallback += LEGACY_PATH;
+        }
         if (ReleaseInfo.isPreRelease()) {
-          fallback += "getdown_prerelease.txt";
+          fallback += "/getdown_prerelease.txt";
         }
         else if (ReleaseInfo.isNightly()) {
-          fallback += "getdown_nightly.txt";
+          fallback += "/getdown_nightly.txt";
         }
         else {
-          fallback += "getdown.txt";
+          fallback += "/getdown.txt";
         }
         Url upd = new Url(fallback);
         String gd = IOUtils.toString(upd.getInputStream(), "UTF-8");
         if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
           throw new Exception("could not even download our fallback");
         }
-        FileUtils.writeStringToFile(new File("getdown.txt"), gd);
+        FileUtils.writeStringToFile(getdownFile, gd);
         return true;
       }
       catch (Exception e2) {
