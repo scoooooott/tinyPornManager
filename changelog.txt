@@ -1,20 +1,21 @@
 2.6.8
 =======================
+IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
+           If you are still using Java6, please update or you will stay at version 2.6.x
+           
 + added language code ZH (Chinese) to the scraper languages 
 + added language to the movie bulk editor
++ added option to suppress writing of movie set artwork to movie folder 
 x Movie renamer: fix renaming with empty settings
 x Movie renamer: fix renaming of unscraped movies
 x made writing of movie NFO less aggressive
 x fix occasional error where media information did not get stored
 x better detection of movie name/year on update
 x fixed sorttitle editing
- 
+x fixed searching for tv show season posters (with 4 digit season)
 
 2.6.7
-=======================
-IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
-           If you are still using Java6, please update.
-           
+=======================          
 + updated mediainfo to 0.7.73 (ARM users now have to install the system version of mediainfo for better compatibility)           
 + Mirror support: TMM now distributed on several mirrors for better availability (and error handling for network blockages)
 + Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
