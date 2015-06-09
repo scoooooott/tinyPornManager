@@ -15,20 +15,6 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +43,20 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -523,7 +523,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         addMediafilesToMovie(movie, mfs);
 
         // third round - try to match unknown graphics like title.ext or filename.ext as poster
-        if (movie.getPoster().isEmpty()) {
+        if (movie.getArtworkFilename(MediaFileType.POSTER).isEmpty()) {
           for (MediaFile mf : mfs) {
             if (mf.getType().equals(MediaFileType.GRAPHIC)) {
               LOGGER.debug("parsing unknown graphic " + mf.getFilename());

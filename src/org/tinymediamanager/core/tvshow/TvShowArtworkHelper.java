@@ -15,11 +15,6 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +30,11 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.util.Url;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The class TvShowArtworkHelper . A helper class for managing TV show artwork
@@ -58,20 +58,8 @@ public class TvShowArtworkHelper {
 
     switch (type) {
       case FANART:
-        url = show.getFanartUrl();
-        filename = "fanart." + FilenameUtils.getExtension(url);
-        break;
-
       case POSTER:
-        url = show.getPosterUrl();
-        filename = "poster." + FilenameUtils.getExtension(url);
-        break;
-
       case BANNER:
-        url = show.getBannerUrl();
-        filename = "banner." + FilenameUtils.getExtension(url);
-        break;
-
       case EXTRAFANART:
       case EXTRATHUMB:
       case LOGO:

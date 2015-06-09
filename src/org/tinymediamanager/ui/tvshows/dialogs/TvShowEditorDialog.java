@@ -15,41 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EmptyBorder;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -85,10 +54,21 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The Class TvShowEditor.
@@ -610,7 +590,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tfTvdbId.setText(tvShow.getIdAsString(Constants.TVDBID));
       tpPlot.setText(tvShow.getPlot());
-      lblPoster.setImagePath(tvShow.getPoster());
+      lblPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
       lblThumb.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.THUMB));
       lblLogo.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.LOGO));
       lblClearart.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARART));
@@ -696,7 +676,7 @@ public class TvShowEditorDialog extends TmmDialog {
       }
     });
     details1Panel.add(lblBanner, "4, 22, 7, 3, fill, fill");
-    lblBanner.setImagePath(tvShow.getBanner());
+    lblBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
     {
       // JLabel lblFanart = new JLabel("");
       lblFanart = new ImageLabel();
@@ -713,7 +693,7 @@ public class TvShowEditorDialog extends TmmDialog {
       });
       details1Panel.add(lblFanart, "12, 20, 3, 5, fill, fill");
     }
-    lblFanart.setImagePath(tvShow.getFanart());
+    lblFanart.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
 
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
@@ -795,18 +775,18 @@ public class TvShowEditorDialog extends TmmDialog {
         tvShowToEdit.setCertification((Certification) certification);
       }
 
-      if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(tvShowToEdit.getPosterUrl())) {
-        tvShowToEdit.setPosterUrl(lblPoster.getImageUrl());
+      if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(tvShowToEdit.getArtworkUrl(MediaFileType.POSTER))) {
+        tvShowToEdit.setArtworkUrl(lblPoster.getImageUrl(), MediaFileType.POSTER);
         tvShowToEdit.downloadArtwork(MediaFileType.POSTER);
       }
 
-      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(tvShowToEdit.getFanartUrl())) {
-        tvShowToEdit.setFanartUrl(lblFanart.getImageUrl());
+      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(tvShowToEdit.getArtworkUrl(MediaFileType.FANART))) {
+        tvShowToEdit.setArtworkUrl(lblFanart.getImageUrl(), MediaFileType.FANART);
         tvShowToEdit.downloadArtwork(MediaFileType.FANART);
       }
 
-      if (!StringUtils.isEmpty(lblBanner.getImageUrl()) && !lblBanner.getImageUrl().equals(tvShowToEdit.getBannerUrl())) {
-        tvShowToEdit.setBannerUrl(lblBanner.getImageUrl());
+      if (!StringUtils.isEmpty(lblBanner.getImageUrl()) && !lblBanner.getImageUrl().equals(tvShowToEdit.getArtworkUrl(MediaFileType.BANNER))) {
+        tvShowToEdit.setArtworkUrl(lblBanner.getImageUrl(), MediaFileType.BANNER);
         tvShowToEdit.downloadArtwork(MediaFileType.BANNER);
       }
 

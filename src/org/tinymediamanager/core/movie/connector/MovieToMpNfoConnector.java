@@ -194,7 +194,7 @@ public class MovieToMpNfoConnector {
 
     mp.setTagline(movie.getTagline());
     mp.setRuntime(String.valueOf(movie.getRuntime()));
-    mp.setThumb(FilenameUtils.getName(movie.getPoster()));
+    mp.setThumb(FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.POSTER)));
 
     // fanarts: is extrafanart is activated - put up to 5 fanarts into the NFO; else take the only fanart
     List<MediaFile> extrafanarts = movie.getMediaFiles(MediaFileType.EXTRAFANART);
@@ -212,7 +212,7 @@ public class MovieToMpNfoConnector {
       }
     }
     else {
-      mp.addFanart(FilenameUtils.getName(movie.getFanart()));
+      mp.addFanart(FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.FANART)));
     }
     mp.setId(movie.getImdbId());
     mp.ids.putAll(movie.getIds());

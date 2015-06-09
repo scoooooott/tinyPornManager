@@ -15,17 +15,15 @@
  */
 package org.tinymediamanager.ui.moviesets.actions;
 
-import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 /**
  * @author Manuel Laggner
@@ -47,14 +45,9 @@ public class MovieSetAddAction extends AbstractAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
-    String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", 1); //$NON-NLS-1$
+    String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
     if (StringUtils.isNotEmpty(name)) {
       MovieSet movieSet = new MovieSet(name);
       movieSet.saveToDb();

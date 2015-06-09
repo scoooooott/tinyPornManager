@@ -15,28 +15,6 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.*;
-
-import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -56,6 +34,28 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.tinymediamanager.core.Constants.*;
 
 /**
  * The Class TvShowEpisode.
@@ -135,10 +135,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     year = new String(source.year);
     plot = new String(source.plot);
     rating = source.rating;
-    posterUrl = new String(source.posterUrl);
-    fanartUrl = new String(source.fanartUrl);
-    bannerUrl = new String(source.bannerUrl);
-    thumbUrl = new String(source.thumbUrl);
+
+    for (Entry<MediaFileType, String> entry : source.artworkUrlMap.entrySet()) {
+      artworkUrlMap.put(entry.getKey(), new String(entry.getValue()));
+    }
+
     dateAdded = new Date(source.dateAdded.getTime());
     scraped = source.scraped;
     ids.putAll(source.ids);
@@ -366,21 +367,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Write thumb image.
    */
   public void writeThumbImage() {
-    if (StringUtils.isNotEmpty(getThumbUrl())) {
+    String thumbUrl = getArtworkUrl(MediaFileType.THUMB);
+    if (StringUtils.isNotEmpty(thumbUrl)) {
       boolean firstImage = true;
       // create correct filename
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename;
       if (Globals.settings.getTvShowSettings().isUseRenamerThumbPostfix()) {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
+        filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
       }
       else {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(getThumbUrl());
+        filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
       }
 
       // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getThumbUrl(), MediaArtworkType.THUMB, filename, firstImage);
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, thumbUrl, MediaArtworkType.THUMB, filename, firstImage);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
@@ -455,7 +457,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     for (MediaArtwork ma : metadata.getFanart()) {
       if (ma.getType() == MediaArtworkType.THUMB) {
-        setThumbUrl(ma.getDefaultUrl());
+        setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
         writeNewThumb = true;
         break;
       }
@@ -508,7 +510,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(getThumb())) {
+    if (StringUtils.isNotEmpty(getArtworkUrl(MediaFileType.THUMB))) {
       return true;
     }
     return false;

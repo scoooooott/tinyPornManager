@@ -15,30 +15,15 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import static org.tinymediamanager.core.Constants.*;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.Certification;
@@ -54,10 +39,15 @@ import org.tinymediamanager.ui.converter.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.WatchedIconConverter2;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static org.tinymediamanager.core.Constants.*;
 
 /**
  * The Class MovieInformationPanel.
@@ -342,8 +332,8 @@ public class MovieInformationPanel extends JPanel {
             else {
               lblTop250.setText("");
             }
-            lblMovieBackground.setImagePath(movie.getFanart());
-            lblMoviePoster.setImagePath(movie.getPoster());
+            lblMovieBackground.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
+            lblMoviePoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
 
             synchronized (mediaFiles) {
               mediaFiles.clear();
@@ -359,12 +349,12 @@ public class MovieInformationPanel extends JPanel {
         if ((source.getClass() == Movie.class && FANART.equals(property))) {
           Movie movie = (Movie) source;
           lblMovieBackground.clearImage();
-          lblMovieBackground.setImagePath(movie.getFanart());
+          lblMovieBackground.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
         }
         if ((source.getClass() == Movie.class && POSTER.equals(property))) {
           Movie movie = (Movie) source;
           lblMoviePoster.clearImage();
-          lblMoviePoster.setImagePath(movie.getPoster());
+          lblMoviePoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
         }
         if ((source.getClass() == Movie.class && TOP250.equals(property))) {
           Movie movie = (Movie) source;

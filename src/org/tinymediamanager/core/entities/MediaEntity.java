@@ -15,9 +15,19 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
-import java.awt.Dimension;
+import javax.persistence.CascadeType;
+import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -35,18 +45,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import static org.tinymediamanager.core.Constants.*;
 
 /**
  * The Class MediaEntity. The base class for all entities
@@ -80,14 +79,6 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                        plot                   = "";
   protected float                         rating                 = 0f;
   protected String                        path                   = "";
-  @Deprecated
-  protected String                        fanartUrl              = "";
-  @Deprecated
-  protected String                        posterUrl              = "";
-  @Deprecated
-  protected String                        bannerUrl              = "";
-  @Deprecated
-  protected String                        thumbUrl               = "";
   protected Date                          dateAdded              = new Date();
   protected String                        productionCompany      = "";
   protected boolean                       scraped                = false;
@@ -98,7 +89,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaFile>                 mediaFiles             = new ArrayList<MediaFile>();
 
-  private Map<MediaFileType, String>      artworkUrlMap          = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String>    artworkUrlMap          = new HashMap<MediaFileType, String>();
 
   @Transient
   public boolean                          justAdded              = false;
@@ -144,31 +135,6 @@ public abstract class MediaEntity extends AbstractModelObject {
     return ids;
   }
 
-  @Deprecated
-  public String getFanartUrl() {
-    return fanartUrl;
-  }
-
-  /**
-   * Gets the file name of the fanart
-   * 
-   * @deprecated use {@link MediaEntity#getArtworkFilename(MediaFileType)} instead
-   * @return the file name of the fanart
-   */
-  @Deprecated
-  public String getFanart() {
-    List<MediaFile> fanarts = getMediaFiles(MediaFileType.FANART);
-    if (fanarts.size() > 0) {
-      return fanarts.get(0).getFile().getPath();
-    }
-    return "";
-  }
-
-  @Deprecated
-  public Dimension getFanartSize() {
-    return getArtworkDimension(MediaFileType.FANART);
-  }
-
   public String getTitle() {
     return title;
   }
@@ -183,58 +149,6 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public String getPath() {
     return path;
-  }
-
-  @Deprecated
-  public String getPosterUrl() {
-    return posterUrl;
-  }
-
-  @Deprecated
-  public String getPoster() {
-    List<MediaFile> poster = getMediaFiles(MediaFileType.POSTER);
-    if (poster.size() > 0) {
-      return poster.get(0).getFile().getPath();
-    }
-    return "";
-  }
-
-  @Deprecated
-  public Dimension getPosterSize() {
-    return getArtworkDimension(MediaFileType.POSTER);
-  }
-
-  @Deprecated
-  public String getBannerUrl() {
-    return bannerUrl;
-  }
-
-  @Deprecated
-  public String getBanner() {
-    List<MediaFile> banner = getMediaFiles(MediaFileType.BANNER);
-    if (banner.size() > 0) {
-      return banner.get(0).getFile().getPath();
-    }
-    return "";
-  }
-
-  @Deprecated
-  public Dimension getBannerSize() {
-    return getArtworkDimension(MediaFileType.BANNER);
-  }
-
-  @Deprecated
-  public String getThumb() {
-    List<MediaFile> thumbs = getMediaFiles(MediaFileType.THUMB);
-    if (thumbs.size() > 0) {
-      return thumbs.get(0).getFile().getPath();
-    }
-    return "";
-  }
-
-  @Deprecated
-  public Dimension getThumbSize() {
-    return getArtworkDimension(MediaFileType.THUMB);
   }
 
   /**
@@ -321,80 +235,14 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(YEAR, oldValue, newValue);
   }
 
-  @Deprecated
-  public void setPosterUrl(String newValue) {
-    String oldValue = posterUrl;
-    posterUrl = newValue;
-    firePropertyChange(POSTER_URL, oldValue, newValue);
-  }
-
-  @Deprecated
-  public void setPoster(File poster) {
-    setArtwork(poster, MediaFileType.POSTER);
-  }
-
-  @Deprecated
-  public void setBannerUrl(String newValue) {
-    String oldValue = bannerUrl;
-    bannerUrl = newValue;
-    firePropertyChange(BANNER_URL, oldValue, newValue);
-  }
-
-  @Deprecated
-  public void setBanner(File banner) {
-    setArtwork(banner, MediaFileType.BANNER);
-  }
-
-  @Deprecated
-  public void setThumb(File thumb) {
-    setArtwork(thumb, MediaFileType.THUMB);
-  }
-
-  @Deprecated
-  public void setFanartUrl(String newValue) {
-    String oldValue = fanartUrl;
-    fanartUrl = newValue;
-    firePropertyChange(FANART_URL, oldValue, newValue);
-  }
-
-  @Deprecated
-  public void setThumbUrl(String newValue) {
-    String oldValue = thumbUrl;
-    thumbUrl = newValue;
-    firePropertyChange(THUMB_URL, oldValue, newValue);
-  }
-
-  @Deprecated
-  public String getThumbUrl() {
-    return thumbUrl;
-  }
-
-  @Deprecated
-  public void setFanart(File fanart) {
-    setArtwork(fanart, MediaFileType.FANART);
-  }
-
   public void setArtworkUrl(String url, MediaFileType type) {
     String oldValue = getArtworkFilename(type);
 
-    // TODO drop with v3; only use the map
     switch (type) {
       case POSTER:
-        this.posterUrl = url;
-        break;
-
       case FANART:
-        this.fanartUrl = url;
-        break;
-
       case BANNER:
-        this.bannerUrl = url;
-        break;
-
       case THUMB:
-        this.thumbUrl = url;
-        break;
-
       case CLEARART:
       case DISCART:
       case LOGO:
@@ -409,24 +257,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public String getArtworkUrl(MediaFileType type) {
-    // TODO drop with v3; only use the map
-    switch (type) {
-      case FANART:
-        return fanartUrl;
-
-      case POSTER:
-        return posterUrl;
-
-      case BANNER:
-        return bannerUrl;
-
-      case THUMB:
-        return thumbUrl;
-
-      default:
-        String url = artworkUrlMap.get(type);
-        return url == null ? "" : url;
-    }
+    String url = artworkUrlMap.get(type);
+    return url == null ? "" : url;
   }
 
   public void setArtwork(File file, MediaFileType type) {

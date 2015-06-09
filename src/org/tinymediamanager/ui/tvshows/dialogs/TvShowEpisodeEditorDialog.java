@@ -15,42 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingWorker;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -61,6 +29,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
@@ -81,10 +50,22 @@ import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class TvShowEpisodeScrapeDialog.
@@ -394,7 +375,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       else {
         spFirstAired.setValue(INITIAL_DATE);
       }
-      lblThumb.setImagePath(episodeToEdit.getThumb());
+      lblThumb.setImagePath(episodeToEdit.getArtworkFilename(MediaFileType.THUMB));
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
       chckbxWatched.setSelected(episodeToEdit.isWatched());
       taPlot.setText(episodeToEdit.getPlot());
@@ -464,8 +445,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setActors(cast);
 
       if (StringUtils.isNotEmpty(lblThumb.getImageUrl())
-          && (!lblThumb.getImageUrl().equals(episodeToEdit.getThumbUrl()) || StringUtils.isBlank(episodeToEdit.getThumb()))) {
-        episodeToEdit.setThumbUrl(lblThumb.getImageUrl());
+          && (!lblThumb.getImageUrl().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)) || StringUtils.isBlank(episodeToEdit
+              .getArtworkUrl(MediaFileType.THUMB)))) {
+        episodeToEdit.setArtworkUrl(lblThumb.getImageUrl(), MediaFileType.THUMB);
         episodeToEdit.writeThumbImage();
       }
 

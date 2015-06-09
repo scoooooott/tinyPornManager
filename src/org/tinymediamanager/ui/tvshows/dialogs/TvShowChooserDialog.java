@@ -15,37 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -83,10 +56,18 @@ import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The Class TvShowChooserDialog.
@@ -387,7 +368,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
                     MediaType.TV_SHOW);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
-                tvShowToScrape.setPosterUrl(lblImage.getImageUrl());
+                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.POSTER);
                 tvShowToScrape.downloadArtwork(MediaFileType.POSTER);
               }
 
@@ -399,7 +380,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
                 ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkProviders, lblImage,
                     extrathumbs, extrafanarts, MediaType.TV_SHOW);
                 dialog.setVisible(true);
-                tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
+                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.FANART);
                 tvShowToScrape.downloadArtwork(MediaFileType.FANART);
               }
 
@@ -409,7 +390,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
                 ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkProviders, lblImage, null, null,
                     MediaType.TV_SHOW);
                 dialog.setVisible(true);
-                tvShowToScrape.setBannerUrl(lblImage.getImageUrl());
+                tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.BANNER);
                 tvShowToScrape.downloadArtwork(MediaFileType.BANNER);
               }
             }

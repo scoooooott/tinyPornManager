@@ -15,31 +15,15 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.Box;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.Certification;
@@ -51,10 +35,15 @@ import org.tinymediamanager.ui.components.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static org.tinymediamanager.core.Constants.*;
 
 /**
  * The Class TvShowInformationPanel.
@@ -356,8 +345,8 @@ public class TvShowInformationPanel extends JPanel {
 
   private void setPoster(TvShow tvShow) {
     lblTvShowPoster.clearImage();
-    lblTvShowPoster.setImagePath(tvShow.getPoster());
-    Dimension posterSize = tvShow.getPosterSize();
+    lblTvShowPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
+    Dimension posterSize = tvShow.getArtworkDimension(MediaFileType.POSTER);
     if (posterSize.width > 0 && posterSize.height > 0) {
       lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
     }
@@ -368,8 +357,8 @@ public class TvShowInformationPanel extends JPanel {
 
   private void setFanart(TvShow tvShow) {
     lblTvShowBackground.clearImage();
-    lblTvShowBackground.setImagePath(tvShow.getFanart());
-    Dimension fanartSize = tvShow.getFanartSize();
+    lblTvShowBackground.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
+    Dimension fanartSize = tvShow.getArtworkDimension(MediaFileType.FANART);
     if (fanartSize.width > 0 && fanartSize.height > 0) {
       lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
     }
@@ -380,8 +369,8 @@ public class TvShowInformationPanel extends JPanel {
 
   private void setBanner(TvShow tvShow) {
     lblTvShowBanner.clearImage();
-    lblTvShowBanner.setImagePath(tvShow.getBanner());
-    Dimension bannerSize = tvShow.getBannerSize();
+    lblTvShowBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
+    Dimension bannerSize = tvShow.getArtworkDimension(MediaFileType.BANNER);
     if (bannerSize.width > 0 && bannerSize.height > 0) {
       lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height); //$NON-NLS-1$
     }

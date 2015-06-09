@@ -15,30 +15,10 @@
  */
 package org.tinymediamanager.ui.moviesets.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
-
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -68,10 +48,17 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The Class MovieSetEditorDialog. Edit movie sets
@@ -341,10 +328,10 @@ public class MovieSetEditorDialog extends TmmDialog {
       tfTmdbId.setText(String.valueOf(movieSetToEdit.getTmdbId()));
       tpOverview.setText(movieSetToEdit.getPlot());
       moviesInSet.addAll(movieSetToEdit.getMovies());
-      lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
-      lblPoster.setImagePath(movieSetToEdit.getPoster());
-      lblFanart.setImageUrl(movieSetToEdit.getFanartUrl());
-      lblFanart.setImagePath(movieSetToEdit.getFanart());
+      lblPoster.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.POSTER));
+      lblPoster.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.POSTER));
+      lblFanart.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.FANART));
+      lblFanart.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.FANART));
 
       // extra artwork
       lblBanner.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.BANNER));
@@ -447,10 +434,10 @@ public class MovieSetEditorDialog extends TmmDialog {
       movieSetToEdit.setPlot(tpOverview.getText());
 
       // image changes
-      if (StringUtils.isNotEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieSetToEdit.getPosterUrl())) {
+      if (StringUtils.isNotEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieSetToEdit.getArtworkUrl(MediaFileType.POSTER))) {
         movieSetToEdit.setArtworkUrl(lblPoster.getImageUrl(), MediaFileType.POSTER);
       }
-      if (StringUtils.isNotEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(movieSetToEdit.getFanartUrl())) {
+      if (StringUtils.isNotEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(movieSetToEdit.getArtworkUrl(MediaFileType.FANART))) {
         movieSetToEdit.setArtworkUrl(lblFanart.getImageUrl(), MediaFileType.FANART);
       }
 

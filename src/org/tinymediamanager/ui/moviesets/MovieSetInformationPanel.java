@@ -15,24 +15,17 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
-import static org.tinymediamanager.core.Constants.*;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextPane;
-
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -45,18 +38,15 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 /**
  * The Class MovieSetInformationPanel.
@@ -216,7 +206,7 @@ public class MovieSetInformationPanel extends JPanel {
             || (source.getClass() == MovieSet.class && "movies".equals(property))) {
           movieEventList.clear();
           movieEventList.addAll(selectionModel.getSelectedMovieSet().getMovies());
-          lblMovieSetFanart.setImagePath(selectionModel.getSelectedMovieSet().getFanart());
+          lblMovieSetFanart.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART));
           lblMovieSetPoster.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.POSTER));
         }
 
@@ -224,12 +214,12 @@ public class MovieSetInformationPanel extends JPanel {
         if ((source.getClass() == MovieSet.class && FANART.equals(property))) {
           MovieSet movieSet = (MovieSet) source;
           lblMovieSetFanart.clearImage();
-          lblMovieSetFanart.setImagePath(movieSet.getFanart());
+          lblMovieSetFanart.setImagePath(movieSet.getArtworkFilename(MediaFileType.FANART));
         }
         if ((source.getClass() == MovieSet.class && POSTER.equals(property))) {
           MovieSet movieSet = (MovieSet) source;
           lblMovieSetPoster.clearImage();
-          lblMovieSetPoster.setImagePath(movieSet.getPoster());
+          lblMovieSetPoster.setImagePath(movieSet.getArtworkFilename(MediaFileType.POSTER));
         }
       }
     };
