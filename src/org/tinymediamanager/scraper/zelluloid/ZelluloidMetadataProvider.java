@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,8 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -56,7 +58,8 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */
-public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
+@PluginImplementation
+public class ZelluloidMetadataProvider implements IMovieMetadataProvider, IMovieTrailerProvider {
   private static final Logger              LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
   private static final String              BASE_URL      = "http://www.zelluloid.de";
   private static final String              PAGE_ENCODING = "ISO-8859-1";
@@ -210,9 +213,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       }
       catch (Exception e) {
         LOGGER.error("failed to get details: " + e.getMessage());
-
-        // clear cache
-        CachedUrl.removeCachedFileForUrl(detailsUrl);
       }
 
       if (doc != null) {
@@ -301,9 +301,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       }
       catch (Exception e) {
         LOGGER.error("failed to get links page: " + e.getMessage());
-
-        // clear cache
-        CachedUrl.removeCachedFileForUrl(linksUrl);
       }
 
       if (doc != null) {
@@ -319,9 +316,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     }
     catch (Exception e) {
       LOGGER.error("Error parsing " + options.getResult().getUrl());
-
-      // clear cache
-      CachedUrl.removeCachedFileForUrl(detailurl);
 
       throw e;
     }
@@ -373,9 +367,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     }
     catch (Exception e) {
       LOGGER.error("failed to search for " + searchTerm + ": " + e.getMessage());
-
-      // clear cache
-      CachedUrl.removeCachedFileForUrl(searchUrl);
     }
 
     if (doc == null) {

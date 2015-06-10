@@ -577,7 +577,7 @@ public class MovieSetEditorDialog extends TmmDialog {
       try {
         TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
         for (Movie movie : moviesInSet) {
-          MediaScrapeOptions options = new MediaScrapeOptions();
+          MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
           if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
             options.setTmdbId(movie.getTmdbId());
             options.setImdbId(movie.getImdbId());

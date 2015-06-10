@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -32,14 +30,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -54,6 +44,11 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 
 /**
  * The Class FeedbackDialog.
@@ -138,11 +133,10 @@ public class FeedbackDialog extends TmmDialog {
         }
 
         // send feedback
-        HttpClient client = TmmHttpClient.getHttpClient();
-        HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec");
-        try {
-          List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+        OkHttpClient client = TmmHttpClient.getHttpClient();
+        String url = "https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec";
 
+        try {
           StringBuilder message = new StringBuilder("Feedback from ");
           message.append(tfName.getText());
           message.append("\nEmail:");
@@ -167,15 +161,14 @@ public class FeedbackDialog extends TmmDialog {
           message.append("\n\n");
           message.append(textArea.getText());
 
-          nameValuePairs.add(new BasicNameValuePair("message", message.toString()));
-          nameValuePairs.add(new BasicNameValuePair("sender", tfEmail.getText()));
-          post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+          MultipartBuilder multipartBuilder = new MultipartBuilder();
+          multipartBuilder.type(MultipartBuilder.FORM);
 
-          HttpResponse response = client.execute(post);
+          multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"message\""), RequestBody.create(null, message.toString()));
+          multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"sender\""), RequestBody.create(null, tfEmail.getText()));
 
-          HttpEntity entity = response.getEntity();
-          EntityUtils.consume(entity);
-
+          Request request = new Request.Builder().url(url).post(multipartBuilder.build()).build();
+          client.newCall(request).execute();
         }
         catch (IOException e) {
           LOGGER.error("failed sending feedback: " + e.getMessage());

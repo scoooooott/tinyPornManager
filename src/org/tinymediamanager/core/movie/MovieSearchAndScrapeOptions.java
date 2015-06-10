@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 
 /**
  * The Class MovieSearchAndScrapeOptions.
@@ -26,16 +28,11 @@ import org.tinymediamanager.Globals;
  * @author Manuel Laggner
  */
 public class MovieSearchAndScrapeOptions {
-  /** The scraper metadata config. */
   private MovieScraperMetadataConfig scraperMetadataConfig;
+  private MediaScraper               metadataScraper;
 
-  /** The media metadata provider. */
-  private MovieScrapers              metadataScraper;
-
-  /** The artwork providers. */
   private List<MovieArtworkScrapers> artworkScrapers = new ArrayList<MovieArtworkScrapers>();
 
-  /** The trailer providers. */
   private List<MovieTrailerScrapers> trailerScrapers = new ArrayList<MovieTrailerScrapers>();
 
   /**
@@ -50,7 +47,7 @@ public class MovieSearchAndScrapeOptions {
   public void loadDefaults() {
     scraperMetadataConfig = Globals.settings.getMovieScraperMetadataConfig();
     // metadata
-    metadataScraper = MovieModuleManager.MOVIE_SETTINGS.getMovieScraper();
+    metadataScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
 
     // artwork
     if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
@@ -89,7 +86,7 @@ public class MovieSearchAndScrapeOptions {
    * 
    * @return the metadata scraper
    */
-  public MovieScrapers getMetadataScraper() {
+  public MediaScraper getMetadataScraper() {
     return metadataScraper;
   }
 
@@ -127,7 +124,7 @@ public class MovieSearchAndScrapeOptions {
    * @param metadataScraper
    *          the new metadata scraper
    */
-  public void setMetadataScraper(MovieScrapers metadataScraper) {
+  public void setMetadataScraper(MediaScraper metadataScraper) {
     this.metadataScraper = metadataScraper;
   }
 

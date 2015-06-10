@@ -34,7 +34,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -91,7 +90,7 @@ public class TvShowArtworkHelper {
     }
 
     // get image in thread
-    MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaArtworkType.getMediaArtworkType(type), filename, true);
+    MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, true);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 

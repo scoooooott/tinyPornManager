@@ -144,7 +144,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
       movie.setArtwork(file, type);
       movie.saveToDb();
-      movie.callbackForWrittenArtwork(MediaArtworkType.getMediaArtworkType(type));
+      movie.callbackForWrittenArtwork(MediaFileType.getMediaArtworkType(type));
     }
     catch (InterruptedException e) {
       LOGGER.warn("interrupted download " + type.name());

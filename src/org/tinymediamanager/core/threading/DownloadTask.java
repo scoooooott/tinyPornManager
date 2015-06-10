@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -38,6 +37,8 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.util.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
+
+import com.squareup.okhttp.Headers;
 
 /**
  * DownloadTask for bigger downloads with status updates
@@ -136,20 +137,19 @@ public class DownloadTask extends TmmTask {
 
       // trace server headers
       LOGGER.debug("Server returned: " + u.getStatusLine());
-      Header[] headers = u.getHeadersResponse();
-      for (Header header : headers) {
-        LOGGER.debug(" < " + header.getName() + ": " + header.getValue());
+      Headers headers = u.getHeadersResponse();
+      for (String name : headers.names()) {
+        LOGGER.debug(" < " + name + ": " + headers.get(name));
       }
 
       if (u.isFault()) {
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, u.getUrl(), u.getStatusLine()));
         is.close();
-        u.closeConnection();
         return;
       }
 
       long length = u.getContentLength();
-      String type = u.getContentType();
+      String type = u.getContentEncoding();
       if (ext.isEmpty()) {
         // still empty? try to parse from mime header
         if (type.startsWith("video/") || type.startsWith("audio/") || type.startsWith("image/")) {
@@ -243,11 +243,6 @@ public class DownloadTask extends TmmTask {
           LOGGER.warn("Download to '" + tempFile + "' was ok, but couldn't move to '" + file + "'");
         }
       } // end isCancelled
-
-      // close the url connections
-      if (u != null) {
-        u.closeConnection();
-      }
     }
     catch (Exception e) {
       LOGGER.error("problem downloading: ", e);

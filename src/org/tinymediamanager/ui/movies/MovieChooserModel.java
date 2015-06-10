@@ -31,8 +31,8 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -53,9 +53,9 @@ public class MovieChooserModel extends AbstractModelObject {
   private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
   public static final MovieChooserModel emptyResult      = new MovieChooserModel();
 
-  private IMediaMetadataProvider        metadataProvider = null;
+  private IMovieMetadataProvider        metadataProvider = null;
   private List<IMediaArtworkProvider>   artworkProviders = null;
-  private List<IMediaTrailerProvider>   trailerProviders = null;
+  private List<IMovieTrailerProvider>   trailerProviders = null;
 
   private MediaLanguages                language         = null;
   private MediaSearchResult             result           = null;
@@ -68,8 +68,8 @@ public class MovieChooserModel extends AbstractModelObject {
   private String                        tagline          = "";
   private boolean                       scraped          = false;
 
-  public MovieChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
-      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result, MediaLanguages language) {
+  public MovieChooserModel(IMovieMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
+      List<IMovieTrailerProvider> trailerProviders, MediaSearchResult result, MediaLanguages language) {
     this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
     this.trailerProviders = trailerProviders;
@@ -150,7 +150,7 @@ public class MovieChooserModel extends AbstractModelObject {
       // poster for preview
       setPosterUrl(result.getPosterUrl());
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setResult(result);
       options.setLanguage(language);
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
@@ -182,8 +182,7 @@ public class MovieChooserModel extends AbstractModelObject {
   public List<MediaArtwork> getArtwork() {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
-    MediaScrapeOptions options = new MediaScrapeOptions();
-    options.setType(MediaType.MOVIE);
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
@@ -212,7 +211,7 @@ public class MovieChooserModel extends AbstractModelObject {
   public List<MovieTrailer> getTrailers() {
     List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
-    MediaScrapeOptions options = new MediaScrapeOptions();
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
     try {
@@ -226,7 +225,7 @@ public class MovieChooserModel extends AbstractModelObject {
     options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
     // scrape trailers
-    for (IMediaTrailerProvider trailerProvider : trailerProviders) {
+    for (IMovieTrailerProvider trailerProvider : trailerProviders) {
       try {
         List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
         for (MediaTrailer mediaTrailer : foundTrailers) {

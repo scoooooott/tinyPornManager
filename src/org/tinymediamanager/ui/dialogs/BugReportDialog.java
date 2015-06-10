@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -43,15 +42,6 @@ import javax.swing.JTextField;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -66,6 +56,11 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 
 /**
  * The Class BugReportDialog, to send bug reports directly from inside tmm.
@@ -166,8 +161,8 @@ public class BugReportDialog extends TmmDialog {
         }
 
         // send bug report
-        HttpClient client = TmmHttpClient.getHttpClient();
-        HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec");
+        OkHttpClient client = TmmHttpClient.getHttpClient();
+        String url = "https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec";
         try {
           StringBuilder message = new StringBuilder("Bug report from ");
           message.append(tfName.getText());
@@ -195,9 +190,11 @@ public class BugReportDialog extends TmmDialog {
 
           BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-          MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
-          mpEntity.addPart("message", new StringBody(message.toString(), Charset.forName("UTF-8")));
-          mpEntity.addPart("sender", new StringBody(tfEmail.getText(), ContentType.TEXT_PLAIN));
+          MultipartBuilder multipartBuilder = new MultipartBuilder();
+          multipartBuilder.type(MultipartBuilder.FORM);
+
+          multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"message\""), RequestBody.create(null, message.toString()));
+          multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"sender\""), RequestBody.create(null, tfEmail.getText()));
 
           // attach files
           if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() /*
@@ -225,9 +222,9 @@ public class BugReportDialog extends TmmDialog {
                 if (logs != null) {
                   for (File logFile : logs) {
                     try {
+                      FileInputStream in = new FileInputStream(logFile);
                       ZipEntry ze = new ZipEntry(logFile.getName());
                       zos.putNextEntry(ze);
-                      FileInputStream in = new FileInputStream(logFile);
 
                       IOUtils.copy(in, zos);
                       in.close();
@@ -240,9 +237,9 @@ public class BugReportDialog extends TmmDialog {
                 }
 
                 try {
+                  FileInputStream in = new FileInputStream("launcher.log");
                   ZipEntry ze = new ZipEntry("launcher.log");
                   zos.putNextEntry(ze);
-                  FileInputStream in = new FileInputStream("launcher.log");
 
                   IOUtils.copy(in, zos);
                   in.close();
@@ -273,28 +270,20 @@ public class BugReportDialog extends TmmDialog {
 
               byte[] data = os.toByteArray();
               String data_string = Base64.encodeBase64String(data);
-              mpEntity.addPart("logs", new StringBody(data_string));
+              multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"logs\""), RequestBody.create(null, data_string));
             }
 
             catch (IOException ex) {
               LOGGER.warn("error adding attachments", ex);
             }
           }
-
-          post.setEntity(mpEntity);
-          HttpResponse response = client.execute(post);
-
-          HttpEntity entity = response.getEntity();
-          EntityUtils.consume(entity);
-
+          Request request = new Request.Builder().url(url).post(multipartBuilder.build()).build();
+          client.newCall(request).execute();
         }
         catch (IOException e) {
           LOGGER.error("failed sending bug report: " + e.getMessage());
           JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error") + "\n" + e.getMessage()); //$NON-NLS-1$
           return;
-        }
-        finally {
-          post.releaseConnection();
         }
         BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 

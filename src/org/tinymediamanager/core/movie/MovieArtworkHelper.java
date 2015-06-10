@@ -534,8 +534,8 @@ public class MovieArtworkHelper {
   private static void setBestArtwork(Movie movie, List<MediaArtwork> artwork, MediaArtworkType type) {
     for (MediaArtwork art : artwork) {
       if (art.getType() == type) {
-        movie.setArtworkUrl(art.getDefaultUrl(), MediaArtworkType.getMediaFileType(type));
-        downloadArtwork(movie, MediaArtworkType.getMediaFileType(type));
+        movie.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
+        downloadArtwork(movie, MediaFileType.getMediaFileType(type));
         break;
       }
     }

@@ -30,65 +30,35 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
-
-import com.omertron.themoviedbapi.model.Collection;
-import com.omertron.themoviedbapi.model.CollectionInfo;
 
 /**
  * The Class MovieSetChooserModel.
  */
 public class MovieSetChooserModel extends AbstractModelObject {
-
   private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
-
-  /** The static LOGGER. */
   private static final Logger              LOGGER      = LoggerFactory.getLogger(MovieSetChooserModel.class);
-
-  /** The Constant emptyResult. */
   public static final MovieSetChooserModel emptyResult = new MovieSetChooserModel();
-
-  /** The name. */
   private String                           name        = "";
-
-  /** The poster url. */
   private String                           posterUrl   = "";
-
-  /** The fanart url. */
   private String                           fanartUrl   = "";
-
-  /** The tmdb id. */
   private int                              tmdbId      = 0;
-
-  /** The collection. */
-  private Collection                       collection;
-
-  /** The info. */
-  private CollectionInfo                   info;
-
-  /** The movies. */
+  private MediaSearchResult                result      = null;
+  private MediaMetadata                    metadata    = null;
   private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
-
-  /** The mp. */
   private TmdbMetadataProvider             mp;
 
-  /** The scraped. */
   private boolean                          scraped;
 
-  /**
-   * Instantiates a new movie set chooser model.
-   * 
-   * @param collection
-   *          the collection
-   */
-  public MovieSetChooserModel(Collection collection) {
-    this.collection = collection;
+  public MovieSetChooserModel(MediaSearchResult result) {
+    this.result = result;
 
-    setName(collection.getName());
-    setTmdbId(collection.getId());
-    setPosterUrl(collection.getPosterPath());
-    setFanartUrl(collection.getBackdropPath());
+    setName(result.getTitle());
+    setTmdbId(Integer.valueOf(result.getId()));
+    setPosterUrl(result.getPosterUrl());
 
     try {
       mp = new TmdbMetadataProvider();
@@ -105,90 +75,41 @@ public class MovieSetChooserModel extends AbstractModelObject {
     setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
   }
 
-  /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Sets the name.
-   * 
-   * @param name
-   *          the new name
-   */
   public void setName(String name) {
     this.name = name;
     firePropertyChange("name", "", name);
   }
 
-  /**
-   * Gets the tmdb id.
-   * 
-   * @return the tmdb id
-   */
   public int getTmdbId() {
     return tmdbId;
   }
 
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param tmdbId
-   *          the new tmdb id
-   */
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
   }
 
-  /**
-   * Sets the poster url.
-   * 
-   * @param posterUrl
-   *          the new poster url
-   */
   public void setPosterUrl(String posterUrl) {
     this.posterUrl = posterUrl;
     firePropertyChange("posterUrl", "", posterUrl);
   }
 
-  /**
-   * Sets the fanart url.
-   * 
-   * @param fanartUrl
-   *          the new fanart url
-   */
   public void setFanartUrl(String fanartUrl) {
     this.fanartUrl = fanartUrl;
     firePropertyChange("fanartUrl", "", fanartUrl);
   }
 
-  /**
-   * Checks if is scraped.
-   * 
-   * @return true, if is scraped
-   */
   public boolean isScraped() {
     return scraped;
   }
 
-  /**
-   * Gets the poster url.
-   * 
-   * @return the poster url
-   */
   public String getPosterUrl() {
     return posterUrl;
   }
 
-  /**
-   * Gets the fanart url.
-   * 
-   * @return the fanart url
-   */
   public String getFanartUrl() {
     return fanartUrl;
   }
@@ -214,7 +135,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
         if (StringUtils.isEmpty(mis.imdbId)) {
           // get imdbid for this tmdbid
           if (mp != null) {
-            MediaScrapeOptions options = new MediaScrapeOptions();
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
@@ -247,19 +168,26 @@ public class MovieSetChooserModel extends AbstractModelObject {
   public void scrapeMetadata() {
     try {
       if (mp != null) {
-        MediaScrapeOptions options = new MediaScrapeOptions();
-        options.setTmdbId(collection.getId());
+        MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+        options.setTmdbId(Integer.parseInt(result.getId()));
         options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
         options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
         options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
-        CollectionInfo info = mp.getMovieSetMetadata(options);
+        MediaMetadata info = mp.getMetadata(options);
+        // if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
+        // movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
+        // movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
+        // movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
+        // movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+        // }
         if (info != null) {
-          this.info = info;
-          for (Collection collection : info.getParts()) {
-            MovieInSet movie = new MovieInSet(collection.getName());
-            movie.setTmdbId(collection.getId());
-            movie.setReleaseDate(collection.getReleaseDate());
+          this.metadata = info;
+          setFanartUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL));
+          for (MediaMetadata item : info.getSubItems()) {
+            MovieInSet movie = new MovieInSet(item.getStringValue(MediaMetadata.TITLE));
+            movie.setTmdbId((Integer) item.getId(item.getProviderId()));
+            movie.setReleaseDate(item.getStringValue(MediaMetadata.RELEASE_DATE));
             movies.add(movie);
           }
 
@@ -278,145 +206,65 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
   }
 
-  /**
-   * Gets the info.
-   * 
-   * @return the info
-   */
-  public CollectionInfo getInfo() {
-    return info;
+  public String getOverview() {
+    if (metadata == null) {
+      return null;
+    }
+    return metadata.getStringValue(MediaMetadata.PLOT);
   }
 
-  /**
-   * Gets the movies.
-   * 
-   * @return the movies
-   */
   public List<MovieInSet> getMovies() {
     return movies;
   }
 
-  /**
-   * The Class MovieInSet.
-   */
   public static class MovieInSet extends AbstractModelObject implements Comparable<MovieInSet> {
-
-    /** The name. */
     private String name        = "";
-
-    /** The tmdb id. */
     private int    tmdbId      = 0;
-
-    /** The imdb id. */
     private String imdbId      = "";
-
-    /** The release date. */
     private String releaseDate = "";
-
-    /** The movie. */
     private Movie  movie       = null;
 
-    /**
-     * Instantiates a new movie in set.
-     * 
-     * @param name
-     *          the name
-     */
     public MovieInSet(String name) {
       this.name = name;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     public String getName() {
       return name;
     }
 
-    /**
-     * Gets the tmdb id.
-     * 
-     * @return the tmdb id
-     */
     public int getTmdbId() {
       return tmdbId;
     }
 
-    /**
-     * Gets the imdb id.
-     * 
-     * @return the imdb id
-     */
     public String getImdbId() {
       return imdbId;
     }
 
-    /**
-     * Gets the release date.
-     * 
-     * @return the release date
-     */
     public String getReleaseDate() {
       return releaseDate;
     }
 
-    /**
-     * Gets the movie.
-     * 
-     * @return the movie
-     */
     public Movie getMovie() {
       return movie;
     }
 
-    /**
-     * Sets the tmdb id.
-     * 
-     * @param tmdbId
-     *          the new tmdb id
-     */
     public void setTmdbId(int tmdbId) {
       this.tmdbId = tmdbId;
     }
 
-    /**
-     * Sets the imdb id.
-     * 
-     * @param imdbId
-     *          the new imdb id
-     */
     public void setImdbId(String imdbId) {
       this.imdbId = imdbId;
     }
 
-    /**
-     * Sets the release date.
-     * 
-     * @param releaseDate
-     *          the new release date
-     */
     public void setReleaseDate(String releaseDate) {
       this.releaseDate = releaseDate;
     }
 
-    /**
-     * Sets the movie.
-     * 
-     * @param movie
-     *          the new movie
-     */
     public void setMovie(Movie movie) {
       this.movie = movie;
       firePropertyChange("movie", null, movie);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     @Override
     public int compareTo(MovieInSet o) {
       return releaseDate.compareTo(o.releaseDate);

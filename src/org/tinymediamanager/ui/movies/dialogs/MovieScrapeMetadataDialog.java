@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -33,20 +32,24 @@ import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieArtworkScrapers;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
-import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -60,7 +63,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
-  private JComboBox                   cbMetadataScraper;
+  private MediaScraperComboBox        cbMetadataScraper;
   private JCheckBox                   chckbxTheMovieDb;
   private JCheckBox                   chckbxFanarttv;
   private JCheckBox                   chckbxTheMovieDb_1;
@@ -104,17 +107,17 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
 
     JPanel panelScraper = new JPanel();
     panelContent.add(panelScraper, BorderLayout.NORTH);
-    panelScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelScraper.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+        FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
     panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
 
-    cbMetadataScraper = new JComboBox(MovieScrapers.values());
-    panelScraper.add(cbMetadataScraper, "4, 2, 3, 1, fill, default");
+    cbMetadataScraper = new MediaScraperComboBox(MovieList.getInstance().getAvailableMediaScrapers());
+    panelScraper.add(cbMetadataScraper, "4, 2, 5, 1");
 
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 4, right, default");
@@ -180,7 +183,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // set data
 
     // metadataprovider
-    MovieScrapers defaultScraper = MovieModuleManager.MOVIE_SETTINGS.getMovieScraper();
+    MediaScraper defaultScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork provider
@@ -213,7 +216,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
    */
   public MovieSearchAndScrapeOptions getMovieSearchAndScrapeConfig() {
     // metadata provider
-    movieSearchAndScrapeConfig.setMetadataScraper((MovieScrapers) cbMetadataScraper.getSelectedItem());
+    movieSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork provider
     if (chckbxTheMovieDb.isSelected()) {

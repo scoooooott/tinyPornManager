@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Manuel Laggner
  */
+@PluginImplementation
 public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
   private static final Logger      LOGGER        = LoggerFactory.getLogger(TheSubDbMetadataProvider.class);
   private static final String      USER_AGENT    = "SubDB/1.0 (tinyMediaManager/" + ReleaseInfo.getVersion() + "; http://www.tinymediamanager.org)";
@@ -50,6 +53,7 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
   private static final String      PAGE_ENCODING = "ISO-8859-1";
 
   public TheSubDbMetadataProvider() {
+    // System.out.println(USER_AGENT);
   }
 
   @Override

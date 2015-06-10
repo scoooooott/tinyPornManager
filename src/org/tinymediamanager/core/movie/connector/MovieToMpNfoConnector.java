@@ -58,6 +58,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
@@ -68,7 +69,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
@@ -363,7 +363,7 @@ public class MovieToMpNfoConnector {
       movie.setProductionCompany(mp.getStudio());
       movie.setCountry(mp.getCountry());
       if (!StringUtils.isEmpty(mp.getMpaa())) {
-        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
       }
 
       // movieset

@@ -1,7 +1,7 @@
 <project default="create_tmm_jar" name="Tiny Media Manager">
 
 	<!-- software revision number -->
-	<property name="version" value="2.6.9" />
+	<property name="version" value="2.6.8" />
 	<!-- CHECK UPGRADE TASKS FOR CORRECT VERSION -->
 
 	<!-- build directories -->
@@ -165,9 +165,7 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="no" />
 		</antcall>
-		<antcall target="downloadLocale">
-			<param name="lang" value="pl" />
-		</antcall>
+		<!--<antcall target="downloadLocale"><param name="lang" value="pl"/></antcall>-->
 		<antcall target="downloadLocale">
 			<param name="lang" value="pt" />
 		</antcall>
@@ -185,7 +183,6 @@
 			<param name="lang" value="tr" />
 		</antcall>
 		<!--<antcall target="downloadLocale"><param name="lang" value="vi" /></antcall>-->
-		<!--<antcall target="downloadLocale"><param name="lang" value="uk" /></antcall>-->
 		<antcall target="downloadLocale">
 			<param name="lang" value="zh" />
 		</antcall>

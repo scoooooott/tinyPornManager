@@ -23,8 +23,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
@@ -113,7 +115,7 @@ public class MovieSettings extends AbstractModelObject {
   private String                        movieRenamerSpaceReplacement             = "_";
   private boolean                       movieRenamerNfoCleanup                   = false;
   private boolean                       imdbScrapeForeignLanguage                = false;
-  private MovieScrapers                 movieScraper                             = MovieScrapers.TMDB;
+  private String                        movieScraper                             = Constants.TMDBID;
   private PosterSizes                   imagePosterSize                          = PosterSizes.BIG;
   private boolean                       imageScraperTmdb                         = true;
   private boolean                       imageScraperFanartTv                     = true;
@@ -412,15 +414,15 @@ public class MovieSettings extends AbstractModelObject {
     this.movieRenamerSpaceReplacement = movieRenamerSpaceReplacement;
   }
 
-  public MovieScrapers getMovieScraper() {
-    if (movieScraper == null) {
-      return MovieScrapers.TMDB;
+  public String getMovieScraper() {
+    if (StringUtils.isBlank(movieScraper)) {
+      return Constants.TMDBID;
     }
     return movieScraper;
   }
 
-  public void setMovieScraper(MovieScrapers newValue) {
-    MovieScrapers oldValue = this.movieScraper;
+  public void setMovieScraper(String newValue) {
+    String oldValue = this.movieScraper;
     this.movieScraper = newValue;
     firePropertyChange(MOVIE_SCRAPER, oldValue, newValue);
   }

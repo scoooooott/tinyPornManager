@@ -62,6 +62,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
@@ -644,10 +645,10 @@ public class MovieToXbmcNfoConnector {
       movie.setProductionCompany(xbmc.studio);
       movie.setCountry(xbmc.country);
       if (!StringUtils.isEmpty(xbmc.certifications)) {
-        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.certifications));
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.certifications));
       }
       if (!StringUtils.isEmpty(xbmc.mpaa) && movie.getCertification() == Certification.NOT_RATED) {
-        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
       }
       movie.setWatched(xbmc.watched);
       if (xbmc.playcount > 0) {

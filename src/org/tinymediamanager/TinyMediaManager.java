@@ -51,12 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.License;
+import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -305,11 +305,17 @@ public class TinyMediaManager {
           TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
           TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
 
-          // if (g2 != null) {
-          // updateProgress(g2, "loading plugins", 50);
-          // splash.update();
-          // }
-          // PluginManager.getInstance(); // just instantiate static
+          if (g2 != null) {
+            updateProgress(g2, "loading plugins", 50);
+            splash.update();
+          }
+          // just instantiate static in background (takes a few secs
+          Thread t = new Thread() {
+            public void run() {
+              PluginManager.getInstance();
+            }
+          };
+          t.start();
 
           // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
@@ -336,13 +342,6 @@ public class TinyMediaManager {
             }
             UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
           }
-
-          // clean cache ////////////////////////////////////////////////////
-          if (g2 != null) {
-            updateProgress(g2, "cleaning cache", 70);
-            splash.update();
-          }
-          CachedUrl.cleanupCache();
 
           // launch application ////////////////////////////////////////////
           if (g2 != null) {

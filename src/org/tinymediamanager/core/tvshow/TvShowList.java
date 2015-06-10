@@ -48,13 +48,12 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.anidb.AniDBMetadataProvider;
-import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
-import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -314,13 +313,15 @@ public class TvShowList extends AbstractModelObject {
     switch (scraper) {
       case ANIDB:
         LOGGER.debug("get instance of AniDbMetadataProvider");
-        metadataProvider = new AniDBMetadataProvider();
+        metadataProvider = (ITvShowMetadataProvider) MediaScraper.getMediaScraperById(ANIDBID, ScraperType.TV_SHOW);
+        // metadataProvider = new AniDBMetadataProvider();
         break;
       case TVDB:
       default:
         LOGGER.debug("get instance of TheTvDbMetadataProvider");
         try {
-          metadataProvider = new TheTvDbMetadataProvider();
+          metadataProvider = (ITvShowMetadataProvider) MediaScraper.getMediaScraperById(TVDBID, ScraperType.TV_SHOW);
+          // metadataProvider = new TheTvDbMetadataProvider();
         }
         catch (Exception e) {
           LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
@@ -387,7 +388,8 @@ public class TvShowList extends AbstractModelObject {
       try {
         if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
           LOGGER.debug("get instance of TheTvDbMetadataProvider");
-          artworkProvider = new TheTvDbMetadataProvider();
+          artworkProvider = (IMediaArtworkProvider) MediaScraper.getMediaScraperById(TV_SHOW, ScraperType.ARTWORK);
+          // artworkProvider = new TheTvDbMetadataProvider();
           artworkProviders.add(artworkProvider);
         }
       }
@@ -398,7 +400,8 @@ public class TvShowList extends AbstractModelObject {
 
     // anidb
     if (scrapers.contains(TvShowArtworkScrapers.ANIDB)) {
-      artworkProviders.add(new AniDBMetadataProvider());
+      artworkProvider = (IMediaArtworkProvider) MediaScraper.getMediaScraperById(ANIDBID, ScraperType.ARTWORK);
+      // artworkProviders.add(new AniDBMetadataProvider());
     }
 
     // fanart.tv
@@ -406,7 +409,8 @@ public class TvShowList extends AbstractModelObject {
       try {
         if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
           LOGGER.debug("get instance of FanartTvMetadataProvider");
-          artworkProvider = new FanartTvMetadataProvider();
+          artworkProvider = (IMediaArtworkProvider) MediaScraper.getMediaScraperById(FANARTTVID, ScraperType.ARTWORK);
+          // artworkProvider = new FanartTvMetadataProvider();
           artworkProviders.add(artworkProvider);
         }
       }

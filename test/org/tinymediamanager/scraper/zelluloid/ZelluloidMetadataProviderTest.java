@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
 
 public class ZelluloidMetadataProviderTest {
 
@@ -23,7 +24,7 @@ public class ZelluloidMetadataProviderTest {
       msr.setId("7614");
       msr.setUrl("http://www.zelluloid.de/filme/index.php3?id=7614");
 
-      MediaScrapeOptions scop = new MediaScrapeOptions();
+      MediaScrapeOptions scop = new MediaScrapeOptions(MediaType.MOVIE);
       scop.setResult(msr);
       MediaMetadata mmd = mp.getMetadata(scop);
       System.out.println(mmd.toString());

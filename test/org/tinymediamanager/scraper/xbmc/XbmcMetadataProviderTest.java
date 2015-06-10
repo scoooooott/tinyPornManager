@@ -2,11 +2,23 @@ package org.tinymediamanager.scraper.xbmc;
 
 import java.io.File;
 
+import net.xeoh.plugins.base.Plugin;
+import net.xeoh.plugins.base.options.getplugin.OptionCapabilities;
+
 import org.junit.Test;
+import org.tinymediamanager.core.PluginManager;
+import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 
 public class XbmcMetadataProviderTest {
+
+  @Test
+  public void getSinglePluginFromMediaScraper() {
+    PluginManager pm = PluginManager.getInstance();
+    Plugin p = pm.getPlugin(IMediaProvider.class, new OptionCapabilities("id:themoviedb.org"));
+    System.out.println(p);
+  }
 
   @Test
   public void loadXbmcScrapers() {

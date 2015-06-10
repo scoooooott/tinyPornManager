@@ -572,6 +572,15 @@ public class Settings extends AbstractModelObject {
     addTitlePrefix("Das");
     addTitlePrefix("Ein");
     addTitlePrefix("Eine");
+    addTitlePrefix("Le");
+    addTitlePrefix("La");
+    addTitlePrefix("Les");
+    addTitlePrefix("L'");
+    addTitlePrefix("Un");
+    addTitlePrefix("Une");
+    addTitlePrefix("Des");
+    addTitlePrefix("Du");
+    addTitlePrefix("D'");
     Collections.sort(titlePrefix);
 
     movieSettings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);

@@ -21,5 +21,6 @@ package org.tinymediamanager.scraper;
  * @author Myron Boyler
  */
 public enum ScraperType {
-  TV_SHOW, MOVIE, ALBUM, ARTIST, MUSICVIDEO, LIBRARY;
+  MOVIE, TV_SHOW, ARTWORK, TRAILER, SUBTITLE, // TMM Types (representing an interfaces)
+  ALBUM, ARTIST, MUSICVIDEO, LIBRARY; // XBMC ones (currently w/o TMM interfaces)
 }

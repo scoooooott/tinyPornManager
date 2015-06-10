@@ -149,12 +149,11 @@ public class TvShowChooserModel extends AbstractModelObject {
       // poster for preview
       setPosterUrl(result.getPosterUrl());
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setResult(result);
       options.setLanguage(language);
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
-      options.setType(MediaType.TV_SHOW);
-      metadata = metadataProvider.getTvShowMetadata(options);
+      metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
 
@@ -180,8 +179,7 @@ public class TvShowChooserModel extends AbstractModelObject {
   public List<MediaArtwork> getArtwork() {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
-    MediaScrapeOptions options = new MediaScrapeOptions();
-    options.setType(MediaType.TV_SHOW);
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));

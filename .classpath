@@ -6,17 +6,12 @@
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/objectdb.jar"/>
 	<classpathentry kind="lib" path="lib/Scaling-bin.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3.jar"/>
 	<classpathentry kind="lib" path="lib/forms.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient.jar" sourcepath="buildsupport/httpclient-4.3.2-sources.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore.jar" sourcepath="buildsupport/httpcore-4.3.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/httpmime.jar"/>
 	<classpathentry kind="lib" path="lib/JSplitButton.jar"/>
-	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>
-	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
 	<classpathentry kind="lib" path="lib/jsoup.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/tinyMediaManager/buildsupport/jsoup-1.7.1-javadoc.jar!/"/>
@@ -30,7 +25,6 @@
 	<classpathentry kind="lib" path="lib/jackson-databind.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
-	<classpathentry kind="lib" path="lib/fanarttvapi.jar" sourcepath="buildsupport/fanarttvapi-3.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/asm.jar"/>
 	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>
@@ -52,7 +46,6 @@
 	<classpathentry kind="lib" path="lib/LightBox.jar"/>
 	<classpathentry kind="lib" path="lib/image-viewer.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
-	<classpathentry kind="lib" path="lib/rottentomatoesapi.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy.jar"/>
 	<classpathentry kind="lib" path="lib/json-20131018.jar"/>
 	<classpathentry kind="lib" path="lib/quaqua-filechooser-only.jar"/>
@@ -60,5 +53,11 @@
 	<classpathentry kind="lib" path="lib/gson.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time.jar"/>
 	<classpathentry kind="lib" path="lib/retrofit.jar"/>
+	<classpathentry kind="lib" path="lib/jspf.core.jar"/>
+	<classpathentry kind="lib" path="lib/api-scraper.jar"/>
+	<classpathentry kind="lib" path="lib/scraper-tmdb.jar"/>
+	<classpathentry kind="lib" path="lib/okhttp-urlconnection.jar"/>
+	<classpathentry kind="lib" path="lib/okhttp.jar"/>
+	<classpathentry kind="lib" path="lib/okio.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

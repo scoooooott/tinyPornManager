@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -36,6 +38,8 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.IMediaProvider;
+import org.tinymediamanager.scraper.MediaProviderInfo;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -67,14 +71,17 @@ import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
  * @author Myron Boyle
  * 
  */
-public class TraktTv {
-  private static final String  CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+@PluginImplementation
+public class TraktTv implements IMediaProvider {
+  private static final String      CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
-  private static final Logger  LOGGER    = LoggerFactory.getLogger(TraktTv.class);
-  private static final TraktV2 TRAKT     = new TraktV2();
-  private static TraktTv       instance;
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(TraktTv.class);
+  private static final TraktV2     TRAKT        = new TraktV2();
+  private static TraktTv           instance;
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKTID, "Trakt.tv",
+                                                    "Scraper for Trakt.tv; yes, we can scraper here too :)");
 
-  private SyncResponse         response;
+  private SyncResponse             response;
 
   public static synchronized TraktTv getInstance() {
     if (instance == null) {
@@ -87,6 +94,11 @@ public class TraktTv {
   }
 
   public TraktTv() {
+  }
+
+  @Override
+  public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
   }
 
   /**

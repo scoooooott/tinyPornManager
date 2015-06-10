@@ -7,6 +7,8 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.ReleaseInfo;
 
 public class XbmcUtil {
 
@@ -61,43 +63,64 @@ public class XbmcUtil {
     return null;
   }
 
+  /**
+   * gets a XBMC scraper object, selected by the filters<br>
+   * <b>only works for DONATOR</b> - else empty
+   * 
+   * @param dirFilter
+   * @param fileFilter
+   * @return
+   */
   public static ArrayList<XbmcScraper> getXbmcAddons(IOFileFilter dirFilter, IOFileFilter fileFilter) {
     ArrayList<XbmcScraper> scrapers = new ArrayList<XbmcScraper>();
 
-    File addons = new File("xbmc_scraper");
-    System.out.println("searchig for scrapers in: " + addons);
-    if (addons != null && addons.exists()) {
-      Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
-      for (File f : files) {
-        XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
-        if (!scrapers.contains(x)) {
-          scrapers.add(x);
-        }
-      }
-    }
+    if (Globals.isDonator() || ReleaseInfo.isNightly() || ReleaseInfo.isPreRelease()) {
 
-    addons = new File(detectXbmcUserdataFolder(), "addons");
-    System.out.println("searchig for scrapers in: " + addons);
-    if (addons != null && addons.exists()) {
-      Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
-      for (File f : files) {
-        XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
-        if (!scrapers.contains(x)) {
-          scrapers.add(x);
+      File addons = new File("xbmc_scraper");
+      System.out.println("searchig for scrapers in: " + addons);
+      if (addons != null && addons.exists()) {
+        Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
+        for (File f : files) {
+          XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
+          if (x.getId().equals("metadata.local")) {
+            continue; // local XBMC scraper
+          }
+          if (!scrapers.contains(x)) {
+            scrapers.add(x);
+          }
         }
       }
-    }
 
-    addons = new File(detectXbmcFolder(), "addons");
-    System.out.println("searchig for scrapers in: " + addons);
-    if (addons != null && addons.exists()) {
-      Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
-      for (File f : files) {
-        XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
-        if (!scrapers.contains(x)) {
-          scrapers.add(x);
+      addons = new File(detectXbmcUserdataFolder(), "addons");
+      System.out.println("searchig for scrapers in: " + addons);
+      if (addons != null && addons.exists()) {
+        Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
+        for (File f : files) {
+          XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
+          if (x.getId().equals("metadata.local")) {
+            continue; // local XBMC scraper
+          }
+          if (!scrapers.contains(x)) {
+            scrapers.add(x);
+          }
         }
       }
+
+      addons = new File(detectXbmcFolder(), "addons");
+      System.out.println("searchig for scrapers in: " + addons);
+      if (addons != null && addons.exists()) {
+        Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
+        for (File f : files) {
+          XbmcScraper x = new XbmcScraper(f.getParentFile()); // parent = folder
+          if (x.getId().equals("metadata.local")) {
+            continue; // local XBMC scraper
+          }
+          if (!scrapers.contains(x)) {
+            scrapers.add(x);
+          }
+        }
+      }
+
     }
     return scrapers;
   }

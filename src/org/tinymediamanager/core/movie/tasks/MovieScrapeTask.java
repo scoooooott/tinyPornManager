@@ -40,8 +40,8 @@ import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -138,9 +138,9 @@ public class MovieScrapeTask extends TmmThreadPool {
         movieList = MovieList.getInstance();
         // set up scrapers
         MovieScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
-        IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
+        IMovieMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
         List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
-        List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
+        List<IMovieTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
 
         // search movie
         MediaSearchResult result1 = null;
@@ -158,7 +158,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         // get metadata, artwork and trailers
         if ((doSearch && result1 != null) || !doSearch) {
           try {
-            MediaScrapeOptions options = new MediaScrapeOptions();
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setResult(result1);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
@@ -208,7 +208,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       }
     }
 
-    private MediaSearchResult searchForMovie(IMediaMetadataProvider mediaMetadataProvider) {
+    private MediaSearchResult searchForMovie(IMovieMetadataProvider mediaMetadataProvider) {
       List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie, mediaMetadataProvider);
       MediaSearchResult result = null;
 
@@ -246,8 +246,7 @@ public class MovieScrapeTask extends TmmThreadPool {
     private List<MediaArtwork> getArtwork(Movie movie, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
       List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
-      options.setType(MediaType.MOVIE);
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
@@ -270,7 +269,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       return artwork;
     }
 
-    private List<MovieTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMediaTrailerProvider> trailerProviders) {
+    private List<MovieTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMovieTrailerProvider> trailerProviders) {
       List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
       // add local trailers!
@@ -285,7 +284,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         trailers.add(mt);
       }
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
@@ -294,7 +293,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
       // scrape trailers
-      for (IMediaTrailerProvider trailerProvider : trailerProviders) {
+      for (IMovieTrailerProvider trailerProvider : trailerProviders) {
         try {
           List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
           for (MediaTrailer mediaTrailer : foundTrailers) {

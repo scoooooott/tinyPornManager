@@ -16,43 +16,56 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Color;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.text.html.HTMLEditorKit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JTableBinding;
+import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.movie.MovieScrapers;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
-import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -63,29 +76,24 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieScraperSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
+
+  private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
   /**
    * UI Elements
    */
-  private ButtonGroup                 buttonGroupScraper;
   private JComboBox                   cbScraperLanguage;
   private JComboBox                   cbCertificationCountry;
-  private JCheckBox                   cbImdbTranslateableContent;
-  private JHintCheckBox               cbScraperImdb;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
   private JPanel                      panelScraperMetadata;
   private JPanel                      panelScraperMetadataContainer;
-  private JHintCheckBox               cbScraperOfdbde;
-  private JHintCheckBox               cbScraperTmdb;
-  private JPanel                      panelTrailer;
+  private JPanel                      panelTrailerScrapers;
   private JCheckBox                   cbTheMovieDatabase;
   private JCheckBox                   cbHdtrailersnet;
   private JCheckBox                   cbOfdbde;
-  private JHintCheckBox               cbZelluloidde;
-  private JHintCheckBox               cbMoviemeternl;
   private JTextPane                   lblScraperThresholdHint;
   private JPanel                      panelAutomaticScraper;
   private JSlider                     sliderThreshold;
@@ -97,93 +105,89 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbTrailerQuality;
   private JSeparator                  separator_2;
   private JCheckBox                   chckbxImageLanguage;
-  private JHintCheckBox               cbRottenTomatoes;
+  private JPanel                      panelScraperDetails;
+  private JPanel                      panelScraperOptions;
+  private JTextPane                   tpScraperDescription;
+  private JScrollPane                 scrollPaneScraper;
+  private JTable                      tableScraper;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public MovieScraperSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+    // data init
+    MediaScraper defaultMediaScraper = MovieList.getInstance().getDefaultMediaScraper();
+    int selectedIndex = 0;
+    int counter = 0;
+    for (MediaScraper scraper : MovieList.getInstance().getAvailableMediaScrapers()) {
+      MovieScraper movieScraper = new MovieScraper(scraper);
+      if (scraper.equals(defaultMediaScraper)) {
+        movieScraper.defaultScraper = true;
+        selectedIndex = counter;
+      }
+      scrapers.add(movieScraper);
+      counter++;
+    }
+    // UI init
+    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMovieScrapers, "2, 2, fill, fill");
-    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    add(panelMovieScrapers, "2, 2, 3, 1, fill, fill");
+    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), }, new RowSpec[] {
+        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC, }));
 
-    cbScraperTmdb = new JHintCheckBox("The Movie Database");
-    cbScraperTmdb.setHintIcon(IconManager.HINT);
-    cbScraperTmdb.setToolTipText(BUNDLE.getString("scraper.tmdb.hint")); //$NON-NLS-1$
-    buttonGroupScraper = new ButtonGroup();
-    buttonGroupScraper.add(cbScraperTmdb);
-    cbScraperTmdb.setSelected(true);
-    panelMovieScrapers.add(cbScraperTmdb, "1, 2, left, default");
+    scrollPaneScraper = new JScrollPane();
+    panelMovieScrapers.add(scrollPaneScraper, "1, 2, 3, 1, fill, fill");
 
-    cbScraperImdb = new JHintCheckBox("IMDB");
-    cbScraperImdb.setHintIcon(IconManager.HINT);
-    cbScraperImdb.setToolTipText(BUNDLE.getString("scraper.imdb.hint")); //$NON-NLS-1$
-    buttonGroupScraper.add(cbScraperImdb);
-    panelMovieScrapers.add(cbScraperImdb, "1, 4, left, default");
+    tableScraper = new JTable();
+    tableScraper.setRowHeight(29);
+    scrollPaneScraper.setViewportView(tableScraper);
 
-    cbImdbTranslateableContent = new JCheckBox(BUNDLE.getString("Settings.getfromTMDB")); //$NON-NLS-1$
-    panelMovieScrapers.add(cbImdbTranslateableContent, "3, 4");
+    panelScraperDetails = new JPanel();
+    panelMovieScrapers.add(panelScraperDetails, "5, 2, fill, fill");
+    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("default:grow"), }));
 
-    cbScraperOfdbde = new JHintCheckBox("OFDb.de");
-    cbScraperOfdbde.setHintIcon(IconManager.HINT);
-    cbScraperOfdbde.setToolTipText(BUNDLE.getString("scraper.ofdb.hint")); //$NON-NLS-1$
-    buttonGroupScraper.add(cbScraperOfdbde);
-    panelMovieScrapers.add(cbScraperOfdbde, "1, 6, left, default");
+    tpScraperDescription = new JTextPane();
+    tpScraperDescription.setOpaque(false);
+    tpScraperDescription.setEditorKit(new HTMLEditorKit());
+    panelScraperDetails.add(tpScraperDescription, "2, 2");
 
-    cbZelluloidde = new JHintCheckBox("Zelluloid.de");
-    cbZelluloidde.setHintIcon(IconManager.HINT);
-    cbZelluloidde.setToolTipText(BUNDLE.getString("scraper.zelluloid.hint")); //$NON-NLS-1$
-    buttonGroupScraper.add(cbZelluloidde);
-    panelMovieScrapers.add(cbZelluloidde, "1, 8, left, default");
-
-    cbMoviemeternl = new JHintCheckBox("MovieMeter.nl");
-    cbMoviemeternl.setHintIcon(IconManager.HINT);
-    cbMoviemeternl.setToolTipText(BUNDLE.getString("scraper.moviemeter.hint")); //$NON-NLS-1$
-    buttonGroupScraper.add(cbMoviemeternl);
-    panelMovieScrapers.add(cbMoviemeternl, "1, 10, left, default");
-
-    cbRottenTomatoes = new JHintCheckBox("Rotten Tomatoes");
-    cbRottenTomatoes.setHintIcon(IconManager.HINT);
-    cbRottenTomatoes.setToolTipText(BUNDLE.getString("scraper.rottentomatoes.hint")); //$NON-NLS-1$
-    buttonGroupScraper.add(cbRottenTomatoes);
-    panelMovieScrapers.add(cbRottenTomatoes, "1, 12, left, default");
+    panelScraperOptions = new JPanel();
+    panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
 
     JSeparator separator = new JSeparator();
-    panelMovieScrapers.add(separator, "1, 14, 3, 1");
+    panelMovieScrapers.add(separator, "1, 4, 5, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblScraperLanguage, "1, 15, right, default");
+    panelMovieScrapers.add(lblScraperLanguage, "1, 5, right, default");
 
     cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    panelMovieScrapers.add(cbScraperLanguage, "3, 15");
+    panelMovieScrapers.add(cbScraperLanguage, "3, 5");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblCountry, "1, 17, right, default");
+    panelMovieScrapers.add(lblCountry, "1, 7, right, default");
 
     cbCertificationCountry = new JComboBox(CountryCode.values());
-    panelMovieScrapers.add(cbCertificationCountry, "3, 17, fill, default");
-    panelMovieScrapers.add(new JSeparator(), "1, 18, 3, 1");
+    panelMovieScrapers.add(cbCertificationCountry, "3, 7, fill, default");
+    panelMovieScrapers.add(new JSeparator(), "1, 8, 5, 1");
 
     chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback")); //$NON-NLS-1$
-    panelMovieScrapers.add(chckbxScraperFallback, "1, 19, 3, 1");
+    panelMovieScrapers.add(chckbxScraperFallback, "1, 9, 5, 1");
 
-    panelTrailer = new JPanel();
-    panelTrailer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"), TitledBorder.LEADING,
-        TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelTrailer, "4, 2, fill, fill");
-    panelTrailer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+    panelTrailerScrapers = new JPanel();
+    panelTrailerScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelTrailerScrapers, "2, 4, 3, 1, fill, fill");
+    panelTrailerScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -191,36 +195,36 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbTheMovieDatabase = new JCheckBox("The Movie Database");
-    panelTrailer.add(cbTheMovieDatabase, "2, 2");
+    panelTrailerScrapers.add(cbTheMovieDatabase, "2, 2");
 
     cbHdtrailersnet = new JCheckBox("HD-Trailers.net");
-    panelTrailer.add(cbHdtrailersnet, "2, 4");
+    panelTrailerScrapers.add(cbHdtrailersnet, "2, 4");
 
     cbOfdbde = new JCheckBox("OFDb.de");
-    panelTrailer.add(cbOfdbde, "2, 6");
+    panelTrailerScrapers.add(cbOfdbde, "2, 6");
 
     separator_2 = new JSeparator();
-    panelTrailer.add(separator_2, "2, 8, 5, 1");
+    panelTrailerScrapers.add(separator_2, "2, 8, 5, 1");
 
     chckbxUseTrailerPreferences = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$ 
-    panelTrailer.add(chckbxUseTrailerPreferences, "2, 10, 3, 1");
+    panelTrailerScrapers.add(chckbxUseTrailerPreferences, "2, 10, 3, 1");
 
     lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
-    panelTrailer.add(lblTrailerSource, "2, 12, right, default");
+    panelTrailerScrapers.add(lblTrailerSource, "2, 12, right, default");
 
     cbTrailerSource = new JComboBox(MovieTrailerSources.values());
-    panelTrailer.add(cbTrailerSource, "4, 12, fill, default");
+    panelTrailerScrapers.add(cbTrailerSource, "4, 12, fill, default");
 
     lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
-    panelTrailer.add(lblTrailerQuality, "2, 14, right, default");
+    panelTrailerScrapers.add(lblTrailerQuality, "2, 14, right, default");
 
     cbTrailerQuality = new JComboBox(MovieTrailerQuality.values());
-    panelTrailer.add(cbTrailerQuality, "4, 14, fill, default");
+    panelTrailerScrapers.add(cbTrailerQuality, "4, 14, fill, default");
 
     panelScraperMetadataContainer = new JPanel();
     panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
         .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
-    add(panelScraperMetadataContainer, "2, 4, fill, fill");
+    add(panelScraperMetadataContainer, "2, 6, fill, fill");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -238,7 +242,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     panelAutomaticScraper = new JPanel();
     panelAutomaticScraper.setBorder(new TitledBorder(null,
         BUNDLE.getString("Settings.automaticscraper"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelAutomaticScraper, "4, 4, fill, fill");
+    add(panelAutomaticScraper, "4, 6, fill, fill");
     panelAutomaticScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -252,7 +256,8 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     sliderThreshold.setPaintTicks(true);
     sliderThreshold.setPaintLabels(true);
     sliderThreshold.setValue((int) (settings.getMovieSettings().getScraperThreshold() * 100));
-    java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
+
+    Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
     labelTable.put(Integer.valueOf(100), new JLabel("1.0"));
     labelTable.put(Integer.valueOf(75), new JLabel("0.75"));
     labelTable.put(Integer.valueOf(50), new JLabel("0.50"));
@@ -275,95 +280,94 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     initDataBindings();
 
-    // set movie Scrapers
-    MovieScrapers movieScraper = settings.getMovieSettings().getMovieScraper();
-    switch (movieScraper) {
-      case IMDB:
-        cbScraperImdb.setSelected(true);
-        break;
+    // adjust table columns
+    // Checkbox and Logo shall have minimal width
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 0, 2);
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
+    TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
-      case OFDB:
-        cbScraperOfdbde.setSelected(true);
-        break;
-
-      case ZELLULOID:
-        cbZelluloidde.setSelected(true);
-        break;
-
-      case MOVIEMETER:
-        cbMoviemeternl.setSelected(true);
-        break;
-
-      case ROTTENTOMATOES:
-        cbRottenTomatoes.setSelected(true);
-        break;
-
-      case TMDB:
-      default:
-        cbScraperTmdb.setSelected(true);
-    }
-
-    cbScraperImdb.addItemListener(new ItemListener() {
+    // implement listener to simulate button group
+    tableScraper.getModel().addTableModelListener(new TableModelListener() {
       @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
+      public void tableChanged(TableModelEvent arg0) {
+        // click on the checkbox
+        if (arg0.getColumn() == 0) {
+          int row = arg0.getFirstRow();
+          MovieScraper changedScraper = scrapers.get(row);
+          // if flag inNFO was changed, change all other trailers flags
+          if (changedScraper.getDefaultScraper()) {
+            settings.getMovieSettings().setMovieScraper(changedScraper.getScraperId());
+            for (MovieScraper scraper : scrapers) {
+              if (scraper != changedScraper) {
+                scraper.setDefaultScraper(Boolean.FALSE);
+              }
+            }
+          }
+        }
       }
     });
-    cbScraperTmdb.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbScraperOfdbde.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbZelluloidde.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbMoviemeternl.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbRottenTomatoes.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
+
+    // select default movie scraper
+    tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
   }
 
-  /**
-   * Check changes.
-   */
-  public void checkChanges() {
-    // save scraper
-    if (cbScraperImdb.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.IMDB);
+  /*****************************************************************************************************
+   * helper classes
+   ****************************************************************************************************/
+  public class MovieScraper extends AbstractModelObject {
+    private MediaScraper scraper;
+    private Icon         scraperLogo;
+    private boolean      defaultScraper;
+
+    public MovieScraper(MediaScraper scraper) {
+      this.scraper = scraper;
+      if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
+        scraperLogo = new ImageIcon();
+      }
+      else {
+        scraperLogo = new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo());
+      }
     }
-    if (cbScraperTmdb.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.TMDB);
+
+    public String getScraperId() {
+      return scraper.getId();
     }
-    if (cbScraperOfdbde.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.OFDB);
+
+    public String getScraperName() {
+      return scraper.getName();
     }
-    if (cbZelluloidde.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.ZELLULOID);
+
+    public String getScraperDescription() {
+      // first try to get the localized version
+      String description = null;
+      try {
+        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
+      }
+      catch (Exception ignored) {
+      }
+
+      if (StringUtils.isBlank(description)) {
+        // try to get a scraper text
+        description = scraper.getDescription();
+      }
+
+      return description;
     }
-    if (cbMoviemeternl.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.MOVIEMETER);
+
+    public Icon getScraperLogo() {
+      return scraperLogo;
     }
-    if (cbRottenTomatoes.isSelected()) {
-      settings.getMovieSettings().setMovieScraper(MovieScrapers.ROTTENTOMATOES);
+
+    public Boolean getDefaultScraper() {
+      return defaultScraper;
     }
+
+    public void setDefaultScraper(Boolean newValue) {
+      Boolean oldValue = this.defaultScraper;
+      this.defaultScraper = newValue;
+      firePropertyChange("defaultScraper", oldValue, newValue);
+    }
+
   }
 
   protected void initDataBindings() {
@@ -378,13 +382,8 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         settingsBeanProperty_9, cbCertificationCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("movieSettings.imdbScrapeForeignLanguage");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_13, cbImdbTranslateableContent, jCheckBoxBeanProperty);
-    autoBinding_12.bind();
-    //
     BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.scrapeBestImage");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
@@ -433,5 +432,25 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
     autoBinding_11.bind();
+    //
+    JTableBinding<MovieScraper, List<MovieScraper>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, scrapers,
+        tableScraper);
+    //
+    BeanProperty<MovieScraper, Boolean> movieScraperBeanProperty = BeanProperty.create("defaultScraper");
+    jTableBinding.addColumnBinding(movieScraperBeanProperty).setColumnName("Default").setColumnClass(Boolean.class);
+    //
+    BeanProperty<MovieScraper, Icon> movieScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
+    jTableBinding.addColumnBinding(movieScraperBeanProperty_1).setColumnName("Logo").setColumnClass(Icon.class);
+    //
+    BeanProperty<MovieScraper, String> movieScraperBeanProperty_2 = BeanProperty.create("scraperName");
+    jTableBinding.addColumnBinding(movieScraperBeanProperty_2).setColumnName("Name").setEditable(false);
+    //
+    jTableBinding.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
+        tpScraperDescription, jTextPaneBeanProperty);
+    autoBinding_12.bind();
   }
 }

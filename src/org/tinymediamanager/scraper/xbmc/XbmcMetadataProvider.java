@@ -11,12 +11,15 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IXBMC;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -34,7 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class XbmcMetadataProvider implements IMediaMetadataProvider {
+@PluginImplementation
+public class XbmcMetadataProvider implements IXBMC, IMovieMetadataProvider {
   private static final Logger                 LOGGER                  = LoggerFactory.getLogger(XbmcMetadataProvider.class);
   private static final DocumentBuilderFactory factory                 = DocumentBuilderFactory.newInstance();
 
@@ -49,6 +53,9 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
   private static final String                 IMDB_RUNNING_TIME_REGEX = "([0-9]+)(\\s+min)?";
 
   private static Pattern                      mpaaRatingParser        = Pattern.compile("Rated\\s+([^ ]+).*");
+
+  public XbmcMetadataProvider() {
+  }
 
   public XbmcMetadataProvider(XbmcScraper scraper) {
     XbmcScraperParser parser = new XbmcScraperParser();
@@ -483,8 +490,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
 
   @Override
   public MediaProviderInfo getProviderInfo() {
-    // TODO Auto-generated method stub
-    return null;
+    return providerInfo;
   }
 
   @Override

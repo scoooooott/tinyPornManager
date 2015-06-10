@@ -4,7 +4,6 @@ IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
            If you are still using Java6, please update or you will stay at version 2.6.x
            
 + added language code ZH (Chinese) to the scraper languages 
-+ added polish GUI translation 
 + added language to the movie bulk editor
 + added option to suppress writing of movie set artwork to movie folder 
 x Movie renamer: fix renaming with empty settings

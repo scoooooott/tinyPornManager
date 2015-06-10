@@ -28,10 +28,24 @@ import javax.swing.table.TableColumnModel;
  * @author Manuel Laggner
  */
 public class TableColumnResizer {
+  /**
+   * Set the preferred width of all columns according to its contents
+   * 
+   * @param table
+   *          the table to set the preferred widths
+   */
   public static void adjustColumnPreferredWidths(JTable table) {
     adjustColumnPreferredWidths(table, 0);
   }
 
+  /**
+   * Set the preferred width of all columns according to its contents
+   * 
+   * @param table
+   *          the table to set the preferred widths
+   * @param margin
+   *          the margin left and right
+   */
   public static void adjustColumnPreferredWidths(JTable table, int margin) {
     // strategy - get max width for cells in header and column and
     // make that the preferred width
@@ -46,9 +60,9 @@ public class TableColumnResizer {
         rend = table.getTableHeader().getDefaultRenderer();
       }
       Component comp = rend.getTableCellRendererComponent(table, value, false, false, -1, col);
-      maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
+      maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
 
-      // columns
+      // rows
       for (int row = 0; row < table.getRowCount(); row++) {
         rend = table.getCellRenderer(row, col);
         value = table.getValueAt(row, col);
@@ -58,6 +72,44 @@ public class TableColumnResizer {
 
       TableColumn column = columnModel.getColumn(col);
       column.setPreferredWidth(maxwidth);
+    }
+  }
+
+  /**
+   * Set the max width of the column to the max needed width
+   * 
+   * @param table
+   *          the JTable
+   * @param column
+   *          the column index
+   * @param margin
+   *          the margin left and right
+   */
+  public static void setMaxWidthForColumn(JTable table, int column, int margin) {
+    // strategy - get max width for cells in header and column and
+    // make that the preferred width
+    TableColumnModel columnModel = table.getColumnModel();
+    if (column < table.getColumnCount()) {
+      int maxwidth = 0;
+      TableCellRenderer rend = columnModel.getColumn(column).getHeaderRenderer();
+      Object value = columnModel.getColumn(column).getHeaderValue();
+      if (rend == null) {
+        rend = table.getTableHeader().getDefaultRenderer();
+      }
+
+      Component comp = rend.getTableCellRendererComponent(table, value, false, false, -1, column);
+      maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
+
+      // rows
+      for (int row = 0; row < table.getRowCount(); row++) {
+        rend = table.getCellRenderer(row, column);
+        value = table.getValueAt(row, column);
+        comp = rend.getTableCellRendererComponent(table, value, false, false, row, column);
+        maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
+      }
+
+      TableColumn col = columnModel.getColumn(column);
+      col.setMaxWidth(maxwidth);
     }
   }
 }

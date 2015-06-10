@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,7 +29,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -40,7 +42,8 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Myron Boyle
  */
-public class HDTrailersNet implements IMediaTrailerProvider {
+@PluginImplementation
+public class HDTrailersNet implements IMovieTrailerProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.HDTRAILERSID, "hd-trailers.net",
                                                     "Scraper for hd-trailers.net which is able to scrape trailers");
@@ -142,9 +145,6 @@ public class HDTrailersNet implements IMediaTrailerProvider {
     }
     catch (Exception e) {
       LOGGER.error("cannot parse HD-Trailers movie: " + ot, e);
-
-      // clear cache
-      CachedUrl.removeCachedFileForUrl(search);
     }
     finally {
     }
@@ -202,4 +202,5 @@ public class HDTrailersNet implements IMediaTrailerProvider {
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
+
 }

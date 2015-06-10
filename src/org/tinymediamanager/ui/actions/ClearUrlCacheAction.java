@@ -16,14 +16,10 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -35,7 +31,6 @@ import org.tinymediamanager.ui.UTF8Control;
 public class ClearUrlCacheAction extends AbstractAction {
   private static final long           serialVersionUID = -8203152643599870011L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ClearUrlCacheAction.class);
 
   public ClearUrlCacheAction() {
     putValue(NAME, BUNDLE.getString("tmm.clearurlcache")); //$NON-NLS-1$
@@ -44,14 +39,6 @@ public class ClearUrlCacheAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    File cache = new File(CachedUrl.CACHE_DIR);
-    if (cache.exists()) {
-      try {
-        FileUtils.deleteDirectory(cache);
-      }
-      catch (Exception e) {
-        LOGGER.warn(e.getMessage());
-      }
-    }
+    CachedUrl.clearCache();
   }
 }

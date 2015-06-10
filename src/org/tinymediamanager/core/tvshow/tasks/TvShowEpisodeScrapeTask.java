@@ -83,7 +83,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
         continue;
       }
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
@@ -91,7 +91,6 @@ public class TvShowEpisodeScrapeTask implements Runnable {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
 
-      options.setType(MediaType.TV_EPISODE);
       if (episode.isDvdOrder()) {
         options.setId(MediaMetadata.SEASON_NR_DVD, String.valueOf(episode.getDvdSeason()));
         options.setId(MediaMetadata.EPISODE_NR_DVD, String.valueOf(episode.getDvdEpisode()));
@@ -108,7 +107,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       try {
-        MediaMetadata metadata = metadataProvider.getEpisodeMetadata(options);
+        MediaMetadata metadata = metadataProvider.getMetadata(options);
         if (StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           episode.setMetadata(metadata);
         }

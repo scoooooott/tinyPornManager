@@ -726,7 +726,7 @@ public class ImageChooserDialog extends TmmDialog {
 
         // get images from all artworkproviders
         for (IMediaArtworkProvider artworkProvider : artworkProviders) {
-          MediaScrapeOptions options = new MediaScrapeOptions();
+          MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE) {
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
@@ -739,7 +739,6 @@ public class ImageChooserDialog extends TmmDialog {
           else {
             continue;
           }
-          options.setType(mediaType);
           switch (type) {
             case POSTER:
               options.setArtworkType(MediaArtworkType.POSTER);

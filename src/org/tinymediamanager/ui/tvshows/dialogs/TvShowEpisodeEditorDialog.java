@@ -522,19 +522,18 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
     @Override
     protected Void doInBackground() throws Exception {
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
 
-      options.setType(MediaType.TV_EPISODE);
       options.setId(MediaMetadata.SEASON_NR, spSeason.getValue().toString());
       options.setId(MediaMetadata.EPISODE_NR, spEpisode.getValue().toString());
 
       try {
-        MediaMetadata metadata = mp.getEpisodeMetadata(options);
+        MediaMetadata metadata = mp.getMetadata(options);
 
         // if nothing has been found -> open the search box
         if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {

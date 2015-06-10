@@ -145,8 +145,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
         // get metadata and artwork
         if ((doSearch && result1 != null) || !doSearch) {
           try {
-            MediaScrapeOptions options = new MediaScrapeOptions();
-            options.setType(MediaType.TV_SHOW);
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
             options.setResult(result1);
             options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
@@ -168,7 +167,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
                 || scraperMetadataConfig.isAired() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
                 || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                 || scraperMetadataConfig.isYear()) {
-              md = mediaMetadataProvider.getTvShowMetadata(options);
+              md = mediaMetadataProvider.getMetadata(options);
               tvShow.setMetadata(md, scraperMetadataConfig);
             }
 
@@ -207,8 +206,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
     public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
       List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
-      MediaScrapeOptions options = new MediaScrapeOptions();
-      options.setType(MediaType.TV_SHOW);
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());

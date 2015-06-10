@@ -45,6 +45,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -201,7 +202,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private class SearchTask extends SwingWorker<Void, Void> {
     @Override
     public Void doInBackground() {
-      MediaScrapeOptions options = new MediaScrapeOptions();
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {

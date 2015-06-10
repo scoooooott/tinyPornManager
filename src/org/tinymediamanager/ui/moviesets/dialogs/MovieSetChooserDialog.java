@@ -44,7 +44,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -60,6 +59,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -75,7 +75,6 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.omertron.themoviedbapi.model.Collection;
 
 /**
  * The Class MovieSetChooserPanel.
@@ -302,13 +301,13 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET);
         options.set(SearchParam.TITLE, searchTerm);
         options.set(SearchParam.LANGUAGE, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name());
-        List<Collection> movieSets = mp.searchMovieSets(options);
+        List<MediaSearchResult> movieSets = mp.search(options);
         movieSetsFound.clear();
         if (movieSets.size() == 0) {
           movieSetsFound.add(MovieSetChooserModel.emptyResult);
         }
         else {
-          for (Collection collection : movieSets) {
+          for (MediaSearchResult collection : movieSets) {
             MovieSetChooserModel model = new MovieSetChooserModel(collection);
             movieSetsFound.add(model);
           }
@@ -357,13 +356,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         MovieSetChooserModel model = movieSetsFound.get(row);
         if (model != MovieSetChooserModel.emptyResult) {
           movieSetToScrape.setTitle(model.getName());
-
-          if (StringUtils.isNotBlank(model.getInfo().getOverview())) {
-            movieSetToScrape.setPlot(model.getInfo().getOverview());
-          }
-          else {
-            movieSetToScrape.setPlot("");
-          }
+          movieSetToScrape.setPlot(model.getOverview());
           movieSetToScrape.setArtworkUrl(model.getPosterUrl(), MediaFileType.POSTER);
           movieSetToScrape.setArtworkUrl(model.getFanartUrl(), MediaFileType.FANART);
           movieSetToScrape.setTmdbId(model.getTmdbId());
