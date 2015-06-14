@@ -18,30 +18,30 @@ Version 2.6.8 has been released on 08. June 2015.
 ##Screenshots##
 more screenshots at [http://www.tinymediamanager.org/index.php/screenshots/](http://www.tinymediamanager.org/index.php/screenshots/)
 
-###Main panel for movies### 
+###Main panel for movies
 
-[![Movie panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movie_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movie_panel_main.jpg)
+[![Movie panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movie_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movie_panel_main.jpg)
 
-###Main panel for moviesets###
+###Main panel for moviesets
 
-[![Movie set panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movieset_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movieset_panel_main.jpg)
+[![Movie set panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieset_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieset_panel_main.jpg)
 
-###Search for a movie###
+###Search for a movie
 
-[![Movie search](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/moviechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/moviechooser_dialog.jpg)
+[![Movie search](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviechooser_dialog.jpg)
 
-###Search for a movieset###
+###Search for a movieset
 
-[![Movie set search](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/moviesetchooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/moviesetchooser_dialog.jpg)
+[![Movie set search](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviesetchooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviesetchooser_dialog.jpg)
 
-###Edit movie metadata###
+###Edit movie metadata
 
-[![Edit movie](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movieeditor_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/movieeditor_dialog.jpg)
+[![Edit movie](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieeditor_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieeditor_dialog.jpg)
 
-###Main panel for TV shows###
+###Main panel for TV shows
 
-[![TV show panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/tvshow_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/tvshow_panel_main.jpg)
+[![TV show panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/tvshow_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/tvshow_panel_main.jpg)
 
-###Change artwork###
+###Change artwork
 
-[![Image chooser](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/imagechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/tinyMediaManager/screenshots/imagechooser_dialog.jpg)
+[![Image chooser](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog.jpg)
