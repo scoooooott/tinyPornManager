@@ -44,8 +44,8 @@
 
 	<target name="compile" depends="init">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.6" target="1.6" encoding="UTF-8">
-			<src path="src" />
+		<javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.7" target="1.7" encoding="UTF-8">
+			<src path="src/main/java" />
 			<classpath refid="classpath.default" />
 		</javac>
 		<!-- enhance several classes for objectdb -->
@@ -55,7 +55,7 @@
 		</java>
 		<!-- copy non java files -->
 		<copy includeemptydirs="false" todir="${bin.dir}">
-			<fileset dir="src" excludes="**/*.java" />
+			<fileset dir="src/main/resources" excludes="**/*.java" />
 		</copy>
 	</target>
 
@@ -63,7 +63,7 @@
 		<mkdir dir="reports/javadoc" />
 		<javadoc access="public" destdir="reports/javadoc" author="true" version="true" use="true" windowtitle="${ant.project.name}">
 			<classpath refid="classpath.default" />
-			<fileset dir="src" defaultexcludes="yes">
+			<fileset dir="src/main/java" defaultexcludes="yes">
 				<include name="**/*.java" />
 			</fileset>
 		</javadoc>
@@ -365,7 +365,7 @@
 		<delete dir="reports" />
 		<mkdir dir="reports" />
 		<ant antfile="buildsupport/analyze.xml">
-			<property name="source" value="src" />
+			<property name="source" value="src/main/java" />
 			<property name="classpath" refid="classpath.default" />
 			<property name="build" value="${bin.dir}" />
 			<!--property name="testsource" value="test"/-->

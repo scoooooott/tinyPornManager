@@ -33,4 +33,6 @@ config.xml
 tmm_ui.prop
 tmm.uuid
 backup
+build
+dist
 

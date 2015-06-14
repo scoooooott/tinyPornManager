@@ -15,6 +15,6 @@ encoding//locale/messages_sk.properties=UTF-8
 encoding//locale/messages_sv.properties=UTF-8
 encoding//locale/messages_tr.properties=UTF-8
 encoding//locale/messages_zh.properties=UTF-8
-encoding//src/messages.properties=UTF-8
 encoding/<project>=UTF-8
 encoding/locale=UTF-8
+encoding/src=UTF-8
