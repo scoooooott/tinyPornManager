@@ -1,70 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-        <classpathentry kind="src" path="src/main/java"/>	
-        <classpathentry kind="src" path="src/main/resources"/>
-        <classpathentry kind="src" path="src/test/resources"/>
-        <classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="src" path="locale"/>	
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="lib/objectdb.jar"/>
-	<classpathentry kind="lib" path="lib/Scaling-bin.jar"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry including="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry including="**/*.java" kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry including="**/*.java" kind="src" path="locale"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang3.jar"/>
-	<classpathentry kind="lib" path="lib/forms.jar"/>
-	<classpathentry kind="lib" path="lib/JSplitButton.jar"/>
-	<classpathentry kind="lib" path="lib/jsoup.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/tinyMediaManager/buildsupport/jsoup-1.7.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/glazedlists.jar" sourcepath="buildsupport/glazedlists_java15-1.9.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/resources.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind.jar"/>
-	<classpathentry kind="lib" path="lib/jna.jar"/>
-	<classpathentry kind="lib" path="lib/platform.jar"/>
-	<classpathentry kind="lib" path="lib/asm.jar"/>
-	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
-	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>
-	<classpathentry kind="lib" path="lib/DJNativeSwing.jar"/>
-	<classpathentry kind="lib" path="lib/jcl-over-slf4j.jar"/>
-	<classpathentry kind="lib" path="lib/logback-classic.jar"/>
-	<classpathentry kind="lib" path="lib/logback-core.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-over-slf4j.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-core.jar" sourcepath="lib/betterbeansbinding-core.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-swingbinding.jar" sourcepath="lib/betterbeansbinding-swingbinding.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-el.jar" sourcepath="lib/betterbeansbinding-el.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-client.jar"/>
-	<classpathentry kind="lib" path="lib/imgscalr-lib.jar"/>
-	<classpathentry kind="lib" path="lib/core.jar"/>
-	<classpathentry kind="lib" path="lib/twinkle.jar"/>
-	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
-	<classpathentry kind="lib" path="lib/api-common.jar"/>
-	<classpathentry kind="lib" path="lib/LightBox.jar"/>
-	<classpathentry kind="lib" path="lib/image-viewer.jar"/>
-	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
-	<classpathentry kind="lib" path="lib/jtidy.jar"/>
-	<classpathentry kind="lib" path="lib/json-20131018.jar"/>
-	<classpathentry kind="lib" path="lib/quaqua-filechooser-only.jar"/>
-	<classpathentry kind="lib" path="lib/trakt-java.jar"/>
-	<classpathentry kind="lib" path="lib/gson.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time.jar"/>
-	<classpathentry kind="lib" path="lib/retrofit.jar"/>
-	<classpathentry kind="lib" path="lib/jspf.core.jar"/>
-	<classpathentry kind="lib" path="lib/api-scraper.jar"/>
-	<classpathentry kind="lib" path="lib/scraper-tmdb.jar"/>
-	<classpathentry kind="lib" path="lib/okhttp-urlconnection.jar"/>
-	<classpathentry kind="lib" path="lib/okhttp.jar"/>
-	<classpathentry kind="lib" path="lib/okio.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
