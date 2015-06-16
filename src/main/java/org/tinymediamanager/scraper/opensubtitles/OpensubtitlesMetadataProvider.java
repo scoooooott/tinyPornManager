@@ -25,6 +25,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -210,7 +211,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
     Map<String, Object> mapQuery = new HashMap<String, Object>();
-    mapQuery.put("sublanguageid", Globals.settings.getLanguage());
+    mapQuery.put("sublanguageid", Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage());
     mapQuery.put("moviehash", SubtitleUtils.computeOpenSubtitlesHash(mf.getFile()));
     // when MI is not run yet, MF always 0 (b/c of locking) - so get this direct
     mapQuery.put("moviebytesize", mf.getFilesize() == 0 ? mf.getFile().length() : mf.getFilesize());
@@ -234,7 +235,8 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     if (session == null) {
       Object token = null;
       try {
-        token = client.invoke("LogIn", new Object[] { "", "", Globals.settings.getLanguage(), USER_AGENT });
+        token = client
+            .invoke("LogIn", new Object[] { "", "", Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage(), USER_AGENT });
         XmlRpcStruct response = (XmlRpcStruct) token;
         session = new ApiStartSession(response);
         LOGGER.debug("Login OK");

@@ -71,7 +71,8 @@ import org.tinymediamanager.ui.TmmWindowSaver;
  */
 public class Utils {
   private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
-
+  private static final Pattern                      localePattern     = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
+                                                                          Pattern.CASE_INSENSITIVE);
   /**
    * Map of all known English/UserLocalized String to base locale, key is LOWERCASE
    */
@@ -723,15 +724,30 @@ public class Utils {
     try {
       File[] props = new File("locale").listFiles();
       for (File file : props) {
-        String l = file.getName().substring(9, 11); // messages_XX.properties
-        Locale myloc = getLocaleFromLanguage(l);
-        if (myloc != null && !loc.contains(myloc)) {
-          loc.add(myloc);
+        // String l = file.getName().substring(9, 11); // messages_XX.properties
+        Matcher matcher = localePattern.matcher(file.getName());
+        if (matcher.matches()) {
+          Locale myloc = null;
+
+          String language = matcher.group(1);
+          String country = matcher.group(2);
+
+          if (country != null) {
+            // found language & country
+            myloc = new Locale(language, country);
+          }
+          else {
+            // found only language
+            myloc = getLocaleFromLanguage(language);
+          }
+          if (myloc != null && !loc.contains(myloc)) {
+            loc.add(myloc);
+          }
         }
       }
     }
     catch (Exception e) {
-      // do nothing
+      LOGGER.warn("could not read locales: " + e.getMessage());
     }
     return loc;
   }
@@ -744,8 +760,12 @@ public class Utils {
    * @return Locale
    */
   public static Locale getLocaleFromLanguage(String language) {
-    if (language == null || language.isEmpty()) {
-      return null;
+    if (StringUtils.isBlank(language)) {
+      return Locale.getDefault();
+    }
+    // do we have a newer locale settings style?
+    if (language.length() > 2) {
+      return LocaleUtils.toLocale(language);
     }
     if (language.equalsIgnoreCase("en")) {
       return new Locale("en", "US"); // don't mess around; at least fixtate this

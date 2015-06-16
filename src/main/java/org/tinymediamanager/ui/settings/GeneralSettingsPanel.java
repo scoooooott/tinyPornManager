@@ -45,6 +45,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -156,8 +157,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
     Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     for (Locale l : Utils.getLanguages()) {
-      LocaleComboBox localeComboBox = new LocaleComboBox();
-      localeComboBox.loc = l;
+      LocaleComboBox localeComboBox = new LocaleComboBox(l);
       locales.add(localeComboBox);
       if (l.equals(settingsLang)) {
         actualLocale = localeComboBox;
@@ -388,7 +388,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     Locale locale = loc.loc;
     Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     if (!locale.equals(actualLocale)) {
-      Globals.settings.setLanguage(locale.getLanguage());
+      Globals.settings.setLanguage(locale.toString());
       lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
     }
 
@@ -410,10 +410,37 @@ public class GeneralSettingsPanel extends ScrollablePanel {
    * Helper class for customized toString() method, to get the Name in localized language.
    */
   private class LocaleComboBox {
-    private Locale loc;
+    private Locale       loc;
+    private List<Locale> countries;
+
+    private LocaleComboBox(Locale loc) {
+      this.loc = loc;
+      countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase());
+    }
 
     @Override
     public String toString() {
+      // display country name if needed
+      // not needed when language == country
+      if (loc.getLanguage().equalsIgnoreCase(loc.getCountry())) {
+        return loc.getDisplayLanguage(loc);
+      }
+
+      // special exceptions (which do not have language == country)
+      if (loc.toString().equals("en_US")) {
+        return loc.getDisplayLanguage(loc);
+      }
+
+      // not needed, when this language is only in one country
+      if (countries.size() == 1) {
+        return loc.getDisplayLanguage(loc);
+      }
+
+      // output country if available
+      if (StringUtils.isNotBlank(loc.getDisplayCountry(loc))) {
+        return loc.getDisplayLanguage(loc) + " (" + loc.getDisplayCountry(loc) + ")";
+      }
+
       return loc.getDisplayLanguage(loc);
     }
   }

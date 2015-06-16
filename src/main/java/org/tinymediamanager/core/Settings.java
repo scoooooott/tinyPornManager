@@ -950,7 +950,7 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * set Localge.getLanguage() 2 char into settings
+   * set Locale.toString() 5 char into settings
    * 
    * @param language
    */

@@ -80,7 +80,7 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
       return results;
     }
 
-    String desiredLanguage = Globals.settings.getLanguage(); // just for info logging
+    String desiredLanguage = Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage(); // just for info logging
 
     // search via the api
     Url url = new Url(API_URL + "?action=search&hash=" + hash);
