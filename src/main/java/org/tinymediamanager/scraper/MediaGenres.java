@@ -18,6 +18,8 @@ package org.tinymediamanager.scraper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -169,6 +171,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    *          the name
    * @return the genre
    */
+  @JsonCreator
   public static MediaGenres getGenre(String name) {
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
