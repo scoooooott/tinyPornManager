@@ -17,7 +17,6 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import java.awt.GraphicsEnvironment;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -25,22 +24,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.h2.mvstore.MVMap;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -55,6 +48,9 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.UTF8Control;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  * The Class TvShowList.
@@ -176,16 +172,11 @@ public class TvShowList extends AbstractModelObject {
     tvShow.removeAllEpisodes();
     tvShowList.remove(tvShow);
 
-    boolean newTransaction = false;
-    if (!TvShowModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
-      TvShowModuleManager.getInstance().getEntityManager().getTransaction().begin();
-      newTransaction = true;
+    try {
+      TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
     }
-
-    TvShowModuleManager.getInstance().getEntityManager().remove(tvShow);
-
-    if (newTransaction) {
-      TvShowModuleManager.getInstance().getEntityManager().getTransaction().commit();
+    catch (Exception e) {
+      LOGGER.error("problem removing TV show from DB: " + e.getMessage());
     }
 
     firePropertyChange(TV_SHOWS, null, tvShowList);
@@ -206,16 +197,11 @@ public class TvShowList extends AbstractModelObject {
     tvShow.removeAllEpisodes();
     tvShowList.remove(tvShow);
 
-    boolean newTransaction = false;
-    if (!TvShowModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
-      TvShowModuleManager.getInstance().getEntityManager().getTransaction().begin();
-      newTransaction = true;
+    try {
+      TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
     }
-
-    TvShowModuleManager.getInstance().getEntityManager().remove(tvShow);
-
-    if (newTransaction) {
-      TvShowModuleManager.getInstance().getEntityManager().getTransaction().commit();
+    catch (Exception e) {
+      LOGGER.error("problem removing TV show from DB: " + e.getMessage());
     }
 
     firePropertyChange(TV_SHOWS, null, tvShowList);
@@ -250,44 +236,110 @@ public class TvShowList extends AbstractModelObject {
   /**
    * Load tv shows from database.
    */
-  public void loadTvShowsFromDatabase(EntityManager entityManager) {
-    List<TvShow> tvShows = null;
-    try {
-      // load tv shows
-      TypedQuery<TvShow> query = entityManager.createQuery("SELECT tvShow FROM TvShow tvShow", TvShow.class);
-      tvShows = query.getResultList();
-      if (tvShows != null) {
-        LOGGER.info("found " + tvShows.size() + " tv shows in database");
-        for (Object obj : tvShows) {
-          if (obj instanceof TvShow) {
-            TvShow tvShow = (TvShow) obj;
-            tvShow.initializeAfterLoading();
-            for (TvShowEpisode episode : tvShow.getEpisodes()) {
-              episode.initializeAfterLoading();
-              updateEpisodeTags(episode);
-              updateMediaInformationLists(episode);
-            }
+  void loadTvShowsFromDatabase(MVMap<UUID, String> tvShowMap, ObjectMapper objectMapper) {
+    // load all TV shows from the database
+    ObjectReader tvShowObjectReader = objectMapper.reader(TvShow.class);
 
-            // for performance reasons we add tv shows directly
-            tvShowList.add(tvShow);
-            updateTvShowTags(tvShow);
-            tvShow.addPropertyChangeListener(propertyChangeListener);
-          }
-          else {
-            LOGGER.error("retrieved no tv show: " + obj);
-          }
-        }
+    for (UUID uuid : tvShowMap.keyList()) {
+      try {
+        TvShow tvShow = tvShowObjectReader.readValue(tvShowMap.get(uuid));
+        tvShow.setDbId(uuid);
 
-        // check for corrupted media entities
-        checkAndCleanupMediaFiles();
+        // for performance reasons we add tv shows directly
+        tvShowList.add(tvShow);
       }
-      else {
-        LOGGER.debug("found no movies in database");
+      catch (Exception e) {
+        LOGGER.warn("problem decoding TV show json string: ", e);
       }
     }
+    LOGGER.info("found " + tvShowList.size() + " TV shows in database");
+  }
+
+  /**
+   * Load episodes from database.
+   */
+  void loadEpisodesFromDatabase(MVMap<UUID, String> episodesMap, ObjectMapper objectMapper) {
+    // load all episodes from the database
+    ObjectReader episodeObjectReader = objectMapper.reader(TvShowEpisode.class);
+    int episodeCount = 0;
+
+    for (UUID uuid : episodesMap.keyList()) {
+      try {
+        episodeCount++;
+        TvShowEpisode episode = episodeObjectReader.readValue(episodesMap.get(uuid));
+        episode.setDbId(uuid);
+
+        // and assign it the the right TV show
+        for (TvShow tvShow : tvShowList) {
+          if (tvShow.getDbId().equals(episode.getTvShowDbId())) {
+            episode.setTvShow(tvShow);
+            tvShow.addEpisode(episode);
+            break;
+          }
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("problem decoding episode json string: ", e);
+      }
+    }
+    LOGGER.info("found " + episodeCount + " episodes in database");
+  }
+
+  void initDataAfterLoading() {
+    // init everything after loading
+    for (TvShow tvShow : tvShowList) {
+      tvShow.initializeAfterLoading();
+      updateTvShowTags(tvShow);
+
+      for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        episode.initializeAfterLoading();
+        updateEpisodeTags(episode);
+        updateMediaInformationLists(episode);
+      }
+
+      tvShow.addPropertyChangeListener(propertyChangeListener);
+    }
+  }
+
+  public void persistTvShow(TvShow tvShow) {
+    // update/insert this TV show to the database
+    try {
+      TvShowModuleManager.getInstance().persistTvShow(tvShow);
+    }
     catch (Exception e) {
-      LOGGER.error("loadTvShowsFromDatabase", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "", "message.database.loadtvshows"));
+      LOGGER.error("failed to persist episode: " + tvShow.getTitle() + "; " + e.getMessage());
+    }
+  }
+
+  public void removeTvShowFromDb(TvShow tvShow) {
+    // delete this TV show from the database
+    try {
+      TvShowModuleManager.getInstance().removeTvShowFromDb(tvShow);
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to remove episode: " + tvShow.getTitle() + "; " + e.getMessage());
+    }
+  }
+
+  public void persistEpisode(TvShowEpisode episode) {
+    // update/insert this episode to the database
+    try {
+      TvShowModuleManager.getInstance().persistEpisode(episode);
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
+          + episode.getTitle() + "; " + e.getMessage());
+    }
+  }
+
+  public void removeEpisodeFromDb(TvShowEpisode episode) {
+    // delete this episode from the database
+    try {
+      TvShowModuleManager.getInstance().removeEpisodeFromDb(episode);
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
+          + episode.getTitle() + "; " + e.getMessage());
     }
   }
 
@@ -712,34 +764,5 @@ public class TvShowList extends AbstractModelObject {
       }
     }
     return newEp;
-  }
-
-  /**
-   * check if there are movies without (at least) one VIDEO mf
-   */
-  private void checkAndCleanupMediaFiles() {
-    boolean problemsDetected = false;
-    for (TvShow tvShow : tvShowList) {
-      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
-        List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
-        if (mfs.isEmpty()) {
-          tvShow.removeEpisode(episode);
-          problemsDetected = true;
-        }
-      }
-    }
-
-    if (problemsDetected) {
-      LOGGER.warn("episodes without VIDEOs detected");
-      // since we have no active UI yet, push a popup message in an own window
-      if (!GraphicsEnvironment.isHeadless()) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("message.database.corrupteddata"));
-          }
-        });
-      }
-    }
   }
 }

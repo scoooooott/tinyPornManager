@@ -695,7 +695,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 e.addToMediaFiles(new MediaFile(file));
                 findAdditionalEpisodeFiles(e, file, content);
                 e.setNewlyAdded(true);
-                // e.saveToDb();
+                e.saveToDb();
                 tvShow.addEpisode(e);
               }
             }
@@ -718,7 +718,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 episode.addToMediaFiles(new MediaFile(file));
                 findAdditionalEpisodeFiles(episode, file, content);
                 episode.setNewlyAdded(true);
-                // episode.saveToDb();
+                episode.saveToDb();
                 tvShow.addEpisode(episode);
               }
             }
@@ -736,7 +736,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.addToMediaFiles(new MediaFile(file));
               findAdditionalEpisodeFiles(episode, file, content);
               episode.setNewlyAdded(true);
-              // episode.saveToDb();
+              episode.saveToDb();
               tvShow.addEpisode(episode);
             }
           }
@@ -846,7 +846,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
-          // episode.saveToDb();
+          episode.saveToDb();
           tvShow.addEpisode(episode);
         }
       }
@@ -860,7 +860,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             e.setNewlyAdded(true);
             // e.findImages();
             findAdditionalEpisodeFiles(e, firstVideoFile, content);
-            // e.saveToDb();
+            e.saveToDb();
             tvShow.addEpisode(e);
           }
         }
@@ -876,7 +876,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
-          // episode.saveToDb();
+          episode.saveToDb();
           tvShow.addEpisode(episode);
         }
       }

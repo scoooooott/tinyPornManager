@@ -40,8 +40,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -115,7 +115,7 @@ public class MovieTrailerPanel extends JPanel {
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
             || (source.getClass() == Movie.class && "trailer".equals(property))) {
           trailerEventList.clear();
-          trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
+          trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
           try {
             TableColumnResizer.adjustColumnPreferredWidths(table, 7);
           }

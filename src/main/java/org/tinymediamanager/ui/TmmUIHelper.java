@@ -29,7 +29,6 @@ import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.transaction.NotSupportedException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -340,7 +339,7 @@ public class TmmUIHelper {
 
     }
     else {
-      throw new NotSupportedException();
+      throw new UnsupportedOperationException();
     }
   }
 
@@ -377,7 +376,7 @@ public class TmmUIHelper {
       }
     }
     else {
-      throw new NotSupportedException();
+      throw new UnsupportedOperationException();
     }
   }
 }

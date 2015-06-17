@@ -15,6 +15,25 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
+import static org.tinymediamanager.core.Constants.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,92 +70,81 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.core.Constants.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The main class for movies.
  * 
  * @author Manuel Laggner / Myron Boyle
  */
-@Entity
-@Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
   @XmlTransient
   private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
 
+  @JsonProperty
   private String              sortTitle       = "";
+  @JsonProperty
   private String              tagline         = "";
+  @JsonProperty
   private int                 votes           = 0;
+  @JsonProperty
   private int                 runtime         = 0;
+  @JsonProperty
   private String              director        = "";
+  @JsonProperty
   private String              writer          = "";
+  @JsonProperty
   private String              dataSource      = "";
+  @JsonProperty
   private boolean             watched         = false;
-  private MovieSet            movieSet;
+  @JsonProperty
   private boolean             isDisc          = false;
+  @JsonProperty
   private String              spokenLanguages = "";
+  @JsonProperty
   private boolean             subtitles       = false;
+  @JsonProperty
   private String              country         = "";
+  @JsonProperty
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                releaseDate     = null;
+  @JsonProperty
   private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
+  @JsonProperty
   private int                 top250          = 0;
-  // missed to set @Enumerated(EnumType.STRING); we must not change it now because it can break databases
+  @JsonProperty
   private MovieMediaSource    mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
+  @JsonProperty
   private boolean             videoIn3D       = false;
-
-  private List<String>        genres          = new ArrayList<String>(1);
-  private List<String>        tags            = new ArrayList<String>(0);
-  private List<String>        extraThumbs     = new ArrayList<String>(0);
-  private List<String>        extraFanarts    = new ArrayList<String>(0);
-
-  @Enumerated(EnumType.STRING)
+  @JsonProperty
   private Certification       certification   = Certification.NOT_RATED;
+  @JsonProperty
+  private UUID                movieSetId;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
+  private List<String>        genres          = new ArrayList<String>(1);
+  @JsonProperty
+  private List<String>        tags            = new ArrayList<String>(0);
+  @JsonProperty
+  private List<String>        extraThumbs     = new ArrayList<String>(0);
+  @JsonProperty
+  private List<String>        extraFanarts    = new ArrayList<String>(0);
+  @JsonProperty
   private List<MovieActor>    actors          = new ArrayList<MovieActor>();
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
   private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
   private List<MovieTrailer>  trailer         = new ArrayList<MovieTrailer>(0);
 
-  @Transient
+  private MovieSet            movieSet;
   private String              titleSortable   = "";
-
-  @Transient
   private boolean             newlyAdded      = false;
-
-  @Transient
   private Date                lastWatched     = null;
-
-  @Transient
   private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
@@ -290,6 +298,11 @@ public class Movie extends MediaEntity {
     for (String genre : new ArrayList<String>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
+
+    // link with movie set
+    if (movieSetId != null) {
+      movieSet = MovieList.getInstance().lookupMovieSet(movieSetId);
+    }
   }
 
   /**
@@ -299,22 +312,8 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addActor(MovieActor obj) {
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      actors.add(obj);
-    }
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
-  }
-
-  /**
-   * Gets the trailers.
-   * 
-   * @return the trailers
-   */
-  @Deprecated
-  public List<MovieTrailer> getTrailers() {
-    return this.trailer;
   }
 
   /**
@@ -333,11 +332,7 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addTrailer(MovieTrailer obj) {
-    // trailers are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      trailer.add(obj);
-    }
+    trailer.add(obj);
     firePropertyChange(TRAILER, null, trailer);
   }
 
@@ -345,11 +340,7 @@ public class Movie extends MediaEntity {
    * Removes the all trailers.
    */
   public void removeAllTrailers() {
-    // trailers are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      trailer.clear();
-    }
+    trailer.clear();
     firePropertyChange(TRAILER, null, trailer);
   }
 
@@ -719,11 +710,7 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void removeActor(MovieActor obj) {
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      actors.remove(obj);
-    }
+    actors.remove(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1075,38 +1062,34 @@ public class Movie extends MediaEntity {
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
 
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      // first remove unused
-      for (int i = actors.size() - 1; i >= 0; i--) {
-        MovieActor actor = actors.get(i);
-        if (!newActors.contains(actor)) {
-          actors.remove(actor);
+    // first remove unused
+    for (int i = actors.size() - 1; i >= 0; i--) {
+      MovieActor actor = actors.get(i);
+      if (!newActors.contains(actor)) {
+        actors.remove(actor);
+      }
+    }
+
+    // second add the new ones
+    for (int i = 0; i < newActors.size(); i++) {
+      MovieActor actor = newActors.get(i);
+      if (!actors.contains(actor)) {
+        try {
+          actors.add(i, actor);
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+          actors.add(actor);
         }
       }
-
-      // second add the new ones
-      for (int i = 0; i < newActors.size(); i++) {
-        MovieActor actor = newActors.get(i);
-        if (!actors.contains(actor)) {
+      else {
+        int indexOldList = actors.indexOf(actor);
+        if (i != indexOldList) {
+          MovieActor oldActor = actors.remove(indexOldList);
           try {
-            actors.add(i, actor);
+            actors.add(i, oldActor);
           }
           catch (ArrayIndexOutOfBoundsException e) {
-            actors.add(actor);
-          }
-        }
-        else {
-          int indexOldList = actors.indexOf(actor);
-          if (i != indexOldList) {
-            MovieActor oldActor = actors.remove(indexOldList);
-            try {
-              actors.add(i, oldActor);
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-              actors.add(oldActor);
-            }
+            actors.add(oldActor);
           }
         }
       }
@@ -1531,6 +1514,13 @@ public class Movie extends MediaEntity {
     MovieSet oldValue = this.movieSet;
     this.movieSet = newValue;
 
+    if (newValue == null) {
+      movieSetId = null;
+    }
+    else {
+      movieSetId = newValue.getDbId();
+    }
+
     // remove movieset-sorttitle
     if (oldValue != null && newValue == null) {
       setSortTitle("");
@@ -1754,6 +1744,7 @@ public class Movie extends MediaEntity {
     return releaseDate;
   }
 
+  @JsonIgnore
   public void setReleaseDate(Date newValue) {
     Date oldValue = this.releaseDate;
     this.releaseDate = newValue;
@@ -1786,7 +1777,7 @@ public class Movie extends MediaEntity {
    * convenient method to set the release date (parsed from string).
    */
   public void setReleaseDate(String dateAsString) throws ParseException {
-    setReleaseDate(org.tinymediamanager.scraper.util.StrgUtils.parseDate(dateAsString));
+    setReleaseDate(StrgUtils.parseDate(dateAsString));
   }
 
   public Date getLastWatched() {
@@ -1805,43 +1796,13 @@ public class Movie extends MediaEntity {
     }
 
     // update/insert this movie to the database
-    final EntityManager entityManager = getEntityManager();
-    readWriteLock.readLock().lock();
-    synchronized (entityManager) {
-      // hotfix - some moviesets are not in the context
-      if (movieSet != null && !MovieModuleManager.getInstance().getEntityManager().contains(movieSet)) {
-        MovieModuleManager.getInstance().getEntityManager().merge(movieSet);
-      }
-
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.persist(this);
-      }
-    }
-    dirty = false;
-    readWriteLock.readLock().unlock();
+    MovieList.getInstance().persistMovie(this);
   }
 
   @Override
   public void deleteFromDb() {
-    // delete this movie from the database
-    final EntityManager entityManager = getEntityManager();
-    readWriteLock.readLock().lock();
-    synchronized (entityManager) {
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.remove(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.remove(this);
-      }
-    }
-    readWriteLock.readLock().unlock();
+    // remove this movie from the database
+    MovieList.getInstance().removeMovieFromDb(this);
   }
 
   @Override
@@ -1894,40 +1855,35 @@ public class Movie extends MediaEntity {
 
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
+    // first remove unused
+    for (int i = producers.size() - 1; i >= 0; i--) {
+      MovieProducer producer = producers.get(i);
+      if (!newProducers.contains(producer)) {
+        producers.remove(producer);
+      }
+    }
 
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      // first remove unused
-      for (int i = producers.size() - 1; i >= 0; i--) {
-        MovieProducer producer = producers.get(i);
-        if (!newProducers.contains(producer)) {
-          producers.remove(producer);
+    // second add the new ones
+    for (int i = 0; i < newProducers.size(); i++) {
+      MovieProducer producer = newProducers.get(i);
+      if (!producers.contains(producer)) {
+        // new producer
+        try {
+          producers.add(i, producer);
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+          producers.add(producer);
         }
       }
-
-      // second add the new ones
-      for (int i = 0; i < newProducers.size(); i++) {
-        MovieProducer producer = newProducers.get(i);
-        if (!producers.contains(producer)) {
-          // new producer
+      else {
+        int indexOldList = producers.indexOf(producer);
+        if (i != indexOldList) {
+          MovieProducer oldProducer = producers.remove(indexOldList);
           try {
-            producers.add(i, producer);
+            producers.add(i, oldProducer);
           }
           catch (ArrayIndexOutOfBoundsException e) {
-            producers.add(producer);
-          }
-        }
-        else {
-          int indexOldList = producers.indexOf(producer);
-          if (i != indexOldList) {
-            MovieProducer oldProducer = producers.remove(indexOldList);
-            try {
-              producers.add(i, oldProducer);
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-              producers.add(oldProducer);
-            }
+            producers.add(oldProducer);
           }
         }
       }
@@ -1958,10 +1914,5 @@ public class Movie extends MediaEntity {
     else {
       return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
     }
-  }
-
-  @Override
-  protected EntityManager getEntityManager() {
-    return MovieModuleManager.getInstance().getEntityManager();
   }
 }

@@ -35,17 +35,9 @@
 	<!-- -->
 	<!-- -->
 	<repositories>
-	<!-- for later use 
-		<repository>
-			<id>tinyMediaManager</id>
-			<name>tinyMediaManager provided libs</name>
-			<url>http://repository-tinymediamanager.forge.cloudbees.com/release</url>
-		</repository>  -->
-		<repository> 
-			<id>objectdb</id>
-			<name>ObjectDB Repository</name>
-			<url>http://m2.objectdb.com</url>
-		</repository>
+		<!-- for later use <repository> <id>tinyMediaManager</id> <name>tinyMediaManager 
+			provided libs</name> <url>http://repository-tinymediamanager.forge.cloudbees.com/release</url> 
+			</repository> -->
 		<repository>
 			<id>aparsons-maven-repository</id>
 			<url>https://github.com/aparsons/maven-repository/raw/master</url>
@@ -70,12 +62,12 @@
 			<artifactId>trakt-java</artifactId>
 			<version>4.2.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>resources</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>it.tidalwave.betterbeansbinding</groupId>
 			<artifactId>betterbeansbinding-swingbinding</artifactId>
@@ -112,9 +104,9 @@
 			<version>1.7.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.objectdb</groupId>
-			<artifactId>objectdb</artifactId>
-			<version>2.6.2</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2-mvstore</artifactId>
+			<version>1.4.187</version>
 		</dependency>
 		<dependency>
 			<groupId>org.kohsuke.redstone</groupId>

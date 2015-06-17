@@ -126,13 +126,13 @@ public class MovieMediaFilesPanel extends JPanel {
     // // libDvdNav? so workaround;
     // if (vlcF.matches(".*[äöüÄÖÜ].*")) {
     // LOGGER.debug("VLC: workaround: german umlauts found - use system player");
-    // Desktop.getDesktop().open(f);
+    // Desk4op.getDesktop().open(f);
     // }
     // else {
     // try {
     //
     // if (!vlcF.startsWith("/")) {
-    // // add the missing 3rd / if not start with one (eg windows)
+    // // add the missing 3rd / in not start with one (eg windows)
     // vlcF = "/" + vlcF;
     // }
     // String mrl = new FileMrl().file(vlcF).value();

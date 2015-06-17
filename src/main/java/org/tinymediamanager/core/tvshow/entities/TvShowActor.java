@@ -15,26 +15,29 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import javax.persistence.Embeddable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Class TvShowActor.
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class TvShowActor extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
+  @JsonProperty
   private String             name      = "";
+  @JsonProperty
   private String             character = "";
+  @JsonProperty
   private String             thumb     = "";
+  @JsonProperty
   private String             thumbPath = "";
 
   public TvShowActor() {

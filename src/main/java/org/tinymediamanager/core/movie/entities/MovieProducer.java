@@ -17,26 +17,29 @@ package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import javax.persistence.Embeddable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Class MovieProducer. This class is representing a movie producer
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MovieProducer extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
+  @JsonProperty
   private String             name      = "";
+  @JsonProperty
   private String             role      = "";
+  @JsonProperty
   private String             thumbUrl  = "";
+  @JsonProperty
   private String             thumbPath = "";
 
   public MovieProducer() {

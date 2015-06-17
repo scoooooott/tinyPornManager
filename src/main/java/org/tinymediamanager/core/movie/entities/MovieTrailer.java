@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 
-import javax.persistence.Embeddable;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -34,21 +32,29 @@ import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Class Trailer.
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MovieTrailer extends AbstractModelObject implements Comparable<MovieTrailer> {
   private static final Logger LOGGER   = LoggerFactory.getLogger(MovieTrailer.class);
 
+  @JsonProperty
   private String              name     = "";
+  @JsonProperty
   private String              url      = "";
+  @JsonProperty
   private String              quality  = "";
+  @JsonProperty
   private String              provider = "";
+  @JsonProperty
   private Boolean             inNfo    = Boolean.FALSE;
+  @JsonProperty
   private String              size     = "";
+  @JsonProperty
   private String              date     = "";
 
   /**

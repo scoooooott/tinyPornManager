@@ -15,9 +15,18 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
+import static org.tinymediamanager.core.Constants.*;
+
+import java.io.File;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -28,35 +37,20 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import java.io.File;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import static org.tinymediamanager.core.Constants.TMDBID;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Class MovieSet. This class is used to represent a movie set (which means a "collection" of n movies)
  * 
  * @author Manuel Laggner
  */
-@Entity
 public class MovieSet extends MediaEntity {
-  private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
-  @OneToMany(fetch = FetchType.EAGER)
-  private List<Movie>                    movies               = new ArrayList<Movie>(0);
+  @JsonProperty
+  private List<UUID>                     movieIds             = new ArrayList<UUID>();
 
-  @Transient
+  private List<Movie>                    movies               = new ArrayList<Movie>(0);
   private String                         titleSortable        = "";
 
   static {
@@ -77,6 +71,19 @@ public class MovieSet extends MediaEntity {
 
     // search for artwork in the artwork folder
     MovieSetArtworkHelper.findArtworkInArtworkFolder(this);
+  }
+
+  @Override
+  public void initializeAfterLoading() {
+    super.initializeAfterLoading();
+
+    // link with movies
+    for (UUID uuid : movieIds) {
+      Movie movie = MovieList.getInstance().lookupMovie(uuid);
+      if (movie != null) {
+        movies.add(movie);
+      }
+    }
   }
 
   @Override
@@ -156,6 +163,7 @@ public class MovieSet extends MediaEntity {
         return;
       }
       movies.add(movie);
+      movieIds.add(movie.getDbId());
       saveToDb();
     }
 
@@ -184,9 +192,11 @@ public class MovieSet extends MediaEntity {
       int index = Collections.binarySearch(movies, movie, MOVIE_SET_COMPARATOR);
       if (index < 0) {
         movies.add(-index - 1, movie);
+        movieIds.add(-index - 1, movie.getDbId());
       }
       else if (index >= 0) {
         movies.add(index, movie);
+        movieIds.add(index, movie.getDbId());
       }
 
       saveToDb();
@@ -226,6 +236,7 @@ public class MovieSet extends MediaEntity {
 
     synchronized (movies) {
       movies.remove(movie);
+      movieIds.remove(movie.getDbId());
       saveToDb();
     }
 
@@ -243,6 +254,11 @@ public class MovieSet extends MediaEntity {
   public void sortMovies() {
     synchronized (movies) {
       Collections.sort(movies, MOVIE_SET_COMPARATOR);
+      // rebuild the ID table the same way
+      movieIds.clear();
+      for (Movie movie : movies) {
+        movieIds.add(movie.getDbId());
+      }
     }
     firePropertyChange("movies", null, movies);
   }
@@ -271,6 +287,7 @@ public class MovieSet extends MediaEntity {
         }
       }
       movies.clear();
+      movieIds.clear();
       saveToDb();
     }
 
@@ -329,36 +346,12 @@ public class MovieSet extends MediaEntity {
 
   @Override
   public void saveToDb() {
-    // update/insert this movie set to the database
-    final EntityManager entityManager = getEntityManager();
-    readWriteLock.readLock().lock();
-    synchronized (entityManager) {
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.persist(this);
-      }
-    }
-    readWriteLock.readLock().unlock();
+    MovieList.getInstance().persistMovieSet(this);
   }
 
   @Override
   public void deleteFromDb() {
-    // delete this movie set from the database
-    final EntityManager entityManager = getEntityManager();
-    synchronized (entityManager) {
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.remove(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.remove(this);
-      }
-    }
+    MovieList.getInstance().removeMovieSetFromDb(this);
   }
 
   /**
@@ -381,6 +374,7 @@ public class MovieSet extends MediaEntity {
     for (Movie movie : new ArrayList<>(movies)) {
       if (!movieList.getMovies().contains(movie)) {
         movies.remove(movie);
+        movieIds.remove(movie.getDbId());
         dirty = true;
       }
     }
@@ -388,11 +382,6 @@ public class MovieSet extends MediaEntity {
     if (dirty) {
       saveToDb();
     }
-  }
-
-  @Override
-  protected EntityManager getEntityManager() {
-    return MovieModuleManager.getInstance().getEntityManager();
   }
 
   /*******************************************************************************

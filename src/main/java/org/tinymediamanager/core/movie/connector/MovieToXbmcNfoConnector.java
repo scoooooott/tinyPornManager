@@ -409,7 +409,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.trailer = "";
-    for (MovieTrailer trailer : new ArrayList<MovieTrailer>(movie.getTrailers())) {
+    for (MovieTrailer trailer : new ArrayList<MovieTrailer>(movie.getTrailer())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
         xbmc.trailer = prepareTrailerForXbmc(trailer);

@@ -34,14 +34,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -57,12 +49,13 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Class MediaFile.
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
   private static final Logger                        LOGGER             = LoggerFactory.getLogger(MediaFile.class);
 
@@ -102,34 +95,42 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public static final String                         VIDEO_3D_HSBS      = "3D HSBS";
   public static final String                         VIDEO_3D_HTAB      = "3D HTAB";
 
+  @JsonProperty
+  private MediaFileType                              type               = MediaFileType.UNKNOWN;
+  @JsonProperty
   private String                                     path               = "";
+  @JsonProperty
   private String                                     filename           = "";
+  @JsonProperty
   private long                                       filesize           = 0;
+  @JsonProperty
   private long                                       filedate           = 0;
+  @JsonProperty
   private String                                     videoCodec         = "";
+  @JsonProperty
   private String                                     containerFormat    = "";
+  @JsonProperty
   private String                                     exactVideoFormat   = "";
+  @JsonProperty
   private String                                     video3DFormat      = "";
+  @JsonProperty
   private int                                        videoWidth         = 0;
+  @JsonProperty
   private int                                        videoHeight        = 0;
+  @JsonProperty
   private int                                        overallBitRate     = 0;
+  @JsonProperty
   private int                                        durationInSecs     = 0;
+  @JsonProperty
   private int                                        stacking           = 0;
 
-  @Enumerated(EnumType.STRING)
-  private MediaFileType                              type               = MediaFileType.UNKNOWN;
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
   private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
   private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
 
-  @Transient
   private MediaInfo                                  mediaInfo;
-  @Transient
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
-
-  @Transient
   private File                                       file               = null;
 
   /**
@@ -261,7 +262,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public MediaFileType parseType() {
     String ext = getExtension().toLowerCase();
-    String name = getFilename().toLowerCase();
     String basename = FilenameUtils.getBaseName(getFilename());
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
 

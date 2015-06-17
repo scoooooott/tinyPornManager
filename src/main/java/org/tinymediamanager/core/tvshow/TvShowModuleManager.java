@@ -16,14 +16,22 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
-
-import javax.persistence.EntityManager;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.h2.mvstore.MVMap;
+import org.h2.mvstore.MVStore;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
-import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * The class TvShowModuleManager. Used to manage the tv show module
@@ -32,11 +40,17 @@ import org.tinymediamanager.core.TmmModuleManager;
  */
 public class TvShowModuleManager implements ITmmModule {
   private static final String        MODULE_TITLE = "TV show management";
-  // private static final String TV_SHOW_DB = "tvshow.odb";
+  private static final String        TV_SHOW_DB   = "tvshows";
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;
-  private EntityManager              entityManager;
+  private MVStore                    mvStore;
+  private ObjectMapper               objectMapper;
+  private ObjectWriter               tvShowObjectWriter;
+  private ObjectWriter               episodeObjectWriter;
+
+  private MVMap<UUID, String>        tvShowMap;
+  private MVMap<UUID, String>        episodeMap;
 
   private TvShowModuleManager() {
     enabled = false;
@@ -56,42 +70,36 @@ public class TvShowModuleManager implements ITmmModule {
 
   @Override
   public void startUp() throws Exception {
-    // // enhance if needed
-    // if (System.getProperty("tmmenhancer") != null) {
-    // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.entities.*");
-    // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.entities.*");
-    // com.objectdb.Enhancer.enhance("org.tinymediamanager.scraper.MediaTrailer");
-    // }
-    //
-    // // get a connection to the database
-    // entityManagerFactory = Persistence.createEntityManagerFactory(TV_SHOW_DB);
-    // try {
-    // entityManager = entityManagerFactory.createEntityManager();
-    // }
-    // catch (PersistenceException e) {
-    // if (e.getCause().getMessage().contains("does not match db file")) {
-    // // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
-    // FileUtils.deleteQuietly(new File(TV_SHOW_DB + "$"));
-    // entityManager = entityManagerFactory.createEntityManager();
-    // }
-    // else {
-    // // unknown
-    // throw (e);
-    // }
-    // }
+    // configure database
+    mvStore = new MVStore.Builder().fileName(TV_SHOW_DB).compressHigh().open();
+    mvStore.setAutoCommitDelay(2000); // 2 sec
+    mvStore.setRetentionTime(0);
+    mvStore.setReuseSpace(true);
 
-    // temp solution for a combined DB
-    entityManager = TmmModuleManager.getInstance().getEntityManager();
+    // configure JSON
+    objectMapper = new ObjectMapper();
+    objectMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);
+    objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
+    objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 
-    TvShowList.getInstance().loadTvShowsFromDatabase(entityManager);
+    tvShowObjectWriter = objectMapper.writerFor(TvShow.class);
+    episodeObjectWriter = objectMapper.writerFor(TvShowEpisode.class);
+
+    tvShowMap = mvStore.openMap("tvshows");
+    episodeMap = mvStore.openMap("episodes");
+
+    TvShowList.getInstance().loadTvShowsFromDatabase(tvShowMap, objectMapper);
+    TvShowList.getInstance().loadEpisodesFromDatabase(episodeMap, objectMapper);
+    TvShowList.getInstance().initDataAfterLoading();
     enabled = true;
   }
 
   @Override
   public void shutDown() throws Exception {
-    // EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-    // entityManager.close();
-    // entityManagerFactory.close();
+    mvStore.compactMoveChunks();
+    mvStore.close();
 
     enabled = false;
 
@@ -108,7 +116,27 @@ public class TvShowModuleManager implements ITmmModule {
     return enabled;
   }
 
-  public EntityManager getEntityManager() {
-    return entityManager;
+  void persistTvShow(TvShow tvShow) throws Exception {
+    String newValue = tvShowObjectWriter.writeValueAsString(tvShow);
+    String oldValue = tvShowMap.get(tvShow.getDbId());
+    if (!StringUtils.equals(newValue, oldValue)) {
+      tvShowMap.put(tvShow.getDbId(), newValue);
+    }
+  }
+
+  void removeTvShowFromDb(TvShow tvShow) throws Exception {
+    tvShowMap.remove(tvShow.getDbId());
+  }
+
+  void persistEpisode(TvShowEpisode episode) throws Exception {
+    String newValue = episodeObjectWriter.writeValueAsString(episode);
+    String oldValue = episodeMap.get(episode.getDbId());
+    if (!StringUtils.equals(newValue, oldValue)) {
+      episodeMap.put(episode.getDbId(), newValue);
+    }
+  }
+
+  void removeEpisodeFromDb(TvShowEpisode episode) throws Exception {
+    episodeMap.remove(episode.getDbId());
   }
 }

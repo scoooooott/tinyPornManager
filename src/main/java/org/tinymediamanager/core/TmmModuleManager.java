@@ -15,16 +15,9 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
-
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TmmModuleManager {
   private static final Logger     LOGGER = LoggerFactory.getLogger(TmmModuleManager.class);
-  private static final String     TMM_DB = "tmm.odb";
   private static TmmModuleManager instance;
 
-  private EntityManager           entityManager;
   private Set<ITmmModule>         modules;
 
   private TmmModuleManager() {
@@ -76,32 +67,7 @@ public class TmmModuleManager {
    * start up tmm - do initialization code here
    */
   public void startUp() {
-    // enhance if needed
-    if (System.getProperty("tmmenhancer") != null) {
-      // changed enhancer to be in sync with the build.xml
-      com.objectdb.Enhancer.enhance("-s org.tinymediamanager.core.*");
-      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.entities.*");
-      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.entities.*");
-      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.entities.*");
-      // com.objectdb.Enhancer.enhance("org.tinymediamanager.scraper.MediaTrailer");
-    }
 
-    // get a connection to the database
-    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(TMM_DB);
-    try {
-      entityManager = entityManagerFactory.createEntityManager();
-    }
-    catch (PersistenceException e) {
-      if (e.getCause().getMessage().contains("does not match db file")) {
-        // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
-        FileUtils.deleteQuietly(new File(TMM_DB + "$"));
-        entityManager = entityManagerFactory.createEntityManager();
-      }
-      else {
-        // unknown
-        throw (e);
-      }
-    }
   }
 
   /**
@@ -118,17 +84,5 @@ public class TmmModuleManager {
         }
       }
     }
-
-    try {
-      EntityManagerFactory emf = entityManager.getEntityManagerFactory();
-      entityManager.close();
-      emf.close();
-    }
-    catch (Exception e) {
-    }
-  }
-
-  public EntityManager getEntityManager() {
-    return entityManager;
   }
 }

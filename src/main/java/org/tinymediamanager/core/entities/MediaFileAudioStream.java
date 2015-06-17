@@ -15,21 +15,23 @@
  */
 package org.tinymediamanager.core.entities;
 
-import javax.persistence.Embeddable;
-
 import org.tinymediamanager.core.AbstractModelObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The class MediaFileAudioStream
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MediaFileAudioStream extends AbstractModelObject {
-
+  @JsonProperty
   private String codec    = "";
+  @JsonProperty
   private String channels = "";
+  @JsonProperty
   private int    bitrate  = 0;
+  @JsonProperty
   private String language = "";
 
   public MediaFileAudioStream() {

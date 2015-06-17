@@ -15,6 +15,21 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
+import static org.tinymediamanager.core.Constants.*;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,69 +43,60 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.core.Constants.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Class TvShowEpisode.
  * 
  * @author Manuel Laggner
  */
-@Entity
-@Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
   private static final Logger LOGGER      = LoggerFactory.getLogger(TvShowEpisode.class);
 
-  @ManyToOne
-  private TvShow              tvShow      = null;
+  @JsonProperty
   private int                 episode     = -1;
+  @JsonProperty
   private int                 season      = -1;
+  @JsonProperty
   private int                 dvdSeason   = -1;
+  @JsonProperty
   private int                 dvdEpisode  = -1;
+  @JsonProperty
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                firstAired  = null;
+  @JsonProperty
   private String              director    = "";
+  @JsonProperty
   private String              writer      = "";
+  @JsonProperty
   private boolean             disc        = false;
+  @JsonProperty
   private boolean             watched     = false;
+  @JsonProperty
   private int                 votes       = 0;
+  @JsonProperty
   private boolean             subtitles   = false;
+  @JsonProperty
   private boolean             isDvdOrder  = false;
+  @JsonProperty
+  private UUID                tvShowId    = null;
 
-  @Transient
-  private boolean             newlyAdded  = false;
-
-  @Transient
-  private Date                lastWatched = null;
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonProperty
   private List<TvShowActor>   actors      = new ArrayList<TvShowActor>(0);
+  @JsonProperty
   private List<String>        tags        = new ArrayList<String>(0);
+
+  private TvShow              tvShow      = null;
+  private boolean             newlyAdded  = false;
+  private Date                lastWatched = null;
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -160,17 +166,14 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     watched = source.watched;
     votes = source.votes;
     subtitles = source.subtitles;
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      actors.addAll(source.actors);
-    }
+    actors.addAll(source.actors);
   }
 
   public Date getFirstAired() {
     return firstAired;
   }
 
+  @JsonIgnore
   public void setFirstAired(Date newValue) {
     Date oldValue = this.firstAired;
     this.firstAired = newValue;
@@ -266,7 +269,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setTvShow(TvShow newValue) {
     TvShow oldValue = this.tvShow;
     this.tvShow = newValue;
+    this.tvShowId = tvShow.getDbId();
     firePropertyChange(TV_SHOW, oldValue, newValue);
+  }
+
+  public UUID getTvShowDbId() {
+    return tvShowId;
   }
 
   public int getEpisode() {
@@ -565,11 +573,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      actors.add(obj);
-    }
+    actors.add(obj);
+
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -600,11 +605,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void removeActor(TvShowActor obj) {
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      actors.remove(obj);
-    }
+    actors.remove(obj);
+
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -616,23 +618,25 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
-    // actors are (like media files) proxied by objectdb;
-    // this is why we need a lock here
-    synchronized (getEntityManager()) {
-      List<TvShowActor> tvShowActors = new ArrayList<TvShowActor>(getTvShow().getActors());
-      // first add the new ones
-      for (TvShowActor actor : newActors) {
-        if (!tvShowActors.contains(actor) && !actors.contains(actor)) {
-          actors.add(actor);
-        }
-      }
+    List<TvShowActor> tvShowActors = new ArrayList<TvShowActor>();
 
-      // second remove unused
-      for (int i = actors.size() - 1; i >= 0; i--) {
-        TvShowActor actor = actors.get(i);
-        if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
-          actors.remove(actor);
-        }
+    // tvShow is null while loading
+    if (getTvShow() != null) {
+      tvShowActors.addAll(getTvShow().getActors());
+    }
+
+    // first add the new ones
+    for (TvShowActor actor : newActors) {
+      if (!tvShowActors.contains(actor) && !actors.contains(actor)) {
+        actors.add(actor);
+      }
+    }
+
+    // second remove unused
+    for (int i = actors.size() - 1; i >= 0; i--) {
+      TvShowActor actor = actors.get(i);
+      if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
+        actors.remove(actor);
       }
     }
 
@@ -873,37 +877,15 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       writeNFO();
     }
 
-    // update/insert this movie to the database
-    final EntityManager entityManager = getEntityManager();
-    readWriteLock.readLock().lock();
-    synchronized (entityManager) {
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.persist(this);
-      }
-    }
+    // update/insert this episode to the database
+    TvShowList.getInstance().persistEpisode(this);
     dirty = false;
-    readWriteLock.readLock().unlock();
   }
 
   @Override
   public void deleteFromDb() {
-    // delete this movie from the database
-    final EntityManager entityManager = getEntityManager();
-    synchronized (entityManager) {
-      if (!entityManager.getTransaction().isActive()) {
-        entityManager.getTransaction().begin();
-        entityManager.remove(this);
-        entityManager.getTransaction().commit();
-      }
-      else {
-        entityManager.remove(this);
-      }
-    }
+    // delete this episode from the database
+    TvShowList.getInstance().removeEpisodeFromDb(this);
   }
 
   public boolean isNewlyAdded() {
@@ -1090,10 +1072,5 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return result;
-  }
-
-  @Override
-  protected EntityManager getEntityManager() {
-    return TvShowModuleManager.getInstance().getEntityManager();
   }
 }

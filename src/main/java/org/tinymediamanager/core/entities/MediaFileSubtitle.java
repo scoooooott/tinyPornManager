@@ -15,20 +15,21 @@
  */
 package org.tinymediamanager.core.entities;
 
-import javax.persistence.Embeddable;
-
 import org.tinymediamanager.core.AbstractModelObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The class MediaFileAudioStream
  * 
  * @author Manuel Laggner
  */
-@Embeddable
 public class MediaFileSubtitle extends AbstractModelObject implements Comparable<MediaFileSubtitle> {
-
+  @JsonProperty
   private String  codec    = "";
+  @JsonProperty
   private String  language = "";
+  @JsonProperty
   private boolean forced   = false;
 
   public MediaFileSubtitle() {
