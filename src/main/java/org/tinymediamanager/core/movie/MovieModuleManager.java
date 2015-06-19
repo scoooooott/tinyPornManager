@@ -19,9 +19,9 @@ import java.io.File;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
-import org.h2.util.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
@@ -121,8 +121,15 @@ public class MovieModuleManager implements ITmmModule {
   void persistMovie(Movie movie) throws Exception {
     String newValue = movieObjectWriter.writeValueAsString(movie);
     String oldValue = movieMap.get(movie.getDbId());
+
     if (!StringUtils.equals(newValue, oldValue)) {
+      // write movie to DB
       movieMap.put(movie.getDbId(), newValue);
+
+      // write NFO if needed
+      if (StringUtils.isNotBlank(oldValue)) {
+        movie.writeNFO();
+      }
     }
   }
 

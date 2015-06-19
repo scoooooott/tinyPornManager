@@ -1790,11 +1790,6 @@ public class Movie extends MediaEntity {
 
   @Override
   public void saveToDb() {
-    // rewrite NFO (needed before saving)
-    if (dirty) {
-      writeNFO();
-    }
-
     // update/insert this movie to the database
     MovieList.getInstance().persistMovie(this);
   }

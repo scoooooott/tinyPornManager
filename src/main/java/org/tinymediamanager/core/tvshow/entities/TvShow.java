@@ -1445,17 +1445,13 @@ public class TvShow extends MediaEntity {
 
   @Override
   public void saveToDb() {
-    // rewrite NFO (needed before save)
-    if (dirty) {
-      writeNFO();
-    }
-
+    // update/insert this TV show to the database
     TvShowList.getInstance().persistTvShow(this);
-    dirty = false;
   }
 
   @Override
   public void deleteFromDb() {
+    // remove this TV show from the database
     TvShowList.getInstance().removeTvShow(this);
   }
 

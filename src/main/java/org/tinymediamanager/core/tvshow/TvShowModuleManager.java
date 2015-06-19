@@ -119,8 +119,15 @@ public class TvShowModuleManager implements ITmmModule {
   void persistTvShow(TvShow tvShow) throws Exception {
     String newValue = tvShowObjectWriter.writeValueAsString(tvShow);
     String oldValue = tvShowMap.get(tvShow.getDbId());
+
     if (!StringUtils.equals(newValue, oldValue)) {
+      // write to DB
       tvShowMap.put(tvShow.getDbId(), newValue);
+
+      // write NFO if needed
+      if (StringUtils.isNotBlank(oldValue)) {
+        tvShow.writeNFO();
+      }
     }
   }
 
@@ -131,8 +138,14 @@ public class TvShowModuleManager implements ITmmModule {
   void persistEpisode(TvShowEpisode episode) throws Exception {
     String newValue = episodeObjectWriter.writeValueAsString(episode);
     String oldValue = episodeMap.get(episode.getDbId());
+
     if (!StringUtils.equals(newValue, oldValue)) {
       episodeMap.put(episode.getDbId(), newValue);
+
+      // write NFO if needed
+      if (StringUtils.isNotBlank(oldValue)) {
+        episode.writeNFO();
+      }
     }
   }
 

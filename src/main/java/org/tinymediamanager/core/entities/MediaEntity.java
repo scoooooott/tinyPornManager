@@ -18,8 +18,6 @@ package org.tinymediamanager.core.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,56 +47,44 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public abstract class MediaEntity extends AbstractModelObject {
-  protected static Comparator<MediaFile>  mediaFileComparator    = null;
-  // dirty flag listener
-  protected static PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-                                                                   @Override
-                                                                   public void propertyChange(PropertyChangeEvent evt) {
-                                                                     if (evt.getSource() instanceof MediaEntity) {
-                                                                       ((MediaEntity) evt.getSource()).dirty = true;
-                                                                     }
-                                                                   }
-                                                                 };
+  protected static Comparator<MediaFile> mediaFileComparator = null;
 
   /** The id for the database. */
-  protected UUID                          dbId                   = UUID.randomUUID();
+  protected UUID                         dbId                = UUID.randomUUID();
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>       ids                    = new HashMap<String, Object>(0);
+  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>(0);
 
   @JsonProperty
-  protected String                        title                  = "";
+  protected String                       title               = "";
   @JsonProperty
-  protected String                        originalTitle          = "";
+  protected String                       originalTitle       = "";
   @JsonProperty
-  protected String                        year                   = "";
+  protected String                       year                = "";
   @JsonProperty
-  protected String                        plot                   = "";
+  protected String                       plot                = "";
   @JsonProperty
-  protected float                         rating                 = 0f;
+  protected float                        rating              = 0f;
   @JsonProperty
-  protected String                        path                   = "";
+  protected String                       path                = "";
   @JsonProperty
-  protected Date                          dateAdded              = new Date();
+  protected Date                         dateAdded           = new Date();
   @JsonProperty
-  protected String                        productionCompany      = "";
+  protected String                       productionCompany   = "";
   @JsonProperty
-  protected boolean                       scraped                = false;
+  protected boolean                      scraped             = false;
 
   @JsonProperty
-  private List<MediaFile>                 mediaFiles             = new ArrayList<MediaFile>();
+  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
   @JsonProperty
-  protected Map<MediaFileType, String>    artworkUrlMap          = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String>   artworkUrlMap       = new HashMap<MediaFileType, String>();
 
-  protected boolean                       duplicate              = false;
-  public boolean                          justAdded              = false;
-  protected boolean                       dirty                  = false;
-  protected ReadWriteLock                 readWriteLock          = new ReentrantReadWriteLock();
+  protected boolean                      duplicate           = false;
+  public boolean                         justAdded           = false;
+  protected ReadWriteLock                readWriteLock       = new ReentrantReadWriteLock();
 
   public MediaEntity() {
-    // add this ME to the dirty listener
-    addPropertyChangeListener(propertyChangeListener);
   }
 
   /**

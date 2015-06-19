@@ -872,14 +872,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public void saveToDb() {
-    // rewrite NFO (needed before saving)
-    if (dirty) {
-      writeNFO();
-    }
-
     // update/insert this episode to the database
     TvShowList.getInstance().persistEpisode(this);
-    dirty = false;
   }
 
   @Override
