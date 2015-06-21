@@ -656,9 +656,11 @@ public class MovieRenamer {
               continue;
             }
           }
-          MediaFile pos = new MediaFile(mf);
-          pos.setFile(new File(newMovieDir, newPosterName));
-          newFiles.add(pos);
+          if (StringUtils.isNoneBlank(newMovieDir, newPosterName)) {
+            MediaFile pos = new MediaFile(mf);
+            pos.setFile(new File(newMovieDir, newPosterName));
+            newFiles.add(pos);
+          }
         }
         break;
 
@@ -690,9 +692,11 @@ public class MovieRenamer {
               continue;
             }
           }
-          MediaFile fan = new MediaFile(mf);
-          fan.setFile(new File(newMovieDir, newFanartName));
-          newFiles.add(fan);
+          if (StringUtils.isNoneBlank(newMovieDir, newFanartName)) {
+            MediaFile fan = new MediaFile(mf);
+            fan.setFile(new File(newMovieDir, newFanartName));
+            newFiles.add(fan);
+          }
         }
         break;
       // *************
