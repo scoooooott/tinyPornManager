@@ -383,6 +383,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (Movie movie : moviesToEdit) {
               movie.saveToDb();
+              movie.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -400,6 +401,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
           if (changed) {
             for (Movie movie : moviesToEdit) {
               movie.saveToDb();
+              movie.writeNFO();
             }
             // if configured - sync with trakt.tv
             if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {

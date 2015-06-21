@@ -42,7 +42,7 @@ public class MovieModuleManager implements ITmmModule {
   public static final MovieSettings MOVIE_SETTINGS = Globals.settings.getMovieSettings();
 
   private static final String       MODULE_TITLE   = "Movie management";
-  private static final String       MOVIE_DB       = "movies";
+  private static final String       MOVIE_DB       = "movies.db";
   private static MovieModuleManager instance;
 
   private boolean                   enabled;
@@ -125,11 +125,6 @@ public class MovieModuleManager implements ITmmModule {
     if (!StringUtils.equals(newValue, oldValue)) {
       // write movie to DB
       movieMap.put(movie.getDbId(), newValue);
-
-      // write NFO if needed
-      if (StringUtils.isNotBlank(oldValue)) {
-        movie.writeNFO();
-      }
     }
   }
 

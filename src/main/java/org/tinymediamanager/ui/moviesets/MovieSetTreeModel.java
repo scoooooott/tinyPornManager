@@ -341,6 +341,7 @@ public class MovieSetTreeModel implements TreeModel {
         for (Movie movie : movieSet.getMovies()) {
           movie.setMovieSet(null);
           movie.saveToDb();
+          movie.writeNFO();
           nodeMap.remove(movie);
         }
         movieSet.removeAllMovies();

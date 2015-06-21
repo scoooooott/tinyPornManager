@@ -284,6 +284,7 @@ public class MovieSet extends MediaEntity {
         if (movie.getMovieSet() != null) {
           movie.setMovieSet(null);
           movie.saveToDb();
+          movie.writeNFO();
         }
       }
       movies.clear();
@@ -361,6 +362,7 @@ public class MovieSet extends MediaEntity {
     for (Movie movie : new ArrayList<>(movies)) {
       movie.setSortTitleFromMovieSet();
       movie.saveToDb();
+      movie.writeNFO();
     }
   }
 

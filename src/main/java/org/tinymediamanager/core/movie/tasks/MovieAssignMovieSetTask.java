@@ -124,6 +124,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
             movieSet.insertMovie(movie);
             movieSet.updateMovieSorttitle();
             movie.saveToDb();
+            movie.writeNFO();
           }
         }
 

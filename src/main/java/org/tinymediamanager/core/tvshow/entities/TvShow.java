@@ -597,6 +597,7 @@ public class TvShow extends MediaEntity {
 
     // update DB
     saveToDb();
+    writeNFO();
   }
 
   /**

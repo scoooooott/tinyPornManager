@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
@@ -26,10 +30,6 @@ import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The class MovieArtworkHelper. A helper class for managing movie artwork

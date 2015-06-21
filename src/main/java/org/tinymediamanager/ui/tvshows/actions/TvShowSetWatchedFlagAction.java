@@ -45,6 +45,7 @@ public class TvShowSetWatchedFlagAction extends AbstractAction {
     for (TvShowEpisode episode : selectedEpisodes) {
       episode.setWatched(true);
       episode.saveToDb();
+      episode.writeNFO();
     }
   }
 }

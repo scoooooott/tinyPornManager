@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  */
 public class TvShowModuleManager implements ITmmModule {
   private static final String        MODULE_TITLE = "TV show management";
-  private static final String        TV_SHOW_DB   = "tvshows";
+  private static final String        TV_SHOW_DB   = "tvshows.db";
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;
@@ -123,11 +123,6 @@ public class TvShowModuleManager implements ITmmModule {
     if (!StringUtils.equals(newValue, oldValue)) {
       // write to DB
       tvShowMap.put(tvShow.getDbId(), newValue);
-
-      // write NFO if needed
-      if (StringUtils.isNotBlank(oldValue)) {
-        tvShow.writeNFO();
-      }
     }
   }
 
@@ -141,11 +136,6 @@ public class TvShowModuleManager implements ITmmModule {
 
     if (!StringUtils.equals(newValue, oldValue)) {
       episodeMap.put(episode.getDbId(), newValue);
-
-      // write NFO if needed
-      if (StringUtils.isNotBlank(oldValue)) {
-        episode.writeNFO();
-      }
     }
   }
 

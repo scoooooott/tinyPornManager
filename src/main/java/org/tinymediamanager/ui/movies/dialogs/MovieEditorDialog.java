@@ -1070,6 +1070,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       movieToEdit.saveToDb();
+      movieToEdit.writeNFO();
 
       // if configured - sync with trakt.tv
       if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {

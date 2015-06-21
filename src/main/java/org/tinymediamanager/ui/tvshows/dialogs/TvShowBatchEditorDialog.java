@@ -296,6 +296,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (TvShow tvShow : tvShowsToEdit) {
               tvShow.saveToDb();
+              tvShow.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -305,6 +306,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (TvShowEpisode episode : tvShowEpisodesToEdit) {
               episode.saveToDb();
+              episode.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -333,6 +335,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (TvShow tvShow : tvShowsToEdit) {
               tvShow.saveToDb();
+              tvShow.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -342,6 +345,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (TvShowEpisode episode : tvShowEpisodesToEdit) {
               episode.saveToDb();
+              episode.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }

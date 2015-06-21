@@ -35,4 +35,5 @@ tmm.uuid
 backup
 build
 dist
-
+movies.db
+tvshows.db

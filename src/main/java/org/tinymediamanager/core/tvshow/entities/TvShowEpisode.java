@@ -473,6 +473,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // update DB
     saveToDb();
+    writeNFO();
 
     // should we write a new thumb?
     if (writeNewThumb) {
@@ -494,9 +495,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
-    // for (TvShowEpisode episode : episodesInNfo) {
-    // episode.saveToDb();
-    // }
   }
 
   /**

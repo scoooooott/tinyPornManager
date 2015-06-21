@@ -15,10 +15,30 @@
  */
 package org.tinymediamanager.ui.moviesets.dialogs;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.border.EmptyBorder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -48,17 +68,10 @@ import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieSetEditorDialog. Edit movie sets
@@ -459,6 +472,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         if (!moviesInSet.contains(movie)) {
           movie.setMovieSet(null);
           movie.saveToDb();
+          movie.writeNFO();
           movieSetToEdit.removeMovie(movie);
         }
       }
@@ -468,12 +482,14 @@ public class MovieSetEditorDialog extends TmmDialog {
         Movie movie = moviesInSet.get(i);
         movie.setSortTitle(movieSetToEdit.getTitle() + String.format("%02d", i + 1));
         movie.saveToDb();
+        movie.writeNFO();
       }
 
       // remove removed movies
       for (Movie movie : removedMovies) {
         movie.removeFromMovieSet();
         movie.saveToDb();
+        movie.writeNFO();
         movieSetToEdit.removeMovie(movie);
       }
 

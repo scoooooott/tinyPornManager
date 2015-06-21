@@ -897,9 +897,6 @@ public class Movie extends MediaEntity {
     // set scraped
     setScraped(true);
 
-    // update DB
-    saveToDb();
-
     // create MovieSet
     if (config.isCollection()) {
       int col = metadata.getIntegerValue(MediaMetadata.TMDBID_SET);
@@ -938,10 +935,13 @@ public class Movie extends MediaEntity {
           setMovieSet(movieSet);
           movieSet.insertMovie(this);
           movieSet.updateMovieSorttitle();
-          // saveToDb();
         }
       }
     }
+
+    // update DB
+    saveToDb();
+    writeNFO();
   }
 
   /**
@@ -1000,6 +1000,7 @@ public class Movie extends MediaEntity {
 
     // persist
     saveToDb();
+    writeNFO();
   }
 
   /**

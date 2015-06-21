@@ -223,6 +223,7 @@ public class TraktTv implements IMediaProvider {
 
           if (dirty) {
             tmmMovie.saveToDb();
+            tmmMovie.writeNFO();
           }
 
           // remove it from our list (no need to add)
@@ -448,6 +449,7 @@ public class TraktTv implements IMediaProvider {
 
           if (dirty) {
             tmmMovie.saveToDb();
+            tmmMovie.writeNFO();
           }
         }
       }
@@ -616,6 +618,7 @@ public class TraktTv implements IMediaProvider {
 
           if (dirty) {
             tmmShow.saveToDb();
+            tmmShow.writeNFO();
           }
 
         }
@@ -728,6 +731,7 @@ public class TraktTv implements IMediaProvider {
 
           if (dirty) {
             tmmShow.saveToDb();
+            tmmShow.writeNFO();
           }
         }
       }

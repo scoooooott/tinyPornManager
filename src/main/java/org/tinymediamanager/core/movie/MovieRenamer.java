@@ -241,8 +241,7 @@ public class MovieRenamer {
                 e.getLocalizedMessage() }));
           }
           if (!ok) {
-            // FIXME: when we were not able to rename folder, display error msg
-            // and abort!!!
+            // FIXME: when we were not able to rename folder, display error msg and abort!!!
             LOGGER.error("Could not move to destination '" + destDir + "' - NOT renaming folder");
             return;
           }
