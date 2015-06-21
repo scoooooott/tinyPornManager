@@ -64,7 +64,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -73,6 +72,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -80,6 +80,7 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -322,8 +323,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
-      JComboBox cbScraper = new JComboBox(TvShowScrapers.values());
-      cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
+      MediaScraperComboBox cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
+      MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
+      cbScraper.setSelectedItem(defaultScraper);
       bottomPanel.add(cbScraper, "2, 2, fill, default");
 
       JButton btnScrape = new JButton(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$

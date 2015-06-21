@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.ScraperType;
 
 /**
  * The Class MovieSearchAndScrapeOptions.
@@ -47,7 +46,7 @@ public class MovieSearchAndScrapeOptions {
   public void loadDefaults() {
     scraperMetadataConfig = Globals.settings.getMovieScraperMetadataConfig();
     // metadata
-    metadataScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
+    metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 
     // artwork
     if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {

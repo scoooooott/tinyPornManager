@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -32,12 +31,14 @@ import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowArtworkScrapers;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -60,7 +61,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
   private boolean                      startScrape                 = true;
 
   /** UI components */
-  private JComboBox                    cbMetadataScraper;
+  private MediaScraperComboBox         cbMetadataScraper;
   private JCheckBox                    chckbxTheTVDb;
   private JCheckBox                    chckbxFanartTv;
 
@@ -107,7 +108,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
     panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
 
-    cbMetadataScraper = new JComboBox(TvShowScrapers.values());
+    cbMetadataScraper = new MediaScraperComboBox(TvShowList.getInstance().getAvailableMediaScrapers());
     panelScraper.add(cbMetadataScraper, "4, 2, fill, default");
 
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
@@ -160,7 +161,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     // set data
 
     // metadataprovider
-    TvShowScrapers defaultScraper = Globals.settings.getTvShowSettings().getTvShowScraper();
+    MediaScraper defaultScraper = TvShowList.getInstance().getDefaultMediaScraper();
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork provider
@@ -179,7 +180,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
    */
   public TvShowSearchAndScrapeOptions getTvShowSearchAndScrapeConfig() {
     // metadata provider
-    tvShowSearchAndScrapeConfig.setMetadataScraper((TvShowScrapers) cbMetadataScraper.getSelectedItem());
+    tvShowSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork provider
     if (chckbxTheTVDb.isSelected()) {

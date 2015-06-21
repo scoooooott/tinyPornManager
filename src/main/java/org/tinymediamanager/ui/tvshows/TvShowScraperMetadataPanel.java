@@ -31,6 +31,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 
 /**
  * The Class TvShowScraperMetadataPanel.
@@ -65,11 +66,26 @@ public class TvShowScraperMetadataPanel extends JPanel {
    */
   public TvShowScraperMetadataPanel(TvShowScraperMetadataConfig config) {
     this.config = config;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"),
-        FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"),
-        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] {
+        FormSpecs.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("left:default"),
+        ColumnSpec.decode("15dlu"),
+        ColumnSpec.decode("left:default"),
+        ColumnSpec.decode("15dlu"),
+        ColumnSpec.decode("left:default"),
+        ColumnSpec.decode("15dlu"),
+        ColumnSpec.decode("left:default"),
+        FormSpecs.RELATED_GAP_COLSPEC,},
+      new RowSpec[] {
+        FormSpecs.RELATED_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.RELATED_GAP_ROWSPEC,}));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
@@ -105,7 +121,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
     add(chckbxArtwork, "6, 6");
 
     chckbxScrapeEpisodes = new JCheckBox(BUNDLE.getString("tvshow.scrapeepisodeseasondata")); //$NON-NLS-1$
-    add(chckbxScrapeEpisodes, "2, 8, 7, 1");
+    add(chckbxScrapeEpisodes, "2, 8, 7, 1, fill, default");
 
     initDataBindings();
   }

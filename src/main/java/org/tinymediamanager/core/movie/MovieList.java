@@ -584,57 +584,6 @@ public class MovieList extends AbstractModelObject {
       scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
     }
     return (IMovieMetadataProvider) scraper.getMediaProvider();
-
-    // MediaScraper mediaScraper = null;
-    // switch (scraper) {
-    // case OFDB:
-    // LOGGER.debug("get instance of OfdbMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(OFDBID, ScraperType.MOVIE);
-    // break;
-    //
-    // case ZELLULOID:
-    // LOGGER.debug("get instance of ZelluloidMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(ZELLULOIDID, ScraperType.MOVIE);
-    // break;
-    //
-    // case MOVIEMETER:
-    // LOGGER.debug("get instance of MoviemeterMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(MOVIEMETERID, ScraperType.MOVIE);
-    // break;
-    //
-    // case IMDB:
-    // LOGGER.debug("get instance of ImdbMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(IMDBID, ScraperType.MOVIE);
-    // break;
-    //
-    // case ROTTENTOMATOES:
-    // LOGGER.debug("get instance of RottenTomatoesMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(ROTTENTOMATOESID, ScraperType.MOVIE);
-    // break;
-    //
-    // case TMDB:
-    // default:
-    // LOGGER.debug("get instance of TmdbMetadataProvider");
-    // mediaScraper = MediaScraper.getMediaScraperById(TMDBID, ScraperType.MOVIE);
-    // }
-    //
-    // metadataProvider = (IMovieMetadataProvider) PluginManager.getInstance().getPlugin(mediaScraper);
-
-    //
-    // try {
-    // metadataProvider = new XbmcMetadataProvider(new
-    // XbmcScraperParser().parseScraper(new
-    // File("xbmc_scraper/metadata.imdb.com/imdb.xml")));
-    // metadataProvider = new XbmcMetadataProvider(new
-    // XbmcScraperParser().parseScraper(new
-    // File("xbmc_scraper/metadata.imdb.de/imdb_de.xml")));
-    // } catch (Exception e) {
-    // LOGGER.error("tried to get xmbc scraper", e);
-    // }
-
-    // }
-
-    // return metadataProvider;
   }
 
   /**
@@ -653,33 +602,6 @@ public class MovieList extends AbstractModelObject {
       scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
     }
     return (IMovieMetadataProvider) scraper.getMediaProvider();
-    // // FIXME: rework scrapers/providerInfo to contain Movie(Tv)Scrapers enums
-    // if (providerId == null || providerId.isEmpty()) {
-    // // default
-    // return getMetadataProvider(MovieScrapers.TMDB);
-    // }
-    // if (providerId.equals(Constants.TMDBID)) {
-    // return getMetadataProvider(MovieScrapers.TMDB);
-    // }
-    // else if (providerId.equals(Constants.IMDBID)) {
-    // return getMetadataProvider(MovieScrapers.IMDB);
-    // }
-    // else if (providerId.equals(Constants.MOVIEMETERID)) {
-    // return getMetadataProvider(MovieScrapers.MOVIEMETER);
-    // }
-    // else if (providerId.equals(Constants.OFDBID)) {
-    // return getMetadataProvider(MovieScrapers.OFDB);
-    // }
-    // else if (providerId.equals(Constants.ZELLULOIDID)) {
-    // return getMetadataProvider(MovieScrapers.ZELLULOID);
-    // }
-    // else if (providerId.equals(Constants.ROTTENTOMATOESID)) {
-    // return getMetadataProvider(MovieScrapers.ROTTENTOMATOES);
-    // }
-    // else {
-    // // default
-    // return getMetadataProvider(MovieScrapers.TMDB);
-    // }
   }
 
   /**

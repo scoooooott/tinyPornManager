@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.MediaScraper;
 
 /**
  * The Class TvShowSearchAndScrapeOptions.
@@ -27,11 +28,8 @@ import org.tinymediamanager.Globals;
  */
 public class TvShowSearchAndScrapeOptions {
   private TvShowScraperMetadataConfig scraperMetadataConfig;
-  private TvShowScrapers              metadataScraper;
+  private MediaScraper                metadataScraper;
   private List<TvShowArtworkScrapers> artworkScrapers = new ArrayList<TvShowArtworkScrapers>();
-
-  /** The trailer providers. */
-  // private List<TvShowTrailerScrapers> trailerScrapers = new ArrayList<TvShowTrailerScrapers>();
 
   /**
    * Instantiates a new movie search and scrape config.
@@ -45,8 +43,9 @@ public class TvShowSearchAndScrapeOptions {
   public void loadDefaults() {
     scraperMetadataConfig = Globals.settings.getTvShowScraperMetadataConfig();
     // metadata
-    metadataScraper = Globals.settings.getTvShowSettings().getTvShowScraper();
-    if (metadataScraper == TvShowScrapers.ANIDB) {
+    metadataScraper = TvShowList.getInstance().getDefaultMediaScraper();
+
+    if ("aniDb".equals(metadataScraper.getId())) {
       artworkScrapers.add(TvShowArtworkScrapers.ANIDB);
     }
     if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
@@ -71,7 +70,7 @@ public class TvShowSearchAndScrapeOptions {
    * 
    * @return the metadata scraper
    */
-  public TvShowScrapers getMetadataScraper() {
+  public MediaScraper getMetadataScraper() {
     return metadataScraper;
   }
 
@@ -83,15 +82,6 @@ public class TvShowSearchAndScrapeOptions {
   public List<TvShowArtworkScrapers> getArtworkScrapers() {
     return artworkScrapers;
   }
-
-  // /**
-  // * Gets the trailer scrapers.
-  // *
-  // * @return the trailer scrapers
-  // */
-  // public List<MovieTrailerScrapers> getTrailerScrapers() {
-  // return trailerScrapers;
-  // }
 
   /**
    * Sets the scraper metadata config.
@@ -109,7 +99,7 @@ public class TvShowSearchAndScrapeOptions {
    * @param metadataScraper
    *          the new metadata scraper
    */
-  public void setMetadataScraper(TvShowScrapers metadataScraper) {
+  public void setMetadataScraper(MediaScraper metadataScraper) {
     this.metadataScraper = metadataScraper;
   }
 

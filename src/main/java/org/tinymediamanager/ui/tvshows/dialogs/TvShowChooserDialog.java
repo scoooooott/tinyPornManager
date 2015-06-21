@@ -15,10 +15,37 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -30,17 +57,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -50,24 +78,17 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class TvShowChooserDialog.
@@ -91,7 +112,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   /** UI components */
   private final JPanel                contentPanel          = new JPanel();
   private JTextField                  textFieldSearchString;
-  private JComboBox                   cbScraper;
+  private MediaScraperComboBox        cbScraper;
   private JComboBox                   cbLanguage;
   private JTable                      table;
   private JTextArea                   lblTvShowName;
@@ -156,8 +177,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox(TvShowScrapers.values());
-        cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
+        cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
+        MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
+        cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
       }
@@ -277,7 +299,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "2, 9, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "2, 9, default, fill");
     }
 
     {
@@ -573,8 +595,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      TvShowScrapers selectedScraper = (TvShowScrapers) cbScraper.getSelectedItem();
-      metadataProvider = TvShowList.getInstance().getMetadataProvider(selectedScraper);
+      MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
+      PluginManager pm = PluginManager.getInstance();
+      metadataProvider = (ITvShowMetadataProvider) pm.getPlugin(selectedScraper);
       searchTvShow(textFieldSearchString.getText());
     }
   }

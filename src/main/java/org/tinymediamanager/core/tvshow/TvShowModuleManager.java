@@ -39,8 +39,10 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class TvShowModuleManager implements ITmmModule {
-  private static final String        MODULE_TITLE = "TV show management";
-  private static final String        TV_SHOW_DB   = "tvshows.db";
+  public static final TvShowSettings TV_SHOW_SETTINGS = Globals.settings.getTvShowSettings();
+
+  private static final String        MODULE_TITLE     = "TV show management";
+  private static final String        TV_SHOW_DB       = "tvshows.db";
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;

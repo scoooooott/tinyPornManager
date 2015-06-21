@@ -22,8 +22,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
 
@@ -49,7 +51,7 @@ public class TvShowSettings extends AbstractModelObject {
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
   private final List<String>  tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
-  private TvShowScrapers      tvShowScraper               = TvShowScrapers.TVDB;
+  private String              tvShowScraper               = Constants.TVDBID;
   private boolean             scrapeBestImage             = true;
   private MediaLanguages      scraperLanguage             = MediaLanguages.en;
   private CountryCode         certificationCountry        = CountryCode.US;
@@ -87,12 +89,15 @@ public class TvShowSettings extends AbstractModelObject {
     return tvShowDataSources;
   }
 
-  public TvShowScrapers getTvShowScraper() {
+  public String getTvShowScraper() {
+    if (StringUtils.isBlank(tvShowScraper)) {
+      return Constants.TVDBID;
+    }
     return tvShowScraper;
   }
 
-  public void setTvShowScraper(TvShowScrapers newValue) {
-    TvShowScrapers oldValue = this.tvShowScraper;
+  public void setTvShowScraper(String newValue) {
+    String oldValue = this.tvShowScraper;
     this.tvShowScraper = newValue;
     firePropertyChange(TV_SHOW_SCRAPER, oldValue, newValue);
   }
