@@ -57,6 +57,11 @@
 			<artifactId>scraper-tmdb</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+    <dependency>
+      <groupId>org.tinymediamanager</groupId>
+      <artifactId>scraper-tvdb</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>		
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>trakt-java</artifactId>
@@ -153,9 +158,9 @@
 
 		<!-- own patches on these artifacts -->
 		<dependency>
-			<groupId>com.jtattoo</groupId>
+			<groupId>org.tinymediamanager</groupId>
 			<artifactId>JTattoo</artifactId>
-			<version>1.6.10</version>
+			<version>1.6.12</version>
 		</dependency>
 	</dependencies>
 
