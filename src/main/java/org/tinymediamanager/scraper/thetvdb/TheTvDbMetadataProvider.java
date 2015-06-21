@@ -42,11 +42,19 @@ import java.util.regex.Pattern;
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static TheTVDBApi        tvdb;
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo(MediaMetadata.TVDBID, "thetvdb.com",
-                                                    "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
   public TheTvDbMetadataProvider() throws Exception {
     initAPI();
+  }
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo(
+        "tvdb",
+        "thetvdb.com",
+        "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork",
+        TheTvDbMetadataProvider.class.getResource("/thetvdb_com.png"));
+    return providerInfo;
   }
 
   private static synchronized void initAPI() throws Exception {
@@ -68,14 +76,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
 
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions) throws Exception {
-    switch (mediaScrapeOptions.getType()){
+    switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(mediaScrapeOptions);
 
       case TV_EPISODE:
         return getEpisodeMetadata(mediaScrapeOptions);
+
+      default:
+        throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
     }
-    throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
   }
 
   @Override
