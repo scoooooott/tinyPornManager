@@ -55,8 +55,6 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 
-import ch.qos.logback.classic.Level;
-
 /**
  * The Class Settings - holding all settings for tmm.
  * 
@@ -116,7 +114,6 @@ public class Settings extends AbstractModelObject {
   private String                      proxyPort;
   private String                      proxyUsername;
   private String                      proxyPassword;
-  private int                         logLevel                    = Level.DEBUG_INT;
 
   private String                      traktUsername               = "";
   private String                      traktPassword               = "";
@@ -744,32 +741,6 @@ public class Settings extends AbstractModelObject {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Gets the log level.
-   * 
-   * @return the log level
-   */
-  @XmlElement(name = LOG_LEVEL)
-  public int getLogLevel() {
-    return logLevel;
-  }
-
-  /**
-   * Sets the log level.
-   * 
-   * @param newValue
-   *          the new log level
-   */
-  public void setLogLevel(int newValue) {
-    int oldValue = this.logLevel;
-    this.logLevel = newValue;
-
-    ch.qos.logback.classic.Logger tl = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.tinymediamanager");
-    tl.setLevel(Level.toLevel(logLevel));
-
-    firePropertyChange(LOG_LEVEL, oldValue, newValue);
   }
 
   /**

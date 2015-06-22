@@ -61,8 +61,6 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
-import ch.qos.logback.classic.Level;
-
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -89,8 +87,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextField                  tfProxyUsername;
   private JPasswordField              tfProxyPassword;
   private JCheckBox                   chckbxClearCacheShutdown;
-  private JLabel                      lblLoglevel;
-  private JComboBox                   cbLogLevel;
   private JPanel                      panelCache;
   private JLabel                      lblImageCacheQuality;
   private JComboBox                   cbImageCacheQuality;
@@ -148,7 +144,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     // listen to changes of the combo box
     ItemListener listener = new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        checkChanges();
       }
     };
 
@@ -315,21 +310,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     add(panelMisc, "4, 6, fill, fill");
     panelMisc.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    Level[] levels = new Level[] { Level.TRACE, Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
-    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
-
-    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));
-    panelMisc.add(lblLoglevel, "2, 2");
-    cbLogLevel = new JComboBox(levels);
-    panelMisc.add(cbLogLevel, "4, 2");
-    cbLogLevel.setSelectedItem(actualLevel);
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
-    panelMisc.add(chckbxDeleteTrash, "2, 4, 3, 1");
-    cbLogLevel.addItemListener(listener);
+    panelMisc.add(chckbxDeleteTrash, "2, 2, 3, 1");
 
     panelMemory = new JPanel();
     panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -372,38 +356,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     cbFontSize.addItemListener(listener);
 
     initMemorySlider();
-  }
-
-  /**
-   * Check changes.
-   */
-  private void checkChanges() {
-    Level level = (Level) cbLogLevel.getSelectedItem();
-    int actualLevel = Globals.settings.getLogLevel();
-    if (actualLevel != level.levelInt) {
-      Globals.settings.setLogLevel(level.levelInt);
-    }
-
-    LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
-    Locale locale = loc.loc;
-    Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
-    if (!locale.equals(actualLocale)) {
-      Globals.settings.setLanguage(locale.toString());
-      lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
-    }
-
-    // fonts
-    Integer fontSize = (Integer) cbFontSize.getSelectedItem();
-    if (fontSize != Globals.settings.getFontSize()) {
-      Globals.settings.setFontSize(fontSize);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
-    }
-
-    String fontFamily = (String) cbFontFamily.getSelectedItem();
-    if (!fontFamily.equals(Globals.settings.getFontFamily())) {
-      Globals.settings.setFontFamily(fontFamily);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
-    }
   }
 
   /**
