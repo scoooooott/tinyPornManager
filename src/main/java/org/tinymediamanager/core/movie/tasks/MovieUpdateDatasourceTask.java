@@ -15,6 +15,20 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,20 +57,6 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -291,7 +291,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.setVideoIn3D(true);
           }
           movie.setDateAdded(new Date());
-          movie.saveToDb();
         }
         movie.setDataSource(datasource);
         movie.setNewlyAdded(true);
@@ -331,15 +330,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       addMediafilesToMovie(movie, foundMediaFiles);
 
-      movie.saveToDb();
       if (movie.getMovieSet() != null) {
         LOGGER.debug("movie is part of a movieset");
         // movie.getMovieSet().addMovie(movie);
         movie.getMovieSet().insertMovie(movie);
         movieList.sortMoviesInMovieSet(movie.getMovieSet());
         movie.getMovieSet().saveToDb();
-        movie.saveToDb();
       }
+
+      movie.saveToDb();
     } // end for every file
   }
 
@@ -504,7 +503,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
           movie.findActorImages(); // TODO: find as MediaFIles
           LOGGER.debug("store movie into DB " + movieDir.getName());
-          movie.saveToDb(); // savepoint
 
           movieList.addMovie(movie);
 
@@ -514,9 +512,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.getMovieSet().insertMovie(movie);
             movieList.sortMoviesInMovieSet(movie.getMovieSet());
             movie.getMovieSet().saveToDb();
-            movie.saveToDb();
           }
-
         } // end movie is null
 
         // second round - now add all the other known files
