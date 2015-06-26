@@ -1078,7 +1078,7 @@ public class Movie extends MediaEntity {
         try {
           actors.add(i, actor);
         }
-        catch (ArrayIndexOutOfBoundsException e) {
+        catch (IndexOutOfBoundsException e) {
           actors.add(actor);
         }
       }
@@ -1089,7 +1089,7 @@ public class Movie extends MediaEntity {
           try {
             actors.add(i, oldActor);
           }
-          catch (ArrayIndexOutOfBoundsException e) {
+          catch (IndexOutOfBoundsException e) {
             actors.add(oldActor);
           }
         }
@@ -1867,7 +1867,7 @@ public class Movie extends MediaEntity {
         try {
           producers.add(i, producer);
         }
-        catch (ArrayIndexOutOfBoundsException e) {
+        catch (IndexOutOfBoundsException e) {
           producers.add(producer);
         }
       }
@@ -1878,7 +1878,7 @@ public class Movie extends MediaEntity {
           try {
             producers.add(i, oldProducer);
           }
-          catch (ArrayIndexOutOfBoundsException e) {
+          catch (IndexOutOfBoundsException e) {
             producers.add(oldProducer);
           }
         }
