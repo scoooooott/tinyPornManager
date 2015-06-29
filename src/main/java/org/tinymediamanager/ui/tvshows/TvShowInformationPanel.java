@@ -15,10 +15,27 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import static org.tinymediamanager.core.Constants.*;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextPane;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -35,15 +52,10 @@ import org.tinymediamanager.ui.components.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 
-import javax.swing.*;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static org.tinymediamanager.core.Constants.*;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class TvShowInformationPanel.
@@ -103,9 +115,9 @@ public class TvShowInformationPanel extends JPanel {
 
       @Override
       public Dimension getPreferredSize() {
-        if (originalImage != null) {
+        if (scaledImage != null) {
           return new Dimension(getParent().getWidth(),
-              (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
         }
         return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
       }
@@ -122,9 +134,9 @@ public class TvShowInformationPanel extends JPanel {
 
       @Override
       public Dimension getPreferredSize() {
-        if (originalImage != null) {
+        if (scaledImage != null) {
           return new Dimension(getParent().getWidth(),
-              (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
         }
         return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 16d * 9d) + 1);
       }
@@ -141,9 +153,9 @@ public class TvShowInformationPanel extends JPanel {
 
       @Override
       public Dimension getPreferredSize() {
-        if (originalImage != null) {
+        if (scaledImage != null) {
           return new Dimension(getParent().getWidth(),
-              (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
         }
         return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 8d) + 1);
       }

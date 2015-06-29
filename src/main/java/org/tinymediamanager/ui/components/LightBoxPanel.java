@@ -66,6 +66,7 @@ public class LightBoxPanel extends JPanel {
   }
 
   public void setImageLocation(String path, String url) {
+    image.clearImage();
     image.setImageUrl(url);
     image.setImagePath(path);
   }

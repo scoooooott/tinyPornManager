@@ -302,8 +302,10 @@ public class MovieList extends AbstractModelObject {
     ObjectReader movieObjectReader = objectMapper.reader(Movie.class);
 
     for (UUID uuid : movieMap.keyList()) {
+      String json = "";
       try {
-        Movie movie = movieObjectReader.readValue(movieMap.get(uuid));
+        json = movieMap.get(uuid);
+        Movie movie = movieObjectReader.readValue(json);
         movie.setDbId(uuid);
         // for performance reasons we add movies directly
         movieList.add(movie);

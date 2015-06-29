@@ -118,9 +118,9 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
       @Override
       public Dimension getPreferredSize() {
-        if (originalImage != null) {
+        if (scaledImage != null) {
           return new Dimension(getParent().getWidth(),
-              (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
         }
         return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
       }

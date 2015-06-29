@@ -69,7 +69,7 @@ public class ActorImageLabel extends ImageLabel {
     }
 
     // load image in separate worker -> performance
-    worker = new ImageLoader(this.imagePath);
+    worker = new ImageLoader(this.imagePath, this.getSize());
     worker.execute();
   }
 
@@ -80,7 +80,7 @@ public class ActorImageLabel extends ImageLabel {
     firePropertyChange("imageUrl", oldValue, newValue);
 
     if (StringUtils.isEmpty(newValue)) {
-      originalImage = null;
+      scaledImage = null;
       this.repaint();
       return;
     }
@@ -93,19 +93,19 @@ public class ActorImageLabel extends ImageLabel {
     // fetch image in separate worker -> performance
     // only do http fetches, if the label is visible
     if (isShowing()) {
-      worker = new ImageFetcher();
+      worker = new ImageFetcher(this.getSize());
       worker.execute();
     }
     else {
-      originalImage = null;
+      scaledImage = null;
     }
   }
 
   @Override
   protected void paintComponent(Graphics g) {
     // refetch the image if its visible now
-    if (isShowing() && originalImage == null && StringUtils.isNotBlank(imageUrl)) {
-      worker = new ImageFetcher();
+    if (isShowing() && scaledImage == null && StringUtils.isNotBlank(imageUrl)) {
+      worker = new ImageFetcher(this.getSize());
       worker.execute();
       return;
     }
