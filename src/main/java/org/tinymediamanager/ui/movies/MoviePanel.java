@@ -620,35 +620,46 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth((int) (width * 1.5));
     table.getTableHeader().getColumnModel().getColumn(2).setIdentifier("rating"); //$NON-NLS-1$
 
+    // date added column
+    width = table.getFontMetrics(table.getFont()).stringWidth("01. Jan. 2000");
+    titleWidth = table.getFontMetrics(table.getFont()).stringWidth(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+    if (titleWidth > width) {
+      width = titleWidth;
+    }
+    table.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth((int) (width * 1.2));
+    table.getTableHeader().getColumnModel().getColumn(3).setMinWidth((int) (width * 1.2));
+    table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth((int) (width * 1.2));
+    table.getTableHeader().getColumnModel().getColumn(3).setIdentifier("dateadded"); //$NON-NLS-1$
+
     // NFO column
-    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
-    table.getColumnModel().getColumn(3).setHeaderValue(IconManager.INFO);
-    table.getTableHeader().getColumnModel().getColumn(3).setIdentifier("nfo"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
+    table.getColumnModel().getColumn(4).setHeaderValue(IconManager.INFO);
+    table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("nfo"); //$NON-NLS-1$
 
     // Images column
-    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
-    table.getColumnModel().getColumn(4).setHeaderValue(IconManager.IMAGE);
-    table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("images"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
+    table.getColumnModel().getColumn(5).setHeaderValue(IconManager.IMAGE);
+    table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("images"); //$NON-NLS-1$
 
     // trailer column
-    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
-    table.getColumnModel().getColumn(5).setHeaderValue(IconManager.CLAPBOARD);
-    table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("trailer"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
+    table.getColumnModel().getColumn(6).setHeaderValue(IconManager.CLAPBOARD);
+    table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("trailer"); //$NON-NLS-1$
 
     // subtitles column
-    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
-    table.getColumnModel().getColumn(6).setHeaderValue(IconManager.SUBTITLE);
-    table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("subtitle"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(7).setMaxWidth(20);
+    table.getColumnModel().getColumn(7).setHeaderValue(IconManager.SUBTITLE);
+    table.getTableHeader().getColumnModel().getColumn(7).setIdentifier("subtitle"); //$NON-NLS-1$
 
     // watched column
-    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(7).setMaxWidth(20);
-    table.getColumnModel().getColumn(7).setHeaderValue(IconManager.PLAY_SMALL);
-    table.getTableHeader().getColumnModel().getColumn(7).setIdentifier("watched"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(8).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(8).setMaxWidth(20);
+    table.getColumnModel().getColumn(8).setHeaderValue(IconManager.PLAY_SMALL);
+    table.getTableHeader().getColumnModel().getColumn(8).setIdentifier("watched"); //$NON-NLS-1$
 
     table.setSelectionModel(movieSelectionModel.getSelectionModel());
     // selecting first movie at startup
@@ -665,6 +676,9 @@ public class MoviePanel extends JPanel {
     }
     if (!MovieModuleManager.MOVIE_SETTINGS.isRatingColumnVisible()) {
       table.hideColumn("rating"); //$NON-NLS-1$
+    }
+    if (!MovieModuleManager.MOVIE_SETTINGS.isDateAddedColumnVisible()) {
+      table.hideColumn("dateadded"); //$NON-NLS-1$
     }
     if (!MovieModuleManager.MOVIE_SETTINGS.isNfoColumnVisible()) {
       table.hideColumn("nfo"); //$NON-NLS-1$
@@ -695,6 +709,9 @@ public class MoviePanel extends JPanel {
           }
           if ("nfoColumnVisible".equals(evt.getPropertyName())) {
             setColumnVisibility("nfo", (Boolean) evt.getNewValue());
+          }
+          if ("dateAddedColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("dateadded", (Boolean) evt.getNewValue());
           }
           if ("imageColumnVisible".equals(evt.getPropertyName())) {
             setColumnVisibility("images", (Boolean) evt.getNewValue()); //$NON-NLS-1$

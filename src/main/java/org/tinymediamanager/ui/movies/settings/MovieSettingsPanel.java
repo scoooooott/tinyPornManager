@@ -100,6 +100,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxTraktTv;
   private JCheckBox                   chckbxWatched;
   private JCheckBox                   chckbxRating;
+  private JCheckBox                   chckbxDateAdded;
 
   /**
    * Instantiates a new movie settings panel.
@@ -134,17 +135,20 @@ public class MovieSettingsPanel extends ScrollablePanel {
     chckbxNfo = new JCheckBox(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
     panelGeneral.add(chckbxNfo, "8, 2");
 
+    chckbxDateAdded = new JCheckBox(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+    panelGeneral.add(chckbxDateAdded, "10, 2");
+
     chckbxImages = new JCheckBox(BUNDLE.getString("metatag.images")); //$NON-NLS-1$
-    panelGeneral.add(chckbxImages, "10, 2");
+    panelGeneral.add(chckbxImages, "4, 4");
 
     chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-    panelGeneral.add(chckbxTrailer, "4, 4");
+    panelGeneral.add(chckbxTrailer, "6, 4");
 
     chckbxSubtitles = new JCheckBox(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-    panelGeneral.add(chckbxSubtitles, "6, 4");
+    panelGeneral.add(chckbxSubtitles, "8, 4");
 
     chckbxWatched = new JCheckBox(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-    panelGeneral.add(chckbxWatched, "8, 4");
+    panelGeneral.add(chckbxWatched, "10, 4");
 
     JSeparator separator_4 = new JSeparator();
     panelGeneral.add(separator_4, "2, 6, 7, 1");
@@ -464,5 +468,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxRating, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_7 = BeanProperty.create("movieSettings.dateAddedColumnVisible");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, chckbxDateAdded, jCheckBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }

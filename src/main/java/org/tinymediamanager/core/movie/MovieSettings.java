@@ -82,6 +82,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           ASCII_REPLACEMENT                        = "asciiReplacement";
   private final static String           YEAR_COLUMN_VISIBLE                      = "yearColumnVisible";
   private final static String           NFO_COLUMN_VISIBLE                       = "nfoColumnVisible";
+  private final static String           DATE_ADDED_COLUMN_VISIBLE                = "dateAddedColumnVisible";
   private final static String           IMAGE_COLUMN_VISIBLE                     = "imageColumnVisible";
   private final static String           TRAILER_COLUMN_VISIBLE                   = "trailerColumnVisible";
   private final static String           SUBTITLE_COLUMN_VISIBLE                  = "subtitleColumnVisible";
@@ -151,6 +152,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       yearColumnVisible                        = true;
   private boolean                       ratingColumnVisible                      = true;
   private boolean                       nfoColumnVisible                         = true;
+  private boolean                       dateAddedColumnVisible                   = true;
   private boolean                       imageColumnVisible                       = true;
   private boolean                       trailerColumnVisible                     = true;
   private boolean                       subtitleColumnVisible                    = true;
@@ -659,6 +661,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.nfoColumnVisible;
     this.nfoColumnVisible = newValue;
     firePropertyChange(NFO_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isDateAddedColumnVisible() {
+    return dateAddedColumnVisible;
+  }
+
+  public void setDateAddedColumnVisible(boolean newValue) {
+    boolean oldValue = this.dateAddedColumnVisible;
+    this.dateAddedColumnVisible = newValue;
+    firePropertyChange(DATE_ADDED_COLUMN_VISIBLE, oldValue, newValue);
   }
 
   public boolean isImageColumnVisible() {

@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -39,10 +40,11 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   private Comparator<String>          stringComparator = new StringComparator();
   private Comparator<Float>           floatComparator  = new FloatComparator();
   private Comparator<ImageIcon>       imageComparator  = new ImageComparator();
+  private Comparator<Date>            dateComparator   = new DateComparator();
 
   @Override
   public int getColumnCount() {
-    return 8;
+    return 9;
   }
 
   @Override
@@ -58,18 +60,21 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return BUNDLE.getString("metatag.rating"); //$NON-NLS-1$
 
       case 3:
-        return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.dateadded"); //$NON-NLS-1$
 
       case 4:
-        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
       case 5:
-        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
 
       case 6:
-        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
 
       case 7:
+        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+
+      case 8:
         return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
     }
 
@@ -89,30 +94,33 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return movie.getRating();
 
       case 3:
+        return movie.getDateAdded();
+
+      case 4:
         if (movie.getHasNfoFile()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 4:
+      case 5:
         if (movie.getHasImages()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 5:
+      case 6:
         if (movie.getHasTrailer()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 6:
+      case 7:
         if (movie.hasSubtitles()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
-      case 7:
+      case 8:
         if (movie.isWatched()) {
           return IconManager.CHECKMARK;
         }
@@ -136,10 +144,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return Float.class;
 
       case 3:
+        return Date.class;
+
       case 4:
       case 5:
       case 6:
       case 7:
+      case 8:
         return ImageIcon.class;
     }
 
@@ -160,10 +171,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return floatComparator;
 
       case 3:
+        return dateComparator;
+
       case 4:
       case 5:
       case 6:
       case 7:
+      case 8:
         return imageComparator;
     }
 
@@ -200,6 +214,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return 1;
       }
       return -1;
+    }
+  }
+
+  private static class DateComparator implements Comparator<Date> {
+    @Override
+    public int compare(Date arg0, Date arg1) {
+      return arg0.compareTo(arg1);
     }
   }
 }
