@@ -179,6 +179,10 @@ public class TvShowChooserModel extends AbstractModelObject {
   public List<MediaArtwork> getArtwork() {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
+    if (!scraped) {
+      return artwork;
+    }
+
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);

@@ -182,6 +182,10 @@ public class MovieChooserModel extends AbstractModelObject {
   public List<MediaArtwork> getArtwork() {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
+    if (!scraped) {
+      return artwork;
+    }
+
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
@@ -210,6 +214,10 @@ public class MovieChooserModel extends AbstractModelObject {
 
   public List<MovieTrailer> getTrailers() {
     List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
+
+    if (!scraped) {
+      return trailers;
+    }
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setMetadata(metadata);

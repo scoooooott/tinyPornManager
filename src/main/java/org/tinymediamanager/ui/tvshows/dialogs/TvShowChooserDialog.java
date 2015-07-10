@@ -57,6 +57,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -367,6 +370,12 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       if (row >= 0) {
         TvShowChooserModel model = tvShowsFound.get(row);
         if (model != TvShowChooserModel.emptyResult) {
+          // when scraping was not successful, abort saving
+          if (!model.isScraped()) {
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed"));
+            return;
+          }
+
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
