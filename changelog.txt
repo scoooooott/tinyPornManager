@@ -1,199 +1,25 @@
-2.6.8
+Version 2.7
 =======================
 IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
            If you are still using Java6, please update or you will stay at version 2.6.x
-           
-+ added language code ZH (Chinese) to the scraper languages 
-+ added language to the movie bulk editor
-+ added option to suppress writing of movie set artwork to movie folder 
-x Movie renamer: fix renaming with empty settings
-x Movie renamer: fix renaming of unscraped movies
-x made writing of movie NFO less aggressive
-x fix occasional error where media information did not get stored
-x better detection of movie name/year on update
-x fixed sorttitle editing
-x fixed searching for tv show season posters (with 4 digit season)
+IMPORTANT: with the update to version 2.7 the internal database will be deleted due to
+           internal changes. You only need to re-import (update data sources) your movies
+           and TV shows
 
-2.6.7
-=======================          
-+ updated mediainfo to 0.7.73 (ARM users now have to install the system version of mediainfo for better compatibility)           
-+ Mirror support: TMM now distributed on several mirrors for better availability (and error handling for network blockages)
-+ Movie renamer: complete rewrite - CHECK YOUR RENAMER SETTINGS!
-+ Movie renamer: possible to "downgrade" a movie, when having no distinct folder. (CHECK YOUR FOLDER RENAMER SETTINGS!)
-+ added sort option via sort title 
-+ added an option to name the episode thumbs without the -thumb postfix (improves compatibility for different media players)
-+ added director to movie renamer tokens
-+ added DVD order renamer tokens ($3, $4, $D)
-x changed detection of DTS-HD codecs (Kodi will display the right logo now after NFO export)
-x fixed multichannel AAC detection
-x added a warning message when doing an update data source and no data source specified 
-x renamer: exchange colon with a dash. (even better than removing completely)
-x TvShow renamer: remove old/left-over NFOs
-x subtitles: language detection for SUB ones
-x the NFO files has not been updated in some cases
-x TheTvDB search cleans out too much "special" characters
-x fixed occasional UI glitches with TV shows
-x various smaller fixes
+With the update to 2.7 there massive changes under the hood of tinyMediaManager:            
+- moved source code management to github and changed build to maven            
+- changed the internal database engine from objectdb to H2-MVStore + JSON
+  this change makes tinyMediaManager more robust and faster
+- introduced a new infrastructure for scrapers which makes developing new 
+  scrapers less complex
 
-Version 2.6.6
-=======================
-+ updated trakt.tv library to the new API
-  IMPORTANT: please re-enter your login data for trakt.tv
-  
-+ new sort order for movies: video bit rate
-+ bulk editing of media source for movies
-+ added rating column to the movie table
-+ double click in movie set/TV show tree opens the editor
-+ added a message history window (menu tools - show message history)
-+ added filter option for year (movie)
-x reworked NFO naming. Now be able to add NFO inside DISC folders separately
-x fixed the season template in the TV show renamer
-x fixed renamer (movie & tv shows) for case insensitive file systems
-x better rewriting of movie NFO after movie set editing
-x HDRIP is now being recognized as BluRay (more common source than TV)
-x change writing of .desktop files for linux
-x fixed OSX app (now tinyMediaManager is launch able without Java 6)
-x bad words are now checked case insensitive
-x fixed search score calculation for tmdb/rottentomatoes scraper
-x enhanced NFO parsing to be more tolerant
-x fixed subtitle writing for Kodi NFOs
-x improved loading of mediainfo on network shares
-x fixed an UI glitch, where episodes disappeared after scraping
-x performance fix for offline movie set artwork 
-x fixed various smaller issues
-
-Version 2.6.5
-=======================
-+ enhanced TV show and movie renamer (http://goo.gl/8pbkFj)
-  IMPORTANT: REVIEW YOUR TV SHOW RENAMER SETTINGS!
-  
-+ DVD ordering of episodes (http://goo.gl/YBD5qJ)
-+ added memory options especially for large media libraries
-+ write thumb url into the NFO for multi episode files
-+ added h265 logo
-+ (experimental) added Rotten Tomates scraper
-+ added downloading of custom image-urls in the image chooser
-+ added genre to the movie renamer
-+ now also allowing folder.jpg/png for disc images
-+ option to change the language while scraping (movie and TV show chooser)
-+ added several DTS profiles to mediainfo detection (+logos)
-x added some workarounds for failing TVDB searches
-x proper handling of the watched state in the NFO
-x catching some NFO parsing problems
-x improved parsing of imdb plot
-x improved performance of artwork detection for movie sets
-x better detection of media source (brrip, hdrip, hdtvrip, ...)
-x fixed scraping of localized movie metadata
-x fixed downloading of season posters
-x fixed some minor issues with the command line version
-x fixed Mac OSX startup script
-x fixed some export template issues
-x fixed some performance issues with movie set artwork detection
-x fixed sort title generation for movie sets
-x respect max. screen resolution when opening dialogs
-x enabled double click in the episode chooser dialog
-
-Version 2.6.4 
-=======================
-+ changed Fanart.tv to v3 API (with clientKey)
-+ added more artwork scraping dialogs
-+ new Excel export template (xml)
-+ added $L language renaming option
-+ added/improved 3D handling
-+ certification bulk edit
-+ add season to image chooser title
-+ remember last opened directory in the directory/file chooser
-x fixed/improved some tooltips
-x improved artwork sorting, better language detection
-x fixed MacOS startup; Java detection, executable, ...
-x fixed SSxEE TvShow parser
-x fixed movie exporter filename generation
-x many code cleanups 
-
-Version 2.6.3
-=======================
-+ added edit button for tv show season
-x fix physically deletion of movies in multiMovieDir
-x updated Trakt.tv libs
-x fix release build version info
-x fix TMM updater in case of error download
-x write additional NFO for DVD/BD folder
-x tweak getting modified date from files (speedup)
-x ignore backup folder when searching for missing movies 
-x added more transifex languages
-x improved some needed debug loggings
-x and some more minor internal things... 
-
-Version 2.6.2
-=======================
-+ added column for watched state to the movie table
-+ added action to scrape episode metadata without thumbs
-+ added quick creation of movie sets to the movie bulk editor
-x greatly improved our episode detection engine
-x performance improvements with loading and update datasources
-x fixed season poster detection
-x fixed occasional crashes with trakt.tv
-x fixed wrong filenames in the renamer preview
-x fixed losing donator registration information
-x fixed crashes in ofdb.de, moviemeter.nl and zelluloid.de scraper
-x fixed trailer detection (movies with trailer in their name weren't added) 
-x fixed startup crashes with orphaned movie sets 
-
-Version 2.6.1
-=======================
-x fixed scraping of episode metadata
-x fixed TV show renamer
-x fixed year setting for TV show renamer 
-x fixed image chooser for thumbs (they are no longer be shown as fanarts) 
-x fixed slow performance of image cache with offline data sources
-x fixed crashes with trakt.tv sync
-x fixed opening of movie/TV show folder and playing of videos for linux/kde
-x improved handling of 0byte downloads (artwork) and choosing local artwork files
-
-=======================
- Version 2.6
-=======================
-
-/!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\
-!                       D O N A T O R      V E R S I O N                       !
-!                                                                              !
-!    Our donators are now able to register their tinyMediaManager copies to    !
-!         unlock special features as a "Thank you" for their support.          !
-!                           http://goo.gl/L8G5BB                               !
-\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!/
-
-! trailer downloading (donator feature) (http://goo.gl/hozk18)
-! Trakt.tv integration (donator feature) (http://goo.gl/WNEzsG)
-! Movie renamer preview (donator feature) (http://goo.gl/PS50MF)
-! automatically add existing movies to movie sets (donator feature)
-+ bigger UI rework (http://goo.gl/3wy3gL)
-+ configurable font and font size
-+ preserve unsupported XML tags (from other tools) in NFO files
-+ extra artwork (banner, CD art, clearart, ..) is now available for movies and movie sets
-+ new threading model: you can now queue different tasks; display open tasks (http://goo.gl/yFGtPq)
-+ preview of images in the image chooser (http://goo.gl/kIFaKJ)
-+ smart scrape: if there is no result from automatic scrape a manual scrape will pop up
-+ NFO enhancement: multiple IDs (from several meta data providers) will be stored
-+ option to set the preferred media player 
-+ able to play trailers
-+ trailer preferences (which one to automatic choose for NFO)
-+ delete works now with deleting physical files (moving to backup folder)
-+ ignore some Mac specific files on searching hdd/network shares
-+ language updates
-+ hotkeys for menu and other functions
-+ improved season and episodes parser
-+ several enhancements to the TV show renamer
-+ show artwork from the media file panel in lightbox
-+ export for TV shows basically done
-+ more filter options for TV shows 
-+ media source management (http://goo.gl/cE62xb)
-x fix occasional database inconsistencies
-x fix TvShow rename in command line
-x fix an occasional crash when choosing artwork
-x empty url cache from broken/unreadable HTTP responses
-x better integration of the year to the result score calculation
-x filter duplicate results from ofdb 
-x prevent audio streams from being added multiple times
-x detect stacking markers with leading zeros
-x import of watched state from XBMC NFO 
-x thousands of various fixes and stabilization from past half year :)
++ rewrote all scrapers from scratch (including optimizations and bug fixes)
++ assign movie sets feature is now free for all (dropped donator only status)
++ added "date added" to the columns of the movie list
++ enhanced UI language to enable country specific translations (e.g. pt_BR)
+x changed NFO rewriting behavior to be less aggressive
+x prevent setting incomplete meta data when scraping was not successful
+x adding special characters to the sort title prefixes is now possible
+x several fixes in the movie renamer               
+x reworked internal representation of artwork file names/url 
+  (performace boost for movie sets) 
