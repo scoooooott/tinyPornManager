@@ -346,6 +346,9 @@ public enum Certification {
     if (cert == null) {
       return "";
     }
+    if(cert == NOT_RATED){
+      return "NR";
+    }
     String certstring = "";
     for (String notation : cert.getPossibleNotations()) {
       if (cert.getCountry() == CountryCode.GB) {
@@ -431,6 +434,8 @@ public enum Certification {
         return "Rated R";
       case US_NC17:
         return "Rated NC-17";
+      case NOT_RATED:
+    	return "NR";
       default:
         return "";
     }
