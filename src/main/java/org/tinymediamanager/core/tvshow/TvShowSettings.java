@@ -38,35 +38,38 @@ import org.tinymediamanager.scraper.MediaLanguages;
 public class TvShowSettings extends AbstractModelObject {
   private final static String TV_SHOW_DATA_SOURCE         = "tvShowDataSource";
   private final static String TV_SHOW_SCRAPER             = "tvShowScraper";
+  private final static String TV_SHOW_ARTWORK_SCRAPERS    = "tvShowArtworkScrapers";
   private final static String PATH                        = "path";
   private final static String SCRAPE_BEST_IMAGE           = "scrapeBestImage";
   private final static String SCRAPER_LANGU               = "scraperLanguage";
   private final static String CERTIFICATION_COUNTRY       = "certificationCountry";
   private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFoldername";
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
-  private final static String IMAGE_SCRAPER_TVDB          = "imageScraperTvdb";
-  private final static String IMAGE_SCRAPER_FANART_TV     = "imageScraperFanartTv";
   private final static String ASCII_REPLACEMENT           = "asciiReplacement";
+  private final static String ENTRY                       = "entry";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
-  private String              tvShowScraper               = Constants.TVDBID;
-  private boolean             scrapeBestImage             = true;
-  private MediaLanguages      scraperLanguage             = MediaLanguages.en;
-  private CountryCode         certificationCountry        = CountryCode.US;
-  private String              renamerTvShowFoldername     = "$N ($Y)";
-  private String              renamerSeasonFoldername     = "Season $1";
-  private String              renamerFilename             = "$N - S$2E$E - $T";
-  private boolean             useRenamerThumbPostfix      = true;
-  private boolean             buildImageCacheOnImport     = false;
-  private boolean             imageScraperTvdb            = true;
-  private boolean             imageScraperFanartTv        = true;
-  private boolean             asciiReplacement            = false;
-  private boolean             renamerSpaceSubstitution    = false;
-  private String              renamerSpaceReplacement     = "_";
-  private boolean             syncTrakt                   = false;
-  private boolean             dvdOrder                    = false;
+  private final List<String> tvShowDataSources = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = TV_SHOW_ARTWORK_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String> tvShowArtworkScrapers = ObservableCollections.observableList(new ArrayList<String>());
+
+  private String         tvShowScraper            = Constants.TVDB;
+  private boolean        scrapeBestImage          = true;
+  private MediaLanguages scraperLanguage          = MediaLanguages.en;
+  private CountryCode    certificationCountry     = CountryCode.US;
+  private String         renamerTvShowFoldername  = "$N ($Y)";
+  private String         renamerSeasonFoldername  = "Season $1";
+  private String         renamerFilename          = "$N - S$2E$E - $T";
+  private boolean        useRenamerThumbPostfix   = true;
+  private boolean        buildImageCacheOnImport  = false;
+  private boolean        asciiReplacement         = false;
+  private boolean        renamerSpaceSubstitution = false;
+  private String         renamerSpaceReplacement  = "_";
+  private boolean        syncTrakt                = false;
+  private boolean        dvdOrder                 = false;
 
   public TvShowSettings() {
   }
@@ -100,6 +103,24 @@ public class TvShowSettings extends AbstractModelObject {
     String oldValue = this.tvShowScraper;
     this.tvShowScraper = newValue;
     firePropertyChange(TV_SHOW_SCRAPER, oldValue, newValue);
+  }
+
+  public void addTvShowArtworkScraper(String newValue) {
+    if (!tvShowArtworkScrapers.contains(newValue)) {
+      tvShowArtworkScrapers.add(newValue);
+      firePropertyChange(TV_SHOW_ARTWORK_SCRAPERS, null, tvShowArtworkScrapers);
+    }
+  }
+
+  public void removeTvShowArtworkScraper(String newValue) {
+    if (tvShowArtworkScrapers.contains(newValue)) {
+      tvShowArtworkScrapers.remove(newValue);
+      firePropertyChange(TV_SHOW_ARTWORK_SCRAPERS, null, tvShowArtworkScrapers);
+    }
+  }
+
+  public List<String> getTvShowArtworkScrapers() {
+    return tvShowArtworkScrapers;
   }
 
   public boolean isScrapeBestImage() {
@@ -170,26 +191,6 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.buildImageCacheOnImport;
     this.buildImageCacheOnImport = newValue;
     firePropertyChange(BUILD_IMAGE_CACHE_ON_IMPORT, oldValue, newValue);
-  }
-
-  public boolean isImageScraperTvdb() {
-    return imageScraperTvdb;
-  }
-
-  public boolean isImageScraperFanartTv() {
-    return imageScraperFanartTv;
-  }
-
-  public void setImageScraperTvdb(boolean newValue) {
-    boolean oldValue = this.imageScraperTvdb;
-    this.imageScraperTvdb = newValue;
-    firePropertyChange(IMAGE_SCRAPER_TVDB, oldValue, newValue);
-  }
-
-  public void setImageScraperFanartTv(boolean newValue) {
-    boolean oldValue = this.imageScraperFanartTv;
-    this.imageScraperFanartTv = newValue;
-    firePropertyChange(IMAGE_SCRAPER_FANART_TV, oldValue, newValue);
   }
 
   public boolean isAsciiReplacement() {

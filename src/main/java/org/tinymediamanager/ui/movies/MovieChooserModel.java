@@ -30,7 +30,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -38,6 +38,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -49,29 +50,29 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
-  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
-  public static final MovieChooserModel emptyResult      = new MovieChooserModel();
+  private static final ResourceBundle   BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger           LOGGER      = LoggerFactory.getLogger(MovieChooserModel.class);
+  public static final MovieChooserModel emptyResult = new MovieChooserModel();
 
-  private IMovieMetadataProvider        metadataProvider = null;
-  private List<IMediaArtworkProvider>   artworkProviders = null;
-  private List<IMovieTrailerProvider>   trailerProviders = null;
+  private MediaScraper                metadataProvider = null;
+  private List<MediaScraper>          artworkScrapers  = null;
+  private List<IMovieTrailerProvider> trailerProviders = null;
 
-  private MediaLanguages                language         = null;
-  private MediaSearchResult             result           = null;
-  private MediaMetadata                 metadata         = null;
-  private String                        name             = "";
-  private String                        overview         = "";
-  private String                        year             = "";
-  private String                        combinedName     = "";
-  private String                        posterUrl        = "";
-  private String                        tagline          = "";
-  private boolean                       scraped          = false;
+  private MediaLanguages    language     = null;
+  private MediaSearchResult result       = null;
+  private MediaMetadata     metadata     = null;
+  private String            name         = "";
+  private String            overview     = "";
+  private String            year         = "";
+  private String            combinedName = "";
+  private String            posterUrl    = "";
+  private String            tagline      = "";
+  private boolean           scraped      = false;
 
-  public MovieChooserModel(IMovieMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
-      List<IMovieTrailerProvider> trailerProviders, MediaSearchResult result, MediaLanguages language) {
+  public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<IMovieTrailerProvider> trailerProviders,
+      MediaSearchResult result, MediaLanguages language) {
     this.metadataProvider = metadataProvider;
-    this.artworkProviders = artworkProviders;
+    this.artworkScrapers = artworkScrapers;
     this.trailerProviders = trailerProviders;
     this.result = result;
     this.language = language;
@@ -156,7 +157,7 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       options.setScrapeCollectionInfo(Globals.settings.getMovieScraperMetadataConfig().isCollection());
       options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
-      metadata = metadataProvider.getMetadata(options);
+      metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
 
@@ -169,13 +170,13 @@ public class MovieChooserModel extends AbstractModelObject {
     }
     catch (IOException e) {
       LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 
@@ -201,7 +202,8 @@ public class MovieChooserModel extends AbstractModelObject {
     options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
     // scrape providers till one artwork has been found
-    for (IMediaArtworkProvider artworkProvider : artworkProviders) {
+    for (MediaScraper artworkScraper : artworkScrapers) {
+      IMovieArtworkProvider artworkProvider = (IMovieArtworkProvider) artworkScraper.getMediaProvider();
       try {
         artwork.addAll(artworkProvider.getArtwork(options));
       }

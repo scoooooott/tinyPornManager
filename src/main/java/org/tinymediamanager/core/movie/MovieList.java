@@ -49,7 +49,6 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -61,12 +60,12 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  * The Class MovieList.
@@ -74,20 +73,20 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
-  private static final Logger          LOGGER                   = LoggerFactory.getLogger(MovieList.class);
-  private static MovieList             instance;
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieList.class);
+  private static MovieList    instance;
 
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;
   private PropertyChangeListener       tagListener;
-  private List<String>                 tagsObservable           = ObservableCollections.observableList(Collections
-                                                                    .synchronizedList(new ArrayList<String>()));
-  private List<String>                 videoCodecsObservable    = ObservableCollections.observableList(Collections
-                                                                    .synchronizedList(new ArrayList<String>()));
-  private List<String>                 audioCodecsObservable    = ObservableCollections.observableList(Collections
-                                                                    .synchronizedList(new ArrayList<String>()));
-  private List<Certification>          certificationsObservable = ObservableCollections.observableList(Collections
-                                                                    .synchronizedList(new ArrayList<Certification>()));
+  private List<String>                 tagsObservable           = ObservableCollections
+      .observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>                 videoCodecsObservable    = ObservableCollections
+      .observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>                 audioCodecsObservable    = ObservableCollections
+      .observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<Certification>          certificationsObservable = ObservableCollections
+      .observableList(Collections.synchronizedList(new ArrayList<Certification>()));
   private final Comparator<MovieSet>   movieSetComparator       = new MovieSetComparator();
 
   /**
@@ -453,12 +452,12 @@ public class MovieList extends AbstractModelObject {
    *          the search term
    * @param movie
    *          the movie
-   * @param metadataProvider
-   *          the metadata provider
+   * @param metadataScraper
+   *          the media scraper
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, IMovieMetadataProvider metadataProvider) {
-    return searchMovie(searchTerm, movie, metadataProvider, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper metadataScraper) {
+    return searchMovie(searchTerm, movie, metadataScraper, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
   }
 
   /**
@@ -468,21 +467,23 @@ public class MovieList extends AbstractModelObject {
    *          the search term
    * @param movie
    *          the movie
-   * @param metadataProvider
-   *          the metadata provider
+   * @param mediaScraper
+   *          the media scraper
    * @param language
    *          the language to search with
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, IMovieMetadataProvider metadataProvider, MediaLanguages langu) {
+  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper mediaScraper, MediaLanguages langu) {
     List<MediaSearchResult> sr = null;
-
     try {
-      IMovieMetadataProvider provider = metadataProvider;
-      // get a new metadataprovider if nothing is set
-      if (provider == null) {
-        provider = getMetadataProvider();
+      IMovieMetadataProvider provider;
+      if (mediaScraper == null) {
+        provider = (IMovieMetadataProvider) getDefaultMediaScraper().getMediaProvider();
       }
+      else {
+        provider = (IMovieMetadataProvider) mediaScraper.getMediaProvider();
+      }
+
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
@@ -523,11 +524,10 @@ public class MovieList extends AbstractModelObject {
         LOGGER.debug("no result yet - trying alternate scrapers");
 
         for (MediaScraper ms : getAvailableMediaScrapers()) {
-          IMovieMetadataProvider provider2 = getMetadataProvider(ms);
-          if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+          if (provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
             continue;
           }
-          sr = provider2.search(options);
+          sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
           if (!sr.isEmpty()) {
             break;
           }
@@ -536,26 +536,11 @@ public class MovieList extends AbstractModelObject {
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
     }
 
     return sr;
-  }
-
-  /**
-   * Gets the metadata provider.
-   * 
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
-   */
-  @Deprecated
-  public IMovieMetadataProvider getMetadataProvider() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
-    }
-    return (IMovieMetadataProvider) scraper.getMediaProvider();
   }
 
   public List<MediaScraper> getAvailableMediaScrapers() {
@@ -572,100 +557,50 @@ public class MovieList extends AbstractModelObject {
     return scraper;
   }
 
-  /**
-   * Gets the metadata provider.
-   * 
-   * @param scraper
-   *          the scraper
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
-   */
-  @Deprecated
-  public IMovieMetadataProvider getMetadataProvider(MediaScraper scraper) {
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
-    }
-    return (IMovieMetadataProvider) scraper.getMediaProvider();
+  public MediaScraper getMediaScraperById(String providerId) {
+    return MediaScraper.getMediaScraperById(providerId, ScraperType.MOVIE);
   }
 
   /**
-   * Gets the metadata provider from a searchresult's providerId.
+   * Gets the artwork scrapers.
    * 
-   * @param providerId
-   *          the scraper
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
+   * @return the artwork scrapers
    */
-  @Deprecated
-  public IMovieMetadataProvider getMetadataProvider(String providerId) {
-
-    MediaScraper scraper = MediaScraper.getMediaScraperById(providerId, ScraperType.MOVIE);
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
-    }
-    return (IMovieMetadataProvider) scraper.getMediaProvider();
+  public List<MediaScraper> getAvailableArtworkScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK);
+    // we can use the MovieMediaScraperComparator here too, since TMDB should also be first
+    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    return availableScrapers;
   }
 
   /**
-   * Gets the artwork provider.
+   * get all specified artwork scrapers
    * 
-   * @return the artwork provider
+   * @return the specified artwork scrapers
    */
-  public List<IMediaArtworkProvider> getArtworkProviders() {
-    List<MovieArtworkScrapers> scrapers = new ArrayList<MovieArtworkScrapers>();
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
-      scrapers.add(MovieArtworkScrapers.TMDB);
+  public List<MediaScraper> getArtworkScrapers(List<String> providerIds) {
+    List<MediaScraper> artworkScrapers = new ArrayList<>();
+
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
+      }
+      MediaScraper artworkScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.MOVIE_ARTWORK);
+      if (artworkScraper != null) {
+        artworkScrapers.add(artworkScraper);
+      }
     }
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
-      scrapers.add(MovieArtworkScrapers.FANART_TV);
-    }
-
-    return getArtworkProviders(scrapers);
+    return artworkScrapers;
   }
 
   /**
-   * Gets the artwork providers.
+   * get all default (specified via settings) artwork scrapers
    * 
-   * @param scrapers
-   *          the scrapers
-   * @return the artwork providers
+   * @return the specified artwork scrapers
    */
-  public List<IMediaArtworkProvider> getArtworkProviders(List<MovieArtworkScrapers> scrapers) {
-    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
-
-    IMediaArtworkProvider artworkProvider = null;
-
-    // tmdb
-    if (scrapers.contains(MovieArtworkScrapers.TMDB)) {
-      try {
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
-          LOGGER.debug("get instance of TmdbMetadataProvider");
-          artworkProvider = new TmdbMetadataProvider();
-          artworkProviders.add(artworkProvider);
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
-      }
-    }
-
-    // fanart.tv
-    if (scrapers.contains(MovieArtworkScrapers.FANART_TV)) {
-      try {
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
-          LOGGER.debug("get instance of FanartTvMetadataProvider");
-          artworkProvider = (IMediaArtworkProvider) MediaScraper.getMediaScraperById(FANARTTVID, ScraperType.ARTWORK);
-          // artworkProvider = new FanartTvMetadataProvider();
-          artworkProviders.add(artworkProvider);
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
-      }
-    }
-
-    return artworkProviders;
+  public List<MediaScraper> getDefaultArtworkScrapers() {
+    return getArtworkScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers());
   }
 
   /**

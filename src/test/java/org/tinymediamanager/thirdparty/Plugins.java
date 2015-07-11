@@ -2,10 +2,11 @@ package org.tinymediamanager.thirdparty;
 
 import org.junit.Test;
 import org.tinymediamanager.core.PluginManager;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaProvider;
+import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.IXBMC;
 
 public class Plugins {
@@ -27,8 +28,14 @@ public class Plugins {
     }
 
     System.out.println("------------------");
-    System.out.println("classes implementing artwork scraping:");
-    for (IMediaArtworkProvider p : pm.getArtworkPlugins()) {
+    System.out.println("classes implementing movie artwork scraping:");
+    for (IMovieArtworkProvider p : pm.getMovieArtworkPlugins()) {
+      System.out.println("  " + p.getProviderInfo());
+    }
+
+    System.out.println("------------------");
+    System.out.println("classes implementing TV show artwork scraping:");
+    for (ITvShowArtworkProvider p : pm.getTvShowArtworkPlugins()) {
       System.out.println("  " + p.getProviderInfo());
     }
 
@@ -37,7 +44,5 @@ public class Plugins {
     for (IMovieTrailerProvider p : pm.getTrailerPlugins()) {
       System.out.println("  " + p.getProviderInfo());
     }
-
   }
-
 }

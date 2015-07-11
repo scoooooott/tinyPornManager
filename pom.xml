@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>
 			<artifactId>glazedlists_java15</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.imgscalr</groupId>
@@ -161,6 +161,11 @@
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>JTattoo</artifactId>
 			<version>1.6.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.japura</groupId>
+			<artifactId>japura-gui</artifactId>
+			<version>7.5.2</version>
 		</dependency>
 	</dependencies>
 

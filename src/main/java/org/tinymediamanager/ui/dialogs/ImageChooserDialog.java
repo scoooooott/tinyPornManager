@@ -68,6 +68,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -100,28 +101,28 @@ public class ImageChooserDialog extends TmmDialog {
     POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
   }
 
-  private DownloadTask                task;
-  private List<IMediaArtworkProvider> artworkProviders;
-  private List<String>                extraThumbs;
-  private List<String>                extraFanarts;
+  private DownloadTask         task;
+  private List<MediaScraper>   artworkScrapers;
+  private List<String>         extraThumbs;
+  private List<String>         extraFanarts;
 
   /** UI components */
-  private final JPanel                contentPanel    = new JPanel();
-  private JProgressBar                progressBar;
-  private JLabel                      lblProgressAction;
-  private JPanel                      panelImages;
-  private ImageLabel                  imageLabel;
-  private JScrollPane                 scrollPane;
-  private ImageType                   type;
-  private MediaType                   mediaType;
-  private ButtonGroup                 buttonGroup     = new ButtonGroup();
-  private List<JToggleButton>         buttons         = new ArrayList<JToggleButton>();
+  private final JPanel         contentPanel    = new JPanel();
+  private JProgressBar         progressBar;
+  private JLabel               lblProgressAction;
+  private JPanel               panelImages;
+  private ImageLabel           imageLabel;
+  private JScrollPane          scrollPane;
+  private ImageType            type;
+  private MediaType            mediaType;
+  private ButtonGroup          buttonGroup     = new ButtonGroup();
+  private List<JToggleButton>  buttons         = new ArrayList<JToggleButton>();
 
-  private final Action                actionOK        = new OkAction();
-  private final Action                actionCancel    = new CancelAction();
-  private final ToggleButtonUI        toggleButtonUI  = new ToggleButtonUI();
-  private final Action                actionLocalFile = new LocalFileChooseAction();
-  private JTextField                  tfImageUrl;
+  private final Action         actionOK        = new OkAction();
+  private final Action         actionCancel    = new CancelAction();
+  private final ToggleButtonUI toggleButtonUI  = new ToggleButtonUI();
+  private final Action         actionLocalFile = new LocalFileChooseAction();
+  private JTextField           tfImageUrl;
 
   /**
    * Instantiates a new image chooser dialog.
@@ -130,7 +131,7 @@ public class ImageChooserDialog extends TmmDialog {
    *          the ids
    * @param type
    *          the type
-   * @param artworkProviders
+   * @param artworkScrapers
    *          the artwork providers
    * @param imageLabel
    *          the image label
@@ -141,13 +142,13 @@ public class ImageChooserDialog extends TmmDialog {
    * @param mediaType
    *          the media for for which artwork has to be chosen
    */
-  public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<IMediaArtworkProvider> artworkProviders, ImageLabel imageLabel,
+  public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
     super("", "imageChooser");
     this.imageLabel = imageLabel;
     this.type = type;
     this.mediaType = mediaType;
-    this.artworkProviders = artworkProviders;
+    this.artworkScrapers = artworkScrapers;
     this.extraThumbs = extraThumbs;
     this.extraFanarts = extraFanarts;
 
@@ -352,7 +353,7 @@ public class ImageChooserDialog extends TmmDialog {
       }
     }
 
-    task = new DownloadTask(ids, this.artworkProviders);
+    task = new DownloadTask(ids, this.artworkScrapers);
     task.execute();
   }
 
@@ -696,13 +697,13 @@ public class ImageChooserDialog extends TmmDialog {
   }
 
   private class DownloadTask extends SwingWorker<Void, DownloadChunk> {
-    private HashMap<String, Object>     ids;
-    private List<IMediaArtworkProvider> artworkProviders;
-    private boolean                     imagesFound = false;
+    private HashMap<String, Object> ids;
+    private List<MediaScraper>      artworkScrapers;
+    private boolean                 imagesFound = false;
 
-    public DownloadTask(HashMap<String, Object> ids, List<IMediaArtworkProvider> artworkProviders) {
+    public DownloadTask(HashMap<String, Object> ids, List<MediaScraper> artworkScrapers) {
       this.ids = ids;
-      this.artworkProviders = artworkProviders;
+      this.artworkScrapers = artworkScrapers;
     }
 
     @Override
@@ -720,12 +721,13 @@ public class ImageChooserDialog extends TmmDialog {
       });
 
       try {
-        if (artworkProviders == null || artworkProviders.size() == 0) {
+        if (artworkScrapers == null || artworkScrapers.size() == 0) {
           return null;
         }
 
         // get images from all artworkproviders
-        for (IMediaArtworkProvider artworkProvider : artworkProviders) {
+        for (MediaScraper scraper : artworkScrapers) {
+          IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE) {
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());

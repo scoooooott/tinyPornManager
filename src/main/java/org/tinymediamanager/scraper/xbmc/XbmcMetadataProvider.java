@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -37,22 +35,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 @PluginImplementation
 public class XbmcMetadataProvider implements IXBMC, IMovieMetadataProvider {
-  private static final Logger                 LOGGER                  = LoggerFactory.getLogger(XbmcMetadataProvider.class);
-  private static final DocumentBuilderFactory factory                 = DocumentBuilderFactory.newInstance();
+  private static final Logger                 LOGGER  = LoggerFactory.getLogger(XbmcMetadataProvider.class);
+  private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-  private static MediaProviderInfo            providerInfo            = new MediaProviderInfo("xbmc", "xbmc.org", "Generic XBMC type scraper");
-  public XbmcScraper                          scraper;
+  private static MediaProviderInfo     providerInfo         = new MediaProviderInfo("xbmc", "xbmc.org", "Generic XBMC type scraper");
+  public XbmcScraper                   scraper;
   // prescan directory for ALL common XMLs
-  private static final ArrayList<File>        commonXmls              = XbmcUtil.getAllCommonXMLs();
-  private MediaType[]                         supportedSearchTypes    = null;
+  private static final ArrayList<File> commonXmls           = XbmcUtil.getAllCommonXMLs();
+  private MediaType[]                  supportedSearchTypes = null;
 
-  private static final String                 IMDB_TITLE_URL          = "http://%s/title/%s/";
-  private static final String                 IMDB_DOMAIN             = "www.imdb.com";
-  private static final String                 IMDB_RUNNING_TIME_REGEX = "([0-9]+)(\\s+min)?";
+  private static final String IMDB_TITLE_URL          = "http://%s/title/%s/";
+  private static final String IMDB_DOMAIN             = "www.imdb.com";
+  private static final String IMDB_RUNNING_TIME_REGEX = "([0-9]+)(\\s+min)?";
 
-  private static Pattern                      mpaaRatingParser        = Pattern.compile("Rated\\s+([^ ]+).*");
+  private static Pattern mpaaRatingParser = Pattern.compile("Rated\\s+([^ ]+).*");
 
   public XbmcMetadataProvider() {
   }

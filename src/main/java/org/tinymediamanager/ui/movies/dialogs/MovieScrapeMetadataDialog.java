@@ -30,8 +30,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.japura.gui.CheckComboBox;
+import org.japura.gui.model.ListCheckModel;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieArtworkScrapers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -42,11 +43,11 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -58,14 +59,15 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
-  private static final long           serialVersionUID           = 3826984454317979241L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 3826984454317979241L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
   private MediaScraperComboBox        cbMetadataScraper;
-  private JCheckBox                   chckbxTheMovieDb;
-  private JCheckBox                   chckbxFanarttv;
+  private CheckComboBox               cbArtworkScraper;
   private JCheckBox                   chckbxTheMovieDb_1;
   private JCheckBox                   chckbxHdtrailernet;
   private JCheckBox                   chckbxOfdbde;
@@ -101,17 +103,21 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
 
     movieSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
 
-    JPanel panelContent = new JPanel();
-    getContentPane().add(panelContent, BorderLayout.CENTER);
-    panelContent.setLayout(new BorderLayout(0, 0));
+    JPanel panelCenter = new JPanel();
+    getContentPane().add(panelCenter, BorderLayout.CENTER);
+    panelCenter.setLayout(
+        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelScraper = new JPanel();
-    panelContent.add(panelScraper, BorderLayout.NORTH);
-    panelScraper.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-        FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+    panelCenter.add(panelScraper, "2, 2, default, fill");
+    panelScraper.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
     JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
     panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
@@ -122,11 +128,11 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
-    chckbxTheMovieDb = new JCheckBox("The Movie DB");
-    panelScraper.add(chckbxTheMovieDb, "4, 4");
-
-    chckbxFanarttv = new JCheckBox("Fanart.tv");
-    panelScraper.add(chckbxFanarttv, "6, 4");
+    cbArtworkScraper = new MediaScraperCheckComboBox();
+    cbArtworkScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
+    cbArtworkScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
+    cbArtworkScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    panelScraper.add(cbArtworkScraper, "4, 4, 5, 1");
 
     JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
     panelScraper.add(lblTrailerScraper, "2, 6, right, default");
@@ -140,23 +146,15 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     chckbxOfdbde = new JCheckBox("OFDb.de");
     panelScraper.add(chckbxOfdbde, "8, 6");
 
-    {
-      JPanel panelCenter = new JPanel();
-      panelContent.add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, }));
-
-      JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
-          TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$,
-      panelCenter.add(panelScraperMetadataSetting, "2, 2");
-    }
+    JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
+    panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$,
+    panelCenter.add(panelScraperMetadataSetting, "2, 4, default, fill");
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
     panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
-    panelContent.add(panelButtons, BorderLayout.SOUTH);
+    getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
     btnStart.setIcon(IconManager.APPLY);
@@ -186,13 +184,13 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     MediaScraper defaultScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
-    // artwork provider
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
-      chckbxTheMovieDb.setSelected(true);
-    }
+    ListCheckModel model = cbArtworkScraper.getModel();
+    for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
+      model.addElement(artworkScraper);
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
-      chckbxFanarttv.setSelected(true);
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
+        model.addCheck(artworkScraper);
+      }
     }
 
     // trailer provider
@@ -218,13 +216,12 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // metadata provider
     movieSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
-    // artwork provider
-    if (chckbxTheMovieDb.isSelected()) {
-      movieSearchAndScrapeConfig.addArtworkScraper(MovieArtworkScrapers.TMDB);
-    }
-
-    if (chckbxFanarttv.isSelected()) {
-      movieSearchAndScrapeConfig.addArtworkScraper(MovieArtworkScrapers.FANART_TV);
+    // artwork scrapers
+    ListCheckModel model = cbArtworkScraper.getModel();
+    for (Object checked : model.getCheckeds()) {
+      if (checked != null && checked instanceof MediaScraper) {
+        movieSearchAndScrapeConfig.addArtworkScraper((MediaScraper) checked);
+      }
     }
 
     // tailer provider

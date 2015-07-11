@@ -30,8 +30,7 @@ public class MovieSearchAndScrapeOptions {
   private MovieScraperMetadataConfig scraperMetadataConfig;
   private MediaScraper               metadataScraper;
 
-  private List<MovieArtworkScrapers> artworkScrapers = new ArrayList<MovieArtworkScrapers>();
-
+  private List<MediaScraper>         artworkScrapers = new ArrayList<>();
   private List<MovieTrailerScrapers> trailerScrapers = new ArrayList<MovieTrailerScrapers>();
 
   /**
@@ -49,13 +48,7 @@ public class MovieSearchAndScrapeOptions {
     metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 
     // artwork
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
-      artworkScrapers.add(MovieArtworkScrapers.TMDB);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
-      artworkScrapers.add(MovieArtworkScrapers.FANART_TV);
-    }
+    artworkScrapers.addAll(MovieList.getInstance().getDefaultArtworkScrapers());
 
     // trailer
     if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
@@ -94,7 +87,7 @@ public class MovieSearchAndScrapeOptions {
    * 
    * @return the artwork scrapers
    */
-  public List<MovieArtworkScrapers> getArtworkScrapers() {
+  public List<MediaScraper> getArtworkScrapers() {
     return artworkScrapers;
   }
 
@@ -133,7 +126,7 @@ public class MovieSearchAndScrapeOptions {
    * @param artworkScraper
    *          the artwork scraper
    */
-  public void addArtworkScraper(MovieArtworkScrapers artworkScraper) {
+  public void addArtworkScraper(MediaScraper artworkScraper) {
     this.artworkScrapers.add(artworkScraper);
   }
 

@@ -22,8 +22,8 @@ package org.tinymediamanager.core;
  */
 public final class Constants {
 
-  public final static String DB                     = "tmm.odb";
-  public final static String BACKUP_FOLDER          = ".deletedByTMM";
+  public final static String DB            = "tmm.odb";
+  public final static String BACKUP_FOLDER = ".deletedByTMM";
 
   public final static String ACTORS                 = "actors";
   public final static String ADDED_EPISODE          = "addedEpisode";
@@ -103,18 +103,21 @@ public final class Constants {
   public final static String YEAR                   = "year";
 
   // IDs for lookup (MediaMetadata IDs map)
-  public final static String ANIDBID                = "anidb";
-  public final static String FANARTTVID             = "fanart";
-  public final static String HDTRAILERSID           = "hdtrailersnet";
-  public final static String MOVIEMETERID           = "moviemeter";
-  public final static String OFDBID                 = "ofdb";
-  public final static String ZELLULOIDID            = "zelluloid";
-  public final static String TMDBID                 = "tmdbId";
-  public final static String TVDBID                 = "tvdbId";
-  public final static String TRAKTID                = "traktId";
-  public final static String IMDBID                 = "imdbId";
-  public final static String TVRAGEID               = "tvrageId";
-  public final static String ROTTENTOMATOESID       = "rottentomatoesId";
+  public final static String ANIDBID          = "anidb";
+  public final static String FANARTTVID       = "fanart";
+  public final static String HDTRAILERSID     = "hdtrailersnet";
+  public final static String MOVIEMETERID     = "moviemeter";
+  public final static String OFDBID           = "ofdb";
+  public final static String ZELLULOIDID      = "zelluloid";
+  public final static String TMDBID           = "tmdbId";
+  public final static String TVDBID           = "tvdbId";
+  public final static String TRAKTID          = "traktId";
+  public final static String IMDBID           = "imdbId";
+  public final static String TVRAGEID         = "tvrageId";
+  public final static String ROTTENTOMATOESID = "rottentomatoesId";
+
+  public final static String TMDB = "tmdb";
+  public final static String TVDB = "tvdb";
 
   private Constants() {
   }

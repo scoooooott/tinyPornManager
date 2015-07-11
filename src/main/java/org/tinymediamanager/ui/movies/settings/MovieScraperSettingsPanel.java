@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -41,6 +44,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -75,41 +79,43 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = -299825914193235308L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private Settings settings = Settings.getInstance();
 
-  private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
+  private List<MovieScraper> scrapers = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
   /**
    * UI Elements
    */
-  private JComboBox                   cbScraperLanguage;
-  private JComboBox                   cbCertificationCountry;
-  private JCheckBox                   chckbxAutomaticallyScrapeImages;
-  private JPanel                      panelScraperMetadata;
-  private JPanel                      panelScraperMetadataContainer;
-  private JPanel                      panelTrailerScrapers;
-  private JCheckBox                   cbTheMovieDatabase;
-  private JCheckBox                   cbHdtrailersnet;
-  private JCheckBox                   cbOfdbde;
-  private JTextPane                   lblScraperThresholdHint;
-  private JPanel                      panelAutomaticScraper;
-  private JSlider                     sliderThreshold;
-  private JCheckBox                   chckbxScraperFallback;
-  private JCheckBox                   chckbxUseTrailerPreferences;
-  private JLabel                      lblTrailerSource;
-  private JLabel                      lblTrailerQuality;
-  private JComboBox                   cbTrailerSource;
-  private JComboBox                   cbTrailerQuality;
-  private JSeparator                  separator_2;
-  private JCheckBox                   chckbxImageLanguage;
-  private JPanel                      panelScraperDetails;
-  private JPanel                      panelScraperOptions;
-  private JTextPane                   tpScraperDescription;
-  private JScrollPane                 scrollPaneScraper;
-  private JTable                      tableScraper;
+  private JComboBox   cbScraperLanguage;
+  private JComboBox   cbCertificationCountry;
+  private JCheckBox   chckbxAutomaticallyScrapeImages;
+  private JPanel      panelScraperMetadata;
+  private JPanel      panelScraperMetadataContainer;
+  private JPanel      panelTrailerScrapers;
+  private JCheckBox   cbTheMovieDatabase;
+  private JCheckBox   cbHdtrailersnet;
+  private JCheckBox   cbOfdbde;
+  private JTextPane   lblScraperThresholdHint;
+  private JPanel      panelAutomaticScraper;
+  private JSlider     sliderThreshold;
+  private JCheckBox   chckbxScraperFallback;
+  private JCheckBox   chckbxUseTrailerPreferences;
+  private JLabel      lblTrailerSource;
+  private JLabel      lblTrailerQuality;
+  private JComboBox   cbTrailerSource;
+  private JComboBox   cbTrailerQuality;
+  private JSeparator  separator_2;
+  private JCheckBox   chckbxImageLanguage;
+  private JPanel      panelScraperDetails;
+  private JPanel      panelScraperOptions;
+  private JTextPane   tpScraperDescription;
+  private JScrollPane scrollPaneScraper;
+  private JTable      tableScraper;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -129,19 +135,21 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       counter++;
     }
     // UI init
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelMovieScrapers, "2, 2, 3, 1, fill, fill");
-    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), }, new RowSpec[] {
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC, }));
+    panelMovieScrapers.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("200dlu:grow"), },
+        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
     scrollPaneScraper = new JScrollPane();
     panelMovieScrapers.add(scrollPaneScraper, "1, 2, 3, 1, fill, fill");
@@ -152,9 +160,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     panelScraperDetails = new JPanel();
     panelMovieScrapers.add(panelScraperDetails, "5, 2, fill, fill");
-    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), }));
+    panelScraperDetails
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
@@ -185,14 +193,15 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     panelTrailerScrapers = new JPanel();
     panelTrailerScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelTrailerScrapers, "2, 4, 3, 1, fill, fill");
-    panelTrailerScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelTrailerScrapers.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbTheMovieDatabase = new JCheckBox("The Movie Database");
     panelTrailerScrapers.add(cbTheMovieDatabase, "2, 2");
@@ -206,7 +215,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     separator_2 = new JSeparator();
     panelTrailerScrapers.add(separator_2, "2, 8, 5, 1");
 
-    chckbxUseTrailerPreferences = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$ 
+    chckbxUseTrailerPreferences = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
     panelTrailerScrapers.add(chckbxUseTrailerPreferences, "2, 10, 3, 1");
 
     lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
@@ -222,13 +231,14 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     panelTrailerScrapers.add(cbTrailerQuality, "4, 14, fill, default");
 
     panelScraperMetadataContainer = new JPanel();
-    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
-        .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
+    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
+        BUNDLE.getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
     add(panelScraperMetadataContainer, "2, 6, fill, fill");
-    panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelScraperMetadataContainer.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     panelScraperMetadata = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
     panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 4, 1, fill, default");
@@ -240,12 +250,13 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     panelScraperMetadataContainer.add(chckbxImageLanguage, "4, 5");
 
     panelAutomaticScraper = new JPanel();
-    panelAutomaticScraper.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.automaticscraper"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelAutomaticScraper
+        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.automaticscraper"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelAutomaticScraper, "4, 6, fill, fill");
-    panelAutomaticScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelAutomaticScraper.setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblScraperTreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
     panelAutomaticScraper.add(lblScraperTreshold, "1, 2, default, top");
@@ -294,7 +305,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         if (arg0.getColumn() == 0) {
           int row = arg0.getFirstRow();
           MovieScraper changedScraper = scrapers.get(row);
-          // if flag inNFO was changed, change all other trailers flags
+          // if flag default scraper was changed, change all other flags
           if (changedScraper.getDefaultScraper()) {
             settings.getMovieSettings().setMovieScraper(changedScraper.getScraperId());
             for (MovieScraper scraper : scrapers) {
@@ -325,7 +336,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         scraperLogo = new ImageIcon();
       }
       else {
-        scraperLogo = new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo());
+        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
       }
     }
 
@@ -352,6 +363,18 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       }
 
       return description;
+    }
+
+    private ImageIcon getScaledIcon(ImageIcon original) {
+      Canvas c = new Canvas();
+      FontMetrics fm = c.getFontMetrics(getFont());
+
+      int height = (int) (fm.getHeight() * 2f);
+      int width = original.getIconWidth() / original.getIconHeight() * height;
+
+      BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY,
+          Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      return new ImageIcon(scaledImage);
     }
 
     public Icon getScraperLogo() {

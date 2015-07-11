@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -53,6 +51,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 /**
  * The Class ZelluloidMetadataProvider. A meta data provider for the site zelluloid.de
  * 
@@ -60,13 +60,13 @@ import org.tinymediamanager.scraper.util.Url;
  */
 @PluginImplementation
 public class ZelluloidMetadataProvider implements IMovieMetadataProvider, IMovieTrailerProvider {
-  private static final Logger              LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
-  private static final String              BASE_URL      = "http://www.zelluloid.de";
-  private static final String              PAGE_ENCODING = "ISO-8859-1";
+  private static final Logger LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
+  private static final String BASE_URL      = "http://www.zelluloid.de";
+  private static final String PAGE_ENCODING = "ISO-8859-1";
 
   private static ZelluloidMetadataProvider instance;
-  private static MediaProviderInfo         providerInfo  = new MediaProviderInfo(Constants.ZELLULOIDID, "zelluloid.de",
-                                                             "Scraper for german zelluloid.de which is able to scrape movie metadata");
+  private static MediaProviderInfo         providerInfo = new MediaProviderInfo(Constants.ZELLULOIDID, "zelluloid.de",
+      "Scraper for german zelluloid.de which is able to scrape movie metadata");
 
   public static synchronized ZelluloidMetadataProvider getInstance() {
     if (instance == null) {

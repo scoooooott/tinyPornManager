@@ -74,7 +74,7 @@ public class TvShowEditAction extends AbstractAction {
         TvShowSeason season = (TvShowSeason) obj;
         ImageLabel imageLabel = new ImageLabel();
         ImageChooserDialog dialog = new ImageChooserDialog(season.getTvShow().getIds(), ImageType.SEASON, TvShowList.getInstance()
-            .getArtworkProviders(), imageLabel, null, null, MediaType.TV_SHOW);
+            .getAvailableArtworkScrapers(), imageLabel, null, null, MediaType.TV_SHOW);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
 

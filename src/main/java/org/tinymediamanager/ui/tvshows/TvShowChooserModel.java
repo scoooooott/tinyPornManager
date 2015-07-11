@@ -28,13 +28,14 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.UTF8Control;
@@ -44,27 +45,27 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowChooserModel extends AbstractModelObject {
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger            LOGGER           = LoggerFactory.getLogger(TvShowChooserModel.class);
-  public static final TvShowChooserModel emptyResult      = new TvShowChooserModel();
+  private static final ResourceBundle    BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger            LOGGER      = LoggerFactory.getLogger(TvShowChooserModel.class);
+  public static final TvShowChooserModel emptyResult = new TvShowChooserModel();
 
-  private ITvShowMetadataProvider        metadataProvider = null;
-  private List<IMediaArtworkProvider>    artworkProviders = null;
-  private MediaLanguages                 language         = null;
-  private MediaSearchResult              result           = null;
-  private MediaMetadata                  metadata         = null;
-  private String                         name             = "";
-  private String                         overview         = "";
-  private String                         year             = "";
-  private String                         combinedName     = "";
-  private String                         posterUrl        = "";
-  private String                         tagline          = "";
-  private boolean                        scraped          = false;
+  private ITvShowMetadataProvider metadataProvider = null;
+  private List<MediaScraper>      artworkScrapers  = null;
+  private MediaLanguages          language         = null;
+  private MediaSearchResult       result           = null;
+  private MediaMetadata           metadata         = null;
+  private String                  name             = "";
+  private String                  overview         = "";
+  private String                  year             = "";
+  private String                  combinedName     = "";
+  private String                  posterUrl        = "";
+  private String                  tagline          = "";
+  private boolean                 scraped          = false;
 
-  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders, MediaSearchResult result,
+  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<MediaScraper> artworkScrapers, MediaSearchResult result,
       MediaLanguages language) {
     this.metadataProvider = metadataProvider;
-    this.artworkProviders = artworkProviders;
+    this.artworkScrapers = artworkScrapers;
     // this.trailerProviders = trailerProviders;
     this.result = result;
     this.language = language;
@@ -166,13 +167,13 @@ public class TvShowChooserModel extends AbstractModelObject {
     }
     catch (IOException e) {
       LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 
@@ -192,7 +193,8 @@ public class TvShowChooserModel extends AbstractModelObject {
     options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
     // scrape providers till one artwork has been found
-    for (IMediaArtworkProvider artworkProvider : artworkProviders) {
+    for (MediaScraper artworkScraper : artworkScrapers) {
+      ITvShowArtworkProvider artworkProvider = (ITvShowArtworkProvider) artworkScraper.getMediaProvider();
       try {
         artwork.addAll(artworkProvider.getArtwork(options));
       }

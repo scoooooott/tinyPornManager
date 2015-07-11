@@ -69,12 +69,11 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -103,40 +102,40 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long                                                 serialVersionUID      = -3104541519073924724L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle(
-                                                                                                      "messages", new UTF8Control());                     //$NON-NLS-1$
-  private static final Logger                                               LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final long           serialVersionUID = -3104541519073924724L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                                                         movieList             = MovieList.getInstance();
-  private Movie                                                             movieToScrape;
-  private List<MovieChooserModel>                                           moviesFound           = ObservableCollections
-                                                                                                      .observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig                                        scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private IMovieMetadataProvider                                            metadataProvider;
-  private List<IMediaArtworkProvider>                                       artworkProviders;
-  private List<IMovieTrailerProvider>                                       trailerProviders;
-  private boolean                                                           continueQueue         = true;
+  private MovieList                   movieList             = MovieList.getInstance();
+  private Movie                       movieToScrape;
+  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper                mediaScraper;
+  private List<MediaScraper>          artworkScrapers;
+  private List<IMovieTrailerProvider> trailerProviders;
+  private boolean                     continueQueue         = true;
 
-  private SearchTask                                                        activeSearchTask;
+  private SearchTask activeSearchTask;
 
   /**
    * UI components
    */
-  private final JPanel                                                      contentPanel          = new JPanel();
-  private JTextField                                                        textFieldSearchString;
-  private MediaScraperComboBox                                              cbScraper;
-  private JTable                                                            table;
-  private JLabel                                                            lblMovieName;
-  private JTextPane                                                         tpMovieDescription;
-  private ImageLabel                                                        lblMoviePoster;
-  private JLabel                                                            lblProgressAction;
-  private JProgressBar                                                      progressBar;
-  private JLabel                                                            lblTagline;
-  private JButton                                                           okButton;
-  private JLabel                                                            lblPath;
-  private JComboBox                                                         cbLanguage;
+  private final JPanel         contentPanel = new JPanel();
+  private JTextField           textFieldSearchString;
+  private MediaScraperComboBox cbScraper;
+  private JTable               table;
+  private JLabel               lblMovieName;
+  private JTextPane            tpMovieDescription;
+  private ImageLabel           lblMoviePoster;
+  private JLabel               lblProgressAction;
+  private JProgressBar         progressBar;
+  private JLabel               lblTagline;
+  private JButton              okButton;
+  private JLabel               lblPath;
+  private JComboBox            cbLanguage;
 
   private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
   private AutoBinding<JTable, String, JLabel, String>                       autoBinding;
@@ -158,8 +157,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
     // copy the values
     MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
-    metadataProvider = movieList.getMetadataProvider();
-    artworkProviders = movieList.getArtworkProviders();
+    mediaScraper = movieList.getDefaultMediaScraper();
+    artworkScrapers = movieList.getDefaultArtworkScrapers();
     trailerProviders = movieList.getTrailerProviders();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
@@ -179,11 +178,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    contentPanel.setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.RELATED_GAP_ROWSPEC, }));
     {
       lblPath = new JLabel("");
       contentPanel.add(lblPath, "2, 2");
@@ -191,10 +191,11 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "2, 4, fill, fill");
-      panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:max(100px;default)"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      panelSearchField.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("right:max(100px;default)"), },
+          new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -286,9 +287,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("350px:grow"),
-            FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("20px"),
-            FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+        panelSearchDetail.setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("350px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+                FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("20px"), FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
         {
           lblMovieName = new JLabel("");
           TmmFontHelper.changeFont(lblMovieName, 1.167, Font.BOLD);
@@ -301,8 +302,9 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         {
           JPanel panel = new JPanel();
           panelSearchDetail.add(panel, "2, 4, fill, fill");
-          panel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("150px"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("200px:grow"), }, new RowSpec[] { RowSpec.decode("240px"), }));
+          panel.setLayout(
+              new FormLayout(new ColumnSpec[] { ColumnSpec.decode("150px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), },
+                  new RowSpec[] { RowSpec.decode("240px"), }));
           {
             lblMoviePoster = new ImageLabel(false);
             panel.add(lblMoviePoster, "1, 1, fill, fill");
@@ -335,9 +337,10 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       JPanel bottomPane = new JPanel();
       contentPanel.add(bottomPane, "2, 11");
       {
-        bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
+        bottomPane.setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2");
@@ -421,7 +424,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.POSTER, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.POSTER, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -434,7 +437,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
                 ImageLabel lblImage = new ImageLabel();
                 List<String> extrathumbs = new ArrayList<String>();
                 List<String> extrafanarts = new ArrayList<String>();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.FANART, artworkProviders, lblImage, extrathumbs,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
                     extrafanarts, MediaType.MOVIE);
                 dialog.setVisible(true);
                 movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.FANART);
@@ -455,7 +458,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // banner
               if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.BANNER, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -466,7 +469,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // logo
               if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.LOGO, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.LOGO, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -477,8 +480,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // clearart
               if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARART, artworkProviders, lblImage, null,
-                    null, MediaType.MOVIE);
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARART, artworkScrapers, lblImage, null, null,
+                    MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
                 movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.CLEARART);
@@ -488,7 +491,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // discart
               if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.DISC, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.DISC, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -499,7 +502,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               // thumb
               if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.THUMB, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.THUMB, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -591,7 +594,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false); // $NON-NLS-1$
     //
     jTableBinding.bind();
     //
@@ -654,7 +657,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
       PluginManager pm = PluginManager.getInstance();
-      metadataProvider = (IMovieMetadataProvider) pm.getPlugin(selectedScraper);
+      mediaScraper = (MediaScraper) pm.getPlugin(selectedScraper);
       searchMovie(textFieldSearchString.getText(), null);
     }
   }
@@ -675,7 +678,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider, language);
+      searchResult = movieList.searchMovie(searchTerm, movie, mediaScraper, language);
       return null;
     }
 
@@ -692,12 +695,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           moviesFound.add(MovieChooserModel.emptyResult);
         }
         else {
-          IMovieMetadataProvider mpFromResult = null;
+          MediaScraper mpFromResult = null;
           for (MediaSearchResult result : searchResult) {
             if (mpFromResult == null) {
-              mpFromResult = MovieList.getInstance().getMetadataProvider(result.getProviderId());
+              mpFromResult = MovieList.getInstance().getMediaScraperById(result.getProviderId());
             }
-            moviesFound.add(new MovieChooserModel(mpFromResult, artworkProviders, trailerProviders, result, language));
+            moviesFound.add(new MovieChooserModel(mpFromResult, artworkScrapers, trailerProviders, result, language));
             // get metadataProvider from searchresult
           }
         }

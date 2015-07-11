@@ -38,130 +38,131 @@ import org.tinymediamanager.scraper.MediaLanguages;
  */
 @XmlRootElement(name = "MovieSettings")
 public class MovieSettings extends AbstractModelObject {
-  private final static String           PATH                                     = "path";
-  private final static String           FILENAME                                 = "filename";
-  private final static String           MOVIE_DATA_SOURCE                        = "movieDataSource";
-  private final static String           IMAGE_POSTER_SIZE                        = "imagePosterSize";
-  private final static String           IMAGE_FANART_SIZE                        = "imageFanartSize";
-  private final static String           IMAGE_EXTRATHUMBS                        = "imageExtraThumbs";
-  private final static String           IMAGE_EXTRATHUMBS_RESIZE                 = "imageExtraThumbsResize";
-  private final static String           IMAGE_EXTRATHUMBS_SIZE                   = "imageExtraThumbsSize";
-  private final static String           IMAGE_EXTRATHUMBS_COUNT                  = "imageExtraThumbsCount";
-  private final static String           IMAGE_EXTRAFANART                        = "imageExtraFanart";
-  private final static String           IMAGE_EXTRAFANART_COUNT                  = "imageExtraFanartCount";
-  private final static String           ENABLE_MOVIESET_ARTWORK_MOVIE_FOLDER     = "enableMovieSetArtworkMovieFolder";
-  private final static String           ENABLE_MOVIESET_ARTWORK_FOLDER           = "enableMovieSetArtworkFolder";
-  private final static String           MOVIESET_ARTWORK_FOLDER                  = "movieSetArtworkFolder";
-  private final static String           MOVIE_CONNECTOR                          = "movieConnector";
-  private final static String           MOVIE_NFO_FILENAME                       = "movieNfoFilename";
-  private final static String           MOVIE_POSTER_FILENAME                    = "moviePosterFilename";
-  private final static String           MOVIE_FANART_FILENAME                    = "movieFanartFilename";
-  private final static String           MOVIE_RENAMER_PATHNAME                   = "movieRenamerPathname";
-  private final static String           MOVIE_RENAMER_FILENAME                   = "movieRenamerFilename";
-  private final static String           MOVIE_RENAMER_SPACE_SUBSTITUTION         = "movieRenamerSpaceSubstitution";
-  private final static String           MOVIE_RENAMER_SPACE_REPLACEMENT          = "movieRenamerSpaceReplacement";
-  private final static String           MOVIE_RENAMER_NFO_CLEANUP                = "movieRenamerNfoCleanup";
-  private final static String           MOVIE_RENAMER_MOVIESET_SINGLE_MOVIE      = "movieRenamerMoviesetSingleMovie";
-  private final static String           MOVIE_SCRAPER                            = "movieScraper";
-  private final static String           SCRAPE_BEST_IMAGE                        = "scrapeBestImage";
-  private final static String           IMAGE_SCRAPER_TMDB                       = "imageScraperTmdb";
-  private final static String           IMAGE_SCRAPER_FANART_TV                  = "imageScraperFanartTv";
-  private final static String           TRAILER_SCRAPER_TMDB                     = "trailerScraperTmdb";
-  private final static String           TRAILER_SCRAPER_HD_TRAILERS              = "trailerScraperHdTrailers";
-  private final static String           TRAILER_SCRAPER_OFDB                     = "trailerScraperOfdb";
-  private final static String           WRITE_ACTOR_IMAGES                       = "writeActorImages";
-  private final static String           IMDB_SCRAPE_FOREIGN_LANGU                = "imdbScrapeForeignLanguage";
-  private final static String           SCRAPER_LANGU                            = "scraperLanguage";
-  private final static String           CERTIFICATION_COUNTRY                    = "certificationCountry";
-  private final static String           SCRAPER_THRESHOLD                        = "scraperThreshold";
-  private final static String           DETECT_MOVIE_MULTI_DIR                   = "detectMovieMultiDir";
-  private final static String           BUILD_IMAGE_CACHE_ON_IMPORT              = "buildImageCacheOnImport";
-  private final static String           BAD_WORDS                                = "badWords";
-  private final static String           ENTRY                                    = "entry";
-  private final static String           RUNTIME_FROM_MI                          = "runtimeFromMediaInfo";
-  private final static String           ASCII_REPLACEMENT                        = "asciiReplacement";
-  private final static String           YEAR_COLUMN_VISIBLE                      = "yearColumnVisible";
-  private final static String           NFO_COLUMN_VISIBLE                       = "nfoColumnVisible";
-  private final static String           DATE_ADDED_COLUMN_VISIBLE                = "dateAddedColumnVisible";
-  private final static String           IMAGE_COLUMN_VISIBLE                     = "imageColumnVisible";
-  private final static String           TRAILER_COLUMN_VISIBLE                   = "trailerColumnVisible";
-  private final static String           SUBTITLE_COLUMN_VISIBLE                  = "subtitleColumnVisible";
-  private final static String           WATCHED_COLUMN_VISIBLE                   = "watchedColumnVisible";
-  private final static String           SCRAPER_FALLBACK                         = "scraperFallback";
+  private final static String PATH                                 = "path";
+  private final static String FILENAME                             = "filename";
+  private final static String MOVIE_DATA_SOURCE                    = "movieDataSource";
+  private final static String IMAGE_POSTER_SIZE                    = "imagePosterSize";
+  private final static String IMAGE_FANART_SIZE                    = "imageFanartSize";
+  private final static String IMAGE_EXTRATHUMBS                    = "imageExtraThumbs";
+  private final static String IMAGE_EXTRATHUMBS_RESIZE             = "imageExtraThumbsResize";
+  private final static String IMAGE_EXTRATHUMBS_SIZE               = "imageExtraThumbsSize";
+  private final static String IMAGE_EXTRATHUMBS_COUNT              = "imageExtraThumbsCount";
+  private final static String IMAGE_EXTRAFANART                    = "imageExtraFanart";
+  private final static String IMAGE_EXTRAFANART_COUNT              = "imageExtraFanartCount";
+  private final static String ENABLE_MOVIESET_ARTWORK_MOVIE_FOLDER = "enableMovieSetArtworkMovieFolder";
+  private final static String ENABLE_MOVIESET_ARTWORK_FOLDER       = "enableMovieSetArtworkFolder";
+  private final static String MOVIESET_ARTWORK_FOLDER              = "movieSetArtworkFolder";
+  private final static String MOVIE_CONNECTOR                      = "movieConnector";
+  private final static String MOVIE_NFO_FILENAME                   = "movieNfoFilename";
+  private final static String MOVIE_POSTER_FILENAME                = "moviePosterFilename";
+  private final static String MOVIE_FANART_FILENAME                = "movieFanartFilename";
+  private final static String MOVIE_RENAMER_PATHNAME               = "movieRenamerPathname";
+  private final static String MOVIE_RENAMER_FILENAME               = "movieRenamerFilename";
+  private final static String MOVIE_RENAMER_SPACE_SUBSTITUTION     = "movieRenamerSpaceSubstitution";
+  private final static String MOVIE_RENAMER_SPACE_REPLACEMENT      = "movieRenamerSpaceReplacement";
+  private final static String MOVIE_RENAMER_NFO_CLEANUP            = "movieRenamerNfoCleanup";
+  private final static String MOVIE_RENAMER_MOVIESET_SINGLE_MOVIE  = "movieRenamerMoviesetSingleMovie";
+  private final static String MOVIE_SCRAPER                        = "movieScraper";
+  private final static String MOVIE_ARTWORK_SCRAPERS               = "movieArtworkScrapers";
+  private final static String SCRAPE_BEST_IMAGE                    = "scrapeBestImage";
+  private final static String TRAILER_SCRAPER_TMDB                 = "trailerScraperTmdb";
+  private final static String TRAILER_SCRAPER_HD_TRAILERS          = "trailerScraperHdTrailers";
+  private final static String TRAILER_SCRAPER_OFDB                 = "trailerScraperOfdb";
+  private final static String WRITE_ACTOR_IMAGES                   = "writeActorImages";
+  private final static String IMDB_SCRAPE_FOREIGN_LANGU            = "imdbScrapeForeignLanguage";
+  private final static String SCRAPER_LANGU                        = "scraperLanguage";
+  private final static String CERTIFICATION_COUNTRY                = "certificationCountry";
+  private final static String SCRAPER_THRESHOLD                    = "scraperThreshold";
+  private final static String DETECT_MOVIE_MULTI_DIR               = "detectMovieMultiDir";
+  private final static String BUILD_IMAGE_CACHE_ON_IMPORT          = "buildImageCacheOnImport";
+  private final static String BAD_WORDS                            = "badWords";
+  private final static String ENTRY                                = "entry";
+  private final static String RUNTIME_FROM_MI                      = "runtimeFromMediaInfo";
+  private final static String ASCII_REPLACEMENT                    = "asciiReplacement";
+  private final static String YEAR_COLUMN_VISIBLE                  = "yearColumnVisible";
+  private final static String NFO_COLUMN_VISIBLE                   = "nfoColumnVisible";
+  private final static String DATE_ADDED_COLUMN_VISIBLE            = "dateAddedColumnVisible";
+  private final static String IMAGE_COLUMN_VISIBLE                 = "imageColumnVisible";
+  private final static String TRAILER_COLUMN_VISIBLE               = "trailerColumnVisible";
+  private final static String SUBTITLE_COLUMN_VISIBLE              = "subtitleColumnVisible";
+  private final static String WATCHED_COLUMN_VISIBLE               = "watchedColumnVisible";
+  private final static String SCRAPER_FALLBACK                     = "scraperFallback";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>            movieDataSources                         = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String> movieDataSources = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieNfoNaming>    movieNfoFilenames                        = new ArrayList<MovieNfoNaming>();
+  private final List<MovieNfoNaming> movieNfoFilenames = new ArrayList<MovieNfoNaming>();
 
   @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MoviePosterNaming> moviePosterFilenames                     = new ArrayList<MoviePosterNaming>();
+  private final List<MoviePosterNaming> moviePosterFilenames = new ArrayList<MoviePosterNaming>();
 
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieFanartNaming> movieFanartFilenames                     = new ArrayList<MovieFanartNaming>();
+  private final List<MovieFanartNaming> movieFanartFilenames = new ArrayList<MovieFanartNaming>();
 
   @XmlElementWrapper(name = BAD_WORDS)
   @XmlElement(name = ENTRY)
-  private final List<String>            badWords                                 = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String> badWords = ObservableCollections.observableList(new ArrayList<String>());
 
-  private MovieConnectors               movieConnector                           = MovieConnectors.XBMC;
-  private String                        movieRenamerPathname                     = "$T ($Y)";
-  private String                        movieRenamerFilename                     = "$T ($Y) $V $A";
-  private boolean                       movieRenamerSpaceSubstitution            = false;
-  private String                        movieRenamerSpaceReplacement             = "_";
-  private boolean                       movieRenamerNfoCleanup                   = false;
-  private boolean                       imdbScrapeForeignLanguage                = false;
-  private String                        movieScraper                             = Constants.TMDBID;
-  private PosterSizes                   imagePosterSize                          = PosterSizes.BIG;
-  private boolean                       imageScraperTmdb                         = true;
-  private boolean                       imageScraperFanartTv                     = true;
-  private FanartSizes                   imageFanartSize                          = FanartSizes.LARGE;
-  private boolean                       imageExtraThumbs                         = false;
-  private boolean                       imageExtraThumbsResize                   = true;
-  private int                           imageExtraThumbsSize                     = 300;
-  private int                           imageExtraThumbsCount                    = 5;
-  private boolean                       imageExtraFanart                         = false;
-  private int                           imageExtraFanartCount                    = 5;
-  private boolean                       enableMovieSetArtworkMovieFolder         = true;
-  private boolean                       enableMovieSetArtworkFolder              = false;
-  private String                        movieSetArtworkFolder                    = "MoviesetArtwork";
-  private boolean                       scrapeBestImage                          = true;
-  private boolean                       imageLanguagePriority                    = true;
-  private boolean                       imageLogo                                = false;
-  private boolean                       imageBanner                              = false;
-  private boolean                       imageClearart                            = false;
-  private boolean                       imageDiscart                             = false;
-  private boolean                       imageThumb                               = false;
-  private boolean                       trailerScraperTmdb                       = true;
-  private boolean                       trailerScraperHdTrailers                 = true;
-  private boolean                       trailerScraperOfdb                       = true;
-  private boolean                       writeActorImages                         = false;
-  private MediaLanguages                scraperLanguage                          = MediaLanguages.en;
-  private CountryCode                   certificationCountry                     = CountryCode.US;
-  private double                        scraperThreshold                         = 0.75;
-  private boolean                       detectMovieMultiDir                      = false;
-  private boolean                       buildImageCacheOnImport                  = false;
-  private boolean                       movieRenamerCreateMoviesetForSingleMovie = false;
-  private boolean                       runtimeFromMediaInfo                     = false;
-  private boolean                       asciiReplacement                         = false;
-  private boolean                       yearColumnVisible                        = true;
-  private boolean                       ratingColumnVisible                      = true;
-  private boolean                       nfoColumnVisible                         = true;
-  private boolean                       dateAddedColumnVisible                   = true;
-  private boolean                       imageColumnVisible                       = true;
-  private boolean                       trailerColumnVisible                     = true;
-  private boolean                       subtitleColumnVisible                    = true;
-  private boolean                       watchedColumnVisible                     = true;
-  private boolean                       scraperFallback                          = false;
-  private boolean                       useTrailerPreference                     = false;
-  private MovieTrailerQuality           trailerQuality                           = MovieTrailerQuality.HD_720;
-  private MovieTrailerSources           trailerSource                            = MovieTrailerSources.YOUTUBE;
-  private boolean                       syncTrakt                                = false;
+  @XmlElementWrapper(name = MOVIE_ARTWORK_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String> movieArtworkScrapers = ObservableCollections.observableList(new ArrayList<String>());
+
+  private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
+  private String              movieRenamerPathname                     = "$T ($Y)";
+  private String              movieRenamerFilename                     = "$T ($Y) $V $A";
+  private boolean             movieRenamerSpaceSubstitution            = false;
+  private String              movieRenamerSpaceReplacement             = "_";
+  private boolean             movieRenamerNfoCleanup                   = false;
+  private boolean             imdbScrapeForeignLanguage                = false;
+  private String              movieScraper                             = Constants.TMDB;
+  private PosterSizes         imagePosterSize                          = PosterSizes.BIG;
+  private FanartSizes         imageFanartSize                          = FanartSizes.LARGE;
+  private boolean             imageExtraThumbs                         = false;
+  private boolean             imageExtraThumbsResize                   = true;
+  private int                 imageExtraThumbsSize                     = 300;
+  private int                 imageExtraThumbsCount                    = 5;
+  private boolean             imageExtraFanart                         = false;
+  private int                 imageExtraFanartCount                    = 5;
+  private boolean             enableMovieSetArtworkMovieFolder         = true;
+  private boolean             enableMovieSetArtworkFolder              = false;
+  private String              movieSetArtworkFolder                    = "MoviesetArtwork";
+  private boolean             scrapeBestImage                          = true;
+  private boolean             imageLanguagePriority                    = true;
+  private boolean             imageLogo                                = false;
+  private boolean             imageBanner                              = false;
+  private boolean             imageClearart                            = false;
+  private boolean             imageDiscart                             = false;
+  private boolean             imageThumb                               = false;
+  private boolean             trailerScraperTmdb                       = true;
+  private boolean             trailerScraperHdTrailers                 = true;
+  private boolean             trailerScraperOfdb                       = true;
+  private boolean             writeActorImages                         = false;
+  private MediaLanguages      scraperLanguage                          = MediaLanguages.en;
+  private CountryCode         certificationCountry                     = CountryCode.US;
+  private double              scraperThreshold                         = 0.75;
+  private boolean             detectMovieMultiDir                      = false;
+  private boolean             buildImageCacheOnImport                  = false;
+  private boolean             movieRenamerCreateMoviesetForSingleMovie = false;
+  private boolean             runtimeFromMediaInfo                     = false;
+  private boolean             asciiReplacement                         = false;
+  private boolean             yearColumnVisible                        = true;
+  private boolean             ratingColumnVisible                      = true;
+  private boolean             nfoColumnVisible                         = true;
+  private boolean             dateAddedColumnVisible                   = true;
+  private boolean             imageColumnVisible                       = true;
+  private boolean             trailerColumnVisible                     = true;
+  private boolean             subtitleColumnVisible                    = true;
+  private boolean             watchedColumnVisible                     = true;
+  private boolean             scraperFallback                          = false;
+  private boolean             useTrailerPreference                     = false;
+  private MovieTrailerQuality trailerQuality                           = MovieTrailerQuality.HD_720;
+  private MovieTrailerSources trailerSource                            = MovieTrailerSources.YOUTUBE;
+  private boolean             syncTrakt                                = false;
 
   public MovieSettings() {
   }
@@ -439,24 +440,22 @@ public class MovieSettings extends AbstractModelObject {
     firePropertyChange(IMDB_SCRAPE_FOREIGN_LANGU, oldValue, newValue);
   }
 
-  public boolean isImageScraperTmdb() {
-    return imageScraperTmdb;
+  public void addMovieArtworkScraper(String newValue) {
+    if (!movieArtworkScrapers.contains(newValue)) {
+      movieArtworkScrapers.add(newValue);
+      firePropertyChange(MOVIE_ARTWORK_SCRAPERS, null, movieArtworkScrapers);
+    }
   }
 
-  public boolean isImageScraperFanartTv() {
-    return imageScraperFanartTv;
+  public void removeMovieArtworkScraper(String newValue) {
+    if (movieArtworkScrapers.contains(newValue)) {
+      movieArtworkScrapers.remove(newValue);
+      firePropertyChange(MOVIE_ARTWORK_SCRAPERS, null, movieArtworkScrapers);
+    }
   }
 
-  public void setImageScraperTmdb(boolean newValue) {
-    boolean oldValue = this.imageScraperTmdb;
-    this.imageScraperTmdb = newValue;
-    firePropertyChange(IMAGE_SCRAPER_TMDB, oldValue, newValue);
-  }
-
-  public void setImageScraperFanartTv(boolean newValue) {
-    boolean oldValue = this.imageScraperFanartTv;
-    this.imageScraperFanartTv = newValue;
-    firePropertyChange(IMAGE_SCRAPER_FANART_TV, oldValue, newValue);
+  public List<String> getMovieArtworkScrapers() {
+    return movieArtworkScrapers;
   }
 
   public boolean isScrapeBestImage() {

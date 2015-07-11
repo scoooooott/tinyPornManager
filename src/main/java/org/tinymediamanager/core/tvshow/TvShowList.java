@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -50,7 +48,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
-import org.tinymediamanager.ui.UTF8Control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -61,22 +58,16 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowList.class);
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static TvShowList           instance              = null;
+  private static final Logger LOGGER   = LoggerFactory.getLogger(TvShowList.class);
+  private static TvShowList   instance = null;
 
-  private List<TvShow>                tvShowList            = ObservableCollections.observableList(Collections
-                                                                .synchronizedList(new ArrayList<TvShow>()));
-  private List<String>                tvShowTagsObservable  = ObservableCollections.observableList(Collections
-                                                                .synchronizedList(new ArrayList<String>()));
-  private List<String>                episodeTagsObservable = ObservableCollections.observableList(Collections
-                                                                .synchronizedList(new ArrayList<String>()));
-  private List<String>                videoCodecsObservable = ObservableCollections.observableList(Collections
-                                                                .synchronizedList(new ArrayList<String>()));
-  private List<String>                audioCodecsObservable = ObservableCollections.observableList(Collections
-                                                                .synchronizedList(new ArrayList<String>()));
+  private List<TvShow> tvShowList            = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<String> tvShowTagsObservable  = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String> episodeTagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String> videoCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String> audioCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
 
-  private PropertyChangeListener      propertyChangeListener;
+  private PropertyChangeListener propertyChangeListener;
 
   /**
    * Instantiates a new TvShowList.
@@ -370,7 +361,7 @@ public class TvShowList extends AbstractModelObject {
   public ITvShowMetadataProvider getMetadataProvider() {
     MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
     if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
+      scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
     return (ITvShowMetadataProvider) scraper.getMediaProvider();
   }
@@ -409,71 +400,45 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
-   * Gets the artwork provider.
+   * Gets all available artwork scrapers.
    * 
-   * @return the artwork provider
+   * @return the artwork scrapers
    */
-  public List<IMediaArtworkProvider> getArtworkProviders() {
-    List<TvShowArtworkScrapers> scrapers = new ArrayList<TvShowArtworkScrapers>();
-    scrapers.add(TvShowArtworkScrapers.TVDB);
-    scrapers.add(TvShowArtworkScrapers.ANIDB);
-    scrapers.add(TvShowArtworkScrapers.FANART_TV);
-    return getArtworkProviders(scrapers);
+  public List<MediaScraper> getAvailableArtworkScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK);
+    // we can use the TvShowMediaScraperComparator here too, since TheTvDb should also be first
+    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    return availableScrapers;
   }
 
   /**
-   * Gets the artwork providers.
+   * get all specified artwork scrapers
    * 
-   * @param scrapers
-   *          the scrapers
-   * @return the artwork providers
+   * @return the specified artwork scrapers
    */
-  public List<IMediaArtworkProvider> getArtworkProviders(List<TvShowArtworkScrapers> scrapers) {
-    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
+  public List<MediaScraper> getArtworkScrapers(List<String> providerIds) {
+    List<MediaScraper> artworkScrapers = new ArrayList<>();
 
-    IMediaArtworkProvider artworkProvider = null;
-
-    // the tv db
-    if (scrapers.contains(TvShowArtworkScrapers.TVDB)) {
-      try {
-        if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
-          LOGGER.debug("get instance of TheTvDbMetadataProvider");
-          artworkProvider = (IMediaArtworkProvider) MediaScraper.getMediaScraperById(Constants.TVDBID, ScraperType.ARTWORK).getMediaProvider();
-          // artworkProvider = new TheTvDbMetadataProvider();
-          artworkProviders.add(artworkProvider);
-        }
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
       }
-      catch (Exception e) {
-        LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
+      MediaScraper artworkScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.TV_SHOW_ARTWORK);
+      if (artworkScraper != null) {
+        artworkScrapers.add(artworkScraper);
       }
     }
 
-    // anidb
-    if (scrapers.contains(TvShowArtworkScrapers.ANIDB)) {
-      MediaScraper scraper = MediaScraper.getMediaScraperById(ANIDBID, ScraperType.ARTWORK);
-      if (scraper != null) {
-        artworkProviders.add((IMediaArtworkProvider) scraper.getMediaProvider());
-      }
-    }
+    return artworkScrapers;
+  }
 
-    // fanart.tv
-    if (scrapers.contains(TvShowArtworkScrapers.FANART_TV)) {
-      try {
-        if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
-          LOGGER.debug("get instance of FanartTvMetadataProvider");
-          MediaScraper scraper = MediaScraper.getMediaScraperById(FANARTTVID, ScraperType.ARTWORK);
-          // artworkProvider = new FanartTvMetadataProvider();
-          if (scraper != null) {
-            artworkProviders.add((IMediaArtworkProvider) scraper.getMediaProvider());
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
-      }
-    }
-
-    return artworkProviders;
+  /**
+   * get all default (specified via settings) artwork scrapers
+   * 
+   * @return the specified artwork scrapers
+   */
+  public List<MediaScraper> getDefaultArtworkScrapers() {
+    return getArtworkScrapers(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowArtworkScrapers());
   }
 
   /**
@@ -533,7 +498,7 @@ public class TvShowList extends AbstractModelObject {
       // }
     }
     catch (Exception e) {
-      LOGGER.error("searchMovie", e);
+      LOGGER.error("searchTvShow", e);
     }
 
     return searchResult;
@@ -679,7 +644,7 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @param path
    *          the path
-   * @return the movie by path
+   * @return the TV show by path
    */
   public TvShow getTvShowByPath(File path) {
     ArrayList<TvShow> tvShows = new ArrayList<TvShow>(tvShowList);

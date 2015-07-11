@@ -66,7 +66,6 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -109,7 +108,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
   private ITvShowMetadataProvider     metadataProvider;
-  private List<IMediaArtworkProvider> artworkProviders;
+  private List<MediaScraper>          artworkScrapers;
   private boolean                     continueQueue         = true;
 
   /** UI components */
@@ -141,7 +140,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     // copy the values
     TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
     metadataProvider = tvShowList.getMetadataProvider();
-    artworkProviders = tvShowList.getArtworkProviders();
+    artworkScrapers = tvShowList.getAvailableArtworkScrapers();
     // trailerProviders = tvShowList.getTrailerProviders();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
@@ -395,7 +394,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.POSTER, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.POSTER, artworkScrapers, lblImage, null, null,
                     MediaType.TV_SHOW);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
@@ -408,8 +407,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
                 ImageLabel lblImage = new ImageLabel();
                 List<String> extrathumbs = new ArrayList<String>();
                 List<String> extrafanarts = new ArrayList<String>();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkProviders, lblImage,
-                    extrathumbs, extrafanarts, MediaType.TV_SHOW);
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
+                    extrafanarts, MediaType.TV_SHOW);
                 dialog.setVisible(true);
                 tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.FANART);
                 tvShowToScrape.downloadArtwork(MediaFileType.FANART);
@@ -418,7 +417,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               // banner
               {
                 ImageLabel lblImage = new ImageLabel();
-                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkProviders, lblImage, null, null,
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
                     MediaType.TV_SHOW);
                 dialog.setVisible(true);
                 tvShowToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.BANNER);
@@ -513,7 +512,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           if (mpFromResult == null) {
             mpFromResult = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
           }
-          tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkProviders, result, language));
+          tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkScrapers, result, language));
         }
       }
 

@@ -15,9 +15,12 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -41,6 +44,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -72,32 +76,35 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 4999827736720726395L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
-  private List<TvShowScraper>         scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
+  private Settings             settings        = Settings.getInstance();
+  private List<TvShowScraper>  scrapers        = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
+  private List<ArtworkScraper> artworkScrapers = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
   /** UI components */
-  private ButtonGroup                 buttonGroupScraper;
-  private JComboBox                   cbScraperTmdbLanguage;
-  private JComboBox                   cbCountry;
-  private JCheckBox                   chckbxAutomaticallyScrapeImages;
-  private JPanel                      panelScraperMetadata;
-  private JPanel                      panelScraperMetadataContainer;
-  private JPanel                      panelArtworkScrapers;
-  private JCheckBox                   chckbxImagesFanartTv;
-  private JCheckBox                   chckbxImagesTvDB;
-  private JTextPane                   lblTvShowScraperCountryHint;
-  private JSeparator                  separator_1;
-  private JRadioButton                rdbtnThumbWithPostfix;
-  private JRadioButton                rdbtnThumbWoPostfix;
-  private JLabel                      lblNewLabel;
-  private ButtonGroup                 btnGroupThumbFilenaming;
-  private JScrollPane                 scrollPaneScraper;
-  private JTable                      tableScraper;
-  private JPanel                      panelScraperDetails;
-  private JTextPane                   tpScraperDescription;
+  private JComboBox    cbScraperTmdbLanguage;
+  private JComboBox    cbCountry;
+  private JCheckBox    chckbxAutomaticallyScrapeImages;
+  private JPanel       panelScraperMetadata;
+  private JPanel       panelScraperMetadataContainer;
+  private JPanel       panelArtworkScrapers;
+  private JSeparator   separator_1;
+  private JRadioButton rdbtnThumbWithPostfix;
+  private JRadioButton rdbtnThumbWoPostfix;
+  private JLabel       lblNewLabel;
+  private ButtonGroup  btnGroupThumbFilenaming;
+  private JScrollPane  scrollPaneScraper;
+  private JTable       tableScraper;
+  private JPanel       panelScraperDetails;
+  private JTextPane    tpScraperDescription;
+  private JScrollPane  scrollPaneArtworkScraper;
+  private JTable       tableArtworkScraper;
+  private JPanel       panelArtworkScraperDetails;
+  private JTextPane    tpArtworkScraperDescription;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -108,28 +115,42 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     int selectedIndex = 0;
     int counter = 0;
     for (MediaScraper scraper : TvShowList.getInstance().getAvailableMediaScrapers()) {
-      TvShowScraper movieScraper = new TvShowScraper(scraper);
+      TvShowScraper tvShowScraper = new TvShowScraper(scraper);
       if (scraper.equals(defaultMediaScraper)) {
-        movieScraper.defaultScraper = true;
+        tvShowScraper.defaultScraper = true;
         selectedIndex = counter;
       }
-      scrapers.add(movieScraper);
+      scrapers.add(tvShowScraper);
+      counter++;
+    }
+    List<String> enabledArtworkProviders = settings.getTvShowSettings().getTvShowArtworkScrapers();
+    int artworkSelectedIndex = -1;
+    counter = 0;
+    for (MediaScraper scraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
+      ArtworkScraper artworkScraper = new ArtworkScraper(scraper);
+      if (enabledArtworkProviders.contains(artworkScraper.getScraperId())) {
+        artworkScraper.active = true;
+        if (artworkSelectedIndex < 0) {
+          artworkSelectedIndex = counter;
+        }
+      }
+      artworkScrapers.add(artworkScraper);
       counter++;
     }
     // UI init
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
     JPanel panelTvShowScrapers = new JPanel();
     panelTvShowScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelTvShowScrapers, "2, 2, fill, top");
-    panelTvShowScrapers.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
-    buttonGroupScraper = new ButtonGroup();
+    panelTvShowScrapers.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("100dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
     scrollPaneScraper = new JScrollPane();
     panelTvShowScrapers.add(scrollPaneScraper, "1, 2, 3, 1, fill, fill");
@@ -149,7 +170,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     panelScraperDetails.add(tpScraperDescription, "2, 2, fill, fill");
 
     JSeparator separator = new JSeparator();
-    panelTvShowScrapers.add(separator, "1, 4, 3, 1");
+    panelTvShowScrapers.add(separator, "1, 4, 5, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelTvShowScrapers.add(lblScraperLanguage, "1, 6, right, default");
@@ -163,46 +184,54 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     cbCountry = new JComboBox(CountryCode.values());
     panelTvShowScrapers.add(cbCountry, "3, 8, fill, default");
 
-    lblTvShowScraperCountryHint = new JTextPane();
-    lblTvShowScraperCountryHint.setEditable(false);
-    lblTvShowScraperCountryHint.setOpaque(false);
-    lblTvShowScraperCountryHint.setText(BUNDLE.getString("Settings.tvshow.certifactioncountry.hint")); //$NON-NLS-1$
-    panelTvShowScrapers.add(lblTvShowScraperCountryHint, "3, 10, 3, 1");
-
     btnGroupThumbFilenaming = new ButtonGroup();
 
     panelArtworkScrapers = new JPanel();
     panelArtworkScrapers.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.images"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelArtworkScrapers, "4, 2, fill, fill");
-    panelArtworkScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    add(panelArtworkScrapers, "2, 4, fill, fill");
+    panelArtworkScrapers.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("75dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
-    chckbxImagesTvDB = new JCheckBox("The TV Database");
-    panelArtworkScrapers.add(chckbxImagesTvDB, "2, 2");
+    scrollPaneArtworkScraper = new JScrollPane();
+    panelArtworkScrapers.add(scrollPaneArtworkScraper, "2, 2, 3, 1, fill, fill");
 
-    chckbxImagesFanartTv = new JCheckBox("Fanart.tv");
-    panelArtworkScrapers.add(chckbxImagesFanartTv, "2, 4");
+    tableArtworkScraper = new JTable();
+    tableArtworkScraper.setRowHeight(29);
+    scrollPaneArtworkScraper.setViewportView(tableArtworkScraper);
+
+    panelArtworkScraperDetails = new JPanel();
+    panelArtworkScrapers.add(panelArtworkScraperDetails, "6, 2, fill, fill");
+    panelArtworkScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+
+    tpArtworkScraperDescription = new JTextPane();
+    tpArtworkScraperDescription.setEditorKit(new HTMLEditorKit());
+    tpArtworkScraperDescription.setOpaque(false);
+    panelArtworkScraperDetails.add(tpArtworkScraperDescription, "2, 2, fill, fill");
 
     separator_1 = new JSeparator();
-    panelArtworkScrapers.add(separator_1, "2, 6");
+    panelArtworkScrapers.add(separator_1, "2, 4, 5, 1");
 
     lblNewLabel = new JLabel(BUNDLE.getString("image.thumb.naming")); //$NON-NLS-1$
-    panelArtworkScrapers.add(lblNewLabel, "2, 8");
+    panelArtworkScrapers.add(lblNewLabel, "2, 6");
     rdbtnThumbWithPostfix = new JRadioButton("<dynamic>-thumb.ext");
     btnGroupThumbFilenaming.add(rdbtnThumbWithPostfix);
-    panelArtworkScrapers.add(rdbtnThumbWithPostfix, "2, 10");
+    panelArtworkScrapers.add(rdbtnThumbWithPostfix, "4, 6");
+    rdbtnThumbWithPostfix.setSelected(settings.getTvShowSettings().isUseRenamerThumbPostfix());
 
     rdbtnThumbWoPostfix = new JRadioButton("<dynamic>.ext");
     btnGroupThumbFilenaming.add(rdbtnThumbWoPostfix);
-    panelArtworkScrapers.add(rdbtnThumbWoPostfix, "2, 12");
+    panelArtworkScrapers.add(rdbtnThumbWoPostfix, "4, 8");
+    rdbtnThumbWoPostfix.setSelected(!settings.getTvShowSettings().isUseRenamerThumbPostfix());
 
     panelScraperMetadataContainer = new JPanel();
-    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
-        .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
-    add(panelScraperMetadataContainer, "2, 4, fill, top");
+    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
+        BUNDLE.getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
+    add(panelScraperMetadataContainer, "2, 6, fill, top");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -219,6 +248,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     TableColumnResizer.setMaxWidthForColumn(tableScraper, 0, 2);
     TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
     TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
+
+    TableColumnResizer.setMaxWidthForColumn(tableArtworkScraper, 0, 2);
+    TableColumnResizer.setMaxWidthForColumn(tableArtworkScraper, 1, 2);
+    TableColumnResizer.adjustColumnPreferredWidths(tableArtworkScraper, 5);
 
     // implement listener to simulate button group
     tableScraper.getModel().addTableModelListener(new TableModelListener() {
@@ -241,8 +274,27 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       }
     });
 
-    // select default movie scraper
+    tableArtworkScraper.getModel().addTableModelListener(new TableModelListener() {
+      @Override
+      public void tableChanged(TableModelEvent arg0) {
+        // click on the checkbox
+        if (arg0.getColumn() == 0) {
+          int row = arg0.getFirstRow();
+          ArtworkScraper changedScraper = artworkScrapers.get(row);
+          if (changedScraper.active) {
+            settings.getTvShowSettings().addTvShowArtworkScraper(changedScraper.getScraperId());
+          }
+          else {
+            settings.getTvShowSettings().removeTvShowArtworkScraper(changedScraper.getScraperId());
+          }
+        }
+      }
+    });
+
+    // select default TV show scraper
     tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    // select default artwork scraper
+    tableArtworkScraper.getSelectionModel().setSelectionInterval(artworkSelectedIndex, artworkSelectedIndex);
 
     ItemListener itemListener = new ItemListener() {
       @Override
@@ -250,8 +302,6 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         checkChanges();
       }
     };
-    rdbtnThumbWithPostfix.setSelected(settings.getTvShowSettings().isUseRenamerThumbPostfix());
-    rdbtnThumbWoPostfix.setSelected(!settings.getTvShowSettings().isUseRenamerThumbPostfix());
     rdbtnThumbWithPostfix.addItemListener(itemListener);
     rdbtnThumbWoPostfix.addItemListener(itemListener);
   }
@@ -277,8 +327,20 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         scraperLogo = new ImageIcon();
       }
       else {
-        scraperLogo = new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo());
+        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
       }
+    }
+
+    private ImageIcon getScaledIcon(ImageIcon original) {
+      Canvas c = new Canvas();
+      FontMetrics fm = c.getFontMetrics(getFont());
+
+      int height = (int) (fm.getHeight() * 2f);
+      int width = original.getIconWidth() / original.getIconHeight() * height;
+
+      BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY,
+          Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      return new ImageIcon(scaledImage);
     }
 
     public String getScraperId() {
@@ -319,7 +381,73 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       this.defaultScraper = newValue;
       firePropertyChange("defaultScraper", oldValue, newValue);
     }
+  }
 
+  public class ArtworkScraper extends AbstractModelObject {
+    private MediaScraper scraper;
+    private Icon         scraperLogo;
+    private boolean      active;
+
+    public ArtworkScraper(MediaScraper scraper) {
+      this.scraper = scraper;
+      if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
+        scraperLogo = new ImageIcon();
+      }
+      else {
+        scraperLogo = getScaledIcon(new ImageIcon(scraper.getMediaProvider().getProviderInfo().getProviderLogo()));
+      }
+    }
+
+    private ImageIcon getScaledIcon(ImageIcon original) {
+      Canvas c = new Canvas();
+      FontMetrics fm = c.getFontMetrics(getFont());
+
+      int height = (int) (fm.getHeight() * 2f);
+      int width = original.getIconWidth() / original.getIconHeight() * height;
+
+      BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY,
+          Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      return new ImageIcon(scaledImage);
+    }
+
+    public String getScraperId() {
+      return scraper.getId();
+    }
+
+    public String getScraperName() {
+      return scraper.getName();
+    }
+
+    public String getScraperDescription() {
+      // first try to get the localized version
+      String description = null;
+      try {
+        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
+      }
+      catch (Exception ignored) {
+      }
+
+      if (StringUtils.isBlank(description)) {
+        // try to get a scraper text
+        description = scraper.getDescription();
+      }
+
+      return description;
+    }
+
+    public Icon getScraperLogo() {
+      return scraperLogo;
+    }
+
+    public Boolean getActive() {
+      return active;
+    }
+
+    public void setActive(Boolean newValue) {
+      Boolean oldValue = this.active;
+      this.active = newValue;
+      firePropertyChange("active", oldValue, newValue);
+    }
   }
 
   protected void initDataBindings() {
@@ -340,16 +468,6 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.imageScraperTvdb");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, chckbxImagesTvDB, jCheckBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("tvShowSettings.imageScraperFanartTv");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxImagesFanartTv, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
-    //
     JTableBinding<TvShowScraper, List<TvShowScraper>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, scrapers,
         tableScraper);
     //
@@ -369,5 +487,24 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<JTable, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
         tpScraperDescription, jTextPaneBeanProperty);
     autoBinding_3.bind();
+    //
+    JTableBinding<ArtworkScraper, List<ArtworkScraper>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE,
+        artworkScrapers, tableArtworkScraper);
+    //
+    BeanProperty<ArtworkScraper, Boolean> artworkScraperBeanProperty = BeanProperty.create("active");
+    jTableBinding_1.addColumnBinding(artworkScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
+    //
+    BeanProperty<ArtworkScraper, Icon> artworkScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
+    jTableBinding_1.addColumnBinding(artworkScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
+    //
+    BeanProperty<ArtworkScraper, String> artworkScraperBeanProperty_2 = BeanProperty.create("scraperName");
+    jTableBinding_1.addColumnBinding(artworkScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
+    //
+    jTableBinding_1.bind();
+    //
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableArtworkScraper,
+        jTableBeanProperty, tpArtworkScraperDescription, jTextPaneBeanProperty_1);
+    autoBinding_1.bind();
   }
 }

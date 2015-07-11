@@ -29,7 +29,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 public class TvShowSearchAndScrapeOptions {
   private TvShowScraperMetadataConfig scraperMetadataConfig;
   private MediaScraper                metadataScraper;
-  private List<TvShowArtworkScrapers> artworkScrapers = new ArrayList<TvShowArtworkScrapers>();
+  private List<MediaScraper>          artworkScrapers = new ArrayList<MediaScraper>();
 
   /**
    * Instantiates a new movie search and scrape config.
@@ -45,15 +45,8 @@ public class TvShowSearchAndScrapeOptions {
     // metadata
     metadataScraper = TvShowList.getInstance().getDefaultMediaScraper();
 
-    if ("aniDb".equals(metadataScraper.getId())) {
-      artworkScrapers.add(TvShowArtworkScrapers.ANIDB);
-    }
-    if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
-      artworkScrapers.add(TvShowArtworkScrapers.TVDB);
-    }
-    if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
-      artworkScrapers.add(TvShowArtworkScrapers.FANART_TV);
-    }
+    // artwork
+    artworkScrapers.addAll(TvShowList.getInstance().getDefaultArtworkScrapers());
   }
 
   /**
@@ -79,7 +72,7 @@ public class TvShowSearchAndScrapeOptions {
    * 
    * @return the artwork scrapers
    */
-  public List<TvShowArtworkScrapers> getArtworkScrapers() {
+  public List<MediaScraper> getArtworkScrapers() {
     return artworkScrapers;
   }
 
@@ -109,17 +102,7 @@ public class TvShowSearchAndScrapeOptions {
    * @param artworkScraper
    *          the artwork scraper
    */
-  public void addArtworkScraper(TvShowArtworkScrapers artworkScraper) {
+  public void addArtworkScraper(MediaScraper artworkScraper) {
     this.artworkScrapers.add(artworkScraper);
   }
-
-  // /**
-  // * Adds the trailer scraper.
-  // *
-  // * @param trailerScraper
-  // * the trailer scraper
-  // */
-  // public void addTrailerScraper(MovieTrailerScrapers trailerScraper) {
-  // this.trailerScrapers.add(trailerScraper);
-  // }
 }

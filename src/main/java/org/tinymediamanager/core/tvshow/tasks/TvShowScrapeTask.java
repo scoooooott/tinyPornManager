@@ -33,12 +33,13 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -50,8 +51,8 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowScrapeTask extends TmmThreadPool {
-  private final static Logger          LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
-  private static final ResourceBundle  BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<TvShow>                 tvShowsToScrape;
   private boolean                      doSearch;
@@ -108,8 +109,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
         // set up scrapers
         TvShowScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
         ITvShowMetadataProvider mediaMetadataProvider = tvShowList.getMetadataProvider(options.getMetadataScraper());
-        List<IMediaArtworkProvider> artworkProviders = tvShowList.getArtworkProviders(options.getArtworkScrapers());
-        // List<IMediaTrailerProvider> trailerProviders = tvShowList.getTrailerProviders(options.getTrailerScrapers());
+        List<MediaScraper> artworkScrapers = options.getArtworkScrapers();
 
         // scrape tv show
 
@@ -178,7 +178,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
 
             // scrape artwork if wanted
             if (scraperMetadataConfig.isArtwork()) {
-              tvShow.setArtwork(getArtwork(tvShow, md, artworkProviders), scraperMetadataConfig);
+              tvShow.setArtwork(getArtwork(tvShow, md, artworkScrapers), scraperMetadataConfig);
             }
 
           }
@@ -191,8 +191,8 @@ public class TvShowScrapeTask extends TmmThreadPool {
 
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowScraper", "message.scrape.threadcrashed", new String[] { ":",
-            e.getLocalizedMessage() }));
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, "TvShowScraper", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
@@ -203,7 +203,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
      *          the metadata
      * @return the artwork
      */
-    public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
+    public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<MediaScraper> artworkScrapers) {
       List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
@@ -216,7 +216,8 @@ public class TvShowScrapeTask extends TmmThreadPool {
       }
 
       // scrape providers till one artwork has been found
-      for (IMediaArtworkProvider artworkProvider : artworkProviders) {
+      for (MediaScraper artworkScraper : artworkScrapers) {
+        ITvShowArtworkProvider artworkProvider = (ITvShowArtworkProvider) artworkScraper.getMediaProvider();
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
