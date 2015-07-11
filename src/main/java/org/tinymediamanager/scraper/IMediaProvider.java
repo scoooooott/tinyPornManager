@@ -19,11 +19,12 @@ import net.xeoh.plugins.base.Plugin;
 
 /**
  * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces
+ * You should not implement this interface by a class, since plugin examination relies on the concrete interface
  *
  * @author Manuel Laggner
  * @since 1.0
  */
-public abstract interface IMediaProvider extends Plugin {
+public interface IMediaProvider extends Plugin {
   /**
    * Gets a general information about the metadata provider
    * 
