@@ -42,6 +42,8 @@ import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.Url;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,14 +61,21 @@ import java.util.regex.Pattern;
  * 
  * @author Manuel Laggner
  */
+@PluginImplementation
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
-  private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
-  private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static MediaProviderInfo         providerInfo      = new MediaProviderInfo("anidb", "anidb.net",
-                                                                 "Scraper for anidb.net - a big anime database");
-  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<Long>(30);
+  private static final Logger           LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
+  private static final String           IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
+  private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
+  private static MediaProviderInfo      providerInfo      = createMediaProviderInfo();
 
-  private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<String, List<AniDBShow>>();
+  private HashMap<String, List<AniDBShow>> showsForLookup = new HashMap<String, List<AniDBShow>>();
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo("anidb", "aniDB",
+        "<html><h3>aniDB</h3><br />AniDB stands for Anime DataBase. AniDB is a non-profit anime database that is open freely to the public.</html>",
+        AniDBMetadataProvider.class.getResource("/anidb_net.png"));
+    return providerInfo;
+  }
 
   public AniDBMetadataProvider() {
   }
@@ -109,8 +118,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       return md;
     }
 
-    // call API http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
-    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id;
+    // call API
+    // http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
+    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid="
+        + id;
     Document doc = null;
     try {
       trackConnections();
@@ -206,7 +217,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     String titleScraperLangu = "";
     String titleFirst = "";
     for (Element title : e.children()) {
-      // store first title if neither the requested one nor the english one available
+      // store first title if neither the requested one nor the english one
+      // available
       if (StringUtils.isBlank(titleFirst)) {
         titleFirst = title.text();
       }
@@ -273,7 +285,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Document doc = null;
     try {
       trackConnections();
-      Url url = new Url("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
+      Url url = new Url(
+          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {
@@ -349,7 +362,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
             try {
               episode.episode = Integer.parseInt(episodeInfo.text());
 
-              // looks like anidb is storing anything in a single season, so put 1 to season, if type = 1
+              // looks like anidb is storing anything in a single season, so put
+              // 1 to season, if type = 1
               if ("1".equals(episodeInfo.attr("type"))) {
                 episode.season = 1;
               }
@@ -431,7 +445,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
+    if (StringUtils.isEmpty(searchString)
+        && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
       searchString = options.get(MediaSearchOptions.SearchParam.TITLE);
     }
 
@@ -491,7 +506,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Document doc = null;
     try {
       trackConnections();
-      Url url = new Url("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
+      Url url = new Url(
+          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {
@@ -529,7 +545,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
    */
   private void buildTitleHashMap() {
     // <aid>|<type>|<language>|<title>
-    // type: 1=primary title (one per anime), 2=synonyms (multiple per anime), 3=shorttitles (multiple per anime), 4=official title (one per
+    // type: 1=primary title (one per anime), 2=synonyms (multiple per anime),
+    // 3=shorttitles (multiple per anime), 4=official title (one per
     // language)
     Pattern pattern = Pattern.compile("^(?!#)(\\d+)[|](\\d)[|]([\\w-]+)[|](.+)$");
     Scanner scanner = null;
@@ -537,7 +554,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       trackConnections();
       Url animeList = new Url("http://anidb.net/api/anime-titles.dat.gz");
       // scanner = new Scanner(new GZIPInputStream(animeList.getInputStream()));
-      // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
+      // DecompressingHttpClient is decompressing the gz from animedb due to
+      // wrong http-server configuration
       scanner = new Scanner(animeList.getInputStream(), "UTF-8");
       while (scanner.hasNextLine()) {
         Matcher matcher = pattern.matcher(scanner.nextLine());
@@ -617,7 +635,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     switch (options.getArtworkType()) {
-    // AniDB only offers Poster
+      // AniDB only offers Poster
       case ALL:
       case POSTER:
         MediaMetadata md;
