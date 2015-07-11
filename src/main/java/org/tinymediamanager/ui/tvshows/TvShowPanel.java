@@ -56,8 +56,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gpl.JSplitButton.JSplitButton;
-import org.gpl.JSplitButton.action.SplitButtonActionListener;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -73,6 +71,8 @@ import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.JSplitButton;
+import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
@@ -113,53 +113,55 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TvShowPanel extends JPanel {
-  private static final long           serialVersionUID              = -1923811385292825136L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -1923811385292825136L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  TvShowSelectionModel                tvShowSelectionModel;
-  TvShowSeasonSelectionModel          tvShowSeasonSelectionModel;
-  TvShowEpisodeSelectionModel         tvShowEpisodeSelectionModel;
-  private TvShowTreeModel             treeModel;
-  private TvShowList                  tvShowList                    = TvShowList.getInstance();
+  TvShowSelectionModel        tvShowSelectionModel;
+  TvShowSeasonSelectionModel  tvShowSeasonSelectionModel;
+  TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
+  private TvShowTreeModel     treeModel;
+  private TvShowList          tvShowList = TvShowList.getInstance();
 
-  private JTree                       tree;
-  private JPanel                      panelRight;
-  private JMenu                       menu;
-  private JLabel                      lblTvShows;
-  private JLabel                      lblEpisodes;
+  private JTree  tree;
+  private JPanel panelRight;
+  private JMenu  menu;
+  private JLabel lblTvShows;
+  private JLabel lblEpisodes;
 
-  private final Action                actionUpdateDatasources       = new TvShowUpdateDatasourcesAction(false);
-  private final Action                actionUpdateDatasources2      = new TvShowUpdateDatasourcesAction(true);
-  private final Action                actionUpdateTvShow            = new TvShowUpdateAction();
-  private final Action                actionScrape                  = new TvShowSingleScrapeAction(false);
-  private final Action                actionScrape2                 = new TvShowSingleScrapeAction(true);
-  private final Action                actionScrapeSelected          = new TvShowSelectedScrapeAction();
-  private final Action                actionScrapeNewItems          = new TvShowScrapeNewItemsAction();
-  private final Action                actionEdit                    = new TvShowEditAction(false);
-  private final Action                actionEdit2                   = new TvShowEditAction(true);
-  private final Action                actionRemove2                 = new TvShowRemoveAction(true);
-  private final Action                actionDelete2                 = new TvShowDeleteAction(true);
-  private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
-  private final Action                actionBatchEdit               = new TvShowBulkEditAction();
-  private final Action                actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
-  private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction(true);
-  private final Action                actionScrapeEpisodes2         = new TvShowScrapeEpisodesAction(false);
-  private final Action                actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
-  private final Action                actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
-  private final Action                actionRename                  = new TvShowRenameAction();
-  private final Action                actionMediaInformation        = new TvShowMediaInformationAction(false);
-  private final Action                actionMediaInformation2       = new TvShowMediaInformationAction(true);
-  private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
-  private final Action                actionExport                  = new TvShowExportAction();
-  private final Action                actionSyncTrakt               = new TvShowSyncTraktTvAction();
-  private final Action                actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
-  private final Action                actionSyncSelectedTrakt       = new TvShowSyncSelectedTraktTvAction();
-  private final Action                actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
-  private final Action                actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
+  private final Action actionUpdateDatasources       = new TvShowUpdateDatasourcesAction(false);
+  private final Action actionUpdateDatasources2      = new TvShowUpdateDatasourcesAction(true);
+  private final Action actionUpdateTvShow            = new TvShowUpdateAction();
+  private final Action actionScrape                  = new TvShowSingleScrapeAction(false);
+  private final Action actionScrape2                 = new TvShowSingleScrapeAction(true);
+  private final Action actionScrapeSelected          = new TvShowSelectedScrapeAction();
+  private final Action actionScrapeNewItems          = new TvShowScrapeNewItemsAction();
+  private final Action actionEdit                    = new TvShowEditAction(false);
+  private final Action actionEdit2                   = new TvShowEditAction(true);
+  private final Action actionRemove2                 = new TvShowRemoveAction(true);
+  private final Action actionDelete2                 = new TvShowDeleteAction(true);
+  private final Action actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
+  private final Action actionBatchEdit               = new TvShowBulkEditAction();
+  private final Action actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
+  private final Action actionScrapeEpisodes          = new TvShowScrapeEpisodesAction(true);
+  private final Action actionScrapeEpisodes2         = new TvShowScrapeEpisodesAction(false);
+  private final Action actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
+  private final Action actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
+  private final Action actionRename                  = new TvShowRenameAction();
+  private final Action actionMediaInformation        = new TvShowMediaInformationAction(false);
+  private final Action actionMediaInformation2       = new TvShowMediaInformationAction(true);
+  private final Action actionClearImageCache         = new TvShowClearImageCacheAction();
+  private final Action actionExport                  = new TvShowExportAction();
+  private final Action actionSyncTrakt               = new TvShowSyncTraktTvAction();
+  private final Action actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
+  private final Action actionSyncSelectedTrakt       = new TvShowSyncSelectedTraktTvAction();
+  private final Action actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
+  private final Action actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
 
-  private int                         width                         = 0;
-  private JTextField                  textField;
+  private int        width = 0;
+  private JTextField textField;
 
   /**
    * Instantiates a new tv show panel.
@@ -186,8 +188,9 @@ public class TvShowPanel extends JPanel {
 
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
-    panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+    panelTvShowTree.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -342,8 +345,9 @@ public class TvShowPanel extends JPanel {
       }
     };
     scrollPane.setColumnHeaderView(panelHeader);
-    panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
+    panelHeader.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblTvShowsColumn = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
@@ -371,10 +375,11 @@ public class TvShowPanel extends JPanel {
     JPanel panel = new JPanel();
     panelTvShowTree.add(panel, "2, 5, 3, 1, fill, fill");
     panel
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+        .setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+                FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+                FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblTvShowsT = new JLabel(BUNDLE.getString("metatag.tvshows") + ":"); //$NON-NLS-1$
     panel.add(lblTvShowsT, "1, 2, fill, fill");
@@ -392,8 +397,8 @@ public class TvShowPanel extends JPanel {
     panel.add(lblEpisodes, "9, 2");
 
     JLayeredPane layeredPaneRight = new JLayeredPane();
-    layeredPaneRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") }, new RowSpec[] {
-        RowSpec.decode("default"), RowSpec.decode("default:grow") }));
+    layeredPaneRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") },
+        new RowSpec[] { RowSpec.decode("default"), RowSpec.decode("default:grow") }));
     panelRight = new JPanel();
     layeredPaneRight.add(panelRight, "1, 1, 2, 2, fill, fill");
     layeredPaneRight.setLayer(panelRight, 0);
@@ -625,8 +630,8 @@ public class TvShowPanel extends JPanel {
   protected void initDataBindings() {
     BeanProperty<TvShowList, Integer> tvShowListBeanProperty = BeanProperty.create("tvShowCount");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
-        tvShowListBeanProperty, lblTvShows, jLabelBeanProperty);
+    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList, tvShowListBeanProperty,
+        lblTvShows, jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<TvShowList, Integer> tvShowListBeanProperty_1 = BeanProperty.create("episodeCount");
@@ -642,7 +647,7 @@ public class TvShowPanel extends JPanel {
     private static final long serialVersionUID = -1444530142931061317L;
 
     public CollapseAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$  
+      putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$
     }
 
     @Override
@@ -657,7 +662,7 @@ public class TvShowPanel extends JPanel {
     private static final long serialVersionUID = 6191727607109012198L;
 
     public ExpandAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$  
+      putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$
     }
 
     @Override

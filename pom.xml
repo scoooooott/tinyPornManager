@@ -128,6 +128,11 @@
 			<artifactId>jtidy</artifactId>
 			<version>r938</version>
 		</dependency>
+	    <dependency>
+			<groupId>org.japura</groupId>
+			<artifactId>japura-gui</artifactId>
+			<version>7.5.2</version>
+		</dependency>
 
 		<!-- non mavenized ones -->
 		<dependency>
@@ -150,22 +155,12 @@
 			<artifactId>lightbox</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.gpl</groupId>
-			<artifactId>jsplitbutton</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 
 		<!-- own patches on these artifacts -->
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>JTattoo</artifactId>
 			<version>1.6.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.japura</groupId>
-			<artifactId>japura-gui</artifactId>
-			<version>7.5.2</version>
 		</dependency>
 	</dependencies>
 
