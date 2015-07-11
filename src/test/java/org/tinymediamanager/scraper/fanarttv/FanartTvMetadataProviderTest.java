@@ -15,13 +15,8 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaLanguages;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaType;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,8 +24,13 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.tinymediamanager.scraper.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
 
 public class FanartTvMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -54,7 +54,7 @@ public class FanartTvMetadataProviderTest {
   
   @Test
   public void testFanartTvMetadataProvider(){
-    IMediaArtworkProvider artworkProvider;
+    IMovieArtworkProvider artworkProvider;
 
     /**
      * Test movie artwork

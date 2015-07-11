@@ -15,9 +15,14 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -31,25 +36,46 @@ import org.tinymediamanager.scraper.fanarttv.entities.Images;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
- * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
+ * The Class FanartTvMetadataProvider. An artwork provider for the site
+ * fanart.tv
  *
  * @author Manuel Laggner
  */
-public class FanartTvMetadataProvider implements IMediaArtworkProvider {
+@PluginImplementation
+public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv", "Scraper for fanarts");
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  private FanartTv                 api          = null;
+  private FanartTv api = null;
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
+        "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
+        FanartTvMetadataProvider.class.getResource("/fanart_tv.png"));
+
+    return providerInfo;
+  }
+
+  public FanartTvMetadataProvider() throws Exception {
+    if (api == null) {
+      try {
+        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"));
+      }
+      catch (Exception e) {
+        LOGGER.error("FanartTvMetadataProvider", e);
+        throw e;
+      }
+    }
+  }
 
   public FanartTvMetadataProvider(String clientKey) throws Exception {
     if (api == null) {
       try {
-        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"), clientKey);
+        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"),
+            clientKey);
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
@@ -244,6 +270,9 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         artworks.addAll(prepareArtwork(images.moviethumb, ImageType.MOVIETHUMB));
         artworks.addAll(prepareArtwork(images.tvthumb, ImageType.TVTHUMB));
         break;
+
+      default:
+        break;
     }
 
     return artworks;
@@ -282,25 +311,25 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   private enum ImageType {
 
     // @formatter:off
-    HDMOVIECLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()), 
-    HDCLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()), 
-    MOVIETHUMB(1000, 562, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()), 
-    SEASONTHUMB(500, 281, MediaArtworkType.SEASON, FanartSizes.SMALL.getOrder()), 
+    HDMOVIECLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()),
+    HDCLEARART(1000, 562, MediaArtworkType.CLEARART, FanartSizes.MEDIUM.getOrder()),
+    MOVIETHUMB(1000, 562, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
+    SEASONTHUMB(500, 281, MediaArtworkType.SEASON, FanartSizes.SMALL.getOrder()),
     TVTHUMB(500, 281, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
-    MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()), 
-    SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()), 
-    MOVIEPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()), 
-    TVPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()), 
-    SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON, MediaArtwork.PosterSizes.LARGE.getOrder()), 
-    TVBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()), 
-    MOVIEBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()), 
-    SEASONBANNER(1000, 185, MediaArtworkType.SEASON, FanartSizes.MEDIUM.getOrder()), 
-    HDMOVIELOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()), 
-    HDTVLOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()), 
-    CLEARLOGO( 400, 155, MediaArtworkType.LOGO, FanartSizes.SMALL.getOrder()), 
+    MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()),
+    SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()),
+    MOVIEPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
+    TVPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
+    SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON, MediaArtwork.PosterSizes.LARGE.getOrder()),
+    TVBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
+    MOVIEBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
+    SEASONBANNER(1000, 185, MediaArtworkType.SEASON, FanartSizes.MEDIUM.getOrder()),
+    HDMOVIELOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()),
+    HDTVLOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()),
+    CLEARLOGO(400, 155, MediaArtworkType.LOGO, FanartSizes.SMALL.getOrder()),
     MOVIELOGO(400, 155, MediaArtworkType.LOGO, FanartSizes.SMALL.getOrder()),
-    CLEARART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()), 
-    MOVIEART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()), 
+    CLEARART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
+    MOVIEART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
     MOVIEDISC(1000, 1000, MediaArtworkType.DISC, FanartSizes.MEDIUM.getOrder());
     // @formatter:on
 
@@ -311,9 +340,9 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
       this.sizeOrder = sizeOrder;
     }
 
-    int              width;
-    int              height;
+    int width;
+    int height;
     MediaArtworkType type;
-    int              sizeOrder;
+    int sizeOrder;
   }
 }
