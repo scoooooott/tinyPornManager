@@ -15,23 +15,51 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
-import com.omertron.thetvdbapi.TheTVDBApi;
-import com.omertron.thetvdbapi.model.*;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
+import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import java.text.Normalizer;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.omertron.thetvdbapi.TheTVDBApi;
+import com.omertron.thetvdbapi.model.Actor;
+import com.omertron.thetvdbapi.model.Banner;
+import com.omertron.thetvdbapi.model.BannerType;
+import com.omertron.thetvdbapi.model.Banners;
+import com.omertron.thetvdbapi.model.Episode;
+import com.omertron.thetvdbapi.model.Series;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class TheTvDbMetadataProvider.
@@ -39,7 +67,7 @@ import java.util.regex.Pattern;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
+public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShowArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static TheTVDBApi        tvdb;
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
