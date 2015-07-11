@@ -43,7 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TmdbTvShowMetadataProvider {
+class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
 
   private Tmdb                api;

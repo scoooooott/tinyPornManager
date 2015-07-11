@@ -15,13 +15,13 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Configuration;
-import com.uwetrottmann.tmdb.entities.Genre;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import java.util.Collections;
+import java.util.List;
+
+import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaEpisode;
@@ -35,19 +35,24 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
+
+import com.uwetrottmann.tmdb.Tmdb;
+import com.uwetrottmann.tmdb.entities.Configuration;
+import com.uwetrottmann.tmdb.entities.Genre;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
+ * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for
+ * the site themoviedb.org
  *
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider, IMovieTrailerProvider, ITvShowMetadataProvider {
+public class TmdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
+    ITvShowArtworkProvider, IMovieTrailerProvider {
   static Tmdb              api;
   static MediaProviderInfo providerInfo = createMediaProviderInfo();
   static Configuration     configuration;
@@ -56,9 +61,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo(
-        "tmdb",
-        "themoviedb.org",
+    MediaProviderInfo providerInfo = new MediaProviderInfo("tmdb", "themoviedb.org",
         "<html><h3>The Movie Database (TMDb)</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
         TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
 

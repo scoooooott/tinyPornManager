@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * The class TmdbArtworkProvider. For managing all artwork provided tasks with tmdb
  */
-public class TmdbArtworkProvider {
+class TmdbArtworkProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbArtworkProvider.class);
 
   private Tmdb                api;

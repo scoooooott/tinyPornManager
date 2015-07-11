@@ -52,7 +52,7 @@ import java.util.List;
 /**
  * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
  */
-public class TmdbMovieMetadataProvider {
+class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
   private Tmdb                api;

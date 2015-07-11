@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
  */
-public class TmdbMovieSetMetadataProvider {
+class TmdbMovieSetMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieSetMetadataProvider.class);
 
   private Tmdb                api;
