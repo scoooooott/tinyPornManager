@@ -10,6 +10,7 @@ public class ParserUtilsTest {
 
   @Test
   public void testNamingDetection() {
+    Assert.assertEquals("Safety Not Guaranteed | 2012", detectTY("Safety Not Guaranteed [2012, HEVC-1080p].mkv"));
     Assert.assertEquals("Gemma Bovery | 2014", detectTY("Gemma.Bovery.2014.[1920x800].24.000fps.1080p.BRRip.x264.JYK.mkv"));
     Assert.assertEquals("Ai No Korīda | 1976", detectTY("Ai.No.Korīda.1976.[1280x772].23.976fps.720p.x264.CiNEFiLE.mkv"));
     Assert.assertEquals("In The Realm Of The Senses 愛のコリーダ | 1976", detectTY("In The Realm Of The Senses (1976) - 愛のコリーダ"));
@@ -27,6 +28,7 @@ public class ParserUtilsTest {
     Assert.assertEquals("RES", detectTY("RES 100x100")); // <--- remove res
     Assert.assertEquals("RES", detectTY("RES 1000x1000")); // <--- remove res
     Assert.assertEquals("RES 10000x10000", detectTY("RES 10000x10000"));
+
   }
 
   private String detectTY(String filename) {
