@@ -37,3 +37,6 @@ build
 dist
 movies.db
 tvshows.db
+/tmm.uuid.disable
+/tmm.lic
+/ignore/

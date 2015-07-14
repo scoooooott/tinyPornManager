@@ -28,23 +28,26 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.w3c.tidy.Tidy;
 
 /**
- * The Class ParserUtils.
+ * Various parses methods to get a clean and workable name out of weird filenames
  * 
- * @author Manuel Laggner
+ * @author Myron Boyle
  */
 public class ParserUtils {
 
-  /** The Constant LOGGER. */
   private static final Logger LOGGER    = LoggerFactory.getLogger(ParserUtils.class);
+  private static final String DELIMITER = "[\\[\\]() _.-]";
 
-  public static String[]      stopwords = { "1080", "1080i", "1080p", "480i", "480p", "576i", "576p", "720", "720i", "720p", "ac3", "ac3ld", "ac3md",
+  public static String[] stopwords = { "1080", "1080i", "1080p", "480i", "480p", "576i", "576p", "720", "720i", "720p", "ac3", "ac3ld", "ac3md",
       "aoe", "bd5", "bdrip", "bdrip", "blueray", "bluray", "brrip", "cam", "cd1", "cd2", "cd3", "cd4", "cd5", "cd6", "cd7", "cd8", "cd9", "complete",
       "custom", "dc", "disc1", "disc2", "disc3", "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "divx", "divx5", "dl", "docu", "dsr", "dsrip",
       "dts", "dtv", "dubbed", "dutch", "dvd", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "dvdivx", "dvdrip", "dvdscr",
-      "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "german", "h264", "hddvd", "hdrip", "hdtv", "hdtvrip", "hrhd", "hrhdtv", "ind",
-      "internal", "ld", "limited", "md", "multisubs", "nfo", "nfofix", "ntg", "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5",
+      "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "fps", "german", "h264", "hddvd", "hdrip", "hdtv", "hdtvrip", "hrhd", "hrhdtv",
+      "ind", "internal", "ld", "limited", "md", "multisubs", "nfo", "nfofix", "ntg", "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5",
       "read", "repack", "rerip", "retail", "roor", "rs", "rsvcd", "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts",
       "uncut", "unrated", "vcf", "webdl", "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
+
+  // clean before splitting (needs delimiter in front!)
+  public static String[] cleanwords = { "24\\.000", "23\\.976", "23\\.98", "24\\.00" };
 
   /**
    * Tries to get movie name from filename<br>
@@ -85,9 +88,17 @@ public class ParserUtils {
       return ret;
     }
 
-    // remove extension (if found) and split
+    // remove extension (if found) and split (keep var)
     String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
-    String[] s = fname.split("[\\[\\]() _.-]");
+
+    // replaces any resolution 1234x1234 (must start with a non-word (else too global)
+    String cleaned = fname.replaceFirst("(?i)\\W\\d{3,4}x\\d{3,4}", " ");
+    // replace FPS specific words (must start with a non-word (else too global)
+    for (String cw : cleanwords) {
+      cleaned = cleaned.replaceFirst("(?i)\\W" + cw, " ");
+    }
+
+    String[] s = cleaned.split(DELIMITER);
     int firstFoundStopwordPosition = s.length;
 
     // iterate over all splitted items
