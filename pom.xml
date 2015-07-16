@@ -57,11 +57,11 @@
 			<artifactId>scraper-tmdb</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-    <dependency>
-      <groupId>org.tinymediamanager</groupId>
-      <artifactId>scraper-tvdb</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>		
+		<dependency>
+			<groupId>org.tinymediamanager</groupId>
+			<artifactId>scraper-tvdb</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>trakt-java</artifactId>
@@ -128,7 +128,7 @@
 			<artifactId>jtidy</artifactId>
 			<version>r938</version>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>org.japura</groupId>
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
@@ -177,6 +177,9 @@
 						<goals>
 							<goal>create</goal>
 						</goals>
+						<configuration>
+							<shortRevisionLength>7</shortRevisionLength>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
