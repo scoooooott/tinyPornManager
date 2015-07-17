@@ -80,9 +80,6 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
 
     if (mediaEntity != null) {
       mediaEntity.saveToDb();
-      if (mediaEntity instanceof Movie) {
-        ((Movie) mediaEntity).writeNFO();
-      }
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
       return "getting MediaInfo from " + mediaEntity.getTitle();
     }
