@@ -1,3 +1,14 @@
+2.6.9
+=======================
+IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
+           If you are still using Java6, please update or you will stay at version 2.6.x
+           
+x fixed NFO writing behavior 
+x fixed a problem with , or [] as sort title delimiter
+x fixed detection of extra video files (samples, trailers, extras)
+x improved overall memory consumption
+x tweaked movie naming detection           
+
 2.6.8
 =======================
 IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
