@@ -70,7 +70,7 @@ import org.tinymediamanager.ui.TmmWindowSaver;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Utils {
-  private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
   /**
    * Map of all known English/UserLocalized String to base locale, key is LOWERCASE
@@ -211,7 +211,7 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
         delim = "";
       }
-      title = title.replaceAll("(?i)^" + prfx + delim + "(.*)", "$1, " + prfx);
+      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + Pattern.quote(prfx));
     }
     return title.trim();
   }
