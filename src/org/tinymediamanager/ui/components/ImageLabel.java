@@ -53,21 +53,19 @@ public class ImageLabel extends JLabel {
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
   }
 
-  private static final long                  serialVersionUID = -2524445544386464158L;
-  protected static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static Font                        FONT;
+  private static final long             serialVersionUID = -2524445544386464158L;
+  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static Font                   FONT;
 
-  protected BufferedImage                    originalImage;
-  protected BufferedImage                    scaledImage;
-  protected Dimension                        size;
-  protected String                           imageUrl;
-  protected String                           imagePath;
-  protected Position                         position         = Position.TOP_LEFT;
-  protected String                           alternativeText  = null;
-  protected boolean                          drawBorder;
-  protected boolean                          drawFullWidth;
-  protected boolean                          enabledLightbox  = false;
-  protected boolean                          useCache         = true;
+  protected BufferedImage scaledImage;
+  protected String        imageUrl;
+  protected String        imagePath;
+  protected Position      position        = Position.TOP_LEFT;
+  protected String        alternativeText = null;
+  protected boolean       drawBorder;
+  protected boolean       drawFullWidth;
+  protected boolean       enabledLightbox = false;
+  protected boolean       useCache        = true;
 
   protected SwingWorker<BufferedImage, Void> worker           = null;
   protected MouseListener                    lightboxListener = null;
@@ -121,22 +119,19 @@ public class ImageLabel extends JLabel {
     }
 
     if (StringUtils.isBlank(newValue)) {
-      originalImage = null;
-      size = null;
       this.repaint();
       return;
     }
 
     // load image in separate worker -> performance
-    worker = new ImageLoader(this.imagePath);
+    worker = new ImageLoader(this.imagePath, this.getSize());
     worker.execute();
   }
 
   public void clearImage() {
     imagePath = "";
     imageUrl = "";
-    originalImage = null;
-    size = null;
+    scaledImage = null;
     this.repaint();
   }
 
@@ -155,33 +150,31 @@ public class ImageLabel extends JLabel {
     }
 
     if (StringUtils.isEmpty(newValue)) {
-      originalImage = null;
-      size = null;
       this.repaint();
       return;
     }
 
     // fetch image in separate worker -> performance
-    worker = new ImageFetcher();
+    worker = new ImageFetcher(this.getSize());
     worker.execute();
   }
 
-  private BufferedImage getScaledImage(Dimension size) {
-    if (!size.equals(this.size)) {
-      // rescale the image
-      scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.width, size.height, Scalr.OP_ANTIALIAS);
-      this.size = size;
-    }
-    return this.scaledImage;
-  }
+  // private BufferedImage getScaledImage(Dimension size) {
+  // if (!size.equals(this.size)) {
+  // // rescale the image
+  // scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.width, size.height, Scalr.OP_ANTIALIAS);
+  // this.size = size;
+  // }
+  // return this.scaledImage;
+  // }
 
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    if (originalImage != null) {
-      int originalWidth = originalImage.getWidth(null);
-      int originalHeight = originalImage.getHeight(null);
+    if (scaledImage != null) {
+      int originalWidth = scaledImage.getWidth(null);
+      int originalHeight = scaledImage.getHeight(null);
 
       // calculate new height/width
       int newWidth = 0;
@@ -210,12 +203,15 @@ public class ImageLabel extends JLabel {
         newWidth = size.x;
         newHeight = size.y;
 
+        // when the image size differs too much - reload and rescale the original image
+        recreateScaledImageIfNeeded(originalWidth, originalHeight, newWidth, newHeight);
+
         g.setColor(Color.BLACK);
         g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
         g.setColor(Color.WHITE);
         g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
-        g.drawImage(getScaledImage(new Dimension(newWidth, newHeight)), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
+        g.drawImage(scaledImage, offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else {
         Point size = null;
@@ -242,8 +238,12 @@ public class ImageLabel extends JLabel {
 
         newWidth = size.x;
         newHeight = size.y;
+
+        // when the image size differs too much - reload and rescale the original image
+        recreateScaledImageIfNeeded(originalWidth, originalHeight, newWidth, newHeight);
+
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
-        g.drawImage(getScaledImage(new Dimension(newWidth, newHeight)), offsetX, offsetY, newWidth, newHeight, this);
+        g.drawImage(scaledImage, offsetX, offsetY, newWidth, newHeight, this);
       }
     }
     else {
@@ -291,6 +291,20 @@ public class ImageLabel extends JLabel {
     }
   }
 
+  private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
+    if ((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
+        || (originalHeight > newHeight * 1.2f)) {
+      if (StringUtils.isNotBlank(imagePath)) {
+        worker = new ImageLoader(imagePath, new Dimension(newWidth, newHeight));
+        worker.execute();
+      }
+      else if (StringUtils.isNotBlank(imageUrl)) {
+        worker = new ImageFetcher(new Dimension(newWidth, newHeight));
+        worker.execute();
+      }
+    }
+  }
+
   public void setPosition(Position position) {
     this.position = position;
   }
@@ -323,13 +337,19 @@ public class ImageLabel extends JLabel {
    * inner class for downloading online images
    */
   protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
+    private Dimension newSize;
+
+    public ImageFetcher(Dimension newSize) {
+      this.newSize = newSize;
+    }
+
     @Override
     protected BufferedImage doInBackground() throws Exception {
       try {
         Url url = new Url(imageUrl);
         Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-        return com.bric.image.ImageLoader.createImage(image);
-
+        return Scalr.resize(com.bric.image.ImageLoader.createImage(image), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+            Scalr.OP_ANTIALIAS);
       }
       catch (Exception e) {
         imageUrl = "";
@@ -339,15 +359,16 @@ public class ImageLabel extends JLabel {
 
     @Override
     protected void done() {
+      if (isCancelled()) {
+        return;
+      }
+
       try {
         // get fetched image
-        originalImage = get();
+        scaledImage = get();
       }
       catch (Exception e) {
-        originalImage = null;
-      }
-      finally {
-        size = null;
+        scaledImage = null;
       }
       repaint();
     }
@@ -357,10 +378,12 @@ public class ImageLabel extends JLabel {
    * inner class for loading local images
    */
   protected class ImageLoader extends SwingWorker<BufferedImage, Void> {
-    private String imagePath;
+    private String    imagePath;
+    private Dimension newSize;
 
-    public ImageLoader(String imagePath) {
+    public ImageLoader(String imagePath, Dimension newSize) {
       this.imagePath = imagePath;
+      this.newSize = newSize;
     }
 
     @Override
@@ -375,7 +398,8 @@ public class ImageLabel extends JLabel {
 
       if (file != null && file.exists()) {
         try {
-          return com.bric.image.ImageLoader.createImage(file);
+          return Scalr.resize(com.bric.image.ImageLoader.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+              Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
           return null;
@@ -391,15 +415,13 @@ public class ImageLabel extends JLabel {
       if (isCancelled()) {
         return;
       }
+
       try {
         // get fetched image
-        originalImage = get();
+        scaledImage = get();
       }
       catch (Exception e) {
-        originalImage = null;
-      }
-      finally {
-        size = null;
+        scaledImage = null;
       }
       revalidate();
       repaint();
@@ -412,7 +434,7 @@ public class ImageLabel extends JLabel {
   private class ImageLabelClickListener extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent arg0) {
-      if (arg0.getClickCount() == 1 && originalImage != null) {
+      if (arg0.getClickCount() == 1 && scaledImage != null) {
         MainWindow.getActiveInstance().createLightbox(getImagePath(), getImageUrl());
       }
     }

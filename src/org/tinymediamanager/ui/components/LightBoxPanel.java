@@ -1,7 +1,5 @@
 package org.tinymediamanager.ui.components;
 
-import harsh.p.raval.lightbox.LightBox;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -16,12 +14,14 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+import harsh.p.raval.lightbox.LightBox;
+
 public class LightBoxPanel extends JPanel {
   private static final long serialVersionUID = -674987974365646512L;
 
-  private ImageLabel        image;
-  private LightBox          lightBox;
-  private JFrame            frame;
+  private ImageLabel image;
+  private LightBox   lightBox;
+  private JFrame     frame;
 
   public LightBoxPanel() {
     lightBox = new LightBox();
@@ -66,6 +66,7 @@ public class LightBoxPanel extends JPanel {
   }
 
   public void setImageLocation(String path, String url) {
+    image.clearImage();
     image.setImageUrl(url);
     image.setImagePath(path);
   }
