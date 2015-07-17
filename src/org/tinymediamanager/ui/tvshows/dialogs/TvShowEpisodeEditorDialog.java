@@ -92,36 +92,38 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-  private static final long                                     serialVersionUID = 7702248909791283043L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
-  private static final Date                                     INITIAL_DATE     = new Date(0);
+  private static final long           serialVersionUID = 7702248909791283043L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Date           INITIAL_DATE     = new Date(0);
 
-  private TvShowList                                            tvShowList       = TvShowList.getInstance();
-  private TvShowEpisode                                         episodeToEdit;
-  private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private boolean                                               continueQueue    = true;
+  private TvShowList        tvShowList    = TvShowList.getInstance();
+  private TvShowEpisode     episodeToEdit;
+  private List<TvShowActor> cast          = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>      tags          = ObservableCollections.observableList(new ArrayList<String>());
+  private boolean           continueQueue = true;
 
-  private JTextField                                            tfTitle;
-  private JLabel                                                lblFilename;
-  private JSpinner                                              spEpisode;
-  private JSpinner                                              spSeason;
-  private JSpinner                                              spRating;
-  private JSpinner                                              spDvdSeason;
-  private JSpinner                                              spDvdEpisode;
-  private JCheckBox                                             cbDvdOrder;
-  private JSpinner                                              spFirstAired;
-  private JSpinner                                              spDateAdded;
-  private JCheckBox                                             chckbxWatched;
-  private ImageLabel                                            lblThumb;
-  private JTextArea                                             taPlot;
-  private JTextField                                            tfDirector;
-  private JTextField                                            tfWriter;
-  private JTable                                                tableGuests;
-  private JComboBox                                             cbTags;
-  private JList                                                 listTags;
+  private JTextField tfTitle;
+  private JLabel     lblFilename;
+  private JSpinner   spEpisode;
+  private JSpinner   spSeason;
+  private JSpinner   spRating;
+  private JSpinner   spDvdSeason;
+  private JSpinner   spDvdEpisode;
+  private JCheckBox  cbDvdOrder;
+  private JSpinner   spFirstAired;
+  private JSpinner   spDateAdded;
+  private JCheckBox  chckbxWatched;
+  private ImageLabel lblThumb;
+  private JTextArea  taPlot;
+  private JTextField tfDirector;
+  private JTextField tfWriter;
+  private JTable     tableGuests;
+  private JComboBox  cbTags;
+  private JList      listTags;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
   private JListBinding<String, List<String>, JList>             jListBinding;
@@ -143,18 +145,19 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     {
       JPanel contentPanel = new JPanel();
       getContentPane().add(contentPanel, BorderLayout.CENTER);
-      contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("120px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+      contentPanel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("120px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblFilenameT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       contentPanel.add(lblFilenameT, "2, 2, right, default");
@@ -316,10 +319,11 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       JPanel bottomPanel = new JPanel();
       getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
-      bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      bottomPanel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JComboBox cbScraper = new JComboBox(TvShowScrapers.values());
       cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
@@ -471,6 +475,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
       episodeToEdit.setTags(tags);
       episodeToEdit.saveToDb();
+      episodeToEdit.writeNFO();
 
       setVisible(false);
     }
@@ -539,7 +544,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         // if nothing has been found -> open the search box
         if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           // message
-          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$    
+          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$
         }
         else {
           tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));

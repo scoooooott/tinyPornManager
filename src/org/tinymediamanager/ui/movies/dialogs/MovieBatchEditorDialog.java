@@ -64,18 +64,20 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = -8515248604267310279L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieList                   movieList        = MovieList.getInstance();
-  private List<Movie>                 moviesToEdit;
-  private boolean                     changed          = false;
+  private MovieList   movieList = MovieList.getInstance();
+  private List<Movie> moviesToEdit;
+  private boolean     changed   = false;
 
-  private JComboBox                   cbGenres;
-  private JComboBox                   cbTags;
-  private JComboBox                   cbMovieSet;
-  private JCheckBox                   chckbxWatched;
-  private JTextField                  tfLanguage;
+  private JComboBox  cbGenres;
+  private JComboBox  cbTags;
+  private JComboBox  cbMovieSet;
+  private JCheckBox  chckbxWatched;
+  private JTextField tfLanguage;
 
   /**
    * Instantiates a new movie batch editor.
@@ -91,13 +93,15 @@ public class MovieBatchEditorDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-          FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-          FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
-          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-          FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(new FormLayout(
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "2, 2, right, default");
@@ -383,6 +387,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (Movie movie : moviesToEdit) {
               movie.saveToDb();
+              movie.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -400,6 +405,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
           if (changed) {
             for (Movie movie : moviesToEdit) {
               movie.saveToDb();
+              movie.writeNFO();
             }
             // if configured - sync with trakt.tv
             if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {

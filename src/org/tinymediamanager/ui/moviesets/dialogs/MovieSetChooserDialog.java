@@ -84,24 +84,26 @@ import com.omertron.themoviedbapi.model.Collection;
  */
 public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID = -1023959850452480592L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
-  private MovieSet                    movieSetToScrape;
-  private List<MovieSetChooserModel>  movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
-  private final Action                actionSearch     = new SearchAction();
-  private boolean                     continueQueue    = true;
+  private MovieSet                   movieSetToScrape;
+  private List<MovieSetChooserModel> movieSetsFound = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private final Action               actionSearch   = new SearchAction();
+  private boolean                    continueQueue  = true;
 
-  private JLabel                      lblProgressAction;
-  private JProgressBar                progressBar;
-  private JTextField                  tfMovieSetName;
-  private JTable                      tableMovieSets;
-  private JTextArea                   lblMovieSetName;
-  private ImageLabel                  lblMovieSetPoster;
-  private JTable                      tableMovies;
-  private JCheckBox                   cbAssignMovies;
-  private JButton                     btnOk;
+  private JLabel       lblProgressAction;
+  private JProgressBar progressBar;
+  private JTextField   tfMovieSetName;
+  private JTable       tableMovieSets;
+  private JTextArea    lblMovieSetName;
+  private ImageLabel   lblMovieSetPoster;
+  private JTable       tableMovies;
+  private JCheckBox    cbAssignMovies;
+  private JButton      btnOk;
 
   /**
    * Instantiates a new movie set chooser panel.
@@ -119,9 +121,10 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
 
     JPanel panelHeader = new JPanel();
     getContentPane().add(panelHeader, BorderLayout.NORTH);
-    panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("114px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelHeader.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("114px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
     {
       tfMovieSetName = new JTextField();
       panelHeader.add(tfMovieSetName, "2, 2, fill, fill");
@@ -139,8 +142,8 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       getContentPane().add(splitPane, BorderLayout.CENTER);
       {
         JPanel panelResults = new JPanel();
-        panelResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), }));
+        panelResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), }));
         JScrollPane panelSearchResults = new JScrollPane();
         panelResults.add(panelSearchResults, "2, 2, fill, fill");
         splitPane.setLeftComponent(panelResults);
@@ -179,10 +182,11 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
-            RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC }));
+        panelSearchDetail.setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"), FormFactory.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
+                RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC }));
         {
           lblMovieSetName = new JTextArea("");
           lblMovieSetName.setLineWrap(true);
@@ -199,9 +203,9 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         {
           JPanel panel = new JPanel();
           panelSearchDetail.add(panel, "4, 3, fill, fill");
-          panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-              FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-              FormFactory.DEFAULT_ROWSPEC, }));
+          panel.setLayout(
+              new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+                  ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
         }
         {
 
@@ -225,9 +229,10 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       JPanel bottomPane = new JPanel();
       getContentPane().add(bottomPane, BorderLayout.SOUTH);
       {
-        bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
+        bottomPane.setLayout(new FormLayout(
+            new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"),
+                FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("2dlu"), },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2, fill, center");
@@ -389,6 +394,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
               movie.setMovieSet(movieSetToScrape);
               movie.setSortTitle(movieSetToScrape.getTitle() + String.format("%02d", i + 1));
               movie.saveToDb();
+              movie.writeNFO();
               movieSetToScrape.addMovie(movie);
             }
 
@@ -463,7 +469,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         movieSetsFound, tableMovieSets);
     //
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false); // $NON-NLS-1$
     //
     jTableBinding.bind();
     //
@@ -481,8 +487,8 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
-        jTableBeanProperty_1, lblMovieSetName, jTextAreaBeanProperty);
+    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
+        lblMovieSetName, jTextAreaBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");

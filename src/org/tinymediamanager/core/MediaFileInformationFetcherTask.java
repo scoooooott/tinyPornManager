@@ -34,11 +34,11 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class MediaFileInformationFetcherTask implements Callable<Object> {
-  private final static Logger LOGGER      = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
-  private List<MediaFile>     mediaFiles;
-  private MediaEntity         mediaEntity;
-  private boolean             forceUpdate = false;
+  private List<MediaFile> mediaFiles;
+  private MediaEntity     mediaEntity;
+  private boolean         forceUpdate = false;
 
   /**
    * Instantiates a new media file information fetcher task.
@@ -74,12 +74,15 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MediaInformation", "message.mediainfo.threadcrashed", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, "MediaInformation", "message.mediainfo.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
 
     if (mediaEntity != null) {
       mediaEntity.saveToDb();
+      if (mediaEntity instanceof Movie) {
+        ((Movie) mediaEntity).writeNFO();
+      }
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
       return "getting MediaInfo from " + mediaEntity.getTitle();
     }

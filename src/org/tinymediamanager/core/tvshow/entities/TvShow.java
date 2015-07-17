@@ -77,52 +77,52 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShow extends MediaEntity {
-  private static final Logger         LOGGER             = LoggerFactory.getLogger(TvShow.class);
-  private static TvShowArtworkHelper  artworkHelper      = new TvShowArtworkHelper();
+  private static final Logger        LOGGER        = LoggerFactory.getLogger(TvShow.class);
+  private static TvShowArtworkHelper artworkHelper = new TvShowArtworkHelper();
 
-  private String                      dataSource         = "";
-  private String                      director           = "";
-  private String                      writer             = "";
-  private int                         runtime            = 0;
-  private int                         votes              = 0;
-  private Date                        firstAired         = null;
-  private String                      status             = "";
-  private String                      studio             = "";
-  private boolean                     watched            = false;
-  private String                      sortTitle          = "";
+  private String  dataSource = "";
+  private String  director   = "";
+  private String  writer     = "";
+  private int     runtime    = 0;
+  private int     votes      = 0;
+  private Date    firstAired = null;
+  private String  status     = "";
+  private String  studio     = "";
+  private boolean watched    = false;
+  private String  sortTitle  = "";
 
-  private List<String>                genres             = new ArrayList<String>(1);
-  private List<String>                tags               = new ArrayList<String>(0);
-  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
+  private List<String>             genres             = new ArrayList<String>(1);
+  private List<String>             tags               = new ArrayList<String>(0);
+  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @Deprecated
-  private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>(0);
+  private HashMap<Integer, String> seasonPosterMap    = new HashMap<Integer, String>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "tvShow")
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
+  private List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
+  private List<TvShowActor> actors = new ArrayList<TvShowActor>();
 
   @Enumerated(EnumType.STRING)
-  private Certification               certification      = Certification.NOT_RATED;
+  private Certification certification = Certification.NOT_RATED;
 
   @Transient
-  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
+  private HashMap<Integer, MediaFile> seasonPosters = new HashMap<Integer, MediaFile>(0);
 
   @Transient
-  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(1);
+  private List<TvShowSeason> seasons = new ArrayList<TvShowSeason>(1);
 
   @Transient
-  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(1);
+  private List<MediaGenres> genresForAccess = new ArrayList<MediaGenres>(1);
 
   @Transient
-  private String                      titleSortable      = "";
+  private String titleSortable = "";
 
   @Transient
-  private Date                        lastWatched        = null;
+  private Date lastWatched = null;
 
   @Transient
-  private PropertyChangeListener      propertyChangeListener;
+  private PropertyChangeListener propertyChangeListener;
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -665,6 +665,7 @@ public class TvShow extends MediaEntity {
 
     // update DB
     saveToDb();
+    writeNFO();
   }
 
   /**
@@ -759,6 +760,7 @@ public class TvShow extends MediaEntity {
 
       // update DB
       saveToDb();
+      writeNFO();
     }
   }
 
@@ -1527,11 +1529,6 @@ public class TvShow extends MediaEntity {
 
   @Override
   public void saveToDb() {
-    // rewrite NFO (needed before save)
-    if (dirty) {
-      writeNFO();
-    }
-
     // update/insert this movie to the database
     final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
@@ -1545,7 +1542,6 @@ public class TvShow extends MediaEntity {
         entityManager.persist(this);
       }
     }
-    dirty = false;
     readWriteLock.readLock().unlock();
   }
 

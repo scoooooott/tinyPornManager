@@ -37,9 +37,6 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
 import com.uwetrottmann.trakt.v2.entities.BaseMovie;
@@ -59,6 +56,9 @@ import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.exceptions.LoginException;
 import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
 
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 /**
  * Sync your collection and watched status with Trakt.tv<br>
  * Using best practice 2-way-sync according to http://trakt.tv/api-docs/sync<br>
@@ -68,13 +68,13 @@ import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
  * 
  */
 public class TraktTv {
-  private static final String  CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+  private static final String CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
-  private static final Logger  LOGGER    = LoggerFactory.getLogger(TraktTv.class);
-  private static final TraktV2 TRAKT     = new TraktV2();
+  private static final Logger  LOGGER = LoggerFactory.getLogger(TraktTv.class);
+  private static final TraktV2 TRAKT  = new TraktV2();
   private static TraktTv       instance;
 
-  private SyncResponse         response;
+  private SyncResponse response;
 
   public static synchronized TraktTv getInstance() {
     if (instance == null) {
@@ -211,6 +211,7 @@ public class TraktTv {
 
           if (dirty) {
             tmmMovie.saveToDb();
+            tmmMovie.writeNFO();
           }
 
           // remove it from our list (no need to add)
@@ -436,6 +437,7 @@ public class TraktTv {
 
           if (dirty) {
             tmmMovie.saveToDb();
+            tmmMovie.writeNFO();
           }
         }
       }
@@ -604,6 +606,7 @@ public class TraktTv {
 
           if (dirty) {
             tmmShow.saveToDb();
+            tmmShow.writeNFO();
           }
 
         }
@@ -716,6 +719,7 @@ public class TraktTv {
 
           if (dirty) {
             tmmShow.saveToDb();
+            tmmShow.writeNFO();
           }
         }
       }
