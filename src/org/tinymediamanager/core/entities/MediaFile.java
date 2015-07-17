@@ -296,8 +296,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // old impl: https://github.com/brentosmith/xbmc-dvdextras
       // Official: http://wiki.xbmc.org/index.php?title=Add-on:VideoExtras#File_Naming_Convention
       if (getFilename().contains(".EXTRAS.") // scene file naming (need to check first! upper case!)
-          || basename.matches("(?i).*[_.-].*extra[s]?$") // end with "-extra[s]"
-          || basename.matches("(?i).*[-].*extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
+          || basename.matches("(?i).*[_.-]*extra[s]?$") // end with "-extra[s]"
+          || basename.matches("(?i).*[-]*extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
           || foldername.equalsIgnoreCase("extras") // preferred folder name
           || foldername.equalsIgnoreCase("extra")) // preferred folder name
       {
