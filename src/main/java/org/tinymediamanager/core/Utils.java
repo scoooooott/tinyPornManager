@@ -72,7 +72,7 @@ import org.tinymediamanager.ui.TmmWindowSaver;
 public class Utils {
   private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
   private static final Pattern                      localePattern     = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
-                                                                          Pattern.CASE_INSENSITIVE);
+      Pattern.CASE_INSENSITIVE);
   /**
    * Map of all known English/UserLocalized String to base locale, key is LOWERCASE
    */
@@ -212,7 +212,7 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
         delim = "";
       }
-      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + Pattern.quote(prfx));
+      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
     }
     return title.trim();
   }
