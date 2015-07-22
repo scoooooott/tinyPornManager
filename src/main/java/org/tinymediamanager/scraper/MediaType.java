@@ -32,15 +32,15 @@ public enum MediaType {
     if ("movie".equalsIgnoreCase(id) || "movies".equalsIgnoreCase(id)) {
       return MOVIE;
     }
-    if ("movieSet".equalsIgnoreCase(id) || "set".equalsIgnoreCase(id)) {
+    if ("movieSet".equalsIgnoreCase(id) || "set".equalsIgnoreCase(id) || "movie_set".equalsIgnoreCase(id)) {
       return MOVIE_SET;
     }
 
-    if ("tv".equalsIgnoreCase(id) || "tvShow".equalsIgnoreCase(id)) {
+    if ("tv".equalsIgnoreCase(id) || "tvShow".equalsIgnoreCase(id) || "tv_show".equalsIgnoreCase(id)) {
       return TV_SHOW;
     }
 
-    if ("episode".equalsIgnoreCase(id) || "tvEpisode".equalsIgnoreCase(id)) {
+    if ("episode".equalsIgnoreCase(id) || "tvEpisode".equalsIgnoreCase(id) || "tv_episode".equalsIgnoreCase(id)) {
       return TV_EPISODE;
     }
 
