@@ -211,7 +211,7 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
         delim = "";
       }
-      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + Pattern.quote(prfx));
+      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
     }
     return title.trim();
   }
