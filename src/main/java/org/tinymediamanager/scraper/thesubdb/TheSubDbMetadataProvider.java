@@ -15,13 +15,12 @@
  */
 package org.tinymediamanager.scraper.thesubdb;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,12 +29,13 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.util.SubtitleUtils;
 import org.tinymediamanager.scraper.util.Url;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class TheSubDbMetadataProvider.
@@ -49,7 +49,7 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
   // private String API_URL = "http://api.thesubdb.com/";
   private String                   API_URL       = "http://sandbox.thesubdb.com/";
   private static MediaProviderInfo providerInfo  = new MediaProviderInfo("subdb", "thesubdb.com",
-                                                     "Scraper for thesubdb.com which is able to scrape subtitles");
+      "Scraper for thesubdb.com which is able to scrape subtitles");
   private static final String      PAGE_ENCODING = "ISO-8859-1";
 
   public TheSubDbMetadataProvider() {
@@ -64,17 +64,17 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
   /**
    * searches for SubDB subtitle
    * 
-   * @param mf
+   * @param subtitleFile
    *          the MediaFile
    * @return the list of search results
    * @throws Exception
    */
   @Override
-  public List<MediaSearchResult> search(MediaFile mf) throws Exception {
-    LOGGER.debug("searching subtitle for " + mf);
+  public List<MediaSearchResult> search(File subtitleFile) throws Exception {
+    LOGGER.debug("searching subtitle for " + subtitleFile);
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
-    String hash = SubtitleUtils.computeSubDBHash(mf.getFile());
+    String hash = SubtitleUtils.computeSubDBHash(subtitleFile);
     // return an empty search result on hashing error
     if (hash.isEmpty()) {
       return results;

@@ -16,6 +16,7 @@
 
 package org.tinymediamanager.scraper.opensubtitles;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,9 +50,9 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
 
   private static final Logger      LOGGER       = LoggerFactory.getLogger(OpensubtitlesMetadataProvider.class);
   private static final String      SERVICE      = "http://api.opensubtitles.org/xml-rpc";
-  private static final String      USER_AGENT   = "OS Test User Agent";                                                // TODO: register!!!
+  private static final String      USER_AGENT   = "OS Test User Agent";                                        // TODO: register!!!
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("opensubtitles", "opensubtitles.org",
-                                                    "Scraper for opensubtitles.org which is able to scrape subtitles");
+      "Scraper for opensubtitles.org which is able to scrape subtitles");
   private static ApiStartSession   session      = null;
   private static XmlRpcClient      client       = null;
 
@@ -201,20 +202,19 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   /**
    * search for subtitle files matching your mediafile using video file hash
    * 
-   * @param mf
+   * @param subtitleFile
    *          the mediafile
    * @return MediaSearchResult
    */
   @Override
-  public List<MediaSearchResult> search(MediaFile mf) {
-    LOGGER.debug("searching subtitle for " + mf);
+  public List<MediaSearchResult> search(File subtitleFile) {
+    LOGGER.debug("searching subtitle for " + subtitleFile);
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
     Map<String, Object> mapQuery = new HashMap<String, Object>();
     mapQuery.put("sublanguageid", Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage());
-    mapQuery.put("moviehash", SubtitleUtils.computeOpenSubtitlesHash(mf.getFile()));
-    // when MI is not run yet, MF always 0 (b/c of locking) - so get this direct
-    mapQuery.put("moviebytesize", mf.getFilesize() == 0 ? mf.getFile().length() : mf.getFilesize());
+    mapQuery.put("moviehash", SubtitleUtils.computeOpenSubtitlesHash(subtitleFile));
+    mapQuery.put("moviebytesize", subtitleFile.length());
 
     try {
       XmlRpcStruct token = (XmlRpcStruct) methodCall("SearchSubtitles", mapQuery);
@@ -235,8 +235,8 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     if (session == null) {
       Object token = null;
       try {
-        token = client
-            .invoke("LogIn", new Object[] { "", "", Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage(), USER_AGENT });
+        token = client.invoke("LogIn",
+            new Object[] { "", "", Utils.getLocaleFromLanguage(Globals.settings.getLanguage()).getLanguage(), USER_AGENT });
         XmlRpcStruct response = (XmlRpcStruct) token;
         session = new ApiStartSession(response);
         LOGGER.debug("Login OK");
