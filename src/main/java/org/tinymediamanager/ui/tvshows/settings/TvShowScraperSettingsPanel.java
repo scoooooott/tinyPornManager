@@ -323,7 +323,8 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
     public TvShowScraper(MediaScraper scraper) {
       this.scraper = scraper;
-      if (scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
+      if (scraper.getMediaProvider() == null || scraper.getMediaProvider().getProviderInfo() == null
+          || scraper.getMediaProvider().getProviderInfo().getProviderLogo() == null) {
         scraperLogo = new ImageIcon();
       }
       else {
