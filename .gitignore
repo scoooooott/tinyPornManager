@@ -25,3 +25,6 @@ pom.xml.*
 .project
 .settings
 bin
+
+#tinyMediaManager
+cache
