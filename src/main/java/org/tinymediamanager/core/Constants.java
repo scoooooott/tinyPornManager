@@ -102,22 +102,12 @@ public final class Constants {
   public final static String WRITER                 = "writer";
   public final static String YEAR                   = "year";
 
-  // IDs for lookup (MediaMetadata IDs map)
-  public final static String ANIDBID          = "anidb";
-  public final static String FANARTTVID       = "fanart";
-  public final static String HDTRAILERSID     = "hdtrailersnet";
-  public final static String MOVIEMETERID     = "moviemeter";
-  public final static String OFDBID           = "ofdb";
-  public final static String ZELLULOIDID      = "zelluloid";
-  public final static String TMDBID           = "tmdbId";
-  public final static String TVDBID           = "tvdbId";
-  public final static String TRAKTID          = "traktId";
-  public final static String IMDBID           = "imdbId";
-  public final static String TVRAGEID         = "tvrageId";
-  public final static String ROTTENTOMATOESID = "rottentomatoesId";
-
-  public final static String TMDB = "tmdb";
-  public final static String TVDB = "tvdb";
+  // some hardcoded, well known meta data provider IDs
+  // may add new ones in MediaEntity.setId()
+  public final static String TMDB  = "tmdb";
+  public final static String IMDB  = "imdb";
+  public final static String TVDB  = "tvdb";
+  public final static String TRAKT = "trakt";
 
   private Constants() {
   }

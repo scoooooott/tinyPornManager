@@ -94,7 +94,7 @@ public class TvShowSettings extends AbstractModelObject {
 
   public String getTvShowScraper() {
     if (StringUtils.isBlank(tvShowScraper)) {
-      return Constants.TVDBID;
+      return Constants.TVDB;
     }
     return tvShowScraper;
   }

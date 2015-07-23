@@ -169,7 +169,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         catch (Exception e1) {
         }
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
-        ids.put(Constants.TMDBID, tmdbId);
+        ids.put(Constants.TMDB, tmdbId);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkScrapers, lblPoster, null, null, MediaType.MOVIE);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
@@ -227,7 +227,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         catch (Exception e1) {
         }
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
-        ids.put(Constants.TMDBID, tmdbId);
+        ids.put(Constants.TMDB, tmdbId);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkScrapers, lblFanart, null, null, MediaType.MOVIE);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());

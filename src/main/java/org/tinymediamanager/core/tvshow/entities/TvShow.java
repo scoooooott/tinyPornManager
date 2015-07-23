@@ -69,50 +69,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class TvShow extends MediaEntity {
-  private static final Logger         LOGGER             = LoggerFactory.getLogger(TvShow.class);
-  private static TvShowArtworkHelper  artworkHelper      = new TvShowArtworkHelper();
+  private static final Logger        LOGGER        = LoggerFactory.getLogger(TvShow.class);
+  private static TvShowArtworkHelper artworkHelper = new TvShowArtworkHelper();
 
   @JsonProperty
-  private String                      dataSource         = "";
+  private String        dataSource    = "";
   @JsonProperty
-  private String                      director           = "";
+  private String        director      = "";
   @JsonProperty
-  private String                      writer             = "";
+  private String        writer        = "";
   @JsonProperty
-  private int                         runtime            = 0;
+  private int           runtime       = 0;
   @JsonProperty
-  private int                         votes              = 0;
+  private int           votes         = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date                        firstAired         = null;
+  private Date          firstAired    = null;
   @JsonProperty
-  private String                      status             = "";
+  private String        status        = "";
   @JsonProperty
-  private String                      studio             = "";
+  private String        studio        = "";
   @JsonProperty
-  private boolean                     watched            = false;
+  private boolean       watched       = false;
   @JsonProperty
-  private String                      sortTitle          = "";
+  private String        sortTitle     = "";
   @JsonProperty
-  private Certification               certification      = Certification.NOT_RATED;
+  private Certification certification = Certification.NOT_RATED;
 
   @JsonProperty
-  private List<String>                genres             = new ArrayList<String>(1);
+  private List<String>             genres             = new ArrayList<String>(1);
   @JsonProperty
-  private List<String>                tags               = new ArrayList<String>(0);
+  private List<String>             tags               = new ArrayList<String>(0);
   @JsonProperty
-  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
+  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @JsonProperty
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
+  private List<TvShowActor>        actors             = new ArrayList<TvShowActor>();
 
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
-  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
-  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(1);
-  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(1);
-  private String                      titleSortable      = "";
-  private Date                        lastWatched        = null;
+  private List<TvShowEpisode>         episodes        = new ArrayList<TvShowEpisode>();
+  private HashMap<Integer, MediaFile> seasonPosters   = new HashMap<Integer, MediaFile>(0);
+  private List<TvShowSeason>          seasons         = new ArrayList<TvShowSeason>(1);
+  private List<MediaGenres>           genresForAccess = new ArrayList<MediaGenres>(1);
+  private String                      titleSortable   = "";
+  private Date                        lastWatched     = null;
 
-  private PropertyChangeListener      propertyChangeListener;
+  private PropertyChangeListener propertyChangeListener;
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -499,12 +499,7 @@ public class TvShow extends MediaEntity {
 
     // populate ids
     for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
-      if ((TVDBID.equals(entry.getKey()) || "tvdb".equals(entry.getKey())) && entry.getValue() != null) {
-        setTvdbId(entry.getValue().toString());
-      }
-      else {
-        setId((String) entry.getKey(), entry.getValue().toString());
-      }
+      setId((String) entry.getKey(), entry.getValue().toString());
     }
 
     if (config.isTitle()) {
@@ -754,7 +749,7 @@ public class TvShow extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    Object obj = ids.get(IMDBID);
+    Object obj = ids.get(IMDB);
     if (obj == null) {
       return "";
     }
@@ -769,8 +764,8 @@ public class TvShow extends MediaEntity {
    */
   public void setImdbId(String newValue) {
     String oldValue = getImdbId();
-    ids.put(IMDBID, newValue);
-    firePropertyChange(IMDBID, oldValue, newValue);
+    ids.put(IMDB, newValue);
+    firePropertyChange("imdbId", oldValue, newValue);
   }
 
   /**
@@ -779,12 +774,9 @@ public class TvShow extends MediaEntity {
    * @return the tvdb id
    */
   public String getTvdbId() {
-    Object obj = ids.get(TVDBID);
+    Object obj = ids.get(TVDB);
     if (obj == null) {
-      obj = ids.get("tvdb"); // old id
-      if (obj == null) {
-        return "";
-      }
+      return "";
     }
     return obj.toString();
   }
@@ -797,8 +789,8 @@ public class TvShow extends MediaEntity {
    */
   public void setTvdbId(String newValue) {
     String oldValue = getTvdbId();
-    ids.put(TVDBID, newValue);
-    firePropertyChange(TVDBID, oldValue, newValue);
+    ids.put(TVDB, newValue);
+    firePropertyChange("tvdbId", oldValue, newValue);
   }
 
   /**
@@ -809,7 +801,7 @@ public class TvShow extends MediaEntity {
   public int getTraktId() {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get(TRAKTID)));
+      id = Integer.valueOf(String.valueOf(ids.get(TRAKT)));
     }
     catch (Exception e) {
       return 0;
@@ -825,36 +817,8 @@ public class TvShow extends MediaEntity {
    */
   public void setTraktId(int newValue) {
     int oldValue = getTraktId();
-    ids.put(TRAKTID, newValue);
-    firePropertyChange(TRAKTID, oldValue, newValue);
-  }
-
-  /**
-   * Gets the TvRage id.
-   * 
-   * @return the TvRage id
-   */
-  public int getTvRageId() {
-    int id = 0;
-    try {
-      id = Integer.valueOf(String.valueOf(ids.get(TVRAGEID)));
-    }
-    catch (Exception e) {
-      return 0;
-    }
-    return id;
-  }
-
-  /**
-   * Sets the TvRage id.
-   * 
-   * @param newValue
-   *          the new TvRage id
-   */
-  public void setTvRageId(int newValue) {
-    int oldValue = getTvRageId();
-    ids.put(TVRAGEID, newValue);
-    firePropertyChange(TVRAGEID, oldValue, newValue);
+    ids.put(TRAKT, newValue);
+    firePropertyChange("traktId", oldValue, newValue);
   }
 
   /**

@@ -19,8 +19,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +26,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -36,6 +33,8 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class HDTrailersNet. A trailer provider for the site hd-trailers.net
@@ -45,8 +44,8 @@ import org.tinymediamanager.scraper.util.Url;
 @PluginImplementation
 public class HDTrailersNet implements IMovieTrailerProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.HDTRAILERSID, "hd-trailers.net",
-                                                    "Scraper for hd-trailers.net which is able to scrape trailers");
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo("hd-trailers", "hd-trailers.net",
+      "Scraper for hd-trailers.net which is able to scrape trailers");
 
   public HDTrailersNet() {
   }
@@ -82,15 +81,15 @@ public class HDTrailersNet implements IMovieTrailerProvider {
        * <tr style="" itemprop="trailer" itemscope itemtype="http://schema.org/VideoObject"> <td class="bottomTableDate" rowspan="2">2012-03-30</td>
        * <td class="bottomTableName" rowspan="2"><span class="standardTrailerName" itemprop="name">Trailer 2</span> <a href=
        * "http://blog.hd-trailers.net/how-to-download-hd-trailers-from-apple/#workarounds" ><img src="http://static.hd-trailers.net/images/error.png"
-       * width="16" height="16" style="border:0px;vertical-align:middle" alt="Apple Direct Download Unavailable"
-       * title="Apple Direct Download Unavailable" /></a></td>
+       * width="16" height="16" style="border:0px;vertical-align:middle" alt="Apple Direct Download Unavailable" title=
+       * "Apple Direct Download Unavailable" /></a></td>
        * 
-       * <td class="bottomTableResolution"><a href= "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h480p.mov"
-       * rel="lightbox[res480p 852 480]" title="Men in Black 3 - Trailer 2 - 480p">480p</a></td> <td class="bottomTableResolution"><a href=
-       * "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h720p.mov" rel="lightbox[res720p 1280 720]"
-       * title="Men in Black 3 - Trailer 2 - 720p">720p</a></td> <td class="bottomTableResolution"><a href=
-       * "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h1080p.mov" rel="lightbox[res1080p 1920 1080]"
-       * title="Men in Black 3 - Trailer 2 - 1080p">1080p</a></td> <td class="bottomTableIcon"> <a
+       * <td class="bottomTableResolution"><a href= "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h480p.mov" rel=
+       * "lightbox[res480p 852 480]" title="Men in Black 3 - Trailer 2 - 480p">480p</a></td> <td class="bottomTableResolution"><a href=
+       * "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h720p.mov" rel="lightbox[res720p 1280 720]" title=
+       * "Men in Black 3 - Trailer 2 - 720p">720p</a></td> <td class="bottomTableResolution"><a href=
+       * "http://trailers.apple.com/movies/sony_pictures/meninblack3/meninblack3-tlr2_h1080p.mov" rel="lightbox[res1080p 1920 1080]" title=
+       * "Men in Black 3 - Trailer 2 - 1080p">1080p</a></td> <td class="bottomTableIcon"> <a
        * href="http://trailers.apple.com/trailers/sony_pictures/meninblack3/" target="_blank"> <img
        * src="http://static.hd-trailers.net/images/apple.ico" alt="Apple" height="16px" width="16px"/></a></td> </tr> <tr> <td
        * class="bottomTableFileSize">36 MB</td> <td class="bottomTableFileSize">111 MB</td> <td class="bottomTableFileSize">181 MB</td> <td

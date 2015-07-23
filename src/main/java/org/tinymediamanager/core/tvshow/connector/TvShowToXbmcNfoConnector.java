@@ -64,41 +64,41 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "genres", "tags", "premiered",
-    "status", "studio", "thumb", "actors", "unsupportedElements" })
+@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "genres", "tags", "premiered", "status",
+    "studio", "thumb", "actors", "unsupportedElements" })
 public class TvShowToXbmcNfoConnector {
 
-  private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
-  private static JAXBContext  context   = initContext();
+  private static final Logger LOGGER  = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
+  private static JAXBContext  context = initContext();
 
-  private String              id        = "";
-  private String              title     = "";
-  private String              sorttitle = "";
-  private float               rating    = 0;
-  private int                 votes     = 0;
-  private String              year      = "";
-  private String              plot      = "";
-  private String              mpaa      = "";
-  private String              premiered = "";
-  private String              studio    = "";
-  private String              status    = "";
-  private EpisodeGuide        episodeguide;
+  private String       id        = "";
+  private String       title     = "";
+  private String       sorttitle = "";
+  private float        rating    = 0;
+  private int          votes     = 0;
+  private String       year      = "";
+  private String       plot      = "";
+  private String       mpaa      = "";
+  private String       premiered = "";
+  private String       studio    = "";
+  private String       status    = "";
+  private EpisodeGuide episodeguide;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        actors;
+  private List<Object> actors;
 
   @XmlElement(name = "genre")
-  private List<String>        genres;
+  private List<String> genres;
 
   @XmlElement(name = "tag")
-  private List<String>        tags;
+  private List<String> tags;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        unsupportedElements;
+  private List<Object> unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  List<Thumb>                 thumb;
+  List<Thumb> thumb;
 
   private static JAXBContext initContext() {
     try {
@@ -159,7 +159,7 @@ public class TvShowToXbmcNfoConnector {
     }
 
     // set data
-    String tvdbid = tvShow.getIdAsString(Constants.TVDBID);
+    String tvdbid = tvShow.getIdAsString(Constants.TVDB);
     if (StringUtils.isNotBlank(tvdbid)) {
       xbmc.setId(tvdbid);
       xbmc.episodeguide.url.cache = tvdbid + ".xml";
@@ -225,8 +225,8 @@ public class TvShowToXbmcNfoConnector {
     catch (Exception e) {
       e.printStackTrace();
       LOGGER.error(nfoFile.getAbsolutePath() + " " + e.getMessage());
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 

@@ -552,7 +552,7 @@ public class MovieList extends AbstractModelObject {
   public MediaScraper getDefaultMediaScraper() {
     MediaScraper scraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
     if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.MOVIE);
+      scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.MOVIE);
     }
     return scraper;
   }

@@ -48,10 +48,10 @@ public class MovieSet extends MediaEntity {
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
   @JsonProperty
-  private List<UUID>                     movieIds             = new ArrayList<UUID>();
+  private List<UUID> movieIds = new ArrayList<UUID>();
 
-  private List<Movie>                    movies               = new ArrayList<Movie>(0);
-  private String                         titleSortable        = "";
+  private List<Movie> movies        = new ArrayList<Movie>(0);
+  private String      titleSortable = "";
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -113,7 +113,7 @@ public class MovieSet extends MediaEntity {
   public int getTmdbId() {
     int id;
     try {
-      id = (Integer) ids.get(TMDBID);
+      id = (Integer) ids.get(TMDB);
     }
     catch (Exception e) {
       return 0;
@@ -123,8 +123,8 @@ public class MovieSet extends MediaEntity {
 
   public void setTmdbId(int newValue) {
     int oldValue = getTmdbId();
-    ids.put(TMDBID, newValue);
-    firePropertyChange(TMDBID, oldValue, newValue);
+    ids.put(TMDB, newValue);
+    firePropertyChange(TMDB, oldValue, newValue);
   }
 
   @Override

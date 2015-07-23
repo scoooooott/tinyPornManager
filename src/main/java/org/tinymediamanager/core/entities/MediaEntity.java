@@ -36,6 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
@@ -50,39 +51,39 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected static Comparator<MediaFile> mediaFileComparator = null;
 
   /** The id for the database. */
-  protected UUID                         dbId                = UUID.randomUUID();
+  protected UUID dbId = UUID.randomUUID();
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>(0);
+  protected HashMap<String, Object> ids = new HashMap<String, Object>(0);
 
   @JsonProperty
-  protected String                       title               = "";
+  protected String  title             = "";
   @JsonProperty
-  protected String                       originalTitle       = "";
+  protected String  originalTitle     = "";
   @JsonProperty
-  protected String                       year                = "";
+  protected String  year              = "";
   @JsonProperty
-  protected String                       plot                = "";
+  protected String  plot              = "";
   @JsonProperty
-  protected float                        rating              = 0f;
+  protected float   rating            = 0f;
   @JsonProperty
-  protected String                       path                = "";
+  protected String  path              = "";
   @JsonProperty
-  protected Date                         dateAdded           = new Date();
+  protected Date    dateAdded         = new Date();
   @JsonProperty
-  protected String                       productionCompany   = "";
+  protected String  productionCompany = "";
   @JsonProperty
-  protected boolean                      scraped             = false;
+  protected boolean scraped           = false;
 
   @JsonProperty
-  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
+  private List<MediaFile>              mediaFiles    = new ArrayList<MediaFile>();
   @JsonProperty
-  protected Map<MediaFileType, String>   artworkUrlMap       = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String> artworkUrlMap = new HashMap<MediaFileType, String>();
 
-  protected boolean                      duplicate           = false;
-  public boolean                         justAdded           = false;
-  protected ReadWriteLock                readWriteLock       = new ReentrantReadWriteLock();
+  protected boolean       duplicate     = false;
+  public boolean          justAdded     = false;
+  protected ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
   public MediaEntity() {
   }
@@ -316,6 +317,11 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void setId(String key, Object value) {
     ids.put(key, value);
     firePropertyChange(key, null, value);
+
+    // fire special events for our well known IDs
+    if (Constants.TMDB.equals(key) || Constants.IMDB.equals(key) || Constants.TVDB.equals(key) || Constants.TRAKT.equals(key)) {
+      firePropertyChange(key + "Id", null, value);
+    }
   }
 
   public void removeId(String key) {

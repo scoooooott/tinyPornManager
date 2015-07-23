@@ -419,7 +419,7 @@ public class MovieSettings extends AbstractModelObject {
 
   public String getMovieScraper() {
     if (StringUtils.isBlank(movieScraper)) {
-      return Constants.TMDBID;
+      return Constants.TMDB;
     }
     return movieScraper;
   }

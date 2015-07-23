@@ -340,7 +340,7 @@ public class TvShowList extends AbstractModelObject {
   public MediaScraper getDefaultMediaScraper() {
     MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
     if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TVDBID, ScraperType.TV_SHOW);
+      scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
     return scraper;
   }
@@ -377,7 +377,7 @@ public class TvShowList extends AbstractModelObject {
   @Deprecated
   public ITvShowMetadataProvider getMetadataProvider(MediaScraper scraper) {
     if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.TV_SHOW);
+      scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.TV_SHOW);
     }
     return (ITvShowMetadataProvider) scraper.getMediaProvider();
   }
@@ -394,7 +394,7 @@ public class TvShowList extends AbstractModelObject {
   public ITvShowMetadataProvider getMetadataProvider(String providerId) {
     MediaScraper scraper = MediaScraper.getMediaScraperById(providerId, ScraperType.TV_SHOW);
     if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDBID, ScraperType.TV_SHOW);
+      scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.TV_SHOW);
     }
     return (ITvShowMetadataProvider) scraper.getMediaProvider();
   }

@@ -59,44 +59,44 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
-  private static final Logger LOGGER      = LoggerFactory.getLogger(TvShowEpisode.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowEpisode.class);
 
   @JsonProperty
-  private int                 episode     = -1;
+  private int     episode    = -1;
   @JsonProperty
-  private int                 season      = -1;
+  private int     season     = -1;
   @JsonProperty
-  private int                 dvdSeason   = -1;
+  private int     dvdSeason  = -1;
   @JsonProperty
-  private int                 dvdEpisode  = -1;
+  private int     dvdEpisode = -1;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date                firstAired  = null;
+  private Date    firstAired = null;
   @JsonProperty
-  private String              director    = "";
+  private String  director   = "";
   @JsonProperty
-  private String              writer      = "";
+  private String  writer     = "";
   @JsonProperty
-  private boolean             disc        = false;
+  private boolean disc       = false;
   @JsonProperty
-  private boolean             watched     = false;
+  private boolean watched    = false;
   @JsonProperty
-  private int                 votes       = 0;
+  private int     votes      = 0;
   @JsonProperty
-  private boolean             subtitles   = false;
+  private boolean subtitles  = false;
   @JsonProperty
-  private boolean             isDvdOrder  = false;
+  private boolean isDvdOrder = false;
   @JsonProperty
-  private UUID                tvShowId    = null;
+  private UUID    tvShowId   = null;
 
   @JsonProperty
-  private List<TvShowActor>   actors      = new ArrayList<TvShowActor>(0);
+  private List<TvShowActor> actors = new ArrayList<TvShowActor>(0);
   @JsonProperty
-  private List<String>        tags        = new ArrayList<String>(0);
+  private List<String>      tags   = new ArrayList<String>(0);
 
-  private TvShow              tvShow      = null;
-  private boolean             newlyAdded  = false;
-  private Date                lastWatched = null;
+  private TvShow  tvShow      = null;
+  private boolean newlyAdded  = false;
+  private Date    lastWatched = null;
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -994,12 +994,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the tvdb id
    */
   public String getTvdbId() {
-    Object obj = ids.get(TVDBID);
+    Object obj = ids.get(TVDB);
     if (obj == null) {
-      obj = ids.get("tvdb"); // old id
-      if (obj == null) {
-        return "";
-      }
+      return "";
     }
     return obj.toString();
   }

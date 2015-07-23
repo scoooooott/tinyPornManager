@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -40,9 +38,6 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
-
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
@@ -63,6 +58,10 @@ import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.exceptions.LoginException;
 import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 /**
  * Sync your collection and watched status with Trakt.tv<br>
  * Using best practice 2-way-sync according to http://trakt.tv/api-docs/sync<br>
@@ -73,15 +72,15 @@ import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
  */
 @PluginImplementation
 public class TraktTv implements IMediaProvider {
-  private static final String      CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+  private static final String CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TraktTv.class);
   private static final TraktV2     TRAKT        = new TraktV2();
   private static TraktTv           instance;
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKTID, "Trakt.tv",
-                                                    "Scraper for Trakt.tv; yes, we can scraper here too :)");
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
+      "Scraper for Trakt.tv; yes, we can scraper here too :)");
 
-  private SyncResponse             response;
+  private SyncResponse response;
 
   public static synchronized TraktTv getInstance() {
     if (instance == null) {
@@ -245,8 +244,8 @@ public class TraktTv implements IMediaProvider {
     List<SyncMovie> movies = new ArrayList<SyncMovie>();
     int nosync = 0;
     for (Movie tmmMovie : tmmMovies) {
-      if (tmmMovie.getIdAsInt(Constants.TRAKTID) != 0 || !tmmMovie.getIdAsString(Constants.IMDBID).isEmpty()
-          || tmmMovie.getIdAsInt(Constants.TMDBID) != 0) {
+      if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
+          || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, false));
       }
       else {
@@ -487,8 +486,8 @@ public class TraktTv implements IMediaProvider {
     List<SyncMovie> movies = new ArrayList<SyncMovie>();
     int nosync = 0;
     for (Movie tmmMovie : tmmWatchedMovies) {
-      if (tmmMovie.getIdAsInt(Constants.TRAKTID) != 0 || !tmmMovie.getIdAsString(Constants.IMDBID).isEmpty()
-          || tmmMovie.getIdAsInt(Constants.TMDBID) != 0) {
+      if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
+          || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, true));
       }
       else {
@@ -868,73 +867,76 @@ public class TraktTv implements IMediaProvider {
 
   private boolean updateIDs(TvShow tmmShow, ShowIds ids) {
     boolean dirty = false;
-    if (tmmShow.getIdAsString(Constants.IMDBID).isEmpty() && !StringUtils.isEmpty(ids.imdb)) {
-      tmmShow.setId(Constants.IMDBID, ids.imdb);
+    if (tmmShow.getIdAsString(Constants.IMDB).isEmpty() && !StringUtils.isEmpty(ids.imdb)) {
+      tmmShow.setId(Constants.IMDB, ids.imdb);
       dirty = true;
     }
-    if (tmmShow.getIdAsInt(Constants.TMDBID) == 0 && ids.tmdb != null && ids.tmdb != 0) {
-      tmmShow.setId(Constants.TMDBID, ids.tmdb);
+    if (tmmShow.getIdAsInt(Constants.TMDB) == 0 && ids.tmdb != null && ids.tmdb != 0) {
+      tmmShow.setId(Constants.TMDB, ids.tmdb);
       dirty = true;
     }
-    if (tmmShow.getIdAsInt(Constants.TRAKTID) == 0 && ids.trakt != null && ids.trakt != 0) {
-      tmmShow.setId(Constants.TRAKTID, ids.trakt);
+    if (tmmShow.getIdAsInt(providerInfo.getId()) == 0 && ids.trakt != null && ids.trakt != 0) {
+      tmmShow.setId(providerInfo.getId(), ids.trakt);
       dirty = true;
     }
-    if (tmmShow.getIdAsInt(Constants.TVDBID) == 0 && ids.tvdb != null && ids.tvdb != 0) {
-      tmmShow.setId(Constants.TVDBID, ids.tvdb);
+    if (tmmShow.getIdAsInt(Constants.TVDB) == 0 && ids.tvdb != null && ids.tvdb != 0) {
+      tmmShow.setId(Constants.TVDB, ids.tvdb);
       dirty = true;
     }
-    if (tmmShow.getIdAsInt(Constants.TVRAGEID) == 0 && ids.tvrage != null && ids.tvrage != 0) {
-      tmmShow.setId(Constants.TVRAGEID, ids.tvrage);
-      dirty = true;
-    }
+
+    // not used atm
+    // if (tmmShow.getIdAsInt(Constants.TVRAGEID) == 0 && ids.tvrage != null && ids.tvrage != 0) {
+    // tmmShow.setId(Constants.TVRAGEID, ids.tvrage);
+    // dirty = true;
+    // }
     return dirty;
   }
 
   private boolean updateIDs(Movie tmmMovie, MovieIds ids) {
     boolean dirty = false;
-    if (tmmMovie.getIdAsString(Constants.IMDBID).isEmpty() && !StringUtils.isEmpty(ids.imdb)) {
-      tmmMovie.setId(Constants.IMDBID, ids.imdb);
+    if (tmmMovie.getIdAsString(Constants.IMDB).isEmpty() && !StringUtils.isEmpty(ids.imdb)) {
+      tmmMovie.setId(Constants.IMDB, ids.imdb);
       dirty = true;
     }
-    if (tmmMovie.getIdAsInt(Constants.TMDBID) == 0 && ids.tmdb != null && ids.tmdb != 0) {
-      tmmMovie.setId(Constants.TMDBID, ids.tmdb);
+    if (tmmMovie.getIdAsInt(Constants.TMDB) == 0 && ids.tmdb != null && ids.tmdb != 0) {
+      tmmMovie.setId(Constants.TMDB, ids.tmdb);
       dirty = true;
     }
-    if (tmmMovie.getIdAsInt(Constants.TRAKTID) == 0 && ids.trakt != null && ids.trakt != 0) {
-      tmmMovie.setId(Constants.TRAKTID, ids.trakt);
+    if (tmmMovie.getIdAsInt(providerInfo.getId()) == 0 && ids.trakt != null && ids.trakt != 0) {
+      tmmMovie.setId(providerInfo.getId(), ids.trakt);
       dirty = true;
     }
     return dirty;
   }
 
   private boolean matches(TvShow tmmShow, ShowIds ids) {
-    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(Constants.TRAKTID)) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmShow.getIdAsInt(providerInfo.getId())) {
       return true;
     }
-    if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmShow.getIdAsString(Constants.IMDBID))) {
+    if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmShow.getIdAsString(Constants.IMDB))) {
       return true;
     }
-    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmShow.getIdAsInt(Constants.TMDBID)) {
+    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmShow.getIdAsInt(Constants.TMDB)) {
       return true;
     }
-    if (ids.tvdb != null && ids.tvdb != 0 && ids.tvdb == tmmShow.getIdAsInt(Constants.TVDBID)) {
+    if (ids.tvdb != null && ids.tvdb != 0 && ids.tvdb == tmmShow.getIdAsInt(Constants.TVDB)) {
       return true;
     }
-    if (ids.tvrage != null && ids.tvrage != 0 && ids.tvrage == tmmShow.getIdAsInt(Constants.TVRAGEID)) {
-      return true;
-    }
+    // not used atm
+    // if (ids.tvrage != null && ids.tvrage != 0 && ids.tvrage == tmmShow.getIdAsInt(Constants.TVRAGEID)) {
+    // return true;
+    // }
     return false;
   }
 
   private boolean matches(Movie tmmMovie, MovieIds ids) {
-    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(Constants.TRAKTID)) {
+    if (ids.trakt != null && ids.trakt != 0 && ids.trakt == tmmMovie.getIdAsInt(providerInfo.getId())) {
       return true;
     }
-    if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmMovie.getIdAsString(Constants.IMDBID))) {
+    if (StringUtils.isNotEmpty(ids.imdb) && ids.imdb.equals(tmmMovie.getIdAsString(Constants.IMDB))) {
       return true;
     }
-    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmMovie.getIdAsInt(Constants.TMDBID)) {
+    if (ids.tmdb != null && ids.tmdb != 0 && ids.tmdb == tmmMovie.getIdAsInt(Constants.TMDB)) {
       return true;
     }
     return false;
@@ -944,14 +946,14 @@ public class TraktTv implements IMediaProvider {
     SyncMovie movie = null;
 
     MovieIds ids = new MovieIds();
-    if (!tmmMovie.getIdAsString(Constants.IMDBID).isEmpty()) {
-      ids.imdb = tmmMovie.getIdAsString(Constants.IMDBID);
+    if (!tmmMovie.getIdAsString(Constants.IMDB).isEmpty()) {
+      ids.imdb = tmmMovie.getIdAsString(Constants.IMDB);
     }
-    if (tmmMovie.getIdAsInt(Constants.TMDBID) != 0) {
-      ids.tmdb = tmmMovie.getIdAsInt(Constants.TMDBID);
+    if (tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
+      ids.tmdb = tmmMovie.getIdAsInt(Constants.TMDB);
     }
-    if (tmmMovie.getIdAsInt(Constants.TRAKTID) != 0) {
-      ids.trakt = tmmMovie.getIdAsInt(Constants.TRAKTID);
+    if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0) {
+      ids.trakt = tmmMovie.getIdAsInt(providerInfo.getId());
     }
 
     // we have to decide what we send; trakt behaves differenty when sending data to
@@ -979,21 +981,22 @@ public class TraktTv implements IMediaProvider {
   private SyncShow toSyncShow(TvShow tmmShow, boolean watched) {
     SyncShow show = null;
     ShowIds ids = new ShowIds();
-    if (!tmmShow.getIdAsString(Constants.IMDBID).isEmpty()) {
-      ids.imdb = tmmShow.getIdAsString(Constants.IMDBID);
+    if (!tmmShow.getIdAsString(Constants.IMDB).isEmpty()) {
+      ids.imdb = tmmShow.getIdAsString(Constants.IMDB);
     }
-    if (tmmShow.getIdAsInt(Constants.TMDBID) != 0) {
-      ids.tmdb = tmmShow.getIdAsInt(Constants.TMDBID);
+    if (tmmShow.getIdAsInt(Constants.TMDB) != 0) {
+      ids.tmdb = tmmShow.getIdAsInt(Constants.TMDB);
     }
-    if (tmmShow.getIdAsInt(Constants.TVDBID) != 0) {
-      ids.tvdb = tmmShow.getIdAsInt(Constants.TVDBID);
+    if (tmmShow.getIdAsInt(Constants.TVDB) != 0) {
+      ids.tvdb = tmmShow.getIdAsInt(Constants.TVDB);
     }
-    if (tmmShow.getIdAsInt(Constants.TRAKTID) != 0) {
-      ids.trakt = tmmShow.getIdAsInt(Constants.TRAKTID);
+    if (tmmShow.getIdAsInt(providerInfo.getId()) != 0) {
+      ids.trakt = tmmShow.getIdAsInt(providerInfo.getId());
     }
-    if (tmmShow.getIdAsInt(Constants.TVRAGEID) != 0) {
-      ids.tvrage = tmmShow.getIdAsInt(Constants.TVRAGEID);
-    }
+    // not used atm
+    // if (tmmShow.getIdAsInt(Constants.TVRAGEID) != 0) {
+    // ids.tvrage = tmmShow.getIdAsInt(Constants.TVRAGEID);
+    // }
 
     ArrayList<SyncSeason> ss = new ArrayList<SyncSeason>();
     boolean foundS = false;
