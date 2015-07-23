@@ -98,7 +98,6 @@
 
 
 		<!-- default files, to include in dist -->
-		<copy file="objectdb.conf" todir="${build.dir}" />
 		<copy file="changelog.txt" todir="${build.dir}" />
 		<copy file="AppBundler/getdown.jar" todir="${build.dir}" />
 		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />

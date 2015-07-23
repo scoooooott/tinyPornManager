@@ -48,11 +48,6 @@
 			<src path="src/main/java" />
 			<classpath refid="classpath.default" />
 		</javac>
-		<!-- enhance several classes for objectdb -->
-		<java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
-			<arg line="-s" />
-			<arg line="${bin.dir}/org/tinymediamanager/core/*" />
-		</java>
 		<!-- copy non java files -->
 		<copy includeemptydirs="false" todir="${bin.dir}">
 			<fileset dir="src/main/resources" excludes="**/*.java" />
@@ -190,7 +185,6 @@
 
 	<target name='package-app' description="builds the packages" depends='create_tmm_jar, downloadLocales'>
 		<!-- default files, to include in dist -->
-		<copy file="objectdb.conf" todir="${build.dir}" />
 		<copy file="changelog.txt" todir="${build.dir}" />
 		<copy file="AppBundler/getdown.jar" todir="${build.dir}" />
 		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />

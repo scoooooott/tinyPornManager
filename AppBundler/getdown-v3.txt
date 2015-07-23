@@ -31,7 +31,6 @@ resource = [mac os x] Info.plist
 resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
-resource = objectdb.conf
 resource = changelog.txt
 resource = [!windows] env.txt                       #still distribute an empty env.txt for a while to clean all old installations
 
