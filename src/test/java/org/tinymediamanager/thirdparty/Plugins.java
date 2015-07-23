@@ -7,7 +7,7 @@ import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.IXBMC;
+import org.tinymediamanager.scraper.IKodiMetadataProvider;
 
 public class Plugins {
 
@@ -18,7 +18,7 @@ public class Plugins {
     System.out.println("------------------");
     System.out.println("classes implementing our base impl:");
     for (IMediaProvider p : pm.getPlugins()) {
-      System.out.println("  " + p.getProviderInfo() + "   " + (p instanceof IXBMC));
+      System.out.println("  " + p.getProviderInfo() + "   " + (p instanceof IKodiMetadataProvider));
     }
 
     System.out.println("------------------");

@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.PluginManager;
-import org.tinymediamanager.scraper.xbmc.XbmcScraper;
-import org.tinymediamanager.scraper.xbmc.XbmcUtil;
 
 /**
  * Class representing a MediaScraper; (type, info, description...)<br>
@@ -24,7 +22,6 @@ public class MediaScraper {
   private URL            logoUrl;
   private ScraperType    type;
   private IMediaProvider mediaProvider;
-  private boolean        xbmcScraper = false;
 
   public MediaScraper(ScraperType type, IMediaProvider mediaProvider, String id, String name) {
     this.mediaProvider = mediaProvider;
@@ -94,14 +91,6 @@ public class MediaScraper {
     this.type = type;
   }
 
-  public boolean isXbmcScraper() {
-    return xbmcScraper;
-  }
-
-  public void setXbmcScraper(boolean xbmcScraper) {
-    this.xbmcScraper = xbmcScraper;
-  }
-
   public IMediaProvider getMediaProvider() {
     return this.mediaProvider;
   }
@@ -144,7 +133,6 @@ public class MediaScraper {
       default:
         break;
     }
-    // plugins.remove(XbmcMetadataProvider.class); // remove the "base" xbmc scraper
 
     for (IMediaProvider p : plugins) {
       MediaProviderInfo pi = p.getProviderInfo();
@@ -152,11 +140,17 @@ public class MediaScraper {
       scraper.add(ms);
     }
 
-    // XBMC scrapers
-    for (XbmcScraper sc : XbmcUtil.getAllScrapers()) {
-      MediaScraper ms = (MediaScraper) sc;
-      if (ms.getType() == type) {
-        scraper.add(ms);
+    // Kodi scrapers
+    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
+      try {
+        for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
+          MediaProviderInfo pi = p.getProviderInfo();
+          MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+          scraper.add(ms);
+        }
+      }
+      catch (Exception e) {
+
       }
     }
 

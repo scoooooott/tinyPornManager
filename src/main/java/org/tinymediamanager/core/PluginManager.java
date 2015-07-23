@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.IMovieArtworkProvider;
@@ -15,8 +16,6 @@ import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.xbmc.XbmcMetadataProvider;
-import org.tinymediamanager.scraper.xbmc.XbmcScraper;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
@@ -120,24 +119,17 @@ public class PluginManager {
    */
   public Plugin getPlugin(final MediaScraper scraper) {
     Class paramClass = ScraperToImplClass(scraper);
-    if (scraper.isXbmcScraper()) {
-      XbmcScraper xs = (XbmcScraper) scraper;
-      XbmcMetadataProvider mp = new XbmcMetadataProvider(xs);
-      return mp;
-    }
-    else {
-      // return pm.getPlugin(paramClass, new OptionCapabilities("id:" + scraper.getId()));
-      PluginSelector<Plugin> selector = new PluginSelector<Plugin>() {
-        @Override
-        public boolean selectPlugin(Plugin paramT) {
-          if (paramT instanceof IMediaProvider && ((IMediaProvider) paramT).getProviderInfo().getId().equals(scraper.getId())) {
-            return true;
-          }
-          return false;
+    // return pm.getPlugin(paramClass, new OptionCapabilities("id:" + scraper.getId()));
+    PluginSelector<Plugin> selector = new PluginSelector<Plugin>() {
+      @Override
+      public boolean selectPlugin(Plugin paramT) {
+        if (paramT instanceof IMediaProvider && ((IMediaProvider) paramT).getProviderInfo().getId().equals(scraper.getId())) {
+          return true;
         }
-      };
-      return pm.getPlugin(paramClass, new OptionPluginSelector<Plugin>(selector));
-    }
+        return false;
+      }
+    };
+    return pm.getPlugin(paramClass, new OptionPluginSelector<Plugin>(selector));
   }
 
   /**
@@ -157,7 +149,7 @@ public class PluginManager {
    * All plugins implementing the IMediaProvider
    */
   public List<IMediaProvider> getPlugins() {
-    ArrayList<IMediaProvider> plugins = new ArrayList<>();
+    List<IMediaProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IMediaProvider.class)) {
       plugins.add((IMediaProvider) p);
     }
@@ -168,7 +160,7 @@ public class PluginManager {
    * All plugins implementing the IMediaMetadataProvider
    */
   public List<IMovieMetadataProvider> getMoviePlugins() {
-    ArrayList<IMovieMetadataProvider> plugins = new ArrayList<>();
+    List<IMovieMetadataProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IMovieMetadataProvider.class)) {
       plugins.add((IMovieMetadataProvider) p);
     }
@@ -179,7 +171,7 @@ public class PluginManager {
    * All plugins implementing the IMovieArtworkProvider
    */
   public List<IMovieArtworkProvider> getMovieArtworkPlugins() {
-    ArrayList<IMovieArtworkProvider> plugins = new ArrayList<>();
+    List<IMovieArtworkProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IMovieArtworkProvider.class)) {
       plugins.add((IMovieArtworkProvider) p);
     }
@@ -190,7 +182,7 @@ public class PluginManager {
    * All plugins implementing the ITvShowArtworkProvider
    */
   public List<ITvShowArtworkProvider> getTvShowArtworkPlugins() {
-    ArrayList<ITvShowArtworkProvider> plugins = new ArrayList<>();
+    List<ITvShowArtworkProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(ITvShowArtworkProvider.class)) {
       plugins.add((ITvShowArtworkProvider) p);
     }
@@ -201,7 +193,7 @@ public class PluginManager {
    * All plugins implementing the IMediaTrailerProvider
    */
   public List<IMovieTrailerProvider> getTrailerPlugins() {
-    ArrayList<IMovieTrailerProvider> plugins = new ArrayList<>();
+    List<IMovieTrailerProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IMovieTrailerProvider.class)) {
       plugins.add((IMovieTrailerProvider) p);
     }
@@ -212,7 +204,7 @@ public class PluginManager {
    * All plugins implementing the IMediaSubtitleProvider
    */
   public List<IMediaSubtitleProvider> getSubtitlePlugins() {
-    ArrayList<IMediaSubtitleProvider> plugins = new ArrayList<>();
+    List<IMediaSubtitleProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IMediaSubtitleProvider.class)) {
       plugins.add((IMediaSubtitleProvider) p);
     }
@@ -223,9 +215,17 @@ public class PluginManager {
    * All plugins implementing the ITvShowMetadataProvider
    */
   public List<ITvShowMetadataProvider> getTvShowPlugins() {
-    ArrayList<ITvShowMetadataProvider> plugins = new ArrayList<>();
+    List<ITvShowMetadataProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(ITvShowMetadataProvider.class)) {
       plugins.add((ITvShowMetadataProvider) p);
+    }
+    return plugins;
+  }
+
+  public List<IKodiMetadataProvider> getKodiPlugins() {
+    List<IKodiMetadataProvider> plugins = new ArrayList<>();
+    for (Plugin p : pmu.getPlugins(IKodiMetadataProvider.class)) {
+      plugins.add((IKodiMetadataProvider) p);
     }
     return plugins;
   }
