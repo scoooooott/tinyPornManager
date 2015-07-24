@@ -133,7 +133,7 @@
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
 		</dependency>
-
+		
 		<!-- non mavenized ones -->
 		<dependency>
 			<groupId>chrriis.dj</groupId>
@@ -203,12 +203,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- plugin> <!- - enhance ObjectDB classes - -> <groupId>org.codehaus.mojo</groupId> 
-				<artifactId>exec-maven-plugin</artifactId> <version>1.4.0</version> <executions> 
-				<execution> <id>enhance</id> <phase>process-classes</phase> <goals> <goal>java</goal> 
-				</goals> <configuration> <mainClass>com.objectdb.Enhancer</mainClass> <arguments> 
-				<argument>-s</argument> <argument>org.tinymediamanager.core.*</argument> 
-				</arguments> </configuration> </execution> </executions> </plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

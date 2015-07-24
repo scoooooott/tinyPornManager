@@ -185,9 +185,9 @@
 
 		<!-- Windows -->
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
-		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_r${tmmRevision}" outfile="${dist.dir}/tinyMediaManager.exe" />
-		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_r${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
-		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_r${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
+		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManager.exe" />
+		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
 
 		<!-- Linux -->
 		<copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
@@ -216,20 +216,20 @@
 
 		<!-- copy digest.txt and create zip files -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_r${tmmRevision}_mac.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 		</zip>
 
 		<!-- windows -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_r${tmmRevision}_win.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
 			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
 		</zip>
 
 		<!-- linux -->
-		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_r${tmmRevision}_linux.tar.gz">
+		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_linux.tar.gz">
 			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**" />
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>

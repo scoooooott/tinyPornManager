@@ -34,5 +34,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-anidb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-fanarttv"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-imdb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-moviemeter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-ofdb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-rottentomatoes"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-tmdb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-tvdb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-zelluloid"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
