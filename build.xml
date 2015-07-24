@@ -14,7 +14,8 @@
 	<!-- set as property to override in jenkins -->
 
 	<tstamp>
-		<format property="today" pattern="dd/MM/yyyy" />
+		<!--format property="today" pattern="dd/MM/yyyy" /-->
+		<format property="today" pattern="yyyy-MM-dd" />
 	</tstamp>
 
 	<path id="classpath.default">
@@ -22,13 +23,6 @@
 			<include name="*.jar" />
 		</fileset>
 	</path>
-
-	<path id="svntask.classpth">
-		<fileset dir="buildsupport/svntask">
-			<include name="*.jar" />
-		</fileset>
-	</path>
-	<taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svntask.classpth" />
 
 	<target name="clean">
 		<delete dir="${bin.dir}" />
@@ -75,17 +69,6 @@
 
 	<target name="create_tmm_jar" description="creates the jar" depends="compile, setNightly, setPreRelease">
 
-		<svn>
-			<info path="." />
-			<!-- svn.info.url
-                 svn.info.repositoryRootUrl
-                 svn.info.revision
-                 svn.info.author
-                 svn.info.committedDate
-                 svn.info.committedRevision -->
-		</svn>
-		<echo message="Building revision ${svn.info.revision} - ${svn.info.author} - ${svn.info.committedDate}" />
-
 		<!-- set manifest Class-Path accordingly; fake jarFile parameter only used for relative path -->
 		<manifestclasspath property="jar.classpath" jarfile="tmm.jar">
 			<classpath refid="classpath.default" />
@@ -97,7 +80,7 @@
 				<attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
 				<attribute name="Class-Path" value=". locale/ ${jar.classpath} lib/swt.jar" />
 				<attribute name="Implementation-Title" value="tinyMediaManager" />
-				<attribute name="Implementation-Version" value="${version} (r${svn.info.revision})" />
+				<attribute name="Implementation-Version" value="${version} (${rev})" />
 				<attribute name="Build-Date" value="${DSTAMP}-${TSTAMP}" />
 				<attribute name="Build-By" value="${user.name}" />
 			</manifest>
@@ -108,10 +91,10 @@
 			<fileset dir="${lib.dir}" />
 		</copy>
 
-		<!-- set SVN revision here - is not set anymore since nightly/prerel -->
+		<!-- set date as revision here - git hashes are not useful -->
 		<!-- Only works, if rev is not set to nightly/prerel - so should be fine for release build -->
 		<echo message="Rev: ${rev}" />
-		<property name="rev" value="${svn.info.revision}" />
+		<property name="rev" value="${today}" />
 		<echo message="Rev: ${rev}" />
 
 		<!-- buildinfo -->
@@ -206,7 +189,6 @@
 		<copy todir="${build.dir}/locale">
 			<fileset dir="locale" />
 		</copy>
-		<replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}" />
 
 		<pathconvert property="gd.code" refid="classpath.default" pathsep="">
 			<mapper>
@@ -259,7 +241,7 @@
 		<mkdir dir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java" />
 		<copy file="AppBundler/osx/Info.plist.template" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" />
 		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%VERSION%" value="${version}" />
-		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%SVNREV%" value="${svn.info.revision}" />
+		<replace file="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" token="%SVNREV%" value="${rev}" />
 		<copy file="AppBundler/osx/PkgInfo" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/PkgInfo" />
 		<copy file="AppBundler/osx/tmm.icns" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/tmm.icns" />
 		<copy todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/">
@@ -282,9 +264,9 @@
 
 		<!-- Windows -->
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
-		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManager.exe" />
-		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
-		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
+		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_${rev}" outfile="${dist.dir}/tinyMediaManager.exe" />
+		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_${rev}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
+		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_${rev}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
 
 		<!-- Linux -->
 		<copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
@@ -335,20 +317,20 @@
 
 		<!-- copy digest.txt and create zip files -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
-		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${version}_${rev}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 		</zip>
 
 		<!-- windows -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
-		<zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
+		<zip destfile="${dist.dir}/tmm_${version}_${rev}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**, build.tar.gz" />
 			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
 		</zip>
 
 		<!-- linux -->
-		<tar compression="gzip" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz">
+		<tar compression="gzip" destfile="${dist.dir}/tmm_${version}_${rev}_linux.tar.gz">
 			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**, build.tar.gz" />
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>

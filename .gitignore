@@ -26,10 +26,17 @@ bin
 cache
 logs
 log
+build
+build-tmp
+dist
+ignore
 config.xml
+*.lic
+*.db
 *.odb
 *.odb$
 *.desktop
+*.disable
 tmm_ui.prop
 tmm.uuid
 backup
