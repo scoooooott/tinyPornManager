@@ -1,0 +1,5 @@
+*
+# ignore all, but...
+!.gitignore
+!*.jar
+!*.txt
