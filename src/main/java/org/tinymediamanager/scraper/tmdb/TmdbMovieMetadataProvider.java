@@ -55,7 +55,7 @@ import java.util.List;
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
-  private Tmdb                api;
+  private Tmdb api;
 
   public TmdbMovieMetadataProvider(Tmdb api) {
     this.api = api;
@@ -155,13 +155,15 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year, "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year,
+              "phrase");
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE), false, 0).getResults();
+          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // false, 0).getResults();
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
@@ -176,13 +178,15 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year, "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year,
+              "phrase");
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE), false, 0).getResults();
+          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // false, 0).getResults();
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
@@ -236,7 +240,16 @@ class TmdbMovieMetadataProvider {
       tmdbId = Integer.parseInt(options.getResult().getId());
     }
 
-    // tmdbId from option
+    // tmdbId from option - own id 
+    if (tmdbId == 0) {
+      try {
+        tmdbId = Integer.parseInt(options.getId(TmdbMetadataProvider.providerInfo.getId()));
+      }
+      catch (NumberFormatException ignored) {
+      }
+    }
+
+    // tmdbId from option - legacy id
     if (tmdbId == 0) {
       tmdbId = options.getTmdbId();
     }
@@ -300,10 +313,12 @@ class TmdbMovieMetadataProvider {
         if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TITLE))) {
           md.storeMetadata(MediaMetadata.TITLE, englishMd.getStringValue(MediaMetadata.TITLE));
         }
-        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+        if (StringUtils.isBlank(movie.original_title)
+            && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
           md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
         }
-        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TAGLINE))) {
+        if (StringUtils.isBlank(movie.tagline)
+            && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TAGLINE))) {
           md.storeMetadata(MediaMetadata.TAGLINE, englishMd.getStringValue(MediaMetadata.TAGLINE));
         }
       }
@@ -503,7 +518,8 @@ class TmdbMovieMetadataProvider {
 
         // only use the certification of the desired country (if any country has
         // been chosen)
-        if (options.getCountry() == null || options.getCountry().getAlpha2().compareToIgnoreCase(info.iso_3166_1) == 0) {
+        if (options.getCountry() == null
+            || options.getCountry().getAlpha2().compareToIgnoreCase(info.iso_3166_1) == 0) {
           md.addCertification(Certification.getCertification(info.iso_3166_1, info.certification));
         }
       }
