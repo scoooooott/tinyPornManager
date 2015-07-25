@@ -51,7 +51,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
   private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
   private TmdbMetadataProvider             mp;
 
-  private boolean                          scraped;
+  private boolean scraped;
 
   public MovieSetChooserModel(MediaSearchResult result) {
     this.result = result;
@@ -135,7 +135,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
         if (StringUtils.isEmpty(mis.imdbId)) {
           // get imdbid for this tmdbid
           if (mp != null) {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
@@ -186,7 +186,11 @@ public class MovieSetChooserModel extends AbstractModelObject {
           setFanartUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL));
           for (MediaMetadata item : info.getSubItems()) {
             MovieInSet movie = new MovieInSet(item.getStringValue(MediaMetadata.TITLE));
-            movie.setTmdbId((Integer) item.getId(item.getProviderId()));
+            try {
+              movie.setTmdbId(Integer.parseInt(item.getId(MediaMetadata.TMDBID).toString()));
+            }
+            catch (NumberFormatException ignored) {
+            }
             movie.setReleaseDate(item.getStringValue(MediaMetadata.RELEASE_DATE));
             movies.add(movie);
           }

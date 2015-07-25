@@ -93,7 +93,9 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ImageChooserDialog extends TmmDialog {
   private static final long           serialVersionUID = 8193355920006275933L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
@@ -101,22 +103,22 @@ public class ImageChooserDialog extends TmmDialog {
     POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
   }
 
-  private DownloadTask         task;
-  private List<MediaScraper>   artworkScrapers;
-  private List<String>         extraThumbs;
-  private List<String>         extraFanarts;
+  private DownloadTask       task;
+  private List<MediaScraper> artworkScrapers;
+  private List<String>       extraThumbs;
+  private List<String>       extraFanarts;
 
   /** UI components */
-  private final JPanel         contentPanel    = new JPanel();
-  private JProgressBar         progressBar;
-  private JLabel               lblProgressAction;
-  private JPanel               panelImages;
-  private ImageLabel           imageLabel;
-  private JScrollPane          scrollPane;
-  private ImageType            type;
-  private MediaType            mediaType;
-  private ButtonGroup          buttonGroup     = new ButtonGroup();
-  private List<JToggleButton>  buttons         = new ArrayList<JToggleButton>();
+  private final JPanel        contentPanel = new JPanel();
+  private JProgressBar        progressBar;
+  private JLabel              lblProgressAction;
+  private JPanel              panelImages;
+  private ImageLabel          imageLabel;
+  private JScrollPane         scrollPane;
+  private ImageType           type;
+  private MediaType           mediaType;
+  private ButtonGroup         buttonGroup  = new ButtonGroup();
+  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
 
   private final Action         actionOK        = new OkAction();
   private final Action         actionCancel    = new CancelAction();
@@ -196,10 +198,11 @@ public class ImageChooserDialog extends TmmDialog {
 
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, }));
     {
       scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -230,10 +233,11 @@ public class ImageChooserDialog extends TmmDialog {
     {
       JPanel bottomPane = new JPanel();
       getContentPane().add(bottomPane, BorderLayout.SOUTH);
-      bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      bottomPane.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+              RowSpec.decode("23px:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         if (type == ImageType.FANART && extraFanarts != null && extraThumbs != null) {
           JPanel panelExtraButtons = new JPanel();
@@ -634,7 +638,8 @@ public class ImageChooserDialog extends TmmDialog {
       // get extrathumbs
       for (JToggleButton button : buttons) {
         if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox
-            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
+            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork
+            && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
           JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
           if (chkbx.isSelected()) {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
@@ -660,7 +665,8 @@ public class ImageChooserDialog extends TmmDialog {
       // get extrafanart
       for (JToggleButton button : buttons) {
         if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox
-            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
+            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork
+            && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
           JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
           if (chkbx.isSelected()) {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
@@ -729,7 +735,7 @@ public class ImageChooserDialog extends TmmDialog {
         for (MediaScraper scraper : artworkScrapers) {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
-          if (mediaType == MediaType.MOVIE) {
+          if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
             options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
