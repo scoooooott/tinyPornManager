@@ -25,6 +25,7 @@ import org.h2.mvstore.MVStore;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 
@@ -72,6 +73,11 @@ public class MovieModuleManager implements ITmmModule {
 
   @Override
   public void startUp() throws Exception {
+    // do a DB backup, and keep last 15 copies
+    File db = new File(MOVIE_DB);
+    Utils.createBackupFile(db);
+    Utils.deleteOldBackupFile(db, 15);
+
     // configure database
     mvStore = new MVStore.Builder().fileName(MOVIE_DB).compressHigh().open();
     mvStore.setAutoCommitDelay(2000); // 2 sec

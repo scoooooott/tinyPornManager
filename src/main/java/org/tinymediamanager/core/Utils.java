@@ -788,13 +788,13 @@ public class Utils {
 
   /**
    * creates a zipped backup of file in backup folder with yyyy-MM-dd timestamp<br>
-   * <b>does not overwrite already existing file from today!</b>
+   * <b>does overwrite already existing file from today!</b>
    * 
    * @param f
    *          the file to backup
    */
   public static final void createBackupFile(File f) {
-    createBackupFile(f, false);
+    createBackupFile(f, true);
   }
 
   /**

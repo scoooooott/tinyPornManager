@@ -48,7 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.TmmModuleManager;
@@ -64,9 +63,9 @@ import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
-
 import com.sun.jna.Platform;
+
+import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 /**
  * The Class TinyMediaManager.
@@ -396,11 +395,11 @@ public class TinyMediaManager {
         // LOGGER.error("PersistenceException", e);
         // if (!GraphicsEnvironment.isHeadless()) {
         // // MessageDialog.showExceptionWindow(e);
-        //            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-        //            MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+        // ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+        // MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
         // dialog.setImage(IconManager.ERROR);
-        //            dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
-        //            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
+        // dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
+        // dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
         // dialog.setResizable(true);
         // dialog.pack();
         // dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
@@ -513,11 +512,6 @@ public class TinyMediaManager {
             TmmOsUtils.createDesktopFileForLinux(desktop);
           }
         }
-
-        // do a DB backup, and keep last 15 copies
-        File db = new File(Constants.DB);
-        Utils.createBackupFile(db);
-        Utils.deleteOldBackupFile(db, 15);
       }
 
       private void showChangelog() {

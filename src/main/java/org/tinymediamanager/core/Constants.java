@@ -21,8 +21,6 @@ package org.tinymediamanager.core;
  * @author Manuel Laggner
  */
 public final class Constants {
-
-  public final static String DB            = "tmm.odb";
   public final static String BACKUP_FOLDER = ".deletedByTMM";
 
   public final static String ACTORS                 = "actors";

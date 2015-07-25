@@ -23,8 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 
@@ -51,19 +49,14 @@ public class UpgradeTasks {
     if (StringUtils.isBlank(v)) {
       v = "2.7"; // set version for other updates
     }
-  }
 
-  private static void updateDtsCodec(MediaFile mf) {
-    for (MediaFileAudioStream audioStream : mf.getAudioStreams()) {
-      if ("DTS-ES".equalsIgnoreCase(audioStream.getCodec())) {
-        audioStream.setCodec("DTSHD-ES");
-      }
-      if ("DTS-MA".equalsIgnoreCase(audioStream.getCodec())) {
-        audioStream.setCodec("DTSHD-MA");
-      }
-      if ("DTS-HRA".equalsIgnoreCase(audioStream.getCodec())) {
-        audioStream.setCodec("DTSHD-HRA");
-      }
+    // upgrade to v2.7
+    if (compareVersion(v, "2.5.2") < 0) {
+      // delete tmm.odb; objectdb.conf; log dir
+      FileUtils.deleteQuietly(new File("tmm.odb"));
+      FileUtils.deleteQuietly(new File("tmm.odb$"));
+      FileUtils.deleteQuietly(new File("objectdb.conf"));
+      FileUtils.deleteQuietly(new File("log"));
     }
   }
 

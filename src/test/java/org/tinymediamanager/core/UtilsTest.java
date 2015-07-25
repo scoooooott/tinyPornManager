@@ -79,8 +79,8 @@ public class UtilsTest {
 
   @Test
   public void backup() {
-    Utils.createBackupFile(new File("tmm.odb"));
-    Utils.deleteOldBackupFile(new File("tmm.odb"), 15);
+    Utils.createBackupFile(new File("movies.db"));
+    Utils.deleteOldBackupFile(new File("movies.db"), 15);
   }
 
   @Test
