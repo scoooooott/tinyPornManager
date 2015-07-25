@@ -41,18 +41,18 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class TvShowModuleManager implements ITmmModule {
   public static final TvShowSettings TV_SHOW_SETTINGS = Globals.settings.getTvShowSettings();
 
-  private static final String        MODULE_TITLE     = "TV show management";
-  private static final String        TV_SHOW_DB       = "tvshows.db";
+  private static final String        MODULE_TITLE = "TV show management";
+  private static final String        TV_SHOW_DB   = "tvshows.db";
   private static TvShowModuleManager instance;
 
-  private boolean                    enabled;
-  private MVStore                    mvStore;
-  private ObjectMapper               objectMapper;
-  private ObjectWriter               tvShowObjectWriter;
-  private ObjectWriter               episodeObjectWriter;
+  private boolean      enabled;
+  private MVStore      mvStore;
+  private ObjectMapper objectMapper;
+  private ObjectWriter tvShowObjectWriter;
+  private ObjectWriter episodeObjectWriter;
 
-  private MVMap<UUID, String>        tvShowMap;
-  private MVMap<UUID, String>        episodeMap;
+  private MVMap<UUID, String> tvShowMap;
+  private MVMap<UUID, String> episodeMap;
 
   private TvShowModuleManager() {
     enabled = false;
@@ -143,5 +143,10 @@ public class TvShowModuleManager implements ITmmModule {
 
   void removeEpisodeFromDb(TvShowEpisode episode) throws Exception {
     episodeMap.remove(episode.getDbId());
+  }
+
+  @Override
+  public void initializeDatabase() throws Exception {
+    FileUtils.deleteQuietly(new File(TV_SHOW_DB));
   }
 }

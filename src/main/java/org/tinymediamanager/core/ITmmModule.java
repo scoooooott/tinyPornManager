@@ -29,4 +29,6 @@ public interface ITmmModule {
   public void startUp() throws Exception;
 
   public void shutDown() throws Exception;
+
+  public void initializeDatabase() throws Exception;
 }

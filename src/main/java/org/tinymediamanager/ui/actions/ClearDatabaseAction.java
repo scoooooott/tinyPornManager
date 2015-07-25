@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -62,10 +61,7 @@ public class ClearDatabaseAction extends AbstractAction {
     // delete the database
     try {
       TmmModuleManager.getInstance().shutDown();
-      File db = new File(Constants.DB);
-      if (db.exists()) {
-        db.delete();
-      }
+      TmmModuleManager.getInstance().initializeDatabase();
       MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.info")); //$NON-NLS-1$
     }
@@ -81,8 +77,8 @@ public class ClearDatabaseAction extends AbstractAction {
       }
       catch (Exception ex) {
         LOGGER.warn(ex.getMessage());
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-            ex.getLocalizedMessage() }));
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
       }
     }
     MainWindow.getActiveInstance().closeTmmAndStart(Utils.getPBforTMMrestart());

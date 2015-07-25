@@ -30,7 +30,7 @@ public class TmmModuleManager {
   private static final Logger     LOGGER = LoggerFactory.getLogger(TmmModuleManager.class);
   private static TmmModuleManager instance;
 
-  private Set<ITmmModule>         modules;
+  private Set<ITmmModule> modules;
 
   private TmmModuleManager() {
     modules = new LinkedHashSet<ITmmModule>();
@@ -82,6 +82,23 @@ public class TmmModuleManager {
         catch (Exception e) {
           LOGGER.error("problem shutting down " + module.getModuleTitle() + ": " + e.getMessage());
         }
+      }
+    }
+  }
+
+  /**
+   * initialize databases of all modules
+   */
+  public void initializeDatabase() {
+    for (ITmmModule module : modules) {
+      try {
+        if (module.isEnabled()) {
+          module.shutDown();
+        }
+        module.initializeDatabase();
+      }
+      catch (Exception e) {
+        LOGGER.error("problem shutting down " + module.getModuleTitle() + ": " + e.getMessage());
       }
     }
   }
