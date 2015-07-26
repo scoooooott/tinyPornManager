@@ -27,6 +27,11 @@ import org.tinymediamanager.scraper.MediaType;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+/**
+ * The entry point for all Kodi meta data providers.
+ * 
+ * @author Manuel Laggner
+ */
 @PluginImplementation
 public class KodiMetadataProvider implements IKodiMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(KodiMetadataProvider.class);
