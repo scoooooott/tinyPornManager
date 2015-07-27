@@ -45,12 +45,12 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Myron Boyle
  */
 public class TvShowRenamer {
-  private static final Logger         LOGGER                   = LoggerFactory.getLogger(TvShowRenamer.class);
-  private static final TvShowSettings SETTINGS                 = Globals.settings.getTvShowSettings();
+  private static final Logger         LOGGER   = LoggerFactory.getLogger(TvShowRenamer.class);
+  private static final TvShowSettings SETTINGS = Globals.settings.getTvShowSettings();
 
   // the regexp to find the episode relevant tokens which have to be repeated on multi ep files
-  private static final Pattern        multiEpisodeTokenPattern = Pattern
-                                                                   .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)?");
+  private static final Pattern multiEpisodeTokenPattern = Pattern
+      .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)?");
 
   /**
    * add leadingZero if only 1 char
@@ -93,12 +93,13 @@ public class TvShowRenamer {
               episode.updateMediaFilePath(srcDir, destDir);
             }
             show.saveToDb();
+            show.writeNFO();
           }
         }
         catch (Exception e) {
           LOGGER.error("error moving folder: ", e.getMessage());
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     }
@@ -113,10 +114,10 @@ public class TvShowRenamer {
   public static void renameEpisode(TvShowEpisode episode) {
     // test for valid season/episode number
     if (episode.getSeason() < 0 || episode.getEpisode() < 0) {
-      LOGGER.warn("failed to rename episode " + episode.getTitle() + " (TV show " + episode.getTvShow().getTitle()
-          + ") - invalid season/episode number");
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, episode.getTvShow().getTitle(), "tvshow.renamer.failedrename",
-          new String[] { episode.getTitle() }));
+      LOGGER.warn(
+          "failed to rename episode " + episode.getTitle() + " (TV show " + episode.getTvShow().getTitle() + ") - invalid season/episode number");
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, episode.getTvShow().getTitle(), "tvshow.renamer.failedrename", new String[] { episode.getTitle() }));
       return;
     }
 
@@ -182,6 +183,7 @@ public class TvShowRenamer {
           for (TvShowEpisode e : eps) {
             e.removeFromMediaFiles(mf);
             e.saveToDb();
+            e.writeNFO();
           }
           return;
         }
@@ -239,8 +241,8 @@ public class TvShowRenamer {
             }
             catch (Exception e) {
               LOGGER.error(e.getMessage());
-              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, epFolder.getName(), "message.renamer.failedrename", new String[] {
-                  ":", e.getLocalizedMessage() }));
+              MessageManager.instance.pushMessage(
+                  new Message(MessageLevel.ERROR, epFolder.getName(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
             }
             if (ok) {
               // iterate over all EPs & MFs and fix new path
@@ -249,6 +251,7 @@ public class TvShowRenamer {
                 e.updateMediaFilePath(disc, newDisc);
                 e.setPath(newEpFolder.getPath());
                 e.saveToDb();
+                e.writeNFO();
               }
             }
             // and cleanup
@@ -260,8 +263,8 @@ public class TvShowRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error moving video file " + disc.getName() + " to " + newFoldername, e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     } // end isDisc
@@ -290,8 +293,8 @@ public class TvShowRenamer {
             }
             catch (Exception e) {
               LOGGER.error(e.getMessage());
-              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, oldMfFile.getPath(), "message.renamer.failedrename", new String[] {
-                  ":", e.getLocalizedMessage() }));
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, oldMfFile.getPath(), "message.renamer.failedrename",
+                  new String[] { ":", e.getLocalizedMessage() }));
             }
             if (ok) {
               newMF.setPath(seasonDir.getAbsolutePath());
@@ -302,6 +305,7 @@ public class TvShowRenamer {
                 e.addToMediaFiles(newMF);
                 e.setPath(seasonDir.getAbsolutePath());
                 e.saveToDb();
+                e.writeNFO();
               }
             }
             // and cleanup
@@ -313,8 +317,8 @@ public class TvShowRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error moving video file " + mf.getFilename() + " to " + newFile.getPath(), e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     }
@@ -459,9 +463,8 @@ public class TvShowRenamer {
     seasonDir = createDestination(seasonDir, episode.getTvShow(), new ArrayList<TvShowEpisode>());
 
     // only allow empty season dir if the season is in the filename
-    if (StringUtils.isBlank(seasonDir)
-        && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
-            || SETTINGS.getRenamerFilename().contains("$3") || SETTINGS.getRenamerFilename().contains("$4"))) {
+    if (StringUtils.isBlank(seasonDir) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
+        || SETTINGS.getRenamerFilename().contains("$3") || SETTINGS.getRenamerFilename().contains("$4"))) {
       seasonDir = "Season " + String.valueOf(episode.getSeason());
     }
     return seasonDir;

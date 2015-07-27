@@ -90,56 +90,56 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Movie.class);
 
-  private String              sortTitle       = "";
-  private String              tagline         = "";
-  private int                 votes           = 0;
-  private int                 runtime         = 0;
-  private String              director        = "";
-  private String              writer          = "";
-  private String              dataSource      = "";
-  private boolean             watched         = false;
-  private MovieSet            movieSet;
-  private boolean             isDisc          = false;
-  private String              spokenLanguages = "";
-  private boolean             subtitles       = false;
-  private String              country         = "";
-  private Date                releaseDate     = null;
-  private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
-  private int                 top250          = 0;
+  private String           sortTitle       = "";
+  private String           tagline         = "";
+  private int              votes           = 0;
+  private int              runtime         = 0;
+  private String           director        = "";
+  private String           writer          = "";
+  private String           dataSource      = "";
+  private boolean          watched         = false;
+  private MovieSet         movieSet;
+  private boolean          isDisc          = false;
+  private String           spokenLanguages = "";
+  private boolean          subtitles       = false;
+  private String           country         = "";
+  private Date             releaseDate     = null;
+  private boolean          multiMovieDir   = false;                    // we detected more movies in same folder
+  private int              top250          = 0;
   // missed to set @Enumerated(EnumType.STRING); we must not change it now because it can break databases
-  private MovieMediaSource    mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
-  private boolean             videoIn3D       = false;
+  private MovieMediaSource mediaSource     = MovieMediaSource.UNKNOWN; // DVD, Bluray, etc
+  private boolean          videoIn3D       = false;
 
-  private List<String>        genres          = new ArrayList<String>(1);
-  private List<String>        tags            = new ArrayList<String>(0);
-  private List<String>        extraThumbs     = new ArrayList<String>(0);
-  private List<String>        extraFanarts    = new ArrayList<String>(0);
+  private List<String> genres       = new ArrayList<String>(1);
+  private List<String> tags         = new ArrayList<String>(0);
+  private List<String> extraThumbs  = new ArrayList<String>(0);
+  private List<String> extraFanarts = new ArrayList<String>(0);
 
   @Enumerated(EnumType.STRING)
-  private Certification       certification   = Certification.NOT_RATED;
+  private Certification certification = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieActor>    actors          = new ArrayList<MovieActor>();
+  private List<MovieActor> actors = new ArrayList<MovieActor>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer> producers = new ArrayList<MovieProducer>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieTrailer>  trailer         = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer> trailer = new ArrayList<MovieTrailer>(0);
 
   @Transient
-  private String              titleSortable   = "";
+  private String titleSortable = "";
 
   @Transient
-  private boolean             newlyAdded      = false;
+  private boolean newlyAdded = false;
 
   @Transient
-  private Date                lastWatched     = null;
+  private Date lastWatched = null;
 
   @Transient
-  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
+  private List<MediaGenres> genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -957,6 +957,7 @@ public class Movie extends MediaEntity {
         }
       }
     }
+    writeNFO();
   }
 
   /**
@@ -1015,6 +1016,7 @@ public class Movie extends MediaEntity {
 
     // persist
     saveToDb();
+    writeNFO();
   }
 
   /**
@@ -1801,11 +1803,6 @@ public class Movie extends MediaEntity {
 
   @Override
   public void saveToDb() {
-    // rewrite NFO (needed before saving)
-    if (dirty) {
-      writeNFO();
-    }
-
     // update/insert this movie to the database
     final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
@@ -1824,7 +1821,6 @@ public class Movie extends MediaEntity {
         entityManager.persist(this);
       }
     }
-    dirty = false;
     readWriteLock.readLock().unlock();
   }
 

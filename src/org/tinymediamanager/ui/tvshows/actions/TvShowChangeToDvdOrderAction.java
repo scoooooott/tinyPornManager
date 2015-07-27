@@ -80,6 +80,7 @@ public class TvShowChangeToDvdOrderAction extends AbstractAction {
         episode.setAiredEpisode(-1);
         episode.setAiredSeason(-1);
         episode.saveToDb();
+        episode.writeNFO();
       }
     }
   }

@@ -18,8 +18,6 @@ package org.tinymediamanager.core.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,63 +53,49 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
  */
 @MappedSuperclass
 public abstract class MediaEntity extends AbstractModelObject {
-  protected static Comparator<MediaFile>  mediaFileComparator    = null;
-  // dirty flag listener
-  protected static PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-                                                                   @Override
-                                                                   public void propertyChange(PropertyChangeEvent evt) {
-                                                                     if (evt.getSource() instanceof MediaEntity) {
-                                                                       ((MediaEntity) evt.getSource()).dirty = true;
-                                                                     }
-                                                                   }
-                                                                 };
+  protected static Comparator<MediaFile> mediaFileComparator = null;
 
   /** The id for the database. */
   @GeneratedValue
-  protected int                           id;
+  protected int id;
 
   /** The ids to store the ID from several metadataproviders. */
   @OneToMany(fetch = FetchType.EAGER)
-  protected HashMap<String, Object>       ids                    = new HashMap<String, Object>(0);
+  protected HashMap<String, Object> ids = new HashMap<String, Object>(0);
 
-  protected String                        title                  = "";
-  protected String                        originalTitle          = "";
-  protected String                        year                   = "";
-  protected String                        plot                   = "";
-  protected float                         rating                 = 0f;
-  protected String                        path                   = "";
+  protected String  title             = "";
+  protected String  originalTitle     = "";
+  protected String  year              = "";
+  protected String  plot              = "";
+  protected float   rating            = 0f;
+  protected String  path              = "";
   @Deprecated
-  protected String                        fanartUrl              = "";
+  protected String  fanartUrl         = "";
   @Deprecated
-  protected String                        posterUrl              = "";
+  protected String  posterUrl         = "";
   @Deprecated
-  protected String                        bannerUrl              = "";
+  protected String  bannerUrl         = "";
   @Deprecated
-  protected String                        thumbUrl               = "";
-  protected Date                          dateAdded              = new Date();
-  protected String                        productionCompany      = "";
-  protected boolean                       scraped                = false;
+  protected String  thumbUrl          = "";
+  protected Date    dateAdded         = new Date();
+  protected String  productionCompany = "";
+  protected boolean scraped           = false;
 
   @Transient
-  protected boolean                       duplicate              = false;
+  protected boolean duplicate = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaFile>                 mediaFiles             = new ArrayList<MediaFile>();
+  private List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
 
-  private Map<MediaFileType, String>      artworkUrlMap          = new HashMap<MediaFileType, String>();
-
-  @Transient
-  public boolean                          justAdded              = false;
+  private Map<MediaFileType, String> artworkUrlMap = new HashMap<MediaFileType, String>();
 
   @Transient
-  protected boolean                       dirty                  = false;
+  public boolean justAdded = false;
 
   @Transient
-  protected ReadWriteLock                 readWriteLock          = new ReentrantReadWriteLock();
+  protected ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
   public MediaEntity() {
-    // add this ME to the dirty listener
-    addPropertyChangeListener(propertyChangeListener);
   }
 
   /**

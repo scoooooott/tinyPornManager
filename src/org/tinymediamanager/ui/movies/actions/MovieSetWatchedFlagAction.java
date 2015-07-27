@@ -46,6 +46,7 @@ public class MovieSetWatchedFlagAction extends AbstractAction {
     for (Movie movie : selectedMovies) {
       movie.setWatched(true);
       movie.saveToDb();
+      movie.writeNFO();
     }
   }
 }

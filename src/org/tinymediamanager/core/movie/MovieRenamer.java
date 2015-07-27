@@ -156,8 +156,8 @@ public class MovieRenamer {
       }
       catch (Exception e) {
         LOGGER.error("error moving subtitles", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename", new String[] { ":",
-            e.getLocalizedMessage() }));
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
       }
     } // end MF loop
     m.saveToDb();
@@ -237,8 +237,8 @@ public class MovieRenamer {
           }
           catch (Exception e) {
             LOGGER.error("error moving folder: ", e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
-                e.getLocalizedMessage() }));
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
           }
           if (!ok) {
             // FIXME: when we were not able to rename folder, display error msg
@@ -448,6 +448,7 @@ public class MovieRenamer {
 
     movie.gatherMediaFileInformation(false);
     movie.saveToDb();
+    movie.writeNFO();
 
     // rewrite NFO if it's a MP NFO and there was a change with poster/fanart
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
@@ -464,8 +465,8 @@ public class MovieRenamer {
         MediaFile cl = cleanup.get(i);
         if (cl.getFile().equals(new File(movie.getDataSource())) || cl.getFile().equals(new File(movie.getPath()))
             || cl.getFile().equals(new File(oldPathname))) {
-          LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": "
-              + cl.getFile().getAbsolutePath());
+          LOGGER.warn(
+              "Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": " + cl.getFile().getAbsolutePath());
           // happens when iterating eg over the getNFONaming and we return a "" string.
           // then the path+filename = movie path and we want to delete :/
           // do not show an error anylonger, just silently ignore...
@@ -861,14 +862,14 @@ public class MovieRenamer {
 
     // replace token first letter of title ($1)
     if (newDestination.contains("$1")) {
-      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase()
-          : "");
+      newDestination = replaceToken(newDestination, "$1",
+          StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase() : "");
     }
 
     // replace token first letter of sort title ($2)
     if (newDestination.contains("$2")) {
-      newDestination = replaceToken(newDestination, "$2", StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1)
-          .toUpperCase() : "");
+      newDestination = replaceToken(newDestination, "$2",
+          StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase() : "");
     }
 
     // replace token year ($Y)
@@ -1102,8 +1103,8 @@ public class MovieRenamer {
     }
     catch (Exception e) {
       LOGGER.error("error moving file", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, oldFilename, "message.renamer.failedrename", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, oldFilename, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
       return false; // rename failed
     }
   }

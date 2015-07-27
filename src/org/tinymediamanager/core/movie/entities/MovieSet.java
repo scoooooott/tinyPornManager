@@ -64,10 +64,10 @@ public class MovieSet extends MediaEntity {
   private static final String[]          SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
   @OneToMany(fetch = FetchType.EAGER)
-  private List<Movie>                    movies                      = new ArrayList<Movie>(0);
+  private List<Movie> movies = new ArrayList<Movie>(0);
 
   @Transient
-  private String                         titleSortable               = "";
+  private String titleSortable = "";
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -353,6 +353,7 @@ public class MovieSet extends MediaEntity {
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
       movie.saveToDb();
+      movie.writeNFO();
     }
 
     synchronized (movies) {
@@ -399,6 +400,7 @@ public class MovieSet extends MediaEntity {
         if (movie.getMovieSet() != null) {
           movie.setMovieSet(null);
           movie.saveToDb();
+          movie.writeNFO();
         }
       }
       movies.clear();
@@ -496,8 +498,8 @@ public class MovieSet extends MediaEntity {
         String providedFiletype = FilenameUtils.getExtension(url);
         if (type == MediaFileType.POSTER) {
           // poster should be written als "folder"
-          writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-poster."
-              + providedFiletype);
+          writeImage(url,
+              artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-poster." + providedFiletype);
         }
         else {
           writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-"
@@ -598,6 +600,7 @@ public class MovieSet extends MediaEntity {
     for (Movie movie : new ArrayList<Movie>(movies)) {
       movie.setSortTitleFromMovieSet();
       movie.saveToDb();
+      movie.writeNFO();
     }
   }
 

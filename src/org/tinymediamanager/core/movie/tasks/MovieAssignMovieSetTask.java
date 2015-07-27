@@ -44,7 +44,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
   private final static Logger         LOGGER = LoggerFactory.getLogger(MovieAssignMovieSetTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<Movie>                 moviesToScrape;
+  private List<Movie> moviesToScrape;
 
   public MovieAssignMovieSetTask(List<Movie> moviesToScrape) {
     super(BUNDLE.getString("movie.assignmovieset"));
@@ -125,6 +125,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
             movieSet.insertMovie(movie);
             movieSet.updateMovieSorttitle();
             movie.saveToDb();
+            movie.writeNFO();
           }
         }
 
