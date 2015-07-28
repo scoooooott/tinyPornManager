@@ -54,6 +54,8 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
   public void init() {
       // preload scrapers
       new KodiUtil();
+      getPluginsForType(MediaType.MOVIE);
+      getPluginsForType(MediaType.TV_SHOW);
   }
 
   /**
@@ -73,7 +75,7 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
             break;
 
           case TV_SHOW:
-            metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
+            // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
             break;
 
           default:
