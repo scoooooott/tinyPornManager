@@ -91,24 +91,29 @@ public class KodiScraper {
           else if (point.equals("xbmc.metadata.scraper.tvshows")) {
             type = MediaType.TV_SHOW;
           }
-          // else if (point.equals("xbmc.metadata.scraper.albums")) {
-          // this.setType(ScraperType.ALBUM);
-          // }
-          // else if (point.equals("xbmc.metadata.scraper.artists")) {
-          // this.setType(ScraperType.ARTIST);
-          // }
-          // else if (point.equals("xbmc.metadata.scraper.musicvideos")) {
-          // this.setType(ScraperType.MUSICVIDEO);
-          // }
-          // else if (point.equals("xbmc.metadata.scraper.library")) {
-          // this.setType(ScraperType.LIBRARY);
-          // }
+//          else if (point.equals("xbmc.metadata.scraper.albums")) {
+//            type = MediaType.ALBUM;
+//          }
+//          else if (point.equals("xbmc.metadata.scraper.artists")) {
+//            type = MediaType.ARTIST;
+//          }
+//          else if (point.equals("xbmc.metadata.scraper.musicvideos")) {
+//            type = MediaType.MUSICVIDEO;
+//          }
+//          else if (point.equals("xbmc.metadata.scraper.library")) {
+//            type = MediaType.LIBRARY;
+//          }
         }
       }
 
       File settings = new File(scraperFolder, "resources/settings.xml");
       if (settings.exists()) {
         settingsPath = settings.getAbsolutePath();
+      }
+
+      File logo = new File(scraperFolder, "icon.png");
+      if (logo.exists()) {
+        logoUrl = logo.toURI().toURL();
       }
     }
     catch (IOException e) {

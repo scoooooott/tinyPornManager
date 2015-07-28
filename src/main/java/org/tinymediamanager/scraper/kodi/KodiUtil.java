@@ -35,6 +35,7 @@ class KodiUtil {
   private static final Logger  LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
   // prescan directory for ALL common XMLs
   static final ArrayList<File> commonXmls = KodiUtil.getAllCommonXMLs();
+  static final List<KodiScraper> scrapers = KodiUtil.getAllScrapers();
 
   /**
    * tries to detect the Kodi installation folder
@@ -66,9 +67,9 @@ class KodiUtil {
    * 
    * @return File or NULL
    */
-  public static File detectKodiUserdataFolder() {
+  private static File detectKodiUserdataFolder() {
     // http://wiki.xbmc.org/?title=Userdata
-    String[] appFolder = { "Kodi", "XMBC", "kodi", ".xbmc", "xbmc", ".kodi" };
+    String[] appFolder = { "Kodi", ".kodi", "kodi", "XMBC", ".xbmc", "xbmc" };
     String[] userFolder = { System.getenv("APPDATA"), System.getProperty("user.home"),
         "/Users/" + System.getProperty("user.name") + "/Library/Application Support" };
 
@@ -100,14 +101,8 @@ class KodiUtil {
     List<KodiScraper> scrapers = new ArrayList<>();
     List<File> foundAddonFiles = new ArrayList<>();
 
-    // detect built in addons
-    File addons = new File(KodiUtil.class.getResource("/kodi_scraper").getFile());
-    if (addons != null && addons.exists()) {
-      foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
-    }
-
     // detect manually added addons
-    addons = new File("kodi_scraper");
+    File addons = new File("kodi_scraper");
     if (addons != null && addons.exists()) {
       foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
     }
@@ -133,6 +128,7 @@ class KodiUtil {
         continue; // local Kodi scraper
       }
       if (!scrapers.contains(x)) {
+        // FIXME: check, if same directory NAME exists (dupe check in other dir)
         scrapers.add(x);
       }
     }
@@ -145,7 +141,7 @@ class KodiUtil {
    * 
    * @return
    */
-  public static List<KodiScraper> getAllScrapers() {
+  private static List<KodiScraper> getAllScrapers() {
     LOGGER.debug("searchig for Kodi scrapers");
 
     List<KodiScraper> scrapers = new ArrayList<KodiScraper>();
@@ -192,7 +188,7 @@ class KodiUtil {
    * 
    * @return
    */
-  public static List<KodiScraper> getAllCommon() {
+  private static List<KodiScraper> getAllCommon() {
     LOGGER.debug("searchig for Kodi commons");
 
     List<KodiScraper> common = new ArrayList<KodiScraper>();
@@ -237,7 +233,7 @@ class KodiUtil {
    * 
    * @return
    */
-  public static ArrayList<File> getAllCommonXMLs() {
+  private static ArrayList<File> getAllCommonXMLs() {
     ArrayList<File> common = new ArrayList<File>();
 
     IOFileFilter dirFilter = new IOFileFilter() {
@@ -269,6 +265,7 @@ class KodiUtil {
       Collection<File> files = FileUtils.listFiles(sc.getFolder(), fileFilter, dirFilter);
       for (File f : files) {
         if (!common.contains(f)) {
+          // FIXME: check, if same directory NAME exists (dupe check in other dir)
           LOGGER.debug("Found common: " + f);
           common.add(f);
         }

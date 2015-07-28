@@ -26,6 +26,7 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaType;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.Init;
 
 /**
  * The entry point for all Kodi meta data providers.
@@ -49,6 +50,12 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
     return providerInfo;
   }
 
+  @Init
+  public void init() {
+      // preload scrapers
+      new KodiUtil();
+  }
+
   /**
    * the factory for creating all instances
    */
@@ -57,12 +64,16 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
     LOGGER.debug("get Kodi scrapers for " + type);
     List<IMediaProvider> metadataProviders = new ArrayList<>();
 
-    List<KodiScraper> scrapers = KodiUtil.getAllScrapers();
+    List<KodiScraper> scrapers = KodiUtil.scrapers;
     for (KodiScraper scraper : scrapers) {
       if (type == scraper.type) {
         switch (type) {
           case MOVIE:
             metadataProviders.add(new KodiMovieMetadataProvider(scraper));
+            break;
+
+          case TV_SHOW:
+            metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
             break;
 
           default:

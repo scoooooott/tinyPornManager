@@ -69,7 +69,7 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     }
     this.scraper = scraper;
     this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name + " - " + scraper.version,
-        scraper.description, AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png"));
+        scraper.description, scraper.logoUrl == null ? AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png") : scraper.logoUrl);
 
     factory = DocumentBuilderFactory.newInstance();
   }
