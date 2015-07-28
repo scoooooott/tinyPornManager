@@ -18,13 +18,16 @@ package org.tinymediamanager.scraper.kodi;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * This class has some common Kodi utils for the scraper
@@ -32,10 +35,10 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiUtil {
-  private static final Logger  LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
+  private static final Logger    LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
   // prescan directory for ALL common XMLs
-  static final ArrayList<File> commonXmls = KodiUtil.getAllCommonXMLs();
-  static final List<KodiScraper> scrapers = KodiUtil.getAllScrapers();
+  static final ArrayList<File>   commonXmls = KodiUtil.getAllCommonXMLs();
+  static final List<KodiScraper> scrapers   = KodiUtil.getAllScrapers();
 
   /**
    * tries to detect the Kodi installation folder
@@ -44,8 +47,8 @@ class KodiUtil {
    */
   public static File detectKodiFolder() {
     String[] appFolder = { "Kodi", "kodi", "xbmc", "XMBC" };
-    String[] installFolder = { System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"),
-        System.getenv("ProgramData"), "/usr/share/", "/usr/lib/", "/Applications/XBMC.app/Contents/Resources" };
+    String[] installFolder = { System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"), System.getenv("ProgramData"), "/usr/share/",
+        "/usr/lib/", "/Applications/XBMC.app/Contents/Resources" };
 
     for (String i : installFolder) {
       if (StringUtils.isEmpty(i)) {
@@ -100,6 +103,7 @@ class KodiUtil {
   private static List<KodiScraper> getKodiAddons(IOFileFilter dirFilter, IOFileFilter fileFilter) {
     List<KodiScraper> scrapers = new ArrayList<>();
     List<File> foundAddonFiles = new ArrayList<>();
+    Map<String, KodiScraper> tmp = new LinkedHashMap<String, KodiScraper>(); // tmp sorted map for version comparison
 
     // detect manually added addons
     File addons = new File("kodi_scraper");
@@ -127,11 +131,27 @@ class KodiUtil {
       if ("metadata.local".equals(x.id)) {
         continue; // local Kodi scraper
       }
-      if (!scrapers.contains(x)) {
-        // FIXME: check, if same directory NAME exists (dupe check in other dir)
-        scrapers.add(x);
+
+      if (!tmp.containsKey(x.id)) {
+        tmp.put(x.id, x);
+      }
+      else {
+        // ok, scraper ID already added, now check for higher version.
+        KodiScraper old = tmp.get(x.id);
+        if (StrgUtils.compareVersion(x.version, old.version) > 0) {
+          // ok, new scraper has a higher version, replace this...
+          LOGGER.debug("replacing " + x.id + " v" + old.version + " with v" + x.version);
+          tmp.remove(x.id);
+          tmp.put(x.id, x);
+        }
+        else {
+          LOGGER.debug("not adding " + x.addonFolder.getAbsolutePath() + " - ID already imported, or version lower");
+        }
       }
     }
+
+    // tmp to scraper list
+    scrapers.addAll(tmp.values());
 
     return scrapers;
   }
@@ -229,7 +249,7 @@ class KodiUtil {
   }
 
   /**
-   * returns a list of all found common addons.xml
+   * returns a list of all found common xmls, but not addon.xml
    * 
    * @return
    */
