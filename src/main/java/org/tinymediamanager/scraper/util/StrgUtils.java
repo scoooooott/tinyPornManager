@@ -322,4 +322,32 @@ public class StrgUtils {
     return title.trim();
   }
 
+  /**
+   * compares the given version (v1) against another one (v2)
+   * 
+   * @param v1
+   * @param v2
+   * @return < 0 if v1 is lower<br>
+   *         > 0 if v1 is higher<br>
+   *         = 0 if equal
+   */
+  public static int compareVersion(String v1, String v2) {
+    String s1 = normalisedVersion(v1);
+    String s2 = normalisedVersion(v2);
+    return s1.compareTo(s2);
+  }
+
+  private static String normalisedVersion(String version) {
+    return normalisedVersion(version, ".", 4);
+  }
+
+  private static String normalisedVersion(String version, String sep, int maxWidth) {
+    String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+    StringBuilder sb = new StringBuilder();
+    for (String s : split) {
+      sb.append(String.format("%" + maxWidth + 's', s));
+    }
+    return sb.toString();
+  }
+
 }
