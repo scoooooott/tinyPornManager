@@ -17,7 +17,6 @@ package org.tinymediamanager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
 
@@ -51,41 +51,13 @@ public class UpgradeTasks {
     }
 
     // upgrade to v2.7
-    if (compareVersion(v, "2.5.2") < 0) {
+    if (StrgUtils.compareVersion(v, "2.5.2") < 0) {
       // delete tmm.odb; objectdb.conf; log dir
       FileUtils.deleteQuietly(new File("tmm.odb"));
       FileUtils.deleteQuietly(new File("tmm.odb$"));
       FileUtils.deleteQuietly(new File("objectdb.conf"));
       FileUtils.deleteQuietly(new File("log"));
     }
-  }
-
-  /**
-   * compares the given version (v1) against another one (v2)
-   * 
-   * @param v1
-   * @param v2
-   * @return < 0 if v1 is lower<br>
-   *         > 0 if v1 is higher<br>
-   *         = 0 if equal
-   */
-  private static int compareVersion(String v1, String v2) {
-    String s1 = normalisedVersion(v1);
-    String s2 = normalisedVersion(v2);
-    return s1.compareTo(s2);
-  }
-
-  private static String normalisedVersion(String version) {
-    return normalisedVersion(version, ".", 4);
-  }
-
-  private static String normalisedVersion(String version, String sep, int maxWidth) {
-    String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
-    StringBuilder sb = new StringBuilder();
-    for (String s : split) {
-      sb.append(String.format("%" + maxWidth + 's', s));
-    }
-    return sb.toString();
   }
 
   /**
