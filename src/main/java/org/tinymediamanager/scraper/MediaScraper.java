@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.PluginManager;
 
 /**
@@ -141,16 +142,17 @@ public class MediaScraper {
     }
 
     // Kodi scrapers
-    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
-      try {
-        for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
-          MediaProviderInfo pi = p.getProviderInfo();
-          MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
-          scraper.add(ms);
+    if (Globals.isDonator()) {
+      for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
+        try {
+          for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
+            MediaProviderInfo pi = p.getProviderInfo();
+            MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+            scraper.add(ms);
+          }
         }
-      }
-      catch (Exception e) {
-
+        catch (Exception e) {
+        }
       }
     }
 
