@@ -120,7 +120,9 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
       @Override
       public Dimension getPreferredSize() {
-        if (scaledImage != null) {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
           return new Dimension(getParent().getWidth(),
               (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
         }

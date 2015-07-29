@@ -118,8 +118,10 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
+    scaledImage = null;
+    this.repaint();
+
     if (StringUtils.isBlank(newValue)) {
-      this.repaint();
       return;
     }
 
@@ -149,8 +151,10 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
+    scaledImage = null;
+    this.repaint();
+
     if (StringUtils.isEmpty(newValue)) {
-      this.repaint();
       return;
     }
 
@@ -291,9 +295,17 @@ public class ImageLabel extends JLabel {
     }
   }
 
+  /**
+   * calculate the new scaled image (if the size differs from the old too much to reuse it and if the new size is big enough - >10px )
+   * 
+   * @param originalWidth
+   * @param originalHeight
+   * @param newWidth
+   * @param newHeight
+   */
   private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
-    if ((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
-        || (originalHeight > newHeight * 1.2f)) {
+    if (((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
+        || (originalHeight > newHeight * 1.2f)) && newWidth > 10) {
       if (StringUtils.isNotBlank(imagePath)) {
         worker = new ImageLoader(imagePath, new Dimension(newWidth, newHeight));
         worker.execute();
