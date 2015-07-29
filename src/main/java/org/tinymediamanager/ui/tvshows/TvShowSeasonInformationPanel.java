@@ -46,6 +46,11 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -54,20 +59,17 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 /**
  * The Class TvShowInformationPanel.
  * 
  * @author Manuel Laggner
  */
 public class TvShowSeasonInformationPanel extends JPanel {
-  private static final long                     serialVersionUID  = 1911808562993073590L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle           BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1911808562993073590L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<TvShowEpisode>              episodeEventList;
   private EventList<MediaFile>                  mediaFileEventList;
@@ -75,22 +77,22 @@ public class TvShowSeasonInformationPanel extends JPanel {
   private TvShowSeasonSelectionModel            tvShowSeasonSelectionModel;
 
   /** UI components */
-  private JSplitPane                            splitPaneVertical;
-  private JPanel                                panelTop;
-  private ImageLabel                            lblTvShowPoster;
-  private JLabel                                lblPosterSize;
-  private JPanel                                panelRight;
-  private JPanel                                panelLeft;
-  private JLabel                                lblTvshowTitle;
-  private JLabel                                lblSeasonT;
-  private JLabel                                lblSeason;
-  private JSeparator                            separator;
-  private JLabel                                lblEpisodelistT;
-  private JScrollPane                           scrollPaneEpisodes;
-  private JTable                                tableEpisodes;
-  private JPanel                                panelBottom;
-  private JLabel                                lblMediaFiles;
-  private MediaFilesPanel                       panelMediaFiles;
+  private JSplitPane      splitPaneVertical;
+  private JPanel          panelTop;
+  private ImageLabel      lblTvShowPoster;
+  private JLabel          lblPosterSize;
+  private JPanel          panelRight;
+  private JPanel          panelLeft;
+  private JLabel          lblTvshowTitle;
+  private JLabel          lblSeasonT;
+  private JLabel          lblSeason;
+  private JSeparator      separator;
+  private JLabel          lblEpisodelistT;
+  private JScrollPane     scrollPaneEpisodes;
+  private JTable          tableEpisodes;
+  private JPanel          panelBottom;
+  private JLabel          lblMediaFiles;
+  private MediaFilesPanel panelMediaFiles;
 
   /**
    * Instantiates a new tv show information panel.
@@ -105,26 +107,16 @@ public class TvShowSeasonInformationPanel extends JPanel {
     mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(4)"), },
-        new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    setLayout(
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(4)"), },
+            new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     panelLeft = new JPanel();
     add(panelLeft, "1, 1, fill, fill");
     panelLeft.setLayout(new ColumnLayout());
 
-    lblTvShowPoster = new ImageLabel(false) {
-      private static final long serialVersionUID = -4774846565578766742L;
-
-      @Override
-      public Dimension getPreferredSize() {
-        if (scaledImage != null) {
-          return new Dimension(getParent().getWidth(),
-              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
-        }
-        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
-      }
-    };
+    lblTvShowPoster = new ImageLabel(false);
+    lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblTvShowPoster.enableLightbox();
@@ -147,11 +139,12 @@ public class TvShowSeasonInformationPanel extends JPanel {
     panelTop = new JPanel();
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        RowSpec.decode("fill:default"), FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("top:default:grow"), }));
+    panelTop.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { RowSpec.decode("fill:default"), FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
 
     lblTvshowTitle = new JLabel("");
     TmmFontHelper.changeFont(lblTvshowTitle, 1.33, Font.BOLD);
@@ -180,9 +173,10 @@ public class TvShowSeasonInformationPanel extends JPanel {
 
     // new MediaFilesPanel(mediaFileEventList);
     splitPaneVertical.setRightComponent(panelBottom);
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelBottom.setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+                RowSpec.decode("default:grow"), }));
 
     lblMediaFiles = new JLabel(BUNDLE.getString("metatag.mediafiles")); //$NON-NLS-1$
     panelBottom.add(lblMediaFiles, "2, 2");
