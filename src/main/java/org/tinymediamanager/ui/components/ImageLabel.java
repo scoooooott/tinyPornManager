@@ -53,19 +53,20 @@ public class ImageLabel extends JLabel {
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
   }
 
-  private static final long                  serialVersionUID = -2524445544386464158L;
-  protected static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static Font                        FONT;
+  private static final long             serialVersionUID = -2524445544386464158L;
+  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static Font                   FONT;
 
-  protected BufferedImage                    scaledImage;
-  protected String                           imageUrl;
-  protected String                           imagePath;
-  protected Position                         position         = Position.TOP_LEFT;
-  protected String                           alternativeText  = null;
-  protected boolean                          drawBorder;
-  protected boolean                          drawFullWidth;
-  protected boolean                          enabledLightbox  = false;
-  protected boolean                          useCache         = true;
+  protected BufferedImage scaledImage;
+  protected String        imageUrl;
+  protected String        imagePath;
+  protected Position      position           = Position.TOP_LEFT;
+  protected String        alternativeText    = null;
+  protected boolean       drawBorder;
+  protected boolean       drawFullWidth;
+  protected boolean       enabledLightbox    = false;
+  protected boolean       useCache           = true;
+  protected float         desiredAspectRatio = 0f;
 
   protected SwingWorker<BufferedImage, Void> worker           = null;
   protected MouseListener                    lightboxListener = null;
@@ -118,8 +119,10 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
+    scaledImage = null;
+    this.repaint();
+
     if (StringUtils.isBlank(newValue)) {
-      this.repaint();
       return;
     }
 
@@ -149,8 +152,10 @@ public class ImageLabel extends JLabel {
       worker.cancel(true);
     }
 
+    scaledImage = null;
+    this.repaint();
+
     if (StringUtils.isEmpty(newValue)) {
-      this.repaint();
       return;
     }
 
@@ -159,14 +164,25 @@ public class ImageLabel extends JLabel {
     worker.execute();
   }
 
-  // private BufferedImage getScaledImage(Dimension size) {
-  // if (!size.equals(this.size)) {
-  // // rescale the image
-  // scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.width, size.height, Scalr.OP_ANTIALIAS);
-  // this.size = size;
-  // }
-  // return this.scaledImage;
-  // }
+  public void setDesiredAspectRatio(float desiredAspectRatio) {
+    this.desiredAspectRatio = desiredAspectRatio;
+  }
+
+  public float getDesiredAspectRatio() {
+    return desiredAspectRatio;
+  }
+
+  @Override
+  public Dimension getPreferredSize() {
+    if (desiredAspectRatio == 0) {
+      // no desired aspect ratio; get the JLabel's preferred size
+      return super.getPreferredSize();
+    }
+    if (scaledImage != null) {
+      return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+    }
+    return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / desiredAspectRatio) + 1);
+  }
 
   @Override
   protected void paintComponent(Graphics g) {
@@ -398,8 +414,8 @@ public class ImageLabel extends JLabel {
 
       if (file != null && file.exists()) {
         try {
-          return Scalr.resize(com.bric.image.ImageLoader.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width,
-              newSize.height, Scalr.OP_ANTIALIAS);
+          return Scalr.resize(com.bric.image.ImageLoader.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+              Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
           return null;
