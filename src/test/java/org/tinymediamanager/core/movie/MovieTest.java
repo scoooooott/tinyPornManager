@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * @author Manuel Laggner
@@ -28,6 +30,14 @@ import org.tinymediamanager.core.movie.entities.Movie;
  */
 public class MovieTest {
   private Movie m = new Movie();
+
+  @Test
+  public void testNamingDetection() {
+    String longest = StrgUtils.getLongestString(new String[] { "exq-theequalizer-720p.mkv", "The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE" });
+    String[] video = ParserUtils.detectCleanMovienameAndYear(longest);
+
+    System.out.println(video[0]);
+  }
 
   @Test
   public void testCleanStackingMarkers() {

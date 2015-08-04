@@ -65,20 +65,20 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                         //$NON-NLS-1$
+  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String>   skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-                                                           "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String> skipFolders = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipFoldersRegex = "^[.][\\w@]+.*";
-  private static Pattern              video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
+  private static final String skipFoldersRegex = "^[.][\\w@]+.*";
+  private static Pattern      video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
-  private List<String>                dataSources;
-  private MovieList                   movieList;
-  private HashSet<File>               filesFound       = new HashSet<File>();
+  private List<String>  dataSources;
+  private MovieList     movieList;
+  private HashSet<File> filesFound = new HashSet<File>();
 
   public MovieUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
@@ -125,8 +125,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         File[] dirs = new File(ds).listFiles();
         if (dirs == null || dirs.length == 0) {
           // error - continue with next datasource
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
-              new String[] { ds }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
           continue;
         }
 
@@ -150,8 +150,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                   parseDsRoot = true; // at least on movie found in DS root
                 }
                 else {
-                  MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot",
-                      new String[] { file.getName() }));
+                  MessageManager.instance.pushMessage(
+                      new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot", new String[] { file.getName() }));
                 }
               }
             }
@@ -384,8 +384,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           parseMultiMovieDir(files, movieDir, dataSource);
         }
         else {
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot",
-              new String[] { movieDir.getName() }));
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot", new String[] { movieDir.getName() }));
         }
       }
       else {
@@ -398,7 +398,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.info("Movie not found; parsing directory" + movieDir);
           movie = new Movie();
           String bdinfoTitle = ""; // title parsed out of BDInfo
-          String[] videoName = { "", "" }; // title from file
+          String videoName = ""; // title from file
 
           // first round - try to parse NFO(s) first
           for (MediaFile mf : mfs) {
@@ -433,7 +433,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               } // end NFO null
             }
             else if (mf.getType().equals(MediaFileType.TEXT)) {
-              if (mf.getFilename().equalsIgnoreCase("BDInfo.txt")) {
+              if (mf.getFilename().toLowerCase().contains("bdinfo")) {
                 String bdinfo = FileUtils.readFileToString(mf.getFile());
                 bdinfo = StrgUtils.substr(bdinfo, ".*Disc Title:\\s+(.*?)[\\n\\r]");
                 if (!bdinfo.isEmpty()) {
@@ -443,50 +443,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               }
             }
             else if (mf.getType().equals(MediaFileType.VIDEO)) {
-              videoName = ParserUtils.detectCleanMovienameAndYear(mf.getBasename());
+              videoName = mf.getBasename();
             }
           }
 
           if (movie.getTitle().isEmpty()) {
-            // no nfo found
-            String[] folder = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
-            String[] bdiName = ParserUtils.detectCleanMovienameAndYear(bdinfoTitle);
+            // use longest name for detection (usually folder over filename)
+            String longest = StrgUtils.getLongestString(new String[] { videoName, movieDir.getName(), bdinfoTitle });
+            String[] video = ParserUtils.detectCleanMovienameAndYear(longest);
 
-            // set the longer title / prefer fileName over folderName over bdinfoName
-            if (folder[0].length() >= bdiName[0].length()) {
-              if (videoName[0].length() > folder[0].length()) {
-                movie.setTitle(videoName[0]);
-              }
-              else {
-                movie.setTitle(folder[0]);
-              }
-            }
-            else {
-              if (videoName[0].length() > bdiName[0].length()) {
-                movie.setTitle(videoName[0]);
-              }
-              else {
-                movie.setTitle(bdiName[0]);
-              }
-            }
-
-            // set the year if not 0 / prefer fileName over folderName over bdinfoName
-            if (folder[1].length() >= bdiName[1].length()) {
-              if (videoName[1].length() > folder[1].length()) {
-                movie.setYear(videoName[1]);
-              }
-              else {
-                movie.setYear(folder[1]);
-              }
-            }
-            else {
-              if (videoName[1].length() > bdiName[1].length()) {
-                movie.setYear(videoName[1]);
-              }
-              else {
-                movie.setYear(bdiName[1]);
-              }
-            }
+            movie.setTitle(video[0]);
+            movie.setYear(video[1]);
           }
 
           // if the String 3D is in the movie dir, assume it is a 3D movie
@@ -502,7 +469,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie.justAdded = true;
 
           movie.findActorImages(); // TODO: find as MediaFIles
-          LOGGER.debug("store movie into DB " + movieDir.getName());
+          LOGGER.debug("store movie into DB " + movie.getTitle());
 
           movieList.addMovie(movie);
 
@@ -546,8 +513,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     catch (Exception e) {
       LOGGER.error("error update Datasources", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 

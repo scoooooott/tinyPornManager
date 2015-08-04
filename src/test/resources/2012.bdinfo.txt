@@ -1,0 +1,2642 @@
+    
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+Notes:          
+
+BDINFO HOME:
+  Cinema Squid
+    http://www.cinemasquid.com/blu-ray/tools/bdinfo
+
+INCLUDES FORUMS REPORT FOR:
+  AVS Forum Blu-ray Audio and Video Specifications Thread
+    http://www.avsforum.com/avs-vb/showthread.php?t=1155731
+
+
+********************
+PLAYLIST: 00001.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00001.MPLS                                                      AVC     2:37:49 37,239,085,056  49,068,683,492  31.46   21.98   DTS-HD Master 5.1 3145Kbps (48kHz/24-bit) 
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00001.MPLS
+Length:                 2:37:49 (h:m:s)
+Size:                   37,239,085,056 bytes
+Total Bitrate:          31.46 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        21985 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+DTS-HD Master Audio             English         3145 kbps       5.1 / 48 kHz / 3145 kbps / 24-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 24-bit)
+Dolby Digital Audio             Czech           448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Hindi           448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Hungarian       448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Polish          448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Russian         448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Tamil           448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Telugu          448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Turkish         448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+Dolby Digital Audio             Ukrainian       448 kbps        5.1 / 48 kHz / 448 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         33.213 kbps                     
+Presentation Graphics           Arabic          16.534 kbps                     
+Presentation Graphics           Bulgarian       29.408 kbps                     
+Presentation Graphics           Croatian        28.874 kbps                     
+Presentation Graphics           Czech           24.681 kbps                     
+Presentation Graphics           Estonian        31.615 kbps                     
+Presentation Graphics           Greek           32.213 kbps                     
+Presentation Graphics           Hebrew          25.403 kbps                     
+Presentation Graphics           Hindi           30.072 kbps                     
+Presentation Graphics           Hungarian       26.733 kbps                     
+Presentation Graphics           Icelandic       31.587 kbps                     
+Presentation Graphics           Lithuanian      36.274 kbps                     
+Presentation Graphics           Polish          28.759 kbps                     
+Presentation Graphics           Romanian        33.407 kbps                     
+Presentation Graphics           Russian         1.698 kbps                      
+Presentation Graphics           Serbian         31.525 kbps                     
+Presentation Graphics           Slovak          29.980 kbps                     
+Presentation Graphics           Slovenian       25.358 kbps                     
+Presentation Graphics           Tamil           0.013 kbps                      
+Presentation Graphics           Telugu          0.000 kbps                      
+Presentation Graphics           Turkish         33.302 kbps                     
+Presentation Graphics           Ukrainian       0.000 kbps                      
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00420.M2TS      0:00:00.000     2:37:49.460     37,239,085,056  31,460          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:11:54.672     20,313 kbps     33,735 kbps     00:07:11.722    31,946 kbps     00:01:18.036    29,989 kbps     00:02:39.701    105,896 bytes   370,513 bytes   00:07:22.316    
+2               0:11:54.672     0:10:03.561     24,830 kbps     36,441 kbps     00:21:43.385    33,494 kbps     00:21:39.298    32,871 kbps     00:11:57.508    129,451 bytes   569,377 bytes   00:21:44.011    
+3               0:21:58.233     0:06:49.367     24,365 kbps     34,431 kbps     00:22:08.744    32,987 kbps     00:23:24.027    32,646 kbps     00:23:18.355    127,030 bytes   520,160 bytes   00:22:15.292    
+4               0:28:47.600     0:05:50.475     22,670 kbps     34,460 kbps     00:33:21.082    32,731 kbps     00:32:38.122    31,756 kbps     00:32:33.117    118,189 bytes   375,806 bytes   00:33:22.083    
+5               0:34:38.076     0:10:10.067     24,775 kbps     34,460 kbps     00:35:49.981    33,026 kbps     00:35:23.204    32,829 kbps     00:35:30.753    129,165 bytes   410,610 bytes   00:35:21.077    
+6               0:44:48.143     0:10:38.512     27,499 kbps     34,932 kbps     00:51:52.484    33,189 kbps     00:51:48.647    32,995 kbps     00:51:49.397    143,367 bytes   424,876 bytes   00:55:07.053    
+7               0:55:26.656     0:09:42.748     26,488 kbps     34,823 kbps     00:57:06.881    33,050 kbps     00:58:32.217    32,066 kbps     00:56:41.648    138,098 bytes   463,195 bytes   00:57:06.005    
+8               1:05:09.405     0:11:15.883     22,041 kbps     34,235 kbps     01:06:58.389    31,837 kbps     01:06:41.497    29,625 kbps     01:06:56.470    114,914 bytes   370,038 bytes   01:14:26.545    
+9               1:16:25.289     0:08:37.225     19,934 kbps     31,157 kbps     01:20:47.592    29,681 kbps     01:20:43.964    27,965 kbps     01:20:45.966    103,925 bytes   368,909 bytes   01:20:48.593    
+10              1:25:02.514     0:11:32.817     21,655 kbps     34,203 kbps     01:33:19.302    32,646 kbps     01:28:46.612    31,584 kbps     01:28:41.983    112,901 bytes   367,824 bytes   01:33:20.052    
+11              1:36:35.331     0:10:11.902     18,670 kbps     33,390 kbps     01:37:17.456    30,314 kbps     01:37:03.234    29,757 kbps     01:36:58.312    97,337 bytes    338,047 bytes   01:37:18.457    
+12              1:46:47.234     0:10:02.560     20,537 kbps     33,946 kbps     01:52:17.605    32,785 kbps     01:52:14.602    28,462 kbps     01:53:30.762    107,068 bytes   333,891 bytes   01:52:16.646    
+13              1:56:49.794     0:08:03.357     21,343 kbps     32,759 kbps     02:01:10.388    29,986 kbps     02:04:22.913    27,425 kbps     02:04:17.825    111,273 bytes   303,310 bytes   01:57:17.697    
+14              2:04:53.152     0:11:46.831     23,543 kbps     33,660 kbps     02:12:59.179    32,642 kbps     02:12:24.311    31,715 kbps     02:12:20.015    122,743 bytes   360,102 bytes   02:13:47.519    
+15              2:16:39.983     0:06:41.609     24,632 kbps     35,248 kbps     02:17:23.693    31,753 kbps     02:20:52.777    31,159 kbps     02:17:14.809    128,422 bytes   341,561 bytes   02:17:36.623    
+16              2:23:21.593     0:14:27.867     13,588 kbps     33,957 kbps     02:28:01.330    33,058 kbps     02:28:07.211    32,958 kbps     02:28:07.211    70,843 bytes    472,887 bytes   02:28:10.006    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00420.M2TS      4113 (0x1011)   0x1B            AVC                                     9469.293                21,985                  26,022,934,028  141,561,242     
+00420.M2TS      4352 (0x1100)   0x86            DTS-HD MA       eng (English)           9469.293                3,145                   3,722,685,944   21,706,171      
+00420.M2TS      4353 (0x1101)   0x81            AC3             ces (Czech)             9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4354 (0x1102)   0x81            AC3             hin (Hindi)             9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4355 (0x1103)   0x81            AC3             hun (Hungarian)         9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4356 (0x1104)   0x81            AC3             rus (Russian)           9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4357 (0x1105)   0x81            AC3             pol (Polish)            9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4358 (0x1106)   0x81            AC3             tam (Tamil)             9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4359 (0x1107)   0x81            AC3             tel (Telugu)            9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4360 (0x1108)   0x81            AC3             tur (Turkish)           9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4361 (0x1109)   0x81            AC3             ukr (Ukrainian)         9469.293                448                     530,290,432     2,959,210       
+00420.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           9469.293                33                      39,313,813      225,932         
+00420.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             9469.293                25                      29,214,410      170,539         
+00420.M2TS      4610 (0x1202)   0x90            PGS             hin (Hindi)             9469.293                30                      35,596,048      205,979         
+00420.M2TS      4611 (0x1203)   0x90            PGS             hun (Hungarian)         9469.293                27                      31,643,800      184,094         
+00420.M2TS      4612 (0x1204)   0x90            PGS             pol (Polish)            9469.293                29                      34,041,193      196,795         
+00420.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           9469.293                33                      39,418,631      226,617         
+00420.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            9469.293                17                      19,571,373      118,709         
+00420.M2TS      4615 (0x1207)   0x90            PGS             bul (Bulgarian)         9469.293                29                      34,809,301      201,700         
+00420.M2TS      4616 (0x1208)   0x90            PGS             hrv (Croatian)          9469.293                29                      34,177,674      198,169         
+00420.M2TS      4617 (0x1209)   0x90            PGS             est (Estonian)          9469.293                32                      37,421,678      215,494         
+00420.M2TS      4618 (0x120A)   0x90            PGS             ell (Greek)             9469.293                32                      38,129,378      219,319         
+00420.M2TS      4619 (0x120B)   0x90            PGS             heb (Hebrew)            9469.293                25                      30,069,092      175,694         
+00420.M2TS      4620 (0x120C)   0x90            PGS             isl (Icelandic)         9469.293                32                      37,389,549      214,162         
+00420.M2TS      4621 (0x120D)   0x90            PGS             lit (Lithuanian)        9469.293                36                      42,936,420      246,763         
+00420.M2TS      4622 (0x120E)   0x90            PGS             ron (Romanian)          9469.293                33                      39,543,320      227,515         
+00420.M2TS      4623 (0x120F)   0x90            PGS             srp (Serbian)           9469.293                32                      37,315,439      215,336         
+00420.M2TS      4624 (0x1210)   0x90            PGS             slk (Slovak)            9469.293                30                      35,486,861      205,316         
+00420.M2TS      4625 (0x1211)   0x90            PGS             slv (Slovenian)         9469.293                25                      30,015,787      175,510         
+00420.M2TS      4626 (0x1212)   0x90            PGS             rus (Russian)           9469.293                2                       2,010,213       11,518          
+00420.M2TS      4627 (0x1213)   0x90            PGS             tam (Tamil)             9469.293                0                       15,739          92              
+00420.M2TS      4628 (0x1214)   0x90            PGS             tel (Telugu)            9469.293                0                       70              7               
+00420.M2TS      4629 (0x1215)   0x90            PGS             ukr (Ukrainian)         9469.293                0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00001.MPLS
+Size: 37,239,085,056 bytes
+Length: 2:37:49
+Total Bitrate: 31.46 Mbps
+Video: MPEG-4 AVC Video / 21985 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / DTS-HD Master Audio / 5.1 / 48 kHz / 3145 kbps / 24-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 24-bit)
+Audio: Czech / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Hindi / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Hungarian / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Polish / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Russian / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Tamil / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Telugu / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Turkish / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Audio: Ukrainian / Dolby Digital Audio / 5.1 / 48 kHz / 448 kbps / DN -4dB
+Subtitle: English / 33.213 kbps
+Subtitle: Arabic / 16.534 kbps
+Subtitle: Bulgarian / 29.408 kbps
+Subtitle: Croatian / 28.874 kbps
+Subtitle: Czech / 24.681 kbps
+Subtitle: Estonian / 31.615 kbps
+Subtitle: Greek / 32.213 kbps
+Subtitle: Hebrew / 25.403 kbps
+Subtitle: Hindi / 30.072 kbps
+Subtitle: Hungarian / 26.733 kbps
+Subtitle: Icelandic / 31.587 kbps
+Subtitle: Lithuanian / 36.274 kbps
+Subtitle: Polish / 28.759 kbps
+Subtitle: Romanian / 33.407 kbps
+Subtitle: Russian / 1.698 kbps
+Subtitle: Serbian / 31.525 kbps
+Subtitle: Slovak / 29.980 kbps
+Subtitle: Slovenian / 25.358 kbps
+Subtitle: Tamil / 0.013 kbps
+Subtitle: Telugu / 0.000 kbps
+Subtitle: Turkish / 33.302 kbps
+Subtitle: Ukrainian / 0.000 kbps
+
+
+********************
+PLAYLIST: 00002.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00002.MPLS                                                      MPEG-2  0:01:00 118,216,704     49,068,683,492  15.75   15.01                                             
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00002.MPLS
+Length:                 0:01:00 (h:m:s)
+Size:                   118,216,704 bytes
+Total Bitrate:          15.75 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-2 Video            15013 kbps          1080p / 23.976 fps / 16:9
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00398.M2TS      0:00:00.000     0:01:00.060     118,216,704     15,746          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:15.015     15,272 kbps     19,624 kbps     00:00:13.930    15,925 kbps     00:00:09.926    15,462 kbps     00:00:04.921    79,401 bytes    663,627 bytes   00:00:14.931    
+2               0:00:15.015     0:00:15.015     14,775 kbps     15,185 kbps     00:00:16.433    15,033 kbps     00:00:16.433    15,017 kbps     00:00:16.433    77,031 bytes    674,417 bytes   00:00:15.432    
+3               0:00:30.030     0:00:15.015     15,005 kbps     15,922 kbps     00:00:43.960    15,184 kbps     00:00:39.956    15,092 kbps     00:00:34.951    78,232 bytes    253,660 bytes   00:00:44.961    
+4               0:00:45.045     0:00:15.015     15,001 kbps     15,033 kbps     00:00:45.045    15,007 kbps     00:00:45.045    15,003 kbps     00:00:45.045    78,424 bytes    253,660 bytes   00:00:45.462    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00398.M2TS      4113 (0x1011)   0x02            MPEG-2                                  59.935                  15,045                  112,712,665     613,678         
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00002.MPLS
+Size: 118,216,704 bytes
+Length: 0:01:00
+Total Bitrate: 15.75 Mbps
+Video: MPEG-2 Video / 15013 kbps / 1080p / 23.976 fps / 16:9
+
+
+********************
+PLAYLIST: 00047.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00047.MPLS                                                      MPEG-2  0:00:58 137,570,304     49,068,683,492  18.92   17.83   DD AC3 2.0 224Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00047.MPLS
+Length:                 0:00:58 (h:m:s)
+Size:                   137,570,304 bytes
+Total Bitrate:          18.92 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-2 Video            17827 kbps          1080p / 23.976 fps / 16:9
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         224 kbps        2.0 / 48 kHz / 224 kbps / DN -4dB
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00397.M2TS      0:00:00.000     0:00:58.183     137,570,304     18,915          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:58.183     17,827 kbps     33,383 kbps     00:00:51.134    23,614 kbps     00:00:51.051    21,754 kbps     00:00:48.131    92,940 bytes    539,115 bytes   00:00:25.316    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00397.M2TS      4113 (0x1011)   0x02            MPEG-2                                  58.016                  17,878                  129,651,781     705,452         
+00397.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           58.016                  225                     1,629,824       9,095           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00047.MPLS
+Size: 137,570,304 bytes
+Length: 0:00:58
+Total Bitrate: 18.92 Mbps
+Video: MPEG-2 Video / 17827 kbps / 1080p / 23.976 fps / 16:9
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 224 kbps / DN -4dB
+
+
+********************
+PLAYLIST: 00051.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00051.MPLS                                                      AVC     0:03:53 542,097,408     49,068,683,492  18.59   16.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00051.MPLS
+Length:                 0:03:53 (h:m:s)
+Size:                   542,097,408 bytes
+Total Bitrate:          18.59 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16993 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         60.104 kbps                     
+Presentation Graphics           Arabic          35.410 kbps                     
+Presentation Graphics           Czech           54.447 kbps                     
+Presentation Graphics           Greek           61.449 kbps                     
+Presentation Graphics           Hebrew          44.598 kbps                     
+Presentation Graphics           Hungarian       56.705 kbps                     
+Presentation Graphics           Polish          57.887 kbps                     
+Presentation Graphics           Russian         64.822 kbps                     
+Presentation Graphics           Turkish         63.719 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00421.M2TS      0:00:00.000     0:03:53.274     542,097,408     18,591          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:03:53.274     16,993 kbps     41,693 kbps     00:02:22.851    37,764 kbps     00:02:18.763    37,094 kbps     00:02:16.469    88,591 bytes    640,990 bytes   00:02:40.451    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00421.M2TS      4113 (0x1011)   0x1B            AVC                                     233.108                 17,005                  495,491,754     2,696,091       
+00421.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           233.108                 192                     5,598,720       36,450          
+00421.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           233.108                 60                      1,752,595       9,954           
+00421.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             233.108                 54                      1,587,639       9,062           
+00421.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         233.108                 57                      1,653,483       9,424           
+00421.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            233.108                 58                      1,687,946       9,608           
+00421.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           233.108                 65                      1,890,177       10,713          
+00421.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           233.108                 64                      1,858,016       10,532          
+00421.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            233.108                 35                      1,032,520       6,055           
+00421.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             233.108                 61                      1,791,824       10,178          
+00421.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            233.108                 45                      1,300,446       7,507           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00051.MPLS
+Size: 542,097,408 bytes
+Length: 0:03:53
+Total Bitrate: 18.59 Mbps
+Video: MPEG-4 AVC Video / 16993 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 60.104 kbps
+Subtitle: Arabic / 35.410 kbps
+Subtitle: Czech / 54.447 kbps
+Subtitle: Greek / 61.449 kbps
+Subtitle: Hebrew / 44.598 kbps
+Subtitle: Hungarian / 56.705 kbps
+Subtitle: Polish / 57.887 kbps
+Subtitle: Russian / 64.822 kbps
+Subtitle: Turkish / 63.719 kbps
+
+
+********************
+PLAYLIST: 00456.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00456.MPLS                                                      AVC     0:00:33 76,142,592      49,068,683,492  18.42   16.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00456.MPLS
+Length:                 0:00:33 (h:m:s)
+Size:                   76,142,592 bytes
+Total Bitrate:          18.42 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16993 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         39.089 kbps                     
+Presentation Graphics           Arabic          26.858 kbps                     
+Presentation Graphics           Czech           34.663 kbps                     
+Presentation Graphics           Greek           39.642 kbps                     
+Presentation Graphics           Hebrew          29.553 kbps                     
+Presentation Graphics           Hungarian       35.357 kbps                     
+Presentation Graphics           Polish          43.103 kbps                     
+Presentation Graphics           Russian         42.878 kbps                     
+Presentation Graphics           Turkish         47.238 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00422.M2TS      0:00:00.000     0:00:33.074     76,142,592      18,417          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:33.074     16,993 kbps     22,938 kbps     00:00:03.712    20,498 kbps     00:00:02.544    19,625 kbps     00:00:02.877    88,595 bytes    192,889 bytes   00:00:00.959    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00422.M2TS      4113 (0x1011)   0x1B            AVC                                     32.908                  17,079                  70,256,179      382,267         
+00422.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           32.908                  193                     794,112         5,170           
+00422.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           32.908                  39                      161,608         925             
+00422.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             32.908                  35                      143,309         826             
+00422.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         32.908                  36                      146,179         841             
+00422.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            32.908                  43                      178,203         1,014           
+00422.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           32.908                  43                      177,271         1,009           
+00422.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           32.908                  47                      195,296         1,108           
+00422.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            32.908                  27                      111,040         650             
+00422.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             32.908                  40                      163,893         937             
+00422.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            32.908                  30                      122,183         710             
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00456.MPLS
+Size: 76,142,592 bytes
+Length: 0:00:33
+Total Bitrate: 18.42 Mbps
+Video: MPEG-4 AVC Video / 16993 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 39.089 kbps
+Subtitle: Arabic / 26.858 kbps
+Subtitle: Czech / 34.663 kbps
+Subtitle: Greek / 39.642 kbps
+Subtitle: Hebrew / 29.553 kbps
+Subtitle: Hungarian / 35.357 kbps
+Subtitle: Polish / 43.103 kbps
+Subtitle: Russian / 42.878 kbps
+Subtitle: Turkish / 47.238 kbps
+
+
+********************
+PLAYLIST: 00457.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00457.MPLS                                                      AVC     0:01:13 166,686,720     49,068,683,492  18.24   16.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00457.MPLS
+Length:                 0:01:13 (h:m:s)
+Size:                   166,686,720 bytes
+Total Bitrate:          18.24 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16988 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         22.918 kbps                     
+Presentation Graphics           Arabic          12.192 kbps                     
+Presentation Graphics           Czech           20.090 kbps                     
+Presentation Graphics           Greek           22.966 kbps                     
+Presentation Graphics           Hebrew          14.931 kbps                     
+Presentation Graphics           Hungarian       21.570 kbps                     
+Presentation Graphics           Polish          19.095 kbps                     
+Presentation Graphics           Russian         21.465 kbps                     
+Presentation Graphics           Turkish         22.228 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00424.M2TS      0:00:00.000     0:01:13.114     166,686,720     18,238          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:13.114     16,988 kbps     20,780 kbps     00:00:14.931    19,578 kbps     00:00:11.344    19,083 kbps     00:00:06.297    88,566 bytes    192,889 bytes   00:00:00.959    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00424.M2TS      4113 (0x1011)   0x1B            AVC                                     72.948                  17,027                  155,256,301     844,799         
+00424.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           72.948                  192                     1,754,880       11,425          
+00424.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           72.948                  23                      209,457         1,211           
+00424.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             72.948                  20                      183,605         1,069           
+00424.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         72.948                  22                      197,138         1,142           
+00424.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            72.948                  19                      174,517         1,019           
+00424.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           72.948                  22                      196,176         1,138           
+00424.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           72.948                  22                      203,152         1,177           
+00424.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            72.948                  12                      111,424         676             
+00424.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             72.948                  23                      209,896         1,213           
+00424.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            72.948                  15                      136,459         812             
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00457.MPLS
+Size: 166,686,720 bytes
+Length: 0:01:13
+Total Bitrate: 18.24 Mbps
+Video: MPEG-4 AVC Video / 16988 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 22.918 kbps
+Subtitle: Arabic / 12.192 kbps
+Subtitle: Czech / 20.090 kbps
+Subtitle: Greek / 22.966 kbps
+Subtitle: Hebrew / 14.931 kbps
+Subtitle: Hungarian / 21.570 kbps
+Subtitle: Polish / 19.095 kbps
+Subtitle: Russian / 21.465 kbps
+Subtitle: Turkish / 22.228 kbps
+
+
+********************
+PLAYLIST: 00458.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00458.MPLS                                                      AVC     0:01:17 178,851,840     49,068,683,492  18.52   17.00   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00458.MPLS
+Length:                 0:01:17 (h:m:s)
+Size:                   178,851,840 bytes
+Total Bitrate:          18.52 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16999 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         61.216 kbps                     
+Presentation Graphics           Arabic          27.858 kbps                     
+Presentation Graphics           Czech           44.525 kbps                     
+Presentation Graphics           Greek           56.345 kbps                     
+Presentation Graphics           Hebrew          42.527 kbps                     
+Presentation Graphics           Hungarian       40.489 kbps                     
+Presentation Graphics           Polish          45.079 kbps                     
+Presentation Graphics           Russian         51.443 kbps                     
+Presentation Graphics           Turkish         57.442 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00425.M2TS      0:00:00.000     0:01:17.243     178,851,840     18,523          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:17.243     16,999 kbps     27,602 kbps     00:00:28.111    23,393 kbps     00:00:26.317    21,801 kbps     00:00:26.735    88,627 bytes    192,891 bytes   00:01:17.202    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00425.M2TS      4113 (0x1011)   0x1B            AVC                                     77.077                  17,036                  164,137,963     893,118         
+00425.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           77.077                  192                     1,853,952       12,070          
+00425.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           77.077                  61                      591,074         3,354           
+00425.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             77.077                  45                      429,912         2,486           
+00425.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         77.077                  41                      390,939         2,264           
+00425.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            77.077                  45                      435,257         2,515           
+00425.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           77.077                  52                      496,705         2,849           
+00425.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           77.077                  58                      554,631         3,170           
+00425.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            77.077                  28                      268,978         1,609           
+00425.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             77.077                  56                      544,037         3,105           
+00425.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            77.077                  43                      410,619         2,380           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00458.MPLS
+Size: 178,851,840 bytes
+Length: 0:01:17
+Total Bitrate: 18.52 Mbps
+Video: MPEG-4 AVC Video / 16999 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 61.216 kbps
+Subtitle: Arabic / 27.858 kbps
+Subtitle: Czech / 44.525 kbps
+Subtitle: Greek / 56.345 kbps
+Subtitle: Hebrew / 42.527 kbps
+Subtitle: Hungarian / 40.489 kbps
+Subtitle: Polish / 45.079 kbps
+Subtitle: Russian / 51.443 kbps
+Subtitle: Turkish / 57.442 kbps
+
+
+********************
+PLAYLIST: 00459.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00459.MPLS                                                      AVC     0:00:57 129,662,976     49,068,683,492  18.19   17.00   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00459.MPLS
+Length:                 0:00:57 (h:m:s)
+Size:                   129,662,976 bytes
+Total Bitrate:          18.19 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16998 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         16.698 kbps                     
+Presentation Graphics           Arabic          9.489 kbps                      
+Presentation Graphics           Czech           15.443 kbps                     
+Presentation Graphics           Greek           16.403 kbps                     
+Presentation Graphics           Hebrew          11.182 kbps                     
+Presentation Graphics           Hungarian       13.209 kbps                     
+Presentation Graphics           Polish          12.992 kbps                     
+Presentation Graphics           Russian         16.511 kbps                     
+Presentation Graphics           Turkish         14.887 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00426.M2TS      0:00:00.000     0:00:57.015     129,662,976     18,193          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:57.015     16,998 kbps     34,127 kbps     00:00:27.068    24,036 kbps     00:00:24.774    20,321 kbps     00:00:25.025    88,622 bytes    276,896 bytes   00:00:27.736    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00426.M2TS      4113 (0x1011)   0x1B            AVC                                     56.848                  17,048                  121,145,886     659,179         
+00426.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           56.848                  193                     1,368,576       8,910           
+00426.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           56.848                  17                      119,002         692             
+00426.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             56.848                  15                      110,062         643             
+00426.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         56.848                  13                      94,138          556             
+00426.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            56.848                  13                      92,596          549             
+00426.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           56.848                  17                      117,674         685             
+00426.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           56.848                  15                      106,101         621             
+00426.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            56.848                  10                      67,624          412             
+00426.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             56.848                  16                      116,905         681             
+00426.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            56.848                  11                      79,693          478             
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00459.MPLS
+Size: 129,662,976 bytes
+Length: 0:00:57
+Total Bitrate: 18.19 Mbps
+Video: MPEG-4 AVC Video / 16998 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 16.698 kbps
+Subtitle: Arabic / 9.489 kbps
+Subtitle: Czech / 15.443 kbps
+Subtitle: Greek / 16.403 kbps
+Subtitle: Hebrew / 11.182 kbps
+Subtitle: Hungarian / 13.209 kbps
+Subtitle: Polish / 12.992 kbps
+Subtitle: Russian / 16.511 kbps
+Subtitle: Turkish / 14.887 kbps
+
+
+********************
+PLAYLIST: 00460.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00460.MPLS                                                      AVC     0:00:48 110,075,904     49,068,683,492  18.31   16.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00460.MPLS
+Length:                 0:00:48 (h:m:s)
+Size:                   110,075,904 bytes
+Total Bitrate:          18.31 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16989 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         29.588 kbps                     
+Presentation Graphics           Arabic          18.235 kbps                     
+Presentation Graphics           Czech           30.487 kbps                     
+Presentation Graphics           Greek           29.318 kbps                     
+Presentation Graphics           Hebrew          22.594 kbps                     
+Presentation Graphics           Hungarian       26.800 kbps                     
+Presentation Graphics           Polish          25.252 kbps                     
+Presentation Graphics           Russian         26.425 kbps                     
+Presentation Graphics           Turkish         30.751 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00427.M2TS      0:00:00.000     0:00:48.089     110,075,904     18,312          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:48.089     16,990 kbps     22,612 kbps     00:00:44.586    21,151 kbps     00:00:40.582    18,928 kbps     00:00:36.911    88,575 bytes    192,889 bytes   00:00:00.959    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00427.M2TS      4113 (0x1011)   0x1B            AVC                                     47.923                  17,049                  102,127,500     555,709         
+00427.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           47.923                  193                     1,154,304       7,515           
+00427.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           47.923                  30                      177,859         1,039           
+00427.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             47.923                  31                      183,263         1,067           
+00427.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         47.923                  27                      161,101         946             
+00427.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            47.923                  25                      151,798         896             
+00427.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           47.923                  27                      158,844         932             
+00427.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           47.923                  31                      184,851         1,075           
+00427.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            47.923                  18                      109,615         668             
+00427.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             47.923                  29                      176,234         1,029           
+00427.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            47.923                  23                      135,818         808             
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00460.MPLS
+Size: 110,075,904 bytes
+Length: 0:00:48
+Total Bitrate: 18.31 Mbps
+Video: MPEG-4 AVC Video / 16989 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 29.588 kbps
+Subtitle: Arabic / 18.235 kbps
+Subtitle: Czech / 30.487 kbps
+Subtitle: Greek / 29.318 kbps
+Subtitle: Hebrew / 22.594 kbps
+Subtitle: Hungarian / 26.800 kbps
+Subtitle: Polish / 25.252 kbps
+Subtitle: Russian / 26.425 kbps
+Subtitle: Turkish / 30.751 kbps
+
+
+********************
+PLAYLIST: 00633.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00633.MPLS                                                      AVC     0:03:53 542,097,408     49,068,683,492  18.59   16.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00633.MPLS
+Length:                 0:03:53 (h:m:s)
+Size:                   542,097,408 bytes
+Total Bitrate:          18.59 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16993 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         60.104 kbps                     
+Presentation Graphics           Arabic          35.410 kbps                     
+Presentation Graphics           Czech           54.447 kbps                     
+Presentation Graphics           Greek           61.449 kbps                     
+Presentation Graphics           Hebrew          44.598 kbps                     
+Presentation Graphics           Hungarian       56.705 kbps                     
+Presentation Graphics           Polish          57.887 kbps                     
+Presentation Graphics           Russian         64.822 kbps                     
+Presentation Graphics           Turkish         63.719 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00421.M2TS      0:00:00.000     0:03:53.274     542,097,408     18,591          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:03:53.274     16,993 kbps     41,693 kbps     00:02:22.851    37,764 kbps     00:02:18.763    37,094 kbps     00:02:16.469    88,591 bytes    640,990 bytes   00:02:40.451    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00421.M2TS      4113 (0x1011)   0x1B            AVC                                     233.108                 17,005                  495,491,754     2,696,091       
+00421.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           233.108                 192                     5,598,720       36,450          
+00421.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           233.108                 60                      1,752,595       9,954           
+00421.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             233.108                 54                      1,587,639       9,062           
+00421.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         233.108                 57                      1,653,483       9,424           
+00421.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            233.108                 58                      1,687,946       9,608           
+00421.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           233.108                 65                      1,890,177       10,713          
+00421.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           233.108                 64                      1,858,016       10,532          
+00421.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            233.108                 35                      1,032,520       6,055           
+00421.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             233.108                 61                      1,791,824       10,178          
+00421.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            233.108                 45                      1,300,446       7,507           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00633.MPLS
+Size: 542,097,408 bytes
+Length: 0:03:53
+Total Bitrate: 18.59 Mbps
+Video: MPEG-4 AVC Video / 16993 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 60.104 kbps
+Subtitle: Arabic / 35.410 kbps
+Subtitle: Czech / 54.447 kbps
+Subtitle: Greek / 61.449 kbps
+Subtitle: Hebrew / 44.598 kbps
+Subtitle: Hungarian / 56.705 kbps
+Subtitle: Polish / 57.887 kbps
+Subtitle: Russian / 64.822 kbps
+Subtitle: Turkish / 63.719 kbps
+
+
+********************
+PLAYLIST: 00634.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00634.MPLS                                                      AVC     0:26:03 3,844,165,632   49,068,683,492  19.66   18.00   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00634.MPLS
+Length:                 0:26:03 (h:m:s)
+Size:                   3,844,165,632 bytes
+Total Bitrate:          19.66 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        17996 kbps          1080i / 29.970 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         73.400 kbps                     
+Presentation Graphics           Arabic          37.360 kbps                     
+Presentation Graphics           Czech           59.841 kbps                     
+Presentation Graphics           Greek           59.804 kbps                     
+Presentation Graphics           Hebrew          47.050 kbps                     
+Presentation Graphics           Hungarian       55.161 kbps                     
+Presentation Graphics           Polish          57.065 kbps                     
+Presentation Graphics           Russian         66.101 kbps                     
+Presentation Graphics           Turkish         60.170 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00429.M2TS      0:00:00.000     0:26:03.995     3,844,165,632   19,663          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:26:03.995     17,996 kbps     39,098 kbps     00:15:28.193    37,016 kbps     00:10:31.897    31,643 kbps     00:10:29.862    75,057 bytes    460,057 bytes   00:01:05.665    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00429.M2TS      4113 (0x1011)   0x1B            AVC                                     1563.862                17,997                  3,518,140,294   19,147,711      
+00429.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           1563.862                192                     37,536,000      244,375         
+00429.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           1563.862                73                      14,349,645      81,164          
+00429.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             1563.862                60                      11,698,802      66,803          
+00429.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         1563.862                55                      10,783,898      61,804          
+00429.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            1563.862                57                      11,156,137      63,847          
+00429.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           1563.862                66                      12,922,649      73,477          
+00429.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           1563.862                60                      11,763,176      67,128          
+00429.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            1563.862                37                      7,303,937       42,953          
+00429.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             1563.862                60                      11,691,742      66,791          
+00429.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            1563.862                47                      9,198,345       53,232          
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00634.MPLS
+Size: 3,844,165,632 bytes
+Length: 0:26:03
+Total Bitrate: 19.66 Mbps
+Video: MPEG-4 AVC Video / 17996 kbps / 1080i / 29.970 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 73.400 kbps
+Subtitle: Arabic / 37.360 kbps
+Subtitle: Czech / 59.841 kbps
+Subtitle: Greek / 59.804 kbps
+Subtitle: Hebrew / 47.050 kbps
+Subtitle: Hungarian / 55.161 kbps
+Subtitle: Polish / 57.065 kbps
+Subtitle: Russian / 66.101 kbps
+Subtitle: Turkish / 60.170 kbps
+
+
+********************
+PLAYLIST: 00635.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00635.MPLS                                                      AVC     0:09:31 1,405,403,136   49,068,683,492  19.69   18.00   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00635.MPLS
+Length:                 0:09:31 (h:m:s)
+Size:                   1,405,403,136 bytes
+Total Bitrate:          19.69 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        18000 kbps          1080i / 29.970 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         73.505 kbps                     
+Presentation Graphics           Arabic          39.849 kbps                     
+Presentation Graphics           Czech           62.379 kbps                     
+Presentation Graphics           Greek           62.436 kbps                     
+Presentation Graphics           Hebrew          49.639 kbps                     
+Presentation Graphics           Hungarian       58.017 kbps                     
+Presentation Graphics           Polish          58.668 kbps                     
+Presentation Graphics           Russian         68.883 kbps                     
+Presentation Graphics           Turkish         62.316 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00430.M2TS      0:00:00.000     0:09:31.003     1,405,403,136   19,690          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:09:31.003     18,000 kbps     32,491 kbps     00:08:10.723    27,106 kbps     00:09:13.920    25,127 kbps     00:09:08.981    75,076 bytes    377,540 bytes   00:00:02.669    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00430.M2TS      4113 (0x1011)   0x1B            AVC                                     570.870                 18,005                  1,284,784,119   6,992,479       
+00430.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           570.870                 192                     13,704,192      89,220          
+00430.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           570.870                 74                      5,246,487       29,701          
+00430.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             570.870                 62                      4,452,348       25,432          
+00430.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         570.870                 58                      4,141,004       23,685          
+00430.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            570.870                 59                      4,187,472       23,983          
+00430.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           570.870                 69                      4,916,576       27,997          
+00430.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           570.870                 62                      4,447,848       25,400          
+00430.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            570.870                 40                      2,844,209       16,726          
+00430.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             570.870                 62                      4,456,369       25,495          
+00430.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            570.870                 50                      3,542,997       20,528          
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00635.MPLS
+Size: 1,405,403,136 bytes
+Length: 0:09:31
+Total Bitrate: 19.69 Mbps
+Video: MPEG-4 AVC Video / 18000 kbps / 1080i / 29.970 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 73.505 kbps
+Subtitle: Arabic / 39.849 kbps
+Subtitle: Czech / 62.379 kbps
+Subtitle: Greek / 62.436 kbps
+Subtitle: Hebrew / 49.639 kbps
+Subtitle: Hungarian / 58.017 kbps
+Subtitle: Polish / 58.668 kbps
+Subtitle: Russian / 68.883 kbps
+Subtitle: Turkish / 62.316 kbps
+
+
+********************
+PLAYLIST: 00636.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00636.MPLS                                                      AVC     0:07:34 1,114,963,968   49,068,683,492  19.63   17.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00636.MPLS
+Length:                 0:07:34 (h:m:s)
+Size:                   1,114,963,968 bytes
+Total Bitrate:          19.63 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        17995 kbps          1080i / 29.970 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         62.609 kbps                     
+Presentation Graphics           Arabic          34.402 kbps                     
+Presentation Graphics           Czech           55.005 kbps                     
+Presentation Graphics           Greek           56.200 kbps                     
+Presentation Graphics           Hebrew          47.952 kbps                     
+Presentation Graphics           Hungarian       51.580 kbps                     
+Presentation Graphics           Polish          56.193 kbps                     
+Presentation Graphics           Russian         61.895 kbps                     
+Presentation Graphics           Turkish         54.275 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00431.M2TS      0:00:00.000     0:07:34.487     1,114,963,968   19,626          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:07:34.487     17,995 kbps     38,399 kbps     00:05:35.401    33,136 kbps     00:05:34.467    29,039 kbps     00:05:34.467    75,054 bytes    361,652 bytes   00:04:44.584    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00431.M2TS      4113 (0x1011)   0x1B            AVC                                     454.354                 18,000                  1,022,309,165   5,563,982       
+00431.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           454.354                 192                     10,907,904      71,015          
+00431.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           454.354                 63                      3,556,884       20,259          
+00431.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             454.354                 55                      3,124,889       17,923          
+00431.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         454.354                 52                      2,930,306       16,861          
+00431.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            454.354                 56                      3,192,376       18,299          
+00431.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           454.354                 62                      3,516,299       20,105          
+00431.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           454.354                 54                      3,083,441       17,688          
+00431.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            454.354                 34                      1,954,392       11,607          
+00431.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             454.354                 56                      3,192,778       18,340          
+00431.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            454.354                 48                      2,724,219       15,783          
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00636.MPLS
+Size: 1,114,963,968 bytes
+Length: 0:07:34
+Total Bitrate: 19.63 Mbps
+Video: MPEG-4 AVC Video / 17995 kbps / 1080i / 29.970 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 62.609 kbps
+Subtitle: Arabic / 34.402 kbps
+Subtitle: Czech / 55.005 kbps
+Subtitle: Greek / 56.200 kbps
+Subtitle: Hebrew / 47.952 kbps
+Subtitle: Hungarian / 51.580 kbps
+Subtitle: Polish / 56.193 kbps
+Subtitle: Russian / 61.895 kbps
+Subtitle: Turkish / 54.275 kbps
+
+
+********************
+PLAYLIST: 00637.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00637.MPLS                                                      AVC     0:13:19 1,968,304,128   49,068,683,492  19.71   17.99   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00637.MPLS
+Length:                 0:13:19 (h:m:s)
+Size:                   1,968,304,128 bytes
+Total Bitrate:          19.71 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        17993 kbps          1080i / 29.970 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         72.973 kbps                     
+Presentation Graphics           Arabic          40.297 kbps                     
+Presentation Graphics           Czech           64.178 kbps                     
+Presentation Graphics           Greek           66.674 kbps                     
+Presentation Graphics           Hebrew          52.322 kbps                     
+Presentation Graphics           Hungarian       62.680 kbps                     
+Presentation Graphics           Polish          66.059 kbps                     
+Presentation Graphics           Russian         69.410 kbps                     
+Presentation Graphics           Turkish         62.917 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00432.M2TS      0:00:00.000     0:13:19.031     1,968,304,128   19,707          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:13:19.031     17,993 kbps     41,948 kbps     00:00:28.094    37,321 kbps     00:07:52.071    36,978 kbps     00:07:51.471    75,048 bytes    592,218 bytes   00:00:38.271    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00432.M2TS      4113 (0x1011)   0x1B            AVC                                     798.898                 17,996                  1,797,165,940   9,781,249       
+00432.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           798.898                 192                     19,176,960      124,850         
+00432.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           798.898                 73                      7,288,433       41,339          
+00432.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             798.898                 64                      6,410,058       36,624          
+00432.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         798.898                 63                      6,260,455       35,827          
+00432.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            798.898                 66                      6,597,873       37,686          
+00432.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           798.898                 69                      6,932,618       39,457          
+00432.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           798.898                 63                      6,284,076       35,894          
+00432.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            798.898                 40                      4,024,843       23,654          
+00432.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             798.898                 67                      6,659,365       38,014          
+00432.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            798.898                 52                      5,225,852       30,185          
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00637.MPLS
+Size: 1,968,304,128 bytes
+Length: 0:13:19
+Total Bitrate: 19.71 Mbps
+Video: MPEG-4 AVC Video / 17993 kbps / 1080i / 29.970 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 72.973 kbps
+Subtitle: Arabic / 40.297 kbps
+Subtitle: Czech / 64.178 kbps
+Subtitle: Greek / 66.674 kbps
+Subtitle: Hebrew / 52.322 kbps
+Subtitle: Hungarian / 62.680 kbps
+Subtitle: Polish / 66.059 kbps
+Subtitle: Russian / 69.410 kbps
+Subtitle: Turkish / 62.917 kbps
+
+
+********************
+PLAYLIST: 00638.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00638.MPLS                                                      AVC     0:03:39 490,924,032     49,068,683,492  17.89   16.58   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00638.MPLS
+Length:                 0:03:39 (h:m:s)
+Size:                   490,924,032 bytes
+Total Bitrate:          17.89 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16581 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         30.599 kbps                     
+Presentation Graphics           Arabic          17.007 kbps                     
+Presentation Graphics           Czech           28.209 kbps                     
+Presentation Graphics           Greek           29.626 kbps                     
+Presentation Graphics           Hebrew          23.610 kbps                     
+Presentation Graphics           Hungarian       27.410 kbps                     
+Presentation Graphics           Polish          27.598 kbps                     
+Presentation Graphics           Russian         29.079 kbps                     
+Presentation Graphics           Turkish         29.613 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00428.M2TS      0:00:00.000     0:03:32.337     486,623,232     18,334          
+00423.M2TS      0:03:32.337     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:03:39.552     16,581 kbps     27,060 kbps     00:02:44.163    26,108 kbps     00:02:40.285    25,304 kbps     00:02:35.697    86,447 bytes    389,480 bytes   00:03:35.340    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00428.M2TS      4113 (0x1011)   0x1B            AVC                                     212.170                 17,014                  451,222,150     2,455,259       
+00428.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           212.170                 192                     5,096,448       33,180          
+00428.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           212.170                 32                      839,691         4,847           
+00428.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             212.170                 29                      774,111         4,511           
+00428.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         212.170                 28                      752,161         4,388           
+00428.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            212.170                 29                      757,331         4,420           
+00428.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           212.170                 30                      797,964         4,640           
+00428.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           212.170                 31                      812,639         4,721           
+00428.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            212.170                 18                      466,661         2,844           
+00428.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             212.170                 31                      812,994         4,730           
+00428.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            212.170                 24                      647,888         3,827           
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00638.MPLS
+Size: 490,924,032 bytes
+Length: 0:03:39
+Total Bitrate: 17.89 Mbps
+Video: MPEG-4 AVC Video / 16581 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 30.599 kbps
+Subtitle: Arabic / 17.007 kbps
+Subtitle: Czech / 28.209 kbps
+Subtitle: Greek / 29.626 kbps
+Subtitle: Hebrew / 23.610 kbps
+Subtitle: Hungarian / 27.410 kbps
+Subtitle: Polish / 27.598 kbps
+Subtitle: Russian / 29.079 kbps
+Subtitle: Turkish / 29.613 kbps
+
+
+********************
+PLAYLIST: 00639.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00639.MPLS                                                      AVC     0:00:40 80,443,392      49,068,683,492  15.97   14.71   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00639.MPLS
+Length:                 0:00:40 (h:m:s)
+Size:                   80,443,392 bytes
+Total Bitrate:          15.97 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        14712 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         32.103 kbps                     
+Presentation Graphics           Arabic          22.062 kbps                     
+Presentation Graphics           Czech           28.469 kbps                     
+Presentation Graphics           Greek           32.556 kbps                     
+Presentation Graphics           Hebrew          24.274 kbps                     
+Presentation Graphics           Hungarian       29.039 kbps                     
+Presentation Graphics           Polish          35.398 kbps                     
+Presentation Graphics           Russian         35.213 kbps                     
+Presentation Graphics           Turkish         38.792 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00422.M2TS      0:00:00.000     0:00:33.074     76,142,592      18,417          
+00423.M2TS      0:00:33.074     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:40.290     14,712 kbps     22,938 kbps     00:00:03.712    20,498 kbps     00:00:02.544    19,625 kbps     00:00:02.877    76,701 bytes    389,480 bytes   00:00:36.077    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00422.M2TS      4113 (0x1011)   0x1B            AVC                                     32.908                  17,079                  70,256,179      382,267         
+00422.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           32.908                  193                     794,112         5,170           
+00422.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           32.908                  39                      161,608         925             
+00422.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             32.908                  35                      143,309         826             
+00422.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         32.908                  36                      146,179         841             
+00422.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            32.908                  43                      178,203         1,014           
+00422.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           32.908                  43                      177,271         1,009           
+00422.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           32.908                  47                      195,296         1,108           
+00422.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            32.908                  27                      111,040         650             
+00422.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             32.908                  40                      163,893         937             
+00422.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            32.908                  30                      122,183         710             
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00639.MPLS
+Size: 80,443,392 bytes
+Length: 0:00:40
+Total Bitrate: 15.97 Mbps
+Video: MPEG-4 AVC Video / 14712 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 32.103 kbps
+Subtitle: Arabic / 22.062 kbps
+Subtitle: Czech / 28.469 kbps
+Subtitle: Greek / 32.556 kbps
+Subtitle: Hebrew / 24.274 kbps
+Subtitle: Hungarian / 29.039 kbps
+Subtitle: Polish / 35.398 kbps
+Subtitle: Russian / 35.213 kbps
+Subtitle: Turkish / 38.792 kbps
+
+
+********************
+PLAYLIST: 00640.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00640.MPLS                                                      AVC     0:01:20 170,987,520     49,068,683,492  17.03   15.84   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00640.MPLS
+Length:                 0:01:20 (h:m:s)
+Size:                   170,987,520 bytes
+Total Bitrate:          17.03 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        15844 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         20.867 kbps                     
+Presentation Graphics           Arabic          11.104 kbps                     
+Presentation Graphics           Czech           18.292 kbps                     
+Presentation Graphics           Greek           20.910 kbps                     
+Presentation Graphics           Hebrew          13.597 kbps                     
+Presentation Graphics           Hungarian       19.640 kbps                     
+Presentation Graphics           Polish          17.387 kbps                     
+Presentation Graphics           Russian         19.544 kbps                     
+Presentation Graphics           Turkish         20.239 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00424.M2TS      0:00:00.000     0:01:13.114     166,686,720     18,238          
+00423.M2TS      0:01:13.114     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:20.330     15,844 kbps     20,780 kbps     00:00:14.931    19,578 kbps     00:00:11.344    19,083 kbps     00:00:06.297    82,603 bytes    389,480 bytes   00:01:16.117    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00424.M2TS      4113 (0x1011)   0x1B            AVC                                     72.948                  17,027                  155,256,301     844,799         
+00424.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           72.948                  192                     1,754,880       11,425          
+00424.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           72.948                  23                      209,457         1,211           
+00424.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             72.948                  20                      183,605         1,069           
+00424.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         72.948                  22                      197,138         1,142           
+00424.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            72.948                  19                      174,517         1,019           
+00424.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           72.948                  22                      196,176         1,138           
+00424.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           72.948                  22                      203,152         1,177           
+00424.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            72.948                  12                      111,424         676             
+00424.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             72.948                  23                      209,896         1,213           
+00424.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            72.948                  15                      136,459         812             
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00640.MPLS
+Size: 170,987,520 bytes
+Length: 0:01:20
+Total Bitrate: 17.03 Mbps
+Video: MPEG-4 AVC Video / 15844 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 20.867 kbps
+Subtitle: Arabic / 11.104 kbps
+Subtitle: Czech / 18.292 kbps
+Subtitle: Greek / 20.910 kbps
+Subtitle: Hebrew / 13.597 kbps
+Subtitle: Hungarian / 19.640 kbps
+Subtitle: Polish / 17.387 kbps
+Subtitle: Russian / 19.544 kbps
+Subtitle: Turkish / 20.239 kbps
+
+
+********************
+PLAYLIST: 00641.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00641.MPLS                                                      AVC     0:01:24 183,152,640     49,068,683,492  17.35   15.91   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00641.MPLS
+Length:                 0:01:24 (h:m:s)
+Size:                   183,152,640 bytes
+Total Bitrate:          17.35 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        15911 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         55.993 kbps                     
+Presentation Graphics           Arabic          25.484 kbps                     
+Presentation Graphics           Czech           40.728 kbps                     
+Presentation Graphics           Greek           51.538 kbps                     
+Presentation Graphics           Hebrew          38.900 kbps                     
+Presentation Graphics           Hungarian       37.036 kbps                     
+Presentation Graphics           Polish          41.234 kbps                     
+Presentation Graphics           Russian         47.055 kbps                     
+Presentation Graphics           Turkish         52.541 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00425.M2TS      0:00:00.000     0:01:17.243     178,851,840     18,523          
+00423.M2TS      0:01:17.243     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:24.459     15,911 kbps     27,602 kbps     00:00:28.111    23,393 kbps     00:00:26.317    21,801 kbps     00:00:26.735    82,951 bytes    389,480 bytes   00:01:20.246    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00425.M2TS      4113 (0x1011)   0x1B            AVC                                     77.077                  17,036                  164,137,963     893,118         
+00425.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           77.077                  192                     1,853,952       12,070          
+00425.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           77.077                  61                      591,074         3,354           
+00425.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             77.077                  45                      429,912         2,486           
+00425.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         77.077                  41                      390,939         2,264           
+00425.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            77.077                  45                      435,257         2,515           
+00425.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           77.077                  52                      496,705         2,849           
+00425.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           77.077                  58                      554,631         3,170           
+00425.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            77.077                  28                      268,978         1,609           
+00425.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             77.077                  56                      544,037         3,105           
+00425.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            77.077                  43                      410,619         2,380           
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00641.MPLS
+Size: 183,152,640 bytes
+Length: 0:01:24
+Total Bitrate: 17.35 Mbps
+Video: MPEG-4 AVC Video / 15911 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 55.993 kbps
+Subtitle: Arabic / 25.484 kbps
+Subtitle: Czech / 40.728 kbps
+Subtitle: Greek / 51.538 kbps
+Subtitle: Hebrew / 38.900 kbps
+Subtitle: Hungarian / 37.036 kbps
+Subtitle: Polish / 41.234 kbps
+Subtitle: Russian / 47.055 kbps
+Subtitle: Turkish / 52.541 kbps
+
+
+********************
+PLAYLIST: 00642.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00642.MPLS                                                      AVC     0:01:04 133,963,776     49,068,683,492  16.69   15.57   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00642.MPLS
+Length:                 0:01:04 (h:m:s)
+Size:                   133,963,776 bytes
+Total Bitrate:          16.69 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        15567 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         14.831 kbps                     
+Presentation Graphics           Arabic          8.431 kbps                      
+Presentation Graphics           Czech           13.717 kbps                     
+Presentation Graphics           Greek           14.569 kbps                     
+Presentation Graphics           Hebrew          9.935 kbps                      
+Presentation Graphics           Hungarian       11.734 kbps                     
+Presentation Graphics           Polish          11.542 kbps                     
+Presentation Graphics           Russian         14.665 kbps                     
+Presentation Graphics           Turkish         13.224 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00426.M2TS      0:00:00.000     0:00:57.015     129,662,976     18,193          
+00423.M2TS      0:00:57.015     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:04.230     15,567 kbps     34,127 kbps     00:00:27.068    24,036 kbps     00:00:24.774    20,321 kbps     00:00:25.025    81,158 bytes    389,480 bytes   00:01:00.018    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00426.M2TS      4113 (0x1011)   0x1B            AVC                                     56.848                  17,048                  121,145,886     659,179         
+00426.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           56.848                  193                     1,368,576       8,910           
+00426.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           56.848                  17                      119,002         692             
+00426.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             56.848                  15                      110,062         643             
+00426.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         56.848                  13                      94,138          556             
+00426.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            56.848                  13                      92,596          549             
+00426.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           56.848                  17                      117,674         685             
+00426.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           56.848                  15                      106,101         621             
+00426.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            56.848                  10                      67,624          412             
+00426.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             56.848                  16                      116,905         681             
+00426.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            56.848                  11                      79,693          478             
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00642.MPLS
+Size: 133,963,776 bytes
+Length: 0:01:04
+Total Bitrate: 16.69 Mbps
+Video: MPEG-4 AVC Video / 15567 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 14.831 kbps
+Subtitle: Arabic / 8.431 kbps
+Subtitle: Czech / 13.717 kbps
+Subtitle: Greek / 14.569 kbps
+Subtitle: Hebrew / 9.935 kbps
+Subtitle: Hungarian / 11.734 kbps
+Subtitle: Polish / 11.542 kbps
+Subtitle: Russian / 14.665 kbps
+Subtitle: Turkish / 13.224 kbps
+
+
+********************
+PLAYLIST: 00643.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00643.MPLS                                                      AVC     0:00:55 114,376,704     49,068,683,492  16.54   15.33   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00643.MPLS
+Length:                 0:00:55 (h:m:s)
+Size:                   114,376,704 bytes
+Total Bitrate:          16.54 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        15328 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         25.738 kbps                     
+Presentation Graphics           Arabic          15.866 kbps                     
+Presentation Graphics           Czech           26.519 kbps                     
+Presentation Graphics           Greek           25.503 kbps                     
+Presentation Graphics           Hebrew          19.656 kbps                     
+Presentation Graphics           Hungarian       23.314 kbps                     
+Presentation Graphics           Polish          21.968 kbps                     
+Presentation Graphics           Russian         22.987 kbps                     
+Presentation Graphics           Turkish         26.749 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00427.M2TS      0:00:00.000     0:00:48.089     110,075,904     18,312          
+00423.M2TS      0:00:48.089     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:55.305     15,328 kbps     22,612 kbps     00:00:44.586    21,151 kbps     00:00:40.582    18,928 kbps     00:00:36.911    79,913 bytes    389,480 bytes   00:00:51.092    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00427.M2TS      4113 (0x1011)   0x1B            AVC                                     47.923                  17,049                  102,127,500     555,709         
+00427.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           47.923                  193                     1,154,304       7,515           
+00427.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           47.923                  30                      177,859         1,039           
+00427.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             47.923                  31                      183,263         1,067           
+00427.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         47.923                  27                      161,101         946             
+00427.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            47.923                  25                      151,798         896             
+00427.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           47.923                  27                      158,844         932             
+00427.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           47.923                  31                      184,851         1,075           
+00427.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            47.923                  18                      109,615         668             
+00427.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             47.923                  29                      176,234         1,029           
+00427.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            47.923                  23                      135,818         808             
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00643.MPLS
+Size: 114,376,704 bytes
+Length: 0:00:55
+Total Bitrate: 16.54 Mbps
+Video: MPEG-4 AVC Video / 15328 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 25.738 kbps
+Subtitle: Arabic / 15.866 kbps
+Subtitle: Czech / 26.519 kbps
+Subtitle: Greek / 25.503 kbps
+Subtitle: Hebrew / 19.656 kbps
+Subtitle: Hungarian / 23.314 kbps
+Subtitle: Polish / 21.968 kbps
+Subtitle: Russian / 22.987 kbps
+Subtitle: Turkish / 26.749 kbps
+
+
+********************
+PLAYLIST: 00644.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00644.MPLS                                                      AVC     0:04:55 665,720,832     49,068,683,492  18.01   16.68   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00644.MPLS
+Length:                 0:04:55 (h:m:s)
+Size:                   665,720,832 bytes
+Total Bitrate:          18.01 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        16683 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         34.057 kbps                     
+Presentation Graphics           Arabic          18.089 kbps                     
+Presentation Graphics           Czech           28.408 kbps                     
+Presentation Graphics           Greek           32.758 kbps                     
+Presentation Graphics           Hebrew          23.935 kbps                     
+Presentation Graphics           Hungarian       26.767 kbps                     
+Presentation Graphics           Polish          27.927 kbps                     
+Presentation Graphics           Russian         31.019 kbps                     
+Presentation Graphics           Turkish         33.652 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00422.M2TS      0:00:00.000     0:00:33.074     76,142,592      18,417          
+00424.M2TS      0:00:33.074     0:01:13.114     166,686,720     18,238          
+00425.M2TS      0:01:46.189     0:01:17.243     178,851,840     18,523          
+00426.M2TS      0:03:03.433     0:00:57.015     129,662,976     18,193          
+00427.M2TS      0:04:00.448     0:00:48.089     110,075,904     18,312          
+00423.M2TS      0:04:48.538     0:00:07.215     4,300,800       4,768           
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:00:33.074     16,994 kbps     22,938 kbps     00:00:03.712    20,498 kbps     00:00:02.544    19,625 kbps     00:00:02.877    88,485 bytes    192,889 bytes   00:00:00.959    
+2               0:00:33.074     0:01:13.114     16,988 kbps     20,780 kbps     00:00:48.006    19,578 kbps     00:00:44.419    19,083 kbps     00:00:39.372    88,566 bytes    192,889 bytes   00:00:34.033    
+3               0:01:46.189     0:01:17.243     16,999 kbps     27,602 kbps     00:02:14.300    23,393 kbps     00:02:12.507    21,801 kbps     00:02:12.924    88,627 bytes    192,891 bytes   00:03:03.391    
+4               0:03:03.433     0:00:57.015     16,998 kbps     34,127 kbps     00:03:30.501    24,036 kbps     00:03:28.207    20,321 kbps     00:03:28.458    88,622 bytes    276,896 bytes   00:03:31.169    
+5               0:04:00.448     0:00:55.305     15,328 kbps     22,612 kbps     00:04:45.034    21,151 kbps     00:04:41.030    18,928 kbps     00:04:37.360    79,973 bytes    389,480 bytes   00:04:51.541    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00422.M2TS      4113 (0x1011)   0x1B            AVC                                     32.908                  17,079                  70,256,179      382,267         
+00422.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           32.908                  193                     794,112         5,170           
+00422.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           32.908                  39                      161,608         925             
+00422.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             32.908                  35                      143,309         826             
+00422.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         32.908                  36                      146,179         841             
+00422.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            32.908                  43                      178,203         1,014           
+00422.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           32.908                  43                      177,271         1,009           
+00422.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           32.908                  47                      195,296         1,108           
+00422.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            32.908                  27                      111,040         650             
+00422.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             32.908                  40                      163,893         937             
+00422.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            32.908                  30                      122,183         710             
+00424.M2TS      4113 (0x1011)   0x1B            AVC                                     72.948                  17,027                  155,256,301     844,799         
+00424.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           72.948                  192                     1,754,880       11,425          
+00424.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           72.948                  23                      209,457         1,211           
+00424.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             72.948                  20                      183,605         1,069           
+00424.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         72.948                  22                      197,138         1,142           
+00424.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            72.948                  19                      174,517         1,019           
+00424.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           72.948                  22                      196,176         1,138           
+00424.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           72.948                  22                      203,152         1,177           
+00424.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            72.948                  12                      111,424         676             
+00424.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             72.948                  23                      209,896         1,213           
+00424.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            72.948                  15                      136,459         812             
+00425.M2TS      4113 (0x1011)   0x1B            AVC                                     77.077                  17,036                  164,137,963     893,118         
+00425.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           77.077                  192                     1,853,952       12,070          
+00425.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           77.077                  61                      591,074         3,354           
+00425.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             77.077                  45                      429,912         2,486           
+00425.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         77.077                  41                      390,939         2,264           
+00425.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            77.077                  45                      435,257         2,515           
+00425.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           77.077                  52                      496,705         2,849           
+00425.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           77.077                  58                      554,631         3,170           
+00425.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            77.077                  28                      268,978         1,609           
+00425.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             77.077                  56                      544,037         3,105           
+00425.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            77.077                  43                      410,619         2,380           
+00426.M2TS      4113 (0x1011)   0x1B            AVC                                     56.848                  17,048                  121,145,886     659,179         
+00426.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           56.848                  193                     1,368,576       8,910           
+00426.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           56.848                  17                      119,002         692             
+00426.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             56.848                  15                      110,062         643             
+00426.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         56.848                  13                      94,138          556             
+00426.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            56.848                  13                      92,596          549             
+00426.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           56.848                  17                      117,674         685             
+00426.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           56.848                  15                      106,101         621             
+00426.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            56.848                  10                      67,624          412             
+00426.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             56.848                  16                      116,905         681             
+00426.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            56.848                  11                      79,693          478             
+00427.M2TS      4113 (0x1011)   0x1B            AVC                                     47.923                  17,049                  102,127,500     555,709         
+00427.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           47.923                  193                     1,154,304       7,515           
+00427.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           47.923                  30                      177,859         1,039           
+00427.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             47.923                  31                      183,263         1,067           
+00427.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         47.923                  27                      161,101         946             
+00427.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            47.923                  25                      151,798         896             
+00427.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           47.923                  27                      158,844         932             
+00427.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           47.923                  31                      184,851         1,075           
+00427.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            47.923                  18                      109,615         668             
+00427.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             47.923                  29                      176,234         1,029           
+00427.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            47.923                  23                      135,818         808             
+00423.M2TS      4113 (0x1011)   0x1B            AVC                                     7.049                   4,355                   3,837,181       20,939          
+00423.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           7.049                   197                     173,568         1,130           
+00423.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           7.049                   0                       70              7               
+00423.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             7.049                   0                       70              7               
+00423.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         7.049                   0                       70              7               
+00423.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            7.049                   0                       70              7               
+00423.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           7.049                   0                       70              7               
+00423.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           7.049                   0                       70              7               
+00423.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            7.049                   0                       70              7               
+00423.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             7.049                   0                       70              7               
+00423.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            7.049                   0                       70              7               
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00644.MPLS
+Size: 665,720,832 bytes
+Length: 0:04:55
+Total Bitrate: 18.01 Mbps
+Video: MPEG-4 AVC Video / 16683 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 34.057 kbps
+Subtitle: Arabic / 18.089 kbps
+Subtitle: Czech / 28.408 kbps
+Subtitle: Greek / 32.758 kbps
+Subtitle: Hebrew / 23.935 kbps
+Subtitle: Hungarian / 26.767 kbps
+Subtitle: Polish / 27.927 kbps
+Subtitle: Russian / 31.019 kbps
+Subtitle: Turkish / 33.652 kbps
+
+
+********************
+PLAYLIST: 00645.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00645.MPLS                                                      AVC     0:01:02 148,101,120     49,068,683,492  19.08   17.98   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00645.MPLS
+Length:                 0:01:02 (h:m:s)
+Size:                   148,101,120 bytes
+Total Bitrate:          19.08 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        17983 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00433.M2TS      0:00:00.000     0:01:02.103     148,101,120     19,078          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:01:02.103     17,983 kbps     37,044 kbps     00:00:47.213    29,603 kbps     00:00:44.794    26,629 kbps     00:00:06.256    93,756 bytes    634,277 bytes   00:00:19.269    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00433.M2TS      4113 (0x1011)   0x1B            AVC                                     61.937                  18,032                  139,602,113     759,559         
+00433.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           61.937                  193                     1,490,688       9,705           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00645.MPLS
+Size: 148,101,120 bytes
+Length: 0:01:02
+Total Bitrate: 19.08 Mbps
+Video: MPEG-4 AVC Video / 17983 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+
+
+********************
+PLAYLIST: 00738.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00738.MPLS                                                      AVC     0:03:32 486,623,232     49,068,683,492  18.33   17.00   DD AC3 2.0 192Kbps                        
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     2012
+Disc Size:      49,068,683,492 bytes
+Protection:     AACS
+BD-Java:        Yes
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00738.MPLS
+Length:                 0:03:32 (h:m:s)
+Size:                   486,623,232 bytes
+Total Bitrate:          18.33 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        17000 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Dolby Digital Audio             English         192 kbps        2.0 / 48 kHz / 192 kbps / DN -4dB
+
+SUBTITLES:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+Presentation Graphics           English         31.636 kbps                     
+Presentation Graphics           Arabic          17.582 kbps                     
+Presentation Graphics           Czech           29.165 kbps                     
+Presentation Graphics           Greek           30.630 kbps                     
+Presentation Graphics           Hebrew          24.410 kbps                     
+Presentation Graphics           Hungarian       28.338 kbps                     
+Presentation Graphics           Polish          28.533 kbps                     
+Presentation Graphics           Russian         30.064 kbps                     
+Presentation Graphics           Turkish         30.617 kbps                     
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00428.M2TS      0:00:00.000     0:03:32.337     486,623,232     18,334          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:03:32.337     17,000 kbps     27,060 kbps     00:02:44.163    26,108 kbps     00:02:40.285    25,304 kbps     00:02:35.697    88,631 bytes    244,540 bytes   00:02:44.956    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00428.M2TS      4113 (0x1011)   0x1B            AVC                                     212.170                 17,014                  451,222,150     2,455,259       
+00428.M2TS      4352 (0x1100)   0x81            AC3             eng (English)           212.170                 192                     5,096,448       33,180          
+00428.M2TS      4608 (0x1200)   0x90            PGS             eng (English)           212.170                 32                      839,691         4,847           
+00428.M2TS      4609 (0x1201)   0x90            PGS             ces (Czech)             212.170                 29                      774,111         4,511           
+00428.M2TS      4610 (0x1202)   0x90            PGS             hun (Hungarian)         212.170                 28                      752,161         4,388           
+00428.M2TS      4611 (0x1203)   0x90            PGS             pol (Polish)            212.170                 29                      757,331         4,420           
+00428.M2TS      4612 (0x1204)   0x90            PGS             rus (Russian)           212.170                 30                      797,964         4,640           
+00428.M2TS      4613 (0x1205)   0x90            PGS             tur (Turkish)           212.170                 31                      812,639         4,721           
+00428.M2TS      4614 (0x1206)   0x90            PGS             ara (Arabic)            212.170                 18                      466,661         2,844           
+00428.M2TS      4615 (0x1207)   0x90            PGS             ell (Greek)             212.170                 31                      812,994         4,730           
+00428.M2TS      4616 (0x1208)   0x90            PGS             heb (Hebrew)            212.170                 24                      647,888         3,827           
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: 2012
+Disc Size: 49,068,683,492 bytes
+Protection: AACS
+BD-Java: Yes
+Playlist: 00738.MPLS
+Size: 486,623,232 bytes
+Length: 0:03:32
+Total Bitrate: 18.33 Mbps
+Video: MPEG-4 AVC Video / 17000 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: English / Dolby Digital Audio / 2.0 / 48 kHz / 192 kbps / DN -4dB
+Subtitle: English / 31.636 kbps
+Subtitle: Arabic / 17.582 kbps
+Subtitle: Czech / 29.165 kbps
+Subtitle: Greek / 30.630 kbps
+Subtitle: Hebrew / 24.410 kbps
+Subtitle: Hungarian / 28.338 kbps
+Subtitle: Polish / 28.533 kbps
+Subtitle: Russian / 30.064 kbps
+Subtitle: Turkish / 30.617 kbps
+
+

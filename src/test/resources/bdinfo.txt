@@ -1,0 +1,108 @@
+Disc Title:     DREAM_HOUSE
+Disc Size:      12,137,395,344 bytes
+Protection:     AACS
+BD-Java:        No
+BDInfo:         0.5.6
+
+Notes:          
+
+BDINFO HOME:
+  Cinema Squid
+    http://www.cinemasquid.com/blu-ray/tools/bdinfo
+
+INCLUDES FORUMS REPORT FOR:
+  AVS Forum Blu-ray Audio and Video Specifications Thread
+    http://www.avsforum.com/avs-vb/showthread.php?t=1155731
+
+
+********************
+PLAYLIST: 00002.MPLS
+********************
+
+<--- BEGIN FORUMS PASTE --->
+[code]
+                                                                                                                Total   Video                                             
+Title                                                           Codec   Length  Movie Size      Disc Size       Bitrate Bitrate Main Audio Track                          Secondary Audio Track
+-----                                                           ------  ------- --------------  --------------  ------- ------- ------------------                        ---------------------
+00002.MPLS                                                      AVC     1:30:49 11,853,772,800  12,137,395,344  17.40   14.65   DTS-HD Master 5.1 1731Kbps (48kHz/16-bit) 
+[/code]
+
+[code]
+
+DISC INFO:
+
+Disc Title:     DREAM_HOUSE
+Disc Size:      12,137,395,344 bytes
+Protection:     AACS
+BD-Java:        No
+BDInfo:         0.5.6
+
+PLAYLIST REPORT:
+
+Name:                   00002.MPLS
+Length:                 1:30:49 (h:m:s)
+Size:                   11,853,772,800 bytes
+Total Bitrate:          17.40 Mbps
+
+VIDEO:
+
+Codec                   Bitrate             Description     
+-----                   -------             -----------     
+MPEG-4 AVC Video        14652 kbps          1080p / 23.976 fps / 16:9 / High Profile 4.1
+
+AUDIO:
+
+Codec                           Language        Bitrate         Description     
+-----                           --------        -------         -----------     
+DTS-HD Master Audio             Russian         1731 kbps       5.1 / 48 kHz / 1731 kbps / 16-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 16-bit)
+
+FILES:
+
+Name            Time In         Length          Size            Total Bitrate   
+----            -------         ------          ----            -------------   
+00005.M2TS      0:00:00.000     1:30:49.569     11,853,772,800  17,401          
+
+CHAPTERS:
+
+Number          Time In         Length          Avg Video Rate  Max 1-Sec Rate  Max 1-Sec Time  Max 5-Sec Rate  Max 5-Sec Time  Max 10Sec Rate  Max 10Sec Time  Avg Frame Size  Max Frame Size  Max Frame Time  
+------          -------         ------          --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  --------------  
+1               0:00:00.000     0:05:06.681     15,015 kbps     32,971 kbps     00:01:02.228    31,282 kbps     00:01:10.320    30,506 kbps     00:01:06.191    78,269 bytes    337,562 bytes   00:05:06.681    
+2               0:05:06.681     0:04:40.780     15,012 kbps     27,194 kbps     00:09:40.997    18,496 kbps     00:09:39.453    16,855 kbps     00:09:34.115    78,268 bytes    419,680 bytes   00:09:41.080    
+3               0:09:47.461     0:04:41.114     14,999 kbps     23,710 kbps     00:10:31.881    17,118 kbps     00:10:18.701    16,042 kbps     00:10:16.657    78,196 bytes    491,486 bytes   00:14:27.825    
+4               0:14:28.576     0:05:37.378     14,981 kbps     29,300 kbps     00:18:05.417    19,306 kbps     00:18:05.042    16,658 kbps     00:18:05.292    78,103 bytes    434,068 bytes   00:15:19.501    
+5               0:20:05.954     0:05:23.489     15,016 kbps     22,146 kbps     00:20:31.438    17,092 kbps     00:20:30.979    15,972 kbps     00:20:30.354    78,288 bytes    337,440 bytes   00:24:15.912    
+6               0:25:29.444     0:05:04.804     14,998 kbps     22,110 kbps     00:29:29.684    17,210 kbps     00:29:29.517    16,435 kbps     00:29:29.517    78,190 bytes    357,146 bytes   00:27:06.458    
+7               0:30:34.249     0:05:33.833     15,001 kbps     25,317 kbps     00:31:56.331    18,904 kbps     00:31:55.913    16,903 kbps     00:31:50.909    78,208 bytes    530,094 bytes   00:31:56.414    
+8               0:36:08.082     0:02:24.978     15,012 kbps     18,845 kbps     00:38:00.820    16,242 kbps     00:36:56.005    15,569 kbps     00:36:56.255    78,263 bytes    287,294 bytes   00:38:05.950    
+9               0:38:33.060     0:07:27.071     14,991 kbps     29,121 kbps     00:42:15.491    18,814 kbps     00:41:20.853    16,934 kbps     00:42:15.491    78,155 bytes    501,585 bytes   00:41:21.312    
+10              0:46:00.132     0:08:14.118     15,009 kbps     28,748 kbps     00:51:55.862    24,836 kbps     00:51:53.235    20,292 kbps     00:51:51.983    78,250 bytes    451,365 bytes   00:48:23.567    
+11              0:54:14.251     0:05:18.234     14,991 kbps     26,304 kbps     00:56:20.627    17,503 kbps     00:56:20.377    16,374 kbps     00:56:20.627    78,157 bytes    395,598 bytes   00:56:20.835    
+12              0:59:32.485     0:05:53.394     15,007 kbps     27,422 kbps     01:01:19.592    18,482 kbps     01:01:18.091    16,824 kbps     01:01:12.669    78,238 bytes    535,042 bytes   01:01:19.634    
+13              1:05:25.880     0:07:17.979     14,988 kbps     28,328 kbps     01:05:56.869    18,583 kbps     01:05:56.869    16,819 kbps     01:05:56.869    78,141 bytes    397,861 bytes   01:05:56.953    
+14              1:12:43.859     0:04:59.424     14,998 kbps     24,923 kbps     01:14:28.297    17,236 kbps     01:17:06.288    15,919 kbps     01:14:19.872    78,195 bytes    376,615 bytes   01:14:28.338    
+15              1:17:43.283     0:07:06.676     14,702 kbps     33,904 kbps     01:24:00.785    27,602 kbps     01:23:59.075    21,540 kbps     01:23:59.075    76,651 bytes    475,676 bytes   01:24:03.121    
+16              1:24:49.959     0:05:59.609     10,071 kbps     22,323 kbps     01:27:55.144    20,310 kbps     01:27:53.393    19,635 kbps     01:27:52.141    52,512 bytes    287,897 bytes   01:27:55.395    
+
+STREAM DIAGNOSTICS:
+
+File            PID             Type            Codec           Language                Seconds                 Bitrate                 Bytes           Packets         
+----            ---             ----            -----           --------                --------------          --------------          -------------   -----           
+00005.M2TS      4113 (0x1011)   0x1B            AVC                                     5449.444                14,652                  9,980,723,476   54,319,135      
+00005.M2TS      4352 (0x1100)   0x86            DTS-HD MA       rus (Russian)           5449.444                1,731                   1,179,311,576   7,236,666       
+
+[/code]
+<---- END FORUMS PASTE ---->
+
+QUICK SUMMARY:
+
+Disc Title: DREAM_HOUSE
+Disc Size: 12,137,395,344 bytes
+Protection: AACS
+BD-Java: No
+Playlist: 00002.MPLS
+Size: 11,853,772,800 bytes
+Length: 1:30:49
+Total Bitrate: 17.40 Mbps
+Video: MPEG-4 AVC Video / 14652 kbps / 1080p / 23.976 fps / 16:9 / High Profile 4.1
+Audio: Russian / DTS-HD Master Audio / 5.1 / 48 kHz / 1731 kbps / 16-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 16-bit)
+
