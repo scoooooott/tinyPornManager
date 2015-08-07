@@ -18,10 +18,13 @@ package org.tinymediamanager.scraper.trakttv;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +39,8 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.util.ApiKey;
 
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
@@ -55,10 +58,8 @@ import com.uwetrottmann.trakt.v2.entities.SyncSeason;
 import com.uwetrottmann.trakt.v2.entities.SyncShow;
 import com.uwetrottmann.trakt.v2.entities.SyncStats;
 import com.uwetrottmann.trakt.v2.enums.Extended;
-import com.uwetrottmann.trakt.v2.exceptions.LoginException;
-import com.uwetrottmann.trakt.v2.exceptions.UnauthorizedException;
+import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -70,24 +71,31 @@ import retrofit.client.Response;
  * @author Myron Boyle
  * 
  */
-@PluginImplementation
-public class TraktTv implements IMediaProvider {
+
+public class TraktTv {
   private static final String CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TraktTv.class);
-  private static final TraktV2     TRAKT        = new TraktV2();
+  private static final TraktV2     TRAKT        = createTraktApi();
   private static TraktTv           instance;
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
       "Scraper for Trakt.tv; yes, we can scraper here too :)");
 
   private SyncResponse response;
 
+  private static TraktV2 createTraktApi() {
+    TraktV2 api = new TraktV2();
+    api.setApiKey(CLIENT_ID);
+    if (LOGGER.isTraceEnabled()) {
+      api.setIsDebug(true);
+    }
+
+    return api;
+  }
+
   public static synchronized TraktTv getInstance() {
     if (instance == null) {
       instance = new TraktTv();
-      if (!instance.Login()) {
-        // ohm, well
-      }
     }
     return instance;
   }
@@ -95,37 +103,41 @@ public class TraktTv implements IMediaProvider {
   public TraktTv() {
   }
 
-  @Override
-  public MediaProviderInfo getProviderInfo() {
-    return providerInfo;
+  public static Map<String, String> authenticateViaPin(String pin) throws Exception {
+    Map<String, String> result = new HashMap<>();
+
+    OAuthAccessTokenResponse response = TraktV2.getAccessToken(CLIENT_ID,
+        ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
+        "urn:ietf:wg:oauth:2.0:oob", pin);
+
+    // get tokens
+    String accessToken = response.getAccessToken();
+    String refreshToken = response.getRefreshToken();
+    if (StringUtils.isNoneBlank(accessToken, refreshToken)) {
+      result.put("accessToken", accessToken);
+      result.put("refreshToken", refreshToken);
+    }
+
+    return result;
   }
 
   /**
-   * does the setup and login with settings credentials
+   * get a new accessToken with the refreshToken
    */
-  public boolean Login() {
-    // TODO: when calling login, check for existing auth. on exception reauth ONCE
-    TRAKT.setApiKey(CLIENT_ID);
-    try {
-      TRAKT.setLoginData(Globals.settings.getTraktUsername(), Globals.settings.getTraktPassword());
+  public static void refreshAccessToken() throws Exception {
+    if (StringUtils.isBlank(Globals.settings.getTraktRefreshToken())) {
+      throw new Exception("not trakt.tv refresh token found");
     }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return false;
+
+    OAuthAccessTokenResponse response = TraktV2.refreshAccessToken(CLIENT_ID,
+        ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
+        "urn:ietf:wg:oauth:2.0:oob", Globals.settings.getTraktRefreshToken());
+
+    if (StringUtils.isNoneBlank(response.getAccessToken(), response.getRefreshToken())) {
+      Globals.settings.setTraktAccessToken(response.getAccessToken());
+      Globals.settings.setTraktRefreshToken(response.getRefreshToken());
+      TRAKT.setAccessToken(Globals.settings.getTraktAccessToken());
     }
-    catch (LoginException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
-      return false;
-    }
-    catch (UnauthorizedException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
-      return false;
-    }
-    if (LOGGER.isTraceEnabled()) {
-      // when we are on TRACE, show some Trakt debug settings... (need to set after login)
-      TRAKT.setIsDebug(true);
-    }
-    return true;
   }
 
   /**
@@ -138,11 +150,12 @@ public class TraktTv implements IMediaProvider {
       LOGGER.warn("Won't spawn TRAKT.TV since you are not a donator!");
       return false;
     }
-    if (!TRAKT.isTokenSet()) {
-      // if we have no token (because auth does not work, try it again)
-      return this.Login();
+    if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
+      // everything seems fine; also set the access token
+      TRAKT.setAccessToken(Globals.settings.getTraktAccessToken());
+      return true;
     }
-    return true;
+    return false;
   }
 
   // @formatter:off
@@ -182,19 +195,19 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktMovies = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktMovies = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
@@ -243,7 +256,9 @@ public class TraktTv implements IMediaProvider {
 
     List<SyncMovie> movies = new ArrayList<SyncMovie>();
     int nosync = 0;
-    for (Movie tmmMovie : tmmMovies) {
+    for (Movie tmmMovie : tmmMovies)
+
+    {
       if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
           || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, false));
@@ -274,7 +289,7 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
+    catch (OAuthUnauthorizedException e) {
       handleRetrofitError((RetrofitError) e.getCause());
       return;
     }
@@ -309,20 +324,20 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
-          traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
+        traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
@@ -346,7 +361,7 @@ public class TraktTv implements IMediaProvider {
         handleRetrofitError(e);
         return;
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
         return;
       }
@@ -369,11 +384,12 @@ public class TraktTv implements IMediaProvider {
         handleRetrofitError(e);
         return;
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
         return;
       }
     }
+
   }
 
   /**
@@ -402,19 +418,19 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktMovies = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktMovies = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
@@ -422,10 +438,8 @@ public class TraktTv implements IMediaProvider {
 
     // loop over all watched movies on trakt
     for (BaseMovie traktWatched : traktMovies) {
-
       // loop over TMM movies, and check if IMDBID match
       for (Movie tmmMovie : tmmMovies) {
-
         if (matches(tmmMovie, traktWatched.movie.ids)) {
           // we have a movie match
 
@@ -516,7 +530,7 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
+    catch (OAuthUnauthorizedException e) {
       handleRetrofitError((RetrofitError) e.getCause());
       return;
     }
@@ -565,19 +579,19 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
@@ -585,7 +599,6 @@ public class TraktTv implements IMediaProvider {
 
     for (BaseShow traktShow : traktShows) {
       for (TvShow tmmShow : tvShows) {
-
         if (matches(tmmShow, traktShow.show.ids)) {
           // ok, we have a show match
 
@@ -619,7 +632,6 @@ public class TraktTv implements IMediaProvider {
             tmmShow.saveToDb();
             tmmShow.writeNFO();
           }
-
         }
       }
     }
@@ -645,7 +657,7 @@ public class TraktTv implements IMediaProvider {
       catch (RetrofitError e) {
         handleRetrofitError(e);
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
       }
     }
@@ -678,26 +690,25 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktShows = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktShows = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
     LOGGER.info("You have " + traktShows.size() + " TvShows marked as watched on Trakt.tv");
     for (BaseShow traktShow : traktShows) {
       for (TvShow tmmShow : tvShows) {
-
         if (matches(tmmShow, traktShow.show.ids)) {
           // ok, we have a show match
 
@@ -758,7 +769,7 @@ public class TraktTv implements IMediaProvider {
       catch (RetrofitError e) {
         handleRetrofitError(e);
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
       }
     }
@@ -789,20 +800,20 @@ public class TraktTv implements IMediaProvider {
       handleRetrofitError(e);
       return;
     }
-    catch (UnauthorizedException e) {
-      // not authorized - maybe access token revoked - relogin
-      if (this.Login()) {
-        // ok, it worked, lets try once again :)
-        try {
-          traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-          traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
-        }
-        catch (UnauthorizedException e1) {
-          return;
-        }
+    catch (OAuthUnauthorizedException e) {
+      try {
+        // not authorized - maybe access token revoked - relogin
+        refreshAccessToken();
+        traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
+        traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
       }
-      else {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e1) {
+        if (e1.getCause() instanceof RetrofitError) {
+          handleRetrofitError((RetrofitError) e1.getCause());
+        }
+        else {
+          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
+        }
         return;
       }
     }
@@ -826,7 +837,7 @@ public class TraktTv implements IMediaProvider {
         handleRetrofitError(e);
         return;
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
         return;
       }
@@ -849,7 +860,7 @@ public class TraktTv implements IMediaProvider {
         handleRetrofitError(e);
         return;
       }
-      catch (UnauthorizedException e) {
+      catch (OAuthUnauthorizedException e) {
         handleRetrofitError((RetrofitError) e.getCause());
         return;
       }
@@ -956,8 +967,7 @@ public class TraktTv implements IMediaProvider {
       ids.trakt = tmmMovie.getIdAsInt(providerInfo.getId());
     }
 
-    // we have to decide what we send; trakt behaves differenty when sending data to
-    // sync collection and sync history.
+    // we have to decide what we send; trakt behaves differenty when sending data to sync collection and sync history.
     if (watched) {
       // sync history
       if (tmmMovie.isWatched() && tmmMovie.getLastWatched() == null) {

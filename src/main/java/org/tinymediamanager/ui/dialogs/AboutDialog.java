@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ import org.tinymediamanager.ui.components.LinkLabel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -56,30 +58,35 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class AboutDialog extends TmmDialog {
   private static final long           serialVersionUID = 2298570526828925319L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                    //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
+  private static final String         TRANSLATORS      = "Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, julienbloch, nerve, carlosmarchi, "
+      + "espiman, beonex, otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh, SeNmaN, Translador, Deleuze23, "
+      + "ShevAbam, abrupt_neurosis, lynxstrike, Spegni, carfesh, vekheoqf, keleniki, htrex, namuit, stickell, Voltinus, Zwanzig, vipkoza"
+      + "Amarante.pt_BR, TaniaC, maopequena, leandrofuscaldi, dukobpa3, bleuge";
 
-  private final JPanel                contentPanel     = new JPanel();
-  private final Action                action           = new SwingAction();
+  private final JPanel contentPanel = new JPanel();
+  private final Action action       = new SwingAction();
 
   public AboutDialog() {
     super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
-    setResizable(false);
-    setBounds(100, 100, 544, 408);
+    setBounds(100, 100, 655, 450);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
     {
       JLabel lblLogo = new JLabel("");
       lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/tmm96.png")));
@@ -104,7 +111,7 @@ public class AboutDialog extends TmmDialog {
       }
     }
     {
-      JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$ 
+      JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$
       contentPanel.add(lblVersion, "6, 8, left, top");
     }
     {
@@ -124,8 +131,8 @@ public class AboutDialog extends TmmDialog {
           }
           catch (Exception e) {
             LOGGER.error(e.getMessage());
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] {
-                ":", e.getLocalizedMessage() }));
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
           }
         }
       });
@@ -152,27 +159,38 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblMatthewSandersFor, "6, 22");
     }
     {
-      JLabel lblXzener = new JLabel("Our translators: Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, julienbloch, nerve, carlosmarchi, ");
-      contentPanel.add(lblXzener, "6, 24");
-    }
-    {
-      JLabel lblXzener = new JLabel("         espiman, beonex, otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh");
-      contentPanel.add(lblXzener, "6, 26");
+      JPanel panelTranslators = new JPanel();
+      contentPanel.add(panelTranslators, "6, 24, fill, fill");
+      panelTranslators
+          .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
+              new RowSpec[] { RowSpec.decode("top:default"), }));
+      {
+        JLabel lblTranslatorsT = new JLabel(BUNDLE.getString("tmm.translators")); //$NON-NLS-1$
+        panelTranslators.add(lblTranslatorsT, "1, 1, right, top");
+      }
+      {
+        JTextPane tpTranslators = new JTextPane();
+        tpTranslators.setBorder(null);
+        tpTranslators.setEditable(false);
+        tpTranslators.setOpaque(false);
+        tpTranslators.setText(TRANSLATORS);
+        panelTranslators.add(tpTranslators, "3, 1, fill, fill");
+      }
     }
     {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 28");
+      contentPanel.add(lblLibs, "6, 26");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 30");
+      contentPanel.add(lblTester, "6, 28");
     }
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.BUTTON_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane.setLayout(
+          new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.BUTTON_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton();
         okButton.setAction(action);
@@ -180,8 +198,10 @@ public class AboutDialog extends TmmDialog {
         getRootPane().setDefaultButton(okButton);
       }
     }
+  }
 
-    pack();
+  @Override
+  public void pack() {
   }
 
   private class SwingAction extends AbstractAction {
