@@ -51,19 +51,26 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCache.CacheType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -77,6 +84,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
   private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
@@ -118,6 +126,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextPane      tpMemoryHint;
   private JLabel         lblMb;
   private JPanel         panelMisc;
+  private JLabel         lblMissingTranslation;
+  private JPanel         panelUILanguage;
+  private JPanel         panelTransifex;
+  private LinkLabel      lblLinkTransifex;
 
   /**
    * Instantiates a new general settings panel.
@@ -134,26 +146,23 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
     add(panelUI, "2, 2, 3, 1, fill, fill");
     panelUI.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-    lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
-    panelUI.add(lblUiLanguage, "2, 2, right, default");
+    panelUILanguage = new JPanel();
+    panelUI.add(panelUILanguage, "2, 2, 3, 1, fill, fill");
+    panelUILanguage
+        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+            new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
 
-    // listen to changes of the combo box
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    };
-
+    lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language"));
+    panelUILanguage.add(lblUiLanguage, "1, 1, right, default");
     LocaleComboBox actualLocale = null;
-
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
     Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     for (Locale l : Utils.getLanguages()) {
@@ -164,10 +173,41 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       }
     }
     cbLanguage = new JComboBox(locales.toArray());
+    panelUILanguage.add(cbLanguage, "3, 1, fill, top");
     if (actualLocale != null) {
       cbLanguage.setSelectedItem(actualLocale);
     }
-    panelUI.add(cbLanguage, "4, 2, fill, default");
+
+    // listen to changes of the combo box
+    ItemListener listener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    };
+    cbLanguage.addItemListener(listener);
+
+    panelTransifex = new JPanel();
+    panelUI.add(panelTransifex, "6, 2, fill, fill");
+    panelTransifex.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
+        new RowSpec[] { RowSpec.decode("15px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+    lblMissingTranslation = new JLabel(BUNDLE.getString("tmm.helptranslate"));//$NON-NLS-1$
+    panelTransifex.add(lblMissingTranslation, "1, 1");
+
+    lblLinkTransifex = new LinkLabel("https://www.transifex.com/projects/p/tinymediamanager/");
+    lblLinkTransifex.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        try {
+          TmmUIHelper.browseUrl(lblLinkTransifex.getNormalText());
+        }
+        catch (Exception e) {
+          LOGGER.error(e.getMessage());
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, lblLinkTransifex.getNormalText(), "message.erroropenurl",
+              new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-1$
+        }
+      }
+    });
+    panelTransifex.add(lblLinkTransifex, "1, 3");
 
     lblLanguageHint = new JLabel("");
     TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
@@ -362,8 +402,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelMemory.add(tpMemoryHint, "2, 3, 6, 1, fill, fill");
 
     initDataBindings();
-
-    cbLanguage.addItemListener(listener);
     cbFontFamily.addItemListener(listener);
     cbFontSize.addItemListener(listener);
 
