@@ -256,9 +256,7 @@ public class TraktTv {
 
     List<SyncMovie> movies = new ArrayList<SyncMovie>();
     int nosync = 0;
-    for (Movie tmmMovie : tmmMovies)
-
-    {
+    for (Movie tmmMovie : tmmMovies) {
       if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
           || tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
         movies.add(toSyncMovie(tmmMovie, false));

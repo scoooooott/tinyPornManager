@@ -114,10 +114,9 @@ public class Settings extends AbstractModelObject {
   private String proxyUsername;
   private String proxyPassword;
 
-  private String traktUsername   = "";
-  private String traktPassword   = "";
-  private String traktAPI        = "";
-  private String fanartClientKey = "";
+  private String traktAccessToken  = "";
+  private String traktRefreshToken = "";
+  private String fanartClientKey   = "";
 
   private String xbmcHost     = "";
   private String xbmcUsername = "";
@@ -956,25 +955,26 @@ public class Settings extends AbstractModelObject {
     return showNotifications;
   }
 
-  public String getTraktUsername() {
-    return traktUsername.trim();
+  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  public String getTraktAccessToken() {
+    return traktAccessToken;
   }
 
-  public void setTraktUsername(String newValue) {
-    String oldValue = this.traktUsername;
-    this.traktUsername = newValue.trim();
-    firePropertyChange("traktUsername", oldValue, newValue);
+  public void setTraktAccessToken(String newValue) {
+    String oldValue = this.traktAccessToken;
+    this.traktAccessToken = newValue.trim();
+    firePropertyChange("traktAccessToken", oldValue, newValue);
   }
 
   @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
-  public String getTraktPassword() {
-    return traktPassword;
+  public String getTraktRefreshToken() {
+    return traktRefreshToken;
   }
 
-  public void setTraktPassword(String newValue) {
-    String oldValue = this.traktPassword;
-    this.traktPassword = newValue;
-    firePropertyChange("traktPassword", oldValue, newValue);
+  public void setTraktRefreshToken(String newValue) {
+    String oldValue = this.traktRefreshToken;
+    this.traktRefreshToken = newValue;
+    firePropertyChange("traktRefreshToken", oldValue, newValue);
   }
 
   public String getFanartClientKey() {

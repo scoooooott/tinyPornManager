@@ -16,26 +16,35 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.scraper.trakttv.TraktTv;
+import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -45,15 +54,14 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 7266564870819511988L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
-
-  private JTextField                  tfTraktUsername;
-  private JPasswordField              tfTraktPassword;
-  private final JPanel                panelFanartTv    = new JPanel();
-  private JTextField                  tfFanartClientKey;
+  private Settings     settings      = Settings.getInstance();
+  private final JPanel panelFanartTv = new JPanel();
+  private JTextField   tfFanartClientKey;
 
   public ExternalServicesSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
@@ -63,30 +71,29 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       JPanel panelTrakttv = new JPanel();
       panelTrakttv.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.trakttv"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
       add(panelTrakttv, "2, 2, fill, fill");
-      panelTrakttv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(25dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
-          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-          FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-          FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-      {
-        JLabel lblTraktUsername = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
-        panelTrakttv.add(lblTraktUsername, "2, 2, right, default");
-        tfTraktUsername = new JTextField();
-        panelTrakttv.add(tfTraktUsername, "4, 2, fill, default");
-        tfTraktUsername.setColumns(10);
-      }
-      {
-        JLabel lblTraktPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-        panelTrakttv.add(lblTraktPassword, "2, 4, right, default");
-        tfTraktPassword = new JPasswordField();
-      }
-      panelTrakttv.add(tfTraktPassword, "4, 4, fill, default");
-      tfTraktPassword.setColumns(10);
+      panelTrakttv.setLayout(new FormLayout(
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("max(25dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+              FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+      final JLabel lblTraktStatus = new JLabel(""); //$NON-NLS-1$
+      panelTrakttv.add(lblTraktStatus, "2, 2, 5, 1");
+
+      JButton btnGetTraktPin = new JButton(BUNDLE.getString("Settings.trakt.getpin")); //$NON-NLS-1$
+      panelTrakttv.add(btnGetTraktPin, "2, 4");
+
+      JButton btnTestTraktConnection = new JButton(BUNDLE.getString("Settings.trakt.testconnection")); //$NON-NLS-1$
+      panelTrakttv.add(btnTestTraktConnection, "4, 4");
+
       panelFanartTv.setBorder(new TitledBorder(null, "Fanart.tv", TitledBorder.LEADING, TitledBorder.TOP, null, null));
       add(panelFanartTv, "2, 5, fill, fill");
-      panelFanartTv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      panelFanartTv.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+              FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblClientKey = new JLabel("client key");
         panelFanartTv.add(lblClientKey, "2, 2");
@@ -98,8 +105,9 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       }
 
       if (!Globals.isDonator()) {
-        tfTraktUsername.setEnabled(false);
-        tfTraktPassword.setEnabled(false);
+        btnGetTraktPin.setEnabled(false);
+        btnTestTraktConnection.setEnabled(false);
+
         tfFanartClientKey.setEnabled(false);
         String msg = "<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"; //$NON-NLS-1$
         JLabel lblTraktDonator = new JLabel(msg);
@@ -110,24 +118,74 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
         lblFanartTvDonator.setForeground(Color.RED);
         panelFanartTv.add(lblFanartTvDonator, "2, 4, 4, 1, default, default");
       }
+      else {
+        if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
+          lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.good")); //$NON-NLS-1$
+        }
+        else {
+          lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.bad")); //$NON-NLS-1$
+        }
+        btnGetTraktPin.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            // open the pin url in a browser
+            try {
+              TmmUIHelper.browseUrl("https://trakt.tv/pin/799");
+            }
+            catch (Exception e1) {
+              // browser could not be opened, show a dialog box
+              JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.getpin.fallback"), //$NON-NLS-1$
+                  BUNDLE.getString("Settings.trakt.getpin"), JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // let the user insert the pin
+            String pin = JOptionPane.showInputDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.getpin.entercode")); //$NON-NLS-1$
+
+            // try to get the tokens
+            String accessToken = "";
+            String refreshToken = "";
+            try {
+              Map<String, String> tokens = TraktTv.authenticateViaPin(pin);
+              accessToken = tokens.get("accessToken") == null ? "" : tokens.get("accessToken");
+              refreshToken = tokens.get("refreshToken") == null ? "" : tokens.get("refreshToken");
+            }
+            catch (Exception e1) {
+            }
+
+            Globals.settings.setTraktAccessToken(accessToken);
+            Globals.settings.setTraktRefreshToken(refreshToken);
+
+            if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
+              lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.good")); //$NON-NLS-1$
+            }
+            else {
+              JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.getpin.problem"),
+                  BUNDLE.getString("Settings.trakt.getpin"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+              lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.bad")); //$NON-NLS-1$
+            }
+          }
+        });
+        btnTestTraktConnection.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            try {
+              TraktTv.refreshAccessToken();
+              JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.good"),
+                  BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+            }
+            catch (Exception e1) {
+              JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.bad"),
+                  BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+            }
+          }
+        });
+      }
     }
     initDataBindings();
 
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("traktUsername");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty, tfTraktUsername, jTextFieldBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("traktPassword");
-    BeanProperty<JPasswordField, String> jPasswordFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JPasswordField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, tfTraktPassword, jPasswordFieldBeanProperty);
-    autoBinding_1.bind();
-    //
     BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("fanartClientKey");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,

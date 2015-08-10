@@ -64,11 +64,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
-			<artifactId>trakt-java</artifactId>
-			<version>4.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager</groupId>
 			<artifactId>resources</artifactId>
 			<version>1.0.0</version>
 		</dependency>
@@ -161,6 +156,11 @@
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>JTattoo</artifactId>
 			<version>1.6.12</version>
+		</dependency>
+		<dependency>
+			<groupId>com.uwetrottmann</groupId>
+			<artifactId>trakt-java</artifactId>
+			<version>4.4.0</version>
 		</dependency>
 	</dependencies>
 
