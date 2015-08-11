@@ -355,39 +355,6 @@ public class StrgUtils {
     return sb.toString();
   }
 
-  /**
-   * returns a count how "clean" a string is<br>
-   * CamelCase name with space as delimiter should get a higher value...<br>
-   * String should be sent through detectCleanMovienameAndYear() first!!!
-   * 
-   * @param name
-   *          the string to rate
-   * @return number, the higher, the better
-   */
-  public static int rateCleanness(String name) {
-    int rate = 0;
-    name = name.trim();
-
-    int words = name.split(" ").length; // count words
-    int seps = name.split("[_.-]").length - 1; // count other separators
-    int uc = name.replaceAll("[^A-Z]", "").length(); // count uppercase
-    int lc = name.replaceAll("[A-Z]", "").length(); // count lowercase
-
-    int cc = 0; // count CamelCase
-    Pattern pattern = Pattern.compile("[A-Z][a-z]");
-    Matcher matcher = pattern.matcher(name);
-    while (matcher.find()) {
-      cc++;
-    }
-
-    // boost CamesCase, rate non-space separators very worse, the lower words the better
-    rate = cc * 20 + (10 - words * 2) * 2 + (seps * -20) - name.length() * 2;
-
-    LOGGER.trace(name + " - Rate:" + rate + "    LEN:" + name.length() + " WRD:" + words + " UC:" + uc + " LC:" + lc + " CC:" + cc + " SEP:" + seps);
-
-    return rate;
-  }
-
   public static String getLongestString(String[] array) {
     int maxLength = 0;
     String longestString = null;
