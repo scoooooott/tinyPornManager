@@ -23,6 +23,7 @@ public class MediaScraper {
   private URL            logoUrl;
   private ScraperType    type;
   private IMediaProvider mediaProvider;
+  private boolean        enabled = true;
 
   public MediaScraper(ScraperType type, IMediaProvider mediaProvider, String id, String name) {
     this.mediaProvider = mediaProvider;
@@ -142,17 +143,18 @@ public class MediaScraper {
     }
 
     // Kodi scrapers
-    if (Globals.isDonator()) {
-      for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
-        try {
-          for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
-            MediaProviderInfo pi = p.getProviderInfo();
-            MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
-            scraper.add(ms);
+    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
+      try {
+        for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
+          MediaProviderInfo pi = p.getProviderInfo();
+          MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+          if (!Globals.isDonator()) {
+            ms.enabled = false;
           }
+          scraper.add(ms);
         }
-        catch (Exception e) {
-        }
+      }
+      catch (Exception e) {
       }
     }
 
@@ -202,4 +204,7 @@ public class MediaScraper {
     return true;
   }
 
+  public boolean isEnabled() {
+    return enabled;
+  }
 }

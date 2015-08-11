@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -82,6 +83,15 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   @Override
   public Dimension getMaximumSize() {
     return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+  }
+
+  @Override
+  public void setSelectedItem(Object anObject) {
+    MediaScraper ms = (MediaScraper) anObject;
+    if (ms.isEnabled()) {
+      // only allow to choose scraper when active
+      super.setSelectedItem(anObject);
+    }
   }
 
   private void init() {
@@ -165,14 +175,6 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     public Component getListCellRendererComponent(JList<? extends MediaScraper> list, MediaScraper scraper, int index, boolean isSelected,
         boolean cellHasFocus) {
 
-      // calculate the max width of the logo
-      int maxWidth = 0;
-      for (int i = 0; i < list.getModel().getSize(); i++) {
-        MediaScraper ms = list.getModel().getElementAt(i);
-        ImageIcon logo = MediaScraperComboBox.this.getIcon(ms.getLogoURL());
-        maxWidth = Math.max(maxWidth, logo.getIconWidth());
-      }
-
       if (isSelected) {
         setBackground(list.getSelectionBackground());
         setForeground(list.getSelectionForeground());
@@ -180,6 +182,21 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       else {
         setBackground(list.getBackground());
         setForeground(list.getForeground());
+      }
+
+      // calculate the max width of the logo
+      int maxWidth = 0;
+      for (int i = 0; i < list.getModel().getSize(); i++) {
+        MediaScraper ms = list.getModel().getElementAt(i);
+        ImageIcon logo = MediaScraperComboBox.this.getIcon(ms.getLogoURL());
+        maxWidth = Math.max(maxWidth, logo.getIconWidth());
+        if (!scraper.isEnabled()) {
+          setEnabled(false);
+          setBackground(Color.lightGray);
+        }
+        else {
+          setEnabled(true);
+        }
       }
 
       int currentWidth = 0;

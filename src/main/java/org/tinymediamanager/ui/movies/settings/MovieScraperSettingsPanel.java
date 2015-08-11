@@ -41,6 +41,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
@@ -154,7 +156,22 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     scrollPaneScraper = new JScrollPane();
     panelMovieScrapers.add(scrollPaneScraper, "1, 2, 3, 1, fill, fill");
 
-    tableScraper = new JTable();
+    tableScraper = new JTable() {
+      @Override
+      public java.awt.Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+        java.awt.Component comp = super.prepareRenderer(renderer, row, col);
+        String value = getModel().getValueAt(row, 2).toString();
+        if (!Globals.isDonator() && value.startsWith("Kodi")) { // FIXME: use scraper.isEnabled() somehow?
+          comp.setBackground(Color.lightGray);
+          comp.setEnabled(false);
+        }
+        else {
+          comp.setBackground(Color.white);
+          comp.setEnabled(true);
+        }
+        return comp;
+      }
+    };
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 
@@ -373,8 +390,15 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;
 
-      BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY,
-          Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      BufferedImage scaledImage;
+      if (!scraper.isEnabled()) {
+        scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
+            height, Scalr.OP_GRAYSCALE);
+      }
+      else {
+        scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
+            height, Scalr.OP_ANTIALIAS);
+      }
       return new ImageIcon(scaledImage);
     }
 
@@ -388,8 +412,14 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     public void setDefaultScraper(Boolean newValue) {
       Boolean oldValue = this.defaultScraper;
-      this.defaultScraper = newValue;
-      firePropertyChange("defaultScraper", oldValue, newValue);
+      if (scraper.isEnabled()) {
+        // only change when donator
+        firePropertyChange("defaultScraper", oldValue, oldValue); // set same, but fire
+      }
+      else {
+        this.defaultScraper = newValue;
+        firePropertyChange("defaultScraper", oldValue, newValue);
+      }
     }
 
   }
