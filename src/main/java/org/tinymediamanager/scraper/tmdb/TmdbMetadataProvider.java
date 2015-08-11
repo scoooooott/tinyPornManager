@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieSetProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -51,7 +52,7 @@ import retrofit.client.OkClient;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class TmdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
+public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
     ITvShowArtworkProvider, IMovieTrailerProvider {
   static Tmdb              api;
   static MediaProviderInfo providerInfo = createMediaProviderInfo();
