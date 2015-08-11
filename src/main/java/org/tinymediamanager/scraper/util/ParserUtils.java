@@ -17,10 +17,12 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
@@ -142,7 +144,7 @@ public class ParserUtils {
       if (!s[i].isEmpty()) {
         // check for bad words
         if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
-          name = name + s[i] + " ";
+          name = name + WordUtils.capitalizeFully(s[i]) + " "; // make CamelCase
         }
       }
     }
@@ -269,5 +271,89 @@ public class ParserUtils {
     catch (Exception e) {
     }
     return sourceNfoContent;
+  }
+
+  /**
+   * for all strings, return the "cleanest" one detected by rateCleanness()
+   * 
+   * @param names
+   *          strings
+   * @return cleanest one
+   */
+  public static ParserInfo getCleanerString(String... names) {
+    ArrayList<ParserInfo> info = new ArrayList<ParserInfo>(1);
+    ParserInfo ret = null;
+    int rate = -10000;
+
+    for (String s : names) {
+      info.add(new ParserInfo(s));
+    }
+    for (ParserInfo i : info) {
+      int tmp = ParserUtils.rateCleanness(i);
+      if (tmp > rate) {
+        ret = i;
+        rate = tmp;
+      }
+    }
+
+    return ret;
+  }
+
+  /**
+   * returns a count how "clean" a string is<br>
+   * CamelCase name with space as delimiter should get a higher value...<br>
+   * 
+   * @param name
+   *          the string to rate
+   * @return number, the higher, the better
+   */
+  public static int rateCleanness(ParserInfo info) {
+    if (info.clean.isEmpty()) {
+      return -1;
+    }
+    int rate = 0;
+
+    int words = info.clean.split(" ").length; // count words
+    int seps = info.clean.split("[_.-]").length - 1; // count other separators
+    int uc = info.clean.replaceAll("[^A-Z]", "").length(); // count uppercase
+    int lc = info.clean.replaceAll("[A-Z]", "").length(); // count lowercase
+    double cleaned = 100 - info.clean.length() * 100 / info.name.length();
+
+    int cc = 0; // count CamelCase
+    Pattern pattern = Pattern.compile("[A-Z][a-z]");
+    Matcher matcher = pattern.matcher(info.clean);
+    while (matcher.find()) {
+      cc++;
+    }
+
+    // boost CamesCase & cleaned words, rate non-space separators very worse, the lower words the better
+    rate = cc * 20 + (10 - words * 2) * 2 + (seps * -20) - info.clean.length() * 2 + (int) cleaned;
+    if (!info.year.isEmpty()) {
+      // we found a year in string, so boost this specially
+      rate += 20;
+    }
+
+    LOGGER.trace(info + " - Rate:" + rate + "    PERC:" + cleaned + " LEN:" + info.clean.length() + " WRD:" + words + " UC:" + uc + " LC:" + lc
+        + " CC:" + cc + " SEP:" + seps);
+
+    return rate;
+  }
+
+  public static class ParserInfo {
+    public String name  = "";
+    public String year  = "";
+    public String clean = "";
+
+    ParserInfo(String name) {
+      this.name = name.trim();
+      String[] ty = detectCleanMovienameAndYear(this.name);
+      this.clean = ty[0];
+      this.year = ty[1];
+    }
+
+    @Override
+    public String toString() {
+      return clean + " (" + this.year + ")";
+    }
   }
 }

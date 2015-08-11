@@ -35,8 +35,15 @@ public class MovieTest {
   public void testNamingDetection() {
     String longest = StrgUtils.getLongestString(new String[] { "exq-theequalizer-720p.mkv", "The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE" });
     String[] video = ParserUtils.detectCleanMovienameAndYear(longest);
-
     System.out.println(video[0]);
+  }
+
+  @Test
+  public void detectCleanness() {
+    System.out.println(ParserUtils.getCleanerString("Kill.the.Boss.2.GERMAN.DL.720p.BluRay.x264-WodkaE", "WodkaE-kill.the.boss.2.720p",
+        "Wodkae Kill The Boss 2", "Kill The Boss 2"));
+    System.out.println(ParserUtils.getCleanerString("The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE", "exq-theequalizer-720p", "The Equalizer",
+        "Exq The Equalizer", "Exq TheEqualizer"));
   }
 
   @Test

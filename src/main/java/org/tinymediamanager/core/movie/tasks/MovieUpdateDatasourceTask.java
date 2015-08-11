@@ -448,12 +448,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
 
           if (movie.getTitle().isEmpty()) {
-            // use longest name for detection (usually folder over filename)
-            String longest = StrgUtils.getLongestString(new String[] { videoName, movieDir.getName(), bdinfoTitle });
-            String[] video = ParserUtils.detectCleanMovienameAndYear(longest);
-
-            movie.setTitle(video[0]);
-            movie.setYear(video[1]);
+            // get the "cleaner" name/year combo
+            ParserUtils.ParserInfo video = ParserUtils.getCleanerString(new String[] { videoName, movieDir.getName(), bdinfoTitle });
+            movie.setTitle(video.clean);
+            movie.setYear(video.year);
           }
 
           // if the String 3D is in the movie dir, assume it is a 3D movie
@@ -468,7 +466,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
           movie.justAdded = true;
 
-          movie.findActorImages(); // TODO: find as MediaFIles
+          movie.findActorImages(); // TODO: find as MediaFiles
           LOGGER.debug("store movie into DB " + movie.getTitle());
 
           movieList.addMovie(movie);

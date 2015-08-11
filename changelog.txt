@@ -22,4 +22,5 @@ x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
 x several fixes in the movie renamer               
 x reworked internal representation of artwork file names/url 
+x reworked movie name detection
   (performace boost for movie sets) 

@@ -8,7 +8,7 @@
     </appender>
 
     <logger name="com.moviejukebox.themoviedb" level="ERROR" />
-    <logger name="org.tinymediamanager" level="WARN" />
+    <logger name="org.tinymediamanager" level="TRACE" />
     <logger name="org.tinymediamanager.scraper.util.CachedUrl" level="WARN" />
 
     <root level="INFO">
