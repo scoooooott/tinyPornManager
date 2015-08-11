@@ -34,7 +34,7 @@ import java.util.List;
 class TmdbMovieSetMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieSetMetadataProvider.class);
 
-  private Tmdb                api;
+  private Tmdb api;
 
   public TmdbMovieSetMetadataProvider(Tmdb api) {
     this.api = api;
@@ -107,8 +107,18 @@ class TmdbMovieSetMetadataProvider {
 
     int tmdbId = 0;
 
-    // search for tmdbId
-    tmdbId = options.getTmdbId();
+    // tmdbId from option - own id
+    try {
+      tmdbId = Integer.parseInt(options.getId(TmdbMetadataProvider.providerInfo.getId()));
+    }
+    catch (NumberFormatException ignored) {
+    }
+
+    // tmdbId from option - legacy id
+    if (tmdbId == 0) {
+      tmdbId = options.getTmdbId();
+    }
+
     if (tmdbId == 0) {
       LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
       return md;
@@ -135,24 +145,23 @@ class TmdbMovieSetMetadataProvider {
       }
     }
 
-    // nothing found
-    if (collection == null) {
-      return md;
-    }
-
     md.setId(MediaMetadata.TMDBID_SET, collection.id);
     md.storeMetadata(MediaMetadata.TITLE, collection.name);
     md.storeMetadata(MediaMetadata.PLOT, collection.overview);
-    md.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
-    md.storeMetadata(MediaMetadata.BACKGROUND_URL, TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
+    md.storeMetadata(MediaMetadata.POSTER_URL,
+        TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
+    md.storeMetadata(MediaMetadata.BACKGROUND_URL,
+        TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
 
     // add all movies belonging to this movie set
     for (Part part : ListUtils.nullSafe(collection.parts)) {
       MediaMetadata mdSubItem = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
       mdSubItem.setId(MediaMetadata.TMDBID, part.id);
       mdSubItem.storeMetadata(MediaMetadata.TITLE, part.title);
-      mdSubItem.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
-      mdSubItem.storeMetadata(MediaMetadata.BACKGROUND_URL, TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
+      mdSubItem.storeMetadata(MediaMetadata.POSTER_URL,
+          TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
+      mdSubItem.storeMetadata(MediaMetadata.BACKGROUND_URL,
+          TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
       mdSubItem.storeMetadata(MediaMetadata.RELEASE_DATE, part.release_date);
       md.addSubItem(mdSubItem);
     }
