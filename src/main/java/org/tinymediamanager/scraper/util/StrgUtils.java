@@ -18,12 +18,16 @@ package org.tinymediamanager.scraper.util;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class StringUtils.
@@ -33,6 +37,7 @@ import java.util.regex.Pattern;
 public class StrgUtils {
   private static final Map<Integer, Replacement> REPLACEMENTS          = buildReplacementMap();
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
+  private static final Logger                    LOGGER                = LoggerFactory.getLogger(StrgUtils.class);
 
   /*
    * build a replacement map of characters, which are not handled right by the normalizer method
@@ -314,7 +319,7 @@ public class StrgUtils {
     for (String prfx : COMMON_TITLE_PREFIXES) {
       String delim = " "; // one spaces as delim
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no
-                                      // space between prefix and title
+                                       // space between prefix and title
         delim = "";
       }
       title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");
@@ -350,14 +355,49 @@ public class StrgUtils {
     return sb.toString();
   }
 
+  /**
+   * returns a count how "clean" a string is<br>
+   * CamelCase name with space as delimiter should get a higher value...<br>
+   * String should be sent through detectCleanMovienameAndYear() first!!!
+   * 
+   * @param name
+   *          the string to rate
+   * @return number, the higher, the better
+   */
+  public static int rateCleanness(String name) {
+    int rate = 0;
+    name = name.trim();
+
+    int words = name.split(" ").length; // count words
+    int seps = name.split("[_.-]").length - 1; // count other separators
+    int uc = name.replaceAll("[^A-Z]", "").length(); // count uppercase
+    int lc = name.replaceAll("[A-Z]", "").length(); // count lowercase
+
+    int cc = 0; // count CamelCase
+    Pattern pattern = Pattern.compile("[A-Z][a-z]");
+    Matcher matcher = pattern.matcher(name);
+    while (matcher.find()) {
+      cc++;
+    }
+
+    // boost CamesCase, rate non-space separators very worse, the lower words the better
+    rate = cc * 20 + (10 - words * 2) * 2 + (seps * -20) - name.length() * 2;
+
+    LOGGER.trace(name + " - Rate:" + rate + "    LEN:" + name.length() + " WRD:" + words + " UC:" + uc + " LC:" + lc + " CC:" + cc + " SEP:" + seps);
+
+    return rate;
+  }
+
   public static String getLongestString(String[] array) {
     int maxLength = 0;
     String longestString = null;
     for (String s : array) {
-        if (s.length() > maxLength) {
-            maxLength = s.length();
-            longestString = s;
-        }
+      if (s.length() > maxLength) {
+        maxLength = s.length();
+        longestString = s;
+      }
     }
     return longestString;
-}}
+  }
+
+}
