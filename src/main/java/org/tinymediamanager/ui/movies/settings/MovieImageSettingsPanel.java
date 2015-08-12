@@ -413,7 +413,9 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     if (selectedIndex < 0) {
       selectedIndex = 0;
     }
-    tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    if (counter > 0) {
+      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
   }
 
   /**

@@ -729,11 +729,11 @@ public class TraktTv {
               // update ep IDs - NOT YET POSSIBLE
               // boolean dirty = updateIDs(tmmEP, be.ids);
 
-              if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getLastWatched()))) {
-                tmmEP.setLastWatched(be.last_watched_at.toDate());
-                tmmEP.setWatched(true);
-                dirty = true;
-              }
+              // if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getLastWatched()))) {
+              // tmmEP.setLastWatched(be.last_watched_at.toDate());
+              // tmmEP.setWatched(true);
+              // dirty = true;
+              // }
             }
           }
 

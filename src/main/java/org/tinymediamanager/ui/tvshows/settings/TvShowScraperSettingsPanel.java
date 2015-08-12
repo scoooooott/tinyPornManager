@@ -125,17 +125,17 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     }
     List<String> enabledArtworkProviders = settings.getTvShowSettings().getTvShowArtworkScrapers();
     int artworkSelectedIndex = -1;
-    counter = 0;
+    int counterAW = 0;
     for (MediaScraper scraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
       ArtworkScraper artworkScraper = new ArtworkScraper(scraper);
       if (enabledArtworkProviders.contains(artworkScraper.getScraperId())) {
         artworkScraper.active = true;
         if (artworkSelectedIndex < 0) {
-          artworkSelectedIndex = counter;
+          artworkSelectedIndex = counterAW;
         }
       }
       artworkScrapers.add(artworkScraper);
-      counter++;
+      counterAW++;
     }
     // UI init
     setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
@@ -292,9 +292,14 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     });
 
     // select default TV show scraper
-    tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    if (counter > 0) {
+      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
+
     // select default artwork scraper
-    tableArtworkScraper.getSelectionModel().setSelectionInterval(artworkSelectedIndex, artworkSelectedIndex);
+    if (counterAW > 0) {
+      tableArtworkScraper.getSelectionModel().setSelectionInterval(artworkSelectedIndex, artworkSelectedIndex);
+    }
 
     ItemListener itemListener = new ItemListener() {
       @Override

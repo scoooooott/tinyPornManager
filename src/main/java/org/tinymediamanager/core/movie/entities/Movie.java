@@ -43,6 +43,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -62,6 +63,7 @@ import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.IMovieSetProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -69,7 +71,6 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
@@ -906,19 +907,22 @@ public class Movie extends MediaEntity {
           movieSet.setTmdbId(col);
           // get movieset metadata
           try {
-            TmdbMetadataProvider mp = new TmdbMetadataProvider();
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
-            options.setTmdbId(col);
-            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
-            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
+            List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+            if (sets != null && sets.size() > 0) {
+              IMovieSetProvider mp = sets.get(0); // just get first
+              MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+              options.setTmdbId(col);
+              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+              options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
-            MediaMetadata info = mp.getMetadata(options);
-            if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
-              movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
-              movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
-              movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
-              movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+              MediaMetadata info = mp.getMetadata(options);
+              if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
+                movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
+                movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
+                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
+                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+              }
             }
           }
           catch (Exception e) {

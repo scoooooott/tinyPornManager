@@ -88,7 +88,7 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   @Override
   public void setSelectedItem(Object anObject) {
     MediaScraper ms = (MediaScraper) anObject;
-    if (ms.isEnabled()) {
+    if (ms != null && ms.isEnabled()) {
       // only allow to choose scraper when active
       super.setSelectedItem(anObject);
     }

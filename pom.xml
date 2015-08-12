@@ -23,7 +23,6 @@
 	</properties>
 
 	<!-- problematic -->
-	<!-- -->
 	<!-- https://code.google.com/p/jsplitbutton/ -->
 	<!-- https://github.com/Chrriis/DJ-Native-Swing -->
 	<!-- https://java.net/projects/javagraphics/sources/svn/show/trunk/src/com/bric?rev=2250 -->
@@ -32,18 +31,14 @@
 	<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
 		-Dpackaging=jar -Dfile=lib\twinkle.jar -DgroupId=ch.swingfx -DartifactId=twinkle 
 		-Dversion=1.0.0 -->
-	<!-- -->
-	<!-- -->
+
 	<repositories>
-		<!-- for later use <repository> <id>tinyMediaManager</id> <name>tinyMediaManager 
-			provided libs</name> <url>http://repository-tinymediamanager.forge.cloudbees.com/release</url> 
-			</repository> -->
 		<repository>
 			<id>aparsons-maven-repository</id>
 			<url>https://github.com/aparsons/maven-repository/raw/master</url>
 		</repository>
 	</repositories>
-	<!-- pluginRepositories> <pluginRepository> <id>weasis</id> <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url> 
+	<!-- // transifex   pluginRepositories> <pluginRepository> <id>weasis</id> <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url> 
 		</pluginRepository> </pluginRepositories -->
 
 	<dependencies>
@@ -54,18 +49,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
-			<artifactId>scraper-tmdb</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager</groupId>
-			<artifactId>scraper-tvdb</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager</groupId>
 			<artifactId>resources</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.0</version> <!-- FIXME: create own project? -->
 		</dependency>
 
 		<dependency>

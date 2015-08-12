@@ -47,7 +47,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -736,15 +735,6 @@ public class TvShowList extends AbstractModelObject {
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {
     @Override
     public int compare(MediaScraper o1, MediaScraper o2) {
-      // TMDB is always first, because it is the build in scraper
-      if (o1.getMediaProvider() instanceof TheTvDbMetadataProvider) {
-        return -1;
-      }
-      if (o2.getMediaProvider() instanceof TheTvDbMetadataProvider) {
-        return 1;
-      }
-
-      // the rest will be sorted alphabetically by the id
       return o1.getId().compareTo(o2.getId());
     }
   }

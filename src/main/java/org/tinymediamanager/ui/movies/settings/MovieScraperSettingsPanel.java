@@ -336,7 +336,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     });
 
     // select default movie scraper
-    tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    if (counter > 0) {
+      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
   }
 
   /*****************************************************************************************************

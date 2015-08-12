@@ -11,10 +11,10 @@ import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.IMovieSetProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaScraper;
 
 import net.xeoh.plugins.base.Plugin;
@@ -226,6 +226,14 @@ public class PluginManager {
     List<IKodiMetadataProvider> plugins = new ArrayList<>();
     for (Plugin p : pmu.getPlugins(IKodiMetadataProvider.class)) {
       plugins.add((IKodiMetadataProvider) p);
+    }
+    return plugins;
+  }
+
+  public List<IMovieSetProvider> getMovieSetPlugins() {
+    List<IMovieSetProvider> plugins = new ArrayList<>();
+    for (Plugin p : pmu.getPlugins(IMovieSetProvider.class)) {
+      plugins.add((IMovieSetProvider) p);
     }
     return plugins;
   }

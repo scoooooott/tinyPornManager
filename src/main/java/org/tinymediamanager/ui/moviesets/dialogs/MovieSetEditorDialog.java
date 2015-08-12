@@ -50,16 +50,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.scraper.IMovieSetProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -584,19 +585,23 @@ public class MovieSetEditorDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       // search for a tmdbId
       try {
-        TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
-        for (Movie movie : moviesInSet) {
-          MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
-          if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
-            options.setTmdbId(movie.getTmdbId());
-            options.setImdbId(movie.getImdbId());
-            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
-            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
-            MediaMetadata md = tmdb.getMetadata(options);
-            if (md.getIntegerValue(MediaMetadata.TMDBID_SET) > 0) {
-              tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDBID_SET)));
-              break;
+        List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+        if (sets != null && sets.size() > 0) {
+          IMovieSetProvider mp = sets.get(0); // just get first
+
+          for (Movie movie : moviesInSet) {
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+            if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
+              options.setTmdbId(movie.getTmdbId());
+              options.setImdbId(movie.getImdbId());
+              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+              options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
+              MediaMetadata md = mp.getMetadata(options);
+              if (md.getIntegerValue(MediaMetadata.TMDBID_SET) > 0) {
+                tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDBID_SET)));
+                break;
+              }
             }
           }
         }
