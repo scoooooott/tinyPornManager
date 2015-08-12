@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -56,10 +57,12 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
@@ -305,13 +308,14 @@ public class TinyMediaManager {
             updateProgress(g2, "loading plugins", 50);
             splash.update();
           }
-          // just instantiate static in background (takes a few secs
-          Thread t = new Thread() {
+          // just instantiate static in background (takes a few secs - execute as MAIN task
+          Runnable r = new Runnable() {
             public void run() {
               PluginManager.getInstance();
             }
           };
-          t.start();
+          // TmmTaskManager.getInstance().addUnnamedTask(new UnnamedTask("loading plugins", r, TaskType.MAIN_TASK));
+          TmmTaskManager.getInstance().addUnnamedTask(r);
 
           // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
@@ -391,23 +395,26 @@ public class TinyMediaManager {
             System.exit(0);
           }
         }
-        // catch (javax.persistence.PersistenceException e) {
-        // LOGGER.error("PersistenceException", e);
-        // if (!GraphicsEnvironment.isHeadless()) {
-        // // MessageDialog.showExceptionWindow(e);
-        // ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-        // MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
-        // dialog.setImage(IconManager.ERROR);
-        // dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
-        // dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
-        // dialog.setResizable(true);
-        // dialog.pack();
-        // dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        // dialog.setVisible(true);
-        //
-        // System.exit(1);
-        // }
-        // }
+        catch (IllegalStateException e) {
+          LOGGER.error("IllegalStateException", e);
+          if (!GraphicsEnvironment.isHeadless() && e.getMessage().contains("file is locked")) {
+            // MessageDialog.showExceptionWindow(e);
+            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+            MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+            dialog.setImage(IconManager.ERROR);
+            dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
+            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
+            dialog.setResizable(true);
+            dialog.pack();
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            System.exit(1);
+          }
+          else {
+            // any other ex
+            throw (e);
+          }
+        }
         catch (Exception e) {
           LOGGER.error("Exception while start of tmm", e);
           if (!GraphicsEnvironment.isHeadless()) {

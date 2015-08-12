@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
+import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -36,30 +37,30 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TmmTaskManager implements TmmTaskListener {
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static TmmTaskManager    instance         = new TmmTaskManager();
-  private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<TmmTaskListener>();
-  private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<TmmTaskHandle>();
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static TmmTaskManager instance     = new TmmTaskManager();
+  private final Set<TmmTaskListener>  taskListener = new CopyOnWriteArraySet<TmmTaskListener>();
+  private final Set<TmmTaskHandle>    runningTasks = new CopyOnWriteArraySet<TmmTaskHandle>();
 
   // we have some "named" queues, holding different types of tasks
   // image download/subtitle download are rather small/fast tasks - we only queue them in a queue and provide to abort the complete queue
-  private ThreadPoolExecutor             imageDownloadExecutor;
+  private ThreadPoolExecutor imageDownloadExecutor;
 
   // this is a queue which holds "other" tasks
-  private ThreadPoolExecutor             unnamedTaskExecutor;
+  private ThreadPoolExecutor unnamedTaskExecutor;
 
   // trailer download are rather big/long running tasks; only x at a time can be run and they are able to be cancelled individually
-  private ThreadPoolExecutor             downloadExecutor;
+  private ThreadPoolExecutor downloadExecutor;
 
   // main tasks (update datasource, scraping, renaming) are queueable tasks, but only one at a time can run; they can be cancelled individually
-  private final ThreadPoolExecutor       mainTaskExecutor = createMainTaskQueue();
+  private final ThreadPoolExecutor mainTaskExecutor = createMainTaskQueue();
 
   // fake task handles to manage queues
-  private TmmTaskHandle                  imageQueueHandle;
-  private TmmTaskHandle                  unnamedQueueHandle;
+  private TmmTaskHandle imageQueueHandle;
+  private TmmTaskHandle unnamedQueueHandle;
 
   // scheduled threads
-  private final ScheduledExecutorService scheduler        = Executors.newScheduledThreadPool(1);
+  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
@@ -87,8 +88,8 @@ public class TmmTaskManager implements TmmTaskListener {
   }
 
   private ThreadPoolExecutor createImageDownloadExecutor() {
-    ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory(
-        "image-download-task")) {
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        new TmmThreadFactory("image-download-task")) {
       @Override
       protected void beforeExecute(Thread d, Runnable r) {
         super.beforeExecute(d, r);
@@ -110,8 +111,8 @@ public class TmmTaskManager implements TmmTaskListener {
   }
 
   private ThreadPoolExecutor createUnnamedTaskExecutor() {
-    ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory(
-        "unnamed-task")) {
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        new TmmThreadFactory("unnamed-task")) {
       @Override
       protected void beforeExecute(Thread d, Runnable r) {
         super.beforeExecute(d, r);
@@ -155,11 +156,17 @@ public class TmmTaskManager implements TmmTaskListener {
     if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
       unnamedTaskExecutor = createUnnamedTaskExecutor();
     }
+    TmmTask t;
+
     if (task instanceof TmmTask) {
-      TmmTask t = (TmmTask) task;
-      t.addListener(this);
-      t.setState(TaskState.QUEUED);
+      t = (TmmTask) task;
     }
+    else {
+      t = new UnnamedTask("", task, TaskType.BACKGROUND_TASK);
+    }
+    t.addListener(this);
+    t.setState(TaskState.QUEUED);
+
     unnamedTaskExecutor.execute(task);
   }
 
@@ -171,7 +178,8 @@ public class TmmTaskManager implements TmmTaskListener {
    */
   public void addDownloadTask(TmmTask task) {
     if (downloadExecutor == null) {
-      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory("download-task"));
+      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+          new TmmThreadFactory("download-task"));
       downloadExecutor.allowCoreThreadTimeOut(true);
     }
     task.addListener(this);
