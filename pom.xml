@@ -38,8 +38,9 @@
 			<url>https://github.com/aparsons/maven-repository/raw/master</url>
 		</repository>
 	</repositories>
-	<!-- // transifex   pluginRepositories> <pluginRepository> <id>weasis</id> <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url> 
-		</pluginRepository> </pluginRepositories -->
+	<!-- // transifex pluginRepositories> <pluginRepository> <id>weasis</id> 
+		<url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url> </pluginRepository> 
+		</pluginRepositories -->
 
 	<dependencies>
 		<dependency>
@@ -113,7 +114,7 @@
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
 		</dependency>
-		
+
 		<!-- non mavenized ones -->
 		<dependency>
 			<groupId>chrriis.dj</groupId>
@@ -217,17 +218,81 @@
 				<version>2.10</version>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
+						<id>copy-tmm-dependencies</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- our named scraper plugins -->
+						<id>copy-tmm-plugins</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-tmdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-tvdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-imdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-anidb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-fanarttv</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-kodi</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-moviemeter</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-ofdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-rottentomatoes</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-zelluloid</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+							</artifactItems>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${project.build.directory}/dependency-plugins</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<includeScope>compile</includeScope>
-					<stripVersion>true</stripVersion>
-				</configuration>
 			</plugin>
 			<plugin>
 				<!-- call our ant file, since it's too complicated to do our packaging 

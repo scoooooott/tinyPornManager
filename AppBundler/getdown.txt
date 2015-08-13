@@ -20,12 +20,11 @@ code = tmm.jar
 plugin = lib/swt.jar
 plugin = locale/*
 
+# plugins
+%PLUGINS%
+
 # files to be deleted
-delete = lib/vlcj.jar
-delete = lib/commons-logging.jar
-delete = lib/log4j.jar
-delete = lib/l2fprod-common-buttonbar.jar         
-delete = lib/l2fprod-common-shared.jar
+# delete = abc.jar
 
 resource = [windows] tinyMediaManager.new                   #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new                #rename to new, for self-update

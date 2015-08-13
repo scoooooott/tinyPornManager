@@ -97,7 +97,9 @@
 		</propertyfile>
 
 
-		<!-- default files, to include in dist -->
+        <!-- ===================================================== -->
+        <!-- default files, to include in dist -->
+        <!-- ===================================================== -->
 		<copy file="changelog.txt" todir="${build.dir}" />
 		<copy file="AppBundler/getdown.jar" todir="${build.dir}" />
 		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
@@ -110,10 +112,16 @@
 		<copy todir="${build.dir}/locale">
 			<fileset dir="locale" />
 		</copy>
-		<copy todir="${build.dir}/lib">
-			<fileset dir="target/dependency" />
-		</copy>
+        <copy todir="${build.dir}/lib">
+            <fileset dir="target/dependency" />
+        </copy>
+        <copy todir="${build.dir}/plugins">
+            <fileset dir="target/dependency-plugins" />
+        </copy>
 
+        <!-- ===================================================== -->
+        <!-- replace classpath -->
+        <!-- ===================================================== -->
 		<pathconvert property="gd.code" refid="classpath.default" pathsep="">
 			<mapper>
 				<chainedmapper>
@@ -127,6 +135,9 @@
 		<!--echo message="${gd.code}" /-->
 		<replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}" />
 
+        <!-- ===================================================== -->
+        <!-- create webstart file (currently w/o plugins) -->
+        <!-- ===================================================== -->
 		<copy file="AppBundler/launch.jnlp" tofile="${build.dir}/launch.jnlp" />
 		<pathconvert property="webstart" refid="classpath.default" pathsep="">
 			<mapper>
@@ -139,21 +150,43 @@
 		<!-- echo message="${gd.code}" /-->
 		<replace file="${build.dir}/launch.jnlp" token="%WEBSTARTLIBS%" value="${webstart}" />
 
-		<pathconvert property="gd.locale" pathsep="">
-			<mapper>
-				<chainedmapper>
-					<flattenmapper />
-					<globmapper from="*" to="resource = locale/*${line.separator}" />
-				</chainedmapper>
-			</mapper>
-			<path>
-				<fileset dir="locale">
-					<include name="**/*.properties" />
-				</fileset>
-			</path>
-		</pathconvert>
-		<!-- echo message="${gd.locale}" /-->
-		<replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}" />
+        <!-- ===================================================== -->
+        <!-- replace message properties -->
+        <!-- ===================================================== -->
+        <pathconvert property="gd.locale" pathsep="">
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper />
+                    <globmapper from="*" to="resource = locale/*${line.separator}" />
+                </chainedmapper>
+            </mapper>
+            <path>
+                <fileset dir="locale">
+                    <include name="**/*.properties" />
+                </fileset>
+            </path>
+        </pathconvert>
+        <!-- echo message="${gd.locale}" /-->
+        <replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}" />
+
+        <!-- ===================================================== -->
+        <!-- replace plugins -->
+        <!-- ===================================================== -->
+        <pathconvert property="gd.plugins" pathsep="">
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper />
+                    <globmapper from="*" to="resource = plugins/*${line.separator}" />
+                </chainedmapper>
+            </mapper>
+            <path>
+                <fileset dir="${build.dir}/plugins">
+                    <include name="*.jar" />
+                </fileset>
+            </path>
+        </pathconvert>
+        <!-- echo message="${gd.plugins}" /-->
+        <replace file="${build.dir}/getdown.txt" token="%PLUGINS%" value="${gd.plugins}" />
 
 		<copy file="AppBundler/LICENSE" todir="${build.dir}" />
 		<copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
@@ -162,7 +195,9 @@
 		<!-- copy TMM itself -->
 		<copy file="target/${tmmName}-${tmmVersion}.jar" tofile="${build.dir}/tmm.jar" />
 
-		<!-- Mac OSX -->
+        <!-- ===================================================== -->
+        <!-- prepare build for MacOS X -->
+        <!-- ===================================================== -->
 		<mkdir dir="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS" />
 		<mkdir dir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java" />
 		<copy file="AppBundler/osx/Info.plist.template" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Info.plist" />
@@ -183,13 +218,17 @@
 		<copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
 		<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
 
-		<!-- Windows -->
+        <!-- ===================================================== -->
+        <!-- prepare build for Windows -->
+        <!-- ===================================================== -->
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
 		<launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManager.exe" />
 		<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerUpd.exe" />
 		<launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${tmmVersion}_${tmmRevision}" outfile="${dist.dir}/tinyMediaManagerCMD.exe" />
 
-		<!-- Linux -->
+        <!-- ===================================================== -->
+        <!-- prepare build for Linux -->
+        <!-- ===================================================== -->
 		<copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
 		<copy file="AppBundler/tinyMediaManagerUpdater.sh" todir="${dist.dir}" />
 		<copy file="AppBundler/tinyMediaManagerCMD.sh" todir="${dist.dir}" />
@@ -198,7 +237,9 @@
 		<chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
 
 
-		<!-- default files, NOT to include in dist, but in getdown updater -->
+        <!-- ===================================================== -->
+        <!-- default files, NOT to include in dist, but in getdown updater -->
+        <!-- ===================================================== -->
 		<copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
 		<copy file="${dist.dir}/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
 		<copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
@@ -215,27 +256,36 @@
 		<digest appdir="${build.dir}" />
 
 		<!-- copy digest.txt and create zip files -->
+        <!-- ===================================================== -->
+        <!-- package for MacOS X -->
+        <!-- ===================================================== -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 		</zip>
 
-		<!-- windows -->
+        <!-- ===================================================== -->
+        <!-- package for Windows -->
+        <!-- ===================================================== -->
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}" />
 		<zip destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${build.dir}" excludes="env.txt, native/linux*/**, native/mac*/**" />
 			<zipfileset filemode="755" dir="${dist.dir}" includes="*.exe" />
 		</zip>
 
-		<!-- linux -->
+        <!-- ===================================================== -->
+        <!-- package for Linux -->
+        <!-- ===================================================== -->
 		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_${tmmRevision}_linux.tar.gz">
 			<tarfileset dir="${build.dir}" excludes="env.txt, native/windows*/**, native/mac*/**" />
 			<tarfileset filemode="755" dir="${dist.dir}" includes="*.sh" />
 		</tar>
 
 
-		<!-- create a whole archive of /build for transfer to mirrors -->
+        <!-- ===================================================== -->
+        <!-- create a whole archive of /build for transfer to mirrors -->
+        <!-- ===================================================== -->
 		<tar compression="gzip" destfile="${build.dir}/build.tar.gz">
 			<tarfileset dir="${build.dir}" />
 			<tarfileset filemode="755" dir="${build.dir}" includes="JavaApplicationStub" />
