@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -37,7 +38,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -73,6 +73,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -81,6 +82,8 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.MediaIdTable;
+import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -88,7 +91,11 @@ import org.tinymediamanager.ui.dialogs.TmmDialog;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 
 /**
  * The Class MovieEditor.
@@ -110,6 +117,7 @@ public class MovieEditorDialog extends TmmDialog {
   private List<MediaGenres>   genres        = ObservableCollections.observableList(new ArrayList<MediaGenres>());
   private List<MovieTrailer>  trailers      = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
   private List<String>        tags          = ObservableCollections.observableList(new ArrayList<String>());
+  private EventList<MediaId>  ids           = new BasicEventList<>();
   private List<String>        extrathumbs   = new ArrayList<String>();
   private List<String>        extrafanarts  = new ArrayList<String>();
   private boolean             continueQueue = true;
@@ -132,8 +140,6 @@ public class MovieEditorDialog extends TmmDialog {
   private JComboBox    cbGenres;
   private JSpinner     spRating;
   private JComboBox    cbCertification;
-  private JTextField   tfImdbId;
-  private JTextField   tfTmdbId;
   private JCheckBox    cbWatched;
   private JTextPane    tpTagline;
   private JTable       tableTrailer;
@@ -149,6 +155,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JSpinner     spTop250;
   private JComboBox    cbSource;
   private JCheckBox    chckbxVideo3D;
+  private JTable       tableIds;
 
   private ImageLabel lblLogo;
   private ImageLabel lblBanner;
@@ -176,6 +183,8 @@ public class MovieEditorDialog extends TmmDialog {
     setBounds(5, 5, 950, 650);
 
     movieToEdit = movie;
+    ids = MediaIdTable.convertIdMapToEventList(movieToEdit.getIds());
+
     getContentPane().setLayout(new BorderLayout());
     {
       JPanel panelPath = new JPanel();
@@ -194,27 +203,32 @@ public class MovieEditorDialog extends TmmDialog {
     }
 
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.NORTH);
-    tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+    /**
+     * DetailsPanel 2
+     */
+    tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
 
     details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details1Panel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("50px"), FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("top:max(50px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px:grow(2)"),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            RowSpec.decode("fill:30px:grow(2)"), }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu:grow"),
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"),
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            RowSpec.decode("fill:default:grow"), }));
 
     {
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -222,7 +236,7 @@ public class MovieEditorDialog extends TmmDialog {
     }
     {
       tfTitle = new JTextField();
-      details1Panel.add(tfTitle, "4, 4, 9, 1, fill, default");
+      details1Panel.add(tfTitle, "4, 4, 15, 1, fill, default");
       tfTitle.setColumns(10);
     }
     {
@@ -239,7 +253,7 @@ public class MovieEditorDialog extends TmmDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "14, 4, 3, 25, fill, fill");
+      details1Panel.add(lblPoster, "22, 4, 3, 23, fill, fill");
     }
     {
       JLabel lblOriginalTitle = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -247,7 +261,7 @@ public class MovieEditorDialog extends TmmDialog {
     }
     {
       tfOriginalTitle = new JTextField();
-      details1Panel.add(tfOriginalTitle, "4, 6, 9, 1, fill, top");
+      details1Panel.add(tfOriginalTitle, "4, 6, 15, 1, fill, top");
       tfOriginalTitle.setColumns(10);
     }
     {
@@ -256,7 +270,7 @@ public class MovieEditorDialog extends TmmDialog {
     }
     {
       tfSorttitle = new JTextField();
-      details1Panel.add(tfSorttitle, "4, 8, 9, 1, fill, default");
+      details1Panel.add(tfSorttitle, "4, 8, 15, 1, fill, default");
       tfSorttitle.setColumns(10);
     }
     {
@@ -267,7 +281,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPaneTagline = new JScrollPane();
       tpTagline = new JTextPane();
       scrollPaneTagline.setViewportView(tpTagline);
-      details1Panel.add(scrollPaneTagline, "4, 10, 9, 1, fill, fill");
+      details1Panel.add(scrollPaneTagline, "4, 10, 15, 1, fill, fill");
     }
     {
       JLabel lblYear = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
@@ -290,6 +304,16 @@ public class MovieEditorDialog extends TmmDialog {
       details1Panel.add(lblMin, "12, 12");
     }
     {
+      JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+      details1Panel.add(lblRating, "16, 12, right, default");
+    }
+    {
+      spRating = new JSpinner();
+      details1Panel.add(spRating, "18, 12");
+    }
+
+    spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
+    {
       JLabel lblReleaseDate = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
       details1Panel.add(lblReleaseDate, "2, 14, right, default");
     }
@@ -301,126 +325,119 @@ public class MovieEditorDialog extends TmmDialog {
       JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
       details1Panel.add(lblCertification, "8, 14, right, default");
     }
-
-    {
-      cbCertification = new JComboBox();
-      details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
-        cbCertification.addItem(cert);
-      }
-    }
-    {
-      JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-      details1Panel.add(lblRating, "2, 16, right, default");
-    }
-    {
-      spRating = new JSpinner();
-      details1Panel.add(spRating, "4, 16");
-    }
+    cbCertification = new JComboBox();
+    details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
     {
       JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
-      details1Panel.add(lblTop, "8, 16, right, default");
+      details1Panel.add(lblTop, "16, 14, right, default");
     }
     {
       spTop250 = new JSpinner();
-      details1Panel.add(spTop250, "10, 16");
+      details1Panel.add(spTop250, "18, 14");
+    }
+    spTop250.setValue(Integer.valueOf(movie.getTop250()));
+    {
+      JLabel lblIds = new JLabel("Ids");
+      details1Panel.add(lblIds, "2, 16, right, bottom");
+    }
+    {
+      JScrollPane scrollPaneIds = new JScrollPane();
+      details1Panel.add(scrollPaneIds, "4, 16, 9, 5, fill, fill");
+      {
+        tableIds = new MediaIdTable(ids, ScraperType.MOVIE);
+        scrollPaneIds.setViewportView(tableIds);
+      }
+    }
+    {
+      JButton btnAddId = new JButton("");
+      btnAddId.setAction(new AddIdAction());
+      btnAddId.setIcon(IconManager.LIST_ADD);
+      btnAddId.setMargin(new Insets(2, 2, 2, 2));
+      details1Panel.add(btnAddId, "2, 18, right, top");
+    }
+    {
+      JButton btnRemoveId = new JButton("");
+      btnRemoveId.setAction(new RemoveIdAction());
+      btnRemoveId.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveId.setMargin(new Insets(2, 2, 2, 2));
+      details1Panel.add(btnRemoveId, "2, 20, right, top");
+    }
+    {
+      JLabel lblSpokenLanguages = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+      details1Panel.add(lblSpokenLanguages, "2, 22, right, default");
+    }
+    {
+      tfSpokenLanguages = new JTextField();
+      details1Panel.add(tfSpokenLanguages, "4, 22, fill, default");
+      tfSpokenLanguages.setColumns(10);
+    }
+    {
+      JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+      details1Panel.add(lblCountry, "8, 22, right, default");
+    }
+    {
+      tfCountry = new JTextField();
+      details1Panel.add(tfCountry, "10, 22, 3, 1, fill, default");
+      tfCountry.setColumns(10);
     }
     {
       JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
-      details1Panel.add(lblMovieSet, "2, 18, right, default");
+      details1Panel.add(lblMovieSet, "2, 24, right, default");
     }
     {
       cbMovieSet = new JComboBox();
-      details1Panel.add(cbMovieSet, "4, 18, 9, 1, fill, default");
+      details1Panel.add(cbMovieSet, "4, 24, 9, 1, fill, default");
     }
+    cbMovieSet.addItem("");
+    JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    details1Panel.add(lblWatched, "16, 24, right, default");
     {
-      JLabel lblImdbId = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-      details1Panel.add(lblImdbId, "2, 20, right, default");
-      tfImdbId = new JTextField();
-      lblImdbId.setLabelFor(tfImdbId);
-      details1Panel.add(tfImdbId, "4, 20, 3, 1, fill, default");
-      tfImdbId.setColumns(10);
-    }
-    {
-      JLabel lblTmdbId = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
-      details1Panel.add(lblTmdbId, "8, 20, right, default");
-      tfTmdbId = new JTextField();
-      lblTmdbId.setLabelFor(tfTmdbId);
-      details1Panel.add(tfTmdbId, "10, 20, 3, 1, fill, default");
-      tfTmdbId.setColumns(10);
-    }
-    {
-      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      details1Panel.add(lblWatched, "2, 22, right, default");
       cbWatched = new JCheckBox("");
-      lblWatched.setLabelFor(cbWatched);
-      details1Panel.add(cbWatched, "4, 22");
+      details1Panel.add(cbWatched, "18, 24");
     }
+    cbWatched.setSelected(movie.isWatched());
+    lblWatched.setLabelFor(cbWatched);
     {
       JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      details1Panel.add(lblDateAdded, "8, 22, right, default");
+      details1Panel.add(lblDateAdded, "2, 26, right, default");
     }
     {
       spDateAdded = new JSpinner(new SpinnerDateModel());
       // JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spDateAdded,
       // "dd.MM.yyyy HH:mm:ss");
       // spDateAdded.setEditor(timeEditor);
-      details1Panel.add(spDateAdded, "10, 22, 3, 1");
+      details1Panel.add(spDateAdded, "4, 26");
     }
-    {
-      JLabel lblSpokenLanguages = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
-      details1Panel.add(lblSpokenLanguages, "2, 24, right, default");
-    }
-    {
-      tfSpokenLanguages = new JTextField();
-      details1Panel.add(tfSpokenLanguages, "4, 24, 3, 1, fill, default");
-      tfSpokenLanguages.setColumns(10);
-    }
-    {
-      JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-      details1Panel.add(lblCountry, "8, 24, right, default");
-    }
-    {
-      tfCountry = new JTextField();
-      details1Panel.add(tfCountry, "10, 24, 3, 1, fill, default");
-      tfCountry.setColumns(10);
-    }
+    spDateAdded.setValue(movie.getDateAdded());
     {
       JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      details1Panel.add(lblSourceT, "2, 26, right, default");
+      details1Panel.add(lblSourceT, "8, 26, right, default");
     }
     {
       cbSource = new JComboBox(MovieMediaSource.values());
-      details1Panel.add(cbSource, "4, 26, 4, 1, fill, default");
+      details1Panel.add(cbSource, "10, 26, 3, 1, fill, default");
     }
+    cbSource.setSelectedItem(movie.getMediaSource());
     {
       JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
-      details1Panel.add(lblVideod, "8, 26, right, default");
+      details1Panel.add(lblVideod, "16, 26, right, default");
     }
     {
       chckbxVideo3D = new JCheckBox("");
-      details1Panel.add(chckbxVideo3D, "10, 26, 3, 1");
+      details1Panel.add(chckbxVideo3D, "18, 26");
     }
+    chckbxVideo3D.setSelected(movie.isVideoIn3D());
     {
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
       details1Panel.add(lblPlot, "2, 28, right, top");
     }
     {
       JScrollPane scrollPanePlot = new JScrollPane();
-      details1Panel.add(scrollPanePlot, "4, 28, 9, 3, fill, fill");
+      details1Panel.add(scrollPanePlot, "4, 28, 15, 1, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
       }
-    }
-    {
-      JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      details1Panel.add(lblDirector, "2, 32, right, default");
-    }
-    {
-      tfDirector = new JTextField();
-      details1Panel.add(tfDirector, "4, 32, 9, 1, fill, top");
-      tfDirector.setColumns(10);
     }
     {
       lblFanart = new ImageLabel();
@@ -435,31 +452,39 @@ public class MovieEditorDialog extends TmmDialog {
           dialog.setVisible(true);
         }
       });
-      details1Panel.add(lblFanart, "14, 30, 3, 7, fill, fill");
+      details1Panel.add(lblFanart, "22, 28, 3, 5, fill, fill");
+    }
+    lblFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
+    {
+      JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      details1Panel.add(lblDirector, "2, 30, right, default");
+    }
+    {
+      tfDirector = new JTextField();
+      details1Panel.add(tfDirector, "4, 30, 15, 1, fill, top");
+      tfDirector.setColumns(10);
     }
     {
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      details1Panel.add(lblWriter, "2, 34, right, default");
+      details1Panel.add(lblWriter, "2, 32, right, default");
     }
     {
       tfWriter = new JTextField();
-      details1Panel.add(tfWriter, "4, 34, 9, 1, fill, top");
+      details1Panel.add(tfWriter, "4, 32, 15, 1, fill, top");
       tfWriter.setColumns(10);
     }
     {
       JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-      details1Panel.add(lblCompany, "2, 36, right, top");
+      details1Panel.add(lblCompany, "2, 34, right, top");
     }
     {
       JScrollPane scrollPaneProduction = new JScrollPane();
-      details1Panel.add(scrollPaneProduction, "4, 36, 9, 1, fill, fill");
+      details1Panel.add(scrollPaneProduction, "4, 34, 15, 1, fill, fill");
       tfProductionCompanies = new JTextPane();
       scrollPaneProduction.setViewportView(tfProductionCompanies);
     }
 
-    /**
-     * DetailsPanel 2
-     */
+    tfSorttitle.setText(movieToEdit.getSortTitle());
     tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
     details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details2Panel.setLayout(new FormLayout(
@@ -785,40 +810,40 @@ public class MovieEditorDialog extends TmmDialog {
     initDataBindings();
 
     {
-      lblMoviePath.setText(movie.getPath());
       tfTitle.setText(movie.getTitle());
       tfOriginalTitle.setText(movie.getOriginalTitle());
       tfSorttitle.setText(movie.getSortTitle());
       tpTagline.setText(movie.getTagline());
-      tfImdbId.setText(movie.getImdbId());
-      tfTmdbId.setText(String.valueOf(movie.getTmdbId()));
       tpPlot.setText(movie.getPlot());
       tpPlot.setCaretPosition(0);
       tfDirector.setText(movie.getDirector());
       tfWriter.setText(movie.getWriter());
-      lblFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
       lblPoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
+      tfProductionCompanies.setText(movie.getProductionCompany());
+      spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
+      cbCertification.setSelectedItem(movie.getCertification());
+      tfSpokenLanguages.setText(movie.getSpokenLanguages());
+      tfCountry.setText(movie.getCountry());
+
+      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
+      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+      spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
+
+      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
+        cbCertification.addItem(cert);
+      }
+      lblMoviePath.setText(movie.getPath());
       lblLogo.setImagePath(movie.getArtworkFilename(MediaFileType.LOGO));
       lblClearart.setImagePath(movie.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(movie.getArtworkFilename(MediaFileType.THUMB));
       lblDisc.setImagePath(movie.getArtworkFilename(MediaFileType.DISCART));
       lblBanner.setImagePath(movie.getArtworkFilename(MediaFileType.BANNER));
-      tfProductionCompanies.setText(movie.getProductionCompany());
-      spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
-      spTop250.setValue(Integer.valueOf(movie.getTop250()));
-      cbWatched.setSelected(movie.isWatched());
-      spDateAdded.setValue(movie.getDateAdded());
-      cbCertification.setSelectedItem(movie.getCertification());
-      cbSource.setSelectedItem(movie.getMediaSource());
-      chckbxVideo3D.setSelected(movie.isVideoIn3D());
       if (movie.getReleaseDate() != null) {
         spReleaseDate.setValue(movie.getReleaseDate());
       }
       else {
         spReleaseDate.setValue(INITIAL_DATE);
       }
-      tfSpokenLanguages.setText(movie.getSpokenLanguages());
-      tfCountry.setText(movie.getCountry());
 
       int year = 0;
       try {
@@ -826,12 +851,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
       catch (Exception e) {
       }
-      spYear.setModel(new SpinnerNumberModel(year, 0, 3000, 1));
-      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
-
-      spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
-      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
-      spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
+      spYear.setModel(new SpinnerNumberModel(year, 1900, 2050, 1));
 
       for (MovieActor origCast : movie.getActors()) {
         MovieActor actor = new MovieActor();
@@ -867,8 +887,6 @@ public class MovieEditorDialog extends TmmDialog {
 
       extrathumbs.addAll(movieToEdit.getExtraThumbs());
       extrafanarts.addAll(movieToEdit.getExtraFanarts());
-
-      cbMovieSet.addItem("");
       for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
         cbMovieSet.addItem(movieSet);
         if (movieToEdit.getMovieSet() == movieSet) {
@@ -877,8 +895,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       toggleSorttitle();
-
-      tfSorttitle.setText(movieToEdit.getSortTitle());
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
@@ -954,25 +970,55 @@ public class MovieEditorDialog extends TmmDialog {
       }
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
       movieToEdit.setTop250((Integer) spTop250.getValue());
-      movieToEdit.setImdbId(tfImdbId.getText());
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setMediaSource((MovieMediaSource) cbSource.getSelectedItem());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
 
-      if (StringUtils.isNotBlank(tfTmdbId.getText())) {
+      // sync of media ids
+      // first round -> add existing ids
+      for (MediaId id : ids) {
+        // only process non empty ids
+        if (StringUtils.isAnyBlank(id.key, id.value)) {
+          continue;
+        }
+        // first try to cast it into an Integer
         try {
-          movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+          Integer value = Integer.parseInt(id.value);
+          // cool, it is an Integer
+          movieToEdit.setId(id.key, value);
         }
         catch (NumberFormatException ex) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
-          return;
+          // okay, we set it as a String
+          movieToEdit.setId(id.key, id.value);
         }
       }
-      else {
-        movieToEdit.setTmdbId(0);
+      // second round -> remove deleted ids
+      List<String> removeIds = new ArrayList<>();
+      for (Entry<String, Object> entry : movieToEdit.getIds().entrySet()) {
+        MediaId id = new MediaId(entry.getKey());
+        if (!ids.contains(id)) {
+          removeIds.add(entry.getKey());
+        }
       }
+      for (String id : removeIds) {
+        movieToEdit.getIds().remove(id);
+      }
+
+      // movieToEdit.setImdbId(tfImdbId.getText());
+      // if (StringUtils.isNotBlank(tfTmdbId.getText())) {
+      // try {
+      // movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+      // }
+      // catch (NumberFormatException ex) {
+      // JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
+      // return;
+      // }
+      // }
+      // else {
+      // movieToEdit.setTmdbId(0);
+      // }
 
       Object certification = cbCertification.getSelectedItem();
       if (certification instanceof Certification) {
@@ -1098,6 +1144,37 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
+    }
+  }
+
+  private class AddIdAction extends AbstractAction {
+    private static final long serialVersionUID = 2903255414553349267L;
+
+    public AddIdAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.add")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MediaId Id = new MediaId(); // $NON-NLS-1$
+      ids.add(Id);
+    }
+  }
+
+  private class RemoveIdAction extends AbstractAction {
+    private static final long serialVersionUID = -7079826950827356996L;
+
+    public RemoveIdAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.remove")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableIds.getSelectedRow();
+      if (row > -1) {
+        row = tableIds.convertRowIndexToModel(row);
+        ids.remove(row);
+      }
     }
   }
 
@@ -1400,6 +1477,22 @@ public class MovieEditorDialog extends TmmDialog {
     }
   }
 
+  @Override
+  public void dispose() {
+    super.dispose();
+    jTableBinding.unbind();
+    jListBinding.unbind();
+    jTableBinding_1.unbind();
+    jComboBinding.unbind();
+    jListBinding_1.unbind();
+    jTableBinding_2.unbind();
+  }
+
+  @Override
+  public void pack() {
+    // do not pack - it would look weird
+  }
+
   protected void initDataBindings() {
     jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
     //
@@ -1449,22 +1542,5 @@ public class MovieEditorDialog extends TmmDialog {
     jTableBinding_2.addColumnBinding(movieProducerBeanProperty_1);
     //
     jTableBinding_2.bind();
-
-  }
-
-  @Override
-  public void dispose() {
-    super.dispose();
-    jTableBinding.unbind();
-    jListBinding.unbind();
-    jTableBinding_1.unbind();
-    jComboBinding.unbind();
-    jListBinding_1.unbind();
-    jTableBinding_2.unbind();
-  }
-
-  @Override
-  public void pack() {
-    // do not pack - it would look weird
   }
 }
