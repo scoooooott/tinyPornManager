@@ -308,31 +308,8 @@ public class TinyMediaManager {
             updateProgress(g2, "loading plugins", 50);
             splash.update();
           }
-          // just instantiate static in background (takes a few secs - execute as MAIN task
-          Runnable r = new Runnable() {
-            public void run() {
-              PluginManager.getInstance();
-            }
-          };
-          // TmmTaskManager.getInstance().addUnnamedTask(new UnnamedTask("loading plugins", r, TaskType.MAIN_TASK));
-          TmmTaskManager.getInstance().addUnnamedTask(r);
-
-          // VLC /////////////////////////////////////////////////////////
-          // // try to initialize VLC native libs
-          // if (g2 != null) {
-          // updateProgress(g2, "loading VLC libs", 60);
-          // splash.update();
-          // }
-          // try {
-          // // add -Dvlcj.log=DEBUG to VM arguments
-          // new NativeDiscovery().discover();
-          // Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(),
-          // LibVlc.class);
-          // LOGGER.info("VLC: native libraries found and loaded :)");
-          // }
-          // catch (UnsatisfiedLinkError ule) {
-          // LOGGER.warn("VLC: " + ule.getMessage().trim());
-          // }
+          // just instantiate static - will block (takes a few secs)
+          PluginManager.getInstance();
 
           // do upgrade tasks after database loading
           if (newVersion) {

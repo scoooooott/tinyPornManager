@@ -16,6 +16,9 @@ import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
+import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
+import org.tinymediamanager.scraper.thesubdb.TheSubDbMetadataProvider;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
@@ -48,25 +51,18 @@ public class PluginManager {
       pmu = new PluginManagerUtil(pm);
 
       long start = System.currentTimeMillis();
-      LOGGER.debug("loading inline plugins...");
+      LOGGER.debug("loading classpath plugins...");
       // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**"));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(AniDBMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(FanartTvMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(HDTrailersNet.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(ImdbMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(MoviemeterMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(OfdbMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(TheTvDbMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(TmdbMetadataProvider.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(TraktTv.class));
-      // pm.addPluginsFrom(ClassURI.PLUGIN(ZelluloidMetadataProvider.class));
+      // pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+      // since all plugins are loaded externally, just add the remaining TMM impl here direct
+      pm.addPluginsFrom(ClassURI.PLUGIN(HDTrailersNet.class));
+      pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
+      pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
       long end = System.currentTimeMillis();
-      LOGGER.debug("Done loading plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
+      LOGGER.debug("Done loading classpath plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
 
       // dedicated folder just for plugins
+      start = System.currentTimeMillis();
       LOGGER.debug("loading external plugins...");
       if (LOGGER.isTraceEnabled()) {
         pm.addPluginsFrom(new File("plugins/").toURI(), new OptionReportAfter());
@@ -74,6 +70,8 @@ public class PluginManager {
       else {
         pm.addPluginsFrom(new File("plugins/").toURI());
       }
+      end = System.currentTimeMillis();
+      LOGGER.debug("Done loading external plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
     }
     return instance;
   }

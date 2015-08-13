@@ -38,6 +38,7 @@ import org.tinymediamanager.scraper.opensubtitles.model.Info;
 import org.tinymediamanager.scraper.opensubtitles.model.Info.MovieInfo;
 import org.tinymediamanager.scraper.util.SubtitleUtils;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcException;
 import redstone.xmlrpc.XmlRpcFault;
@@ -46,6 +47,7 @@ import redstone.xmlrpc.XmlRpcStruct;
 /**
  * @author Myron Boyle
  */
+@PluginImplementation
 public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
 
   private static final Logger      LOGGER       = LoggerFactory.getLogger(OpensubtitlesMetadataProvider.class);
