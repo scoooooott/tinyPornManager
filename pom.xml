@@ -207,6 +207,7 @@
 							<Build-Nr>${buildNumber}</Build-Nr>
 							<Build-Date>${timestamp}</Build-Date>
 							<Build-By>${user.name}</Build-By>
+							<Class-Path>lib/swt.jar locale/*</Class-Path><!-- additional; same as in GD.txt -->
 						</manifestEntries>
 					</archive>
 				</configuration>
