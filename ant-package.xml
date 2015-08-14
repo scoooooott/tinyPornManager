@@ -3,7 +3,7 @@
 	<!-- build directories -->
 	<property name="build.dir" value="target/ant" />
 	<property name="lib.dir" value="${build.dir}/lib" />
-	<property name="dist.dir" value="dist" />
+	<property name="dist.dir" value="target/dist" />
 
 	<!-- set as property to override in jenkins -->
 	<property name="getdown" value="getdown.txt" />
@@ -81,7 +81,8 @@
 	</target>
 
 	<target name="package-app" description="builds the packages" depends="setNightly, setPreRelease, downloadLocales">
-		<mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
 
 		<!-- set SVN revision here - is not set anymore since nightly/prerel -->
 		<!-- Only works, if rev is not set to nightly/prerel - so should be fine for release build -->
@@ -294,14 +295,16 @@
 		</tar>
 
 		<!-- done, move build dir -->
-		<delete dir="build" />
-		<move file="${build.dir}" tofile="build" />
+        <delete dir="build" />
+        <move file="${build.dir}" tofile="build" />
 
 		<!-- cleanup dist -->
 		<delete includeemptydirs="true">
 			<fileset dir="${dist.dir}" includes="**/*" excludes="*.zip,*.tar.gz" />
 			<dirset dir="${dist.dir}" includes="**/*" />
 		</delete>
+        <delete dir="dist" />
+        <move file="${dist.dir}" tofile="dist" />
 	</target>
 
 </project>
