@@ -162,7 +162,7 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     MediaSearchResult result = options.getResult();
 
     if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {
-      md.storeMetadata(MediaMetadata.IMDBID, result.getIMDBId());
+      md.storeMetadata(MediaMetadata.IMDB, result.getIMDBId());
     }
 
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
@@ -173,8 +173,8 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     processXmlContent(xmlDetails, md, result);
 
     // try to parse an imdb id from the url
-    if (!StringUtils.isEmpty(result.getUrl()) && md.getId(MediaMetadata.IMDBID) != null) {
-      md.setId(MediaMetadata.IMDBID, parseIMDBID(result.getUrl()));
+    if (!StringUtils.isEmpty(result.getUrl()) && md.getId(MediaMetadata.IMDB) != null) {
+      md.setId(MediaMetadata.IMDB, parseIMDBID(result.getUrl()));
     }
 
     return md;
