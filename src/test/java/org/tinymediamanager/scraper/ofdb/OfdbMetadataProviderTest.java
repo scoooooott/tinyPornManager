@@ -146,7 +146,7 @@ public class OfdbMetadataProviderTest {
       mp = new OfdbMetadataProvider();
 
       MediaScrapeOptions scop = new MediaScrapeOptions(MediaType.MOVIE);
-      scop.setId(MediaMetadata.IMDBID, "tt1194173");
+      scop.setId(MediaMetadata.IMDB, "tt1194173");
       md = mp.getMetadata(scop);
 
       assertThat(md.getStringValue(MediaMetadata.TITLE)).isEqualTo("Das Bourne Vermächtnis");

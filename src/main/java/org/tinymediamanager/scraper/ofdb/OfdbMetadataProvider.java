@@ -100,9 +100,9 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     }
 
     // case b)
-    if (options.getResult() == null && StringUtils.isNotBlank(options.getId(MediaMetadata.IMDBID))) {
+    if (options.getResult() == null && StringUtils.isNotBlank(options.getId(MediaMetadata.IMDB))) {
       MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE);
-      searchOptions.set(SearchParam.IMDBID, options.getId(MediaMetadata.IMDBID));
+      searchOptions.set(SearchParam.IMDBID, options.getId(MediaMetadata.IMDB));
       try {
         List<MediaSearchResult> results = search(searchOptions);
         if (results != null && !results.isEmpty()) {
@@ -141,7 +141,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       // IMDB ID "http://www.imdb.com/Title?1194173"
       el = doc.getElementsByAttributeValueContaining("href", "imdb.com");
       if (!el.isEmpty()) {
-        md.setId(MediaMetadata.IMDBID, "tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
+        md.setId(MediaMetadata.IMDB, "tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
       }
 
       // title / year
