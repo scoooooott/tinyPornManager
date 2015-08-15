@@ -160,7 +160,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     Images images = null;
     int tvdbId = 0;
     try {
-      tvdbId = Integer.parseInt(options.getId(MediaMetadata.TVDBID));
+      tvdbId = Integer.parseInt(options.getId(MediaMetadata.TVDB));
     }
     catch (Exception ignored) {
     }
