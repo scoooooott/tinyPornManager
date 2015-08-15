@@ -100,7 +100,7 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
-    md.setId(MediaMetadata.IMDBID, imdbId);
+    md.setId(providerInfo.getId(), imdbId);
 
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(executor);
@@ -189,7 +189,7 @@ public class ImdbMovieParser extends ImdbParser {
       MediaMetadata tmdbMd = futureTmdb.get();
       if (options.isScrapeImdbForeignLanguage() && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
         // tmdbid
-        md.setId(MediaMetadata.TMDBID, tmdbMd.getId(MediaMetadata.TMDBID));
+        md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
         // title
         md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
         // original title
@@ -200,10 +200,10 @@ public class ImdbMovieParser extends ImdbParser {
         md.storeMetadata(MediaMetadata.PLOT, tmdbMd.getStringValue(MediaMetadata.PLOT));
         // collection info
         md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
-        md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
+        md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
       }
       if (options.isScrapeCollectionInfo() && tmdbMd != null) {
-        md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
+        md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
         md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
       }
     }
