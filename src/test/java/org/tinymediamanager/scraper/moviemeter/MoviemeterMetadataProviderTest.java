@@ -77,7 +77,7 @@ public class MoviemeterMetadataProviderTest {
       assertThat(md.getDoubleValue(MediaMetadata.RATING)).isGreaterThan(0);
       assertThat(md.getStringValue(MediaMetadata.PLOT)).startsWith("Jake Sully (Sam Worthington) is een verlamde oorlogsveteraan in de toekomst, die met enkele");
       assertThat(md.getStringValue(MediaMetadata.PRODUCTION_COMPANY)).isEmpty();
-      assertThat(md.getId(MediaMetadata.IMDBID)).isEqualTo("tt0499549");
+      assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0499549");
       assertThat(md.getIntegerValue(MediaMetadata.RUNTIME)).isEqualTo(162);
       assertThat(md.getGenres().size()).isEqualTo(2);
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(3);

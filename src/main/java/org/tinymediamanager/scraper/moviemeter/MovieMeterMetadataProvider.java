@@ -134,7 +134,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       return md;
     }
 
-    md.setId(MediaMetadata.IMDBID, fd.imdb);
+    md.setId(MediaMetadata.IMDB, fd.imdb);
     md.storeMetadata(MediaMetadata.TITLE, fd.title);
     md.storeMetadata(MediaMetadata.YEAR, fd.year);
     md.storeMetadata(MediaMetadata.PLOT, fd.plot);
