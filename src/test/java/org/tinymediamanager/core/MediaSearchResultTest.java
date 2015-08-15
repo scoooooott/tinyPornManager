@@ -18,7 +18,7 @@ public class MediaSearchResultTest {
     MediaSearchResult my = new MediaSearchResult("providerID0");
 
     MediaMetadata md = new MediaMetadata("providerId");
-    md.setId(MediaMetadata.IMDBID, "tt1000000");
+    md.setId(MediaMetadata.IMDB, "tt1000000");
     md.storeMetadata("key1", "value1");
     md.addGenre(MediaGenres.ACTION);
     md.addGenre(MediaGenres.ACTION);
@@ -29,7 +29,7 @@ public class MediaSearchResultTest {
 
     MediaSearchResult s2 = new MediaSearchResult("TMDB", "66666666666", "movie2", "2014", 0.6f);
     md = new MediaMetadata("anotherOne");
-    md.setId(MediaMetadata.TMDBID, "101010");
+    md.setId(MediaMetadata.TMDB, "101010");
     md.storeMetadata("key1", "XXXXXXXXXXXnooverwriteXXXXXXXXX");
     md.addGenre(MediaGenres.ACTION);
     md.addGenre(MediaGenres.CRIME);

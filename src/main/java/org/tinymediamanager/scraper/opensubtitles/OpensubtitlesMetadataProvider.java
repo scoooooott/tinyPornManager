@@ -185,7 +185,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
         MediaMetadata md = new MediaMetadata(this.getProviderInfo().getId());
         md.storeMetadata(MediaMetadata.EPISODE_NR, i.SeriesEpisode);
         md.storeMetadata(MediaMetadata.SEASON_NR, i.SeriesSeason);
-        md.storeMetadata(MediaMetadata.IMDBID, i.MovieImdbID);
+        md.storeMetadata(MediaMetadata.IMDB, i.MovieImdbID);
         md.storeMetadata(MediaMetadata.TITLE, i.MovieName);
         md.storeMetadata(MediaMetadata.YEAR, i.MovieYear);
         md.storeMetadata(MediaMetadata.VOTE_COUNT, i.SeenCount); // well...

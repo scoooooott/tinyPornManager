@@ -187,8 +187,8 @@ public class TvShowChooserModel extends AbstractModelObject {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
-    options.setId(MediaMetadata.TVDBID, String.valueOf(metadata.getId(MediaMetadata.TVDBID)));
+    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
+    options.setId(MediaMetadata.TVDB, String.valueOf(metadata.getId(MediaMetadata.TVDB)));
     options.setLanguage(language);
     options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 

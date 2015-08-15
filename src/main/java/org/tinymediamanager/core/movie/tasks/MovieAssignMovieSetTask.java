@@ -91,7 +91,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           }
 
           MediaMetadata md = mp.getMetadata(options);
-          int collectionId = md.getIntegerValue(MediaMetadata.TMDBID_SET);
+          int collectionId = md.getIntegerValue(MediaMetadata.TMDB_SET);
           if (collectionId > 0) {
             String collectionName = md.getStringValue(MediaMetadata.COLLECTION_NAME);
             MovieSet movieSet = movieList.getMovieSet(collectionName, collectionId);

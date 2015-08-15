@@ -598,8 +598,8 @@ public class MovieSetEditorDialog extends TmmDialog {
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
               options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
               MediaMetadata md = mp.getMetadata(options);
-              if (md.getIntegerValue(MediaMetadata.TMDBID_SET) > 0) {
-                tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDBID_SET)));
+              if (md.getIntegerValue(MediaMetadata.TMDB_SET) > 0) {
+                tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDB_SET)));
                 break;
               }
             }

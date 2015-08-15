@@ -190,9 +190,9 @@ public class MovieChooserModel extends AbstractModelObject {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
+    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
     try {
-      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDBID))));
+      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
     }
     catch (Exception e) {
       options.setTmdbId(0);
@@ -223,9 +223,9 @@ public class MovieChooserModel extends AbstractModelObject {
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
+    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
     try {
-      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDBID))));
+      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
     }
     catch (Exception e) {
       options.setTmdbId(0);
