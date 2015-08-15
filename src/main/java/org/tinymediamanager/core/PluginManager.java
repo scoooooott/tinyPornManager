@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
@@ -53,11 +54,17 @@ public class PluginManager {
       long start = System.currentTimeMillis();
       LOGGER.debug("loading classpath plugins...");
       // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
-      // pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
-      // since all plugins are loaded externally, just add the remaining TMM impl here direct
-      pm.addPluginsFrom(ClassURI.PLUGIN(HDTrailersNet.class));
-      pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
-      pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
+
+      if (ReleaseInfo.getVersion().equals("SVN")) {
+        // since we do not have them as dependencies, load all from classpath (we have dependent projects)
+        pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+      }
+      else {
+        // since all plugins are loaded externally, just add the remaining TMM impl here direct
+        pm.addPluginsFrom(ClassURI.PLUGIN(HDTrailersNet.class));
+        pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
+        pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
+      }
       long end = System.currentTimeMillis();
       LOGGER.debug("Done loading classpath plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
 
@@ -80,7 +87,7 @@ public class PluginManager {
     Class c = IMediaProvider.class;
     switch (scraper.getType()) {
       case MOVIE:
-        c = MediaScraper.class;
+        c = IMovieMetadataProvider.class;
         break;
       case TV_SHOW:
         c = ITvShowMetadataProvider.class;
