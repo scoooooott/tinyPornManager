@@ -202,8 +202,7 @@
 							<mainClass>org.tinymediamanager.TinyMediaManager</mainClass>
 						</manifest>
 						<manifestEntries>
-							<SplashScreen-Image>resources/splashscreen.png</SplashScreen-Image><!-- 
-								TODO: -->
+							<SplashScreen-Image>splashscreen.png</SplashScreen-Image>
 							<Build-Nr>${buildNumber}</Build-Nr>
 							<Build-Date>${timestamp}</Build-Date>
 							<Build-By>${user.name}</Build-By>
