@@ -275,7 +275,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     // populate metadata
     md.setId(providerInfo.getId(), show.getId());
     md.storeMetadata(MediaMetadata.TITLE, show.getSeriesName());
-    md.setId(MediaMetadata.IMDBID, show.getImdbId());
+    md.setId(MediaMetadata.IMDB, show.getImdbId());
     md.storeMetadata(MediaMetadata.PLOT, show.getOverview());
 
     try {
