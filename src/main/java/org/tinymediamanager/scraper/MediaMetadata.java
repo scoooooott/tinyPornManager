@@ -31,55 +31,57 @@ import java.util.List;
  * 
  * @author Manuel Laggner
  * @since 1.0
- * 
  */
 public class MediaMetadata {
-  public static final String      PROVIDER_ID         = "providerId";
-  public static final String      IMDBID              = "imdbId";
-  public static final String      TMDBID              = "tmdbId";
-  public static final String      TVDBID              = "tvdbId";
-  public static final String      TMDBID_SET          = "tmdbIdSet";
-  public static final String      COLLECTION_NAME     = "collectionName";
-  public static final String      TITLE               = "title";
-  public static final String      ORIGINAL_TITLE      = "originalTitle";
-  public static final String      PLOT                = "plot";
-  public static final String      RATING              = "rating";
-  public static final String      VOTE_COUNT          = "voteCount";
-  public static final String      TOP_250             = "top250";
-  public static final String      RUNTIME             = "runtime";
-  public static final String      TAGLINE             = "tagline";
-  public static final String      PRODUCTION_COMPANY  = "productionCompany";
-  public static final String      YEAR                = "year";
-  public static final String      RELEASE_DATE        = "releaseDate";
-  public static final String      SPOKEN_LANGUAGES    = "spokenLanguages";
-  public static final String      COUNTRY             = "country";
-  public static final String      POSTER_URL          = "posterUrl";
-  public static final String      BACKGROUND_URL      = "backgroundUrl";
-  public static final String      STATUS              = "status";
+  public static final String PROVIDER_ID = "providerId";
+
+  public static final String COLLECTION_NAME    = "collectionName";
+  public static final String TITLE              = "title";
+  public static final String ORIGINAL_TITLE     = "originalTitle";
+  public static final String PLOT               = "plot";
+  public static final String RATING             = "rating";
+  public static final String VOTE_COUNT         = "voteCount";
+  public static final String TOP_250            = "top250";
+  public static final String RUNTIME            = "runtime";
+  public static final String TAGLINE            = "tagline";
+  public static final String PRODUCTION_COMPANY = "productionCompany";
+  public static final String YEAR               = "year";
+  public static final String RELEASE_DATE       = "releaseDate";
+  public static final String SPOKEN_LANGUAGES   = "spokenLanguages";
+  public static final String COUNTRY            = "country";
+  public static final String POSTER_URL         = "posterUrl";
+  public static final String BACKGROUND_URL     = "backgroundUrl";
+  public static final String STATUS             = "status";
 
   // TV
-  public static final String      EPISODE_NR          = "episodeNr";
-  public static final String      SEASON_NR           = "seasonNr";
-  public static final String      EPISODE_NR_DVD      = "dvdEpisodeNr";
-  public static final String      SEASON_NR_DVD       = "dvdSeasonNr";
-  public static final String      EPISODE_NR_COMBINED = "combinedEpisodeNr";
-  public static final String      SEASON_NR_COMBINED  = "combinedSeasonNr";
-  public static final String      ABSOLUTE_NR         = "absoluteNr";
+  public static final String EPISODE_NR          = "episodeNr";
+  public static final String SEASON_NR           = "seasonNr";
+  public static final String EPISODE_NR_DVD      = "dvdEpisodeNr";
+  public static final String SEASON_NR_DVD       = "dvdSeasonNr";
+  public static final String EPISODE_NR_COMBINED = "combinedEpisodeNr";
+  public static final String SEASON_NR_COMBINED  = "combinedSeasonNr";
+  public static final String ABSOLUTE_NR         = "absoluteNr";
 
-  public static Date              INITIAL_DATE        = new Date(0);
+  // some well known ids
+  public static final String IMDB     = "imdb";
+  public static final String TMDB     = "tmdb";
+  public static final String TVDB     = "tvdb";
+  public static final String TMDB_SET = "tmdbSet";
 
-  private List<MediaCastMember>   castMembers         = new ArrayList<MediaCastMember>();
-  private List<MediaArtwork>      fanart              = new ArrayList<MediaArtwork>();
-  private List<MediaGenres>       genres              = new ArrayList<MediaGenres>();
-  private List<Certification>     certifications      = new ArrayList<Certification>();
-  private List<MediaTrailer>      trailers            = new ArrayList<MediaTrailer>();
-  private List<MediaMetadata>     subItems            = new ArrayList<MediaMetadata>();
+  public static Date INITIAL_DATE = new Date(0);
+
+  private List<MediaCastMember> castMembers    = new ArrayList<MediaCastMember>();
+  private List<MediaArtwork>    fanart         = new ArrayList<MediaArtwork>();
+  private List<MediaGenres>     genres         = new ArrayList<MediaGenres>();
+  private List<Certification>   certifications = new ArrayList<Certification>();
+  private List<MediaTrailer>    trailers       = new ArrayList<MediaTrailer>();
+  private List<MediaMetadata>   subItems       = new ArrayList<MediaMetadata>();
 
   /**
    * new infrastructure
    */
-  private HashMap<String, Object> ids                 = new HashMap<String, Object>();
-  private HashMap<String, Object> metadata            = new HashMap<String, Object>();
+  private HashMap<String, Object> ids      = new HashMap<String, Object>();
+  private HashMap<String, Object> metadata = new HashMap<String, Object>();
 
   /**
    * Instantiates a new media metadata for the given provider.
@@ -240,7 +242,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Date value for a given key. Date are passed right thru, whilst other type are returned with an initial value
+   * Gets the Date value for a given key. Date are passed right thru, whilst other type are returned with an initial
+   * value
    * 
    * @param key
    *          the key

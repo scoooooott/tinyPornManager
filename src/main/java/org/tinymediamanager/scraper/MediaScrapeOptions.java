@@ -65,9 +65,10 @@ public class MediaScrapeOptions {
   }
 
   public String getImdbId() {
-    Object obj = ids.get(MediaMetadata.IMDBID);
+    Object obj = ids.get(MediaMetadata.IMDB);
     if (obj == null) {
-      obj = ids.get("imdb");
+      // legacy
+      obj = ids.get("imdbId");
       if (obj == null) {
         return "";
       }
@@ -78,13 +79,14 @@ public class MediaScrapeOptions {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = Integer.parseInt(ids.get(MediaMetadata.TMDBID));
+      id = Integer.parseInt(ids.get(MediaMetadata.TMDB));
     }
     catch (Exception ignored) {
     }
     if (id == 0) {
       try {
-        id = Integer.parseInt(ids.get("tmdb"));
+        // legacy
+        id = Integer.parseInt(ids.get("tmdbId"));
       }
       catch (Exception ignored) {
       }
@@ -93,11 +95,11 @@ public class MediaScrapeOptions {
   }
 
   public void setImdbId(String imdbId) {
-    ids.put(MediaMetadata.IMDBID, imdbId);
+    ids.put(MediaMetadata.IMDB, imdbId);
   }
 
   public void setTmdbId(int tmdbId) {
-    ids.put(MediaMetadata.TMDBID, String.valueOf(tmdbId));
+    ids.put(MediaMetadata.TMDB, String.valueOf(tmdbId));
   }
 
   public MediaArtworkType getArtworkType() {
