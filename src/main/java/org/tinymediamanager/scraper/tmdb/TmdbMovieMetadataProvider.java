@@ -457,7 +457,7 @@ class TmdbMovieMetadataProvider {
   private MediaMetadata morphMovieToMediaMetadata(Movie movie, MediaScrapeOptions options) {
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
-    md.setId(MediaMetadata.TMDBID, movie.id);
+    md.setId(TmdbMetadataProvider.providerInfo.getId(), movie.id);
     md.storeMetadata(MediaMetadata.TITLE, movie.title);
     md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, movie.original_title);
     md.storeMetadata(MediaMetadata.PLOT, movie.overview);
@@ -487,7 +487,7 @@ class TmdbMovieMetadataProvider {
     md.storeMetadata(MediaMetadata.COUNTRY, countries);
 
     if (MetadataUtil.isValidImdbId(movie.imdb_id)) {
-      md.setId(MediaMetadata.IMDBID, movie.imdb_id);
+      md.setId(MediaMetadata.IMDB, movie.imdb_id);
     }
 
     // production companies
@@ -572,7 +572,7 @@ class TmdbMovieMetadataProvider {
     }
 
     if (movie.belongs_to_collection != null) {
-      md.storeMetadata(MediaMetadata.TMDBID_SET, movie.belongs_to_collection.id);
+      md.storeMetadata(MediaMetadata.TMDB_SET, movie.belongs_to_collection.id);
       md.storeMetadata(MediaMetadata.COLLECTION_NAME, movie.belongs_to_collection.name);
     }
 

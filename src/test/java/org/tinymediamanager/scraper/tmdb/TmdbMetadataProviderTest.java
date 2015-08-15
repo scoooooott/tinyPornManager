@@ -180,7 +180,7 @@ public class TmdbMetadataProviderTest {
           "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard -- with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths -- and about the villain who's to blame.",
           md.getStringValue(MediaMetadata.PLOT));
       assertEquals("Let the Magic Begin.", md.getStringValue(MediaMetadata.TAGLINE));
-      assertEquals(1241, (int) md.getIntegerValue(MediaMetadata.TMDBID_SET));
+      assertEquals(1241, (int) md.getIntegerValue(MediaMetadata.TMDB_SET));
       assertEquals("Harry Potter Collection", md.getStringValue(MediaMetadata.COLLECTION_NAME));
 
       assertNotNull(md.getCastMembers(CastType.ACTOR));
@@ -296,7 +296,7 @@ public class TmdbMetadataProviderTest {
       assertNotNull(md.getSubItems());
       assertEquals(8, md.getSubItems().size());
       assertEquals("Harry Potter and the Philosopher's Stone", md.getSubItems().get(0).getStringValue(MediaMetadata.TITLE));
-      assertEquals(671, md.getSubItems().get(0).getId(MediaMetadata.TMDBID));
+      assertEquals(671, md.getSubItems().get(0).getId(MediaMetadata.TMDB));
     }
     catch (Exception e) {
       fail(e.getMessage());

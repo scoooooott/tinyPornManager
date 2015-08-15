@@ -145,7 +145,7 @@ class TmdbMovieSetMetadataProvider {
       }
     }
 
-    md.setId(MediaMetadata.TMDBID_SET, collection.id);
+    md.setId(MediaMetadata.TMDB_SET, collection.id);
     md.storeMetadata(MediaMetadata.TITLE, collection.name);
     md.storeMetadata(MediaMetadata.PLOT, collection.overview);
     md.storeMetadata(MediaMetadata.POSTER_URL,
@@ -156,7 +156,7 @@ class TmdbMovieSetMetadataProvider {
     // add all movies belonging to this movie set
     for (Part part : ListUtils.nullSafe(collection.parts)) {
       MediaMetadata mdSubItem = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
-      mdSubItem.setId(MediaMetadata.TMDBID, part.id);
+      mdSubItem.setId(TmdbMetadataProvider.providerInfo.getId(), part.id);
       mdSubItem.storeMetadata(MediaMetadata.TITLE, part.title);
       mdSubItem.storeMetadata(MediaMetadata.POSTER_URL,
           TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
