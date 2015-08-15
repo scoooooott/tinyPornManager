@@ -52,10 +52,10 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
 
   @Init
   public void init() {
-      // preload scrapers
-      new KodiUtil();
-      getPluginsForType(MediaType.MOVIE);
-      getPluginsForType(MediaType.TV_SHOW);
+    // preload scrapers
+    new KodiUtil();
+    // getPluginsForType(MediaType.MOVIE);
+    // getPluginsForType(MediaType.TV_SHOW);
   }
 
   /**
@@ -69,17 +69,22 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
     List<KodiScraper> scrapers = KodiUtil.scrapers;
     for (KodiScraper scraper : scrapers) {
       if (type == scraper.type) {
-        switch (type) {
-          case MOVIE:
-            metadataProviders.add(new KodiMovieMetadataProvider(scraper));
-            break;
+        try {
+          switch (type) {
+            case MOVIE:
+              metadataProviders.add(new KodiMovieMetadataProvider(scraper));
+              break;
 
-          case TV_SHOW:
-            // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
-            break;
+            case TV_SHOW:
+              // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
+              break;
 
-          default:
-            break;
+            default:
+              break;
+          }
+        }
+        catch (Exception e) {
+          LOGGER.error("could not load scraper " + scraper.id, e);
         }
       }
     }
