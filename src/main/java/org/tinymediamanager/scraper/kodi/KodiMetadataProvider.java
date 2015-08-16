@@ -16,6 +16,8 @@
 package org.tinymediamanager.scraper.kodi;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -63,6 +65,11 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
    */
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
+    if(type == null){
+      // unsupported type
+      return Collections.emptyList();
+    }
+    
     LOGGER.debug("get Kodi scrapers for " + type);
     List<IMediaProvider> metadataProviders = new ArrayList<>();
 
