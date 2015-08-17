@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.tinymediamanager.scraper.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -46,14 +46,13 @@ import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
 /**
- * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for
- * the site themoviedb.org
+ * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
  *
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
-    ITvShowArtworkProvider, IMovieTrailerProvider {
+public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider,
+    IMovieArtworkProvider, ITvShowArtworkProvider, IMovieTrailerProvider {
   static Tmdb              api;
   static MediaProviderInfo providerInfo = createMediaProviderInfo();
   static Configuration     configuration;
@@ -172,6 +171,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetPr
 
     switch (options.getType()) {
       case MOVIE:
+        return new TmdbTrailerProvider(api).getTrailers(options);
 
       default:
         throw new Exception("unsupported media type");
