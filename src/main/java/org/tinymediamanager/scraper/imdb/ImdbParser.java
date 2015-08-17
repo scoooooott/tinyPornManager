@@ -181,8 +181,8 @@ public abstract class ImdbParser {
           Elements imgs = td.getElementsByTag("img");
           for (Element img : imgs) {
             posterUrl = img.attr("src");
-            posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
-            posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
+            posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX200_");
+            posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY200_");
             posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
           }
         }
@@ -271,8 +271,8 @@ public abstract class ImdbParser {
         Elements imgs = element.getElementsByTag("img");
         for (Element img : imgs) {
           posterUrl = img.attr("src");
-          posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
-          posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
+          posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX200_");
+          posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY200_");
           posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
         }
       }
@@ -436,8 +436,8 @@ public abstract class ImdbParser {
     Element poster = doc.getElementById("primary-poster");
     if (poster != null) {
       String posterUrl = poster.attr("src");
-      posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
-      posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
+      posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX600_");
+      posterUrl = posterUrl.replaceAll("UY[0-9]{2,4}_", "UY600_");
       processMediaArt(md, MediaArtwork.MediaArtworkType.POSTER, posterUrl);
     }
 
