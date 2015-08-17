@@ -54,15 +54,16 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -302,9 +303,10 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       try {
-        List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+        List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
         if (sets != null && sets.size() > 0) {
-          IMovieSetProvider mp = sets.get(0); // just get first
+          MediaScraper first = sets.get(0); // just get first
+          IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET);
           options.set(SearchParam.TITLE, searchTerm);

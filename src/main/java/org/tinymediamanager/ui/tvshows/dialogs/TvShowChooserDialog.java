@@ -60,7 +60,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -98,10 +97,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID      = 2371518113606870230L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
-  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final long           serialVersionUID = 2371518113606870230L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
   private TvShowList                  tvShowList            = TvShowList.getInstance();
   private TvShow                      tvShowToScrape;
@@ -112,18 +113,18 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private boolean                     continueQueue         = true;
 
   /** UI components */
-  private final JPanel                contentPanel          = new JPanel();
-  private JTextField                  textFieldSearchString;
-  private MediaScraperComboBox        cbScraper;
-  private JComboBox                   cbLanguage;
-  private JTable                      table;
-  private JTextArea                   lblTvShowName;
-  private JTextPane                   tpTvShowOverview;
-  private ImageLabel                  lblTvShowPoster;
-  private JLabel                      lblProgressAction;
-  private JProgressBar                progressBar;
-  private JButton                     okButton;
-  private JLabel                      lblPath;
+  private final JPanel         contentPanel = new JPanel();
+  private JTextField           textFieldSearchString;
+  private MediaScraperComboBox cbScraper;
+  private JComboBox            cbLanguage;
+  private JTable               table;
+  private JTextArea            lblTvShowName;
+  private JTextPane            tpTvShowOverview;
+  private ImageLabel           lblTvShowPoster;
+  private JLabel               lblProgressAction;
+  private JProgressBar         progressBar;
+  private JButton              okButton;
+  private JLabel               lblPath;
 
   /**
    * Instantiates a new tv show chooser dialog.
@@ -158,11 +159,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       lblPath = new JLabel("");
       contentPanel.add(lblPath, "2, 2");
@@ -170,10 +171,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "2, 4, fill, fill");
-      panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      panelSearchField.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("right:default"), },
+          new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -266,9 +268,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("240px:grow"), }));
+        panelSearchDetail.setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"), FormFactory.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+                RowSpec.decode("240px:grow"), }));
         {
           lblTvShowName = new JTextArea("");
           lblTvShowName.setLineWrap(true);
@@ -308,9 +312,10 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       JPanel bottomPane = new JPanel();
       contentPanel.add(bottomPane, "2, 11");
       {
-        bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+        bottomPane.setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2");
@@ -604,8 +609,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
       MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
-      PluginManager pm = PluginManager.getInstance();
-      metadataProvider = (ITvShowMetadataProvider) pm.getPlugin(selectedScraper);
+      metadataProvider = (ITvShowMetadataProvider) selectedScraper.getMediaProvider();
       searchTvShow(textFieldSearchString.getText());
     }
   }

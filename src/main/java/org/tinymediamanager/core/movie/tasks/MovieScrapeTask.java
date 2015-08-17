@@ -47,7 +47,6 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -142,7 +141,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         MovieScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
         MediaScraper mediaMetadataScraper = options.getMetadataScraper();
         List<MediaScraper> artworkScrapers = options.getArtworkScrapers();
-        List<IMovieTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
+        List<MediaScraper> trailerScrapers = options.getTrailerScrapers();
 
         // search movie
         MediaSearchResult result1 = null;
@@ -195,7 +194,7 @@ public class MovieScrapeTask extends TmmThreadPool {
 
               // scrape trailer if wanted
               if (scraperMetadataConfig.isTrailer()) {
-                movie.setTrailers(getTrailers(movie, md, trailerProviders));
+                movie.setTrailers(getTrailers(movie, md, trailerScrapers));
               }
             }
           }
@@ -274,7 +273,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       return artwork;
     }
 
-    private List<MovieTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMovieTrailerProvider> trailerProviders) {
+    private List<MovieTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<MediaScraper> trailerScrapers) {
       List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
       // add local trailers!
@@ -298,8 +297,9 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
       // scrape trailers
-      for (IMovieTrailerProvider trailerProvider : trailerProviders) {
+      for (MediaScraper trailerScraper : trailerScrapers) {
         try {
+          IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
           List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
           for (MediaTrailer mediaTrailer : foundTrailers) {
             MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);

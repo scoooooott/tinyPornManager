@@ -50,17 +50,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -585,9 +585,10 @@ public class MovieSetEditorDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       // search for a tmdbId
       try {
-        List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+        List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
         if (sets != null && sets.size() > 0) {
-          IMovieSetProvider mp = sets.get(0); // just get first
+          MediaScraper first = sets.get(0); // just get first
+          IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           for (Movie movie : moviesInSet) {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);

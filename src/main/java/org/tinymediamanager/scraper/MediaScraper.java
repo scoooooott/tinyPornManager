@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 - 2015 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper;
 
 import java.net.URL;
@@ -115,19 +130,22 @@ public class MediaScraper {
     ArrayList<IMediaProvider> plugins = new ArrayList<IMediaProvider>();
     switch (type) {
       case MOVIE:
-        plugins.addAll(PluginManager.getInstance().getMoviePlugins());
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class));
         break;
       case TV_SHOW:
-        plugins.addAll(PluginManager.getInstance().getTvShowPlugins());
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(ITvShowMetadataProvider.class));
+        break;
+      case MOVIE_SET:
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieSetMetadataProvider.class));
         break;
       case MOVIE_ARTWORK:
-        plugins.addAll(PluginManager.getInstance().getMovieArtworkPlugins());
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieArtworkProvider.class));
         break;
       case TV_SHOW_ARTWORK:
-        plugins.addAll(PluginManager.getInstance().getTvShowArtworkPlugins());
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(ITvShowArtworkProvider.class));
         break;
-      case TRAILER:
-        plugins.addAll(PluginManager.getInstance().getTrailerPlugins());
+      case MOVIE_TRAILER:
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieTrailerProvider.class));
         break;
       case SUBTITLE:
         plugins.addAll(PluginManager.getInstance().getSubtitlePlugins());
@@ -143,7 +161,7 @@ public class MediaScraper {
     }
 
     // Kodi scrapers
-    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getKodiPlugins()) {
+    for (IKodiMetadataProvider kodi : PluginManager.getInstance().getPluginsForInterface(IKodiMetadataProvider.class)) {
       try {
         for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
           MediaProviderInfo pi = p.getProviderInfo();

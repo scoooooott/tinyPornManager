@@ -30,8 +30,8 @@ public class MovieSearchAndScrapeOptions {
   private MovieScraperMetadataConfig scraperMetadataConfig;
   private MediaScraper               metadataScraper;
 
-  private List<MediaScraper>         artworkScrapers = new ArrayList<>();
-  private List<MovieTrailerScrapers> trailerScrapers = new ArrayList<MovieTrailerScrapers>();
+  private List<MediaScraper> artworkScrapers = new ArrayList<>();
+  private List<MediaScraper> trailerScrapers = new ArrayList<>();
 
   /**
    * Instantiates a new movie search and scrape config.
@@ -51,17 +51,7 @@ public class MovieSearchAndScrapeOptions {
     artworkScrapers.addAll(MovieList.getInstance().getDefaultArtworkScrapers());
 
     // trailer
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
-      trailerScrapers.add(MovieTrailerScrapers.TMDB);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperHdTrailers()) {
-      trailerScrapers.add(MovieTrailerScrapers.HDTRAILERS);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperOfdb()) {
-      trailerScrapers.add(MovieTrailerScrapers.OFDB);
-    }
+    trailerScrapers.addAll(MovieList.getInstance().getDefaultTrailerScrapers());
   }
 
   /**
@@ -96,7 +86,7 @@ public class MovieSearchAndScrapeOptions {
    * 
    * @return the trailer scrapers
    */
-  public List<MovieTrailerScrapers> getTrailerScrapers() {
+  public List<MediaScraper> getTrailerScrapers() {
     return trailerScrapers;
   }
 
@@ -136,7 +126,7 @@ public class MovieSearchAndScrapeOptions {
    * @param trailerScraper
    *          the trailer scraper
    */
-  public void addTrailerScraper(MovieTrailerScrapers trailerScraper) {
+  public void addTrailerScraper(MediaScraper trailerScraper) {
     this.trailerScrapers.add(trailerScraper);
   }
 }

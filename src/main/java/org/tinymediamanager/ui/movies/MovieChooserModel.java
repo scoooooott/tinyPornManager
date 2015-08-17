@@ -54,9 +54,9 @@ public class MovieChooserModel extends AbstractModelObject {
   private static final Logger           LOGGER      = LoggerFactory.getLogger(MovieChooserModel.class);
   public static final MovieChooserModel emptyResult = new MovieChooserModel();
 
-  private MediaScraper                metadataProvider = null;
-  private List<MediaScraper>          artworkScrapers  = null;
-  private List<IMovieTrailerProvider> trailerProviders = null;
+  private MediaScraper       metadataProvider = null;
+  private List<MediaScraper> artworkScrapers  = null;
+  private List<MediaScraper> trailerScrapers  = null;
 
   private MediaLanguages    language     = null;
   private MediaSearchResult result       = null;
@@ -69,11 +69,11 @@ public class MovieChooserModel extends AbstractModelObject {
   private String            tagline      = "";
   private boolean           scraped      = false;
 
-  public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<IMovieTrailerProvider> trailerProviders,
+  public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers,
       MediaSearchResult result, MediaLanguages language) {
     this.metadataProvider = metadataProvider;
     this.artworkScrapers = artworkScrapers;
-    this.trailerProviders = trailerProviders;
+    this.trailerScrapers = trailerScrapers;
     this.result = result;
     this.language = language;
 
@@ -235,8 +235,9 @@ public class MovieChooserModel extends AbstractModelObject {
     options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
     // scrape trailers
-    for (IMovieTrailerProvider trailerProvider : trailerProviders) {
+    for (MediaScraper trailerScraper : trailerScrapers) {
       try {
+        IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
         List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
         for (MediaTrailer mediaTrailer : foundTrailers) {
           MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);

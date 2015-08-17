@@ -31,7 +31,9 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class MovieSettingsContainerPanel extends JPanel {
   private static final long           serialVersionUID = -1191910643362891059L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieSettingsContainerPanel() {
@@ -54,6 +56,11 @@ public class MovieSettingsContainerPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(new MovieImageSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.images"), null, scrollPane, null); //$NON-NLS-1$
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(new MovieTrailerSettingsPanel());
+        tabbedPanePages.addTab(BUNDLE.getString("Settings.trailer"), null, scrollPane, null); //$NON-NLS-1$
       }
       {
         JScrollPane scrollPane = new JScrollPane();

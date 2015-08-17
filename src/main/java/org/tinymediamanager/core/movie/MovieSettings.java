@@ -64,10 +64,8 @@ public class MovieSettings extends AbstractModelObject {
   private final static String MOVIE_RENAMER_MOVIESET_SINGLE_MOVIE  = "movieRenamerMoviesetSingleMovie";
   private final static String MOVIE_SCRAPER                        = "movieScraper";
   private final static String MOVIE_ARTWORK_SCRAPERS               = "movieArtworkScrapers";
+  private final static String MOVIE_TRAILER_SCRAPERS               = "movieTrailerScrapers";
   private final static String SCRAPE_BEST_IMAGE                    = "scrapeBestImage";
-  private final static String TRAILER_SCRAPER_TMDB                 = "trailerScraperTmdb";
-  private final static String TRAILER_SCRAPER_HD_TRAILERS          = "trailerScraperHdTrailers";
-  private final static String TRAILER_SCRAPER_OFDB                 = "trailerScraperOfdb";
   private final static String WRITE_ACTOR_IMAGES                   = "writeActorImages";
   private final static String IMDB_SCRAPE_FOREIGN_LANGU            = "imdbScrapeForeignLanguage";
   private final static String SCRAPER_LANGU                        = "scraperLanguage";
@@ -112,6 +110,10 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String> movieArtworkScrapers = ObservableCollections.observableList(new ArrayList<String>());
 
+  @XmlElementWrapper(name = MOVIE_TRAILER_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String> movieTrailerScrapers = ObservableCollections.observableList(new ArrayList<String>());
+
   private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
   private String              movieRenamerPathname                     = "$T ($Y)";
   private String              movieRenamerFilename                     = "$T ($Y) $V $A";
@@ -138,9 +140,6 @@ public class MovieSettings extends AbstractModelObject {
   private boolean             imageClearart                            = false;
   private boolean             imageDiscart                             = false;
   private boolean             imageThumb                               = false;
-  private boolean             trailerScraperTmdb                       = true;
-  private boolean             trailerScraperHdTrailers                 = true;
-  private boolean             trailerScraperOfdb                       = true;
   private boolean             writeActorImages                         = false;
   private MediaLanguages      scraperLanguage                          = MediaLanguages.en;
   private CountryCode         certificationCountry                     = CountryCode.US;
@@ -468,34 +467,22 @@ public class MovieSettings extends AbstractModelObject {
     firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
   }
 
-  public boolean isTrailerScraperTmdb() {
-    return trailerScraperTmdb;
+  public void addMovieTrailerScraper(String newValue) {
+    if (!movieTrailerScrapers.contains(newValue)) {
+      movieTrailerScrapers.add(newValue);
+      firePropertyChange(MOVIE_TRAILER_SCRAPERS, null, movieTrailerScrapers);
+    }
   }
 
-  public boolean isTrailerScraperHdTrailers() {
-    return trailerScraperHdTrailers;
+  public void removeMovieTrailerScraper(String newValue) {
+    if (movieTrailerScrapers.contains(newValue)) {
+      movieTrailerScrapers.remove(newValue);
+      firePropertyChange(MOVIE_TRAILER_SCRAPERS, null, movieTrailerScrapers);
+    }
   }
 
-  public void setTrailerScraperTmdb(boolean newValue) {
-    boolean oldValue = this.trailerScraperTmdb;
-    this.trailerScraperTmdb = newValue;
-    firePropertyChange(TRAILER_SCRAPER_TMDB, oldValue, newValue);
-  }
-
-  public void setTrailerScraperHdTrailers(boolean newValue) {
-    boolean oldValue = this.trailerScraperHdTrailers;
-    this.trailerScraperHdTrailers = newValue;
-    firePropertyChange(TRAILER_SCRAPER_HD_TRAILERS, oldValue, newValue);
-  }
-
-  public boolean isTrailerScraperOfdb() {
-    return trailerScraperOfdb;
-  }
-
-  public void setTrailerScraperOfdb(boolean newValue) {
-    boolean oldValue = this.trailerScraperOfdb;
-    this.trailerScraperOfdb = newValue;
-    firePropertyChange(TRAILER_SCRAPER_OFDB, oldValue, newValue);
+  public List<String> getMovieTrailerScrapers() {
+    return movieTrailerScrapers;
   }
 
   public boolean isWriteActorImages() {

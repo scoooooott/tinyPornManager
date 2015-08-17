@@ -38,18 +38,18 @@ public class MovieUIModule implements ITmmUIModule {
   private final static String         ID       = "movies";
   private static MovieUIModule        instance = null;
 
-  private MoviePanel                  listPanel;
-  private JPanel                      detailPanel;
-  private final JPanel                settingsPanel;
+  private MoviePanel listPanel;
+  private JPanel     detailPanel;
+  private JPanel     settingsPanel;
 
-  private final MovieSelectionModel   selectionModel;
+  private final MovieSelectionModel selectionModel;
 
-  private Action                      searchAction;
-  private Action                      editAction;
-  private Action                      updateAction;
+  private Action searchAction;
+  private Action editAction;
+  private Action updateAction;
 
-  private JPopupMenu                  searchPopupMenu;
-  private JPopupMenu                  editPopupMenu;
+  private JPopupMenu searchPopupMenu;
+  private JPopupMenu editPopupMenu;
 
   private MovieUIModule() {
     // this will be used in v3
@@ -60,7 +60,8 @@ public class MovieUIModule implements ITmmUIModule {
     // createActions();
     // createPopupMenu();
 
-    settingsPanel = new MovieSettingsContainerPanel();
+    // latzy loading!
+    // settingsPanel = new MovieSettingsContainerPanel();
     selectionModel = MainWindow.getActiveInstance().getMoviePanel().movieSelectionModel;
   }
 
@@ -114,7 +115,7 @@ public class MovieUIModule implements ITmmUIModule {
 
   @Override
   public String getTabTitle() {
-    return BUNDLE.getString("tmm.movies"); //$NON-NLS-1$)
+    return BUNDLE.getString("tmm.movies"); //$NON-NLS-1$ )
   }
 
   @Override
@@ -164,6 +165,9 @@ public class MovieUIModule implements ITmmUIModule {
 
   @Override
   public JPanel getSettingsPanel() {
+    if (settingsPanel == null) {
+      settingsPanel = new MovieSettingsContainerPanel();
+    }
     return settingsPanel;
   }
 }

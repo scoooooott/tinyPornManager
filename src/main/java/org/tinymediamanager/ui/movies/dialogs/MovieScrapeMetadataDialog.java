@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -37,7 +36,6 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
-import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -68,9 +66,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
   private MediaScraperComboBox        cbMetadataScraper;
   private CheckComboBox               cbArtworkScraper;
-  private JCheckBox                   chckbxTheMovieDb_1;
-  private JCheckBox                   chckbxHdtrailernet;
-  private JCheckBox                   chckbxOfdbde;
+  private CheckComboBox               cbTrailerScraper;
   private boolean                     startScrape                = false;
 
   /**
@@ -137,14 +133,11 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
     panelScraper.add(lblTrailerScraper, "2, 6, right, default");
 
-    chckbxTheMovieDb_1 = new JCheckBox("The Movie DB");
-    panelScraper.add(chckbxTheMovieDb_1, "4, 6");
-
-    chckbxHdtrailernet = new JCheckBox("HD-Trailer.net");
-    panelScraper.add(chckbxHdtrailernet, "6, 6");
-
-    chckbxOfdbde = new JCheckBox("OFDb.de");
-    panelScraper.add(chckbxOfdbde, "8, 6");
+    cbTrailerScraper = new MediaScraperCheckComboBox();
+    cbTrailerScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
+    cbTrailerScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
+    cbTrailerScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    panelScraper.add(cbTrailerScraper, "4, 6, 5, 1");
 
     JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
     panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
@@ -193,17 +186,14 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       }
     }
 
-    // trailer provider
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
-      chckbxTheMovieDb_1.setSelected(true);
-    }
+    // trailer scraper
+    model = cbTrailerScraper.getModel();
+    for (MediaScraper trailerScraper : MovieList.getInstance().getAvailableTrailerScrapers()) {
+      model.addElement(trailerScraper);
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperHdTrailers()) {
-      chckbxHdtrailernet.setSelected(true);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperOfdb()) {
-      chckbxOfdbde.setSelected(true);
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers().contains(trailerScraper.getId())) {
+        model.addCheck(trailerScraper);
+      }
     }
   }
 
@@ -224,17 +214,12 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       }
     }
 
-    // tailer provider
-    if (chckbxTheMovieDb_1.isSelected()) {
-      movieSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.TMDB);
-    }
-
-    if (chckbxHdtrailernet.isSelected()) {
-      movieSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.HDTRAILERS);
-    }
-
-    if (chckbxOfdbde.isSelected()) {
-      movieSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.OFDB);
+    // tailer scraper
+    model = cbTrailerScraper.getModel();
+    for (Object checked : model.getCheckeds()) {
+      if (checked != null && checked instanceof MediaScraper) {
+        movieSearchAndScrapeConfig.addTrailerScraper((MediaScraper) checked);
+      }
     }
 
     return movieSearchAndScrapeConfig;

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 - 2015 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.core;
 
 import java.io.File;
@@ -7,30 +22,24 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.scraper.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.IMovieSetProvider;
-import org.tinymediamanager.scraper.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
 import org.tinymediamanager.scraper.thesubdb.TheSubDbMetadataProvider;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
-import net.xeoh.plugins.base.options.GetPluginOption;
 import net.xeoh.plugins.base.options.addpluginsfrom.OptionReportAfter;
-import net.xeoh.plugins.base.options.getplugin.OptionPluginSelector;
-import net.xeoh.plugins.base.options.getplugin.PluginSelector;
 import net.xeoh.plugins.base.util.JSPFProperties;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 import net.xeoh.plugins.base.util.uri.ClassURI;
 
+/**
+ * This class manages loading of external plugins. It is intended to be accessed via TmmModuleManager to ensure controlled access (i.e. caching)
+ * 
+ * @author Manuel Laggner
+ */
 public class PluginManager {
   private final static Logger                        LOGGER = LoggerFactory.getLogger(PluginManager.class);
   private static net.xeoh.plugins.base.PluginManager pm;
@@ -83,125 +92,21 @@ public class PluginManager {
     return instance;
   }
 
-  private Class ScraperToImplClass(MediaScraper scraper) {
-    Class c = IMediaProvider.class;
-    switch (scraper.getType()) {
-      case MOVIE:
-        c = IMovieMetadataProvider.class;
-        break;
-      case TV_SHOW:
-        c = ITvShowMetadataProvider.class;
-        break;
-      case MOVIE_ARTWORK:
-        c = IMovieArtworkProvider.class;
-        break;
-      case TV_SHOW_ARTWORK:
-        c = ITvShowArtworkProvider.class;
-        break;
-      case TRAILER:
-        c = IMovieTrailerProvider.class;
-        break;
-      case SUBTITLE:
-        c = IMediaSubtitleProvider.class;
-        break;
-      case ALBUM:
-      case ARTIST:
-      case LIBRARY:
-      case MUSICVIDEO:
-      default:
-        LOGGER.warn("No implementing interface for scraper: " + scraper);
-        break;
-    }
-    return c;
-  }
-
   /**
-   * Gets the plugin from a MediaScraper
+   * get all plugins for the desired interface
    * 
-   * @param scraper
-   *          the TMM scraper
-   * @return Plugin
+   * @param iface
+   *          the interface to search for plugins
+   * @return all found plugins
    */
-  public Plugin getPlugin(final MediaScraper scraper) {
-    Class paramClass = ScraperToImplClass(scraper);
-    // return pm.getPlugin(paramClass, new OptionCapabilities("id:" + scraper.getId()));
-    PluginSelector<Plugin> selector = new PluginSelector<Plugin>() {
-      @Override
-      public boolean selectPlugin(Plugin paramT) {
-        if (paramT instanceof IMediaProvider && ((IMediaProvider) paramT).getProviderInfo().getId().equals(scraper.getId())) {
-          return true;
-        }
-        return false;
-      }
-    };
-    return pm.getPlugin(paramClass, new OptionPluginSelector<Plugin>(selector));
-  }
+  public <T extends IMediaProvider> List<T> getPluginsForInterface(Class<T> iface) {
+    List<T> plugins = new ArrayList<>();
 
-  /**
-   * Gets the plugin implementing a desired interface and capabilities
-   * 
-   * @param paramClass
-   *          plugin implementing the TMM interface IMedia...
-   * @param paramVarArgs
-   *          String to fetch desired capabilities like "id:tmdb.org"
-   * @return Plugin
-   */
-  public Plugin getPlugin(Class paramClass, GetPluginOption... paramVarArgs) {
-    return pm.getPlugin(paramClass, paramVarArgs);
-  }
-
-  /**
-   * All plugins implementing the IMediaProvider
-   */
-  public List<IMediaProvider> getPlugins() {
-    List<IMediaProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMediaProvider.class)) {
-      plugins.add((IMediaProvider) p);
+    // get the right plugins
+    for (T mp : pmu.getPlugins(iface)) {
+      plugins.add(mp);
     }
-    return plugins;
-  }
 
-  /**
-   * All plugins implementing the IMediaMetadataProvider
-   */
-  public List<IMovieMetadataProvider> getMoviePlugins() {
-    List<IMovieMetadataProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMovieMetadataProvider.class)) {
-      plugins.add((IMovieMetadataProvider) p);
-    }
-    return plugins;
-  }
-
-  /**
-   * All plugins implementing the IMovieArtworkProvider
-   */
-  public List<IMovieArtworkProvider> getMovieArtworkPlugins() {
-    List<IMovieArtworkProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMovieArtworkProvider.class)) {
-      plugins.add((IMovieArtworkProvider) p);
-    }
-    return plugins;
-  }
-
-  /**
-   * All plugins implementing the ITvShowArtworkProvider
-   */
-  public List<ITvShowArtworkProvider> getTvShowArtworkPlugins() {
-    List<ITvShowArtworkProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(ITvShowArtworkProvider.class)) {
-      plugins.add((ITvShowArtworkProvider) p);
-    }
-    return plugins;
-  }
-
-  /**
-   * All plugins implementing the IMediaTrailerProvider
-   */
-  public List<IMovieTrailerProvider> getTrailerPlugins() {
-    List<IMovieTrailerProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMovieTrailerProvider.class)) {
-      plugins.add((IMovieTrailerProvider) p);
-    }
     return plugins;
   }
 
@@ -215,32 +120,4 @@ public class PluginManager {
     }
     return plugins;
   }
-
-  /**
-   * All plugins implementing the ITvShowMetadataProvider
-   */
-  public List<ITvShowMetadataProvider> getTvShowPlugins() {
-    List<ITvShowMetadataProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(ITvShowMetadataProvider.class)) {
-      plugins.add((ITvShowMetadataProvider) p);
-    }
-    return plugins;
-  }
-
-  public List<IKodiMetadataProvider> getKodiPlugins() {
-    List<IKodiMetadataProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IKodiMetadataProvider.class)) {
-      plugins.add((IKodiMetadataProvider) p);
-    }
-    return plugins;
-  }
-
-  public List<IMovieSetProvider> getMovieSetPlugins() {
-    List<IMovieSetProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMovieSetProvider.class)) {
-      plugins.add((IMovieSetProvider) p);
-    }
-    return plugins;
-  }
-
 }

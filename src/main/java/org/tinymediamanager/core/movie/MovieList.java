@@ -42,7 +42,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
@@ -50,7 +49,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -561,7 +559,7 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
-   * Gets the artwork scrapers.
+   * get all available artwork scrapers.
    * 
    * @return the artwork scrapers
    */
@@ -575,6 +573,8 @@ public class MovieList extends AbstractModelObject {
   /**
    * get all specified artwork scrapers
    * 
+   * @param providerIds
+   *          a list of all specified scraper ids
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getArtworkScrapers(List<String> providerIds) {
@@ -603,56 +603,47 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
-   * Gets the trailer providers.
+   * all available trailer scrapers.
    * 
-   * @return the trailer providers
+   * @return the trailer scrapers
    */
-  public List<IMovieTrailerProvider> getTrailerProviders() {
-    List<MovieTrailerScrapers> scrapers = new ArrayList<MovieTrailerScrapers>();
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
-      scrapers.add(MovieTrailerScrapers.TMDB);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperHdTrailers()) {
-      scrapers.add(MovieTrailerScrapers.HDTRAILERS);
-    }
-
-    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperOfdb()) {
-      scrapers.add(MovieTrailerScrapers.OFDB);
-    }
-
-    return getTrailerProviders(scrapers);
+  public List<MediaScraper> getAvailableTrailerScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER);
+    // we can use the MovieMediaScraperComparator here too, since TMDB should also be first
+    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    return availableScrapers;
   }
 
   /**
-   * Gets the trailer providers.
+   * get all default (specified via settings) trailer scrapers
    * 
-   * @param scrapers
+   * @return the specified trailer scrapers
+   */
+  public List<MediaScraper> getDefaultTrailerScrapers() {
+    return getTrailerScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers());
+  }
+
+  /**
+   * get all specified trailer scrapers.
+   * 
+   * @param providerIds
    *          the scrapers
    * @return the trailer providers
    */
-  public List<IMovieTrailerProvider> getTrailerProviders(List<MovieTrailerScrapers> scrapers) {
-    List<IMovieTrailerProvider> trailerProviders = new ArrayList<IMovieTrailerProvider>();
+  public List<MediaScraper> getTrailerScrapers(List<String> providerIds) {
+    List<MediaScraper> trailerScrapers = new ArrayList<>();
 
-    List<IMovieTrailerProvider> availableProviders = PluginManager.getInstance().getTrailerPlugins();
-
-    for (IMovieTrailerProvider trailerProvider : availableProviders) {
-      if ("tmdb".equals(trailerProvider.getProviderInfo().getId()) && scrapers.contains(MovieTrailerScrapers.TMDB)) {
-        trailerProviders.add(trailerProvider);
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
         continue;
       }
-      if ("hdtrailersnet".equals(trailerProvider.getProviderInfo().getId()) && scrapers.contains(MovieTrailerScrapers.HDTRAILERS)) {
-        trailerProviders.add(trailerProvider);
-        continue;
-      }
-      if ("ofdb".equals(trailerProvider.getProviderInfo().getId()) && scrapers.contains(MovieTrailerScrapers.OFDB)) {
-        trailerProviders.add(trailerProvider);
-        continue;
+      MediaScraper trailerScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.MOVIE_TRAILER);
+      if (trailerScraper != null) {
+        trailerScrapers.add(trailerScraper);
       }
     }
 
-    return trailerProviders;
+    return trailerScrapers;
   }
 
   /**

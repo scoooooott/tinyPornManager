@@ -23,16 +23,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -78,9 +79,10 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
         return;
       }
       try {
-        List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+        List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
         if (sets != null && sets.size() > 0) {
-          IMovieSetProvider mp = sets.get(0); // just get first
+          MediaScraper first = sets.get(0); // just get first
+          IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
           options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
           options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());

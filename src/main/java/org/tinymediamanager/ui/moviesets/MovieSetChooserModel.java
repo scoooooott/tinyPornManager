@@ -25,15 +25,16 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -50,7 +51,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
   private MediaSearchResult                result      = null;
   private MediaMetadata                    metadata    = null;
   private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
-  private IMovieSetProvider                mp;
+  private MediaScraper                     scraper;
 
   private boolean scraped;
 
@@ -62,13 +63,13 @@ public class MovieSetChooserModel extends AbstractModelObject {
     setPosterUrl(result.getPosterUrl());
 
     try {
-      List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+      List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
       if (sets != null && sets.size() > 0) {
-        mp = sets.get(0); // just get first
+        scraper = sets.get(0); // just get first
       }
     }
     catch (Exception e) {
-      mp = null;
+      scraper = null;
     }
   }
 
@@ -138,14 +139,14 @@ public class MovieSetChooserModel extends AbstractModelObject {
       if (mis.movie == null) {
         if (StringUtils.isEmpty(mis.imdbId)) {
           // get imdbid for this tmdbid
-          if (mp != null) {
+          if (scraper.getMediaProvider() != null) {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
             options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
             try {
-              MediaMetadata md = mp.getMetadata(options);
+              MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));
             }
             catch (Exception e) {
@@ -171,14 +172,14 @@ public class MovieSetChooserModel extends AbstractModelObject {
    */
   public void scrapeMetadata() {
     try {
-      if (mp != null) {
+      if (scraper.getMediaProvider() != null) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
         options.setTmdbId(Integer.parseInt(result.getId()));
         options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
         options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
         options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
-        MediaMetadata info = mp.getMetadata(options);
+        MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
         // if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
         // movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
         // movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));

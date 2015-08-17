@@ -43,7 +43,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -63,14 +62,16 @@ import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.IMovieSetProvider;
+import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
@@ -907,9 +908,10 @@ public class Movie extends MediaEntity {
           movieSet.setTmdbId(col);
           // get movieset metadata
           try {
-            List<IMovieSetProvider> sets = PluginManager.getInstance().getMovieSetPlugins();
+            List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
             if (sets != null && sets.size() > 0) {
-              IMovieSetProvider mp = sets.get(0); // just get first
+              MediaScraper first = sets.get(0); // just get first
+              IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
               options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());

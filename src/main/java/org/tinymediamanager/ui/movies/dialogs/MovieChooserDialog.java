@@ -60,7 +60,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -69,7 +68,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -109,14 +107,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                   movieList             = MovieList.getInstance();
-  private Movie                       movieToScrape;
-  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private MediaScraper                mediaScraper;
-  private List<MediaScraper>          artworkScrapers;
-  private List<IMovieTrailerProvider> trailerProviders;
-  private boolean                     continueQueue         = true;
+  private MovieList                  movieList             = MovieList.getInstance();
+  private Movie                      movieToScrape;
+  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper               mediaScraper;
+  private List<MediaScraper>         artworkScrapers;
+  private List<MediaScraper>         trailerScrapers;
+  private boolean                    continueQueue         = true;
 
   private SearchTask activeSearchTask;
 
@@ -159,7 +157,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
     mediaScraper = movieList.getDefaultMediaScraper();
     artworkScrapers = movieList.getDefaultArtworkScrapers();
-    trailerProviders = movieList.getTrailerProviders();
+    trailerScrapers = movieList.getDefaultTrailerScrapers();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
     scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
@@ -656,8 +654,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
       MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
-      PluginManager pm = PluginManager.getInstance();
-      mediaScraper = (MediaScraper) pm.getPlugin(selectedScraper);
+      mediaScraper = selectedScraper;
       searchMovie(textFieldSearchString.getText(), null);
     }
   }
@@ -700,7 +697,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
             if (mpFromResult == null) {
               mpFromResult = MovieList.getInstance().getMediaScraperById(result.getProviderId());
             }
-            moviesFound.add(new MovieChooserModel(mpFromResult, artworkScrapers, trailerProviders, result, language));
+            moviesFound.add(new MovieChooserModel(mpFromResult, artworkScrapers, trailerScrapers, result, language));
             // get metadataProvider from searchresult
           }
         }
