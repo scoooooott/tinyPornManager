@@ -18,12 +18,12 @@ package org.tinymediamanager.scraper;
 import java.util.List;
 
 /**
- * The Interface IMovieSetProvider. All scrapers providing movieset meta data must implement this interface
+ * The Interface IMovieSetMetadataProvider. All scrapers providing movieset meta data must implement this interface
  * 
  * @author Myron Boyle
  * @since 1.0
  */
-public interface IMovieSetProvider extends IMediaProvider {
+public interface IMovieSetMetadataProvider extends IMediaProvider {
 
   /**
    * Gets the meta data.
