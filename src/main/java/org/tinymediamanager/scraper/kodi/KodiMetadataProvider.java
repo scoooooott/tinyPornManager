@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.kodi;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,11 +36,8 @@ import net.xeoh.plugins.base.annotations.events.Init;
  */
 @PluginImplementation
 public class KodiMetadataProvider implements IKodiMetadataProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiMetadataProvider.class);
-
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(KodiMetadataProvider.class);
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("kodi", "kodi.tv", "Generic Kodi type scraper");
-
-  // private static Pattern mpaaRatingParser = Pattern.compile("Rated\\s+([^ ]+).*");
 
   public KodiMetadataProvider() {
     // empty constructor just for creating the factory
@@ -56,8 +52,6 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
   public void init() {
     // preload scrapers
     new KodiUtil();
-    // getPluginsForType(MediaType.MOVIE);
-    // getPluginsForType(MediaType.TV_SHOW);
   }
 
   /**
@@ -65,12 +59,11 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
    */
   @Override
   public List<IMediaProvider> getPluginsForType(MediaType type) {
-    if(type == null){
+    if (type == null) {
       // unsupported type
       return Collections.emptyList();
     }
-    
-    LOGGER.debug("get Kodi scrapers for " + type);
+
     List<IMediaProvider> metadataProviders = new ArrayList<>();
 
     List<KodiScraper> scrapers = KodiUtil.scrapers;

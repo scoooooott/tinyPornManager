@@ -162,7 +162,7 @@ class KodiUtil {
    * @return
    */
   private static List<KodiScraper> getAllScrapers() {
-    LOGGER.debug("searchig for Kodi scrapers");
+    LOGGER.debug("searching for Kodi scrapers");
 
     List<KodiScraper> scrapers = new ArrayList<KodiScraper>();
 
@@ -209,7 +209,7 @@ class KodiUtil {
    * @return
    */
   private static List<KodiScraper> getAllCommon() {
-    LOGGER.debug("searchig for Kodi commons");
+    LOGGER.debug("searching for Kodi commons");
 
     List<KodiScraper> common = new ArrayList<KodiScraper>();
 
