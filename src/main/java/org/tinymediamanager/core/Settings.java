@@ -54,6 +54,7 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.scraper.util.ProxySettings;
 
 /**
  * The Class Settings - holding all settings for tmm.
@@ -727,6 +728,12 @@ public class Settings extends AbstractModelObject {
         System.setProperty("https.proxyPassword", getProxyPassword());
       }
       // System.setProperty("java.net.useSystemProxies", "true");
+    }
+    try {
+      ProxySettings.setProxySettings(getProxyHost(), Integer.parseInt(getProxyPort()), getProxyUsername(), getProxyPassword());
+    }
+    catch (NumberFormatException e) {
+      LOGGER.error("could not parse proxy port: " + e.getMessage());
     }
   }
 
