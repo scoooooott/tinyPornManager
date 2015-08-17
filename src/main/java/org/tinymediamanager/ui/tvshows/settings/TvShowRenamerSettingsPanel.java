@@ -63,6 +63,11 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -71,20 +76,17 @@ import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 /**
  * The class TvShowRenamerSettingsPanel
  * 
  * @author Manuel Laggner
  */
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long               serialVersionUID = 5189531235704401313L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 5189531235704401313L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
   private List<String>                    spaceReplacement = new ArrayList<String>(Arrays.asList("_", ".", "-"));
@@ -93,28 +95,28 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   /**
    * UI components
    */
-  private JTextPane                       txtpntAsciiHint;
-  private JLabel                          lblSeasonFolderName;
-  private JLabel                          lblExample;
-  private JComboBox                       cbTvShowForPreview;
-  private JTextField                      tfSeasonFoldername;
-  private JCheckBox                       chckbxAsciiReplacement;
-  private JComboBox                       cbSpaceReplacement;
-  private JHintCheckBox                   chckbxSpaceReplacement;
-  private JPanel                          panelExample;
-  private JComboBox                       cbEpisodeForPreview;
-  private JScrollPane                     scrollPane;
-  private JTable                          tableExamples;
-  private JLabel                          lblTvShowFolder;
-  private JTextField                      tfTvShowFolder;
-  private JTextField                      tfEpisodeFilename;
-  private JLabel                          lblEpisodeFileName;
+  private JTextPane     txtpntAsciiHint;
+  private JLabel        lblSeasonFolderName;
+  private JLabel        lblExample;
+  private JComboBox     cbTvShowForPreview;
+  private JTextField    tfSeasonFoldername;
+  private JCheckBox     chckbxAsciiReplacement;
+  private JComboBox     cbSpaceReplacement;
+  private JHintCheckBox chckbxSpaceReplacement;
+  private JPanel        panelExample;
+  private JComboBox     cbEpisodeForPreview;
+  private JScrollPane   scrollPane;
+  private JTable        tableExamples;
+  private JLabel        lblTvShowFolder;
+  private JTextField    tfTvShowFolder;
+  private JTextField    tfEpisodeFilename;
+  private JLabel        lblEpisodeFileName;
 
   public TvShowRenamerSettingsPanel() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+                RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
     exampleEventList = GlazedLists.threadSafeList(new ObservableElementList<TvShowRenamerExample>(new BasicEventList<TvShowRenamerExample>(),
         GlazedLists.beanConnector(TvShowRenamerExample.class)));
@@ -148,18 +150,18 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     };
 
     JPanel panelRenamer = new JPanel();
-    panelRenamer.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.tvshow.renamer.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelRenamer
+        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.tvshow.renamer.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
 
     add(panelRenamer, "2, 2, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelRenamer.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
     panelRenamer.add(lblTvShowFolder, "2, 2, right, default");
@@ -205,11 +207,12 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     panelExample = new JPanel();
     panelExample.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.example"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelExample, "2, 4, fill, fill");
-    panelExample.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelExample.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
     panelExample.add(lblExampleTvShowT, "2, 2, right, default");
@@ -263,6 +266,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     exampleEventList.add(new TvShowRenamerExample("$D"));
     exampleEventList.add(new TvShowRenamerExample("$Y"));
     exampleEventList.add(new TvShowRenamerExample("$N"));
+    exampleEventList.add(new TvShowRenamerExample("$M"));
     exampleEventList.add(new TvShowRenamerExample("$R"));
     exampleEventList.add(new TvShowRenamerExample("$A"));
     exampleEventList.add(new TvShowRenamerExample("$V"));
