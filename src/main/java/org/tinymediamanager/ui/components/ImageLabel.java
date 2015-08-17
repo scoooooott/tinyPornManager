@@ -309,7 +309,7 @@ public class ImageLabel extends JLabel {
 
   private void recreateScaledImageIfNeeded(int originalWidth, int originalHeight, int newWidth, int newHeight) {
     if ((newWidth * 0.8f > originalWidth) || (originalWidth > newWidth * 1.2f) || (newHeight * 0.8f > originalHeight)
-        || (originalHeight > newHeight * 1.2f)) {
+        || (originalHeight > newHeight * 1.2f) && newWidth > 10) {
       if (StringUtils.isNotBlank(imagePath)) {
         worker = new ImageLoader(imagePath, new Dimension(newWidth, newHeight));
         worker.execute();

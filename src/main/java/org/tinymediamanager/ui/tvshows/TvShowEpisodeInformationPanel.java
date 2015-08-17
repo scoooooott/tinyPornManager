@@ -120,7 +120,20 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelLeft.setLayout(new ColumnLayout());
     add(panelLeft, "1, 1, fill, fill");
 
-    lblSeasonPoster = new ImageLabel(false);
+    lblSeasonPoster = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
+      }
+    };
     lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblSeasonPoster);
     lblSeasonPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
@@ -131,7 +144,20 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelLeft.add(lblSeasonPosterSize);
     panelLeft.add(Box.createVerticalStrut(20));
 
-    lblEpisodeThumb = new ImageLabel(false);
+    lblEpisodeThumb = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 16d * 9d) + 1);
+      }
+    };
     lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
     panelLeft.add(lblEpisodeThumb);
     lblEpisodeThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$

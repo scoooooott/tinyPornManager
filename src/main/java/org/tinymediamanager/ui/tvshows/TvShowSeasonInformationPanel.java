@@ -115,7 +115,20 @@ public class TvShowSeasonInformationPanel extends JPanel {
     add(panelLeft, "1, 1, fill, fill");
     panelLeft.setLayout(new ColumnLayout());
 
-    lblTvShowPoster = new ImageLabel(false);
+    lblTvShowPoster = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
+      }
+    };
     lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$

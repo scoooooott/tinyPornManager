@@ -112,7 +112,20 @@ public class TvShowInformationPanel extends JPanel {
     add(panelLeft, "1, 1, fill, fill");
     panelLeft.setLayout(new ColumnLayout());
 
-    lblTvShowPoster = new ImageLabel(false);
+    lblTvShowPoster = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
+      }
+    };
     lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
@@ -121,7 +134,20 @@ public class TvShowInformationPanel extends JPanel {
     panelLeft.add(lblPosterSize);
     panelLeft.add(Box.createVerticalStrut(20));
 
-    lblTvShowBackground = new ImageLabel(false);
+    lblTvShowBackground = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 16d * 9d) + 1);
+      }
+    };
     lblTvShowBackground.setDesiredAspectRatio(16 / 9.0f);
     panelLeft.add(lblTvShowBackground);
     lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
@@ -130,7 +156,20 @@ public class TvShowInformationPanel extends JPanel {
     panelLeft.add(lblFanartSize);
     panelLeft.add(Box.createVerticalStrut(20));
 
-    lblTvShowBanner = new ImageLabel(false);
+    lblTvShowBanner = new ImageLabel(false) {
+      private static final long serialVersionUID = -4774846565578766742L;
+
+      @Override
+      public Dimension getPreferredSize() {
+        // chicken - egg problem; the scaled image has the right sizes only after initial layouting
+        // check with width > 10 if initial loading has been done
+        if (scaledImage != null && scaledImage.getWidth() > 10) {
+          return new Dimension(getParent().getWidth(),
+              (int) (getParent().getWidth() / (float) scaledImage.getWidth() * (float) scaledImage.getHeight()));
+        }
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 8d) + 1);
+      }
+    };
     lblTvShowBanner.setDesiredAspectRatio(25 / 8.0f);
     panelLeft.add(lblTvShowBanner);
     lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
