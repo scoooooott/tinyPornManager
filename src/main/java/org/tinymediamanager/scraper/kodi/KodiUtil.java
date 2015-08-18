@@ -207,6 +207,9 @@ class KodiUtil {
 
     List<AbstractKodiMetadataProvider> metadataProviders = new ArrayList<>();
     for (KodiScraper scraper : scrapers) {
+      if(scraper.type == null){
+        continue;
+      }
       try {
         switch (scraper.type) {
           case MOVIE:
