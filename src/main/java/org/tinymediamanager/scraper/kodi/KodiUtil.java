@@ -35,10 +35,10 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiUtil {
-  private static final Logger    LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
+  private static final Logger                     LOGGER     = LoggerFactory.getLogger(KodiUtil.class);
   // prescan directory for ALL common XMLs
-  static final ArrayList<File>   commonXmls = KodiUtil.getAllCommonXMLs();
-  static final List<KodiScraper> scrapers   = KodiUtil.getAllScrapers();
+  static final ArrayList<File>                    commonXmls = KodiUtil.getAllCommonXMLs();
+  static final List<AbstractKodiMetadataProvider> scrapers   = KodiUtil.getAllScrapers();
 
   /**
    * tries to detect the Kodi installation folder
@@ -103,7 +103,12 @@ class KodiUtil {
   private static List<KodiScraper> getKodiAddons(IOFileFilter dirFilter, IOFileFilter fileFilter) {
     List<KodiScraper> scrapers = new ArrayList<>();
     List<File> foundAddonFiles = new ArrayList<>();
-    Map<String, KodiScraper> tmp = new LinkedHashMap<String, KodiScraper>(); // tmp sorted map for version comparison
+    Map<String, KodiScraper> tmp = new LinkedHashMap<String, KodiScraper>(); // tmp
+                                                                             // sorted
+                                                                             // map
+                                                                             // for
+                                                                             // version
+                                                                             // comparison
 
     // detect manually added addons
     File addons = new File("kodi_scraper");
@@ -157,11 +162,11 @@ class KodiUtil {
   }
 
   /**
-   * returns a list of all found scraper addons.xml
+   * returns a list of all found scrapers
    * 
    * @return
    */
-  private static List<KodiScraper> getAllScrapers() {
+  private static List<AbstractKodiMetadataProvider> getAllScrapers() {
     LOGGER.debug("searching for Kodi scrapers");
 
     List<KodiScraper> scrapers = new ArrayList<KodiScraper>();
@@ -200,7 +205,27 @@ class KodiUtil {
       }
     }
 
-    return scrapers;
+    List<AbstractKodiMetadataProvider> metadataProviders = new ArrayList<>();
+    for (KodiScraper scraper : scrapers) {
+      try {
+        switch (scraper.type) {
+          case MOVIE:
+            metadataProviders.add(new KodiMovieMetadataProvider(scraper));
+            break;
+
+          case TV_SHOW:
+            // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
+            break;
+
+          default:
+            break;
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("could not load scraper " + scraper.id, e);
+      }
+    }
+    return metadataProviders;
   }
 
   /**
@@ -230,7 +255,8 @@ class KodiUtil {
       public boolean accept(File pathname) {
         // all XML files in scraper folder - but not the addon.xml itself
         return pathname.getName().equals("addon.xml");
-        // return pathname.getName().endsWith("xml") && !pathname.getName().equals("addon.xml");
+        // return pathname.getName().endsWith("xml") &&
+        // !pathname.getName().equals("addon.xml");
       }
 
       @Override
@@ -285,7 +311,8 @@ class KodiUtil {
       Collection<File> files = FileUtils.listFiles(sc.getFolder(), fileFilter, dirFilter);
       for (File f : files) {
         if (!common.contains(f)) {
-          // FIXME: check, if same directory NAME exists (dupe check in other dir)
+          // FIXME: check, if same directory NAME exists (dupe check in other
+          // dir)
           LOGGER.debug("Found common: " + f);
           common.add(f);
         }

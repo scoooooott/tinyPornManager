@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -36,7 +34,6 @@ import net.xeoh.plugins.base.annotations.events.Init;
  */
 @PluginImplementation
 public class KodiMetadataProvider implements IKodiMetadataProvider {
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(KodiMetadataProvider.class);
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("kodi", "kodi.tv", "Generic Kodi type scraper");
 
   public KodiMetadataProvider() {
@@ -66,26 +63,9 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
 
     List<IMediaProvider> metadataProviders = new ArrayList<>();
 
-    List<KodiScraper> scrapers = KodiUtil.scrapers;
-    for (KodiScraper scraper : scrapers) {
-      if (type == scraper.type) {
-        try {
-          switch (type) {
-            case MOVIE:
-              metadataProviders.add(new KodiMovieMetadataProvider(scraper));
-              break;
-
-            case TV_SHOW:
-              // metadataProviders.add(new KodiTvShowMetadataProvider(scraper));
-              break;
-
-            default:
-              break;
-          }
-        }
-        catch (Exception e) {
-          LOGGER.error("could not load scraper " + scraper.id, e);
-        }
+    for (AbstractKodiMetadataProvider metadataProvider : KodiUtil.scrapers) {
+      if (type == metadataProvider.scraper.type) {
+        metadataProviders.add(metadataProvider);
       }
     }
     return metadataProviders;
@@ -108,7 +88,8 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
   // }
   //
   // /**
-  // * Given a string like, "Rated PG-13 for..." it tries to return PG-13, or the entire string, if cannot find it.
+  // * Given a string like, "Rated PG-13 for..." it tries to return PG-13, or
+  // the entire string, if cannot find it.
   // *
   // * @param imdbString
   // * @return
