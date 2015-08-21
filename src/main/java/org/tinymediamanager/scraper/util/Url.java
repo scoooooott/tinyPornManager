@@ -235,7 +235,7 @@ public class Url {
       responseCode = response.code();
       responseMessage = response.message();
       responseCharset = response.body().contentType().charset();
-      responseContentType = response.body().contentType().type();
+      responseContentType = response.body().contentType().toString();
       is = response.body().byteStream();
 
     }
