@@ -89,6 +89,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
@@ -164,6 +165,7 @@ public class MoviePanel extends JPanel {
   private final Action actionSyncTrakt              = new MovieSyncTraktTvAction();
   private final Action actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
   private final Action actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
+  private final Action actionTrailerDownload        = new MovieTrailerDownloadAction();
 
   /** The action rename. */
   private final Action actionRename = new MovieRenameAction(false);
@@ -537,6 +539,8 @@ public class MoviePanel extends JPanel {
 
     menuItem = menu.add(actionRewriteNfo);
     menuItem.setMnemonic(KeyEvent.VK_N);
+    menuItem = menu.add(actionTrailerDownload);
+
     menu.addSeparator();
     menuItem = menu.add(actionMediaInformation2);
     menuItem.setMnemonic(KeyEvent.VK_M);
@@ -576,6 +580,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionRenamerPreview);
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
+    popupMenu.add(actionTrailerDownload);
     popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);

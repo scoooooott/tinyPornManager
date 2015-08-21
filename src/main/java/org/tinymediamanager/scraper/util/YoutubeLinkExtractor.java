@@ -53,7 +53,7 @@ public class YoutubeLinkExtractor {
   }
 
   // http://en.wikipedia.org/wiki/YouTube#Quality_and_codecs
-  static final Map<Integer, VideoQuality> itagMap                = new HashMap<Integer, VideoQuality>();
+  static final Map<Integer, VideoQuality> itagMap = new HashMap<Integer, VideoQuality>();
 
   static {
     itagMap.put(264, VideoQuality.p1080);
@@ -93,20 +93,20 @@ public class YoutubeLinkExtractor {
     itagMap.put(5, VideoQuality.p240);
   }
 
-  private static Pattern                  patternAge             = Pattern.compile("(verify_age)");
-  private static Pattern                  patternUnavailable     = Pattern.compile("(unavailable-player)");
-  private static Pattern                  patternUrlencod        = Pattern.compile("\"url_encoded_fmt_stream_map\":\"([^\"]*)\"");
-  private static Pattern                  patternUrl             = Pattern.compile("url=(.*)");
-  private static Pattern                  patternStream          = Pattern.compile("stream=(.*)");
-  private static Pattern                  patternLink            = Pattern.compile("(sparams.*)&itag=(\\d+)&.*&conn=rtmpe(.*),");
-  private static Pattern                  patternDecryptFunction = Pattern.compile("signature=(\\w+?)\\([^)]\\)");
-  private static Pattern                  patternSubfunction     = Pattern.compile("([a-zA-Z]*?)[.]?(\\w+?)\\([^)]*?\\)");
-  private static Pattern                  playerUrlPattern       = Pattern.compile("\\\"assets\\\":\\{.*?\\\"js\\\":\\\"(.*?)\\\"");
+  private static Pattern patternAge             = Pattern.compile("(verify_age)");
+  private static Pattern patternUnavailable     = Pattern.compile("(unavailable-player)");
+  private static Pattern patternUrlencod        = Pattern.compile("\"url_encoded_fmt_stream_map\":\"([^\"]*)\"");
+  private static Pattern patternUrl             = Pattern.compile("url=(.*)");
+  private static Pattern patternStream          = Pattern.compile("stream=(.*)");
+  private static Pattern patternLink            = Pattern.compile("(sparams.*)&itag=(\\d+)&.*&conn=rtmpe(.*),");
+  private static Pattern patternDecryptFunction = Pattern.compile("signature=(\\w+?)\\([^)]\\)");
+  private static Pattern patternSubfunction     = Pattern.compile("([a-zA-Z]*?)[.]?(\\w+?)\\([^)]*?\\)");
+  private static Pattern playerUrlPattern       = Pattern.compile("\\\"assets\\\":\\{.*?\\\"js\\\":\\\"(.*?)\\\"");
 
-  private String                          youtubeUrl;
-  private String                          id;
-  private String                          jsonConfiguration;
-  private String                          playerJavascript;
+  private String youtubeUrl;
+  private String id;
+  private String jsonConfiguration;
+  private String playerJavascript;
 
   public YoutubeLinkExtractor(String youtubeUrl) {
     this.youtubeUrl = youtubeUrl;
@@ -157,9 +157,7 @@ public class YoutubeLinkExtractor {
 
         // still not found any useful link.. try to get the best one
         for (VideoDownload dl : downloads) {
-          if (dl.vq.ordinal() >= desiredQuality.ordinal()) {
-            return URLDecoder.decode(dl.url.toExternalForm(), "UTF-8");
-          }
+          return URLDecoder.decode(dl.url.toExternalForm(), "UTF-8");
         }
       }
     }
@@ -515,6 +513,12 @@ public class YoutubeLinkExtractor {
   private class VideoUrlComparator implements Comparator<VideoDownload> {
     @Override
     public int compare(VideoDownload o1, VideoDownload o2) {
+      if (o1.vq == null) {
+        return 1;
+      }
+      if (o2.vq == null) {
+        return -1;
+      }
       if (o1.vq.ordinal() == o2.vq.ordinal()) {
         return 0;
       }

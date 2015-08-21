@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,6 @@ import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
-import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
@@ -60,6 +58,7 @@ import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
+import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
@@ -73,7 +72,6 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -344,46 +342,6 @@ public class Movie extends MediaEntity {
   public void removeAllTrailers() {
     trailer.clear();
     firePropertyChange(TRAILER, null, trailer);
-  }
-
-  /**
-   * Downloads trailer to movie folder (get from NFO), naming <code>&lt;movie&gt;-trailer.ext</code><br>
-   * Downloads to .tmp file first and renames after successful download.
-   * 
-   * @param trailerToDownload
-   *          the MediaTrailer object to download
-   * @return true/false if successful
-   */
-  public Boolean downloadTrailer(MovieTrailer trailerToDownload) {
-    try {
-      // get trailer filename from first mediafile
-      String tfile = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), this) + "-trailer.";
-      String ext = UrlUtil.getFileExtension(trailerToDownload.getDownloadUrl());
-      if (ext.isEmpty()) {
-        ext = "unknown";
-      }
-      // TODO: push to threadpool
-      // download to temp first
-      trailerToDownload.downloadTo(tfile + ext + ".tmp");
-      LOGGER.info("Trailer download successfully");
-      // TODO: maybe check if there are other trailerfiles (with other
-      // extension) and remove
-      File trailer = new File(tfile + ext);
-      FileUtils.deleteQuietly(trailer);
-      boolean ok = Utils.moveFileSafe(new File(tfile + ext + ".tmp"), trailer);
-    }
-    catch (IOException e) {
-      LOGGER.error("Error downloading trailer", e);
-      return false;
-    }
-    catch (URISyntaxException e) {
-      LOGGER.error("Error downloading trailer; url invalid", e);
-      return false;
-    }
-    catch (Exception e) {
-      LOGGER.error("Error downloading trailer; rename failed", e);
-    }
-    return true;
   }
 
   /**
@@ -1002,6 +960,12 @@ public class Movie extends MediaEntity {
       }
 
       addTrailer(trailer);
+    }
+
+    if (MovieModuleManager.MOVIE_SETTINGS.isAutomaticTrailerDownload() && getMediaFiles(MediaFileType.TRAILER).isEmpty() && !trailer.isEmpty()) {
+      MovieTrailer trailer = this.trailer.get(0);
+      MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, this);
+      TmmTaskManager.getInstance().addDownloadTask(task);
     }
 
     // persist

@@ -18,8 +18,8 @@ package org.tinymediamanager.core.movie.tasks;
 import java.io.File;
 
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.DownloadTask;
 
 /**

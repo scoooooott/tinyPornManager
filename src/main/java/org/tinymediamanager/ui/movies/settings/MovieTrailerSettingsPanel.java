@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -55,6 +56,7 @@ import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -75,13 +77,14 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  private MovieSettings        settings = Settings.getInstance().getMovieSettings();
-  private List<TrailerScraper> scrapers = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
-  private JTable               tableTrailerScraper;
-  private JTextPane            tpScraperDescription;
-  private JComboBox            cbTrailerSource;
-  private JComboBox            cbTrailerQuality;
-  private JCheckBox            checkBox;
+  private MovieSettings                  settings = Settings.getInstance().getMovieSettings();
+  private List<TrailerScraper>           scrapers = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
+  private JTable                         tableTrailerScraper;
+  private JTextPane                      tpScraperDescription;
+  private JComboBox<MovieTrailerSources> cbTrailerSource;
+  private JComboBox<MovieTrailerQuality> cbTrailerQuality;
+  private JCheckBox                      checkBox;
+  private JCheckBox                      chckbxAutomaticTrailerDownload;
 
   public MovieTrailerSettingsPanel() {
     // data init
@@ -109,39 +112,43 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelTrailerScrapers, "2, 2, fill, fill");
     panelTrailerScrapers.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("100dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JScrollPane scrollPaneScraper = new JScrollPane();
-    panelTrailerScrapers.add(scrollPaneScraper, "2, 2, 3, 1, fill, fill");
+    panelTrailerScrapers.add(scrollPaneScraper, "2, 2, 5, 1, fill, fill");
 
     tableTrailerScraper = new JTable();
     tableTrailerScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableTrailerScraper);
 
     JSeparator separator = new JSeparator();
-    panelTrailerScrapers.add(separator, "2, 4, 5, 1");
+    panelTrailerScrapers.add(separator, "2, 4, 7, 1");
 
     checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
-    panelTrailerScrapers.add(checkBox, "2, 6, 5, 1");
+    panelTrailerScrapers.add(checkBox, "2, 6, 7, 1");
 
     JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
-    panelTrailerScrapers.add(lblTrailerSource, "2, 8, right, default");
+    panelTrailerScrapers.add(lblTrailerSource, "4, 8, right, default");
 
-    cbTrailerSource = new JComboBox(MovieTrailerSources.values());
-    panelTrailerScrapers.add(cbTrailerSource, "4, 8, fill, default");
+    cbTrailerSource = new JComboBox<>();
+    cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
+    panelTrailerScrapers.add(cbTrailerSource, "6, 8, fill, default");
 
     JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
-    panelTrailerScrapers.add(lblTrailerQuality, "2, 10, right, default");
+    panelTrailerScrapers.add(lblTrailerQuality, "4, 10, right, default");
 
-    cbTrailerQuality = new JComboBox(MovieTrailerQuality.values());
-    panelTrailerScrapers.add(cbTrailerQuality, "4, 10, fill, default");
+    cbTrailerQuality = new JComboBox<>();
+    cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
+    panelTrailerScrapers.add(cbTrailerQuality, "6, 10, fill, default");
 
     JPanel panelScraperDetails = new JPanel();
-    panelTrailerScrapers.add(panelScraperDetails, "6, 2, fill, fill");
+    panelTrailerScrapers.add(panelScraperDetails, "8, 2, fill, fill");
     panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
@@ -152,6 +159,14 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
 
     JPanel panelScraperOptions = new JPanel();
     panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
+
+    chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
+    panelTrailerScrapers.add(chckbxAutomaticTrailerDownload, "2, 12, 7, 1");
+
+    JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, 0.833);
+    panelTrailerScrapers.add(lblAutomaticTrailerDownloadHint, "4, 14, 5, 1");
+
     initDataBindings();
 
     // adjust table columns
@@ -278,14 +293,15 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
     autoBinding.bind();
     //
     BeanProperty<MovieSettings, MovieTrailerSources> movieSettingsBeanProperty = BeanProperty.create("trailerSource");
-    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, MovieTrailerSources, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
+    BeanProperty<JComboBox<MovieTrailerSources>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, MovieTrailerSources, JComboBox<MovieTrailerSources>, Object> autoBinding_1 = Bindings
+        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty, cbTrailerSource, jComboBoxBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<MovieSettings, MovieTrailerQuality> movieSettingsBeanProperty_1 = BeanProperty.create("trailerQuality");
-    AutoBinding<MovieSettings, MovieTrailerQuality, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty);
+    BeanProperty<JComboBox<MovieTrailerQuality>, Object> jComboBoxBeanProperty_1 = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, MovieTrailerQuality, JComboBox<MovieTrailerQuality>, Object> autoBinding_2 = Bindings
+        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, movieSettingsBeanProperty_1, cbTrailerQuality, jComboBoxBeanProperty_1);
     autoBinding_2.bind();
     //
     BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_2 = BeanProperty.create("useTrailerPreference");
@@ -293,5 +309,10 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_2, checkBox, jCheckBoxBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_3 = BeanProperty.create("automaticTrailerDownload");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_3, chckbxAutomaticTrailerDownload, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }

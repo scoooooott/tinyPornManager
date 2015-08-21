@@ -46,14 +46,14 @@ import com.squareup.okhttp.Headers;
  * @author Myron Boyle, Manuel Laggner
  */
 public class DownloadTask extends TmmTask {
-  private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
-  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER = LoggerFactory.getLogger(DownloadTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      url;
-  private File                        file;
-  private MediaEntity                 media;
-  private MediaFileType               fileType;
-  private String                      userAgent = "";
+  private String        url;
+  private File          file;
+  private MediaEntity   media;
+  private MediaFileType fileType;
+  private String        userAgent = "";
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -136,10 +136,10 @@ public class DownloadTask extends TmmTask {
       InputStream is = u.getInputStream();
 
       // trace server headers
-      LOGGER.debug("Server returned: " + u.getStatusLine());
+      LOGGER.trace("Server returned: " + u.getStatusLine());
       Headers headers = u.getHeadersResponse();
       for (String name : headers.names()) {
-        LOGGER.debug(" < " + name + ": " + headers.get(name));
+        LOGGER.trace(" < " + name + ": " + headers.get(name));
       }
 
       if (u.isFault()) {

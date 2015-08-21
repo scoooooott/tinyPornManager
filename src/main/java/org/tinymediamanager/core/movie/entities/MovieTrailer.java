@@ -15,21 +15,15 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URISyntaxException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.util.Url;
-import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,31 +34,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MovieTrailer extends AbstractModelObject implements Comparable<MovieTrailer> {
-  private static final Logger LOGGER   = LoggerFactory.getLogger(MovieTrailer.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieTrailer.class);
 
   @JsonProperty
-  private String              name     = "";
+  private String  name     = "";
   @JsonProperty
-  private String              url      = "";
+  private String  url      = "";
   @JsonProperty
-  private String              quality  = "";
+  private String  quality  = "";
   @JsonProperty
-  private String              provider = "";
+  private String  provider = "";
   @JsonProperty
-  private Boolean             inNfo    = Boolean.FALSE;
+  private Boolean inNfo    = Boolean.FALSE;
   @JsonProperty
-  private String              size     = "";
+  private String  size     = "";
   @JsonProperty
-  private String              date     = "";
+  private String  date     = "";
 
-  /**
-   * Instantiates a new trailer.
-   */
   public MovieTrailer() {
   }
 
   /**
-   * create a MovieTrailer object from a given MediaTrailer instance
+   * create a MovieTrailer object from a given MovieTrailer instance
    * 
    * @param mediaTrailer
    *          the MediaTrailer instance
@@ -80,105 +71,50 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
     }
   }
 
-  /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Sets the name.
-   * 
-   * @param newValue
-   *          the new name
-   */
   public void setName(String newValue) {
     String oldValue = this.name;
     this.name = newValue;
     firePropertyChange("name", oldValue, newValue);
   }
 
-  /**
-   * Gets the url.
-   * 
-   * @return the url
-   */
   public String getUrl() {
     return url;
   }
 
-  /**
-   * Sets the url.
-   * 
-   * @param newValue
-   *          the new url
-   */
   public void setUrl(String newValue) {
     String oldValue = this.url;
     this.url = newValue;
     firePropertyChange("url", oldValue, newValue);
   }
 
-  /**
-   * Gets the quality.
-   * 
-   * @return the quality
-   */
   public String getQuality() {
     return quality;
   }
 
-  /**
-   * Sets the quality.
-   * 
-   * @param newValue
-   *          the new quality
-   */
   public void setQuality(String newValue) {
     String oldValue = this.quality;
     this.quality = newValue;
     firePropertyChange("quality", oldValue, newValue);
   }
 
-  /**
-   * Gets the provider.
-   * 
-   * @return the provider
-   */
   public String getProvider() {
     return provider;
   }
 
-  /**
-   * Sets the provider.
-   * 
-   * @param newValue
-   *          the new provider
-   */
   public void setProvider(String newValue) {
     String oldValue = this.provider;
     this.provider = newValue;
     firePropertyChange("provider", oldValue, newValue);
   }
 
-  /**
-   * Gets the in nfo.
-   * 
-   * @return the in nfo
-   */
   public Boolean getInNfo() {
     return inNfo;
   }
 
-  /**
-   * Sets the in nfo.
-   * 
-   * @param newValue
-   *          the new in nfo
-   */
   public void setInNfo(Boolean newValue) {
     if (this.url.startsWith("file")) {
       // local trailers never in url
@@ -189,56 +125,26 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
     firePropertyChange("inNfo", oldValue, newValue);
   }
 
-  /**
-   * Gets the size.
-   * 
-   * @return the size
-   */
   public String getSize() {
     return size;
   }
 
-  /**
-   * Gets the date.
-   * 
-   * @return the date
-   */
   public String getDate() {
     return date;
   }
 
-  /**
-   * Sets the size.
-   * 
-   * @param newValue
-   *          the new size
-   */
   public void setSize(String newValue) {
     String oldValue = this.size;
     this.size = newValue;
     firePropertyChange("size", oldValue, newValue);
   }
 
-  /**
-   * Sets the date.
-   * 
-   * @param newValue
-   *          the new date
-   */
   public void setDate(String newValue) {
     String oldValue = this.date;
     this.date = newValue;
     firePropertyChange("date", oldValue, newValue);
   }
 
-  /**
-   * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
-   * </p>
-   * 
-   * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
-   */
   @Override
   public String toString() {
     return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
@@ -247,31 +153,6 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
         return super.accept(f) && !f.getName().equals("propertyChangeSupport");
       }
     }).toString();
-  }
-
-  /**
-   * Downloads Trailer to specified file.
-   * 
-   * @param file
-   *          the absolute file on file system, overwrites existing trailer!
-   * @throws IOException
-   *           if url is not valid or network error
-   * @throws URISyntaxException
-   *           if url is not valid
-   * @throws InterruptedException
-   */
-  public void downloadTo(String file) throws IOException, URISyntaxException, InterruptedException {
-    LOGGER.info("Downloading " + this.getUrl() + " to " + file);
-
-    Url u = new Url(UrlUtil.getURIEncoded(this.getDownloadUrl()).toASCIIString());
-    if ("apple".equalsIgnoreCase(getProvider())) {
-      u.setUserAgent("QuickTime");
-    }
-    FileOutputStream outputStream = new FileOutputStream(file);
-    InputStream is = u.getInputStream();
-    IOUtils.copy(is, outputStream);
-    outputStream.close();
-    is.close();
   }
 
   /**
