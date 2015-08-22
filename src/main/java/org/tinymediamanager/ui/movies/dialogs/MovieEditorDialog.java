@@ -60,6 +60,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -82,6 +83,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.MediaFileEditorPanel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -118,44 +120,46 @@ public class MovieEditorDialog extends TmmDialog {
   private List<MovieTrailer>  trailers      = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
   private List<String>        tags          = ObservableCollections.observableList(new ArrayList<String>());
   private EventList<MediaId>  ids           = new BasicEventList<>();
+  private List<MediaFile>     mediaFiles    = new ArrayList<MediaFile>();
   private List<String>        extrathumbs   = new ArrayList<String>();
   private List<String>        extrafanarts  = new ArrayList<String>();
   private boolean             continueQueue = true;
 
-  private final JPanel details1Panel = new JPanel();
-  private final JPanel details2Panel = new JPanel();
-  private JTextField   tfTitle;
-  private JTextField   tfOriginalTitle;
-  private JSpinner     spYear;
-  private JTextPane    tpPlot;
-  private JTextField   tfDirector;
-  private JTable       tableActors;
-  private JLabel       lblMoviePath;
-  private ImageLabel   lblPoster;
-  private ImageLabel   lblFanart;
-  private JTextField   tfWriter;
-  private JSpinner     spRuntime;
-  private JTextPane    tfProductionCompanies;
-  private JList        listGenres;
-  private JComboBox    cbGenres;
-  private JSpinner     spRating;
-  private JComboBox    cbCertification;
-  private JCheckBox    cbWatched;
-  private JTextPane    tpTagline;
-  private JTable       tableTrailer;
-  private JTable       tableProducers;
-  private JComboBox    cbTags;
-  private JList        listTags;
-  private JSpinner     spDateAdded;
-  private JComboBox    cbMovieSet;
-  private JTextField   tfSorttitle;
-  private JTextField   tfSpokenLanguages;
-  private JTextField   tfCountry;
-  private JSpinner     spReleaseDate;
-  private JSpinner     spTop250;
-  private JComboBox    cbSource;
-  private JCheckBox    chckbxVideo3D;
-  private JTable       tableIds;
+  private final JPanel         details1Panel = new JPanel();
+  private final JPanel         details2Panel = new JPanel();
+  private JTextField           tfTitle;
+  private JTextField           tfOriginalTitle;
+  private JSpinner             spYear;
+  private JTextPane            tpPlot;
+  private JTextField           tfDirector;
+  private JTable               tableActors;
+  private JLabel               lblMoviePath;
+  private ImageLabel           lblPoster;
+  private ImageLabel           lblFanart;
+  private JTextField           tfWriter;
+  private JSpinner             spRuntime;
+  private JTextPane            tfProductionCompanies;
+  private JList                listGenres;
+  private JComboBox            cbGenres;
+  private JSpinner             spRating;
+  private JComboBox            cbCertification;
+  private JCheckBox            cbWatched;
+  private JTextPane            tpTagline;
+  private JTable               tableTrailer;
+  private JTable               tableProducers;
+  private JComboBox            cbTags;
+  private JList                listTags;
+  private JSpinner             spDateAdded;
+  private JComboBox            cbMovieSet;
+  private JTextField           tfSorttitle;
+  private JTextField           tfSpokenLanguages;
+  private JTextField           tfCountry;
+  private JSpinner             spReleaseDate;
+  private JSpinner             spTop250;
+  private JComboBox            cbSource;
+  private JCheckBox            chckbxVideo3D;
+  private JTable               tableIds;
+  private MediaFileEditorPanel mediaFilesPanel;
 
   private ImageLabel lblLogo;
   private ImageLabel lblBanner;
@@ -184,6 +188,9 @@ public class MovieEditorDialog extends TmmDialog {
 
     movieToEdit = movie;
     ids = MediaIdTable.convertIdMapToEventList(movieToEdit.getIds());
+    for (MediaFile mf : movie.getMediaFiles()) {
+      mediaFiles.add(new MediaFile(mf));
+    }
 
     getContentPane().setLayout(new BorderLayout());
     {
@@ -773,6 +780,14 @@ public class MovieEditorDialog extends TmmDialog {
     }
 
     /**
+     * Media Files
+     */
+    {
+      mediaFilesPanel = new MediaFileEditorPanel(mediaFiles);
+      tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), null, mediaFilesPanel, null); //$NON-NLS-1$
+    }
+
+    /**
      * Button pane
      */
     {
@@ -1006,24 +1021,14 @@ public class MovieEditorDialog extends TmmDialog {
         movieToEdit.getIds().remove(id);
       }
 
-      // movieToEdit.setImdbId(tfImdbId.getText());
-      // if (StringUtils.isNotBlank(tfTmdbId.getText())) {
-      // try {
-      // movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
-      // }
-      // catch (NumberFormatException ex) {
-      // JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
-      // return;
-      // }
-      // }
-      // else {
-      // movieToEdit.setTmdbId(0);
-      // }
-
       Object certification = cbCertification.getSelectedItem();
       if (certification instanceof Certification) {
         movieToEdit.setCertification((Certification) certification);
       }
+
+      // sync media files with the media file editor and fire the mediaFiles event
+      MediaFileEditorPanel.syncMediaFiles(mediaFiles, movieToEdit.getMediaFiles());
+      movieToEdit.fireEventForChangedMediaInformation();
 
       if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.POSTER))) {
         movieToEdit.setArtworkUrl(lblPoster.getImageUrl(), MediaFileType.POSTER);
@@ -1486,6 +1491,7 @@ public class MovieEditorDialog extends TmmDialog {
     jComboBinding.unbind();
     jListBinding_1.unbind();
     jTableBinding_2.unbind();
+    mediaFilesPanel.unbindBindings();
   }
 
   @Override

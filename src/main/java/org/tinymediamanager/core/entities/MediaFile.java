@@ -143,6 +143,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.videoCodec = new String(clone.videoCodec);
     this.containerFormat = new String(clone.containerFormat);
     this.exactVideoFormat = new String(clone.exactVideoFormat);
+    this.video3DFormat = new String(clone.video3DFormat);
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
     this.overallBitRate = clone.overallBitRate;
@@ -1076,6 +1077,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return audioStreams;
   }
 
+  public void setAudioStreams(List<MediaFileAudioStream> audioStreams) {
+    this.audioStreams = audioStreams;
+  }
+
   public String getCombinedCodecs() {
     StringBuilder sb = new StringBuilder(videoCodec);
 
@@ -1096,6 +1101,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public String getVideo3DFormat() {
     return this.video3DFormat;
+  }
+
+  /**
+   * explicit set the 3D format
+   * 
+   * @param video3DFormat
+   */
+  public void setVideo3DFormat(String video3DFormat) {
+    this.video3DFormat = video3DFormat;
   }
 
   /**

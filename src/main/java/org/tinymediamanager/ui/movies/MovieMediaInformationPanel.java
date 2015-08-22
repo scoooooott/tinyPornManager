@@ -48,22 +48,24 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieMediaInformationPanel extends JPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel         movieSelectionModel;
-  private JLabel                      lblRuntime;
-  private JCheckBox                   chckbxWatched;
-  private JPanel                      panelVideoStreamDetails;
-  private JLabel                      lblVideoCodec;
-  private JLabel                      lblVideoResolution;
-  private JLabel                      lblVideoBitrate;
-  private JPanel                      panelAudioStreamT;
-  private JPanel                      panelAudioStreamDetails;
-  private JPanel                      panelSubtitleT;
-  private JPanel                      panelSubtitleDetails;
-  private JLabel                      lblSourceT;
-  private JLabel                      lblSource;
+  private MovieSelectionModel movieSelectionModel;
+  private JLabel              lblRuntime;
+  private JCheckBox           chckbxWatched;
+  private JPanel              panelVideoStreamDetails;
+  private JLabel              lblVideoCodec;
+  private JLabel              lblVideoResolution;
+  private JLabel              lblVideoBitrate;
+  private JPanel              panelAudioStreamT;
+  private JPanel              panelAudioStreamDetails;
+  private JPanel              panelSubtitleT;
+  private JPanel              panelSubtitleDetails;
+  private JLabel              lblSourceT;
+  private JLabel              lblSource;
 
   /**
    * Instantiates a new movie media information panel.
@@ -73,13 +75,14 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("100px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     add(lblRuntimeT, "2, 2");
@@ -217,6 +220,9 @@ public class MovieMediaInformationPanel extends JPanel {
         panelAudioStreamDetails.add(new JLabel(audioStream.getLanguage()));
       }
     }
+
+    panelAudioStreamDetails.revalidate();
+    panelAudioStreamT.revalidate();
   }
 
   private void buildSubtitleStreamDetails() {
@@ -240,6 +246,8 @@ public class MovieMediaInformationPanel extends JPanel {
         }
       }
     }
+    panelSubtitleDetails.revalidate();
+    panelSubtitleT.revalidate();
   }
 
   protected void initDataBindings() {

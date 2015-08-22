@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +45,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -76,10 +78,12 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.MediaFileEditorPanel;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
@@ -94,36 +98,40 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-  private static final long                                     serialVersionUID = 7702248909791283043L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
-  private static final Date                                     INITIAL_DATE     = new Date(0);
+  private static final long           serialVersionUID = 7702248909791283043L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Date           INITIAL_DATE     = new Date(0);
 
-  private TvShowList                                            tvShowList       = TvShowList.getInstance();
-  private TvShowEpisode                                         episodeToEdit;
-  private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private boolean                                               continueQueue    = true;
+  private TvShowList        tvShowList    = TvShowList.getInstance();
+  private TvShowEpisode     episodeToEdit;
+  private List<TvShowActor> cast          = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>      tags          = ObservableCollections.observableList(new ArrayList<String>());
+  private List<MediaFile>   mediaFiles    = new ArrayList<MediaFile>();
+  private boolean           continueQueue = true;
 
-  private JTextField                                            tfTitle;
-  private JLabel                                                lblFilename;
-  private JSpinner                                              spEpisode;
-  private JSpinner                                              spSeason;
-  private JSpinner                                              spRating;
-  private JSpinner                                              spDvdSeason;
-  private JSpinner                                              spDvdEpisode;
-  private JCheckBox                                             cbDvdOrder;
-  private JSpinner                                              spFirstAired;
-  private JSpinner                                              spDateAdded;
-  private JCheckBox                                             chckbxWatched;
-  private ImageLabel                                            lblThumb;
-  private JTextArea                                             taPlot;
-  private JTextField                                            tfDirector;
-  private JTextField                                            tfWriter;
-  private JTable                                                tableGuests;
-  private JComboBox                                             cbTags;
-  private JList                                                 listTags;
+  private JTextField           tfTitle;
+  private JLabel               lblFilename;
+  private JSpinner             spEpisode;
+  private JSpinner             spSeason;
+  private JSpinner             spRating;
+  private JSpinner             spDvdSeason;
+  private JSpinner             spDvdEpisode;
+  private JCheckBox            cbDvdOrder;
+  private JSpinner             spFirstAired;
+  private JSpinner             spDateAdded;
+  private JCheckBox            chckbxWatched;
+  private ImageLabel           lblThumb;
+  private JTextArea            taPlot;
+  private JTextField           tfDirector;
+  private JTextField           tfWriter;
+  private JTable               tableGuests;
+  private JComboBox            cbTags;
+  private JList                listTags;
+  private MediaFileEditorPanel mediaFilesPanel;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
   private JListBinding<String, List<String>, JList>             jListBinding;
@@ -140,96 +148,118 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     super(BUNDLE.getString("tvshowepisode.scrape"), "tvShowEpisodeScraper"); //$NON-NLS-1$
     setBounds(5, 5, 964, 632);
 
+    for (MediaFile mf : episode.getMediaFiles()) {
+      mediaFiles.add(new MediaFile(mf));
+    }
+
     this.episodeToEdit = episode;
     getContentPane().setLayout(new BorderLayout());
+
     {
-      JPanel contentPanel = new JPanel();
-      getContentPane().add(contentPanel, BorderLayout.CENTER);
-      contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("120px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+      JPanel panelFilename = new JPanel();
+      getContentPane().add(panelFilename, BorderLayout.NORTH);
+      panelFilename.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+              FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("15px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblFilenameT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      contentPanel.add(lblFilenameT, "2, 2, right, default");
+      panelFilename.add(lblFilenameT, "2, 2, left, top");
 
       lblFilename = new JLabel("");
-      contentPanel.add(lblFilename, "4, 2, 9, 1, left, bottom");
+      TmmFontHelper.changeFont(lblFilename, 1.166, Font.BOLD);
+      panelFilename.add(lblFilename, "5, 2, left, top");
+    }
+
+    JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.NORTH);
+    getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+    /**
+     * DetailsPanel
+     */
+    {
+      JPanel detailsPanel = new JPanel();
+      tabbedPane.addTab(BUNDLE.getString("metatag.details"), detailsPanel); //$NON-NLS-1$
+      detailsPanel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("120px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
-      contentPanel.add(lblTitle, "2, 4, right, default");
+      detailsPanel.add(lblTitle, "2, 4, right, default");
 
       tfTitle = new JTextField();
-      contentPanel.add(tfTitle, "4, 4, 9, 1");
+      detailsPanel.add(tfTitle, "4, 4, 9, 1");
       tfTitle.setColumns(10);
 
       JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-      contentPanel.add(lblSeason, "2, 6, right, default");
+      detailsPanel.add(lblSeason, "2, 6, right, default");
 
       spSeason = new JSpinner();
-      contentPanel.add(spSeason, "4, 6");
+      detailsPanel.add(spSeason, "4, 6");
 
       JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-      contentPanel.add(lblEpisode, "6, 6, right, default");
+      detailsPanel.add(lblEpisode, "6, 6, right, default");
 
       spEpisode = new JSpinner();
-      contentPanel.add(spEpisode, "8, 6");
+      detailsPanel.add(spEpisode, "8, 6");
 
       JLabel lblDvdSeason = new JLabel(BUNDLE.getString("metatag.dvdseason")); //$NON-NLS-1$
-      contentPanel.add(lblDvdSeason, "2, 8, right, default");
+      detailsPanel.add(lblDvdSeason, "2, 8, right, default");
 
       spDvdSeason = new JSpinner();
-      contentPanel.add(spDvdSeason, "4, 8");
+      detailsPanel.add(spDvdSeason, "4, 8");
 
       JLabel lblDvdEpisode = new JLabel(BUNDLE.getString("metatag.dvdepisode")); //$NON-NLS-1$
-      contentPanel.add(lblDvdEpisode, "6, 8, right, default");
+      detailsPanel.add(lblDvdEpisode, "6, 8, right, default");
 
       spDvdEpisode = new JSpinner();
-      contentPanel.add(spDvdEpisode, "8, 8");
+      detailsPanel.add(spDvdEpisode, "8, 8");
 
       JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
-      contentPanel.add(lblDvdOrder, "2, 10, right, default");
+      detailsPanel.add(lblDvdOrder, "2, 10, right, default");
 
       cbDvdOrder = new JCheckBox("");
-      contentPanel.add(cbDvdOrder, "4, 10");
+      detailsPanel.add(cbDvdOrder, "4, 10");
 
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-      contentPanel.add(lblRating, "2, 12, right, default");
+      detailsPanel.add(lblRating, "2, 12, right, default");
 
       spRating = new JSpinner();
-      contentPanel.add(spRating, "4, 12");
+      detailsPanel.add(spRating, "4, 12");
 
       JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-      contentPanel.add(lblFirstAired, "6, 12, right, default");
+      detailsPanel.add(lblFirstAired, "6, 12, right, default");
 
       spFirstAired = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spFirstAired, "8, 12");
+      detailsPanel.add(spFirstAired, "8, 12");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      contentPanel.add(lblWatched, "2, 14, right, default");
+      detailsPanel.add(lblWatched, "2, 14, right, default");
 
       chckbxWatched = new JCheckBox("");
-      contentPanel.add(chckbxWatched, "4, 14");
+      detailsPanel.add(chckbxWatched, "4, 14");
 
       JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      contentPanel.add(lblDateAdded, "6, 14, right, default");
+      detailsPanel.add(lblDateAdded, "6, 14, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spDateAdded, "8, 14");
+      detailsPanel.add(spDateAdded, "8, 14");
 
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      contentPanel.add(lblPlot, "2, 16, right, top");
+      detailsPanel.add(lblPlot, "2, 16, right, top");
 
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 16, 5, 1, fill, fill");
+      detailsPanel.add(scrollPane, "4, 16, 5, 1, fill, fill");
 
       taPlot = new JTextArea();
       taPlot.setLineWrap(true);
@@ -249,38 +279,38 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         }
       });
       lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      contentPanel.add(lblThumb, "10, 6, 3, 15");
+      detailsPanel.add(lblThumb, "10, 6, 3, 15");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      contentPanel.add(lblDirector, "2, 18, right, default");
+      detailsPanel.add(lblDirector, "2, 18, right, default");
 
       tfDirector = new JTextField();
       tfDirector.setText((String) null);
       tfDirector.setColumns(10);
-      contentPanel.add(tfDirector, "4, 18, 5, 1, fill, default");
+      detailsPanel.add(tfDirector, "4, 18, 5, 1, fill, default");
 
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      contentPanel.add(lblWriter, "2, 20, right, default");
+      detailsPanel.add(lblWriter, "2, 20, right, default");
 
       tfWriter = new JTextField();
       tfWriter.setText((String) null);
       tfWriter.setColumns(10);
-      contentPanel.add(tfWriter, "4, 20, 5, 1, fill, default");
+      detailsPanel.add(tfWriter, "4, 20, 5, 1, fill, default");
 
       JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
-      contentPanel.add(lblGuests, "2, 22, right, top");
+      detailsPanel.add(lblGuests, "2, 22, right, top");
 
       JScrollPane scrollPaneGuests = new JScrollPane();
-      contentPanel.add(scrollPaneGuests, "4, 22, 5, 7, fill, fill");
+      detailsPanel.add(scrollPaneGuests, "4, 22, 5, 7, fill, fill");
 
       tableGuests = new JTable();
       scrollPaneGuests.setViewportView(tableGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      contentPanel.add(lblTags, "10, 22, default, top");
+      detailsPanel.add(lblTags, "10, 22, default, top");
 
       JScrollPane scrollPaneTags = new JScrollPane();
-      contentPanel.add(scrollPaneTags, "12, 22, 1, 5, fill, fill");
+      detailsPanel.add(scrollPaneTags, "12, 22, 1, 5, fill, fill");
 
       listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
@@ -289,39 +319,48 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
       btnAddActor.setIcon(IconManager.LIST_ADD);
-      contentPanel.add(btnAddActor, "2, 24, right, top");
+      detailsPanel.add(btnAddActor, "2, 24, right, top");
 
       JButton btnAddTag = new JButton("");
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(IconManager.LIST_ADD);
-      contentPanel.add(btnAddTag, "10, 24, right, top");
+      detailsPanel.add(btnAddTag, "10, 24, right, top");
 
       JButton btnRemoveActor = new JButton("");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
       btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
-      contentPanel.add(btnRemoveActor, "2, 26, right, top");
+      detailsPanel.add(btnRemoveActor, "2, 26, right, top");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
-      contentPanel.add(btnRemoveTag, "10, 26, right, top");
+      detailsPanel.add(btnRemoveTag, "10, 26, right, top");
 
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
       cbTags.setEditable(true);
-      contentPanel.add(cbTags, "12, 28, fill, default");
+      detailsPanel.add(cbTags, "12, 28, fill, default");
+    }
+
+    /**
+     * Media Files panel
+     */
+    {
+      mediaFilesPanel = new MediaFileEditorPanel(mediaFiles);
+      tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), null, mediaFilesPanel, null); //$NON-NLS-1$
     }
 
     {
       JPanel bottomPanel = new JPanel();
       getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
-      bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      bottomPanel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       MediaScraperComboBox cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
       MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
@@ -447,6 +486,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
       episodeToEdit.setPlot(taPlot.getText());
 
+      // sync media files with the media file editor and fire the mediaFiles event
+      MediaFileEditorPanel.syncMediaFiles(mediaFiles, episodeToEdit.getMediaFiles());
+      episodeToEdit.fireEventForChangedMediaInformation();
+
       double tempRating = (Double) spRating.getValue();
       float rating = (float) tempRating;
       if (episodeToEdit.getRating() != rating) {
@@ -466,9 +509,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setWriter(tfWriter.getText());
       episodeToEdit.setActors(cast);
 
-      if (StringUtils.isNotEmpty(lblThumb.getImageUrl())
-          && (!lblThumb.getImageUrl().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)) || StringUtils.isBlank(episodeToEdit
-              .getArtworkUrl(MediaFileType.THUMB)))) {
+      if (StringUtils.isNotEmpty(lblThumb.getImageUrl()) && (!lblThumb.getImageUrl().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
+          || StringUtils.isBlank(episodeToEdit.getArtworkUrl(MediaFileType.THUMB)))) {
         episodeToEdit.setArtworkUrl(lblThumb.getImageUrl(), MediaFileType.THUMB);
         episodeToEdit.writeThumbImage();
       }
@@ -543,7 +585,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         // if nothing has been found -> open the search box
         if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           // message
-          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$    
+          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$
         }
         else {
           tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));
@@ -610,6 +652,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     super.dispose();
     jTableBinding.unbind();
     jListBinding.unbind();
+    mediaFilesPanel.unbindBindings();
   }
 
   @Override
