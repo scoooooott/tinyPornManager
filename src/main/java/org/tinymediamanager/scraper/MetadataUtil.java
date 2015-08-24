@@ -62,8 +62,9 @@ public class MetadataUtil {
    * @return the string
    */
   public static String parseRunningTime(String in, String regex) {
-    if (in == null || regex == null)
+    if (in == null || regex == null) {
       return null;
+    }
     Pattern p = Pattern.compile(regex);
     Matcher m = p.matcher(in);
     if (m.find()) {
@@ -85,8 +86,9 @@ public class MetadataUtil {
    */
   public static void copySearchQueryToSearchResult(MediaSearchOptions query, MediaSearchResult sr) {
     for (MediaSearchOptions.SearchParam f : MediaSearchOptions.SearchParam.values()) {
-      if (f == MediaSearchOptions.SearchParam.QUERY)
+      if (f == MediaSearchOptions.SearchParam.QUERY) {
         continue;
+      }
       String s = query.get(f);
       if (!StringUtils.isEmpty(s)) {
         sr.getExtra().put(f.name(), s);
@@ -102,8 +104,9 @@ public class MetadataUtil {
    * @return the string
    */
   public static String removeNonSearchCharacters(String s) {
-    if (s == null)
+    if (s == null) {
       return null;
+    }
     // return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
     // return s.replaceAll("[\\\\[\\\\]-–_.:|]", " ");
     return s.replaceAll("[\\\\[\\\\]_.:|]", " ");

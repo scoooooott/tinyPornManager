@@ -55,6 +55,6 @@ public enum MediaLanguages {
 
   @Override
   public String toString() {
-    return this.title;
+    return title;
   }
 }

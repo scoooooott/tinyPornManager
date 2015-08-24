@@ -61,7 +61,7 @@ public class MediaScrapeOptions {
   }
 
   public void setId(String key, String id) {
-    this.ids.put(key, id);
+    ids.put(key, id);
   }
 
   public String getImdbId() {

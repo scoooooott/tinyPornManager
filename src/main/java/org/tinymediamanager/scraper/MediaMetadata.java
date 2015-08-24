@@ -274,14 +274,16 @@ public class MediaMetadata {
    * @return the cast members
    */
   public List<MediaCastMember> getCastMembers(CastType type) {
-    if (type == CastType.ALL)
+    if (type == CastType.ALL) {
       return castMembers;
+    }
 
     // get all castmember for the given type
     List<MediaCastMember> l = new ArrayList<MediaCastMember>(castMembers.size());
     for (MediaCastMember cm : castMembers) {
-      if (cm.getType() == type)
+      if (cm.getType() == type) {
         l.add(cm);
+      }
     }
     return l;
   }
@@ -295,14 +297,16 @@ public class MediaMetadata {
    */
   public List<MediaArtwork> getMediaArt(MediaArtworkType type) {
     List<MediaArtwork> mediaArt = getFanart();
-    if (mediaArt == null || type == MediaArtworkType.ALL)
+    if (mediaArt == null || type == MediaArtworkType.ALL) {
       return mediaArt;
+    }
 
     // get all artwork
     List<MediaArtwork> l = new ArrayList<MediaArtwork>(mediaArt.size());
     for (MediaArtwork ma : mediaArt) {
-      if (ma.getType() == type)
+      if (ma.getType() == type) {
         l.add(ma);
+      }
     }
     return l;
 
@@ -327,8 +331,9 @@ public class MediaMetadata {
    *          the cast member
    */
   public void addCastMember(MediaCastMember cm) {
-    if (containsCastMember(cm))
+    if (containsCastMember(cm)) {
       return;
+    }
     castMembers.add(cm);
 
   }

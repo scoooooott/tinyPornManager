@@ -67,11 +67,11 @@ public class MediaArtwork {
 
     @Override
     public String toString() {
-      return this.text;
+      return text;
     }
 
     public int getOrder() {
-      return this.order;
+      return order;
     }
   }
 
@@ -96,7 +96,7 @@ public class MediaArtwork {
 
     @Override
     public String toString() {
-      return this.text;
+      return text;
     }
 
     public int getOrder() {
@@ -125,7 +125,7 @@ public class MediaArtwork {
   }
 
   public void setPreviewUrl(String downloadUrl) {
-    this.previewUrl = downloadUrl;
+    previewUrl = downloadUrl;
   }
 
   public String getDefaultUrl() {
@@ -300,7 +300,7 @@ public class MediaArtwork {
 
     @Override
     public String toString() {
-      return this.width + "x" + this.height;
+      return width + "x" + height;
     }
   }
 
@@ -308,7 +308,7 @@ public class MediaArtwork {
     private MediaLanguages preferredLangu = MediaLanguages.en;
 
     public MediaArtworkComparator(MediaLanguages language) {
-      this.preferredLangu = language;
+      preferredLangu = language;
     }
 
     /*

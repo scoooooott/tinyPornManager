@@ -15,16 +15,22 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.net.UnknownHostException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.UnknownHostException;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 /**
- * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).
+ * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files
+ * which can't the streamed via a ByteArrayInputStream).
  * 
  * @author Manuel Laggner
  */
@@ -36,7 +42,8 @@ public class StreamingUrl extends Url {
   }
 
   /**
-   * get the InputStream of the content. Be aware: using this class needs you to close the connection per hand calling the method closeConnection()
+   * get the InputStream of the content. Be aware: using this class needs you to
+   * close the connection per hand calling the method closeConnection()
    * 
    * @return the InputStream of the content
    */
@@ -58,8 +65,8 @@ public class StreamingUrl extends Url {
     InputStream is = null;
 
     // set custom headers
-    for (Pair header : headersRequest) {
-      requestBuilder.addHeader(header.first().toString(), header.second().toString());
+    for (Pair<String, String> header : headersRequest) {
+      requestBuilder.addHeader(header.first(), header.second());
     }
 
     Request request = requestBuilder.build();

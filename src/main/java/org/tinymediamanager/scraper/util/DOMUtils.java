@@ -38,8 +38,9 @@ public class DOMUtils {
    * @return the element value
    */
   public static String getElementValue(Element el, String tag) {
-    if (el == null || tag == null)
+    if (el == null || tag == null) {
       return null;
+    }
     NodeList nl = el.getElementsByTagName(tag);
     if (nl.getLength() > 0) {
       Node n = nl.item(0);

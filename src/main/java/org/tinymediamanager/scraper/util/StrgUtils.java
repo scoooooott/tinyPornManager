@@ -18,16 +18,12 @@ package org.tinymediamanager.scraper.util;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Class StringUtils.
@@ -37,10 +33,10 @@ import org.slf4j.LoggerFactory;
 public class StrgUtils {
   private static final Map<Integer, Replacement> REPLACEMENTS          = buildReplacementMap();
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
-  private static final Logger                    LOGGER                = LoggerFactory.getLogger(StrgUtils.class);
 
   /*
-   * build a replacement map of characters, which are not handled right by the normalizer method
+   * build a replacement map of characters, which are not handled right by the
+   * normalizer method
    */
   private static Map<Integer, Replacement> buildReplacementMap() {
     Map<Integer, Replacement> replacements = new HashMap<Integer, Replacement>();
@@ -58,13 +54,13 @@ public class StrgUtils {
   }
 
   private static String[] buildCommonTitlePrefixes() {
-    //@formatter:off
+    // @formatter:off
     return new String[] { "A", "An", "The", // english
-                          "Der", "Die", "Das", "Ein", "Eine", "Eines", "Einer", "Einem", "Einen", // german
-                          "Le", "La", "Une", "Des", // french
-                          "El", "Los", "La", "Las", "Un", "Unos", "Una", "Unas" // spanish
-                    };
-    //@formatter:on
+        "Der", "Die", "Das", "Ein", "Eine", "Eines", "Einer", "Einem", "Einen", // german
+        "Le", "La", "Une", "Des", // french
+        "El", "Los", "La", "Las", "Un", "Unos", "Una", "Unas" // spanish
+    };
+    // @formatter:on
   }
 
   /**
@@ -75,8 +71,9 @@ public class StrgUtils {
    * @return the string
    */
   public static String removeHtml(String html) {
-    if (html == null)
+    if (html == null) {
       return null;
+    }
     return html.replaceAll("<[^>]+>", "");
   }
 
@@ -88,8 +85,9 @@ public class StrgUtils {
    * @return the string
    */
   public static String unquote(String str) {
-    if (str == null)
+    if (str == null) {
       return null;
+    }
     return str.replaceFirst("^\\\"(.*)\\\"$", "$1");
   }
 
@@ -102,10 +100,12 @@ public class StrgUtils {
    */
   @SuppressWarnings("rawtypes")
   public static String mapToString(Map map) {
-    if (map == null)
+    if (map == null) {
       return "null";
-    if (map.size() == 0)
+    }
+    if (map.size() == 0) {
       return "empty";
+    }
 
     StringBuilder sb = new StringBuilder();
     for (Object o : map.entrySet()) {
@@ -188,7 +188,8 @@ public class StrgUtils {
   }
 
   /**
-   * Remove all duplicate whitespace characters and line terminators are replaced with a single space.
+   * Remove all duplicate whitespace characters and line terminators are
+   * replaced with a single space.
    * 
    * @param s
    *          a not null String
@@ -210,15 +211,19 @@ public class StrgUtils {
   }
 
   /**
-   * This method takes an input String and replaces all special characters like umlauts, accented or other letter with diacritical marks with their
-   * basic ascii eqivalents. Originally written by Jens Hausherr (https://github.com/jabbrwcky), modified by Manuel Laggner
+   * This method takes an input String and replaces all special characters like
+   * umlauts, accented or other letter with diacritical marks with their basic
+   * ascii eqivalents. Originally written by Jens Hausherr
+   * (https://github.com/jabbrwcky), modified by Manuel Laggner
    * 
    * @param input
    *          String to convert
    * @param replaceAllCapitalLetters
-   *          <code>true</code> causes uppercase special chars that are replaced by more than one character to be replaced by all-uppercase
-   *          replacements; <code>false</code> will cause only the initial character of the replacements to be in uppercase and all subsequent
-   *          replacement characters will be in lowercase.
+   *          <code>true</code> causes uppercase special chars that are replaced
+   *          by more than one character to be replaced by all-uppercase
+   *          replacements; <code>false</code> will cause only the initial
+   *          character of the replacements to be in uppercase and all
+   *          subsequent replacement characters will be in lowercase.
    * @return Input string reduced to ASCII-safe characters.
    */
   public static String convertToAscii(String input, boolean replaceAllCapitalLetters) {
@@ -278,8 +283,9 @@ public class StrgUtils {
               if (rep != null) {
                 result.append(uppercase ? rep.UPPER : rep.LOWER);
               }
-              else
+              else {
                 result.append(c);
+              }
           }
         }
       }
@@ -295,8 +301,8 @@ public class StrgUtils {
     private final String LOWER;
 
     Replacement(String ucReplacement, String lcReplacement) {
-      this.UPPER = ucReplacement;
-      this.LOWER = lcReplacement;
+      UPPER = ucReplacement;
+      LOWER = lcReplacement;
     }
 
     Replacement(String caseInsensitiveReplacement) {
@@ -305,7 +311,8 @@ public class StrgUtils {
   }
 
   /**
-   * Returns the common name of title/originaltitle when it is named sortable<br>
+   * Returns the common name of title/originaltitle when it is named sortable
+   * <br>
    * eg "Bourne Legacy, The" -> "The Bourne Legacy".
    * 
    * @param title
@@ -319,7 +326,7 @@ public class StrgUtils {
     for (String prfx : COMMON_TITLE_PREFIXES) {
       String delim = " "; // one spaces as delim
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no
-                                       // space between prefix and title
+                                      // space between prefix and title
         delim = "";
       }
       title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");

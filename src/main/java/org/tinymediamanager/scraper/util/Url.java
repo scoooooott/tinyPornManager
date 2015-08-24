@@ -15,29 +15,39 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 /**
- * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
- * is passed to the caller.
+ * The Class Url. Used to make simple, blocking URL requests. The request is
+ * temporarily streamed into a ByteArrayInputStream, before the InputStream is
+ * passed to the caller.
  * 
  * @author Manuel Laggner / Myron Boyle
  */
 public class Url {
-  private static final Logger   LOGGER                = LoggerFactory.getLogger(Url.class);
+  private static final Logger   LOGGER = LoggerFactory.getLogger(Url.class);
   protected static OkHttpClient client;
 
   protected static final String USER_AGENT            = "User-Agent";
@@ -47,10 +57,10 @@ public class Url {
   protected String              responseContentType   = "";
   protected long                responseContentLength = -1;
 
-  protected String              url                   = null;
-  protected Headers             headersResponse       = null;
-  protected List<Pair>          headersRequest        = new ArrayList<Pair>();
-  protected URI                 uri                   = null;
+  protected String                     url             = null;
+  protected Headers                    headersResponse = null;
+  protected List<Pair<String, String>> headersRequest  = new ArrayList<>();
+  protected URI                        uri             = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -96,7 +106,7 @@ public class Url {
 
     // morph to URI to check syntax of the url
     try {
-      this.uri = morphStringToUri(url);
+      uri = morphStringToUri(url);
     }
     catch (URISyntaxException e) {
       throw new MalformedURLException(url);
@@ -162,19 +172,21 @@ public class Url {
 
     LOGGER.trace("add HTTP header: " + key + "=" + value);
 
-    // check for duplicates
-    // FIXME looks like there is no need for duplicate check since some headers can occur several times
-    // Typically HTTP headers work like a Map<String, String>: each field has one value or none. But some headers permit multiple values, like Guava's
-    // Multimap. For example, it's legal and common for an HTTP response to supply multiple Vary headers.
+    // looks like there is no need for duplicate check since some headers can
+    // occur several times
+    // Typically HTTP headers work like a Map<String, String>: each field has
+    // one value or none. But some headers permit multiple values, like Guava's
+    // Multimap. For example, it's legal and common for an HTTP response to
+    // supply multiple Vary headers.
     for (int i = headersRequest.size() - 1; i >= 0; i--) {
-      Pair header = headersRequest.get(i);
+      Pair<String, String> header = headersRequest.get(i);
       if (key.equals(header.first())) {
         headersRequest.remove(i);
       }
     }
 
     // and add the new one
-    headersRequest.add(new Pair(key, value));
+    headersRequest.add(new Pair<>(key, value));
   }
 
   /**
@@ -183,7 +195,7 @@ public class Url {
    * @param header
    *          the header
    */
-  public void addHeader(Pair header) {
+  public void addHeader(Pair<String, String> header) {
     headersRequest.add(header);
   }
 
@@ -193,7 +205,7 @@ public class Url {
    * @param headers
    *          the headers
    */
-  public void addHeaders(List<Pair> headers) {
+  public void addHeaders(List<Pair<String, String>> headers) {
     headersRequest.addAll(headers);
   }
 
@@ -222,7 +234,7 @@ public class Url {
     requestBuilder.url(url);
 
     // set custom headers
-    for (Pair header : headersRequest) {
+    for (Pair<String, String> header : headersRequest) {
       requestBuilder.addHeader(header.first().toString(), header.second().toString());
     }
 
@@ -311,8 +323,9 @@ public class Url {
   }
 
   /**
-   * the number of bytes of the content, or a negative number if unknown. If the content length is known but exceeds Long.MAX_VALUE, a negative number
-   * is returned.
+   * the number of bytes of the content, or a negative number if unknown. If the
+   * content length is known but exceeds Long.MAX_VALUE, a negative number is
+   * returned.
    * 
    * @return the content length
    */

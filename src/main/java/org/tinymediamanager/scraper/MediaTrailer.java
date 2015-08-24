@@ -146,11 +146,11 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
 
   @Override
   public int compareTo(MediaTrailer mt2) {
-    return this.getUrl().compareTo(mt2.getUrl());
+    return getUrl().compareTo(mt2.getUrl());
   }
 
   @Override
   public int hashCode() {
-    return this.getUrl().hashCode();
+    return getUrl().hashCode();
   }
 }

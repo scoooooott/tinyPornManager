@@ -15,15 +15,19 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * The Class UrlUtil.
@@ -31,13 +35,12 @@ import java.util.Locale;
  * @author Manuel Laggner / Myron Boyle
  */
 public class UrlUtil {
-
-  /** The Constant log. */
   private static final Logger LOGGER = LoggerFactory.getLogger(UrlUtil.class);
 
   /**
-   * Casts url string to URI, and does the correct encoding (rfc2396) of query string ONLY (eg "|" character). URLEncoder encodes everything which
-   * might break commons.http
+   * Casts url string to URI, and does the correct encoding (rfc2396) of query
+   * string ONLY (eg "|" character). URLEncoder encodes everything which might
+   * break commons.http
    * 
    * @param url
    *          the url as string
@@ -77,7 +80,6 @@ public class UrlUtil {
    * @param url
    *          the to get the base name from
    * @return BaseName
-   * @throws URISyntaxException
    */
   public static String getBasename(String url) {
     return getFileNameArray(url)[0];
@@ -89,7 +91,6 @@ public class UrlUtil {
    * @param url
    *          the to get the extension from
    * @return BaseName
-   * @throws URISyntaxException
    */
   public static String getExtension(String url) {
     return getFileNameArray(url)[1];
@@ -107,7 +108,8 @@ public class UrlUtil {
   }
 
   /**
-   * Returns the the entire Url Path except the filename, like doing a basedir on a filename.
+   * Returns the the entire Url Path except the filename, like doing a basedir
+   * on a filename.
    * 
    * @param url
    *          the url
@@ -179,7 +181,8 @@ public class UrlUtil {
   }
 
   /**
-   * get the correct name/extension/filename of url (even with parameters! - commons-io CANNOT)
+   * get the correct name/extension/filename of url (even with parameters! -
+   * commons-io CANNOT)
    * 
    * @param url
    *          the url
@@ -188,10 +191,12 @@ public class UrlUtil {
   public static String[] getFileNameArray(String url) {
     String[] ret = new String[] { "", "", "" };
 
-    // URL: "http://photosaaaaa.net/photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo"
+    // URL:
+    // "http://photosaaaaa.net/photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo"
     String filename = "";
     String path = "";
-    // PATH: /photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo
+    // PATH:
+    // /photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo
     try {
       url = getURIEncoded(url).toString();
       path = new URL(url).getPath();
@@ -246,8 +251,9 @@ public class UrlUtil {
    */
   @SuppressWarnings("deprecation")
   public static String encode(String data) {
-    if (data == null)
+    if (data == null) {
       return "";
+    }
     try {
       return URLEncoder.encode(data, "UTF-8");
     }
@@ -260,7 +266,8 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE;
+   * rv:26.0) Gecko/20100101 Firefox/26.0<br>
    * but with correct OS and language values
    */
   public static String generateUA() {
@@ -270,14 +277,16 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE;
+   * rv:26.0) Gecko/20100101 Firefox/26.0<br>
    * but with correct OS and language values
    * 
    * @param language
    *          take the given language rather than the systems default
    */
   public static String generateUA(String language) {
-    // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
+    // this is due to the fact, that the OS is not correctly recognized (eg
+    // Mobile FirefoxOS, where it isn't)
     String hardcodeOS = "";
     if (SystemUtils.IS_OS_WINDOWS) {
       hardcodeOS = "Windows; Windows NT " + System.getProperty("os.version");
@@ -295,13 +304,8 @@ public class UrlUtil {
     Locale l = getLocaleFromLanguage(language);
 
     // @formatter:off
-    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:37.0) Gecko/20100101 Firefox/37.0",
-        hardcodeOS,
-        System.getProperty("os.name", ""),
-        System.getProperty("os.version", ""),
-        System.getProperty("os.arch", ""),
-        l.getLanguage(),
-        l.getCountry());
+    return String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:37.0) Gecko/20100101 Firefox/37.0", hardcodeOS,
+        System.getProperty("os.name", ""), System.getProperty("os.version", ""), System.getProperty("os.arch", ""), l.getLanguage(), l.getCountry());
     // @formatter:on
   }
 

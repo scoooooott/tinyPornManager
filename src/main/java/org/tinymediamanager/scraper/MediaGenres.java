@@ -97,7 +97,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
 
   @Override
   public String toString() {
-    return this.getLocalizedName();
+    return getLocalizedName();
   }
 
   public String dump() {
@@ -119,7 +119,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         // and for invalid languages (like NB) it will be null
         continue;
       }
-      ResourceBundle b = ApiResourceBundle.getResourceBundle(loc); //$NON-NLS-1$
+      ResourceBundle b = ApiResourceBundle.getResourceBundle(loc); 
       try {
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }
@@ -216,7 +216,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    */
   public String getLocalizedName() {
     String lang = Locale.getDefault().getLanguage() + "-";
-    for (String notation : this.alternateNames) {
+    for (String notation : alternateNames) {
       if (notation.startsWith(lang)) {
         return notation.substring(3);
       }

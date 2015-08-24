@@ -102,8 +102,9 @@ public class DynaEnum<E extends DynaEnum<E>> {
   public final int compareTo(E other) {
     DynaEnum<?> self = this;
     if (self.getClass() != other.getClass() && // optimization
-        self.getDeclaringClass() != other.getDeclaringClass())
+        self.getDeclaringClass() != other.getDeclaringClass()) {
       throw new ClassCastException();
+    }
     return self.ordinal - other.ordinal;
   }
 

@@ -16,13 +16,15 @@
 package org.tinymediamanager.scraper;
 
 /**
- * The UnsupportedMediaTypeException is used to indicate that the given media type cannot be used for the chosen meta data provider
+ * The UnsupportedMediaTypeException is used to indicate that the given media
+ * type cannot be used for the chosen meta data provider
  * 
  * @author Manuel Laggner
  * @since 1.0
  */
 public class UnsupportedMediaTypeException extends Exception {
-  private MediaType type;
+  private static final long serialVersionUID = 2860692702692312793L;
+  private MediaType         type;
 
   public UnsupportedMediaTypeException(MediaType type) {
     this.type = type;

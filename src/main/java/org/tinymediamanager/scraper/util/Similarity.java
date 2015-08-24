@@ -21,14 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * String Similarity taken from: http://www.catalysoft.com/articles/StrikeAMatch.html
+ * String Similarity taken from:
+ * http://www.catalysoft.com/articles/StrikeAMatch.html
  * 
  * @author seans
  * 
  */
 public class Similarity {
-
-  /** The Constant log. */
   private static final Logger LOGGER = LoggerFactory.getLogger(Similarity.class);
 
   /**
@@ -116,8 +115,9 @@ public class Similarity {
    * @return lexical similarity value in the range [0,1]
    */
   private static float compareStrings(String str1, String str2, boolean suppressLogOutput) {
-    if (str1 == null || str2 == null)
+    if (str1 == null || str2 == null) {
       return 0.0f;
+    }
     if (str1.equalsIgnoreCase(str2)) {
       if (!suppressLogOutput) {
         LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, 1.0f));
@@ -148,8 +148,10 @@ public class Similarity {
         score = 0;
       }
       // do not downgrade score, b/c we skip duplicate 100% matches in task
-      // and we had the bug, that 0.9 is lower then the second match, where it took the wrong movie
-      // and if the 2 results get 99% there's also a chance of takeing the wrong one
+      // and we had the bug, that 0.9 is lower then the second match, where it
+      // took the wrong movie
+      // and if the 2 results get 99% there's also a chance of takeing the wrong
+      // one
       //
       // if (score == 1.0f) {
       // // exception case... for some reason, "Batman Begins" ==
@@ -159,7 +161,8 @@ public class Similarity {
       // return score;
       // }
       // else {
-      // LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 + " and " + str2 + " because they are not equal.");
+      // LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 +
+      // " and " + str2 + " because they are not equal.");
       // // adjust the score, because only 2 strings should be equal.
       // score = 0.90f;
       // }

@@ -138,7 +138,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   public void addExtraArg(String key, String value) {
-    this.extraArgs.put(key, value);
+    extraArgs.put(key, value);
   }
 
   public MediaType getMediaType() {
@@ -162,7 +162,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   public void setIMDBId(String imdbid) {
-    this.imdbId = imdbid;
+    imdbId = imdbid;
   }
 
   public Map<String, String> getExtra() {
@@ -174,7 +174,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   public void setMetadata(MediaMetadata md) {
-    this.metadata = md;
+    metadata = md;
   }
 
   public String getPosterUrl() {

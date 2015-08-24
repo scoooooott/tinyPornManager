@@ -247,7 +247,7 @@ public enum Certification {
    * @return the country
    */
   public CountryCode getCountry() {
-    return this.country;
+    return country;
   }
 
   /**
@@ -256,7 +256,7 @@ public enum Certification {
    * @return the name
    */
   public String getName() {
-    return this.name;
+    return name;
   }
 
   /**
@@ -294,7 +294,7 @@ public enum Certification {
 
   @Override
   public String toString() {
-    return this.name;
+    return name;
   }
 
   /**

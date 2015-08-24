@@ -30,7 +30,7 @@ public interface IMediaSubtitleProvider extends IMediaProvider {
   /**
    * searches for subtitles for MediaFile
    * 
-   * @param mf
+   * @param subtitleFile
    *          the MediaFile
    * @return the MediaSearchResults
    * @throws Exception

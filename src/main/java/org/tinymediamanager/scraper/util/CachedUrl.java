@@ -15,15 +15,11 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import com.squareup.okhttp.Headers;
-import org.apache.commons.io.IOUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -31,8 +27,13 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
+import com.squareup.okhttp.Headers;
+
 /**
- * The class CachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)
+ * The class CachedUrl is used to cache some sort of Urls (e.g. when they are
+ * accessed several times in a short period)
  */
 public class CachedUrl extends Url {
   private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<String, CachedRequest>(60, 5);
@@ -54,6 +55,7 @@ public class CachedUrl extends Url {
     }
   }
 
+  @Override
   public InputStream getInputStream() throws IOException, InterruptedException {
     CachedRequest cachedRequest = CACHE.get(url);
     if (cachedRequest == null) {
@@ -69,19 +71,19 @@ public class CachedUrl extends Url {
 
       // and now fill the CachedRequest object with the result
       cachedRequest = new CachedRequest(url, outputStream.toByteArray());
-      if(url.responseCode >= 200 && url.responseCode < 300){
+      if (url.responseCode >= 200 && url.responseCode < 300) {
         CACHE.put(this.url, cachedRequest);
       }
     }
 
-    this.responseCode = cachedRequest.responseCode;
-    this.responseMessage = cachedRequest.responseMessage;
-    this.responseCharset = cachedRequest.responseCharset;
-    this.responseContentType = cachedRequest.responseContentType;
-    this.responseContentLength = cachedRequest.responseContentLength;
+    responseCode = cachedRequest.responseCode;
+    responseMessage = cachedRequest.responseMessage;
+    responseCharset = cachedRequest.responseCharset;
+    responseContentType = cachedRequest.responseContentType;
+    responseContentLength = cachedRequest.responseContentLength;
 
-    this.headersResponse = cachedRequest.headersResponse;
-    this.headersRequest.addAll(cachedRequest.headersRequest);
+    headersResponse = cachedRequest.headersResponse;
+    headersRequest.addAll(cachedRequest.headersRequest);
 
     return new GZIPInputStream(new ByteArrayInputStream(cachedRequest.content));
   }
@@ -94,22 +96,18 @@ public class CachedUrl extends Url {
    * A inner class for representing cached entries
    */
   private static class CachedRequest {
-    String     url;
-    URI        uri;
-    byte[]     content;
+    byte[] content;
 
-    int        responseCode          = 0;
-    String     responseMessage       = "";
-    Charset    responseCharset       = null;
-    String     responseContentType   = "";
-    long       responseContentLength = -1;
+    int     responseCode          = 0;
+    String  responseMessage       = "";
+    Charset responseCharset       = null;
+    String  responseContentType   = "";
+    long    responseContentLength = -1;
 
-    Headers    headersResponse       = null;
-    List<Pair> headersRequest        = new ArrayList<Pair>();
+    Headers                    headersResponse = null;
+    List<Pair<String, String>> headersRequest  = new ArrayList<>();
 
-    CachedRequest(Url url, byte[] content){
-      this.url = url.url;
-      this.uri = url.uri;
+    CachedRequest(Url url, byte[] content) {
       this.content = content;
 
       this.responseCode = url.responseCode;

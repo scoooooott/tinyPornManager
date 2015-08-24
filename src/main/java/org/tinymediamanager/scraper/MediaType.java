@@ -25,8 +25,9 @@ public enum MediaType {
   TV_SHOW, TV_EPISODE, MOVIE, MOVIE_SET;
 
   public static MediaType toMediaType(String id) {
-    if (id == null)
+    if (id == null) {
       return null;
+    }
 
     id = id.toLowerCase();
     if ("movie".equalsIgnoreCase(id) || "movies".equalsIgnoreCase(id)) {
