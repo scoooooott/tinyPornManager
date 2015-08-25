@@ -45,3 +45,20 @@ more screenshots at [http://www.tinymediamanager.org/index.php/screenshots/](htt
 ###Change artwork
 
 [![Image chooser](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog.jpg)
+
+
+
+## Developer info:
+To work with the SNAPSHOTs, you need to add following repository to your ~/.m2/settings.xml
+
+				<repository>
+					<id>ossrh-snapshot</id>
+					<name>Sonatype Snapshot Repository</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
