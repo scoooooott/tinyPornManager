@@ -30,6 +30,7 @@ config.xml
 *.odb
 *.odb$
 *.desktop
+scraper_*.conf
 tmm_ui.prop
 tmm.uuid
 backup

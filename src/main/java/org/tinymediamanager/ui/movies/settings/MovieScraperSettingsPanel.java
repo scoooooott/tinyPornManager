@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
@@ -58,11 +61,14 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -177,6 +183,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     panelScraperDetails.add(tpScraperDescription, "2, 2");
 
     panelScraperOptions = new JPanel();
+    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
     panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
 
     JSeparator separator = new JSeparator();
@@ -286,6 +293,21 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       }
     });
 
+    // implement selection listener to load settings
+    tableScraper.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
+        if (index > -1) {
+          panelScraperOptions.removeAll();
+          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          }
+          panelScraperOptions.revalidate();
+        }
+      }
+    });
+
     // select default movie scraper
     if (counter > 0) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
@@ -369,6 +391,10 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         this.defaultScraper = newValue;
         firePropertyChange("defaultScraper", oldValue, newValue);
       }
+    }
+
+    public IMediaProvider getMediaProvider() {
+      return scraper.getMediaProvider();
     }
   }
 

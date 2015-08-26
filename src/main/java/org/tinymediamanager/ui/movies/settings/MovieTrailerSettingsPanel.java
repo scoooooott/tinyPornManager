@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Canvas;
+import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -54,10 +57,13 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
+import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -85,6 +91,7 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
   private JComboBox<MovieTrailerQuality> cbTrailerQuality;
   private JCheckBox                      checkBox;
   private JCheckBox                      chckbxAutomaticTrailerDownload;
+  private JPanel                         panelScraperOptions;
 
   public MovieTrailerSettingsPanel() {
     // data init
@@ -157,7 +164,8 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
     panelScraperDetails.add(tpScraperDescription, "2, 2, fill, fill");
 
-    JPanel panelScraperOptions = new JPanel();
+    panelScraperOptions = new JPanel();
+    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
     panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
 
     chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
@@ -188,6 +196,21 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
           else {
             settings.removeMovieTrailerScraper(changedScraper.getScraperId());
           }
+        }
+      }
+    });
+
+    // implement selection listener to load settings
+    tableTrailerScraper.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        int index = tableTrailerScraper.convertRowIndexToModel(tableTrailerScraper.getSelectedRow());
+        if (index > -1) {
+          panelScraperOptions.removeAll();
+          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          }
+          panelScraperOptions.revalidate();
         }
       }
     });
@@ -268,6 +291,10 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
       Boolean oldValue = this.active;
       this.active = newValue;
       firePropertyChange("active", oldValue, newValue);
+    }
+
+    public IMediaProvider getMediaProvider() {
+      return scraper.getMediaProvider();
     }
   }
 

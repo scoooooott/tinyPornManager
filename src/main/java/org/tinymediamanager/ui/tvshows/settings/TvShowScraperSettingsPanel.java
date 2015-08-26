@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -39,6 +40,8 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -56,10 +59,13 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.IMediaProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -105,6 +111,8 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JTable       tableArtworkScraper;
   private JPanel       panelArtworkScraperDetails;
   private JTextPane    tpArtworkScraperDescription;
+  private JPanel       panelScraperOptions;
+  private JPanel       panelArtworkScraperOptions;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -162,12 +170,16 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     panelScraperDetails = new JPanel();
     panelTvShowScrapers.add(panelScraperDetails, "5, 2, fill, fill");
     panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
     panelScraperDetails.add(tpScraperDescription, "2, 2, fill, fill");
+
+    panelScraperOptions = new JPanel();
+    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+    panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
 
     JSeparator separator = new JSeparator();
     panelTvShowScrapers.add(separator, "1, 4, 5, 1");
@@ -212,6 +224,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     tpArtworkScraperDescription.setEditorKit(new HTMLEditorKit());
     tpArtworkScraperDescription.setOpaque(false);
     panelArtworkScraperDetails.add(tpArtworkScraperDescription, "2, 2, fill, fill");
+
+    panelArtworkScraperOptions = new JPanel();
+    panelArtworkScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+    panelArtworkScraperDetails.add(panelArtworkScraperOptions, "2, 4, fill, fill");
 
     separator_1 = new JSeparator();
     panelArtworkScrapers.add(separator_1, "2, 4, 5, 1");
@@ -274,6 +290,21 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       }
     });
 
+    // implement selection listener to load settings
+    tableScraper.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
+        if (index > -1) {
+          panelScraperOptions.removeAll();
+          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          }
+          panelScraperOptions.revalidate();
+        }
+      }
+    });
+
     tableArtworkScraper.getModel().addTableModelListener(new TableModelListener() {
       @Override
       public void tableChanged(TableModelEvent arg0) {
@@ -287,6 +318,21 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
           else {
             settings.getTvShowSettings().removeTvShowArtworkScraper(changedScraper.getScraperId());
           }
+        }
+      }
+    });
+    // implement selection listener to load settings
+    tableArtworkScraper.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        int index = tableArtworkScraper.convertRowIndexToModel(tableArtworkScraper.getSelectedRow());
+        if (index > -1) {
+          panelArtworkScraperOptions.removeAll();
+          if (artworkScrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
+            panelArtworkScraperOptions
+                .add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) artworkScrapers.get(index).getMediaProvider()));
+          }
+          panelArtworkScraperOptions.revalidate();
         }
       }
     });
@@ -387,6 +433,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       this.defaultScraper = newValue;
       firePropertyChange("defaultScraper", oldValue, newValue);
     }
+
+    public IMediaProvider getMediaProvider() {
+      return scraper.getMediaProvider();
+    }
   }
 
   public class ArtworkScraper extends AbstractModelObject {
@@ -453,6 +503,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       Boolean oldValue = this.active;
       this.active = newValue;
       firePropertyChange("active", oldValue, newValue);
+    }
+
+    public IMediaProvider getMediaProvider() {
+      return scraper.getMediaProvider();
     }
   }
 
