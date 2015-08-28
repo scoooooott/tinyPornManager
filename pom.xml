@@ -13,29 +13,9 @@
 	<version>2.7-SNAPSHOT</version>
 	<name>tinyMediaManager</name>
 
-	<scm>
-		<url>https://github.com/tinyMediaManager/tinyMediaManager</url>
-		<connection>scm:git:https://github.com/tinyMediaManager/tinyMediaManager</connection>
-		<developerConnection>scm:git:git@github.com:tinyMediaManager/tinyMediaManager.git</developerConnection>
-	</scm>
 	<properties>
 		<transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
 	</properties>
-
-	<repositories>
-		<!-- we still have to use some non-mavenized libraries -->
-		<repository>
-			<id>tinymediamanager-3rd-party</id>
-			<name>tinyMediaManager 3rd-party releases</name>
-			<url>https://repository-tinymediamanager.forge.cloudbees.com/release/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<!-- TMM dependencies -->
@@ -195,7 +175,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -209,8 +188,7 @@
 							<Build-Nr>${buildNumber}</Build-Nr>
 							<Build-Date>${timestamp}</Build-Date>
 							<Build-By>${user.name}</Build-By>
-							<Class-Path>lib/swt.jar locale/*</Class-Path><!-- additional; same 
-								as in GD.txt -->
+							<Class-Path>lib/swt.jar</Class-Path><!-- additional; same as in GD.txt -->
 						</manifestEntries>
 					</archive>
 				</configuration>
