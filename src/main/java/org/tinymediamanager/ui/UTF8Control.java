@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,6 +30,8 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
+
+import org.tinymediamanager.core.Constants;
 
 /**
  * Utility class fo UTF8 resource bundles<br>
@@ -75,8 +80,7 @@ public class UTF8Control extends Control {
               if (url != null) {
                 URLConnection connection = url.openConnection();
                 if (connection != null) {
-                  // Disable caches to get fresh data for
-                  // reloading.
+                  // Disable caches to get fresh data for reloading.
                   connection.setUseCaches(false);
                   is = connection.getInputStream();
                 }
@@ -90,8 +94,19 @@ public class UTF8Control extends Control {
         });
       }
       catch (PrivilegedActionException e) {
+        e.printStackTrace();
         throw (IOException) e.getException();
       }
+
+      if (stream == null) {
+        // still not in classpath? read from our file system directly
+        try {
+          stream = new FileInputStream(new File(Constants.LOCALE_FOLDER, resourceName));
+        }
+        catch (FileNotFoundException e) {
+        }
+      }
+
       if (stream != null) {
         try {
           // Only this line is changed to make it to read properties files as UTF-8.

@@ -722,7 +722,7 @@ public class Utils {
     ArrayList<Locale> loc = new ArrayList<Locale>();
     loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
-      File[] props = new File("locale").listFiles();
+      File[] props = new File(Constants.LOCALE_FOLDER).listFiles();
       for (File file : props) {
         // String l = file.getName().substring(9, 11); // messages_XX.properties
         Matcher matcher = localePattern.matcher(file.getName());
