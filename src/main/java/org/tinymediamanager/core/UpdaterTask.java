@@ -99,10 +99,11 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
             }
           }
 
-          Url upd = new Url(uu + "digest.txt");
+          Url upd = new Url(uu + "digest.txt?z=" + System.currentTimeMillis()); // cache bust
           LOGGER.trace("Checking " + uu);
           remoteDigest = IOUtils.toString(upd.getInputStream(), "UTF-8");
           if (remoteDigest != null && remoteDigest.contains("tmm.jar")) {
+            remoteDigest = remoteDigest.trim();
             valid = true; // bingo!
             remoteUrl = uu;
           }
@@ -123,6 +124,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
 
       // compare with our local
       String localDigest = FileUtils.readFileToString(digestFile, "UTF-8");
+      localDigest = localDigest.trim();
       if (!localDigest.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
 
