@@ -34,15 +34,15 @@ import java.util.HashMap;
 public class MediaScrapeOptions {
   private MediaSearchResult       result;
   private MediaMetadata           metadata;
-  private HashMap<String, String> ids                       = new HashMap<String, String>();
+  private HashMap<String, String> ids         = new HashMap<String, String>();
   private MediaType               type;
-  private MediaArtworkType        artworkType               = MediaArtworkType.ALL;
-  private MediaLanguages          language                  = MediaLanguages.en;
-  private CountryCode             country                   = CountryCode.US;
-  private boolean                 scrapeCollectionInfo      = false;
-  private boolean                 scrapeImdbForeignLanguage = false;
-  private FanartSizes             fanartSize                = FanartSizes.MEDIUM;           // default; will be overwritten by tmm settings
-  private PosterSizes             posterSize                = PosterSizes.MEDIUM;           // default; will be overwritten by tmm settings
+  private MediaArtworkType        artworkType = MediaArtworkType.ALL;
+  private MediaLanguages          language    = MediaLanguages.en;
+  private CountryCode             country     = CountryCode.US;
+  private FanartSizes             fanartSize  = FanartSizes.MEDIUM;           // default; will be overwritten by tmm
+                                                                              // settings
+  private PosterSizes             posterSize  = PosterSizes.MEDIUM;           // default; will be overwritten by tmm
+                                                                              // settings
 
   public MediaScrapeOptions(MediaType type) {
     this.type = type;
@@ -136,22 +136,6 @@ public class MediaScrapeOptions {
 
   public void setCountry(CountryCode country) {
     this.country = country;
-  }
-
-  public boolean isScrapeCollectionInfo() {
-    return scrapeCollectionInfo;
-  }
-
-  public void setScrapeCollectionInfo(boolean scrapeCollectionInfo) {
-    this.scrapeCollectionInfo = scrapeCollectionInfo;
-  }
-
-  public boolean isScrapeImdbForeignLanguage() {
-    return scrapeImdbForeignLanguage;
-  }
-
-  public void setScrapeImdbForeignLanguage(boolean scrapeImdbForeignLanguage) {
-    this.scrapeImdbForeignLanguage = scrapeImdbForeignLanguage;
   }
 
   public FanartSizes getFanartSize() {
