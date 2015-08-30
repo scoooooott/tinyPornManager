@@ -157,8 +157,6 @@ public abstract class ImdbParser {
         options.setImdbId(movieId);
         options.setLanguage(MediaLanguages.valueOf(language));
         options.setCountry(CountryCode.valueOf(country));
-        options.setScrapeCollectionInfo(Boolean.parseBoolean(query.get(MediaSearchOptions.SearchParam.COLLECTION_INFO)));
-        options.setScrapeImdbForeignLanguage(Boolean.parseBoolean(query.get(MediaSearchOptions.SearchParam.IMDB_FOREIGN_LANGUAGE)));
         md = getMetadata(options);
         if (!StringUtils.isEmpty(md.getStringValue(MediaMetadata.TITLE))) {
           movieName = md.getStringValue(MediaMetadata.TITLE);
@@ -555,7 +553,7 @@ public abstract class ImdbParser {
          * more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*") && !options.isScrapeImdbForeignLanguage()) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*") && !ImdbMetadataProviderConfig.SETTINGS.useTmdb) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();

@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +35,9 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class ImdbMetadataProvider. A meta data provider for the site imdb.com
@@ -42,30 +45,29 @@ import java.util.concurrent.Executors;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
-  private static final Logger    LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+public class ImdbMetadataProvider
+    implements IConfigureableMediaProvider, IMovieMetadataProvider, ITvShowMetadataProvider {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
-  static final MediaProviderInfo providerInfo  = createMediaProviderInfo();
+  static final MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  static final ExecutorService   executor      = Executors.newFixedThreadPool(4);
+  static final ExecutorService executor = Executors.newFixedThreadPool(4);
 
-  public static final String     CAT_ALL       = "&s=all";
-  public static final String     CAT_TITLE     = "&s=tt";
-  public static final String     CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
-  public static final String     CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
-  public static final String     CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
-  public static final String     CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
+  public static final String CAT_ALL       = "&s=all";
+  public static final String CAT_TITLE     = "&s=tt";
+  public static final String CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
+  public static final String CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
+  public static final String CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
+  public static final String CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
 
-  private ImdbSiteDefinition     imdbSite;
+  private ImdbSiteDefinition imdbSite;
 
   public ImdbMetadataProvider() {
     imdbSite = ImdbSiteDefinition.IMDB_COM;
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo(
-        "imdb",
-        "IMDb.com",
+    MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "IMDb.com",
         "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
         ImdbMetadataProvider.class.getResource("/imdb_com.png"));
 
@@ -75,6 +77,17 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
+  }
+
+  @Override
+  public Map<String, Object> getProviderSettings() {
+    return ImdbMetadataProviderConfig.SETTINGS.getConfigMap();
+  }
+
+  @Override
+  public void setProviderSettings(Map<String, Object> settings) {
+    ImdbMetadataProviderConfig.SETTINGS.setConfig(settings);
+    ImdbMetadataProviderConfig.SETTINGS.save();
   }
 
   @Override
