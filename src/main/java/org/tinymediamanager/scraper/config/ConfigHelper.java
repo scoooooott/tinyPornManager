@@ -26,18 +26,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.tinymediamanager.scraper.util.AesUtil;
+
 /**
- * The class ConfigHelper is a helper class for loading and storing scraper
- * config files via reflection
+ * The class ConfigHelper is a helper class for loading and storing scraper config files via reflection
  * 
  * @author Manuel Laggner
  * @since 1.0
  */
 public final class ConfigHelper {
+  private static final String SALT = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String IV   = "E17D2C8927726ACE1E7510A1BDD3D439";
+
+  private static final AesUtil AES_UTIL = new AesUtil(128, 100);
 
   /**
-   * load the properties file specified via the parameter filename and assign
-   * the values via reflection to the object config.
+   * load the properties file specified via the parameter filename and assign the values via reflection to the object
+   * config.
    * 
    * @param filename
    *          the file name of the config properties file
@@ -68,9 +73,32 @@ public final class ConfigHelper {
     for (Field field : config.getClass().getFields()) {
       try {
         field.setAccessible(true);
-        Method method = field.getType().getMethod("valueOf", String.class);
+        ScraperSetting annotation = field.getAnnotation(ScraperSetting.class);
+        if (annotation == null) {
+          continue;
+        }
+        Method method = null;
+        try {
+          method = field.getType().getMethod("valueOf", String.class);
+        }
+        catch (Exception ignored) {
+        }
         if (method != null) {
-          field.set(config, method.invoke(null, properties.getProperty(field.getName())));
+          if (annotation.encrypt()) {
+            field.set(config,
+                method.invoke(null, decryptField(properties.getProperty(field.getName()), annotation.encryptionKey())));
+          }
+          else {
+            field.set(config, method.invoke(null, properties.getProperty(field.getName())));
+          }
+        }
+        else if (field.getType() == String.class) {
+          if (annotation.encrypt()) {
+            field.set(config, decryptField(properties.getProperty(field.getName()), annotation.encryptionKey()));
+          }
+          else {
+            field.set(config, properties.getProperty(field.getName()));
+          }
         }
       }
       catch (Exception ignored) {
@@ -79,8 +107,8 @@ public final class ConfigHelper {
   }
 
   /**
-   * write the config properties file specified with the parameter filename. The
-   * values to be stored are determined and read via reflection
+   * write the config properties file specified with the parameter filename. The values to be stored are determined and
+   * read via reflection
    * 
    * @param filename
    *          the file name to store the config to
@@ -94,7 +122,18 @@ public final class ConfigHelper {
     for (Field field : config.getClass().getFields()) {
       try {
         field.setAccessible(true);
-        properties.setProperty(field.getName(), field.get(config).toString());
+        ScraperSetting annotation = field.getAnnotation(ScraperSetting.class);
+        if (annotation == null) {
+          continue;
+        }
+
+        if (annotation.encrypt()) {
+          properties.setProperty(field.getName(),
+              encryptField(field.get(config).toString(), annotation.encryptionKey()));
+        }
+        else {
+          properties.setProperty(field.getName(), field.get(config).toString());
+        }
       }
       catch (Exception ignored) {
       }
@@ -120,8 +159,7 @@ public final class ConfigHelper {
   }
 
   /**
-   * Convert the config object into a map containing the fields (mainly used for
-   * representation in a UI)
+   * Convert the config object into a map containing the fields (mainly used for representation in a UI)
    * 
    * @param config
    *          the object containing the configuration
@@ -142,8 +180,7 @@ public final class ConfigHelper {
   }
 
   /**
-   * Convert the config map (field/value pairs) to the config class (mainly used
-   * after changing the config in a UI)
+   * Convert the config map (field/value pairs) to the config class (mainly used after changing the config in a UI)
    * 
    * @param configMap
    *          the map containing the new config field/value pairs
@@ -160,5 +197,13 @@ public final class ConfigHelper {
       catch (Exception ignored) {
       }
     }
+  }
+
+  private static String encryptField(String value, String key) {
+    return AES_UTIL.encrypt(SALT, IV, key, value);
+  }
+
+  private static String decryptField(String value, String key) {
+    return AES_UTIL.decrypt(SALT, IV, key, value);
   }
 }

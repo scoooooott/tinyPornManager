@@ -37,7 +37,7 @@ public class AesUtil {
   private final int    iterationCount;
   private final Cipher cipher;
 
-  protected AesUtil(int keySize, int iterationCount) {
+  public AesUtil(int keySize, int iterationCount) {
     this.keySize = keySize;
     this.iterationCount = iterationCount;
     try {
@@ -48,7 +48,7 @@ public class AesUtil {
     }
   }
 
-  protected String encrypt(String salt, String iv, String passphrase, String plaintext) {
+  public String encrypt(String salt, String iv, String passphrase, String plaintext) {
     try {
       SecretKey key = generateKey(salt, passphrase);
       byte[] encrypted = doFinal(Cipher.ENCRYPT_MODE, key, iv, plaintext.getBytes("UTF-8"));
@@ -59,7 +59,7 @@ public class AesUtil {
     }
   }
 
-  protected String decrypt(String salt, String iv, String passphrase, String ciphertext) {
+  public String decrypt(String salt, String iv, String passphrase, String ciphertext) {
     try {
       SecretKey key = generateKey(salt, passphrase);
       byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, iv, base64(ciphertext));
