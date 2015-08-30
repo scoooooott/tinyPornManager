@@ -144,7 +144,6 @@ public class MovieSetChooserModel extends AbstractModelObject {
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
             try {
               MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));
@@ -177,7 +176,6 @@ public class MovieSetChooserModel extends AbstractModelObject {
         options.setTmdbId(Integer.parseInt(result.getId()));
         options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
         options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-        options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
         MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
         // if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {

@@ -738,7 +738,6 @@ public class ImageChooserDialog extends TmmDialog {
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
           }
           else if (mediaType == MediaType.TV_SHOW) {
             options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());

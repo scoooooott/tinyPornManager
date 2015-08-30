@@ -163,8 +163,6 @@ public class MovieScrapeTask extends TmmThreadPool {
             options.setResult(result1);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
-            options.setScrapeCollectionInfo(scraperMetadataConfig.isCollection());
 
             // we didn't do a search - pass imdbid and tmdbid from movie object
             if (!doSearch) {
@@ -256,7 +254,6 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setTmdbId(movie.getTmdbId());
       options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-      options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
       // scrape providers till one artwork has been found
       for (MediaScraper scraper : artworkScrapers) {
@@ -294,7 +291,6 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setTmdbId(movie.getTmdbId());
       options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-      options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {

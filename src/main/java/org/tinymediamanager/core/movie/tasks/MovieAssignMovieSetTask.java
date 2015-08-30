@@ -86,8 +86,6 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
           options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
           options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-          options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
-          options.setScrapeCollectionInfo(true);
           for (Entry<String, Object> entry : movie.getIds().entrySet()) {
             options.setId(entry.getKey(), entry.getValue().toString());
           }
@@ -105,7 +103,6 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
                 options.setTmdbId(collectionId);
                 options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
                 options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-                options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
                 MediaMetadata info = mp.getMetadata(options);
                 if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {

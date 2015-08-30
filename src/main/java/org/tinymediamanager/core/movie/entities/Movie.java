@@ -874,7 +874,6 @@ public class Movie extends MediaEntity {
               options.setTmdbId(col);
               options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-              options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
               MediaMetadata info = mp.getMetadata(options);
               if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
