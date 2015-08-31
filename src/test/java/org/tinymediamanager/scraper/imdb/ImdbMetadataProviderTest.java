@@ -1,19 +1,32 @@
 package org.tinymediamanager.scraper.imdb;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.tinymediamanager.scraper.*;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.LogManager;
 
-import static org.junit.Assert.*;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaCastMember.CastType;
+import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.util.ProxySettings;
 
 public class ImdbMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -89,7 +102,8 @@ public class ImdbMetadataProviderTest {
       result = results.get(1);
       checkSearchResult("The Real Inglorious Bastards", "2012", "tt3320110", result);
 
-      // check third result (Inglourious Basterds: Movie Special - 2009 - tt1515156)
+      // check third result (Inglourious Basterds: Movie Special - 2009 -
+      // tt1515156)
       result = results.get(2);
       checkSearchResult("Inglourious Basterds: Movie Special", "2009", "tt1515156", result);
 
@@ -240,6 +254,9 @@ public class ImdbMetadataProviderTest {
     ImdbMetadataProvider mp = null;
     MediaScrapeOptions options = null;
     MediaMetadata md = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+
+    ProxySettings.setProxySettings("localhost", 3128, "", "");
 
     /*
      * test on akas.imdb.com - Psych (tt0491738)
@@ -260,7 +277,7 @@ public class ImdbMetadataProviderTest {
 
       assertEquals("Pilot", md.getStringValue(MediaMetadata.TITLE));
       assertEquals("The police department in Santa Barbara hires someone they think is a psychic detective.", md.getStringValue(MediaMetadata.PLOT));
-      assertEquals("7 July 2006", md.getStringValue(MediaMetadata.RELEASE_DATE));
+      assertEquals("7 July 2006", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
     }
     catch (Exception e) {
@@ -284,7 +301,7 @@ public class ImdbMetadataProviderTest {
       assertEquals("Earth, Wind and... Wait for It", md.getStringValue(MediaMetadata.TITLE));
       assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.",
           md.getStringValue(MediaMetadata.PLOT));
-      assertEquals("23 January 2009", md.getStringValue(MediaMetadata.RELEASE_DATE));
+      assertEquals("23 January 2009", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -539,10 +556,12 @@ public class ImdbMetadataProviderTest {
     // assertNotNull("MediaMetadata", md);
     //
     // // check moviedetails
-    // checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", md);
+    // checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker",
+    // "Pamela Pettler, Shane Acker", "PG-13", md);
     //
     // // check poster
-    // // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
+    // //
+    // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
     // // md);
     //
     // // check genres
@@ -558,7 +577,14 @@ public class ImdbMetadataProviderTest {
     //
     // // check plot
     // checkPlot(
-    // "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten Tage der menschlichen Existenz, haben sich zu einer Mission zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle gemeinsam gegen die Maschinen aufzubringen.",
+    // "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen
+    // \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der
+    // Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare
+    // kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten
+    // Tage der menschlichen Existenz, haben sich zu einer Mission
+    // zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von
+    // Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle
+    // gemeinsam gegen die Maschinen aufzubringen.",
     // md);
     //
     // // check cast
@@ -580,7 +606,8 @@ public class ImdbMetadataProviderTest {
     // checkCastMembers(castMembers, 10, md);
     //
     // // check production company
-    // checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Tim Burton Productions", md);
+    // checkProductionCompany("Focus Features, Relativity Media, Arc
+    // Productions, Starz Animation, Tim Burton Productions", md);
 
   }
 
@@ -622,7 +649,9 @@ public class ImdbMetadataProviderTest {
     }
     assertEquals("writer", writer, sb.toString());
     // certification
-    // assertEquals("certification", Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), certification), md
+    // assertEquals("certification",
+    // Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(),
+    // certification), md
     // .getCertifications().get(0));
   }
 

@@ -15,6 +15,17 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,16 +34,13 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.util.CachedUrl;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
@@ -41,9 +49,10 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInf
  */
 public class ImdbTvShowParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbTvShowParser.class);
-  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped out
+  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped
+                                                                                                                               // out
 
-  private ImdbSiteDefinition   imdbSite;
+  private ImdbSiteDefinition imdbSite;
 
   public ImdbTvShowParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.TV_SHOW);
@@ -142,7 +151,8 @@ public class ImdbTvShowParser extends ImdbParser {
       return md;
     }
 
-    // first get the base episode metadata which can be gathered via getEpisodeList()
+    // first get the base episode metadata which can be gathered via
+    // getEpisodeList()
     List<MediaEpisode> episodes = getEpisodeList(options);
 
     MediaEpisode wantedEpisode = null;
@@ -186,16 +196,22 @@ public class ImdbTvShowParser extends ImdbParser {
         Element releaseDate = h4.nextElementSibling();
         if (releaseDate.tag().getName().equals("b")) {
           try {
-            md.storeMetadata(MediaMetadata.RELEASE_DATE, releaseDate.ownText());
+            SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+            Date parsedDate = sdf.parse(releaseDate.ownText());
+            md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
           }
-          catch (Exception e) {
+          catch (ParseException ignored) {
+            ignored.printStackTrace();
           }
 
-          // parse plot - this is really tricky, because the plot is not in any tag for itself:
-          // <b>7 July 2006</b><br>The police department in Santa Barbara hires someone they think is a psychic detective.<br/>
+          // parse plot - this is really tricky, because the plot is not in any
+          // tag for itself:
+          // <b>7 July 2006</b><br>The police department in Santa Barbara hires
+          // someone they think is a psychic detective.<br/>
           // first store the reference of the preceeding <b>
           Element b = releaseDate.nextElementSibling();
-          // and then iterate over all text nodes of the parent until we get the right node
+          // and then iterate over all text nodes of the parent until we get the
+          // right node
           for (TextNode node : content.textNodes()) {
             if (node.previousSibling() == b) {
               md.storeMetadata(MediaMetadata.PLOT, node.text());
@@ -206,10 +222,10 @@ public class ImdbTvShowParser extends ImdbParser {
 
         // and finally the cast which is the nextmost <div> after the h4
         Element next = h4.nextElementSibling();
-        while(true){
-          if(next.tag().getName().equals("div")) {
+        while (true) {
+          if (next.tag().getName().equals("div")) {
             Elements rows = next.getElementsByTag("tr");
-            for(Element row : rows){
+            for (Element row : rows) {
               MediaCastMember cm = parseCastMember(row);
               if (StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
                 cm.setType(MediaCastMember.CastType.ACTOR);
@@ -237,7 +253,8 @@ public class ImdbTvShowParser extends ImdbParser {
   List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
     List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
 
-    // parse the episodes from the ratings overview page (e.g. http://www.imdb.com/title/tt0491738/epdate )
+    // parse the episodes from the ratings overview page (e.g.
+    // http://www.imdb.com/title/tt0491738/epdate )
     String imdbId = options.getImdbId();
     if (StringUtils.isBlank(imdbId)) {
       return episodes;
