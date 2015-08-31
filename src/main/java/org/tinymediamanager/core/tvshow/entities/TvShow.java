@@ -520,12 +520,7 @@ public class TvShow extends MediaEntity {
     }
 
     if (config.isAired()) {
-      try {
-        setFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
-      }
-      catch (ParseException e) {
-
-      }
+      setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
     }
 
     if (config.isStatus()) {

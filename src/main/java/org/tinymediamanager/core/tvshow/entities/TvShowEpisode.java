@@ -418,14 +418,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR));
     setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD));
     setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD));
-
-    try {
-      setFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
-    }
-    catch (ParseException e) {
-      LOGGER.warn(e.getMessage());
-    }
-
+    setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
     setRating(metadata.getFloatValue(MediaMetadata.RATING));
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();

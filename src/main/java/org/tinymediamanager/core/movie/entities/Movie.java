@@ -771,12 +771,7 @@ public class Movie extends MediaEntity {
 
     if (config.isYear()) {
       setYear(metadata.getStringValue(MediaMetadata.YEAR));
-      try {
-        setReleaseDate(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
-      }
-      catch (ParseException e) {
-        LOGGER.warn(e.getMessage());
-      }
+      setReleaseDate(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
     }
 
     if (config.isRating()) {
