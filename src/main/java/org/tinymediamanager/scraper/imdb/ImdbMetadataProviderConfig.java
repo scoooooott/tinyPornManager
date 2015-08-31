@@ -21,18 +21,18 @@ import org.tinymediamanager.scraper.config.ConfigHelper;
 import org.tinymediamanager.scraper.config.ScraperSetting;
 
 /**
- * The class ImdbMetadataProviderConfig used to store/persist and serve settings for the ImdbMetadataProvider
+ * The class ImdbMetadataProviderConfig used to store/persist and serve settings
+ * for the ImdbMetadataProvider
  *
  * @author Manuel Laggner
  * @since 1.0
  */
 class ImdbMetadataProviderConfig {
-  private static final String             CONFIG_FILE = "scraper_imdb.conf";
-  static final ImdbMetadataProviderConfig SETTINGS    = loadSettings();
+  static final ImdbMetadataProviderConfig SETTINGS = loadSettings();
 
   @ScraperSetting
   public Boolean useTmdb = false;
-  
+
   @ScraperSetting
   public Boolean scrapeCollectionInfo = false;
 
@@ -40,14 +40,14 @@ class ImdbMetadataProviderConfig {
     ImdbMetadataProviderConfig config = new ImdbMetadataProviderConfig();
 
     // load the config via reflection
-    ConfigHelper.loadConfig(CONFIG_FILE, config);
+    ConfigHelper.loadConfig(ImdbMetadataProvider.providerInfo, config);
 
     return config;
   }
 
   void save() {
     // save config via reflection
-    ConfigHelper.saveConfig(CONFIG_FILE, this);
+    ConfigHelper.saveConfig(ImdbMetadataProvider.providerInfo, this);
   }
 
   Map<String, Object> getConfigMap() {
