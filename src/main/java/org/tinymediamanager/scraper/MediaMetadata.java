@@ -15,16 +15,18 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
@@ -102,14 +104,16 @@ public class MediaMetadata {
    */
   public void mergeFrom(MediaMetadata md) {
     HashMap<String, Object> delta = md.getIds();
-    delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we have in our array
+    delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we
+                                            // have in our array
     ids.putAll(delta); // so no dupe on adding while not overwriting
 
     delta = md.getAllMetadata();
     delta.keySet().removeAll(metadata.keySet());
     metadata.putAll(delta);
 
-    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which we have in other array
+    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which
+                                                // we have in other array
     castMembers.addAll(md.getCastMembers()); // so no dupe on adding all ;)
     fanart.removeAll(md.getFanart());
     fanart.addAll(md.getFanart());
@@ -131,7 +135,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Stores a metadata in the internal map. Do not store IDs here. Use the ID map
+   * Stores a metadata in the internal map. Do not store IDs here. Use the ID
+   * map
    * 
    * @param key
    *          the key
@@ -167,7 +172,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer
+   * Gets the Integer value for a given key. Integer are passed right thru,
+   * whilst other type are casted to an Integer
    * 
    * @param key
    *          the key
@@ -192,7 +198,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Float value for a given key. Float are passed right thru, whilst other type are casted to an Float
+   * Gets the Float value for a given key. Float are passed right thru, whilst
+   * other type are casted to an Float
    * 
    * @param key
    *          the key
@@ -217,7 +224,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Double value for a given key. Double are passed right thru, whilst other type are casted to an Double
+   * Gets the Double value for a given key. Double are passed right thru, whilst
+   * other type are casted to an Double
    * 
    * @param key
    *          the key
@@ -242,8 +250,9 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Date value for a given key. Date are passed right thru, whilst other type are returned with an initial
-   * value
+   * Gets the Date value for a given key. Date are passed right thru, whilst
+   * trying to parse String to Date object. Other types are returned with an
+   * initial value
    * 
    * @param key
    *          the key
@@ -252,7 +261,16 @@ public class MediaMetadata {
   public Date getDateValue(String key) {
     Object data = metadata.get(key);
     if (data != null && data instanceof Date) {
+      // true Date object - return it
       return (Date) data;
+    }
+    else if (data != null && data instanceof String) {
+      // maybe a String coded date - try to parse it
+      try {
+        return StrgUtils.parseDate((String) data);
+      }
+      catch (ParseException ignored) {
+      }
     }
     return INITIAL_DATE;
   }
@@ -443,7 +461,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Adds the trailer. To use only when scraping the metadata also provides the trailers
+   * Adds the trailer. To use only when scraping the metadata also provides the
+   * trailers
    * 
    * @param trailer
    *          the trailer
@@ -499,7 +518,8 @@ public class MediaMetadata {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
