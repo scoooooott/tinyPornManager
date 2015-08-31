@@ -103,7 +103,7 @@ class MovieMeter {
           return Integer.valueOf(json.getAsInt());
         }
         catch (NumberFormatException e) {
-          return null;
+          return 0;
         }
       }
     });
