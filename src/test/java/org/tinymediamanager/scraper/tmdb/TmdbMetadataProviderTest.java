@@ -1,5 +1,16 @@
 package org.tinymediamanager.scraper.tmdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.logging.LogManager;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.CountryCode;
@@ -14,16 +25,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.LogManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.*;
 
 public class TmdbMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -415,10 +416,11 @@ public class TmdbMetadataProviderTest {
   }
 
   @Test
-  public void testEpisodeScrape(){
+  public void testEpisodeScrape() {
     ITvShowMetadataProvider mp = null;
     MediaScrapeOptions options = null;
     MediaMetadata md = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
     /*
      * Psych (1447)
@@ -437,8 +439,10 @@ public class TmdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       assertEquals("Pilot", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("When Shawn Spencer is arrested for calling in an accurate tip to the police because only the perpetrator would know the details, his only way out is pretending to be a psychic. It turns out Santa Barbara PD isn't done with him. They ask him to consult on a kidnapping case, and a business is born.", md.getStringValue(MediaMetadata.PLOT));
-      assertEquals("07-07-2006", md.getStringValue(MediaMetadata.RELEASE_DATE));
+      assertEquals(
+          "When Shawn Spencer is arrested for calling in an accurate tip to the police because only the perpetrator would know the details, his only way out is pretending to be a psychic. It turns out Santa Barbara PD isn't done with him. They ask him to consult on a kidnapping case, and a business is born.",
+          md.getStringValue(MediaMetadata.PLOT));
+      assertEquals("07-07-2006", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
       assertEquals(7, md.getCastMembers(CastType.ACTOR).size());
     }
     catch (Exception e) {

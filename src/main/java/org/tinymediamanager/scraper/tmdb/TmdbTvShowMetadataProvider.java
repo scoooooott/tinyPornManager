@@ -15,16 +15,10 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.AppendToResponse;
-import com.uwetrottmann.tmdb.entities.CastMember;
-import com.uwetrottmann.tmdb.entities.ProductionCompany;
-import com.uwetrottmann.tmdb.entities.TvEpisode;
-import com.uwetrottmann.tmdb.entities.TvResultsPage;
-import com.uwetrottmann.tmdb.entities.TvSeason;
-import com.uwetrottmann.tmdb.entities.TvShow;
-import com.uwetrottmann.tmdb.entities.TvShowComplete;
-import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +33,21 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import com.uwetrottmann.tmdb.Tmdb;
+import com.uwetrottmann.tmdb.entities.AppendToResponse;
+import com.uwetrottmann.tmdb.entities.CastMember;
+import com.uwetrottmann.tmdb.entities.ProductionCompany;
+import com.uwetrottmann.tmdb.entities.TvEpisode;
+import com.uwetrottmann.tmdb.entities.TvResultsPage;
+import com.uwetrottmann.tmdb.entities.TvSeason;
+import com.uwetrottmann.tmdb.entities.TvShow;
+import com.uwetrottmann.tmdb.entities.TvShowComplete;
+import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
 
 class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
 
-  private Tmdb                api;
+  private Tmdb api;
 
   public TmdbTvShowMetadataProvider(Tmdb api) {
     this.api = api;
@@ -243,8 +244,8 @@ class TmdbTvShowMetadataProvider {
     md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, complete.original_name);
     md.storeMetadata(MediaMetadata.RATING, complete.vote_average);
     md.storeMetadata(MediaMetadata.VOTE_COUNT, complete.vote_count);
-    if (complete.first_air_date != null){
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, (new SimpleDateFormat("dd-MM-yyyy").format(complete.first_air_date)));
+    if (complete.first_air_date != null) {
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, complete.first_air_date);
     }
     md.storeMetadata(MediaMetadata.PLOT, complete.overview);
     md.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
@@ -340,8 +341,8 @@ class TmdbTvShowMetadataProvider {
     md.storeMetadata(MediaMetadata.RATING, episode.vote_average);
     md.storeMetadata(MediaMetadata.VOTE_COUNT, episode.vote_count);
 
-    if (episode.air_date != null){
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, (new SimpleDateFormat("dd-MM-yyyy").format(episode.air_date)));
+    if (episode.air_date != null) {
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.air_date);
     }
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
