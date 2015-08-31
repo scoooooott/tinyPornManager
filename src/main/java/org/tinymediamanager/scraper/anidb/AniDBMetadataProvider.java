@@ -15,6 +15,19 @@
  */
 package org.tinymediamanager.scraper.anidb;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,21 +53,10 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB)
@@ -120,8 +122,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // call API
     // http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
-    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid="
-        + id;
+    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id;
     Document doc = null;
     try {
       trackConnections();
@@ -142,12 +143,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     for (Element e : anime.children()) {
       if ("startdate".equalsIgnoreCase(e.tagName())) {
-        md.storeMetadata(MediaMetadata.RELEASE_DATE, e.text());
         try {
-          Date date = org.tinymediamanager.scraper.util.StrgUtils.parseDate(e.text());
+          Date date = StrgUtils.parseDate(e.text());
+          md.storeMetadata(MediaMetadata.RELEASE_DATE, date);
           md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(date));
         }
-        catch (Exception ignored) {
+        catch (ParseException ignored) {
         }
       }
 
@@ -285,8 +286,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Document doc = null;
     try {
       trackConnections();
-      Url url = new Url(
-          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
+      Url url = new Url("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {
@@ -324,7 +324,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     md.storeMetadata(MediaMetadata.TITLE, title);
     md.storeMetadata(MediaMetadata.PLOT, episode.summary);
     md.storeMetadata(MediaMetadata.RATING, episode.rating);
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.airdate);
+    try {
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(episode.airdate));
+    }
+    catch (ParseException ignored) {
+    }
     md.storeMetadata(MediaMetadata.RUNTIME, episode.runtime);
     md.setId(providerInfo.getId(), episode.id);
 
@@ -445,8 +449,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
     }
 
-    if (StringUtils.isEmpty(searchString)
-        && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
       searchString = options.get(MediaSearchOptions.SearchParam.TITLE);
     }
 
@@ -506,8 +509,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     Document doc = null;
     try {
       trackConnections();
-      Url url = new Url(
-          "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
+      Url url = new Url("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "", Parser.xmlParser());
     }
     catch (Exception e) {

@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.scraper.anidb;
 
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.logging.LogManager;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -25,15 +34,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.LogManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class AniDBMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -80,12 +80,13 @@ public class AniDBMetadataProviderTest {
   @Test
   public void testScrapeTvShow() {
     ITvShowMetadataProvider mp = new AniDBMetadataProvider();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     options.setId("anidb", "4242");
     try {
       MediaMetadata md = mp.getMetadata(options);
-      assertEquals("2006-03-25", md.getStringValue(MediaMetadata.RELEASE_DATE));
+      assertEquals("2006-03-25", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
       assertEquals("2006", md.getStringValue(MediaMetadata.YEAR));
       assertEquals("Spider Riders", md.getStringValue(MediaMetadata.TITLE));
       assertEquals(
