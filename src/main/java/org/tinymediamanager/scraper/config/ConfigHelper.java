@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.util.AesUtil;
 
 /**
@@ -36,8 +37,9 @@ import org.tinymediamanager.scraper.util.AesUtil;
  * @since 1.0
  */
 public final class ConfigHelper {
-  private static final String SALT = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
-  private static final String IV   = "E17D2C8927726ACE1E7510A1BDD3D439";
+  private static final String CONFIG_FILE = "scraper_{id}.conf";
+  private static final String SALT        = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String IV          = "E17D2C8927726ACE1E7510A1BDD3D439";
 
   private static final AesUtil AES_UTIL = new AesUtil(128, 100);
 
@@ -45,12 +47,14 @@ public final class ConfigHelper {
    * load the properties file specified via the parameter filename and assign
    * the values via reflection to the object config.
    * 
-   * @param filename
-   *          the file name of the config properties file
+   * @param mediaProviderInfo
+   *          the media provider info from the media provider requesting to load
+   *          the config
    * @param config
    *          the object to store the configuration via reflection
    */
-  public static void loadConfig(String filename, Object config) {
+  public static void loadConfig(MediaProviderInfo mediaProviderInfo, Object config) {
+    String filename = CONFIG_FILE.replace("{id}", mediaProviderInfo.getId());
     // load properties
     Properties properties = new Properties();
     InputStream input = null;
@@ -110,12 +114,14 @@ public final class ConfigHelper {
    * write the config properties file specified with the parameter filename. The
    * values to be stored are determined and read via reflection
    * 
-   * @param filename
-   *          the file name to store the config to
+   * @param mediaProviderInfo
+   *          the media provider info from the media provider requesting to save
+   *          the config
    * @param config
    *          the object to extract the config from
    */
-  public static void saveConfig(String filename, Object config) {
+  public static void saveConfig(MediaProviderInfo mediaProviderInfo, Object config) {
+    String filename = CONFIG_FILE.replace("{id}", mediaProviderInfo.getId());
     // save properties
     Properties properties = new Properties();
 
