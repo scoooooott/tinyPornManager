@@ -25,3 +25,7 @@ pom.xml.*
 .project
 .settings
 bin
+
+#tmm
+scraper_*.conf
+cache/
