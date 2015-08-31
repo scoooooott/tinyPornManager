@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.thetvdb;
 
 import java.text.Normalizer;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ApiKey;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
@@ -77,9 +79,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo(
-        "tvdb",
-        "thetvdb.com",
+    MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
         "<html><h3>The TV DB</h3><br />An open database for television fans. This scraper is able to scrape TV series metadata and artwork",
         TheTvDbMetadataProvider.class.getResource("/thetvdb_com.png"));
     return providerInfo;
@@ -292,7 +292,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     catch (NumberFormatException e) {
       md.storeMetadata(MediaMetadata.RATING, 0);
     }
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, show.getFirstAired());
+    try {
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(show.getFirstAired()));
+    }
+    catch (ParseException ignored) {
+    }
 
     try {
       Date date = org.tinymediamanager.scraper.util.StrgUtils.parseDate(show.getFirstAired());
@@ -439,7 +443,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     catch (NumberFormatException e) {
       md.storeMetadata(MediaMetadata.RATING, 0);
     }
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.getFirstAired());
+    try {
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(episode.getFirstAired()));
+    }
+    catch (ParseException ignored) {
+    }
     md.setId(providerInfo.getId(), episode.getId());
 
     // directors
