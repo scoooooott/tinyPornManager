@@ -61,51 +61,53 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "tags", "playcount",
-    "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "unsupportedElements" })
+@XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
+    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
-  private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
-  private static JAXBContext  context   = initContext();
+  private static final Logger LOGGER  = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static JAXBContext  context = initContext();
 
-  private String              season    = "";
-  private String              episode   = "";
-  private String              uniqueid  = "";
-  private String              title     = "";
-  private String              showtitle = "";
-  private float               rating    = 0;
-  private int                 votes     = 0;
-  private String              plot      = "";
-  private String              studio    = "";
-  private String              mpaa      = "";
-  private String              aired     = "";
-  private String              premiered = "";
+  private String season         = "";
+  private String episode        = "";
+  private String displayseason  = "";
+  private String displayepisode = "";
+  private String uniqueid       = "";
+  private String title          = "";
+  private String showtitle      = "";
+  private float  rating         = 0;
+  private int    votes          = 0;
+  private String plot           = "";
+  private String studio         = "";
+  private String mpaa           = "";
+  private String aired          = "";
+  private String premiered      = "";
 
   @XmlElement
-  private int                 playcount = 0;
+  private int     playcount = 0;
   @XmlElement
-  private boolean             watched   = false;
+  private boolean watched   = false;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        actors;
+  private List<Object> actors;
 
   @XmlElement(name = "credits")
-  private List<String>        credits;
+  private List<String> credits;
 
   @XmlElement(name = "director")
-  private List<String>        director;
+  private List<String> director;
 
   @XmlElement(name = "tag")
-  private List<String>        tags;
+  private List<String> tags;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        unsupportedElements;
+  private List<Object> unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  String                      thumb;
+  String thumb;
 
   @XmlElement
-  String                      lastplayed;
+  String lastplayed;
 
   private static JAXBContext initContext() {
     try {
@@ -138,8 +140,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
     boolean multiEpisode = tvShowEpisodes.size() > 1 ? true : false;
 
     if (context == null) {
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
-          "Context is null" }));
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", "Context is null" }));
       return;
     }
 
@@ -191,6 +193,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setRating(episode.getRating());
       xbmc.setSeason(String.valueOf(episode.getSeason()));
       xbmc.setEpisode(String.valueOf(episode.getEpisode()));
+      xbmc.setDisplayseason(String.valueOf(episode.getDisplaySeason()));
+      xbmc.setDisplayepisode(String.valueOf(episode.getDisplayEpisode()));
       xbmc.setPlot(episode.getPlot());
       xbmc.setAired(episode.getFirstAiredFormatted());
       xbmc.setPremiered(episode.getFirstAiredFormatted());
@@ -282,8 +286,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
       catch (Exception e) {
         LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
-            e.getLocalizedMessage() }));
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
@@ -296,8 +300,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
     catch (Exception e) {
       LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance.pushMessage(
+          new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 
@@ -333,6 +337,13 @@ public class TvShowEpisodeToXbmcNfoConnector {
       try {
         episode.setEpisode(Integer.valueOf(xbmc.getEpisode()));
         episode.setSeason(Integer.valueOf(xbmc.getSeason()));
+      }
+      catch (NumberFormatException e) {
+      }
+
+      try {
+        episode.setDisplayEpisode(Integer.valueOf(xbmc.getDisplayepisode()));
+        episode.setDisplaySeason(Integer.valueOf(xbmc.getDisplayseason()));
       }
       catch (NumberFormatException e) {
       }
@@ -389,266 +400,137 @@ public class TvShowEpisodeToXbmcNfoConnector {
     return episodes;
   }
 
-  /**
-   * Gets the title.
-   * 
-   * @return the title
-   */
   @XmlElement(name = "title")
   public String getTitle() {
     return title;
   }
 
-  /**
-   * Gets the uniqueid.
-   * 
-   * @return the uniqueid
-   */
   @XmlElement(name = "uniqueid")
   public String getUniqueid() {
     return uniqueid;
   }
 
-  /**
-   * Sets the uniqueid.
-   * 
-   * @param uniqueid
-   *          the new uniqueid
-   */
   public void setUniqueid(String uniqueid) {
     this.uniqueid = uniqueid;
   }
 
-  /**
-   * Sets the title.
-   * 
-   * @param title
-   *          the new title
-   */
   public void setTitle(String title) {
     this.title = title;
   }
 
-  /**
-   * Gets the season.
-   * 
-   * @return the season
-   */
   @XmlElement(name = "season")
   public String getSeason() {
     return season;
   }
 
-  /**
-   * Gets the episode.
-   * 
-   * @return the episode
-   */
   @XmlElement(name = "episode")
   public String getEpisode() {
     return episode;
   }
 
-  /**
-   * Gets the showtitle.
-   * 
-   * @return the showtitle
-   */
   @XmlElement(name = "showtitle")
   public String getShowtitle() {
     return showtitle;
   }
 
-  /**
-   * Sets the season.
-   * 
-   * @param season
-   *          the new season
-   */
   public void setSeason(String season) {
     this.season = season;
   }
 
-  /**
-   * Sets the episode.
-   * 
-   * @param episode
-   *          the new episode
-   */
   public void setEpisode(String episode) {
     this.episode = episode;
   }
 
-  /**
-   * Gets the mpaa.
-   * 
-   * @return the mpaa
-   */
+  @XmlElement(name = "displayseason")
+  public String getDisplayseason() {
+    return displayseason;
+  }
+
+  @XmlElement(name = "displayepisode")
+  public String getDisplayepisode() {
+    return displayepisode;
+  }
+
+  public void setDisplayseason(String displayseason) {
+    this.displayseason = displayseason;
+  }
+
+  public void setDisplayepisode(String displayepisode) {
+    this.displayepisode = displayepisode;
+  }
+
   @XmlElement(name = "mpaa")
   public String getMpaa() {
     return this.mpaa;
   }
 
-  /**
-   * Sets the mpaa.
-   * 
-   * @param mpaa
-   *          the new mpaa
-   */
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
   }
 
-  /**
-   * Sets the showtitle.
-   * 
-   * @param showtitle
-   *          the new showtitle
-   */
   public void setShowtitle(String showtitle) {
     this.showtitle = showtitle;
   }
 
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
   @XmlElement(name = "rating")
   public float getRating() {
     return rating;
   }
 
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
   @XmlElement(name = "votes")
   public int getVotes() {
     return votes;
   }
 
-  /**
-   * Sets the votes.
-   * 
-   * @param votes
-   *          the new votes
-   */
   public void setVotes(int votes) {
     this.votes = votes;
   }
 
-  /**
-   * Gets the aired.
-   * 
-   * @return the aired
-   */
   @XmlElement(name = "aired")
   public String getAired() {
     return aired;
   }
 
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
   @XmlElement(name = "studio")
   public String getStudio() {
     return studio;
   }
 
-  /**
-   * Sets the studio.
-   * 
-   * @param studio
-   *          the new studio
-   */
   public void setStudio(String studio) {
     this.studio = studio;
   }
 
-  /**
-   * Sets the aired.
-   * 
-   * @param aired
-   *          the new aired
-   */
   public void setAired(String aired) {
     this.aired = aired;
   }
 
-  /**
-   * Gets the premiered.
-   * 
-   * @return the premiered
-   */
   @XmlElement(name = "premiered")
   public String getPremiered() {
     return premiered;
   }
 
-  /**
-   * Sets the premiered.
-   * 
-   * @param premiered
-   *          the new premiered
-   */
   public void setPremiered(String premiered) {
     this.premiered = premiered;
   }
 
-  /**
-   * Gets the plot.
-   * 
-   * @return the plot
-   */
   @XmlElement(name = "plot")
   public String getPlot() {
     return plot;
   }
 
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
   public void setRating(float rating) {
     this.rating = rating;
   }
 
-  /**
-   * Sets the plot.
-   * 
-   * @param plot
-   *          the new plot
-   */
   public void setPlot(String plot) {
     this.plot = plot;
   }
 
-  /**
-   * Adds the actor.
-   * 
-   * @param name
-   *          the name
-   * @param role
-   *          the role
-   * @param thumb
-   *          the thumb
-   */
   public void addActor(String name, String role, String thumb) {
     Actor actor = new Actor(name, role, thumb);
     actors.add(actor);
   }
 
-  /**
-   * Gets the actors.
-   * 
-   * @return the actors
-   */
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
@@ -662,40 +544,18 @@ public class TvShowEpisodeToXbmcNfoConnector {
     return pureActors;
   }
 
-  /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
   public List<String> getDirector() {
     return director;
   }
 
-  /**
-   * Sets the director.
-   * 
-   * @param director
-   *          the new director
-   */
   public void addDirector(String director) {
     this.director.add(director);
   }
 
-  /**
-   * Gets the credits.
-   * 
-   * @return the credits
-   */
   public List<String> getCredits() {
     return credits;
   }
 
-  /**
-   * Sets the credits.
-   * 
-   * @param credits
-   *          the new credits
-   */
   public void addCredits(String credits) {
     this.credits.add(credits);
   }

@@ -43,6 +43,8 @@ public final class Constants {
   public final static String DVD_EPISODE            = "dvdEpisode";
   public final static String DVD_ORDER              = "dvdOrder";
   public final static String DVD_SEASON             = "dvdSeason";
+  public final static String DISPLAY_EPISODE        = "displayEpisode";
+  public final static String DISPLAY_SEASON         = "displaySeason";
   public final static String EPISODE                = "episode";
   public final static String EPISODE_COUNT          = "episodeCount";
   public final static String FANART                 = "fanart";

@@ -62,32 +62,36 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private static final Logger LOGGER = LoggerFactory.getLogger(TvShowEpisode.class);
 
   @JsonProperty
-  private int     episode    = -1;
+  private int     episode        = -1;
   @JsonProperty
-  private int     season     = -1;
+  private int     season         = -1;
   @JsonProperty
-  private int     dvdSeason  = -1;
+  private int     dvdSeason      = -1;
   @JsonProperty
-  private int     dvdEpisode = -1;
+  private int     dvdEpisode     = -1;
+  @JsonProperty
+  private int     displaySeason  = -1;
+  @JsonProperty
+  private int     displayEpisode = -1;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date    firstAired = null;
+  private Date    firstAired     = null;
   @JsonProperty
-  private String  director   = "";
+  private String  director       = "";
   @JsonProperty
-  private String  writer     = "";
+  private String  writer         = "";
   @JsonProperty
-  private boolean disc       = false;
+  private boolean disc           = false;
   @JsonProperty
-  private boolean watched    = false;
+  private boolean watched        = false;
   @JsonProperty
-  private int     votes      = 0;
+  private int     votes          = 0;
   @JsonProperty
-  private boolean subtitles  = false;
+  private boolean subtitles      = false;
   @JsonProperty
-  private boolean isDvdOrder = false;
+  private boolean isDvdOrder     = false;
   @JsonProperty
-  private UUID    tvShowId   = null;
+  private UUID    tvShowId       = null;
 
   @JsonProperty
   private List<TvShowActor> actors = new ArrayList<TvShowActor>(0);
@@ -414,11 +418,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     setIds(metadata.getIds());
 
-    setAiredSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR));
-    setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR));
-    setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD));
-    setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD));
+    setAiredSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR, -1));
+    setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR, -1));
+    setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD, -1));
+    setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD, -1));
     setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+    setDisplaySeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DISPLAY, -1));
+    setDisplayEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DISPLAY, -1));
     setRating(metadata.getFloatValue(MediaMetadata.RATING));
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();
@@ -1022,6 +1028,26 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       firePropertyChange(EPISODE, oldValue, newValue);
     }
     firePropertyChange(DVD_EPISODE, oldValue, newValue);
+  }
+
+  public void setDisplaySeason(int newValue) {
+    int oldValue = this.displaySeason;
+    this.displaySeason = newValue;
+    firePropertyChange(DISPLAY_SEASON, oldValue, newValue);
+  }
+
+  public int getDisplaySeason() {
+    return displaySeason;
+  }
+
+  public void setDisplayEpisode(int newValue) {
+    int oldValue = this.displayEpisode;
+    this.displayEpisode = newValue;
+    firePropertyChange(DISPLAY_EPISODE, oldValue, newValue);
+  }
+
+  public int getDisplayEpisode() {
+    return displayEpisode;
   }
 
   /**
