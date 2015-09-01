@@ -182,21 +182,7 @@ public class MediaMetadata {
    * @return value the value
    */
   public Integer getIntegerValue(String key) {
-    Object data = metadata.get(key);
-    if (data != null && data instanceof Integer) {
-      // return the int
-      return (Integer) data;
-    }
-    else if (data != null) {
-      // try to parse out the int
-      try {
-        return Integer.parseInt(String.valueOf(data));
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    return 0;
+    return getIntegerValue(key, 0);
   }
 
   /**
