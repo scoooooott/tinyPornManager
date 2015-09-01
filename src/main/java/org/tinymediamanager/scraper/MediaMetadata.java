@@ -60,6 +60,8 @@ public class MediaMetadata {
   public static final String SEASON_NR           = "seasonNr";
   public static final String EPISODE_NR_DVD      = "dvdEpisodeNr";
   public static final String SEASON_NR_DVD       = "dvdSeasonNr";
+  public static final String EPISODE_NR_DISPLAY  = "displayEpisodeNr";
+  public static final String SEASON_NR_DISPLAY   = "displaySeasonNr";
   public static final String EPISODE_NR_COMBINED = "combinedEpisodeNr";
   public static final String SEASON_NR_COMBINED  = "combinedSeasonNr";
   public static final String ABSOLUTE_NR         = "absoluteNr";
@@ -195,6 +197,35 @@ public class MediaMetadata {
     }
 
     return 0;
+  }
+
+  /**
+   * Gets the Integer value for a given key. Integer are passed right thru,
+   * whilst other type are casted to an Integer. If any error occur, the default
+   * value will be returned
+   * 
+   * @param key
+   *          the key
+   * @param defaultValue
+   *          the default value to be returned on any error
+   * @return value the value
+   */
+  public Integer getIntegerValue(String key, Integer defaultValue) {
+    Object data = metadata.get(key);
+    if (data != null && data instanceof Integer) {
+      // return the int
+      return (Integer) data;
+    }
+    else if (data != null) {
+      // try to parse out the int
+      try {
+        return Integer.parseInt(String.valueOf(data));
+      }
+      catch (Exception ignored) {
+      }
+    }
+
+    return defaultValue;
   }
 
   /**
