@@ -156,8 +156,8 @@ public class MovieRenamer {
       }
       catch (Exception e) {
         LOGGER.error("error moving subtitles", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename", new String[] { ":",
-            e.getLocalizedMessage() }));
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
       }
     } // end MF loop
     m.saveToDb();
@@ -183,6 +183,7 @@ public class MovieRenamer {
     // already scraped? do not rename if not...
     if (!movie.isScraped()) {
       LOGGER.error("won't rename movie '" + movie.getPath() + "' / '" + movie.getTitle() + "' since it appears to not have been scraped yet!");
+      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie.getTitle(), "message.renamer.notyetscraped"));
       return;
     }
 
@@ -237,8 +238,8 @@ public class MovieRenamer {
           }
           catch (Exception e) {
             LOGGER.error("error moving folder: ", e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
-                e.getLocalizedMessage() }));
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
           }
           if (!ok) {
             // FIXME: when we were not able to rename folder, display error msg and abort!!!
@@ -403,7 +404,8 @@ public class MovieRenamer {
     // ## rename all other types (copy 1:1)
     // ######################################################################
     mfs = new ArrayList<MediaFile>();
-    mfs.addAll(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART));
+    mfs.addAll(
+        movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFile().getAbsolutePath());
@@ -421,6 +423,11 @@ public class MovieRenamer {
         }
       }
     }
+
+    // ######################################################################
+    // ## rename subtitles later, but ADD it to not clean up
+    // ######################################################################
+    needed.addAll(movie.getMediaFiles(MediaFileType.SUBTITLE));
 
     // ######################################################################
     // ## invalidade image cache
@@ -463,8 +470,8 @@ public class MovieRenamer {
         MediaFile cl = cleanup.get(i);
         if (cl.getFile().equals(new File(movie.getDataSource())) || cl.getFile().equals(new File(movie.getPath()))
             || cl.getFile().equals(new File(oldPathname))) {
-          LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": "
-              + cl.getFile().getAbsolutePath());
+          LOGGER.warn(
+              "Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": " + cl.getFile().getAbsolutePath());
           // happens when iterating eg over the getNFONaming and we return a "" string.
           // then the path+filename = movie path and we want to delete :/
           // do not show an error anylonger, just silently ignore...
@@ -864,14 +871,14 @@ public class MovieRenamer {
 
     // replace token first letter of title ($1)
     if (newDestination.contains("$1")) {
-      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase()
-          : "");
+      newDestination = replaceToken(newDestination, "$1",
+          StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase() : "");
     }
 
     // replace token first letter of sort title ($2)
     if (newDestination.contains("$2")) {
-      newDestination = replaceToken(newDestination, "$2", StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1)
-          .toUpperCase() : "");
+      newDestination = replaceToken(newDestination, "$2",
+          StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase() : "");
     }
 
     // replace token year ($Y)
@@ -1105,8 +1112,8 @@ public class MovieRenamer {
     }
     catch (Exception e) {
       LOGGER.error("error moving file", e);
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, oldFilename, "message.renamer.failedrename", new String[] { ":",
-          e.getLocalizedMessage() }));
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, oldFilename, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
       return false; // rename failed
     }
   }

@@ -51,12 +51,13 @@ public class UpgradeTasks {
     }
 
     // upgrade to v2.7
-    if (StrgUtils.compareVersion(v, "2.5.2") < 0) {
+    if (StrgUtils.compareVersion(v, "2.7") < 0) {
       // delete tmm.odb; objectdb.conf; log dir
       FileUtils.deleteQuietly(new File("tmm.odb"));
       FileUtils.deleteQuietly(new File("tmm.odb$"));
       FileUtils.deleteQuietly(new File("objectdb.conf"));
       FileUtils.deleteQuietly(new File("log"));
+      Globals.settings.removeSubtitleFileType(".idx"); // aww, we never removed...
     }
   }
 

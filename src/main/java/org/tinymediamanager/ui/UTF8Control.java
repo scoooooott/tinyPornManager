@@ -94,7 +94,6 @@ public class UTF8Control extends Control {
         });
       }
       catch (PrivilegedActionException e) {
-        e.printStackTrace();
         throw (IOException) e.getException();
       }
 
