@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.util;
+package org.tinymediamanager.scraper.http;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import org.tinymediamanager.scraper.util.Pair;
 
 /**
  * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files

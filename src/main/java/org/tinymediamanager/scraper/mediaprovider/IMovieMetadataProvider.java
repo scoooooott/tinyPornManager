@@ -13,32 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.mediaprovider;
+
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
 
 import java.util.List;
 
 /**
- * The interface ITvShowMetadataProvider. To provide metadata for TV shows/episodes
+ * The Interface IMovieMetadataProvider. All scrapers providing movie meta data must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0
- *
  */
-public interface ITvShowMetadataProvider extends IMediaProvider {
+public interface IMovieMetadataProvider extends IMediaProvider {
 
   /**
-   * Gets the metadata for the given TV show
+   * Gets the meta data.
    * 
    * @param options
-   *          the scrape options (containing the type (TV_SHOW or TV_EPISODE) and the ID of the TV show)
-   * @return the metadata
+   *          the options
+   * @return the meta data
    * @throws Exception
-   * 
+   *           the exception
    */
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   /**
-   * Search for a TV show
+   * Search for media.
    * 
    * @param options
    *          the options
@@ -47,14 +51,4 @@ public interface ITvShowMetadataProvider extends IMediaProvider {
    *           the exception
    */
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
-
-  /**
-   * Gets an episode list for the given TV show
-   * 
-   * @param options
-   *          scrape options (containing the ID of the TV show)
-   * @return a list of episodes
-   * @throws Exception
-   */
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception;
 }

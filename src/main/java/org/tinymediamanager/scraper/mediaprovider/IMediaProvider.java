@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.mediaprovider;
 
 import net.xeoh.plugins.base.Plugin;
+import org.tinymediamanager.scraper.MediaProviderInfo;
 
 /**
  * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces

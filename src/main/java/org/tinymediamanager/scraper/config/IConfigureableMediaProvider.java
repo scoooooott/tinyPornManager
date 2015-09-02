@@ -17,7 +17,7 @@ package org.tinymediamanager.scraper.config;
 
 import java.util.Map;
 
-import org.tinymediamanager.scraper.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 /**
  * This interface extends the main media provider interface with loading and

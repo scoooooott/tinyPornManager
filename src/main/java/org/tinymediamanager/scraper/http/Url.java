@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.util;
+package org.tinymediamanager.scraper.http;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +38,8 @@ import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import org.tinymediamanager.scraper.util.Pair;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is

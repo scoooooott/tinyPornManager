@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.mediaprovider;
+
+import org.tinymediamanager.scraper.MediaType;
 
 import java.util.List;
 

@@ -13,37 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.mediaprovider;
 
+import org.tinymediamanager.scraper.MediaSearchResult;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
- * The Interface IMovieMetadataProvider. All scrapers providing movie meta data must implement this interface
+ * The Interface IMediaSubtitleProvider.
  * 
- * @author Manuel Laggner
+ * @author Myron Boyle
  * @since 1.0
  */
-public interface IMovieMetadataProvider extends IMediaProvider {
+public interface IMediaSubtitleProvider extends IMediaProvider {
 
   /**
-   * Gets the meta data.
+   * searches for subtitles for MediaFile
    * 
-   * @param options
-   *          the options
-   * @return the meta data
+   * @param subtitleFile
+   *          the MediaFile
+   * @return the MediaSearchResults
    * @throws Exception
    *           the exception
    */
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
+  public List<MediaSearchResult> search(File subtitleFile) throws Exception;
 
   /**
-   * Search for media.
+   * download subtitle
    * 
-   * @param options
-   *          the options
-   * @return the list
-   * @throws Exception
-   *           the exception
+   * @param hash
+   *          the SubDB file hash (MSR.getId())
+   * @param language
+   *          2char language string (2-char locale)
    */
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
+  public void download(String hash, String language) throws IOException;
 }

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.mediaprovider;
+
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 
 import java.util.List;
 

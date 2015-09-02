@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.util;
+package org.tinymediamanager.scraper.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +30,8 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import com.squareup.okhttp.Headers;
+import org.tinymediamanager.scraper.util.CacheMap;
+import org.tinymediamanager.scraper.util.Pair;
 
 /**
  * The class CachedUrl is used to cache some sort of Urls (e.g. when they are
