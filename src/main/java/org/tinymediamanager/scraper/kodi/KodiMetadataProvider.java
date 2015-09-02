@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.tinymediamanager.scraper.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaType;
 

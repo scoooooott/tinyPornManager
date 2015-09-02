@@ -13,8 +13,8 @@ import java.util.logging.LogManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.scraper.IMediaProvider;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;

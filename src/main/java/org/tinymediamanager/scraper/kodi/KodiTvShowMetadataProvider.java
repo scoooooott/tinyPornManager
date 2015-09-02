@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
