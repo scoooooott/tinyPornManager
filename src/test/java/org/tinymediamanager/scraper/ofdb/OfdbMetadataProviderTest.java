@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -26,8 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.*;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.http.Url;
 
 import java.io.InputStream;
 import java.net.URLDecoder;
