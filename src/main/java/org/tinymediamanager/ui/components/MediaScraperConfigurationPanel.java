@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
@@ -85,11 +86,12 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.gridy = 0;
-    constraints.ipadx = 20;
-    constraints.anchor = GridBagConstraints.LINE_START;
 
     // build up the panel for being displayed in the popup
     for (Entry<String, Object> entry : mediaProvider.getProviderSettings().entrySet()) {
+      constraints.anchor = GridBagConstraints.LINE_START;
+      constraints.ipadx = 20;
+
       // label
       JLabel label = new JLabel(entry.getKey());
       constraints.gridx = 0;
@@ -112,8 +114,22 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       }
       comp.putClientProperty(entry.getKey(), entry.getKey());
+      constraints.ipadx = 0;
       constraints.gridx = 1;
       panel.add(comp, constraints);
+
+      // add a hint if a long text has been found
+      try {
+        String desc = BUNDLE.getString("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey() + ".desc"); //$NON-NLS-1$
+        if (StringUtils.isNotBlank(desc)) {
+          JLabel lblHint = new JLabel(IconManager.HINT);
+          lblHint.setToolTipText(desc);
+          constraints.gridx = 2;
+          panel.add(lblHint, constraints);
+        }
+      }
+      catch (Exception ignored) {
+      }
 
       constraints.gridy++;
     }

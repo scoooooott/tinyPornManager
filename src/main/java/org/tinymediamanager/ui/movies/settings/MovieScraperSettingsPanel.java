@@ -141,7 +141,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelMovieScrapers, "2, 2, 3, 1, fill, fill");
     panelMovieScrapers.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
@@ -173,18 +173,19 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     panelScraperDetails = new JPanel();
     panelMovieScrapers.add(panelScraperDetails, "6, 2, fill, fill");
-    panelScraperDetails
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelScraperDetails.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
-    panelScraperDetails.add(tpScraperDescription, "2, 2");
+    panelScraperDetails.add(tpScraperDescription, "2, 2, default, top");
 
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
+    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, bottom");
 
     JSeparator separator = new JSeparator();
     panelMovieScrapers.add(separator, "2, 4, 5, 1");
