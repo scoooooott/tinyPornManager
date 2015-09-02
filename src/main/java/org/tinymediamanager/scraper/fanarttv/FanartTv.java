@@ -25,7 +25,7 @@ import com.google.gson.internal.bind.DateTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.fanarttv.services.MovieService;
 import org.tinymediamanager.scraper.fanarttv.services.TvShowService;
-import org.tinymediamanager.scraper.util.TmmHttpClient;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;

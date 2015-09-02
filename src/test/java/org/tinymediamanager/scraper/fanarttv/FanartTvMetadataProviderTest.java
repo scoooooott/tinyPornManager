@@ -26,7 +26,7 @@ import java.util.logging.LogManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.scraper.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScrapeOptions;

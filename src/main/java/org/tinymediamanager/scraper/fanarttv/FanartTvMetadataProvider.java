@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
