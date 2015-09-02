@@ -18,12 +18,12 @@ package org.tinymediamanager.scraper.tmdb;
 import java.util.Collections;
 import java.util.List;
 
-import org.tinymediamanager.scraper.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -35,7 +35,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.ApiKey;
-import org.tinymediamanager.scraper.util.TmmHttpClient;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
 
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.Configuration;
