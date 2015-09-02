@@ -35,6 +35,9 @@ class ImdbMetadataProviderConfig {
 
   @ScraperSetting
   public Boolean scrapeCollectionInfo = false;
+  
+  @ScraperSetting
+  public Boolean filterUnwantedCategories = true;
 
   private static ImdbMetadataProviderConfig loadSettings() {
     ImdbMetadataProviderConfig config = new ImdbMetadataProviderConfig();

@@ -52,8 +52,8 @@ import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
- * The abstract class ImdbParser holds all relevant parsing logic which can be
- * used either by the movie parser and TV show parser
+ * The abstract class ImdbParser holds all relevant parsing logic which can be used either by the movie parser and TV
+ * show parser
  * 
  * @author Manuel Laggner
  */
@@ -90,16 +90,13 @@ public abstract class ImdbParser {
      * 
      * Firstly, if there is one exact match it returns the matching IMDb page.
      * 
-     * If that fails to produce a unique hit then a list of possible matches are
-     * returned categorised as: Popular Titles (Displaying ? Results) Titles
-     * (Exact Matches) (Displaying ? Results) Titles (Partial Matches)
-     * (Displaying ? Results)
+     * If that fails to produce a unique hit then a list of possible matches are returned categorised as: Popular Titles
+     * (Displaying ? Results) Titles (Exact Matches) (Displaying ? Results) Titles (Partial Matches) (Displaying ?
+     * Results)
      * 
-     * We should check the Exact match section first, then the poplar titles and
-     * finally the partial matches.
+     * We should check the Exact match section first, then the poplar titles and finally the partial matches.
      * 
-     * Note: That even with exact matches there can be more than 1 hit, for
-     * example "Star Trek"
+     * Note: That even with exact matches there can be more than 1 hit, for example "Star Trek"
      */
     String searchTerm = "";
 
@@ -238,9 +235,12 @@ public abstract class ImdbParser {
         }
 
         // filter out unwanted results
-        Matcher matcher = getUnwantedSearchResultPattern().matcher(element.text());
-        if (matcher.find()) {
-          continue;
+        Pattern unwantedSearchResultPattern = getUnwantedSearchResultPattern();
+        if (unwantedSearchResultPattern != null) {
+          Matcher matcher = unwantedSearchResultPattern.matcher(element.text());
+          if (matcher.find()) {
+            continue;
+          }
         }
 
         // is there a localized name? (aka)
@@ -265,7 +265,7 @@ public abstract class ImdbParser {
 
             // parse id
             String href = a.attr("href");
-            matcher = IMDB_ID_PATTERN.matcher(href);
+            Matcher matcher = IMDB_ID_PATTERN.matcher(href);
             while (matcher.find()) {
               if (matcher.group(1) != null) {
                 movieId = matcher.group(1);
@@ -410,10 +410,8 @@ public abstract class ImdbParser {
     /*
      * title and year have the following structure
      * 
-     * <div id="tn15title"><h1>Merida - Legende der Highlands <span>(<a
-     * href="/year/2012/">2012</a>) <span class="pro-link">...</span> <span
-     * class="title-extra">Brave <i>(original title)</i></span> </span></h1>
-     * </div>
+     * <div id="tn15title"><h1>Merida - Legende der Highlands <span>(<a href="/year/2012/">2012</a>) <span
+     * class="pro-link">...</span> <span class="title-extra">Brave <i>(original title)</i></span> </span></h1> </div>
      */
 
     // parse title and year
@@ -466,8 +464,8 @@ public abstract class ImdbParser {
     }
 
     /*
-     * <div class="starbar-meta"> <b>7.4/10</b> &nbsp;&nbsp;<a href="ratings"
-     * class="tn15more">52,871 votes</a>&nbsp;&raquo; </div>
+     * <div class="starbar-meta"> <b>7.4/10</b> &nbsp;&nbsp;<a href="ratings" class="tn15more">52,871
+     * votes</a>&nbsp;&raquo; </div>
      */
 
     // rating and rating count
@@ -550,11 +548,10 @@ public abstract class ImdbParser {
 
         // release date
         /*
-         * <div class="info"><h5>Release Date:</h5><div class="info-content">5
-         * January 1996 (USA)<a class="tn15more inline"
-         * href="/title/tt0114746/releaseinfo" onclick=
-         * "(new Image()).src='/rg/title-tease/releasedates/images/b.gif?link=/title/tt0114746/releaseinfo';"
-         * > See more</a>&nbsp;</div></div>
+         * <div class="info"><h5>Release Date:</h5><div class="info-content">5 January 1996 (USA)<a class=
+         * "tn15more inline" href="/title/tt0114746/releaseinfo" onclick=
+         * "(new Image()).src='/rg/title-tease/releasedates/images/b.gif?link=/title/tt0114746/releaseinfo';" > See
+         * more</a>&nbsp;</div></div>
          */
         if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getReleaseDate() + ".*")) {
           Elements div = element.getElementsByClass("info-content");
@@ -576,14 +573,14 @@ public abstract class ImdbParser {
         }
 
         /*
-         * <div class="info"><h5>Tagline:</h5><div class="info-content"> (7) To
-         * Defend Us... <a class="tn15more inline"
+         * <div class="info"><h5>Tagline:</h5><div class="info-content"> (7) To Defend Us... <a class="tn15more inline"
          * href="/title/tt0472033/taglines" onClick=
-         * "(new Image()).src='/rg/title-tease/taglines/images/b.gif?link=/title/tt0472033/taglines';"
-         * >See more</a>&nbsp;&raquo; </div></div>
+         * "(new Image()).src='/rg/title-tease/taglines/images/b.gif?link=/title/tt0472033/taglines';" >See
+         * more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*") && !ImdbMetadataProviderConfig.SETTINGS.useTmdb) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*")
+            && !ImdbMetadataProviderConfig.SETTINGS.useTmdb) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
@@ -593,17 +590,13 @@ public abstract class ImdbParser {
         }
 
         /*
-         * <div class="info-content"><a
-         * href="/Sections/Genres/Animation/">Animation</a> | <a
-         * href="/Sections/Genres/Action/">Action</a> | <a
-         * href="/Sections/Genres/Adventure/">Adventure</a> | <a
-         * href="/Sections/Genres/Fantasy/">Fantasy</a> | <a
-         * href="/Sections/Genres/Mystery/">Mystery</a> | <a
-         * href="/Sections/Genres/Sci-Fi/">Sci-Fi</a> | <a
-         * href="/Sections/Genres/Thriller/">Thriller</a> <a class=
+         * <div class="info-content"><a href="/Sections/Genres/Animation/">Animation</a> | <a
+         * href="/Sections/Genres/Action/">Action</a> | <a href="/Sections/Genres/Adventure/">Adventure</a> | <a
+         * href="/Sections/Genres/Fantasy/">Fantasy</a> | <a href="/Sections/Genres/Mystery/">Mystery</a> | <a
+         * href="/Sections/Genres/Sci-Fi/">Sci-Fi</a> | <a href="/Sections/Genres/Thriller/">Thriller</a> <a class=
          * "tn15more inline" href="/title/tt0472033/keywords" onClick=
-         * "(new Image()).src='/rg/title-tease/keywords/images/b.gif?link=/title/tt0472033/keywords';"
-         * > See more</a>&nbsp;&raquo; </div>
+         * "(new Image()).src='/rg/title-tease/keywords/images/b.gif?link=/title/tt0472033/keywords';" > See
+         * more</a>&nbsp;&raquo; </div>
          */
         // genres are only scraped from akas.imdb.com
         if (h5Title.matches("(?i)" + getImdbSite().getGenre() + "(.*)")) {
@@ -620,8 +613,8 @@ public abstract class ImdbParser {
         // }
 
         /*
-         * <div class="info"><h5>Runtime:</h5><div class="info-content">162 min
-         * | 171 min (special edition) | 178 min (extended cut)</div></div>
+         * <div class="info"><h5>Runtime:</h5><div class="info-content">162 min | 171 min (special edition) | 178 min
+         * (extended cut)</div></div>
          */
         // runtime
         // if (h5Title.matches("(?i)" + imdbSite.getRuntime() + ".*")) {
@@ -648,9 +641,8 @@ public abstract class ImdbParser {
         }
 
         /*
-         * <div class="info"><h5>Country:</h5><div class="info-content"><a
-         * href="/country/fr">France</a> | <a href="/country/es">Spain</a> | <a
-         * href="/country/it">Italy</a> | <a
+         * <div class="info"><h5>Country:</h5><div class="info-content"><a href="/country/fr">France</a> | <a
+         * href="/country/es">Spain</a> | <a href="/country/it">Italy</a> | <a
          * href="/country/hu">Hungary</a></div></div>
          */
         // country
@@ -672,10 +664,8 @@ public abstract class ImdbParser {
         }
 
         /*
-         * <div class="info"><h5>Language:</h5><div class="info-content"><a
-         * href="/language/en">English</a> | <a href="/language/de">German</a> |
-         * <a href="/language/fr">French</a> | <a
-         * href="/language/it">Italian</a></div>
+         * <div class="info"><h5>Language:</h5><div class="info-content"><a href="/language/en">English</a> | <a
+         * href="/language/de">German</a> | <a href="/language/fr">French</a> | <a href="/language/it">Italian</a></div>
          */
         // Spoken languages
         if (h5Title.matches("(?i)Language.*")) {
@@ -697,14 +687,11 @@ public abstract class ImdbParser {
 
         /*
          * <div class="info"><h5>Certification:</h5><div class="info-content"><a
-         * href="/search/title?certificates=us:pg">USA:PG</a> <i>(certificate
-         * #47489)</i> | <a
-         * href="/search/title?certificates=ca:pg">Canada:PG</a>
-         * <i>(Ontario)</i> | <a
+         * href="/search/title?certificates=us:pg">USA:PG</a> <i>(certificate #47489)</i> | <a
+         * href="/search/title?certificates=ca:pg">Canada:PG</a> <i>(Ontario)</i> | <a
          * href="/search/title?certificates=au:pg">Australia:PG</a> | <a
          * href="/search/title?certificates=in:u">India:U</a> | <a
-         * href="/search/title?certificates=ie:pg">Ireland:PG</a>
-         * ...</div></div>
+         * href="/search/title?certificates=ie:pg">Ireland:PG</a> ...</div></div>
          */
         // certification
         // if (h5Title.matches("(?i)" + imdbSite.getCertification() + ".*")) {
@@ -712,7 +699,8 @@ public abstract class ImdbParser {
           Elements a = element.getElementsByTag("a");
           for (Element anchor : a) {
             // certification for the right country
-            if (anchor.attr("href").matches("(?i)/search/title\\?certificates=" + options.getCountry().getAlpha2() + ".*")) {
+            if (anchor.attr("href")
+                .matches("(?i)/search/title\\?certificates=" + options.getCountry().getAlpha2() + ".*")) {
               Pattern certificationPattern = Pattern.compile(".*:(.*)");
               Matcher matcher = certificationPattern.matcher(anchor.ownText());
               Certification certification = null;
@@ -732,10 +720,9 @@ public abstract class ImdbParser {
       }
 
       /*
-       * <div id="director-info" class="info"> <h5>Director:</h5> <div
-       * class="info-content"><a href="/name/nm0000416/" onclick=
-       * "(new Image()).src='/rg/directorlist/position-1/images/b.gif?link=name/nm0000416/';"
-       * >Terry Gilliam</a><br/> </div> </div>
+       * <div id="director-info" class="info"> <h5>Director:</h5> <div class="info-content"><a href="/name/nm0000416/"
+       * onclick= "(new Image()).src='/rg/directorlist/position-1/images/b.gif?link=name/nm0000416/';" >Terry
+       * Gilliam</a><br/> </div> </div>
        */
       // director
       if ("director-info".equals(element.id())) {
@@ -751,34 +738,25 @@ public abstract class ImdbParser {
     }
 
     /*
-     * <table class="cast"> <tr class="odd"><td class="hs"><a
-     * href="http://pro.imdb.com/widget/resume_redirect/" onClick=
-     * "(new Image()).src='/rg/resume/prosystem/images/b.gif?link=http://pro.imdb.com/widget/resume_redirect/';"
-     * ><img src=
-     * "http://i.media-imdb.com/images/SF9113d6f5b7cb1533c35313ccd181a6b1/tn15/no_photo.png"
-     * width="25" height="31" border="0"></td><td class="nm"><a
-     * href="/name/nm0577828/" onclick=
-     * "(new Image()).src='/rg/castlist/position-1/images/b.gif?link=/name/nm0577828/';"
-     * >Joseph Melito</a></td><td class="ddd"> ... </td><td class="char"><a
-     * href="/character/ch0003139/">Young Cole</a></td></tr> <tr
+     * <table class="cast"> <tr class="odd"><td class="hs"><a href="http://pro.imdb.com/widget/resume_redirect/"
+     * onClick=
+     * "(new Image()).src='/rg/resume/prosystem/images/b.gif?link=http://pro.imdb.com/widget/resume_redirect/';" ><img
+     * src= "http://i.media-imdb.com/images/SF9113d6f5b7cb1533c35313ccd181a6b1/tn15/no_photo.png" width="25" height="31"
+     * border="0"></td><td class="nm"><a href="/name/nm0577828/" onclick=
+     * "(new Image()).src='/rg/castlist/position-1/images/b.gif?link=/name/nm0577828/';" >Joseph Melito</a></td><td
+     * class="ddd"> ... </td><td class="char"><a href="/character/ch0003139/">Young Cole</a></td></tr> <tr
      * class="even"><td class="hs"><a href="/name/nm0000246/" onClick=
-     * "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0000246/';"
-     * ><img src=
+     * "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0000246/';" ><img src=
      * "http://ia.media-imdb.com/images/M/MV5BMjA0MjMzMTE5OF5BMl5BanBnXkFtZTcwMzQ2ODE3Mw@@._V1._SY30_SX23_.jpg"
-     * width="23" height="32" border="0"></a><br></td><td class="nm"><a
-     * href="/name/nm0000246/" onclick=
-     * "(new Image()).src='/rg/castlist/position-2/images/b.gif?link=/name/nm0000246/';"
-     * >Bruce Willis</a></td><td class="ddd"> ... </td><td class="char"><a
-     * href="/character/ch0003139/">James Cole</a></td></tr> <tr class="odd"><td
-     * class="hs"><a href="/name/nm0781218/" onClick=
-     * "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0781218/';"
-     * ><img src=
+     * width="23" height="32" border="0"></a><br></td><td class="nm"><a href="/name/nm0000246/" onclick=
+     * "(new Image()).src='/rg/castlist/position-2/images/b.gif?link=/name/nm0000246/';" >Bruce Willis</a></td><td
+     * class="ddd"> ... </td><td class="char"><a href="/character/ch0003139/">James Cole</a></td></tr> <tr
+     * class="odd"><td class="hs"><a href="/name/nm0781218/" onClick=
+     * "(new Image()).src='/rg/title-tease/tinyhead/images/b.gif?link=/name/nm0781218/';" ><img src=
      * "http://ia.media-imdb.com/images/M/MV5BODI1MTA2MjkxM15BMl5BanBnXkFtZTcwMTcwMDg2Nw@@._V1._SY30_SX23_.jpg"
-     * width="23" height="32" border="0"></a><br></td><td class="nm"><a
-     * href="/name/nm0781218/" onclick=
-     * "(new Image()).src='/rg/castlist/position-3/images/b.gif?link=/name/nm0781218/';"
-     * >Jon Seda</a></td><td class="ddd"> ... </td><td class="char"><a
-     * href="/character/ch0003143/">Jose</a></td></tr>...</table>
+     * width="23" height="32" border="0"></a><br></td><td class="nm"><a href="/name/nm0781218/" onclick=
+     * "(new Image()).src='/rg/castlist/position-3/images/b.gif?link=/name/nm0781218/';" >Jon Seda</a></td><td
+     * class="ddd"> ... </td><td class="char"><a href="/character/ch0003143/">Jose</a></td></tr>...</table>
      */
     // cast
     elements = doc.getElementsByClass("cast");

@@ -49,8 +49,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class ImdbTvShowParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbTvShowParser.class);
-  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped
-                                                                                                                               // out
+  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern
+      .compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*");                                     // stripped out
 
   private ImdbSiteDefinition imdbSite;
 
@@ -61,7 +61,10 @@ public class ImdbTvShowParser extends ImdbParser {
 
   @Override
   protected Pattern getUnwantedSearchResultPattern() {
-    return UNWANTED_SEARCH_RESULTS;
+    if (ImdbMetadataProviderConfig.SETTINGS.filterUnwantedCategories) {
+      return UNWANTED_SEARCH_RESULTS;
+    }
+    return null;
   }
 
   @Override
@@ -82,6 +85,9 @@ public class ImdbTvShowParser extends ImdbParser {
 
       case TV_EPISODE:
         return getEpisodeMetadata(options);
+
+      default:
+        break;
     }
     return new MediaMetadata(providerInfo.getId());
   }

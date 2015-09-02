@@ -40,9 +40,10 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
  */
 public class ImdbMovieParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbMovieParser.class);
-  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
+  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern
+      .compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
 
-  private ImdbSiteDefinition   imdbSite;
+  private ImdbSiteDefinition imdbSite;
 
   public ImdbMovieParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.MOVIE);
@@ -51,7 +52,10 @@ public class ImdbMovieParser extends ImdbParser {
 
   @Override
   protected Pattern getUnwantedSearchResultPattern() {
-    return UNWANTED_SEARCH_RESULTS;
+    if (ImdbMetadataProviderConfig.SETTINGS.filterUnwantedCategories) {
+      return UNWANTED_SEARCH_RESULTS;
+    }
+    return null;
   }
 
   @Override
@@ -111,7 +115,8 @@ public class ImdbMovieParser extends ImdbParser {
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
-    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
+    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(),
+        options.getCountry().getAlpha2(), imdbSite);
     Future<Document> futureCombined = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
@@ -187,7 +192,8 @@ public class ImdbMovieParser extends ImdbParser {
     // get data from tmdb?
     if (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo) {
       MediaMetadata tmdbMd = futureTmdb.get();
-      if (ImdbMetadataProviderConfig.SETTINGS.useTmdb && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+      if (ImdbMetadataProviderConfig.SETTINGS.useTmdb && tmdbMd != null
+          && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
         // tmdbid
         md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
         // title
