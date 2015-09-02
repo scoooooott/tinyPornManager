@@ -40,7 +40,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.http.CachedUrl;
 
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com

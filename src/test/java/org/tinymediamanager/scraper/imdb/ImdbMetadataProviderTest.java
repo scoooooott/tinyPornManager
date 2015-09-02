@@ -26,7 +26,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.util.ProxySettings;
+import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class ImdbMetadataProviderTest {
   private static final String CRLF = "\n";
