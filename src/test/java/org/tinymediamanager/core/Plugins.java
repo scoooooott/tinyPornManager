@@ -1,11 +1,11 @@
 package org.tinymediamanager.core;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 public class Plugins {
 

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**

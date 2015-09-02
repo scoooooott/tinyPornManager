@@ -20,7 +20,7 @@
 //import java.util.List;
 //
 //import org.junit.Test;
-//import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+//import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 //import org.tinymediamanager.scraper.MediaCastMember;
 //import org.tinymediamanager.scraper.MediaMetadata;
 //import org.tinymediamanager.scraper.MediaScrapeOptions;

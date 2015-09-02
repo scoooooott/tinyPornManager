@@ -26,7 +26,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.http.Url;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

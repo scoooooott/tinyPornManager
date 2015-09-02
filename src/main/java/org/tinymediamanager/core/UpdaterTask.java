@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.http.Url;
 
 /**
  * UpdaterTasks checks if there's a new update for TMM

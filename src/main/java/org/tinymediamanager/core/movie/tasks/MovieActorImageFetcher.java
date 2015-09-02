@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.http.Url;
 
 /**
  * The Class MovieActorImageFetcher.

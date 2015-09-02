@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.scraper.http.Url;
 
 /**
  * Extract download links/video urls from a youtube url

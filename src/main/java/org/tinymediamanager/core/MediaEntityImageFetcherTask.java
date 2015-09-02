@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.http.Url;
 
 /**
  * The Class MediaEntityImageFetcherTask.

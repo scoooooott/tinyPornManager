@@ -54,7 +54,7 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.scraper.util.ProxySettings;
+import org.tinymediamanager.scraper.http.ProxySettings;
 
 /**
  * The Class Settings - holding all settings for tmm.

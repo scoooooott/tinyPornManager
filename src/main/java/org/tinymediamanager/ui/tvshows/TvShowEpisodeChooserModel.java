@@ -18,7 +18,7 @@ package org.tinymediamanager.ui.tvshows;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 
