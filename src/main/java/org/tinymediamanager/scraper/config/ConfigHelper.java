@@ -82,6 +82,12 @@ public final class ConfigHelper {
         if (annotation == null) {
           continue;
         }
+        
+        String propValue = properties.getProperty(field.getName());
+        if(propValue == null){
+          continue;
+        }
+        
         Method method = null;
         try {
           method = field.getType().getMethod("valueOf", String.class);
@@ -90,10 +96,10 @@ public final class ConfigHelper {
         }
         if (method != null) {
           if (annotation.encrypt()) {
-            field.set(config, method.invoke(null, decryptField(properties.getProperty(field.getName()), annotation.encryptionKey())));
+            field.set(config, method.invoke(null, decryptField(propValue, annotation.encryptionKey())));
           }
           else {
-            field.set(config, method.invoke(null, properties.getProperty(field.getName())));
+            field.set(config, method.invoke(null, propValue));
           }
         }
         else if (field.getType() == String.class) {
