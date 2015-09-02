@@ -24,7 +24,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
 import org.tinymediamanager.scraper.moviemeter.services.FilmService;
 import org.tinymediamanager.scraper.moviemeter.services.SearchService;
-import org.tinymediamanager.scraper.util.TmmHttpClient;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;

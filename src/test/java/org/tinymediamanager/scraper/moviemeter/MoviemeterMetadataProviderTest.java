@@ -2,7 +2,7 @@ package org.tinymediamanager.scraper.moviemeter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.scraper.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
