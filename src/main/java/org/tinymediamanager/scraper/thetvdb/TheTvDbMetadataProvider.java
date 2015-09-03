@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -48,9 +46,11 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
@@ -231,9 +231,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     if (show.getFirstAired() != null && show.getFirstAired().length() > 3) {
       sr.setYear(show.getFirstAired().substring(0, 4));
     }
-
-    // populate extra args
-    MetadataUtil.copySearchQueryToSearchResult(options, sr);
 
     sr.setScore(MetadataUtil.calculateScore(searchString, show.getSeriesName()));
 
