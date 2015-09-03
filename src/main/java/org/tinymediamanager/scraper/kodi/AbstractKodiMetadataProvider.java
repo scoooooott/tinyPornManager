@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -39,8 +38,9 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -68,8 +68,8 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
       throw new RuntimeException("Failed to Load Kodi Scraper: " + scraper, e);
     }
     this.scraper = scraper;
-    this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name + " - " + scraper.version,
-        scraper.description, scraper.logoUrl == null ? AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png") : scraper.logoUrl);
+    this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name + " - " + scraper.version, scraper.description,
+        scraper.logoUrl == null ? AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png") : scraper.logoUrl);
 
     factory = DocumentBuilderFactory.newInstance();
   }
@@ -123,19 +123,9 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
         sr.setId(id);
         sr.setUrl(u.toExternalForm());
         sr.setProviderId(providerInfo.getId());
-        sr.getExtra().put("mediatype", options.getMediaType().name());
-
-        // populate extra args
-        MetadataUtil.copySearchQueryToSearchResult(options, sr);
 
         if (u.toExternalForm().indexOf("imdb") != -1) {
-          sr.addExtraArg("kodiprovider", "imdb");
-          sr.addExtraArg("imdbid", id);
           sr.setIMDBId(id);
-        }
-        else if (u.toExternalForm().indexOf("thetvdb.com") != -1) {
-          sr.addExtraArg("kodiprovider", "tvdb");
-          sr.addExtraArg("tvdbid", id);
         }
 
         // String v[] = ParserUtils.parseTitle(t);
@@ -339,7 +329,8 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
   }
 
   /**
-   * first search the tag in any <details> (from a scraperfunction), then in base
+   * first search the tag in any <details> (from a scraperfunction), then in
+   * base
    * 
    * @param tag
    *          the tag to search for
@@ -427,6 +418,5 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     return v;
   }
 
-  protected abstract void processXmlContent(String xmlDetails, MediaMetadata md, MediaSearchResult result)
-      throws Exception;
+  protected abstract void processXmlContent(String xmlDetails, MediaMetadata md, MediaSearchResult result) throws Exception;
 }
