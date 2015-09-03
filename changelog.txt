@@ -1,19 +1,18 @@
 Version 2.7
 =======================
-IMPORTANT: with tinyMediaManager version 2.7 we do not support Java6 anymore.
-           If you are still using Java6, please update or you will stay at version 2.6.x
 IMPORTANT: with the update to version 2.7 the internal database will be deleted due to
            internal changes. You only need to re-import (update data sources) your movies
            and TV shows
 
-With the update to 2.7 there massive changes under the hood of tinyMediaManager:            
-- moved source code management to github and changed build to maven            
+With the update to 2.7 there massive changes under the hood of tinyMediaManager:
+- moved source code management to github and changed build to maven
 - changed the internal database engine from objectdb to H2-MVStore + JSON
   this change makes tinyMediaManager more robust and faster
 - introduced a new infrastructure for scrapers which makes developing new 
   scrapers less complex
 
 + rewrote all scrapers from scratch (including optimizations and bug fixes)
++ added a very special scraper for all that who have Kodi installed ;) (donator only)
 + assign movie sets feature is now free for all (dropped donator only status)
 + added "date added" to the columns of the movie list
 + enhanced UI language to enable country specific translations (e.g. pt_BR)

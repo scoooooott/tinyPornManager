@@ -41,6 +41,13 @@ public class UpgradeTasks {
 
   }
 
+  /**
+   * performs some upgrade tasks from one version to another<br>
+   * <b>make sure, this upgrade can run multiple times (= needed for nightlies!!!)
+   * 
+   * @param oldVersion
+   *          our current version
+   */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
     MovieList movieList = MovieList.getInstance();
     TvShowList tvShowList = TvShowList.getInstance();
