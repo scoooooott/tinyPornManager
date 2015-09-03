@@ -15,11 +15,15 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.util.*;
 
 /**
  * This class is used to represent an artwork for a media
@@ -30,17 +34,23 @@ import java.util.*;
 public class MediaArtwork {
   private static final ResourceBundle BUNDLE = ApiResourceBundle.getResourceBundle();
 
+  /**
+   * The different types of artwork we know
+   * 
+   * @author Manuel Laggner
+   * @since 1.0
+   */
   public enum MediaArtworkType {
     // @formatter:off
-    BACKGROUND,
-    BANNER,
-    POSTER,
-    ACTOR,
-    SEASON,
-    THUMB,
-    CLEARART,
-    DISC,
-    LOGO,
+    BACKGROUND, 
+    BANNER, 
+    POSTER, 
+    ACTOR, 
+    SEASON, 
+    THUMB, 
+    CLEARART, 
+    DISC, 
+    LOGO, 
     ALL
     // @formatter:on
   }
@@ -58,7 +68,7 @@ public class MediaArtwork {
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~185x277px", 1); //$NON-NLS-1$
 
     private String text;
-    private int    order;
+    private int order;
 
     private PosterSizes(String text, int order) {
       this.text = text;
@@ -87,7 +97,7 @@ public class MediaArtwork {
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~300x168px", 1); //$NON-NLS-1$
 
     private String text;
-    private int    order;
+    private int order;
 
     private FanartSizes(String text, int order) {
       this.text = text;
@@ -104,16 +114,16 @@ public class MediaArtwork {
     }
   }
 
-  private String                imdbId;
-  private int                   tmdbId;
-  private int                   season     = -1;
-  private String                previewUrl = "";
-  private String                defaultUrl = "";
-  private String                language   = "";
-  private String                providerId;
-  private MediaArtworkType      type;
-  private int                   sizeOrder  = 0;
-  private int                   likes      = 0;
+  private String           imdbId;
+  private int              tmdbId;
+  private int              season     = -1;
+  private String           previewUrl = "";
+  private String           defaultUrl = "";
+  private String           language   = "";
+  private String           providerId;
+  private MediaArtworkType type;
+  private int              sizeOrder  = 0;
+  private int              likes      = 0;
 
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
 
@@ -237,7 +247,8 @@ public class MediaArtwork {
   /**
    * amount of likes (or other, for ordering)
    * 
-   * @param likes set the amount of likes
+   * @param likes
+   *          set the amount of likes
    */
   public void setLikes(int likes) {
     this.likes = likes;
@@ -253,7 +264,8 @@ public class MediaArtwork {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -265,7 +277,8 @@ public class MediaArtwork {
   }
 
   /**
-   * This class represents a combination of image size and the correspondin url for an artwork
+   * This class represents a combination of image size and the correspondin url
+   * for an artwork
    * 
    * @author Manuel Laggner
    * @since 1.0
@@ -312,7 +325,8 @@ public class MediaArtwork {
     }
 
     /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
+     * sort artwork: primary by language: preferred lang (ie de), en, others;
+     * then: score
      */
     @Override
     public int compare(MediaArtwork arg0, MediaArtwork arg1) {

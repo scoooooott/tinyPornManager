@@ -26,9 +26,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The Class StringUtils.
+ * The class StrgUtils. This can be used for several String related tasks
  * 
- * @author Manuel Laggner
+ * @author Manuel Laggner, Myron Boyle
+ * @since 1.0
  */
 public class StrgUtils {
   private static final Map<Integer, Replacement> REPLACEMENTS          = buildReplacementMap();
@@ -373,5 +374,4 @@ public class StrgUtils {
     }
     return longestString;
   }
-
 }

@@ -18,7 +18,8 @@ package org.tinymediamanager.scraper.util;
 import java.util.Collections;
 
 /**
- * The class ListUtils is a helper class, providing some special functions for Lists
+ * The class ListUtils is a helper class, providing some special functions for
+ * Lists
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -26,11 +27,13 @@ import java.util.Collections;
 public class ListUtils {
 
   /**
-   * Get a nullsafe Iterable. You can pass here any iterable collection and get a iterable collection back. Also works with null
+   * Get a nullsafe Iterable. You can pass here any iterable collection and get
+   * a iterable collection back. Also works with null
    * 
    * @param it
    *          the iterable collection or null
-   * @return the same iterable collection (if <i>it</i> was not null) or an empty iterable collection of the same type
+   * @return the same iterable collection (if <i>it</i> was not null) or an
+   *         empty iterable collection of the same type
    */
   public static <T> Iterable<T> nullSafe(Iterable<T> it) {
     return it != null ? it : Collections.<T> emptySet();

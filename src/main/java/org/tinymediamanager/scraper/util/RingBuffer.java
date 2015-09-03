@@ -20,10 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * This class implements a fixed-size ring buffer (aka a circular buffer) of objects. Objects are always added to the head of the buffer and removed
- * from the tail. Objects in the middle cannot be retrieved or removed. Decisions on how to handle adding an object to a full buffer are delegated to
- * an OverflowPolicy, which may have the option to fail the add, remove the last element and add, etc. The policy may do whatever it wishes with the
- * ring buffer.
+ * This class implements a fixed-size ring buffer (aka a circular buffer) of
+ * objects. Objects are always added to the head of the buffer and removed from
+ * the tail. Objects in the middle cannot be retrieved or removed. Decisions on
+ * how to handle adding an object to a full buffer are delegated to an
+ * OverflowPolicy, which may have the option to fail the add, remove the last
+ * element and add, etc. The policy may do whatever it wishes with the ring
+ * buffer.
  * <p>
  * This class is fully thread-safe and reentrant.
  * 

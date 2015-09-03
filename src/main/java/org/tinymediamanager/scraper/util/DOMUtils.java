@@ -22,9 +22,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * The Class DOMUtils.
+ * The class DOMUtils. This class is used for several DOM related tasks
  * 
  * @author Manuel Laggner
+ * @since 1.0
  */
 public class DOMUtils {
 

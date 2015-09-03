@@ -28,10 +28,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
-
-import com.squareup.okhttp.Headers;
 import org.tinymediamanager.scraper.util.CacheMap;
 import org.tinymediamanager.scraper.util.Pair;
+
+import com.squareup.okhttp.Headers;
 
 /**
  * The class CachedUrl is used to cache some sort of Urls (e.g. when they are
@@ -40,12 +40,6 @@ import org.tinymediamanager.scraper.util.Pair;
 public class CachedUrl extends Url {
   private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<String, CachedRequest>(60, 5);
 
-  /**
-   * Instantiates a new cached url
-   *
-   * @param url
-   *          the url
-   */
   public CachedUrl(String url) throws MalformedURLException {
     this.url = url;
     // morph to URI to check syntax of the url

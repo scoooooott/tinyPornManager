@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * The Class Trailer.
+ * The class MediaTrailer. This is used for holding data about trailer
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -33,92 +33,50 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   private String size     = "";
   private String date     = "";
 
-  /**
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * @param name
-   *          the name to set
-   */
   public void setName(String name) {
     this.name = name;
   }
 
-  /**
-   * @return the url
-   */
   public String getUrl() {
     return url;
   }
 
-  /**
-   * @param url
-   *          the url to set
-   */
   public void setUrl(String url) {
     this.url = url;
   }
 
-  /**
-   * @return the quality
-   */
   public String getQuality() {
     return quality;
   }
 
-  /**
-   * @param quality
-   *          the quality to set
-   */
   public void setQuality(String quality) {
     this.quality = quality;
   }
 
-  /**
-   * @return the provider
-   */
   public String getProvider() {
     return provider;
   }
 
-  /**
-   * @param provider
-   *          the provider to set
-   */
   public void setProvider(String provider) {
     this.provider = provider;
   }
 
-  /**
-   * @return the size
-   */
   public String getSize() {
     return size;
   }
 
-  /**
-   * @param size
-   *          the size to set
-   */
   public void setSize(String size) {
     this.size = size;
   }
 
-  /**
-   * @return the date
-   */
   public String getDate() {
     return date;
   }
 
-  /**
-   * @param date
-   *          the date to set
-   */
   public void setDate(String date) {
     this.date = date;
   }

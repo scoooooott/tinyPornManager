@@ -18,7 +18,8 @@ package org.tinymediamanager.scraper.http;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This class is holding the proxy settings. After changing the proxy settings, a new HTTP-Client is being created automatically
+ * This class is holding the proxy settings. After changing the proxy settings,
+ * a new HTTP-Client is being created automatically
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -26,10 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 public class ProxySettings {
   public static final ProxySettings INSTANCE = new ProxySettings();
 
-  private String                    host     = "";
-  private int                       port     = 0;
-  private String                    username = "";
-  private String                    password = "";
+  private String host     = "";
+  private int    port     = 0;
+  private String username = "";
+  private String password = "";
 
   /**
    * Set the actual proxy settings
@@ -52,47 +53,22 @@ public class ProxySettings {
     TmmHttpClient.changeProxy();
   }
 
-  /**
-   * Get the proxy host
-   * 
-   * @return the proxy host
-   */
   public String getHost() {
     return host;
   }
 
-  /**
-   * Get the proxy port
-   * 
-   * @return the proxy port
-   */
   public int getPort() {
     return port;
   }
 
-  /**
-   * Get the proxy username
-   * 
-   * @return the proxy username
-   */
   public String getUsername() {
     return username;
   }
 
-  /**
-   * Get the proxy password
-   * 
-   * @return the proxy password
-   */
   public String getPassword() {
     return password;
   }
 
-  /**
-   * Should we use a proxy.
-   * 
-   * @return true, if successful
-   */
   public boolean useProxy() {
     return StringUtils.isNotBlank(INSTANCE.host);
   }

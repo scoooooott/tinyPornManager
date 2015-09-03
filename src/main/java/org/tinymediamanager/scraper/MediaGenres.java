@@ -15,16 +15,22 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.lang.reflect.Method;
-import java.util.*;
-
 /**
- * The Class MediaGenres.
+ * The class/dynaenum MediaGenres. This class stores all default known genres
+ * along with some different parsing informations
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -76,8 +82,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War");
   public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western");
 
-  private String                  name;
-  private String[]                alternateNames;
+  private String   name;
+  private String[] alternateNames;
 
   /**
    * Instantiates a new genres.
@@ -105,7 +111,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   }
 
   /**
-   * Iterates ofer all found languages ang gets the "alternative name" of specified property
+   * Iterates over all found languages and gets the "alternative name" of
+   * specified property
    * 
    * @param propName
    *          the property
@@ -119,7 +126,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         // and for invalid languages (like NB) it will be null
         continue;
       }
-      ResourceBundle b = ApiResourceBundle.getResourceBundle(loc); 
+      ResourceBundle b = ApiResourceBundle.getResourceBundle(loc);
       try {
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }
@@ -131,7 +138,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   }
 
   /**
-   * get all available Languages. Here we use reflection to get rid of the dependency to the tmm core. If org.tinymediamanager.core.Utils is not in
+   * get all available Languages. Here we use reflection to get rid of the
+   * dependency to the tmm core. If org.tinymediamanager.core.Utils is not in
    * our classpath, we only use en as available language
    * 
    * @return all available languages
@@ -243,5 +251,4 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
       return o1.toString().compareTo(o2.toString());
     }
   }
-
 }

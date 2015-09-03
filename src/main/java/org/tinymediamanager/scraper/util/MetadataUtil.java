@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.util.Similarity;
+package org.tinymediamanager.scraper.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * The Class MetadataUtil.
+ * The class MetadataUtil. Here are some helper utils for managing meta data
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -77,26 +76,6 @@ public class MetadataUtil {
   }
 
   /**
-   * Copy search query to search result.
-   * 
-   * @param query
-   *          the query
-   * @param sr
-   *          the sr
-   */
-  public static void copySearchQueryToSearchResult(MediaSearchOptions query, MediaSearchResult sr) {
-    for (MediaSearchOptions.SearchParam f : MediaSearchOptions.SearchParam.values()) {
-      if (f == MediaSearchOptions.SearchParam.QUERY) {
-        continue;
-      }
-      String s = query.get(f);
-      if (!StringUtils.isEmpty(s)) {
-        sr.getExtra().put(f.name(), s);
-      }
-    }
-  }
-
-  /**
    * For the purposes of searching it will, keep only alpha numeric characters and '&.
    * 
    * @param s
@@ -126,5 +105,4 @@ public class MetadataUtil {
 
     return imdbId.matches("tt\\d{7}");
   }
-
 }

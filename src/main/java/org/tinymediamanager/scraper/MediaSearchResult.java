@@ -15,13 +15,11 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.lang.reflect.Field;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The Class MediaSearchResult.
@@ -37,7 +35,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private String              originalTitle;
   private String              id;
   private float               score;
-  private Map<String, String> extraArgs = new HashMap<String, String>();
   private String              imdbId;
   private MediaMetadata       metadata  = null;
   private MediaType           type;
@@ -63,15 +60,12 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     imdbId = StringUtils.isEmpty(imdbId) ? msr.getIMDBId() : imdbId;
     posterUrl = StringUtils.isEmpty(posterUrl) ? msr.getPosterUrl() : posterUrl;
 
-    extraArgs.putAll(msr.getExtra()); // meh - add all
-
     if (metadata == null) {
       metadata = msr.getMediaMetadata();
     }
     else {
       metadata.mergeFrom(msr.getMediaMetadata());
     }
-
   }
 
   public String getOriginalTitle() {
@@ -137,10 +131,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     this.url = url;
   }
 
-  public void addExtraArg(String key, String value) {
-    extraArgs.put(key, value);
-  }
-
   public MediaType getMediaType() {
     return type;
   }
@@ -163,10 +153,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
 
   public void setIMDBId(String imdbid) {
     imdbId = imdbid;
-  }
-
-  public Map<String, String> getExtra() {
-    return extraArgs;
   }
 
   public MediaMetadata getMediaMetadata() {

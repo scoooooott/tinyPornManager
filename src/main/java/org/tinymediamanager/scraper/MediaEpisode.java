@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class MediaEpisode {
   public final String                  providerId;
-  /** a hashmap storing id. */
+  /** a hashmap storing ids */
   public final HashMap<String, Object> ids         = new HashMap<String, Object>();
   public int                           season      = -1;
   public int                           episode     = -1;

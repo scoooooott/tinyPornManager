@@ -25,7 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The Class DynaEnum.
+ * The class DynaEnum is used to create a "dynamic" enum - an enum which is
+ * extensible at runtime
  * 
  * @param <E>
  *          the element type
