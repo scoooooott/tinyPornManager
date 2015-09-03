@@ -36,8 +36,7 @@ public class StrgUtils {
   private static final String[]                  COMMON_TITLE_PREFIXES = buildCommonTitlePrefixes();
 
   /*
-   * build a replacement map of characters, which are not handled right by the
-   * normalizer method
+   * build a replacement map of characters, which are not handled right by the normalizer method
    */
   private static Map<Integer, Replacement> buildReplacementMap() {
     Map<Integer, Replacement> replacements = new HashMap<Integer, Replacement>();
@@ -189,8 +188,7 @@ public class StrgUtils {
   }
 
   /**
-   * Remove all duplicate whitespace characters and line terminators are
-   * replaced with a single space.
+   * Remove all duplicate whitespace characters and line terminators are replaced with a single space.
    * 
    * @param s
    *          a not null String
@@ -212,19 +210,15 @@ public class StrgUtils {
   }
 
   /**
-   * This method takes an input String and replaces all special characters like
-   * umlauts, accented or other letter with diacritical marks with their basic
-   * ascii eqivalents. Originally written by Jens Hausherr
-   * (https://github.com/jabbrwcky), modified by Manuel Laggner
+   * This method takes an input String and replaces all special characters like umlauts, accented or other letter with diacritical marks with their
+   * basic ascii eqivalents. Originally written by Jens Hausherr (https://github.com/jabbrwcky), modified by Manuel Laggner
    * 
    * @param input
    *          String to convert
    * @param replaceAllCapitalLetters
-   *          <code>true</code> causes uppercase special chars that are replaced
-   *          by more than one character to be replaced by all-uppercase
-   *          replacements; <code>false</code> will cause only the initial
-   *          character of the replacements to be in uppercase and all
-   *          subsequent replacement characters will be in lowercase.
+   *          <code>true</code> causes uppercase special chars that are replaced by more than one character to be replaced by all-uppercase
+   *          replacements; <code>false</code> will cause only the initial character of the replacements to be in uppercase and all subsequent
+   *          replacement characters will be in lowercase.
    * @return Input string reduced to ASCII-safe characters.
    */
   public static String convertToAscii(String input, boolean replaceAllCapitalLetters) {
@@ -312,8 +306,7 @@ public class StrgUtils {
   }
 
   /**
-   * Returns the common name of title/originaltitle when it is named sortable
-   * <br>
+   * Returns the common name of title/originaltitle when it is named sortable <br>
    * eg "Bourne Legacy, The" -> "The Bourne Legacy".
    * 
    * @param title
@@ -355,6 +348,16 @@ public class StrgUtils {
   }
 
   private static String normalisedVersion(String version, String sep, int maxWidth) {
+    // SNAPSHOT should be considered as lower version
+    // so just removing does not work
+    // add micromicro version to other
+    if (!version.contains("-SNAPSHOT")) {
+      version += ".0.0.1";
+    }
+    else {
+      version = version.replace("-SNAPSHOT", "");
+    }
+
     String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
     StringBuilder sb = new StringBuilder();
     for (String s : split) {
