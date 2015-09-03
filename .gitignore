@@ -25,3 +25,4 @@ pom.xml.*
 .project
 .settings
 bin
+cache
