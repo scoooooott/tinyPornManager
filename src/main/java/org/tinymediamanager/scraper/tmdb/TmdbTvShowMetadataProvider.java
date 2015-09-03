@@ -30,8 +30,8 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.AppendToResponse;

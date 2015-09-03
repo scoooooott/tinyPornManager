@@ -15,6 +15,26 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.AppendToResponse;
 import com.uwetrottmann.tmdb.entities.CastMember;
@@ -29,28 +49,10 @@ import com.uwetrottmann.tmdb.entities.ProductionCountry;
 import com.uwetrottmann.tmdb.entities.SpokenLanguage;
 import com.uwetrottmann.tmdb.entities.Videos;
 import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaLanguages;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.util.ListUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
- * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
+ * The class TmdbMovieMetadataProvider is used to provide metadata for movies
+ * from tmdb
  */
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
@@ -142,7 +144,8 @@ class TmdbMovieMetadataProvider {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound.add(tmdb.getMovieInfoImdb(imdbId, query.get(MediaSearchOptions.SearchParam.LANGUAGE)));
+          // moviesFound.add(tmdb.getMovieInfoImdb(imdbId,
+          // query.get(MediaSearchOptions.SearchParam.LANGUAGE)));
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
@@ -155,14 +158,14 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year,
-              "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year, "phrase");
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // moviesFound = tmdb.searchMovie(searchString, year,
+          // query.get(MediaSearchOptions.SearchParam.LANGUAGE),
           // false, 0).getResults();
         }
         catch (Exception e) {
@@ -171,21 +174,22 @@ class TmdbMovieMetadataProvider {
         LOGGER.debug("found " + resultList.size() + " results with search string");
       }
 
-      // 4. if the last token in search string seems to be a year, try without :)
+      // 4. if the last token in search string seems to be a year, try without
+      // :)
       if (searchString.matches(".*\\s\\d{4}$") && (resultList == null || resultList.size() == 0)) {
         // nada found & last part seems to be date; strip off and try again
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year,
-              "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year, "phrase");
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
             }
           }
-          // moviesFound = tmdb.searchMovie(searchString, year, query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // moviesFound = tmdb.searchMovie(searchString, year,
+          // query.get(MediaSearchOptions.SearchParam.LANGUAGE),
           // false, 0).getResults();
         }
         catch (Exception e) {
@@ -212,9 +216,6 @@ class TmdbMovieMetadataProvider {
         // compare score based on names
         result.setScore(MetadataUtil.calculateScore(searchString, result.getTitle()));
       }
-
-      // populate extra args
-      MetadataUtil.copySearchQueryToSearchResult(query, result);
     }
 
     return resultList;
@@ -240,7 +241,7 @@ class TmdbMovieMetadataProvider {
       tmdbId = Integer.parseInt(options.getResult().getId());
     }
 
-    // tmdbId from option - own id 
+    // tmdbId from option - own id
     if (tmdbId == 0) {
       try {
         tmdbId = Integer.parseInt(options.getId(TmdbMetadataProvider.providerInfo.getId()));
@@ -275,7 +276,8 @@ class TmdbMovieMetadataProvider {
             movie = api.moviesService().summary(tempTmdbId, options.getLanguage().name(),
                 new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASES));
           }
-          // movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
+          // movie = tmdb.getMovieInfoImdb(imdbId,
+          // options.getLanguage().name());
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
@@ -313,12 +315,10 @@ class TmdbMovieMetadataProvider {
         if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TITLE))) {
           md.storeMetadata(MediaMetadata.TITLE, englishMd.getStringValue(MediaMetadata.TITLE));
         }
-        if (StringUtils.isBlank(movie.original_title)
-            && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
           md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
         }
-        if (StringUtils.isBlank(movie.tagline)
-            && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TAGLINE))) {
+        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TAGLINE))) {
           md.storeMetadata(MediaMetadata.TAGLINE, englishMd.getStringValue(MediaMetadata.TAGLINE));
         }
       }
@@ -518,8 +518,7 @@ class TmdbMovieMetadataProvider {
 
         // only use the certification of the desired country (if any country has
         // been chosen)
-        if (options.getCountry() == null
-            || options.getCountry().getAlpha2().compareToIgnoreCase(info.iso_3166_1) == 0) {
+        if (options.getCountry() == null || options.getCountry().getAlpha2().compareToIgnoreCase(info.iso_3166_1) == 0) {
           md.addCertification(Certification.getCertification(info.iso_3166_1, info.certification));
         }
       }
