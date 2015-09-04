@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -48,6 +49,8 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaSource;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -61,7 +64,6 @@ import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
-import org.tinymediamanager.ui.movies.MovieExtendedMatcher.SearchOptions;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -76,54 +78,56 @@ import com.jtattoo.plaf.AbstractLookAndFeel;
  */
 public class MovieExtendedSearchPanel extends RoundedPanel {
   private static final long            serialVersionUID = -4170930017190753789L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$
   private static final float           FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
   private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
-  private MovieList                    movieList        = MovieList.getInstance();
-  private MovieSelectionModel          movieSelectionModel;
+  private MovieList           movieList = MovieList.getInstance();
+  private MovieSelectionModel movieSelectionModel;
 
   /**
    * UI Elements
    */
-  private JCheckBox                    cbFilterWatched;
-  private JComboBox                    cbGenre;
-  private JComboBox                    cbSortColumn;
-  private JComboBox                    cbSortOrder;
-  private JComboBox                    cbWatched;
-  private JCheckBox                    cbFilterGenre;
-  private JCheckBox                    cbFilterCast;
-  private JTextField                   tfCastMember;
-  private JCheckBox                    cbFilterTag;
-  private JComboBox                    cbTag;
-  private JCheckBox                    cbFilterDuplicates;
-  private JCheckBox                    cbFilterMovieset;
-  private JComboBox                    cbMovieset;
-  private JCheckBox                    cbFilterVideoFormat;
-  private JComboBox                    cbVideoFormat;
-  private JCheckBox                    cbFilterVideoCodec;
-  private JComboBox                    cbVideoCodec;
-  private JCheckBox                    cbFilterAudioCodec;
-  private JComboBox                    cbAudioCodec;
-  private JCheckBox                    cbFilterDatasource;
-  private JComboBox                    cbDatasource;
-  private JCheckBox                    cbFilterMissingMetadata;
-  private JCheckBox                    cbFilterMissingArtwork;
-  private JCheckBox                    cbFilterMissingSubtitles;
+  private JCheckBox  cbFilterWatched;
+  private JComboBox  cbGenre;
+  private JComboBox  cbSortColumn;
+  private JComboBox  cbSortOrder;
+  private JComboBox  cbWatched;
+  private JCheckBox  cbFilterGenre;
+  private JCheckBox  cbFilterCast;
+  private JTextField tfCastMember;
+  private JCheckBox  cbFilterTag;
+  private JComboBox  cbTag;
+  private JCheckBox  cbFilterDuplicates;
+  private JCheckBox  cbFilterMovieset;
+  private JComboBox  cbMovieset;
+  private JCheckBox  cbFilterVideoFormat;
+  private JComboBox  cbVideoFormat;
+  private JCheckBox  cbFilterVideoCodec;
+  private JComboBox  cbVideoCodec;
+  private JCheckBox  cbFilterAudioCodec;
+  private JComboBox  cbAudioCodec;
+  private JCheckBox  cbFilterDatasource;
+  private JComboBox  cbDatasource;
+  private JCheckBox  cbFilterMissingMetadata;
+  private JCheckBox  cbFilterMissingArtwork;
+  private JCheckBox  cbFilterMissingSubtitles;
 
-  private final Action                 actionSort       = new SortAction();
-  private final Action                 actionFilter     = new FilterAction();
-  private JCheckBox                    cbFilterNewMovies;
-  private JLabel                       lblNewMovies;
-  private JCheckBox                    cbFilterCertification;
-  private JLabel                       lblCertification;
-  private JComboBox                    cbCertification;
-  private JCheckBox                    cbFilterMediaSource;
-  private JComboBox                    cbMediaSource;
-  private JCheckBox                    cbFilterYear;
-  private JLabel                       lblYear;
-  private JSpinner                     spYear;
+  private final Action actionSort   = new SortAction();
+  private final Action actionFilter = new FilterAction();
+  private JCheckBox    cbFilterNewMovies;
+  private JLabel       lblNewMovies;
+  private JCheckBox    cbFilterCertification;
+  private JLabel       lblCertification;
+  private JComboBox    cbCertification;
+  private JCheckBox    cbFilterMediaSource;
+  private JComboBox    cbMediaSource;
+  private JCheckBox    cbFilterYear;
+  private JLabel       lblYear;
+  private JSpinner     spYear;
 
   /**
    * Instantiates a new movie extended search
@@ -138,13 +142,16 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     arcs = new Dimension(10, 10);
 
     this.movieSelectionModel = model;
+    Map<MovieSearchOptions, Object> savedSearchOptions = MovieModuleManager.MOVIE_SETTINGS.getUiFilters();
 
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormFactory.UNRELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -159,6 +166,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterDuplicates = new JCheckBox("");
     cbFilterDuplicates.setUI(CHECKBOX_UI); // $hide$
+    cbFilterDuplicates.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.DUPLICATES));
     cbFilterDuplicates.setAction(actionFilter);
     add(cbFilterDuplicates, "2, 4");
 
@@ -168,6 +176,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterWatched = new JCheckBox("");
     cbFilterWatched.setUI(CHECKBOX_UI); // $hide$
+    cbFilterWatched.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.WATCHED));
     cbFilterWatched.setAction(actionFilter);
     add(cbFilterWatched, "2, 5");
 
@@ -182,6 +191,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterGenre = new JCheckBox("");
     cbFilterGenre.setUI(CHECKBOX_UI); // $hide$
+    cbFilterGenre.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.GENRE));
     cbFilterGenre.setAction(actionFilter);
     add(cbFilterGenre, "2, 6");
 
@@ -196,6 +206,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterCertification = new JCheckBox("");
     cbFilterCertification.setUI(CHECKBOX_UI); // $hide$
+    cbFilterCertification.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.CERTIFICATION));
     cbFilterCertification.setAction(actionFilter);
     add(cbFilterCertification, "2, 7");
 
@@ -210,6 +221,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterYear = new JCheckBox("");
     cbFilterYear.setUI(CHECKBOX_UI); // $hide$
+    cbFilterYear.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.YEAR));
     cbFilterYear.setAction(actionFilter);
     add(cbFilterYear, "2, 8");
 
@@ -233,6 +245,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterCast = new JCheckBox("");
     cbFilterCast.setUI(CHECKBOX_UI); // $hide$
+    cbFilterCast.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.CAST));
     cbFilterCast.setAction(actionFilter);
     add(cbFilterCast, "2, 9");
 
@@ -261,6 +274,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterTag = new JCheckBox("");
     cbFilterTag.setUI(CHECKBOX_UI); // $hide$
+    cbFilterTag.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.TAG));
     cbFilterTag.setAction(actionFilter);
     add(cbFilterTag, "2, 10");
 
@@ -276,6 +290,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterMovieset = new JCheckBox("");
     cbFilterMovieset.setUI(CHECKBOX_UI); // $hide$
+    cbFilterMovieset.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.MOVIESET));
     cbFilterMovieset.setAction(actionFilter);
     add(cbFilterMovieset, "2, 11");
 
@@ -290,6 +305,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterVideoFormat = new JCheckBox("");
     cbFilterVideoFormat.setUI(CHECKBOX_UI); // $hide$
+    cbFilterVideoFormat.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.VIDEO_FORMAT));
     cbFilterVideoFormat.setAction(actionFilter);
     add(cbFilterVideoFormat, "2, 12");
 
@@ -304,6 +320,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterVideoCodec = new JCheckBox("");
     cbFilterVideoCodec.setUI(CHECKBOX_UI); // $hide$
+    cbFilterVideoCodec.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.VIDEO_CODEC));
     cbFilterVideoCodec.setAction(actionFilter);
     add(cbFilterVideoCodec, "2, 13");
 
@@ -318,6 +335,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterAudioCodec = new JCheckBox("");
     cbFilterAudioCodec.setUI(CHECKBOX_UI); // $hide$
+    cbFilterAudioCodec.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.AUDIO_CODEC));
     cbFilterAudioCodec.setAction(actionFilter);
     add(cbFilterAudioCodec, "2, 14");
 
@@ -332,6 +350,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     cbFilterDatasource = new JCheckBox("");
     cbFilterDatasource.setUI(CHECKBOX_UI); // $hide$
+    cbFilterDatasource.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.DATASOURCE));
     cbFilterDatasource.setAction(actionFilter);
     add(cbFilterDatasource, "2, 15");
 
@@ -345,8 +364,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     add(cbDatasource, "6, 15, fill, default");
 
     cbFilterMediaSource = new JCheckBox("");
-    cbFilterMediaSource.addActionListener(actionFilter);
     cbFilterMediaSource.setUI(CHECKBOX_UI); // $hide$
+    cbFilterMediaSource.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.MEDIA_SOURCE));
+    cbFilterMediaSource.addActionListener(actionFilter);
     add(cbFilterMediaSource, "2, 16");
 
     JLabel lblMediaSource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
@@ -359,8 +379,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     add(cbMediaSource, "6, 16, fill, default");
 
     cbFilterMissingMetadata = new JCheckBox("");
-    cbFilterMissingMetadata.setAction(actionFilter);
     cbFilterMissingMetadata.setUI(CHECKBOX_UI); // $hide$
+    cbFilterMissingMetadata.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.MISSING_METADATA));
+    cbFilterMissingMetadata.setAction(actionFilter);
     add(cbFilterMissingMetadata, "2, 17");
 
     JLabel lblMissingMetadata = new JLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
@@ -368,8 +389,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     add(lblMissingMetadata, "4, 17, right, default");
 
     cbFilterMissingArtwork = new JCheckBox("");
-    cbFilterMissingArtwork.setAction(actionFilter);
     cbFilterMissingArtwork.setUI(CHECKBOX_UI); // $hide$
+    cbFilterMissingArtwork.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.MISSING_ARTWORK));
+    cbFilterMissingArtwork.setAction(actionFilter);
     add(cbFilterMissingArtwork, "2, 18");
 
     JLabel lblMissingArtwork = new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
@@ -377,8 +399,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     add(lblMissingArtwork, "4, 18, right, default");
 
     cbFilterMissingSubtitles = new JCheckBox("");
-    cbFilterMissingSubtitles.setAction(actionFilter);
     cbFilterMissingSubtitles.setUI(CHECKBOX_UI); // $hide$
+    cbFilterMissingSubtitles.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.MISSING_SUBTITLES));
+    cbFilterMissingSubtitles.setAction(actionFilter);
     add(cbFilterMissingSubtitles, "2, 19");
 
     JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
@@ -386,8 +409,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     add(lblMissingSubtitles, "4, 19, right, default");
 
     cbFilterNewMovies = new JCheckBox("");
-    cbFilterNewMovies.setAction(actionFilter);
     cbFilterNewMovies.setUI(CHECKBOX_UI); // $hide$
+    cbFilterNewMovies.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.NEW_MOVIES));
+    cbFilterNewMovies.setAction(actionFilter);
     add(cbFilterNewMovies, "2, 20");
 
     lblNewMovies = new JLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
@@ -440,15 +464,31 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   }
 
   private void buildAndInstallTagsArray() {
+    // remember old value and remove listener
+    Object oldValue = cbTag.getSelectedItem();
+    cbTag.removeActionListener(actionFilter);
+
+    // build up the new cb
     cbTag.removeAllItems();
     List<String> tags = new ArrayList<String>(movieList.getTagsInMovies());
     Collections.sort(tags);
     for (String tag : tags) {
       cbTag.addItem(tag);
     }
+
+    // re-set the value and readd action listener
+    if (oldValue != null) {
+      cbTag.setSelectedItem(oldValue);
+    }
+    cbTag.addActionListener(actionFilter);
   }
 
   private void buildAndInstallCodecArray() {
+    // remember old value and remove listener
+    Object oldValue = cbVideoCodec.getSelectedItem();
+    cbVideoCodec.removeActionListener(actionFilter);
+
+    // build up the new cb
     cbVideoCodec.removeAllItems();
     List<String> codecs = new ArrayList<String>(movieList.getVideoCodecsInMovies());
     Collections.sort(codecs);
@@ -456,30 +496,69 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       cbVideoCodec.addItem(codec);
     }
 
+    // re-set the value and readd action listener
+    if (oldValue != null) {
+      cbVideoCodec.setSelectedItem(oldValue);
+    }
+    cbVideoCodec.addActionListener(actionFilter);
+
+    // remember old value and remove listener
+    oldValue = cbAudioCodec.getSelectedItem();
+    cbAudioCodec.removeActionListener(actionFilter);
+
+    // build up the new cb
     cbAudioCodec.removeAllItems();
     codecs = new ArrayList<String>(movieList.getAudioCodecsInMovies());
     Collections.sort(codecs);
     for (String codec : codecs) {
       cbAudioCodec.addItem(codec);
     }
+
+    // re-set the value and readd action listener
+    if (oldValue != null) {
+      cbAudioCodec.setSelectedItem(oldValue);
+    }
+    cbAudioCodec.addActionListener(actionFilter);
   }
 
   private void buildAndInstallDatasourceArray() {
+    // remember old value and remove listener
+    Object oldValue = cbDatasource.getSelectedItem();
+    cbDatasource.removeActionListener(actionFilter);
+
+    // build up the new cb
     cbDatasource.removeAllItems();
     List<String> datasources = new ArrayList<String>(Settings.getInstance().getMovieSettings().getMovieDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       cbDatasource.addItem(datasource);
     }
+
+    // re-set the value and readd action listener
+    if (oldValue != null) {
+      cbDatasource.setSelectedItem(oldValue);
+    }
+    cbDatasource.addActionListener(actionFilter);
   }
 
   private void buildAndInstallCertificationArray() {
+    // remember old value and remove listener
+    Object oldValue = cbCertification.getSelectedItem();
+    cbCertification.removeActionListener(actionFilter);
+
+    // build up the new cb
     cbCertification.removeAllItems();
     List<Certification> certifications = new ArrayList<Certification>(movieList.getCertificationsInMovies());
     Collections.sort(certifications);
     for (Certification cert : certifications) {
       cbCertification.addItem(cert);
     }
+
+    // re-set the value and readd action listener
+    if (oldValue != null) {
+      cbCertification.setSelectedItem(oldValue);
+    }
+    cbCertification.addActionListener(actionFilter);
   }
 
   private class SortAction extends AbstractAction {
@@ -501,21 +580,21 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      HashMap<SearchOptions, Object> searchOptions = new HashMap<SearchOptions, Object>();
+      HashMap<MovieSearchOptions, Object> searchOptions = new HashMap<MovieSearchOptions, Object>();
 
       // filter duplicates
       if (cbFilterDuplicates.isSelected()) {
         movieList.searchDuplicates();
-        searchOptions.put(SearchOptions.DUPLICATES, null);
+        searchOptions.put(MovieSearchOptions.DUPLICATES, true);
       }
 
       // filter for watched flag
       if (cbFilterWatched.isSelected()) {
         if (cbWatched.getSelectedItem() == WatchedFlag.WATCHED) {
-          searchOptions.put(SearchOptions.WATCHED, true);
+          searchOptions.put(MovieSearchOptions.WATCHED, true);
         }
         else {
-          searchOptions.put(SearchOptions.WATCHED, false);
+          searchOptions.put(MovieSearchOptions.WATCHED, false);
         }
       }
 
@@ -523,7 +602,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       if (cbFilterGenre.isSelected()) {
         MediaGenres genre = (MediaGenres) cbGenre.getSelectedItem();
         if (genre != null) {
-          searchOptions.put(SearchOptions.GENRE, genre);
+          searchOptions.put(MovieSearchOptions.GENRE, genre);
         }
       }
 
@@ -531,14 +610,14 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       if (cbFilterCertification.isSelected()) {
         Certification cert = (Certification) cbCertification.getSelectedItem();
         if (cert != null) {
-          searchOptions.put(SearchOptions.CERTIFICATION, cert);
+          searchOptions.put(MovieSearchOptions.CERTIFICATION, cert);
         }
       }
 
       // filter by cast
       if (cbFilterCast.isSelected()) {
         if (StringUtils.isNotBlank(tfCastMember.getText())) {
-          searchOptions.put(SearchOptions.CAST, tfCastMember.getText());
+          searchOptions.put(MovieSearchOptions.CAST, tfCastMember.getText());
         }
       }
 
@@ -546,31 +625,31 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       if (cbFilterTag.isSelected()) {
         String tag = (String) cbTag.getSelectedItem();
         if (StringUtils.isNotBlank(tag)) {
-          searchOptions.put(SearchOptions.TAG, tag);
+          searchOptions.put(MovieSearchOptions.TAG, tag);
         }
       }
 
       // filter by movie in movieset
       if (cbFilterMovieset.isSelected()) {
         if (cbMovieset.getSelectedItem() == MovieInMovieSet.IN_MOVIESET) {
-          searchOptions.put(SearchOptions.MOVIESET, true);
+          searchOptions.put(MovieSearchOptions.MOVIESET, true);
         }
         else {
-          searchOptions.put(SearchOptions.MOVIESET, false);
+          searchOptions.put(MovieSearchOptions.MOVIESET, false);
         }
       }
 
       // filter by video format
       if (cbFilterVideoFormat.isSelected()) {
         String videoFormat = (String) cbVideoFormat.getSelectedItem();
-        searchOptions.put(SearchOptions.VIDEO_FORMAT, videoFormat);
+        searchOptions.put(MovieSearchOptions.VIDEO_FORMAT, videoFormat);
       }
 
       // filter by video codec
       if (cbFilterVideoCodec.isSelected()) {
         String videoCodec = (String) cbVideoCodec.getSelectedItem();
         if (StringUtils.isNotBlank(videoCodec)) {
-          searchOptions.put(SearchOptions.VIDEO_CODEC, videoCodec);
+          searchOptions.put(MovieSearchOptions.VIDEO_CODEC, videoCodec);
         }
       }
 
@@ -578,7 +657,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       if (cbFilterAudioCodec.isSelected()) {
         String audioCodec = (String) cbAudioCodec.getSelectedItem();
         if (StringUtils.isNotBlank(audioCodec)) {
-          searchOptions.put(SearchOptions.AUDIO_CODEC, audioCodec);
+          searchOptions.put(MovieSearchOptions.AUDIO_CODEC, audioCodec);
         }
       }
 
@@ -586,38 +665,38 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       if (cbFilterDatasource.isSelected()) {
         String datasource = (String) cbDatasource.getSelectedItem();
         if (StringUtils.isNotBlank(datasource)) {
-          searchOptions.put(SearchOptions.DATASOURCE, datasource);
+          searchOptions.put(MovieSearchOptions.DATASOURCE, datasource);
         }
       }
 
       // filer by missing metadata
       if (cbFilterMissingMetadata.isSelected()) {
-        searchOptions.put(SearchOptions.MISSING_METADATA, Boolean.TRUE);
+        searchOptions.put(MovieSearchOptions.MISSING_METADATA, Boolean.TRUE);
       }
 
       // filer by missing artwork
       if (cbFilterMissingArtwork.isSelected()) {
-        searchOptions.put(SearchOptions.MISSING_ARTWORK, Boolean.TRUE);
+        searchOptions.put(MovieSearchOptions.MISSING_ARTWORK, Boolean.TRUE);
       }
 
       // filer by missing artwork
       if (cbFilterMissingSubtitles.isSelected()) {
-        searchOptions.put(SearchOptions.MISSING_SUBTITLES, Boolean.TRUE);
+        searchOptions.put(MovieSearchOptions.MISSING_SUBTITLES, Boolean.TRUE);
       }
 
       // filter by new movies
       if (cbFilterNewMovies.isSelected()) {
-        searchOptions.put(SearchOptions.NEW_MOVIES, Boolean.TRUE);
+        searchOptions.put(MovieSearchOptions.NEW_MOVIES, Boolean.TRUE);
       }
 
       // filter by media source
       if (cbFilterMediaSource.isSelected()) {
-        searchOptions.put(SearchOptions.MEDIA_SOURCE, cbMediaSource.getSelectedItem());
+        searchOptions.put(MovieSearchOptions.MEDIA_SOURCE, cbMediaSource.getSelectedItem());
       }
 
       // filter by year
       if (cbFilterYear.isSelected()) {
-        searchOptions.put(SearchOptions.YEAR, spYear.getValue());
+        searchOptions.put(MovieSearchOptions.YEAR, spYear.getValue());
       }
 
       // apply the filter

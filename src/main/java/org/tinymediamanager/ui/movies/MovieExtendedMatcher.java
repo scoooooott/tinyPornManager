@@ -16,8 +16,8 @@
 package org.tinymediamanager.ui.movies;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +25,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieMediaSource;
+import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -39,12 +40,7 @@ import ca.odell.glazedlists.matchers.Matcher;
  * @author Manuel Laggner
  */
 public class MovieExtendedMatcher implements Matcher<Movie> {
-  public enum SearchOptions {
-    DUPLICATES, WATCHED, GENRE, CERTIFICATION, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA,
-    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES, MEDIA_SOURCE, YEAR
-  }
-
-  private HashMap<SearchOptions, Object> searchOptions;
+  private Map<MovieSearchOptions, Object> searchOptions;
 
   /**
    * Instantiates a new movies extended matcher.
@@ -52,7 +48,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
    * @param searchOptions
    *          the search options
    */
-  public MovieExtendedMatcher(HashMap<SearchOptions, Object> searchOptions) {
+  public MovieExtendedMatcher(Map<MovieSearchOptions, Object> searchOptions) {
     this.searchOptions = searchOptions;
   }
 
@@ -64,15 +60,15 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check duplicates
-    if (searchOptions.containsKey(SearchOptions.DUPLICATES)) {
+    if (searchOptions.containsKey(MovieSearchOptions.DUPLICATES)) {
       if (!movie.isDuplicate()) {
         return false;
       }
     }
 
     // check against watched flag
-    if (searchOptions.containsKey(SearchOptions.WATCHED)) {
-      boolean watched = (Boolean) searchOptions.get(SearchOptions.WATCHED);
+    if (searchOptions.containsKey(MovieSearchOptions.WATCHED)) {
+      boolean watched = (Boolean) searchOptions.get(MovieSearchOptions.WATCHED);
       boolean result = !(movie.isWatched() ^ watched);
       if (result == false) {
         return false;
@@ -80,48 +76,48 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check against genre
-    if (searchOptions.containsKey(SearchOptions.GENRE)) {
-      MediaGenres genre = (MediaGenres) searchOptions.get(SearchOptions.GENRE);
+    if (searchOptions.containsKey(MovieSearchOptions.GENRE)) {
+      MediaGenres genre = (MediaGenres) searchOptions.get(MovieSearchOptions.GENRE);
       if (!movie.getGenres().contains(genre)) {
         return false;
       }
     }
 
     // check against certification
-    if (searchOptions.containsKey(SearchOptions.CERTIFICATION)) {
-      Certification cert = (Certification) searchOptions.get(SearchOptions.CERTIFICATION);
+    if (searchOptions.containsKey(MovieSearchOptions.CERTIFICATION)) {
+      Certification cert = (Certification) searchOptions.get(MovieSearchOptions.CERTIFICATION);
       if (cert != movie.getCertification()) {
         return false;
       }
     }
 
     // check against cast member
-    if (searchOptions.containsKey(SearchOptions.CAST)) {
-      String castSearch = (String) searchOptions.get(SearchOptions.CAST);
+    if (searchOptions.containsKey(MovieSearchOptions.CAST)) {
+      String castSearch = (String) searchOptions.get(MovieSearchOptions.CAST);
       if (!containsCast(movie, castSearch)) {
         return false;
       }
     }
 
     // check against tag
-    if (searchOptions.containsKey(SearchOptions.TAG)) {
-      String tag = (String) searchOptions.get(SearchOptions.TAG);
+    if (searchOptions.containsKey(MovieSearchOptions.TAG)) {
+      String tag = (String) searchOptions.get(MovieSearchOptions.TAG);
       if (!containsTag(movie, tag)) {
         return false;
       }
     }
 
     // check against MOVIESET
-    if (searchOptions.containsKey(SearchOptions.MOVIESET)) {
-      Boolean isInSet = (Boolean) searchOptions.get(SearchOptions.MOVIESET);
+    if (searchOptions.containsKey(MovieSearchOptions.MOVIESET)) {
+      Boolean isInSet = (Boolean) searchOptions.get(MovieSearchOptions.MOVIESET);
       if ((movie.getMovieSet() != null) != isInSet) {
         return false;
       }
     }
 
     // check against video format
-    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
-      String videoFormat = (String) searchOptions.get(SearchOptions.VIDEO_FORMAT);
+    if (searchOptions.containsKey(MovieSearchOptions.VIDEO_FORMAT)) {
+      String videoFormat = (String) searchOptions.get(MovieSearchOptions.VIDEO_FORMAT);
       if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {
         if (videoFormat == MediaFile.VIDEO_FORMAT_HD && !isVideoHD(movie.getMediaInfoVideoFormat())) {
           return false;
@@ -138,68 +134,68 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check against video codec
-    if (searchOptions.containsKey(SearchOptions.VIDEO_CODEC)) {
-      String videoCodec = (String) searchOptions.get(SearchOptions.VIDEO_CODEC);
+    if (searchOptions.containsKey(MovieSearchOptions.VIDEO_CODEC)) {
+      String videoCodec = (String) searchOptions.get(MovieSearchOptions.VIDEO_CODEC);
       if (!videoCodec.equals(movie.getMediaInfoVideoCodec())) {
         return false;
       }
     }
 
     // check against audio codec
-    if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
-      String audioCodec = (String) searchOptions.get(SearchOptions.AUDIO_CODEC);
+    if (searchOptions.containsKey(MovieSearchOptions.AUDIO_CODEC)) {
+      String audioCodec = (String) searchOptions.get(MovieSearchOptions.AUDIO_CODEC);
       if (!containsAudioCodec(movie, audioCodec)) {
         return false;
       }
     }
 
     // check against datasource
-    if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
-      String datasource = (String) searchOptions.get(SearchOptions.DATASOURCE);
+    if (searchOptions.containsKey(MovieSearchOptions.DATASOURCE)) {
+      String datasource = (String) searchOptions.get(MovieSearchOptions.DATASOURCE);
       if (!new File(datasource).equals(new File(movie.getDataSource()))) {
         return false;
       }
     }
 
     // check against missing metadata
-    if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
+    if (searchOptions.containsKey(MovieSearchOptions.MISSING_METADATA)) {
       if (movie.isScraped()) {
         return false;
       }
     }
 
     // check against missing artwork
-    if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
+    if (searchOptions.containsKey(MovieSearchOptions.MISSING_ARTWORK)) {
       if (movie.getHasImages()) {
         return false;
       }
     }
 
     // check against missing subtitles
-    if (searchOptions.containsKey(SearchOptions.MISSING_SUBTITLES)) {
+    if (searchOptions.containsKey(MovieSearchOptions.MISSING_SUBTITLES)) {
       if (movie.hasSubtitles()) {
         return false;
       }
     }
 
     // check against new movies
-    if (searchOptions.containsKey(SearchOptions.NEW_MOVIES)) {
+    if (searchOptions.containsKey(MovieSearchOptions.NEW_MOVIES)) {
       if (!movie.isNewlyAdded()) {
         return false;
       }
     }
 
     // check against movie source
-    if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
-      MovieMediaSource mediaSource = (MovieMediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE);
+    if (searchOptions.containsKey(MovieSearchOptions.MEDIA_SOURCE)) {
+      MovieMediaSource mediaSource = (MovieMediaSource) searchOptions.get(MovieSearchOptions.MEDIA_SOURCE);
       if (movie.getMediaSource() != mediaSource) {
         return false;
       }
     }
 
     // check against year
-    if (searchOptions.containsKey(SearchOptions.YEAR)) {
-      Integer year = (Integer) searchOptions.get(SearchOptions.YEAR);
+    if (searchOptions.containsKey(MovieSearchOptions.YEAR)) {
+      Integer year = (Integer) searchOptions.get(MovieSearchOptions.YEAR);
       if (!movie.getYear().equals(year.toString())) {
         return false;
       }

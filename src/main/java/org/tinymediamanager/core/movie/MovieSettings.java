@@ -16,17 +16,21 @@
 package org.tinymediamanager.core.movie;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
@@ -85,6 +89,8 @@ public class MovieSettings extends AbstractModelObject {
   private final static String SUBTITLE_COLUMN_VISIBLE              = "subtitleColumnVisible";
   private final static String WATCHED_COLUMN_VISIBLE               = "watchedColumnVisible";
   private final static String SCRAPER_FALLBACK                     = "scraperFallback";
+  private final static String UI_FILTERS                           = "uiFilters";
+  private final static String STORE_UI_FILTERS                     = "storeUiFilters";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -113,6 +119,8 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElementWrapper(name = MOVIE_TRAILER_SCRAPERS)
   @XmlElement(name = ENTRY)
   private final List<String> movieTrailerScrapers = ObservableCollections.observableList(new ArrayList<String>());
+
+  private Map<MovieSearchOptions, Object> uiFilters = new HashMap<>();
 
   private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
   private String              movieRenamerPathname                     = "$T ($Y)";
@@ -163,6 +171,7 @@ public class MovieSettings extends AbstractModelObject {
   private MovieTrailerQuality trailerQuality                           = MovieTrailerQuality.HD_720;
   private MovieTrailerSources trailerSource                            = MovieTrailerSources.YOUTUBE;
   private boolean             syncTrakt                                = false;
+  private boolean             storeUiFilters                           = false;
 
   public MovieSettings() {
   }
@@ -484,6 +493,30 @@ public class MovieSettings extends AbstractModelObject {
 
   public List<String> getMovieTrailerScrapers() {
     return movieTrailerScrapers;
+  }
+
+  public void setUiFilters(Map<MovieSearchOptions, Object> filters) {
+    uiFilters = filters;
+    firePropertyChange(UI_FILTERS, null, uiFilters);
+  }
+
+  @XmlElement(name = UI_FILTERS)
+  @XmlJavaTypeAdapter(MovieSearchOptionsAdapter.class)
+  public Map<MovieSearchOptions, Object> getUiFilters() {
+    if (storeUiFilters) {
+      return uiFilters;
+    }
+    return new HashMap<MovieSearchOptions, Object>();
+  }
+
+  public void setStoreUiFilters(boolean newValue) {
+    boolean oldValue = this.storeUiFilters;
+    this.storeUiFilters = newValue;
+    firePropertyChange(STORE_UI_FILTERS, oldValue, newValue);
+  }
+
+  public boolean isStoreUiFilters() {
+    return storeUiFilters;
   }
 
   public boolean isWriteActorImages() {

@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 import ca.odell.glazedlists.EventList;
@@ -222,7 +223,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param filter
    *          the filter
    */
-  public void filterMovies(HashMap<MovieExtendedMatcher.SearchOptions, Object> filter) {
+  public void filterMovies(HashMap<MovieSearchOptions, Object> filter) {
     matcherEditor.filterMovies(filter);
   }
 

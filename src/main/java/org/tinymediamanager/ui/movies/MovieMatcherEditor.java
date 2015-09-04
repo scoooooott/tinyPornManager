@@ -15,8 +15,11 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.util.HashMap;
+import java.util.Map;
 
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
@@ -41,8 +44,12 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
    * @param filter
    *          the filter
    */
-  public void filterMovies(HashMap<MovieExtendedMatcher.SearchOptions, Object> filter) {
+  public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
     fireChanged(matcher);
+    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+      MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
+      Globals.settings.saveSettings();
+    }
   }
 }

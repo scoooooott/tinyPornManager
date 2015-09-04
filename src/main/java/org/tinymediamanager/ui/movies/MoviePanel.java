@@ -462,6 +462,11 @@ public class MoviePanel extends JPanel {
 
     // further initializations
     init();
+
+    // filter
+    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+      movieMatcherEditor.filterMovies(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
+    }
   }
 
   private void buildMenu() {

@@ -65,6 +65,7 @@ import org.tinymediamanager.ui.components.ScrollablePanel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -74,54 +75,59 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = -7580437046944123496L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private Settings settings = Settings.getInstance();
 
   /**
    * UI elements
    */
-  private JTable                      tableMovieSources;
-  private JComboBox                   cbNfoFormat;
-  private JCheckBox                   cbMovieNfoFilename1;
-  private JCheckBox                   cbMovieNfoFilename2;
-  private JCheckBox                   cbMovieNfoFilename3;
-  private JCheckBox                   chckbxMultipleMoviesPerFolder;
-  private JCheckBox                   chckbxImageCache;
-  private JTextField                  tfAddBadword;
-  private JList                       listBadWords;
-  private JCheckBox                   chckbxYear;
-  private JCheckBox                   chckbxTrailer;
-  private JCheckBox                   chckbxSubtitles;
-  private JCheckBox                   chckbxImages;
-  private JCheckBox                   chckbxNfo;
-  private JCheckBox                   chckbxRuntimeFromMf;
-  private JCheckBox                   chckbxTraktTv;
-  private JCheckBox                   chckbxWatched;
-  private JCheckBox                   chckbxRating;
-  private JCheckBox                   chckbxDateAdded;
+  private JTable     tableMovieSources;
+  private JComboBox  cbNfoFormat;
+  private JCheckBox  cbMovieNfoFilename1;
+  private JCheckBox  cbMovieNfoFilename2;
+  private JCheckBox  cbMovieNfoFilename3;
+  private JCheckBox  chckbxMultipleMoviesPerFolder;
+  private JCheckBox  chckbxImageCache;
+  private JTextField tfAddBadword;
+  private JList      listBadWords;
+  private JCheckBox  chckbxYear;
+  private JCheckBox  chckbxTrailer;
+  private JCheckBox  chckbxSubtitles;
+  private JCheckBox  chckbxImages;
+  private JCheckBox  chckbxNfo;
+  private JCheckBox  chckbxRuntimeFromMf;
+  private JCheckBox  chckbxTraktTv;
+  private JCheckBox  chckbxWatched;
+  private JCheckBox  chckbxRating;
+  private JCheckBox  chckbxDateAdded;
+  private JCheckBox  chckbxSaveUiFilter;
 
   /**
    * Instantiates a new movie settings panel.
    */
   public MovieSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:default:grow"), FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelGeneral = new JPanel();
     panelGeneral.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.general"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelGeneral, "2, 2, fill, fill");
-    panelGeneral.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelGeneral.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblVisiblecolumns = new JLabel(BUNDLE.getString("Settings.movie.visiblecolumns")); //$NON-NLS-1$
     panelGeneral.add(lblVisiblecolumns, "2, 2, right, default");
@@ -150,30 +156,36 @@ public class MovieSettingsPanel extends ScrollablePanel {
     chckbxWatched = new JCheckBox(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
     panelGeneral.add(chckbxWatched, "10, 4");
 
+    JLabel lblSaveUiFilter = new JLabel(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
+    panelGeneral.add(lblSaveUiFilter, "2, 6, right, default");
+
+    chckbxSaveUiFilter = new JCheckBox("");
+    panelGeneral.add(chckbxSaveUiFilter, "4, 6");
+
     JSeparator separator_4 = new JSeparator();
-    panelGeneral.add(separator_4, "2, 6, 7, 1");
+    panelGeneral.add(separator_4, "2, 8, 9, 1");
 
     JLabel lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport"));
-    panelGeneral.add(lblImageCache, "2, 8, right, default");
+    panelGeneral.add(lblImageCache, "2, 10, right, default");
 
     chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(chckbxImageCache, 0.833);
-    panelGeneral.add(chckbxImageCache, "4, 8, 7, 1");
+    panelGeneral.add(chckbxImageCache, "4, 10, 7, 1");
 
     JLabel lblRuntimeFromMedia = new JLabel(BUNDLE.getString("Settings.runtimefrommediafile"));
-    panelGeneral.add(lblRuntimeFromMedia, "2, 10, right, default");
+    panelGeneral.add(lblRuntimeFromMedia, "2, 12, right, default");
 
     chckbxRuntimeFromMf = new JCheckBox("");
-    panelGeneral.add(chckbxRuntimeFromMf, "4, 10");
+    panelGeneral.add(chckbxRuntimeFromMf, "4, 12");
 
     JSeparator separator = new JSeparator();
-    panelGeneral.add(separator, "2, 12, 7, 1");
+    panelGeneral.add(separator, "2, 14, 9, 1");
 
     JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-    panelGeneral.add(lblTraktTv, "2, 14");
+    panelGeneral.add(lblTraktTv, "2, 16");
 
     chckbxTraktTv = new JCheckBox("");
-    panelGeneral.add(chckbxTraktTv, "4, 14");
+    panelGeneral.add(chckbxTraktTv, "4, 16");
 
     JButton btnClearTraktTvMovies = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));//$NON-NLS-1$
     btnClearTraktTvMovies.addActionListener(new ActionListener() {
@@ -187,20 +199,21 @@ public class MovieSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panelGeneral.add(btnClearTraktTvMovies, "6, 14, 3, 1, left, default");
+    panelGeneral.add(btnClearTraktTvMovies, "6, 16, 3, 1, left, default");
 
     JPanel panelMovieDataSources = new JPanel();
 
-    panelMovieDataSources.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.movie.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelMovieDataSources
+        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.movie.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieDataSources, "2, 4, fill, fill");
-    panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default):grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieDataSources.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -285,10 +298,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JPanel panelBadWords = new JPanel();
     panelBadWords.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.movie.badwords"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelBadWords, "4, 2, 1, 3, fill, fill");
-    panelBadWords.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    panelBadWords.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JTextPane txtpntBadWordsHint = new JTextPane();
     txtpntBadWordsHint.setBackground(UIManager.getColor("Panel.background"));
@@ -420,8 +434,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
     autoBinding_3.bind();
     //
     BeanProperty<Settings, List<String>> settingsBeanProperty_6 = BeanProperty.create("movieSettings.badWords");
-    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_6, listBadWords);
+    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_6,
+        listBadWords);
     jListBinding.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty_8 = BeanProperty.create("movieSettings.runtimeFromMediaInfo");
@@ -473,5 +487,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, chckbxDateAdded, jCheckBoxBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_11 = BeanProperty.create("movieSettings.storeUiFilters");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_11, chckbxSaveUiFilter, jCheckBoxBeanProperty);
+    autoBinding_10.bind();
   }
 }
