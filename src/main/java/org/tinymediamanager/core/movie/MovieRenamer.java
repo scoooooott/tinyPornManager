@@ -432,10 +432,7 @@ public class MovieRenamer {
     // now iterate over all non-tmm NFOs, and add them for cleanup or not
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
       if (MovieConnectors.isValidNFO(mf.getFile())) {
-        // TMM info, but maybe an old one?
-        if (mf.getFiledate() < nfo.getFiledate()) {
-          cleanup.add(mf);
-        }
+        cleanup.add(mf);
       }
       else {
         if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
@@ -648,22 +645,31 @@ public class MovieRenamer {
         break;
 
       case NFO:
-        List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
-        if (newDestIsMultiMovieDir) {
-          // Fixate the name regardless of setting
-          nfonames.add(MovieNfoNaming.FILENAME_NFO);
+        if (MovieConnectors.isValidNFO(mf.getFile())) {
+          List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+          if (newDestIsMultiMovieDir) {
+            // Fixate the name regardless of setting
+            nfonames.add(MovieNfoNaming.FILENAME_NFO);
+          }
+          else {
+            nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+          }
+          for (MovieNfoNaming name : nfonames) {
+            String newNfoName = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
+            if (newNfoName.isEmpty()) {
+              continue;
+            }
+            MediaFile nfo = new MediaFile(mf);
+            nfo.setFile(new File(newMovieDir, newNfoName));
+            newFiles.add(nfo);
+          }
         }
         else {
-          nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-        }
-        for (MovieNfoNaming name : nfonames) {
-          String newNfoName = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
-          if (newNfoName.isEmpty()) {
-            continue;
+          // not a TMM NFO
+          if (!MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
+            newFiles.add(new MediaFile(mf));
           }
-          MediaFile nfo = new MediaFile(mf);
-          nfo.setFile(new File(newMovieDir, newNfoName));
-          newFiles.add(nfo);
+
         }
         break;
 
