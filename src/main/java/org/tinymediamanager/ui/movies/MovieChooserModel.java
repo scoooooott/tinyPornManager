@@ -29,9 +29,6 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -41,6 +38,9 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -205,6 +205,15 @@ public class MovieChooserModel extends AbstractModelObject {
       }
       catch (Exception e) {
       }
+    }
+
+    // at last take the poster from the result
+    if (StringUtils.isNotBlank(getPosterUrl())) {
+      MediaArtwork ma = new MediaArtwork();
+      ma.setType(MediaArtworkType.POSTER);
+      ma.setDefaultUrl(getPosterUrl());
+      ma.setProviderId(result.getProviderId());
+      artwork.add(ma);
     }
 
     return artwork;

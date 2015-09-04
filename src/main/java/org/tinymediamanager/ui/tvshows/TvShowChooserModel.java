@@ -15,6 +15,11 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +39,6 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * 
@@ -201,6 +201,15 @@ public class TvShowChooserModel extends AbstractModelObject {
       catch (Exception e) {
         LOGGER.warn("could not get artwork from " + artworkProvider.getProviderInfo().getName() + ": " + e.getMessage());
       }
+    }
+
+    // at last take the poster from the result
+    if (StringUtils.isNotBlank(getPosterUrl())) {
+      MediaArtwork ma = new MediaArtwork();
+      ma.setType(MediaArtworkType.POSTER);
+      ma.setDefaultUrl(getPosterUrl());
+      ma.setProviderId(result.getProviderId());
+      artwork.add(ma);
     }
 
     return artwork;
