@@ -20,22 +20,23 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
@@ -55,6 +56,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private IConfigureableMediaProvider mediaProvider;
+  private boolean                     dirty = false;
+
+  private JPanel configPanel;
 
   public MediaScraperConfigurationPanel(IConfigureableMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;
@@ -67,15 +71,30 @@ public class MediaScraperConfigurationPanel extends JPanel {
     JLabel lblScraperOptions = new JLabel(BUNDLE.getString("Settings.scraper.options")); //$NON-NLS-1$
     panelHead.add(lblScraperOptions);
 
-    JButton btnChangeOptions = new JButton();
-    btnChangeOptions.setAction(new EditScraperOptionsAction());
-    btnChangeOptions.setMargin(new Insets(2, 2, 2, 2));
-    panelHead.add(btnChangeOptions);
+    configPanel = createConfigPanel();
+    add(configPanel, BorderLayout.CENTER);
 
-    add(createConfigPanel(false), BorderLayout.CENTER);
+    // add a listener to determine when to save the settings
+    addAncestorListener(new AncestorListener() {
+      @Override
+      public void ancestorRemoved(AncestorEvent event) {
+        // check if anything has been changed
+        if (dirty) {
+          saveSettings();
+        }
+      }
+
+      @Override
+      public void ancestorMoved(AncestorEvent event) {
+      }
+
+      @Override
+      public void ancestorAdded(AncestorEvent event) {
+      }
+    });
   }
 
-  private JPanel createConfigPanel(boolean edit) {
+  private JPanel createConfigPanel() {
     JPanel panel = new JPanel();
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWidths = new int[] { 0 };
@@ -101,17 +120,33 @@ public class MediaScraperConfigurationPanel extends JPanel {
       if (entry.getValue() instanceof Boolean) {
         JCheckBox checkbox = new JCheckBox();
         checkbox.setSelected((Boolean) entry.getValue());
-        checkbox.setEnabled(edit);
+        checkbox.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            dirty = true;
+          }
+        });
         comp = checkbox;
       }
       else {
-        if (edit) {
-          comp = new JTextField(String.valueOf(entry.getValue()));
-        }
-        else {
-          comp = new JLabel(String.valueOf(entry.getValue()));
-        }
+        JTextField tf = new JTextField(String.valueOf(entry.getValue()));
+        tf.getDocument().addDocumentListener(new DocumentListener() {
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            dirty = true;
+          }
 
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            dirty = true;
+          }
+
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            dirty = true;
+          }
+        });
+        comp = tf;
       }
       comp.putClientProperty(entry.getKey(), entry.getKey());
       constraints.ipadx = 0;
@@ -130,69 +165,44 @@ public class MediaScraperConfigurationPanel extends JPanel {
       }
       catch (Exception ignored) {
       }
-
       constraints.gridy++;
     }
-
     return panel;
   }
 
-  private class EditScraperOptionsAction extends AbstractAction {
-    private static final long serialVersionUID = -5581329806797961536L;
+  private void saveSettings() {
+    Map<String, Object> newConfig = new HashMap<>();
+    Map<String, Object> config = mediaProvider.getProviderSettings();
+    // transfer the items from the components to the config
+    for (Entry<String, Object> entry : config.entrySet()) {
+      for (Component comp : configPanel.getComponents()) {
+        // get the right component for this setting
+        if (!(comp instanceof JComponent)) {
+          continue;
+        }
 
-    public EditScraperOptionsAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("Settings.scraper.options.edit")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.EDIT);
-      putValue(LARGE_ICON_KEY, IconManager.EDIT);
-    }
+        Object param = ((JComponent) comp).getClientProperty(entry.getKey());
+        if (param == null || !entry.getKey().equals(param)) {
+          continue;
+        }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      JPanel panel = createConfigPanel(true);
-      int answer = JOptionPane.showConfirmDialog(MediaScraperConfigurationPanel.this.getTopLevelAncestor(), panel,
-          BUNDLE.getString("Settings.scraper.options.edit"), //$NON-NLS-1$
-          JOptionPane.OK_CANCEL_OPTION);
-      // ok pressed -> change settings
-      if (answer == JOptionPane.OK_OPTION) {
-        Map<String, Object> newConfig = new HashMap<>();
-        Map<String, Object> config = mediaProvider.getProviderSettings();
-
-        // transfer the items from the components to the config
-        for (Entry<String, Object> entry : config.entrySet()) {
-          for (Component comp : panel.getComponents()) {
-            // get the right component for this setting
-            if (!(comp instanceof JComponent)) {
-              continue;
-            }
-
-            Object param = ((JComponent) comp).getClientProperty(entry.getKey());
-            if (param == null || !entry.getKey().equals(param)) {
-              continue;
-            }
-
-            // parse the value and write it back to the new config
-            try {
-              if (comp instanceof JCheckBox) {
-                newConfig.put(entry.getKey(), ((JCheckBox) comp).isSelected());
-              }
-              else {
-                Method method = param.getClass().getMethod("valueOf", String.class);
-                if (method != null) {
-                  newConfig.put(entry.getKey(), method.invoke(null, ((JTextField) comp).getText()));
-                }
-              }
-            }
-            catch (Exception ignored) {
+        // parse the value and write it back to the new config
+        try {
+          if (comp instanceof JCheckBox) {
+            newConfig.put(entry.getKey(), ((JCheckBox) comp).isSelected());
+          }
+          else {
+            Method method = param.getClass().getMethod("valueOf", String.class);
+            if (method != null) {
+              newConfig.put(entry.getKey(), method.invoke(null, ((JTextField) comp).getText()));
             }
           }
         }
-
-        mediaProvider.setProviderSettings(newConfig);
-        // and re set the changed config to the panel
-        remove(((BorderLayout) getLayout()).getLayoutComponent(BorderLayout.CENTER));
-        add(createConfigPanel(false), BorderLayout.CENTER);
-        revalidate();
+        catch (Exception ignored) {
+        }
       }
     }
+
+    mediaProvider.setProviderSettings(newConfig);
   }
 }
