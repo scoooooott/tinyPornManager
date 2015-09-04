@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
+import java.io.File;
+
+import org.tinymediamanager.core.movie.entities.Movie;
+
 /**
  * The Enum MovieConnectors.
  * 
@@ -33,4 +37,23 @@ public enum MovieConnectors {
   public String toString() {
     return this.title;
   }
+
+  /**
+   * checks, if current NFO file is a valid XML<br>
+   * (by casting to all known XML formats)
+   * 
+   * @param nfo
+   * @return
+   */
+  public static boolean isValidNFO(File nfo) {
+    Movie tmp = MovieToXbmcNfoConnector.getData(nfo);
+    if (tmp == null) {
+      tmp = MovieToMpNfoConnector.getData(nfo);
+    }
+    if (tmp == null) {
+      return false;
+    }
+    return true;
+  }
+
 }

@@ -180,10 +180,9 @@ public class MovieRenamer {
       return;
     }
 
-    // already scraped? do not rename if not...
-    if (!movie.isScraped()) {
-      LOGGER.error("won't rename movie '" + movie.getPath() + "' / '" + movie.getTitle() + "' since it appears to not have been scraped yet!");
-      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie.getTitle(), "message.renamer.notyetscraped"));
+    // if (!movie.isScraped()) {
+    if (movie.getTitle().isEmpty()) {
+      LOGGER.error("won't rename movie '" + movie.getPath() + "' / '" + movie.getTitle() + "' not even title is set?");
       return;
     }
 
@@ -318,9 +317,11 @@ public class MovieRenamer {
 
     // BASENAME
     String newVideoBasename = "";
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {
-      // we are NOT renaming any files, so we keep the same name on renaming ;)
+    if (!isFilePatternValid()) {
+      // Template empty or not even title set, so we are NOT renaming any files
+      // we keep the same name on renaming ;)
       newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+      LOGGER.warn("Pattern is not valid - NOT renaming files!");
     }
     else {
       // since we rename, generate the new basename
@@ -377,11 +378,10 @@ public class MovieRenamer {
     }
 
     // ######################################################################
-    // ## rename NFO, POSTER, FANART (copy 1:N)
+    // ## rename POSTER, FANART (copy 1:N)
     // ######################################################################
     // we can have multiple ones, just get the newest one and copy(overwrite) them to all needed
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
-    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.NFO));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.FANART));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.POSTER));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -389,13 +389,60 @@ public class MovieRenamer {
       LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFile().getAbsolutePath());
       ArrayList<MediaFile> newMFs = generateFilename(movie, mf, newVideoBasename); // 1:N
       for (MediaFile newMF : newMFs) {
-        if (newMF.getType() == MediaFileType.FANART || newMF.getType() == MediaFileType.POSTER) {
-          posterRenamed = true;
-          fanartRenamed = true;
-        }
+        posterRenamed = true;
+        fanartRenamed = true;
         boolean ok = copyFile(mf.getFile(), newMF.getFile());
         if (ok) {
           needed.add(newMF);
+        }
+      }
+    }
+
+    // ######################################################################
+    // ## rename NFO (copy 1:N) - only TMM NFOs
+    // ######################################################################
+    // we need to find the newest, valid TMM NFO
+    MediaFile nfo = new MediaFile();
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
+      if (mf.getFiledate() >= nfo.getFiledate() && MovieConnectors.isValidNFO(mf.getFile())) {
+        nfo = new MediaFile(mf);
+      }
+    }
+
+    if (nfo.getFiledate() > 0) { // one valid found? copy our NFO to all variants
+      ArrayList<MediaFile> newNFOs = generateFilename(movie, nfo, newVideoBasename); // 1:N
+      if (newNFOs.size() > 0) {
+        // ok, at least one has been set up
+        for (MediaFile newNFO : newNFOs) {
+          boolean ok = copyFile(nfo.getFile(), newNFO.getFile());
+          if (ok) {
+            needed.add(newNFO);
+          }
+        }
+      }
+      else {
+        // list was empty, so even remove this NFO
+        cleanup.add(nfo);
+      }
+    }
+    else {
+      LOGGER.trace("No valid NFO found for this movie");
+    }
+
+    // now iterate over all non-tmm NFOs, and add them for cleanup or not
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
+      if (MovieConnectors.isValidNFO(mf.getFile())) {
+        // TMM info, but maybe an old one?
+        if (mf.getFiledate() < nfo.getFiledate()) {
+          cleanup.add(mf);
+        }
+      }
+      else {
+        if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
+          cleanup.add(mf);
+        }
+        else {
+          needed.add(mf);
         }
       }
     }
@@ -461,7 +508,7 @@ public class MovieRenamer {
     }
 
     // ######################################################################
-    // ## CLEANUP
+    // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
     LOGGER.info("Cleanup...");
     for (int i = cleanup.size() - 1; i >= 0; i--) {
@@ -489,28 +536,6 @@ public class MovieRenamer {
           // if directory is empty, delete it as well
           LOGGER.debug("Deleting empty Directory " + cl.getFile().getParentFile().getAbsolutePath());
           FileUtils.deleteQuietly(cl.getFile().getParentFile()); // no need for backup ;)
-        }
-      }
-    }
-
-    // clean all non tmm nfos
-    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
-      File[] content = new File(movie.getPath()).listFiles();
-      if (content != null) {
-        for (File file : content) {
-          if (file.isFile() && file.getName().toLowerCase().endsWith(".nfo")) {
-            // check if it's a tmm nfo
-            boolean supported = false;
-            for (MediaFile nfo : movie.getMediaFiles(MediaFileType.NFO)) {
-              if (nfo.getFilename().equals(file.getName())) {
-                supported = true;
-              }
-            }
-            if (!supported) {
-              LOGGER.debug("Deleting " + file);
-              Utils.deleteFileSafely(file, movie.getDataSource());
-            }
-          }
         }
       }
     }
@@ -555,7 +580,14 @@ public class MovieRenamer {
 
     String newFilename = videoFileName;
     if (newFilename == null || newFilename.isEmpty()) {
+      // empty only when first generating basename, so generation here is OK
       newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+    }
+
+    if (!isFilePatternValid()) {
+      // NOT renaming files
+      newFiles.add(new MediaFile(mf));
+      return newFiles;
     }
 
     // extra clone, just for easy adding the "default" ones ;)
@@ -850,6 +882,105 @@ public class MovieRenamer {
   }
 
   /**
+   * gets the token value ($x) from specified movie object
+   * 
+   * @param movie
+   *          our movie
+   * @param token
+   *          the $x token
+   * @return value or empty string
+   */
+  public static String getTokenValue(Movie movie, String token) {
+    String ret = "";
+    MediaFile mf = new MediaFile();
+    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+      mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
+    }
+
+    switch (token.toUpperCase()) {
+      case "$T":
+        ret = movie.getTitle();
+        break;
+      case "$1":
+        ret = StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase() : "";
+        break;
+      case "$2":
+        ret = StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase() : "";
+        break;
+      case "$Y":
+        ret = movie.getYear().equals("0") ? "" : movie.getYear();
+        break;
+      case "$O":
+        ret = movie.getOriginalTitle();
+        break;
+      case "$M":
+        if (movie.getMovieSet() != null
+            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
+          ret = movie.getMovieSet().getTitleSortable();
+        }
+        break;
+      case "$N":
+        if (movie.getMovieSet() != null
+            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
+          ret = movie.getMovieSet().getTitle();
+        }
+        break;
+      case "$I":
+        ret = movie.getImdbId();
+        break;
+      case "$E":
+        ret = movie.getTitleSortable();
+        break;
+      case "$L":
+        ret = movie.getSpokenLanguages();
+        break;
+      case "$C":
+        if (movie.getCertification() != Certification.NOT_RATED) {
+          ret = movie.getCertification().getName();
+        }
+        break;
+      case "$G":
+        if (!movie.getGenres().isEmpty()) {
+          MediaGenres genre = movie.getGenres().get(0);
+          ret = genre.getLocalizedName();
+        }
+        break;
+      case "$D":
+        ret = movie.getDirector();
+        break;
+      case "$R":
+        ret = mf.getVideoResolution();
+        break;
+      case "$3":
+        if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
+          ret = mf.getVideo3DFormat();
+        }
+        else if (movie.isVideoIn3D()) { // no MI info, but flag set from user
+          ret = "3D";
+        }
+        break;
+      case "$A":
+        ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
+        break;
+      case "$V":
+        ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
+        break;
+      case "$F":
+        ret = mf.getVideoFormat();
+        break;
+      case "$S":
+        if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+          ret = movie.getMediaSource().toString();
+        }
+        break;
+      default:
+        break;
+    }
+
+    return ret;
+  }
+
+  /**
    * Creates the new file/folder name according to template string
    * 
    * @param template
@@ -864,159 +995,12 @@ public class MovieRenamer {
   public static String createDestination(String template, Movie movie, boolean forFilename) {
     String newDestination = template;
 
-    // replace token title ($T)
-    if (newDestination.contains("$T")) {
-      newDestination = replaceToken(newDestination, "$T", movie.getTitle());
-    }
-
-    // replace token first letter of title ($1)
-    if (newDestination.contains("$1")) {
-      newDestination = replaceToken(newDestination, "$1",
-          StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase() : "");
-    }
-
-    // replace token first letter of sort title ($2)
-    if (newDestination.contains("$2")) {
-      newDestination = replaceToken(newDestination, "$2",
-          StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase() : "");
-    }
-
-    // replace token year ($Y)
-    if (newDestination.contains("$Y")) {
-      if (movie.getYear().equals("0")) {
-        newDestination = newDestination.replace("$Y", "");
-      }
-      else {
-        newDestination = replaceToken(newDestination, "$Y", movie.getYear());
-      }
-    }
-
-    // replace token orignal title ($O)
-    if (newDestination.contains("$O")) {
-      newDestination = replaceToken(newDestination, "$O", movie.getOriginalTitle());
-    }
-
-    // replace token Movie set title - sorted ($M)
-    if (newDestination.contains("$M")) {
-      if (movie.getMovieSet() != null
-          && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
-        newDestination = replaceToken(newDestination, "$M", movie.getMovieSet().getTitleSortable());
-      }
-      else {
-        newDestination = newDestination.replace("$M", "");
-      }
-    }
-
-    // replace token Movie set title ($N)
-    if (newDestination.contains("$N")) {
-      if (movie.getMovieSet() != null
-          && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
-        newDestination = replaceToken(newDestination, "$N", movie.getMovieSet().getTitle());
-      }
-      else {
-        newDestination = newDestination.replace("$N", "");
-      }
-    }
-
-    // replace token IMDBid ($I)
-    if (newDestination.contains("$I")) {
-      newDestination = replaceToken(newDestination, "$I", movie.getImdbId());
-    }
-
-    // replace token sort title ($E)
-    if (newDestination.contains("$E")) {
-      newDestination = replaceToken(newDestination, "$E", movie.getTitleSortable());
-    }
-
-    // replace token language ($L)
-    if (newDestination.contains("$L")) {
-      newDestination = replaceToken(newDestination, "$L", movie.getSpokenLanguages());
-    }
-
-    // replace token certification ($C)
-    if (newDestination.contains("$C")) {
-      if (movie.getCertification() != Certification.NOT_RATED) {
-        newDestination = replaceToken(newDestination, "$C", movie.getCertification().getName());
-      }
-      else {
-        newDestination = newDestination.replace("$C", "");
-      }
-    }
-
-    // replace token genre ($G)
-    if (newDestination.contains("$G")) {
-      if (!movie.getGenres().isEmpty()) {
-        MediaGenres genre = movie.getGenres().get(0);
-        newDestination = replaceToken(newDestination, "$G", genre.getLocalizedName());
-      }
-      else {
-        newDestination = newDestination.replace("$G", "");
-      }
-    }
-
-    // replace token director ($D)
-    if (newDestination.contains("$D")) {
-      newDestination = replaceToken(newDestination, "$D", movie.getDirector());
-    }
-    else {
-      newDestination = newDestination.replace("$D", "");
-    }
-
-    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-      MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
-      // replace token resolution ($R)
-      if (newDestination.contains("$R")) {
-        newDestination = replaceToken(newDestination, "$R", mf.getVideoResolution());
-      }
-
-      // replace token 3D format ($3)
-      if (newDestination.contains("$3")) {
-        // if there is 3D info from MI, take this
-        if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
-          newDestination = replaceToken(newDestination, "$3", mf.getVideo3DFormat());
-        }
-        // no MI info, but flag set from user
-        else if (movie.isVideoIn3D()) {
-          newDestination = replaceToken(newDestination, "$3", "3D");
-        }
-        // strip unneeded token
-        else {
-          newDestination = replaceToken(newDestination, "$3", "");
-        }
-      }
-
-      // replace token audio codec + channels ($A)
-      if (newDestination.contains("$A")) {
-        newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
-      }
-
-      // replace token video codec + format ($V)
-      if (newDestination.contains("$V")) {
-        newDestination = replaceToken(newDestination, "$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
-      }
-
-      // replace token video format ($F)
-      if (newDestination.contains("$F")) {
-        newDestination = replaceToken(newDestination, "$F", mf.getVideoFormat());
-      }
-    }
-    else {
-      // no mediafiles; remove at least token (if available)
-      newDestination = newDestination.replace("$R", "");
-      newDestination = newDestination.replace("$3", "");
-      newDestination = newDestination.replace("$A", "");
-      newDestination = newDestination.replace("$V", "");
-      newDestination = newDestination.replace("$F", "");
-    }
-
-    // replace token media source (BluRay|DVD|TV|...) ($S)
-    if (newDestination.contains("$S")) {
-      if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
-        newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource().toString());
-      }
-      else {
-        newDestination = newDestination.replaceAll("\\$S", "");
-      }
+    // replace all $x parameters
+    Pattern p = Pattern.compile("(\\$\\w)");
+    Matcher m = p.matcher(template);
+    while (m.find()) {
+      String value = getTokenValue(movie, m.group(1));
+      newDestination = replaceToken(newDestination, m.group(1), value);
     }
 
     // replace empty brackets
@@ -1151,7 +1135,23 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {
-    if (((pattern.contains("$T") || pattern.contains("$E")) && pattern.contains("$Y")) || pattern.contains("$I")) {
+    if (((pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) && pattern.contains("$Y")) || pattern.contains("$I")) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Check if the FILE rename pattern is valid<br>
+   * What means, either empty, or has at least title set ($T|$E|$O)<br>
+   * 
+   * @param pattern
+   * @return true/false
+   */
+  public static boolean isFilePatternValid() {
+    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().toUpperCase().trim();
+
+    if (pattern.isEmpty() || (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O"))) {
       return true;
     }
     return false;

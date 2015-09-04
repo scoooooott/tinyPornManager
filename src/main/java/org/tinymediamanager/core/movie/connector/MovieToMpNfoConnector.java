@@ -292,7 +292,9 @@ public class MovieToMpNfoConnector {
         }
         File f = new File(movie.getPath(), nfoFilename);
         FileUtils.write(f, sb, "UTF-8");
-        newNfos.add(new MediaFile(f));
+        MediaFile mf = new MediaFile(f);
+        mf.gatherMediaInformation(true); // force to update filedate
+        newNfos.add(mf);
       }
       catch (Exception e) {
         LOGGER.error("setData " + movie.getPath() + File.separator + nfoFilename, e);

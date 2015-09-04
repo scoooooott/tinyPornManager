@@ -1376,6 +1376,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         // System.out.println(height + "-" + width + "-" + videoCodec);
         break;
 
+      case NFO: // do nothing here, but do not display default warning (since we got the filedate)
+        break;
+
       default:
         LOGGER.warn("no mediainformation handling for MediaFile type " + getType() + " yet.");
         break;
@@ -1485,9 +1488,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return false;
     }
 
-    // parse audio, video and graphic files
+    // parse audio, video and graphic files (NFO only for getting the filedate)
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO)
+        || type.equals(MediaFileType.NFO) || isGraphic()) {
       return true;
     }
 
