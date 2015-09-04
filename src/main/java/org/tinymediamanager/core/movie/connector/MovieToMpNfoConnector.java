@@ -441,20 +441,42 @@ public class MovieToMpNfoConnector {
       throw new Exception("could not create unmarshaller");
     }
 
+    Reader in = null;
+    MovieToMpNfoConnector mp = null;
     try {
-      Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
-      return (MovieToMpNfoConnector) um.unmarshal(in);
+      in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      mp = (MovieToMpNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
       LOGGER.error("tried to unmarshal; now trying to clean xml stream");
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+    }
+    if (mp != null) {
+      return mp;
     }
 
     // now trying to parse it via string
     String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
     completeNFO = completeNFO.replace("<movie>",
         "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-    Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
-    return (MovieToMpNfoConnector) um.unmarshal(in);
+    try {
+      in = new StringReader(ParserUtils.cleanNfo(completeNFO));
+      mp = (MovieToMpNfoConnector) um.unmarshal(in);
+    }
+    catch (UnmarshalException e) {
+      // TODO: handle exception
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+    }
+    return mp;
+
   }
 
   /**

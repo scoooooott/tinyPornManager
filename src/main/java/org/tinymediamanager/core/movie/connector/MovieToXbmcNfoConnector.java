@@ -754,16 +754,25 @@ public class MovieToXbmcNfoConnector {
       throw new Exception("could not create unmarshaller");
     }
 
+    MovieToXbmcNfoConnector xbmc = null;
+    Reader in = null;
     try {
-      Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
-      MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
-      return xbmc;
+      in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
       LOGGER.error("tried to unmarshal; now trying to clean xml stream");
     }
     catch (IllegalArgumentException e) {
       LOGGER.warn("tried to unmarshal; now trying to clean xml stream");
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+    }
+    if (xbmc != null) {
+      return xbmc;
     }
 
     // now trying to parse it via string
@@ -773,8 +782,16 @@ public class MovieToXbmcNfoConnector {
       completeNFO = matcher
           .replaceFirst("<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
     }
-    Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
-    return (MovieToXbmcNfoConnector) um.unmarshal(in);
+    try {
+      in = new StringReader(ParserUtils.cleanNfo(completeNFO));
+      xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+    }
+    return xbmc;
   }
 
   private void addActor(String name, String role, String thumb) {
