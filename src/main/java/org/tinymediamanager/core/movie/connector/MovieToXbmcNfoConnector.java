@@ -747,7 +747,7 @@ public class MovieToXbmcNfoConnector {
     return movie;
   }
 
-  private static MovieToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+  protected static MovieToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
@@ -761,34 +761,31 @@ public class MovieToXbmcNfoConnector {
       xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
-      LOGGER.error("tried to unmarshal; now trying to clean xml stream");
     }
     catch (IllegalArgumentException e) {
-      LOGGER.warn("tried to unmarshal; now trying to clean xml stream");
     }
     finally {
       if (in != null) {
         in.close();
       }
     }
-    if (xbmc != null) {
-      return xbmc;
-    }
 
-    // now trying to parse it via string
-    String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
-    Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
-    if (matcher.find()) {
-      completeNFO = matcher
-          .replaceFirst("<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-    }
-    try {
-      in = new StringReader(ParserUtils.cleanNfo(completeNFO));
-      xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
-    }
-    finally {
-      if (in != null) {
-        in.close();
+    if (xbmc == null) {
+      // now trying to parse it via string
+      String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+      Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
+      if (matcher.find()) {
+        completeNFO = matcher
+            .replaceFirst("<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+      }
+      try {
+        in = new StringReader(ParserUtils.cleanNfo(completeNFO));
+        xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+      }
+      finally {
+        if (in != null) {
+          in.close();
+        }
       }
     }
     return xbmc;

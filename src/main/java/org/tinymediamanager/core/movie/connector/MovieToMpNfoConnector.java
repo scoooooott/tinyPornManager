@@ -434,7 +434,7 @@ public class MovieToMpNfoConnector {
     return movie;
   }
 
-  private static MovieToMpNfoConnector parseNFO(File nfoFile) throws Exception {
+  protected static MovieToMpNfoConnector parseNFO(File nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
@@ -448,31 +448,28 @@ public class MovieToMpNfoConnector {
       mp = (MovieToMpNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
-      LOGGER.error("tried to unmarshal; now trying to clean xml stream");
+    }
+    catch (IllegalArgumentException e) {
     }
     finally {
       if (in != null) {
         in.close();
       }
     }
-    if (mp != null) {
-      return mp;
-    }
 
-    // now trying to parse it via string
-    String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
-    completeNFO = completeNFO.replace("<movie>",
-        "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-    try {
-      in = new StringReader(ParserUtils.cleanNfo(completeNFO));
-      mp = (MovieToMpNfoConnector) um.unmarshal(in);
-    }
-    catch (UnmarshalException e) {
-      // TODO: handle exception
-    }
-    finally {
-      if (in != null) {
-        in.close();
+    if (mp == null) {
+      // now trying to parse it via string
+      String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+      completeNFO = completeNFO.replace("<movie>",
+          "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+      try {
+        in = new StringReader(ParserUtils.cleanNfo(completeNFO));
+        mp = (MovieToMpNfoConnector) um.unmarshal(in);
+      }
+      finally {
+        if (in != null) {
+          in.close();
+        }
       }
     }
     return mp;

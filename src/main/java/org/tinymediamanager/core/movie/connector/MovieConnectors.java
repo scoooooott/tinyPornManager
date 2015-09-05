@@ -17,8 +17,6 @@ package org.tinymediamanager.core.movie.connector;
 
 import java.io.File;
 
-import org.tinymediamanager.core.movie.entities.Movie;
-
 /**
  * The Enum MovieConnectors.
  * 
@@ -46,11 +44,23 @@ public enum MovieConnectors {
    * @return
    */
   public static boolean isValidNFO(File nfo) {
-    Movie tmp = MovieToXbmcNfoConnector.getData(nfo);
-    if (tmp == null) {
-      tmp = MovieToMpNfoConnector.getData(nfo);
+    MovieToXbmcNfoConnector tmp = null;
+    try {
+      tmp = MovieToXbmcNfoConnector.parseNFO(nfo);
     }
+    catch (Exception e) {
+    }
+
+    MovieToMpNfoConnector tmp2 = null;
     if (tmp == null) {
+      try {
+        tmp2 = MovieToMpNfoConnector.parseNFO(nfo);
+      }
+      catch (Exception e) {
+      }
+    }
+
+    if (tmp == null && tmp2 == null) {
       return false;
     }
     return true;
