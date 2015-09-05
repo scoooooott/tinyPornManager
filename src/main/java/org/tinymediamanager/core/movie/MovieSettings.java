@@ -567,8 +567,10 @@ public class MovieSettings extends AbstractModelObject {
     return movieRenamerNfoCleanup;
   }
 
-  public void setMovieRenamerNfoCleanup(boolean movieRenamerNfoCleanup) {
-    this.movieRenamerNfoCleanup = movieRenamerNfoCleanup;
+  public void setMovieRenamerNfoCleanup(boolean newValue) {
+    boolean oldValue = this.movieRenamerNfoCleanup;
+    this.movieRenamerNfoCleanup = newValue;
+    firePropertyChange(MOVIE_RENAMER_NFO_CLEANUP, oldValue, newValue);
   }
 
   /**

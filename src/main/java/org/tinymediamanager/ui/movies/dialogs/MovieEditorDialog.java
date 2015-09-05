@@ -836,7 +836,7 @@ public class MovieEditorDialog extends TmmDialog {
       lblPoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
       tfProductionCompanies.setText(movie.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
-      cbCertification.setSelectedItem(movie.getCertification());
+
       tfSpokenLanguages.setText(movie.getSpokenLanguages());
       tfCountry.setText(movie.getCountry());
 
@@ -847,6 +847,8 @@ public class MovieEditorDialog extends TmmDialog {
       for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
+      cbCertification.setSelectedItem(movie.getCertification());
+
       lblMoviePath.setText(movie.getPath());
       lblLogo.setImagePath(movie.getArtworkFilename(MediaFileType.LOGO));
       lblClearart.setImagePath(movie.getArtworkFilename(MediaFileType.CLEARART));
