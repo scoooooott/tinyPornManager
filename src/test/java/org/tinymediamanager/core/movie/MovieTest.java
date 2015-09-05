@@ -44,6 +44,7 @@ public class MovieTest {
         "Wodkae Kill The Boss 2", "Kill The Boss 2"));
     System.out.println(ParserUtils.getCleanerString("The.Equalizer.German.720p.BluRay.x264-EXQUiSiTE", "exq-theequalizer-720p", "The Equalizer",
         "Exq The Equalizer", "Exq TheEqualizer"));
+    System.out.println(ParserUtils.getCleanerString("lebo_b.avi", "lebow.avi", "The Big Lebowski"));
   }
 
   @Test

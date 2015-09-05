@@ -433,13 +433,23 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               } // end NFO null
             }
             else if (mf.getType().equals(MediaFileType.TEXT)) {
-              if (mf.getFilename().toLowerCase().contains("bdinfo")) {
-                String bdinfo = FileUtils.readFileToString(mf.getFile());
-                bdinfo = StrgUtils.substr(bdinfo, ".*Disc Title:\\s+(.*?)[\\n\\r]");
+              try {
+                String txtFile = FileUtils.readFileToString(mf.getFile());
+
+                String bdinfo = StrgUtils.substr(txtFile, ".*Disc Title:\\s+(.*?)[\\n\\r]");
                 if (!bdinfo.isEmpty()) {
                   LOGGER.debug("Found Disc Title in BDInfo.txt: " + bdinfo);
                   bdinfoTitle = bdinfo;
                 }
+
+                String imdb = ParserUtils.detectImdbId(txtFile);
+                if (!imdb.isEmpty()) {
+                  LOGGER.debug("Found IMDB id: " + imdb);
+                  movie.setImdbId(imdb);
+                }
+              }
+              catch (Exception e) {
+                LOGGER.warn("couldn't read TXT " + mf.getFilename());
               }
             }
             else if (mf.getType().equals(MediaFileType.VIDEO)) {
@@ -449,9 +459,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
           if (movie.getTitle().isEmpty()) {
             // get the "cleaner" name/year combo
-            ParserUtils.ParserInfo video = ParserUtils.getCleanerString(new String[] { videoName, movieDir.getName(), bdinfoTitle });
-            movie.setTitle(video.clean);
-            movie.setYear(video.year);
+            // ParserUtils.ParserInfo video = ParserUtils.getCleanerString(new String[] { videoName, movieDir.getName(), bdinfoTitle });
+            // does not work reliable yet - user folder name
+            String[] video = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
+            movie.setTitle(video[0]);
+            if (!video[1].isEmpty()) {
+              movie.setYear(video[1]);
+            }
           }
 
           // if the String 3D is in the movie dir, assume it is a 3D movie
