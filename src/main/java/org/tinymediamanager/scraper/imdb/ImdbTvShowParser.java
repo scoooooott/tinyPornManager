@@ -15,17 +15,6 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,6 +31,18 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
+
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
  * 
@@ -49,8 +50,7 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
  */
 public class ImdbTvShowParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbTvShowParser.class);
-  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern
-      .compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*");                                     // stripped out
+  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped out
 
   private ImdbSiteDefinition imdbSite;
 
@@ -101,7 +101,8 @@ public class ImdbTvShowParser extends ImdbParser {
    * get the TV show metadata
    * 
    * @param options
-   * @return
+   *          the scrape options
+   * @return the MediaMetadata
    * @throws Exception
    */
   MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
@@ -130,7 +131,8 @@ public class ImdbTvShowParser extends ImdbParser {
    * get the episode metadata.
    * 
    * @param options
-   * @return
+   *          the scrape options
+   * @return the MediaMetaData
    * @throws Exception
    */
   MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
@@ -253,11 +255,12 @@ public class ImdbTvShowParser extends ImdbParser {
    * parse the episode list from the ratings overview
    * 
    * @param options
-   * @return
+   *          the scrape options
+   * @return the episode list
    * @throws Exception
    */
   List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+    List<MediaEpisode> episodes = new ArrayList<>();
 
     // parse the episodes from the ratings overview page (e.g.
     // http://www.imdb.com/title/tt0491738/epdate )
@@ -308,7 +311,7 @@ public class ImdbTvShowParser extends ImdbParser {
                 // rating is the third column
                 ep.rating = Double.parseDouble(cols.get(2).ownText());
               }
-              catch (Exception e) {
+              catch (Exception ignored) {
               }
             }
 
@@ -323,5 +326,4 @@ public class ImdbTvShowParser extends ImdbParser {
 
     return episodes;
   }
-
 }

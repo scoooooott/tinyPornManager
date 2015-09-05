@@ -40,8 +40,7 @@ import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
  */
 public class ImdbMovieParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbMovieParser.class);
-  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern
-      .compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
+  private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
 
   private ImdbSiteDefinition imdbSite;
 
@@ -106,8 +105,8 @@ public class ImdbMovieParser extends ImdbParser {
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
     md.setId(providerInfo.getId(), imdbId);
 
-    ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(executor);
-    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(executor);
+    ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<>(executor);
+    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<>(executor);
 
     // worker for imdb request (/combined) (everytime from www.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());
@@ -115,12 +114,11 @@ public class ImdbMovieParser extends ImdbParser {
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
-    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(),
-        options.getCountry().getAlpha2(), imdbSite);
+    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
     Future<Document> futureCombined = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
-    Future<Document> futurePlotsummary = null;
+    Future<Document> futurePlotsummary;
     sb = new StringBuilder(imdbSite.getSite());
     sb.append("title/");
     sb.append(imdbId);
@@ -145,7 +143,6 @@ public class ImdbMovieParser extends ImdbParser {
      * plot from /plotsummary
      */
     // build the url
-    doc = null;
     doc = futurePlotsummary.get();
 
     // imdb.com has another site structure
@@ -177,7 +174,7 @@ public class ImdbMovieParser extends ImdbParser {
     if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
       Element title = doc.getElementById("tn15title");
       if (title != null) {
-        Element element = null;
+        Element element;
         // title
         Elements elements = title.getElementsByClass("main");
         if (elements.size() > 0) {
@@ -190,27 +187,30 @@ public class ImdbMovieParser extends ImdbParser {
     // }
 
     // get data from tmdb?
-    if (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo) {
-      MediaMetadata tmdbMd = futureTmdb.get();
-      if (ImdbMetadataProviderConfig.SETTINGS.useTmdb && tmdbMd != null
-          && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
-        // tmdbid
-        md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
-        // title
-        md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
-        // original title
-        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, tmdbMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
-        // tagline
-        md.storeMetadata(MediaMetadata.TAGLINE, tmdbMd.getStringValue(MediaMetadata.TAGLINE));
-        // plot
-        md.storeMetadata(MediaMetadata.PLOT, tmdbMd.getStringValue(MediaMetadata.PLOT));
-        // collection info
-        md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
-        md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
+    if (futureTmdb != null && (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo)) {
+      try {
+        MediaMetadata tmdbMd = futureTmdb.get();
+        if (ImdbMetadataProviderConfig.SETTINGS.useTmdb && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+          // tmdbid
+          md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
+          // title
+          md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
+          // original title
+          md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, tmdbMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+          // tagline
+          md.storeMetadata(MediaMetadata.TAGLINE, tmdbMd.getStringValue(MediaMetadata.TAGLINE));
+          // plot
+          md.storeMetadata(MediaMetadata.PLOT, tmdbMd.getStringValue(MediaMetadata.PLOT));
+          // collection info
+          md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
+          md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
+        }
+        if (ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo && tmdbMd != null) {
+          md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
+          md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
+        }
       }
-      if (ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo && tmdbMd != null) {
-        md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
-        md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
+      catch (Exception ignored) {
       }
     }
 

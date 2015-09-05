@@ -15,16 +15,10 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaEpisode;
@@ -36,8 +30,13 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The Class ImdbMetadataProvider. A meta data provider for the site imdb.com
@@ -45,8 +44,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class ImdbMetadataProvider
-    implements IConfigureableMediaProvider, IMovieMetadataProvider, ITvShowMetadataProvider {
+public class ImdbMetadataProvider implements IConfigureableMediaProvider, IMovieMetadataProvider, ITvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -67,11 +65,9 @@ public class ImdbMetadataProvider
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "IMDb.com",
+    return new MediaProviderInfo("imdb", "IMDb.com",
         "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
         ImdbMetadataProvider.class.getResource("/imdb_com.png"));
-
-    return providerInfo;
   }
 
   @Override
@@ -160,8 +156,8 @@ public class ImdbMetadataProvider
    */
   static MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;
-    if (genre.isEmpty()) {
-      return g;
+    if (StringUtils.isBlank(genre)) {
+      return null;
     }
     // @formatter:off
     else if (genre.equals("Action"))         { g = MediaGenres.ACTION; }
