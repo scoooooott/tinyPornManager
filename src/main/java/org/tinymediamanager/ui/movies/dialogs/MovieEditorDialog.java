@@ -866,9 +866,9 @@ public class MovieEditorDialog extends TmmDialog {
       try {
         year = Integer.valueOf(movie.getYear());
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
-      spYear.setModel(new SpinnerNumberModel(year, 1900, 2050, 1));
+      spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
 
       for (MovieActor origCast : movie.getActors()) {
         MovieActor actor = new MovieActor();
