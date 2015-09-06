@@ -242,9 +242,25 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(type.name().toLowerCase() + "Url", oldValue, url);
   }
 
+  /**
+   * get the artwork url for the desired type
+   * 
+   * @param type
+   *          the artwork type
+   * @return the url to the artwork type or an empty string
+   */
   public String getArtworkUrl(MediaFileType type) {
     String url = artworkUrlMap.get(type);
     return url == null ? "" : url;
+  }
+
+  /**
+   * get all artwork urls
+   * 
+   * @return a map containing all urls
+   */
+  public Map<MediaFileType, String> getArtworkUrls() {
+    return artworkUrlMap;
   }
 
   public void setArtwork(File file, MediaFileType type) {
