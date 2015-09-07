@@ -98,8 +98,8 @@ public class TvShowTreeModel implements TreeModel {
           removeTvShowEpisode(episode);
         }
 
-        // changed the season of an episode
-        if (SEASON.equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+        // changed the season/episode nr of an episode
+        if ((SEASON.equals(evt.getPropertyName()) || EPISODE.equals(evt.getPropertyName())) && evt.getSource() instanceof TvShowEpisode) {
           // simply remove it from the tree and readd it
           TvShowEpisode episode = (TvShowEpisode) evt.getSource();
           removeTvShowEpisode(episode);
