@@ -655,7 +655,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
       mediaScraper = selectedScraper;
-      searchMovie(textFieldSearchString.getText(), null);
+      searchMovie(textFieldSearchString.getText(), movieToScrape);
     }
   }
 
