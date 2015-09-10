@@ -321,7 +321,7 @@ public class MovieRenamer {
       // Template empty or not even title set, so we are NOT renaming any files
       // we keep the same name on renaming ;)
       newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
-      LOGGER.warn("Pattern is not valid - NOT renaming files!");
+      LOGGER.warn("Filepattern is not valid - NOT renaming files!");
     }
     else {
       // since we rename, generate the new basename
@@ -581,9 +581,11 @@ public class MovieRenamer {
       newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
     }
 
-    if (!isFilePatternValid()) {
-      // NOT renaming files
-      newFiles.add(new MediaFile(mf));
+    if (!isFilePatternValid() && !movie.isDisc()) {
+      // not renaming files, but IF we have a folder pattern, we need to move around! (but NOT disc movies!)
+      MediaFile newMF = new MediaFile(mf);
+      newMF.setPath(newMovieDir);
+      newFiles.add(newMF);
       return newFiles;
     }
 
@@ -1149,7 +1151,8 @@ public class MovieRenamer {
 
   /**
    * Check if the FILE rename pattern is valid<br>
-   * What means, either empty, or has at least title set ($T|$E|$O)<br>
+   * What means, pattern has at least title set ($T|$E|$O)<br>
+   * "empty" is considered as invalid - so not renaming files
    * 
    * @param pattern
    * @return true/false
@@ -1157,7 +1160,7 @@ public class MovieRenamer {
   public static boolean isFilePatternValid() {
     String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().toUpperCase().trim();
 
-    if (pattern.isEmpty() || (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O"))) {
+    if (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) {
       return true;
     }
     return false;
