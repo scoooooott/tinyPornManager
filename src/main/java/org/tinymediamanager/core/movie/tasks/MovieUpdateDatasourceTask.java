@@ -20,6 +20,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -136,7 +137,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (file.isDirectory()) {
               String directoryName = file.getName();
               // check against unwanted dirs
-              if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)) {
+              if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)
+                  || MovieModuleManager.MOVIE_SETTINGS.getMovieSkip().contains(file.getAbsolutePath())) {
                 LOGGER.info("ignoring directory " + directoryName);
                 continue;
               }
@@ -216,20 +218,19 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   /**
    * parses a list of VIDEO files in a dir and creates movies out of it
    */
-  private void parseMultiMovieDir(File[] files, File parentDir, String datasource) {
-    if (files == null || files.length == 0) {
+  private void parseMultiMovieDir(List<File> files, File parentDir, String datasource) {
+    if (files == null || files.isEmpty()) {
       return;
     }
     List<File> completeDirContents = new ArrayList<File>(Arrays.asList(parentDir.listFiles()));
 
     // just compare filename length, start with longest b/c of overlapping names
-    Arrays.sort(files, new Comparator<File>() {
+    Collections.sort(files, new Comparator<File>() {
       public int compare(File file1, File file2) {
         return file2.getName().length() - file1.getName().length();
       }
     });
     for (File file : files) {
-
       Movie movie = null;
       MediaFile mf = new MediaFile(file);
       String basename = Utils.cleanStackingMarkers(mf.getBasename());
@@ -347,21 +348,29 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
-      // store dir for faster cleanup
-      synchronized (filesFound) {
-        filesFound.add(movieDir);
-      }
-
       // list all type VIDEO files
-      File[] files = movieDir.listFiles(new FileFilter() {
+      List<File> files = Arrays.asList(movieDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
+          if (file.getName().equals(".tmmignore")) {
+            return true;
+          }
           if (file.isDirectory() || file.getName().startsWith("._")) { // MacOS ignore
             return false;
           }
           return new MediaFile(file).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
         }
-      });
+      }));
+
+      // .tmmignore or no video file found, abort scanning
+      if (files.contains(new File(movieDir, ".tmmignore")) || files.isEmpty()) {
+        return;
+      }
+
+      // store dir for faster cleanup
+      synchronized (filesFound) {
+        filesFound.add(movieDir);
+      }
 
       // check if we have more than one movie in dir
       HashSet<String> h = new HashSet<String>();
@@ -537,7 +546,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          start dir
    * @param level
    *          the level how deep we are (level 0 = datasource root)
-   * @return arraylist of abolute movie dirs
+   * @return arraylist of absolute movie dirs
    */
   private ArrayList<File> getRootMovieDirs(File directory, int level) {
     ArrayList<File> ar = new ArrayList<File>();
@@ -555,8 +564,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         files.add(file);
       }
       else {
-        // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
+        // ignore .folders, well known unwanted folders and configured skip folders
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkip().contains(file.getAbsolutePath())) {
           dirs.add(file);
         }
       }
@@ -627,8 +637,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       else {
-        // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
+        // ignore .folders, well known unwanted folders and configured skip folders
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkip().contains(file.getAbsolutePath())) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }

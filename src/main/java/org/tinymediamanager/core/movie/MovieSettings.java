@@ -91,6 +91,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String SCRAPER_FALLBACK                     = "scraperFallback";
   private final static String UI_FILTERS                           = "uiFilters";
   private final static String STORE_UI_FILTERS                     = "storeUiFilters";
+  private final static String MOVIE_SKIP                           = "movieIgnore";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -121,6 +122,10 @@ public class MovieSettings extends AbstractModelObject {
   private final List<String> movieTrailerScrapers = ObservableCollections.observableList(new ArrayList<String>());
 
   private Map<MovieSearchOptions, Object> uiFilters = new HashMap<>();
+
+  @XmlElementWrapper(name = MOVIE_SKIP)
+  @XmlElement(name = ENTRY)
+  private final List<String> movieSkip = ObservableCollections.observableList(new ArrayList<String>());
 
   private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
   private String              movieRenamerPathname                     = "$T ($Y)";
@@ -493,6 +498,24 @@ public class MovieSettings extends AbstractModelObject {
 
   public List<String> getMovieTrailerScrapers() {
     return movieTrailerScrapers;
+  }
+
+  public void addMovieSkip(String newValue) {
+    if (!movieSkip.contains(newValue)) {
+      movieSkip.add(newValue);
+      firePropertyChange(MOVIE_SKIP, null, movieSkip);
+    }
+  }
+
+  public void removeMovieSkip(String newValue) {
+    if (movieSkip.contains(newValue)) {
+      movieSkip.remove(newValue);
+      firePropertyChange(MOVIE_SKIP, null, movieSkip);
+    }
+  }
+
+  public List<String> getMovieSkip() {
+    return movieSkip;
   }
 
   public void setUiFilters(Map<MovieSearchOptions, Object> filters) {
