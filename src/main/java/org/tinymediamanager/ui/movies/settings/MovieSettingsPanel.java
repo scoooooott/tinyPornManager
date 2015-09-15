@@ -205,8 +205,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieDataSources.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow(2)"),
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
             FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
@@ -215,7 +215,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieDataSources.add(lblDataSource, "2, 2, 5, 1");
 
     JLabel lblIngore = new JLabel(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblIngore, "10, 2");
+    panelMovieDataSources.add(lblIngore, "12, 2");
 
     JScrollPane scrollPaneDataSources = new JScrollPane();
     panelMovieDataSources.add(scrollPaneDataSources, "2, 4, 5, 1, fill, fill");
@@ -267,13 +267,13 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieSourcesButtons.add(btnRemove, "1, 3, fill, top");
 
     JScrollPane scrollPaneIgnore = new JScrollPane();
-    panelMovieDataSources.add(scrollPaneIgnore, "10, 4, fill, fill");
+    panelMovieDataSources.add(scrollPaneIgnore, "12, 4, fill, fill");
 
     listIgnore = new JList<>();
     scrollPaneIgnore.setViewportView(listIgnore);
 
     JPanel panelIgnoreButtons = new JPanel();
-    panelMovieDataSources.add(panelIgnoreButtons, "12, 4, fill, fill");
+    panelMovieDataSources.add(panelIgnoreButtons, "14, 4, fill, fill");
     panelIgnoreButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
         new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
@@ -285,7 +285,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent e) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
         if (file != null && file.exists() && file.isDirectory()) {
-          settings.getMovieSettings().addMovieSkip(file.getAbsolutePath());
+          settings.getMovieSettings().addMovieSkipFolder(file.getAbsolutePath());
         }
       }
     });
@@ -299,8 +299,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent e) {
         int row = listIgnore.getSelectedIndex();
         if (row != -1) { // nothing selected
-          String ingore = MovieModuleManager.MOVIE_SETTINGS.getMovieSkip().get(row);
-          MovieModuleManager.MOVIE_SETTINGS.removeMovieSkip(ingore);
+          String ingore = settings.getMovieSettings().getMovieSkipFolders().get(row);
+          settings.getMovieSettings().removeMovieSkipFolder(ingore);
         }
       }
     });
@@ -317,13 +317,13 @@ public class MovieSettingsPanel extends ScrollablePanel {
     tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
     tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
     tpMultipleMoviesHint.setEditable(false);
-    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 6, 7, 1, fill, fill");
+    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 6, 9, 1, fill, fill");
 
     JSeparator separator_1 = new JSeparator();
-    panelMovieDataSources.add(separator_1, "2, 8, 11, 1");
+    panelMovieDataSources.add(separator_1, "2, 8, 13, 1");
 
     JPanel panel = new JPanel();
-    panelMovieDataSources.add(panel, "2, 10, 11, 1, fill, fill");
+    panelMovieDataSources.add(panel, "2, 10, 13, 1, fill, fill");
     panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
@@ -544,7 +544,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
         settingsBeanProperty_4, listDataSources);
     jListBinding_1.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_12 = BeanProperty.create("movieSettings.movieSkip");
+    BeanProperty<Settings, List<String>> settingsBeanProperty_12 = BeanProperty.create("movieSettings.movieSkipFolders");
     JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();

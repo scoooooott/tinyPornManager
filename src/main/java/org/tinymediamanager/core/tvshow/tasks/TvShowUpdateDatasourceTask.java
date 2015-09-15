@@ -43,6 +43,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -191,7 +192,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         String directoryName = subdir.getName();
         // check against unwanted dirs
-        if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)) {
+        if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)
+            || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(subdir.getAbsolutePath())) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
         }
@@ -746,7 +748,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         } // end skipFilesStartingWith
       } // end isFile
 
-      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
+      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+          && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
         if (!tmmIgnore.exists()) {

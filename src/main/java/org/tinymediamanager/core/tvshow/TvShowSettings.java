@@ -47,6 +47,7 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
   private final static String ASCII_REPLACEMENT           = "asciiReplacement";
   private final static String ENTRY                       = "entry";
+  private final static String TV_SHOW_SKIP_FOLDERS        = "tvShowSkipFolders";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -55,6 +56,10 @@ public class TvShowSettings extends AbstractModelObject {
   @XmlElementWrapper(name = TV_SHOW_ARTWORK_SCRAPERS)
   @XmlElement(name = ENTRY)
   private final List<String> tvShowArtworkScrapers = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = TV_SHOW_SKIP_FOLDERS)
+  @XmlElement(name = ENTRY)
+  private final List<String> tvShowSkipFolders = ObservableCollections.observableList(new ArrayList<String>());
 
   private String         tvShowScraper            = Constants.TVDB;
   private boolean        scrapeBestImage          = true;
@@ -251,5 +256,23 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.useRenamerThumbPostfix;
     this.useRenamerThumbPostfix = newValue;
     firePropertyChange("useRenamerThumbPostfix", oldValue, newValue);
+  }
+
+  public void addTvShowSkipFolder(String newValue) {
+    if (!tvShowSkipFolders.contains(newValue)) {
+      tvShowSkipFolders.add(newValue);
+      firePropertyChange(TV_SHOW_SKIP_FOLDERS, null, tvShowSkipFolders);
+    }
+  }
+
+  public void removeTvShowSkipFolder(String newValue) {
+    if (tvShowSkipFolders.contains(newValue)) {
+      tvShowSkipFolders.remove(newValue);
+      firePropertyChange(TV_SHOW_SKIP_FOLDERS, null, tvShowSkipFolders);
+    }
+  }
+
+  public List<String> getTvShowSkipFolders() {
+    return tvShowSkipFolders;
   }
 }

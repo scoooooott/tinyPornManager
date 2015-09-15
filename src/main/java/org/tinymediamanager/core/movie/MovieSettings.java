@@ -91,7 +91,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String SCRAPER_FALLBACK                     = "scraperFallback";
   private final static String UI_FILTERS                           = "uiFilters";
   private final static String STORE_UI_FILTERS                     = "storeUiFilters";
-  private final static String MOVIE_SKIP                           = "movieIgnore";
+  private final static String MOVIE_SKIP_FOLDERS                   = "movieSkipFolders";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -123,9 +123,9 @@ public class MovieSettings extends AbstractModelObject {
 
   private Map<MovieSearchOptions, Object> uiFilters = new HashMap<>();
 
-  @XmlElementWrapper(name = MOVIE_SKIP)
+  @XmlElementWrapper(name = MOVIE_SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
-  private final List<String> movieSkip = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String> movieSkipFolders = ObservableCollections.observableList(new ArrayList<String>());
 
   private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
   private String              movieRenamerPathname                     = "$T ($Y)";
@@ -500,22 +500,22 @@ public class MovieSettings extends AbstractModelObject {
     return movieTrailerScrapers;
   }
 
-  public void addMovieSkip(String newValue) {
-    if (!movieSkip.contains(newValue)) {
-      movieSkip.add(newValue);
-      firePropertyChange(MOVIE_SKIP, null, movieSkip);
+  public void addMovieSkipFolder(String newValue) {
+    if (!movieSkipFolders.contains(newValue)) {
+      movieSkipFolders.add(newValue);
+      firePropertyChange(MOVIE_SKIP_FOLDERS, null, movieSkipFolders);
     }
   }
 
-  public void removeMovieSkip(String newValue) {
-    if (movieSkip.contains(newValue)) {
-      movieSkip.remove(newValue);
-      firePropertyChange(MOVIE_SKIP, null, movieSkip);
+  public void removeMovieSkipFolder(String newValue) {
+    if (movieSkipFolders.contains(newValue)) {
+      movieSkipFolders.remove(newValue);
+      firePropertyChange(MOVIE_SKIP_FOLDERS, null, movieSkipFolders);
     }
   }
 
-  public List<String> getMovieSkip() {
-    return movieSkip;
+  public List<String> getMovieSkipFolders() {
+    return movieSkipFolders;
   }
 
   public void setUiFilters(Map<MovieSearchOptions, Object> filters) {
