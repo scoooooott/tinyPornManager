@@ -74,12 +74,12 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void startUp() throws Exception {
     // do a DB backup, and keep last 15 copies
-    File db = new File(MOVIE_DB);
+    File db = new File(Constants.CONFIG_FOLDER, MOVIE_DB);
     Utils.createBackupFile(db);
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(MOVIE_DB).compressHigh().open();
+    mvStore = new MVStore.Builder().fileName(Constants.CONFIG_FOLDER + File.separatorChar + MOVIE_DB).compressHigh().open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -152,6 +152,6 @@ public class MovieModuleManager implements ITmmModule {
 
   @Override
   public void initializeDatabase() throws Exception {
-    FileUtils.deleteQuietly(new File(MOVIE_DB));
+    FileUtils.deleteQuietly(new File(Constants.CONFIG_FOLDER, MOVIE_DB));
   }
 }

@@ -22,6 +22,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -38,7 +40,33 @@ public class UpgradeTasks {
 
   public static void performUpgradeTasksBeforeDatabaseLoading(String oldVersion) {
     String v = "" + oldVersion;
+    if (StringUtils.isBlank(v)) {
+      v = "2.6.9"; // set version for other updates
+    }
 
+    // upgrade to v2.7
+    if (StrgUtils.compareVersion(v, "2.7") < 0) {
+
+      // migrate to config dir
+      moveToConfigFolder("movies.db");
+      moveToConfigFolder("tvshows.db");
+      moveToConfigFolder("scraper_imdb.conf");
+      moveToConfigFolder("tmm_ui.prop");
+
+    }
+  }
+
+  private static void moveToConfigFolder(String file) {
+    File f = new File(file);
+    if (f.exists()) {
+      File fnew = new File(Constants.CONFIG_FOLDER, f.getName());
+      try {
+        Utils.moveFileSafe(f, fnew);
+      }
+      catch (IOException e) {
+        LOGGER.warn("error moving " + file);
+      }
+    }
   }
 
   /**
@@ -54,7 +82,7 @@ public class UpgradeTasks {
     String v = "" + oldVersion;
 
     if (StringUtils.isBlank(v)) {
-      v = "2.7"; // set version for other updates
+      v = "2.6.9"; // set version for other updates
     }
 
     // upgrade to v2.7

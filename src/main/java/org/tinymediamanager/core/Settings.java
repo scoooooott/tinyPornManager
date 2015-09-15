@@ -17,8 +17,10 @@ package org.tinymediamanager.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -175,13 +177,33 @@ public class Settings extends AbstractModelObject {
    */
   public synchronized static Settings getInstance() {
     if (Settings.instance == null) {
+
+      // upgrade/move into own config dir
+      // need to do here, since this is called quite in the beginning
+      File oldCfg = new File(CONFIG_FILE);
+      if (oldCfg.exists()) {
+        File cfgFolder = new File(Constants.CONFIG_FOLDER);
+        if (!cfgFolder.exists()) {
+          cfgFolder.mkdir(); // don't care
+        }
+        try {
+          File newCfg = new File(Constants.CONFIG_FOLDER, CONFIG_FILE);
+          Utils.moveFileSafe(oldCfg, newCfg);
+        }
+        catch (IOException e) {
+          // could not migrate config.xml
+          // don't care, once not found will create a new one
+          LOGGER.warn("error migrating config.xml");
+        }
+      }
+
       // try to parse XML
       JAXBContext context;
       try {
         context = JAXBContext.newInstance(Settings.class);
         Unmarshaller um = context.createUnmarshaller();
         try {
-          Reader in = new InputStreamReader(new FileInputStream(CONFIG_FILE), "UTF-8");
+          Reader in = new InputStreamReader(new FileInputStream(new File(Constants.CONFIG_FOLDER, CONFIG_FILE)), "UTF-8");
           Settings.instance = (Settings) um.unmarshal(in);
         }
         catch (Exception e) {
@@ -420,7 +442,7 @@ public class Settings extends AbstractModelObject {
         sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
       }
 
-      w = new FileWriter(CONFIG_FILE);
+      w = new FileWriter(new File(Constants.CONFIG_FOLDER, CONFIG_FILE));
       String xml = sb.toString();
       IOUtils.write(xml, w);
 
