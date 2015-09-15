@@ -23,5 +23,4 @@ pom.xml.*
 #Eclipse
 .classpath
 .project
-.settings
 bin
