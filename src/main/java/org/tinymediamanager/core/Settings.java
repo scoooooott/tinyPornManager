@@ -180,12 +180,13 @@ public class Settings extends AbstractModelObject {
 
       // upgrade/move into own config dir
       // need to do here, since this is called quite in the beginning
+      File cfgFolder = new File(Constants.CONFIG_FOLDER);
+      if (!cfgFolder.exists()) {
+        cfgFolder.mkdir(); // don't care
+      }
+
       File oldCfg = new File(CONFIG_FILE);
       if (oldCfg.exists()) {
-        File cfgFolder = new File(Constants.CONFIG_FOLDER);
-        if (!cfgFolder.exists()) {
-          cfgFolder.mkdir(); // don't care
-        }
         try {
           File newCfg = new File(Constants.CONFIG_FOLDER, CONFIG_FILE);
           Utils.moveFileSafe(oldCfg, newCfg);
