@@ -26,13 +26,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -44,10 +44,15 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @PluginImplementation
 public class HDTrailersNet implements IMovieTrailerProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("hd-trailers", "hd-trailers.net",
-      "Scraper for hd-trailers.net which is able to scrape trailers");
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
   public HDTrailersNet() {
+  }
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    return new MediaProviderInfo("hd-trailers", "hd-trailers.net",
+        "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
+        HDTrailersNet.class.getResource("hd-trailers_net.png"));
   }
 
   @Override
