@@ -176,7 +176,7 @@ public class TinyMediaManager {
     // start EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        boolean newVersion = !Globals.settings.isCurrentVersion();
+        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/svn considered as "new", for upgrades
         try {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
           if (!GraphicsEnvironment.isHeadless()) {
@@ -342,7 +342,8 @@ public class TinyMediaManager {
             window.setVisible(true);
 
             // show changelog
-            if (newVersion) {
+            if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
+              // special case nightly/svn: if same snapshot version, do not display changelog
               Utils.trackEvent("updated");
               showChangelog();
             }

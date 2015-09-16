@@ -57,6 +57,7 @@ import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.http.ProxySettings;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class Settings - holding all settings for tmm.
@@ -180,7 +181,18 @@ public class Settings extends AbstractModelObject {
 
       // upgrade/move into own config dir
       // need to do here, since this is called quite in the beginning
-      File cfgFolder = new File(Constants.CONFIG_FOLDER);
+
+      File cfgFolder = new File("config"); // old impl
+      if (cfgFolder.exists()) {
+        try {
+          Utils.moveDirectorySafe(cfgFolder, new File(".", Constants.CONFIG_FOLDER));
+        }
+        catch (IOException e) {
+          LOGGER.warn("error migrating config folder");
+        }
+      }
+
+      cfgFolder = new File(Constants.CONFIG_FOLDER);
       if (!cfgFolder.exists()) {
         cfgFolder.mkdir(); // don't care
       }
@@ -192,8 +204,6 @@ public class Settings extends AbstractModelObject {
           Utils.moveFileSafe(oldCfg, newCfg);
         }
         catch (IOException e) {
-          // could not migrate config.xml
-          // don't care, once not found will create a new one
           LOGGER.warn("error migrating config.xml");
         }
       }
@@ -226,7 +236,8 @@ public class Settings extends AbstractModelObject {
    * is our settings file up2date?
    */
   public boolean isCurrentVersion() {
-    return ReleaseInfo.getVersion().equals(version);
+    // return ReleaseInfo.getVersion().equals(version);
+    return StrgUtils.compareVersion(version, ReleaseInfo.getVersion()) == 0;
   }
 
   /**

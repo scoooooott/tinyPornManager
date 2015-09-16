@@ -38,13 +38,13 @@ public class ReleaseInfo {
   private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseInfo.class);
 
   /** The version. */
-  private static String       version;
+  private static String version;
 
   /** The build. */
-  private static String       build;
+  private static String build;
 
   /** The build date. */
-  private static String       buildDate;
+  private static String buildDate;
 
   static {
     FileInputStream fileInputStream = null;
@@ -58,7 +58,7 @@ public class ReleaseInfo {
     }
     catch (IOException e) {
       version = "";
-      build = "svn";
+      build = "svn"; // no file - we must be in SVN
       buildDate = "";
     }
     finally {
@@ -142,6 +142,15 @@ public class ReleaseInfo {
    */
   public static boolean isPreRelease() {
     return getBuild().equalsIgnoreCase("prerelease") ? true : false;
+  }
+
+  /**
+   * are we a SVN version?
+   * 
+   * @return true/false if SVN build
+   */
+  public static boolean isSvnBuild() {
+    return getBuild().equalsIgnoreCase("svn") ? true : false;
   }
 
   /**

@@ -33,7 +33,7 @@ import com.sun.jna.Platform;
 /**
  * The class UpdateTasks. To perform needed update tasks
  * 
- * @author Manuel Laggner
+ * @author Manuel Laggner / Myron Boyle
  */
 public class UpgradeTasks {
   private static final Logger LOGGER = LoggerFactory.getLogger(UpgradeTasks.class);
@@ -44,27 +44,31 @@ public class UpgradeTasks {
       v = "2.6.9"; // set version for other updates
     }
 
-    // upgrade to v2.7
-    if (StrgUtils.compareVersion(v, "2.7") < 0) {
+    // ****************************************************
+    // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
+    // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
+    // ****************************************************
+
+    // upgrade to v2.7 (OR DO THIS IF WE ARE INSIDE IDE)
+    if (StrgUtils.compareVersion(v, "2.7") < 0 || ReleaseInfo.isSvnBuild()) {
 
       // migrate to config dir
-      moveToConfigFolder("movies.db");
-      moveToConfigFolder("tvshows.db");
-      moveToConfigFolder("scraper_imdb.conf");
-      moveToConfigFolder("tmm_ui.prop");
+      moveToConfigFolder(new File("movies.db"));
+      moveToConfigFolder(new File("tvshows.db"));
+      moveToConfigFolder(new File("scraper_imdb.conf"));
+      moveToConfigFolder(new File("tmm_ui.prop"));
 
     }
   }
 
-  private static void moveToConfigFolder(String file) {
-    File f = new File(file);
+  private static void moveToConfigFolder(File f) {
     if (f.exists()) {
       File fnew = new File(Constants.CONFIG_FOLDER, f.getName());
       try {
         Utils.moveFileSafe(f, fnew);
       }
       catch (IOException e) {
-        LOGGER.warn("error moving " + file);
+        LOGGER.warn("error moving " + f);
       }
     }
   }
@@ -85,8 +89,13 @@ public class UpgradeTasks {
       v = "2.6.9"; // set version for other updates
     }
 
+    // ****************************************************
+    // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
+    // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
+    // ****************************************************
+
     // upgrade to v2.7
-    if (StrgUtils.compareVersion(v, "2.7") < 0) {
+    if (StrgUtils.compareVersion(v, "2.7") < 0 || ReleaseInfo.isSvnBuild()) {
       // delete tmm.odb; objectdb.conf; log dir
       FileUtils.deleteQuietly(new File("tmm.odb"));
       FileUtils.deleteQuietly(new File("tmm.odb$"));
