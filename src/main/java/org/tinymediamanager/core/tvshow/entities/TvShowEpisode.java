@@ -393,6 +393,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
       }
 
+      if (StringUtils.isBlank(thumbUrl) || StringUtils.isBlank(filename)) {
+        return;
+      }
+
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, thumbUrl, MediaArtworkType.THUMB, filename, firstImage);
       TmmTaskManager.getInstance().addImageDownloadTask(task);

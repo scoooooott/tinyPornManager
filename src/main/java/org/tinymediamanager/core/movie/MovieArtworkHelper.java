@@ -106,6 +106,10 @@ public class MovieArtworkHelper {
         continue;
       }
 
+      if (StringUtils.isBlank(fanartUrl) || StringUtils.isBlank(filename)) {
+        continue;
+      }
+
       if (++i == 1) {
         firstImage = true;
       }
@@ -150,6 +154,10 @@ public class MovieArtworkHelper {
       String generatedFiletype = FilenameUtils.getExtension(filename);
       String providedFiletype = FilenameUtils.getExtension(posterUrl);
       if (!generatedFiletype.equals(providedFiletype)) {
+        continue;
+      }
+
+      if (StringUtils.isBlank(posterUrl) || StringUtils.isBlank(filename)) {
         continue;
       }
 
@@ -362,7 +370,8 @@ public class MovieArtworkHelper {
       if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
         for (MediaArtwork art : artwork) {
           // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+          if (art.getType() == MediaArtworkType.BACKGROUND
+              && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
             extrathumbs.add(art.getDefaultUrl());
             if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
               break;
@@ -380,7 +389,8 @@ public class MovieArtworkHelper {
       if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
         for (MediaArtwork art : artwork) {
           // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+          if (art.getType() == MediaArtworkType.BACKGROUND
+              && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
             extrafanarts.add(art.getDefaultUrl());
             if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
               break;

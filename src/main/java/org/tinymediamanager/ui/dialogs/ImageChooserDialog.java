@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -71,6 +70,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -812,6 +812,9 @@ public class ImageChooserDialog extends TmmDialog {
               publish(chunk);
               imagesFound = true;
               // addImage(bufferedImage, art);
+            }
+            catch (InterruptedException ingored) {
+              LOGGER.warn("Thread interrupted");
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask", e);

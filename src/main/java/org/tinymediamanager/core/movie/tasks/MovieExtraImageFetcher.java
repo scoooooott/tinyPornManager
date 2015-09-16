@@ -32,6 +32,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -46,8 +47,8 @@ import org.tinymediamanager.scraper.http.Url;
 public class MovieExtraImageFetcher implements Runnable {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcher.class);
 
-  private Movie               movie;
-  private MediaFileType       type;
+  private Movie         movie;
+  private MediaFileType type;
 
   public MovieExtraImageFetcher(Movie movie, MediaFileType type) {
     this.movie = movie;
@@ -107,9 +108,10 @@ public class MovieExtraImageFetcher implements Runnable {
       return;
     }
 
+    String filename = "";
     try {
+      String oldFilename = movie.getArtworkFilename(type);
       // we are lucky and have chosen our enums wisely - except the discart :(
-      String filename = "";
       if (type == MediaFileType.DISCART) {
         filename = "disc." + FilenameUtils.getExtension(artworkUrl);
       }
@@ -123,13 +125,15 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // fetch and store images
       Url url1 = new Url(artworkUrl);
-      File file = new File(movie.getPath(), filename);
-      FileOutputStream outputStream = new FileOutputStream(file);
+      File tempFile = new File(movie.getPath(), filename + ".part");
+      FileOutputStream outputStream = new FileOutputStream(tempFile);
       InputStream is = url1.getInputStream();
       IOUtils.copy(is, outputStream);
       outputStream.flush();
       try {
         outputStream.getFD().sync(); // wait until file has been completely written
+        // give it a few milliseconds
+        Thread.sleep(150);
       }
       catch (Exception e) {
         // empty here -> just not let the thread crash
@@ -142,15 +146,41 @@ public class MovieExtraImageFetcher implements Runnable {
         return;
       }
 
-      movie.setArtwork(file, type);
+      // check if the file has been downloaded
+      if (!tempFile.exists() || tempFile.length() == 0) {
+        throw new Exception("0byte file downloaded: " + filename);
+      }
+
+      // delete the old one if exisiting
+      File oldFile = new File(movie.getPath(), oldFilename);
+      FileUtils.deleteQuietly(oldFile);
+
+      // delete new destination if existing
+      File destinationFile = new File(movie.getPath(), filename);
+      FileUtils.deleteQuietly(destinationFile);
+
+      // move the temp file to the expected filename
+      if (!Utils.moveFileSafe(tempFile, destinationFile)) {
+        throw new Exception("renaming temp file failed: " + filename);
+      }
+
+      movie.setArtwork(tempFile, type);
       movie.saveToDb();
       movie.callbackForWrittenArtwork(MediaFileType.getMediaArtworkType(type));
     }
-    catch (InterruptedException e) {
-      LOGGER.warn("interrupted download " + type.name());
-    }
-    catch (IOException e) {
-      LOGGER.warn("download " + type.name(), e);
+    catch (Exception e) {
+      if (e instanceof InterruptedException) {
+        // only warning
+        LOGGER.warn("interrupted image download");
+      }
+      else {
+        LOGGER.error("fetch image: " + e.getMessage());
+      }
+      // remove temp file
+      File tempFile = new File(movie.getPath(), filename + ".part");
+      if (tempFile.exists()) {
+        FileUtils.deleteQuietly(tempFile);
+      }
     }
   }
 
@@ -183,7 +213,9 @@ public class MovieExtraImageFetcher implements Runnable {
         IOUtils.copy(is, outputStream);
         outputStream.flush();
         try {
-          outputStream.getFD().sync();
+          outputStream.getFD().sync(); // wait until file has been completely written
+          // give it a few milliseconds
+          Thread.sleep(150);
         }
         catch (Exception e) {
           // empty here -> just not let the thread crash

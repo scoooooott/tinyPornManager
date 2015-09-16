@@ -38,11 +38,11 @@ import org.tinymediamanager.scraper.http.Url;
 public class MediaEntityImageFetcherTask implements Runnable {
   private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
 
-  private MediaEntity         entity;
-  private String              url;
-  private MediaArtworkType    type;
-  private String              filename;
-  private boolean             firstImage;
+  private MediaEntity      entity;
+  private String           url;
+  private MediaArtworkType type;
+  private String           filename;
+  private boolean          firstImage;
 
   public MediaEntityImageFetcherTask(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.entity = entity;
@@ -55,6 +55,10 @@ public class MediaEntityImageFetcherTask implements Runnable {
   @Override
   public void run() {
     try {
+      if (StringUtils.isBlank(filename)) {
+        return;
+      }
+
       String oldFilename = null;
       try {
         // store old filename at the first image
@@ -100,6 +104,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
           outputStream.flush();
           try {
             outputStream.getFD().sync(); // wait until file has been completely written
+            // give it a few milliseconds
+            Thread.sleep(150);
           }
           catch (Exception e) {
             // empty here -> just not let the thread crash
@@ -113,6 +119,12 @@ public class MediaEntityImageFetcherTask implements Runnable {
           }
 
           // delete the old one if exisiting
+          if (StringUtils.isNotBlank(oldFilename)) {
+            File oldFile = new File(entity.getPath(), oldFilename);
+            FileUtils.deleteQuietly(oldFile);
+          }
+
+          // delete new destination if existing
           File destinationFile = new File(entity.getPath(), filename);
           FileUtils.deleteQuietly(destinationFile);
 
@@ -185,8 +197,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
           }
         }
 
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":",
-            e.getLocalizedMessage() }));
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
       }
 
     }
