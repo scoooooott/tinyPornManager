@@ -37,7 +37,7 @@ import org.tinymediamanager.scraper.util.AesUtil;
  * @since 1.0
  */
 public final class ConfigHelper {
-  private static final String CONFIG_FOLDER = "config";
+  private static final String CONFIG_FOLDER = "data";
   private static final String CONFIG_FILE   = "scraper_{id}.conf";
   private static final String SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
   private static final String IV            = "E17D2C8927726ACE1E7510A1BDD3D439";

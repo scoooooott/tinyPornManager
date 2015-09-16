@@ -320,7 +320,7 @@ public class StrgUtils {
     for (String prfx : COMMON_TITLE_PREFIXES) {
       String delim = " "; // one spaces as delim
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no
-                                      // space between prefix and title
+                                       // space between prefix and title
         delim = "";
       }
       title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");
@@ -329,7 +329,9 @@ public class StrgUtils {
   }
 
   /**
-   * compares the given version (v1) against another one (v2)
+   * compares the given version (v1) against another one (v2)<br>
+   * Special case:<br>
+   * if we have SNAPSHOT or SVN version, and both are the same, return -1
    * 
    * @param v1
    * @param v2
@@ -338,6 +340,10 @@ public class StrgUtils {
    *         = 0 if equal
    */
   public static int compareVersion(String v1, String v2) {
+    if ((v1.contains("-SNAPSHOT") || v1.contains("SVN")) && v1.equals(v2)) {
+      // we have the same snapshot version - consider as potential lower (for nightly)
+      return -1;
+    }
     String s1 = normalisedVersion(v1);
     String s2 = normalisedVersion(v2);
     return s1.compareTo(s2);
