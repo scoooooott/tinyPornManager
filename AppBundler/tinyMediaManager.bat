@@ -1,1 +1,0 @@
-java -Djava.net.preferIPv4Stack=true -Dappbase=http://www.tinymediamanager.org/ -jar getdown.jar .
