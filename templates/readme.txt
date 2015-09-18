@@ -50,6 +50,11 @@ As you can see, the name variable in ${movie.name} tells JMTE to print the name 
         ${end}
         </span>
     ${end}
+    
+To access values in a map, you can simply use map key like the variable (to access a key from type enum, you have to use upper case notation)
+    ${foreach movies movie}
+        <img src="${movie.artworkUrls.POSTER}" />
+    ${end}     
 
 In this example we iterated over the movies list array like in the previous example. Then, from within the first foreach loop, we iterated over the genres list array and printed them. We told JMTE to separate each entry with a comma by putting a comma at the end of the foreach instance.
 
@@ -59,136 +64,163 @@ Following variables can be used:
 * MOVIES
 ***********************************************************************************************************
 Movie:
-Date                  dateAdded
-List<MediaFile>       mediaFiles
-List<MediaGenres>     genres
-List<MediaTrailer>    trailer
-List<MovieCast>       actors        
-List<String>          extraThumbs
-List<String>          tags
-MovieSet              movieSet;
-String                dataSource
-String                director
-String                fanart
-String                fanartUrl
-String                imdbId
-String                title
-String                titleSortable
-String                nfoFilename
-String                originalTitle
-String                plot
-String                path
-String                poster
-String                posterUrl
-String                productionCompany
-String                sortTitle
-String                spokenLanguages
-String                tagline
-String                writer
-String                year
-boolean               duplicate
-boolean               isDisc
-boolean               scraped
-boolean               watched
-float                 rating
-int                   runtime
-int                   tmdbId
-int                   votes
+UUID						dbId
+Date                  		dateAdded
+List<MediaFile>       		mediaFiles
+List<MediaGenres>     		genres
+List<MediaTrailer>    		trailer
+List<MovieCast>       		actors        
+List<String>          		extraThumbs
+List<String>          		tags
+Map<MediaFileType, String>	artworkUrls
+MovieSet              		movieSet;
+String                		dataSource
+String                		director
+String                		imdbId
+String                		title
+String                		titleSortable
+String                		nfoFilename
+String                		originalTitle
+String                		plot
+String                		path
+String                		productionCompany
+String                		sortTitle
+String                		spokenLanguages
+String                		tagline
+String                		writer
+String                		year
+boolean               		duplicate
+boolean               		isDisc
+boolean               		scraped
+boolean               		watched
+float                 		rating
+int                   		runtime
+int                   		tmdbId
+int                   		votes
 
 MovieCast:
-String                character
-String                name
-String                thumbUrl
+String                		character
+String                		name
+String                		thumbUrl
 
 MediaFile:
-String                path
-String                filename
-String                filesize
-String                videoCodec      
-String                audioCodec      
-String                audioChannels   
-String                containerFormat  
-String                videoFormat      
-String                exactVideoFormat 
-int                   videoWidth       
-int                   videoHeight      
-int                   overallBitRate   
-int                   duration         
+MediaFileType				type
+String                		path
+String                		filename
+String                		filesize
+String                		videoCodec      
+String                		audioCodec      
+String                		audioChannels   
+String                		containerFormat  
+String                		videoFormat      
+String                		exactVideoFormat 
+int                   		videoWidth       
+int	                   		videoHeight      
+int                   		overallBitRate   
+int                   		duration         
 
 MediaTrailer:
-String                name
-String                url
-String                provider
+String                		name
+String                		url
+String                		provider
+
+MovieSet:
+UUID						dbId
+Date                  		dateAdded
+List<UUID> 					movieIds
+List<Movie>					movies
+String                		plot
+String                		title
+String                		titleSortable
+
+MediaFileType:
+VIDEO 						main video files
+VIDEO_EXTRA 				bonus/extra videos
+TRAILER 					trailer
+SAMPLE						sample != trailer
+AUDIO 						audio files
+SUBTITLE 					subtitle files
+NFO 						NFO files
+POSTER 						poster
+FANART 						fanart
+BANNER						banner
+CLEARART					clearart
+DISCART						disc art	
+LOGO						logo
+THUMB						thumb   
+SEASON_POSTER				season poster
+EXTRAFANART					extra fanart
+EXTRATHUMB					extra thumb  
+GRAPHIC						generic graphic
+TEXT						various text infos, like BDinfo.txt or others...
+UNKNOWN
 
 ***********************************************************************************************************
 * TV SHOWS
 ***********************************************************************************************************
 TV show:
-Date                  dateAdded
-List<TvShowEpisode>   episodes
-List<TvShowSeason>    seasons
-List<MediaFile>       mediaFiles
-List<MediaGenres>     genres
-List<TvShowActor>     actors        
-List<String>          tags
-String                dataSource
-String                fanart
-String                fanartUrl
-String                tvdbId
-String                title
-String                titleSortable
-String                nfoFilename
-String                originalTitle
-String                plot
-String                path
-String                poster
-String                posterUrl
-String                banner
-String                bannerUrl
-String                studio
-String                sortTitle
-Date                  firstAired
-String                year
-boolean               duplicate
-boolean               scraped
-boolean               watched
-float                 rating
-int                   votes
+UUID						dbId
+Date                  		dateAdded
+List<TvShowEpisode>   		episodes
+List<TvShowSeason>    		seasons
+List<MediaFile>       		mediaFiles
+List<MediaGenres>     		genres
+List<TvShowActor>     		actors        
+List<String>          		tags
+Map<MediaFileType, String>	artworkUrls
+String                		dataSource
+String                		tvdbId	
+String                		title
+String                		titleSortable
+String                		nfoFilename
+String                		originalTitle
+String                		plot
+String                		path
+String                		studio
+String                		sortTitle
+Date                  		firstAired
+String                		year
+boolean               		duplicate
+boolean               		scraped
+boolean               		watched
+float                 		rating
+int                   		votes
 
 TvShowSeason:
-int                   season
-List<TvShowEpisode>   episodes
+int                   		season
+List<TvShowEpisode>   		episodes
 
 TvShowEpisode:
-List<TvShowActor>     actors
-List<MediaFile>       mediaFiles
-List<String>          tags
-int                   season
-int                   episode
-Date                  firstAired
-String                director
-String                writer 
-boolean               disc   
-boolean               watched 
-float                 rating
-int                   votes    
+UUID						dbId
+List<TvShowActor>     		actors
+List<MediaFile>       		mediaFiles
+List<String>          		tags
+int                   		season
+int                   		episode
+Date                  		firstAired
+String                		director
+String                		writer 
+boolean               		disc   
+boolean               		watched 
+float                 		rating
+int                   		votes    
      
 TvShowActor:
-String                character
-String                name
-String                thumbUrl
+String                		character
+String                		name
+String                		thumbUrl
 
 MediaFile:
-String                path
-String                filename
-String                filesize
-String                videoCodec      
-String                audioCodec      
-String                audioChannels   
-String                containerFormat  
-String                videoFormat      
-String                exactVideoFormat 
-int                   videoWidth       
-int                   videoHeight      
-int                   overallBitRate   
-int                   duration         
+String                		path
+String                		filename
+String                		filesize
+String                		videoCodec      
+String                		audioCodec      
+String                		audioChannels   
+String                		containerFormat  
+String                		videoFormat      
+String                		exactVideoFormat 
+int                   		videoWidth       
+int                   		videoHeight      
+int                   		overallBitRate   
+int                   		duration         
