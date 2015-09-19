@@ -65,14 +65,6 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
     this.provider = provider;
   }
 
-  public String getSize() {
-    return size;
-  }
-
-  public void setSize(String size) {
-    this.size = size;
-  }
-
   public String getDate() {
     return date;
   }
