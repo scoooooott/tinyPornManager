@@ -44,5 +44,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-tvdb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-zelluloid"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-kodi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scraper-hdtrailers"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

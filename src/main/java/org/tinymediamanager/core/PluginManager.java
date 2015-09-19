@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
 import org.tinymediamanager.scraper.thesubdb.TheSubDbMetadataProvider;
 
@@ -70,7 +69,6 @@ public class PluginManager {
       }
       else {
         // since all plugins are loaded externally, just add the remaining TMM impl here direct
-        pm.addPluginsFrom(ClassURI.PLUGIN(HDTrailersNet.class));
         pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
         pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
       }

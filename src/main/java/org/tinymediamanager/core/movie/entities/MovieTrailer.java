@@ -47,8 +47,6 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
   @JsonProperty
   private Boolean inNfo    = Boolean.FALSE;
   @JsonProperty
-  private String  size     = "";
-  @JsonProperty
   private String  date     = "";
 
   public MovieTrailer() {
@@ -66,7 +64,6 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
       url = mediaTrailer.getUrl();
       quality = mediaTrailer.getQuality();
       provider = mediaTrailer.getProvider();
-      size = mediaTrailer.getSize();
       date = mediaTrailer.getDate();
     }
   }
@@ -125,18 +122,8 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
     firePropertyChange("inNfo", oldValue, newValue);
   }
 
-  public String getSize() {
-    return size;
-  }
-
   public String getDate() {
     return date;
-  }
-
-  public void setSize(String newValue) {
-    String oldValue = this.size;
-    this.size = newValue;
-    firePropertyChange("size", oldValue, newValue);
   }
 
   public void setDate(String newValue) {
