@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
-import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
-import org.tinymediamanager.scraper.thesubdb.TheSubDbMetadataProvider;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
@@ -66,11 +64,6 @@ public class PluginManager {
       if (ReleaseInfo.getVersion().equals("SVN")) {
         // since we do not have them as dependencies, load all from classpath (we have dependent projects)
         pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
-      }
-      else {
-        // since all plugins are loaded externally, just add the remaining TMM impl here direct
-        pm.addPluginsFrom(ClassURI.PLUGIN(OpensubtitlesMetadataProvider.class));
-        pm.addPluginsFrom(ClassURI.PLUGIN(TheSubDbMetadataProvider.class));
       }
       long end = System.currentTimeMillis();
       LOGGER.debug("Done loading classpath plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
