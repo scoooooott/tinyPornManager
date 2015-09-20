@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaEntityExporter;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -99,7 +100,7 @@ public class TvShowExporter extends MediaEntityExporter {
 
     // create the list
     LOGGER.info("generating tv show list");
-    FileUtils.deleteQuietly(listExportFile);
+    Utils.deleteFileSafely(listExportFile);
 
     Map<String, Object> root = new HashMap<String, Object>();
     root.put("tvShows", new ArrayList<T>(tvShowsToExport));
@@ -111,7 +112,7 @@ public class TvShowExporter extends MediaEntityExporter {
       for (MediaEntity me : tvShowsToExport) {
         TvShow show = (TvShow) me;
         // create a TV show dir
-        File showDir = new File(pathToExport + File.separator + TvShowRenamer.createDestination("$N ($Y)", show, new ArrayList<TvShowEpisode>()));
+        File showDir = new File(pathToExport, TvShowRenamer.createDestination("$N ($Y)", show, new ArrayList<TvShowEpisode>()));
         if (showDir.exists()) {
           FileUtils.deleteQuietly(showDir);
         }

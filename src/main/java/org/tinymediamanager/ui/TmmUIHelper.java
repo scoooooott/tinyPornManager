@@ -51,7 +51,7 @@ public class TmmUIHelper {
   @SuppressWarnings("rawtypes")
   public static Class         swt    = null;
 
-  private static File         lastDir;
+  private static File lastDir;
 
   public static void init() throws ClassNotFoundException {
     // if (SystemUtils.IS_OS_LINUX) {
@@ -210,7 +210,7 @@ public class TmmUIHelper {
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
       lastDir = new File(chooser.getDirectory());
-      return new File(chooser.getDirectory() + File.separator + chooser.getFile());
+      return new File(chooser.getDirectory(), chooser.getFile());
     }
     else {
       return null;
@@ -262,7 +262,7 @@ public class TmmUIHelper {
       fileDialog.show(window);
       if (StringUtils.isNotEmpty(fileDialog.getSelectedFileName())) {
         lastDir = new File(fileDialog.getParentDirectory());
-        return new File(fileDialog.getParentDirectory() + File.separator + fileDialog.getSelectedFileName());
+        return new File(fileDialog.getParentDirectory(), fileDialog.getSelectedFileName());
       }
       else {
         return null;
@@ -280,7 +280,7 @@ public class TmmUIHelper {
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
       lastDir = new File(chooser.getDirectory());
-      return new File(chooser.getDirectory() + File.separator + chooser.getFile());
+      return new File(chooser.getDirectory(), chooser.getFile());
     }
     else {
       return null;

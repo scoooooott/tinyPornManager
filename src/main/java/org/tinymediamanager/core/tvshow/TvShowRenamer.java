@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -155,7 +154,7 @@ public class TvShowRenamer {
       // when moving video file, all NFOs get deleted and a new gets created.
       // so this OLD NFO is not found anylonger - just delete it
       if (mf.getType() == MediaFileType.NFO) {
-        FileUtils.deleteQuietly(mf.getFile());
+        Utils.deleteFileSafely(mf.getFile());
         return;
       }
 
@@ -227,8 +226,8 @@ public class TvShowRenamer {
 
       String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
       if (newFoldername != null && !newFoldername.isEmpty()) {
-        File newEpFolder = new File(seasonDir + File.separator + newFoldername);
-        File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
+        File newEpFolder = new File(seasonDir, newFoldername);
+        File newDisc = new File(newEpFolder, disc.getName()); // old disc name
 
         try {
           // if (!epFolder.equals(newEpFolder)) {

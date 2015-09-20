@@ -221,13 +221,13 @@ public class MovieSet extends MediaEntity {
    */
   public void removeMovie(Movie movie) {
     // remove images from movie folder
-    File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
+    File imageFile = new File(movie.getPath(), "movieset-fanart.jpg");
     if (imageFile.exists()) {
-      imageFile.delete();
+      Utils.deleteFileSafely(imageFile);
     }
-    imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
+    imageFile = new File(movie.getPath(), "movieset-poster.jpg");
     if (imageFile.exists()) {
-      imageFile.delete();
+      Utils.deleteFileSafely(imageFile);
     }
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
@@ -272,13 +272,13 @@ public class MovieSet extends MediaEntity {
     // remove images from movie folder
     synchronized (movies) {
       for (Movie movie : movies) {
-        File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
+        File imageFile = new File(movie.getPath(), "movieset-fanart.jpg");
         if (imageFile.exists()) {
-          imageFile.delete();
+          Utils.deleteFileSafely(imageFile);
         }
-        imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
+        imageFile = new File(movie.getPath(), "movieset-poster.jpg");
         if (imageFile.exists()) {
-          imageFile.delete();
+          Utils.deleteFileSafely(imageFile);
         }
 
         if (movie.getMovieSet() != null) {

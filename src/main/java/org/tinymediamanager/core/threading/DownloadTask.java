@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -210,7 +209,7 @@ public class DownloadTask extends TmmTask {
 
       if (cancel) {
         // delete half downloaded file
-        FileUtils.deleteQuietly(tempFile);
+        Utils.deleteFileSafely(tempFile);
       }
       else {
         if (ext.isEmpty()) {
@@ -227,10 +226,10 @@ public class DownloadTask extends TmmTask {
           }
         }
 
-        FileUtils.deleteQuietly(file); // delete existing file
+        Utils.deleteFileSafely(file); // delete existing file
         boolean ok = Utils.moveFileSafe(tempFile, file);
         if (ok) {
-          FileUtils.deleteQuietly(tempFile);
+          Utils.deleteFileSafely(tempFile);
           if (media != null) {
             MediaFile mf = new MediaFile(file, fileType);
             mf.gatherMediaInformation();

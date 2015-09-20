@@ -23,12 +23,12 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.http.Url;
@@ -42,7 +42,7 @@ public class MovieActorImageFetcher implements Runnable {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcher.class);
 
-  private Movie               movie;
+  private Movie movie;
 
   public MovieActorImageFetcher(Movie movie) {
     this.movie = movie;
@@ -104,7 +104,7 @@ public class MovieActorImageFetcher implements Runnable {
 
           // delete image if not found
           if (!found) {
-            FileUtils.deleteQuietly(file);
+            Utils.deleteFileWithBackup(file, movie.getDataSource());
           }
         }
       }
@@ -114,7 +114,7 @@ public class MovieActorImageFetcher implements Runnable {
         String actorName = actor.getName().replace(" ", "_");
 
         String providedFiletype = FilenameUtils.getExtension(actor.getThumbUrl());
-        File actorImage = new File(actorsDirPath + File.separator + actorName + "." + providedFiletype);
+        File actorImage = new File(actorsDirPath, actorName + "." + providedFiletype);
         if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumbUrl())) {
           try {
             Url url = new Url(actor.getThumbUrl());

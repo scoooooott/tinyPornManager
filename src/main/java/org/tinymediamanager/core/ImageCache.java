@@ -379,7 +379,7 @@ public class ImageCache {
       if (mediaFile.isGraphic()) {
         File file = ImageCache.getCachedFile(mediaFile.getFile().getPath());
         if (file.exists()) {
-          FileUtils.deleteQuietly(file);
+          Utils.deleteFileSafely(file);
         }
       }
     }

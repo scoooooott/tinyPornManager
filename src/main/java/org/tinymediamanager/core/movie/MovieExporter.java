@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaEntityExporter;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -88,7 +89,7 @@ public class MovieExporter extends MediaEntityExporter {
 
     // create list
     LOGGER.info("generating movie list");
-    FileUtils.deleteQuietly(listExportFile);
+    Utils.deleteFileSafely(listExportFile);
 
     Map<String, Object> root = new HashMap<String, Object>();
     root.put("movies", new ArrayList<T>(moviesToExport));
@@ -102,7 +103,7 @@ public class MovieExporter extends MediaEntityExporter {
     if (StringUtils.isNotBlank(detailTemplate)) {
       File detailsDir = new File(exportDir, "movies");
       if (detailsDir.exists()) {
-        FileUtils.deleteQuietly(detailsDir);
+        Utils.deleteFileSafely(detailsDir);
       }
       detailsDir.mkdirs();
 

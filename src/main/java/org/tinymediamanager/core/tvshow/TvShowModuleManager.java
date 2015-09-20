@@ -113,7 +113,7 @@ public class TvShowModuleManager implements ITmmModule {
 
     if (Globals.settings.isDeleteTrashOnExit()) {
       for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
-        File file = new File(ds + File.separator + Constants.BACKUP_FOLDER);
+        File file = new File(ds, Constants.BACKUP_FOLDER);
         FileUtils.deleteQuietly(file);
       }
     }

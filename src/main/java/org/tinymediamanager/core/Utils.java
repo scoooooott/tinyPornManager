@@ -60,8 +60,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
 /**
@@ -637,11 +637,9 @@ public class Utils {
    * maintaining its originating directory
    * 
    * @param file
-   * @param datasource
-   *          the datasource of this file
    * @return true/false if successful
    */
-  public static boolean deleteFileSafely(File file, String datasource) {
+  public static boolean deleteFileWithBackup(File file, String datasource) {
     String fn = file.getAbsolutePath();
     if (file.isDirectory()) {
       LOGGER.warn("could not delete file '" + fn + "': file is a directory!");
@@ -670,6 +668,22 @@ public class Utils {
       LOGGER.warn("could not delete file: " + e.getMessage());
       return false;
     }
+  }
+
+  /**
+   * <b>PHYSICALLY</b> deletes a file (w/o backup)<br>
+   * only doing a check if it is not a directory
+   * 
+   * @param file
+   * @return true/false if successful
+   */
+  public static boolean deleteFileSafely(File file) {
+    String fn = file.getAbsolutePath();
+    if (file.isDirectory()) {
+      LOGGER.warn("will not delete file '" + fn + "': file is a directory!");
+      return false;
+    }
+    return FileUtils.deleteQuietly(file);
   }
 
   /**
@@ -859,7 +873,7 @@ public class Utils {
     }
     for (int i = 0; i < al.size() - keep; i++) {
       // System.out.println("del " + al.get(i).getName());
-      FileUtils.deleteQuietly(al.get(i));
+      deleteFileSafely(al.get(i));
     }
   }
 

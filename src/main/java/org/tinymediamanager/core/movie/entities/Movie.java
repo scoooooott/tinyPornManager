@@ -61,7 +61,6 @@ import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -71,6 +70,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -479,9 +479,8 @@ public class Movie extends MediaEntity {
    */
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
-      String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
       // get all files from the actors path
-      File[] actorImages = new File(actorsDirPath).listFiles();
+      File[] actorImages = new File(getPath(), MovieActor.ACTOR_DIR).listFiles();
       if (actorImages != null && actorImages.length > 0) {
         // search all local actor images
         for (MovieActor actor : getActors()) {

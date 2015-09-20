@@ -153,11 +153,11 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // delete the old one if exisiting
       File oldFile = new File(movie.getPath(), oldFilename);
-      FileUtils.deleteQuietly(oldFile);
+      Utils.deleteFileSafely(oldFile);
 
       // delete new destination if existing
       File destinationFile = new File(movie.getPath(), filename);
-      FileUtils.deleteQuietly(destinationFile);
+      Utils.deleteFileSafely(destinationFile);
 
       // move the temp file to the expected filename
       if (!Utils.moveFileSafe(tempFile, destinationFile)) {
@@ -179,7 +179,7 @@ public class MovieExtraImageFetcher implements Runnable {
       // remove temp file
       File tempFile = new File(movie.getPath(), filename + ".part");
       if (tempFile.exists()) {
-        FileUtils.deleteQuietly(tempFile);
+        Utils.deleteFileSafely(tempFile);
       }
     }
   }
@@ -193,8 +193,7 @@ public class MovieExtraImageFetcher implements Runnable {
     }
 
     try {
-      String path = movie.getPath() + File.separator + "extrafanart";
-      File folder = new File(path);
+      File folder = new File(movie.getPath(), "extrafanart");
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRAFANART);
@@ -207,7 +206,7 @@ public class MovieExtraImageFetcher implements Runnable {
         String urlAsString = fanarts.get(i);
         String providedFiletype = FilenameUtils.getExtension(urlAsString);
         Url url = new Url(urlAsString);
-        File file = new File(path, "fanart" + (i + 1) + "." + providedFiletype);
+        File file = new File(folder, "fanart" + (i + 1) + "." + providedFiletype);
         FileOutputStream outputStream = new FileOutputStream(file);
         InputStream is = url.getInputStream();
         IOUtils.copy(is, outputStream);
@@ -245,8 +244,7 @@ public class MovieExtraImageFetcher implements Runnable {
     }
 
     try {
-      String path = movie.getPath() + File.separator + "extrathumbs";
-      File folder = new File(path);
+      File folder = new File(movie.getPath(), "extrathumbs");
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.THUMB);
@@ -263,7 +261,7 @@ public class MovieExtraImageFetcher implements Runnable {
         InputStream is = null;
         File file = null;
         if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize() > 0) {
-          file = new File(path, "thumb" + (i + 1) + ".jpg");
+          file = new File(folder, "thumb" + (i + 1) + ".jpg");
           outputStream = new FileOutputStream(file);
           try {
             is = ImageCache.scaleImage(url, MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize());
@@ -274,7 +272,7 @@ public class MovieExtraImageFetcher implements Runnable {
           }
         }
         else {
-          file = new File(path, "thumb" + (i + 1) + "." + providedFiletype);
+          file = new File(folder, "thumb" + (i + 1) + "." + providedFiletype);
           outputStream = new FileOutputStream(file);
           Url url1 = new Url(url);
           is = url1.getInputStream();

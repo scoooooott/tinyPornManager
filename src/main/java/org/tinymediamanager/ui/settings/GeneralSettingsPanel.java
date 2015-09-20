@@ -546,7 +546,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         // nothing in the file?
         if (StringUtils.isBlank(extraTxt)) {
           // yes -> delete it
-          FileUtils.deleteQuietly(file);
+          Utils.deleteFileSafely(file);
         }
         else {
           // no -> rewrite it

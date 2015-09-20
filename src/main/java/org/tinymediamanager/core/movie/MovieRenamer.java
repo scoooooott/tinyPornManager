@@ -526,7 +526,7 @@ public class MovieRenamer {
 
         if (cl.getFile().exists()) { // unneeded, but for not displaying wrong deletes in logger...
           LOGGER.debug("Deleting " + cl.getFile());
-          Utils.deleteFileSafely(cl.getFile(), movie.getDataSource());
+          Utils.deleteFileWithBackup(cl.getFile(), movie.getDataSource());
         }
         File[] list = cl.getFile().getParentFile().listFiles();
         if (list != null && list.length == 0) {

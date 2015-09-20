@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -121,12 +120,12 @@ public class MediaEntityImageFetcherTask implements Runnable {
           // delete the old one if exisiting
           if (StringUtils.isNotBlank(oldFilename)) {
             File oldFile = new File(entity.getPath(), oldFilename);
-            FileUtils.deleteQuietly(oldFile);
+            Utils.deleteFileSafely(oldFile);
           }
 
           // delete new destination if existing
           File destinationFile = new File(entity.getPath(), filename);
-          FileUtils.deleteQuietly(destinationFile);
+          Utils.deleteFileSafely(destinationFile);
 
           // move the temp file to the expected filename
           if (!Utils.moveFileSafe(tempFile, destinationFile)) {
@@ -174,7 +173,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         // remove temp file
         File tempFile = new File(entity.getPath(), filename + ".part");
         if (tempFile.exists()) {
-          FileUtils.deleteQuietly(tempFile);
+          Utils.deleteFileSafely(tempFile);
         }
 
         // fallback

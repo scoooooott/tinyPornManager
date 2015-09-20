@@ -1516,7 +1516,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false if successful
    */
   public boolean deleteSafely(String datasource) {
-    return Utils.deleteFileSafely(getFile(), datasource);
+    return Utils.deleteFileWithBackup(getFile(), datasource);
   }
 
   @Override
