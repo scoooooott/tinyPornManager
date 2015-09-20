@@ -15,11 +15,11 @@
  */
 package org.tinymediamanager.scraper.mediaprovider;
 
-import org.tinymediamanager.scraper.MediaSearchResult;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
+
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaSubtitleDownloadOptions;
 
 /**
  * The Interface IMediaSubtitleProvider.
@@ -32,21 +32,19 @@ public interface IMediaSubtitleProvider extends IMediaProvider {
   /**
    * searches for subtitles for MediaFile
    * 
-   * @param subtitleFile
-   *          the MediaFile
+   * @param options
+   *          the options for searching the subtitles
    * @return the MediaSearchResults
    * @throws Exception
    *           the exception
    */
-  public List<MediaSearchResult> search(File subtitleFile) throws Exception;
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
 
   /**
    * download subtitle
    * 
-   * @param hash
-   *          the SubDB file hash (MSR.getId())
-   * @param language
-   *          2char language string (2-char locale)
+   * @param options
+   *          the options for downloading a subtitle
    */
-  public void download(String hash, String language) throws IOException;
+  public void download(MediaSubtitleDownloadOptions options) throws Exception;
 }
