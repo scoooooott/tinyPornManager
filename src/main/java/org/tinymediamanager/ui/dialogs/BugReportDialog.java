@@ -69,15 +69,17 @@ import com.squareup.okhttp.RequestBody;
  */
 public class BugReportDialog extends TmmDialog {
   private static final long           serialVersionUID = 1992385114573899815L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
-  private JTextField                  tfName;
-  private JTextArea                   textArea;
-  private JTextField                  tfEmail;
-  private JCheckBox                   chckbxLogs;
-  private JCheckBox                   chckbxConfigxml;
+  private JTextField tfName;
+  private JTextArea  textArea;
+  private JTextField tfEmail;
+  private JCheckBox  chckbxLogs;
+  private JCheckBox  chckbxConfigxml;
 
   /**
    * Instantiates a new feedback dialog.
@@ -86,20 +88,20 @@ public class BugReportDialog extends TmmDialog {
     super(BUNDLE.getString("BugReport"), "bugReport"); //$NON-NLS-1$
     setBounds(100, 100, 532, 453);
 
-    getContentPane().setLayout(
-        new FormLayout(
-            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    getContentPane().setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, "2, 2, fill, fill");
-    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    panelContent.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");

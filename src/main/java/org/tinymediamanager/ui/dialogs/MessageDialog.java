@@ -49,14 +49,16 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MessageDialog extends JDialog {
   private static final long           serialVersionUID = -9035402766767310658L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JLabel                      lblImage;
-  private JLabel                      lblText;
-  private JLabel                      lblDescription;
-  private JScrollPane                 scrollPane;
-  private JTextPane                   textPane;
+  private JLabel      lblImage;
+  private JLabel      lblText;
+  private JLabel      lblDescription;
+  private JScrollPane scrollPane;
+  private JTextPane   textPane;
 
   public MessageDialog(Window owner, String title) {
     super(owner, title);
@@ -70,10 +72,12 @@ public class MessageDialog extends JDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(10dlu;default)"),
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+              RowSpec.decode("max(10dlu;default)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+              FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         lblImage = new JLabel("");
         lblImage.setVisible(false);
@@ -105,9 +109,10 @@ public class MessageDialog extends JDialog {
     {
       JPanel panelBottom = new JPanel();
       getContentPane().add(panelBottom, BorderLayout.SOUTH);
-      panelBottom.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelBottom.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JPanel panelButtons = new JPanel();
         EqualsLayout layout = new EqualsLayout(5);

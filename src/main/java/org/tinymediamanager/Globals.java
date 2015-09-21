@@ -33,7 +33,7 @@ public class Globals {
   // new LinkedBlockingQueue<Runnable>(), // our queue
   // new TmmThreadFactory("global"));
 
-  private static final boolean DONATOR  = License.isValid();
+  private static final boolean DONATOR = License.isValid();
 
   /**
    * Have we donated?

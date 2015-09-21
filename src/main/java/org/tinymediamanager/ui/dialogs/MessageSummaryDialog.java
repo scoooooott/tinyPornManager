@@ -39,11 +39,13 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MessageSummaryDialog extends TmmDialog {
   private static final long           serialVersionUID = -8163687483097098568L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<String>                messageList      = new ArrayList<String>();
-  private JList                       listMessages;
+  private List<String> messageList = new ArrayList<String>();
+  private JList        listMessages;
 
   public MessageSummaryDialog(List<String> messages) {
     super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$

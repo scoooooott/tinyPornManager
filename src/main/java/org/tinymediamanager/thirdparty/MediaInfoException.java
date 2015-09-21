@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.thirdparty;
-import com.sun.jna.Platform;
 
+import com.sun.jna.Platform;
 
 /**
  * The Class MediaInfoException.

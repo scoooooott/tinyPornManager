@@ -28,7 +28,7 @@ import org.jdesktop.beansbinding.Converter;
 public class WatchedIconConverter extends Converter<Boolean, Icon> {
   public final static ImageIcon watchedIcon    = new ImageIcon(WatchedIconConverter.class.getResource("/org/tinymediamanager/ui/images/watched.png"));
   public final static ImageIcon notWatchedIcon = new ImageIcon(
-                                                   WatchedIconConverter.class.getResource("/org/tinymediamanager/ui/images/not_watched.png"));
+      WatchedIconConverter.class.getResource("/org/tinymediamanager/ui/images/not_watched.png"));
 
   @Override
   public Icon convertForward(Boolean arg0) {

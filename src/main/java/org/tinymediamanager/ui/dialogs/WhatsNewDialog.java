@@ -51,7 +51,9 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WhatsNewDialog extends TmmDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 
@@ -86,10 +88,11 @@ public class WhatsNewDialog extends TmmDialog {
     {
       JPanel panel = new JPanel();
       getContentPane().add(panel, BorderLayout.SOUTH);
-      panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+      panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint")); //$NON-NLS-1$
       panel.add(lblHint, "2, 2");
@@ -121,8 +124,8 @@ public class WhatsNewDialog extends TmmDialog {
   @Override
   public Dimension getPreferredSize() {
     Dimension superPref = super.getPreferredSize();
-    return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700), (int) (500 > superPref.getHeight() ? superPref.getHeight()
-        : 500));
+    return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700),
+        (int) (500 > superPref.getHeight() ? superPref.getHeight() : 500));
   }
 
   private String prepareTextAsHtml(String originalText) {

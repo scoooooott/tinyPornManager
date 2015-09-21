@@ -28,8 +28,8 @@ public class WolDevice extends AbstractModelObject {
   private final static String NAME        = "name";
   private final static String MAC_ADDRESS = "macAddress";
 
-  private String              name;
-  private String              macAddress;
+  private String name;
+  private String macAddress;
 
   public String getName() {
     return name;

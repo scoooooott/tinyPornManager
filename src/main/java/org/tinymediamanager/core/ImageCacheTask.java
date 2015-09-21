@@ -29,9 +29,9 @@ import org.tinymediamanager.core.entities.MediaFile;
  * @author Manuel Laggner
  */
 public class ImageCacheTask implements Runnable {
-  private static final Logger LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageCacheTask.class);
 
-  private List<File>          filesToCache = new ArrayList<File>();
+  private List<File> filesToCache = new ArrayList<File>();
 
   public ImageCacheTask(String pathToFile) {
     filesToCache.add(new File(pathToFile));

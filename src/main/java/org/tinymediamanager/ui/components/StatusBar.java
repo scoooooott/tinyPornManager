@@ -61,19 +61,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class StatusBar extends JPanel implements TmmTaskListener {
-  private static final long                     serialVersionUID = -6375900257553323558L;
+  private static final long serialVersionUID = -6375900257553323558L;
 
   private Map<TmmTaskHandle, TaskListComponent> taskMap;
   private TmmTaskHandle                         activeTask;
 
-  private JProgressBar                          bar;
-  private JLabel                                label;
-  private JButton                               closeButton;
+  private JProgressBar bar;
+  private JLabel       label;
+  private JButton      closeButton;
   // private JWindow popupWindow;
-  private JPopupMenu                            popup;
-  private PopupPane                             pane;
+  private JPopupMenu   popup;
+  private PopupPane    pane;
 
-  private final int                             preferredHeight;
+  private final int preferredHeight;
 
   public StatusBar() {
     taskMap = new HashMap<TmmTaskHandle, TaskListComponent>();

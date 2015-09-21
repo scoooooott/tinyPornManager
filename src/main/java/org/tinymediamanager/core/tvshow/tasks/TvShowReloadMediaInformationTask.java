@@ -40,8 +40,8 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
   private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowReloadMediaInformationTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());        //$NON-NLS-1$
 
-  private List<TvShow>                tvShows;
-  private List<TvShowEpisode>         episodes;
+  private List<TvShow>        tvShows;
+  private List<TvShowEpisode> episodes;
 
   public TvShowReloadMediaInformationTask(List<TvShow> tvShows, List<TvShowEpisode> episodes) {
     super(BUNDLE.getString("tvshow.updatemediainfo"));

@@ -78,57 +78,60 @@ import com.jgoodies.forms.layout.RowSpec;
  * The class MovieRenamerSettingsPanel.
  */
 public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long              serialVersionUID           = 5039498266207230875L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 5039498266207230875L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                  settings                   = Settings.getInstance().getMovieSettings();
-  private List<String>                   separators                 = new ArrayList<String>(Arrays.asList("_", ".", "-"));
-  private EventList<MovieRenamerExample> exampleEventList           = null;
+  private MovieSettings                  settings         = Settings.getInstance().getMovieSettings();
+  private List<String>                   separators       = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private EventList<MovieRenamerExample> exampleEventList = null;
 
   /**
    * UI components
    */
-  private JTextField                     tfMoviePath;
-  private JTextField                     tfMovieFilename;
-  private JLabel                         lblExample;
-  private JCheckBox                      chckbxAsciiReplacement;
+  private JTextField tfMoviePath;
+  private JTextField tfMovieFilename;
+  private JLabel     lblExample;
+  private JCheckBox  chckbxAsciiReplacement;
 
-  private JCheckBox                      chckbxSpaceSubstitution;
-  private JComboBox                      cbSeparator;
-  private JComboBox                      cbMovieForPreview;
-  private JCheckBox                      chckbxRemoveOtherNfos;
-  private JCheckBox                      chckbxMoviesetSingleMovie;
+  private JCheckBox chckbxSpaceSubstitution;
+  private JComboBox cbSeparator;
+  private JComboBox cbMovieForPreview;
+  private JCheckBox chckbxRemoveOtherNfos;
+  private JCheckBox chckbxMoviesetSingleMovie;
 
-  private ActionListener                 actionCreateRenamerExample = new ActionListener() {
-                                                                      @Override
-                                                                      public void actionPerformed(ActionEvent e) {
-                                                                        createRenamerExample();
-                                                                      }
-                                                                    };
-  private JScrollPane                    scrollPane;
-  private JTable                         tableExamples;
-  private JPanel                         panelExample;
-  private JLabel                         lblMMDWarning;
+  private ActionListener actionCreateRenamerExample = new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      createRenamerExample();
+    }
+  };
+  private JScrollPane    scrollPane;
+  private JTable         tableExamples;
+  private JPanel         panelExample;
+  private JLabel         lblMMDWarning;
 
   public MovieRenamerSettingsPanel() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC,
+                RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
     // the panel renamer
     JPanel panelRenamer = new JPanel();
-    panelRenamer.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.movie.renamer.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelRenamer
+        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.movie.renamer.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelRenamer, "2, 2, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(3)"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelRenamer.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow(3)"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
     chckbxAsciiReplacement.addActionListener(actionCreateRenamerExample);
@@ -225,11 +228,12 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     panelExample = new JPanel();
     panelExample.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.example"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
     add(panelExample, "2, 4, fill, fill");
-    panelExample.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelExample.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblExampleT = new JLabel(BUNDLE.getString("tmm.movie")); //$NON-NLS-1$
     panelExample.add(lblExampleT, "2, 2");

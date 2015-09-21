@@ -48,35 +48,36 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
-  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Color          EVEN_ROW_COLOR             = new Color(241, 245, 250);
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Color          EVEN_ROW_COLOR = new Color(241, 245, 250);
 
-  private JPanel                      tvShowPanel                = new JPanel();
-  private JLabel                      tvShowTitle                = new JLabel();
-  private JLabel                      tvShowInfo                 = new JLabel();
-  private JLabel                      tvShowNfoLabel             = new JLabel();
-  private JLabel                      tvShowImageLabel           = new JLabel();
+  private JPanel tvShowPanel      = new JPanel();
+  private JLabel tvShowTitle      = new JLabel();
+  private JLabel tvShowInfo       = new JLabel();
+  private JLabel tvShowNfoLabel   = new JLabel();
+  private JLabel tvShowImageLabel = new JLabel();
 
-  private JPanel                      tvShowSeasonPanel          = new JPanel();
-  private JLabel                      tvShowSeasonTitle          = new JLabel();
+  private JPanel tvShowSeasonPanel = new JPanel();
+  private JLabel tvShowSeasonTitle = new JLabel();
 
-  private JPanel                      tvShowEpisodePanel         = new JPanel();
-  private JLabel                      tvShowEpisodeTitle         = new JLabel();
-  private JLabel                      tvShowEpisodeNfoLabel      = new JLabel();
-  private JLabel                      tvShowEpisodeImageLabel    = new JLabel();
-  private JLabel                      tvShowEpisodeSubtitleLabel = new JLabel();
+  private JPanel tvShowEpisodePanel         = new JPanel();
+  private JLabel tvShowEpisodeTitle         = new JLabel();
+  private JLabel tvShowEpisodeNfoLabel      = new JLabel();
+  private JLabel tvShowEpisodeImageLabel    = new JLabel();
+  private JLabel tvShowEpisodeSubtitleLabel = new JLabel();
 
-  private DefaultTreeCellRenderer     defaultRenderer            = new DefaultTreeCellRenderer();
-  private final Color                 defaultColor               = tvShowTitle.getForeground();
-  private final Color                 newlyAddedColor            = new Color(76, 143, 72);
+  private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
+  private final Color             defaultColor    = tvShowTitle.getForeground();
+  private final Color             newlyAddedColor = new Color(76, 143, 72);
 
   /**
    * Instantiates a new tv show tree cell renderer.
    */
   public TvShowTreeCellRenderer() {
-    tvShowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    tvShowPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("center:20px"),
+            ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     TmmFontHelper.changeFont(tvShowTitle, Font.BOLD);
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
@@ -94,9 +95,9 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
     tvShowSeasonPanel.setLayout(new BoxLayout(tvShowSeasonPanel, BoxLayout.Y_AXIS));
     tvShowSeasonPanel.add(tvShowSeasonTitle);
 
-    tvShowEpisodePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+    tvShowEpisodePanel.setLayout(
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("center:20px"),
+            ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
     tvShowEpisodeTitle.setMinimumSize(new Dimension(0, 0));
     tvShowEpisodePanel.add(tvShowEpisodeTitle, "1, 1");
     tvShowEpisodePanel.add(tvShowEpisodeNfoLabel, "3, 1");
@@ -110,7 +111,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
    * @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
    */
   @Override
-  public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+  public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
+      boolean hasFocus) {
     Component returnValue = null;
     // paint tv show node
     if (value != null && value instanceof TvShowTreeNode) {
@@ -135,8 +137,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
           tvShowTitle.setForeground(defaultColor);
         }
 
-        tvShowInfo.setText(tvShow.getSeasons().size()
-            + " " + BUNDLE.getString("metatag.seasons") + " - " + tvShow.getEpisodes().size() + " " + BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
+        tvShowInfo.setText(tvShow.getSeasons().size() + " " + BUNDLE.getString("metatag.seasons") + " - " + tvShow.getEpisodes().size() + " " //$NON-NLS-1$
+            + BUNDLE.getString("metatag.episodes"));
         tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
         tvShowImageLabel.setIcon(tvShow.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 

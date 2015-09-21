@@ -34,10 +34,10 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
  * @author Manuel Laggner
  */
 public class MovieSetSelectionModel extends AbstractModelObject {
-  private static final String    SELECTED_MOVIE_SET = "selectedMovieSet";
+  private static final String SELECTED_MOVIE_SET = "selectedMovieSet";
 
   private MovieSet               selectedMovieSet;
-  private MovieSet               initalMovieSet     = new MovieSet("");
+  private MovieSet               initalMovieSet = new MovieSet("");
   private PropertyChangeListener propertyChangeListener;
   private JTree                  tree;
 

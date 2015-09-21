@@ -78,9 +78,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
-  private static final long                                    serialVersionUID = -8162631708278089277L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -8162631708278089277L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer>              results;
   private SortedList<MovieRenamerPreviewContainer>             sortedResults;
@@ -92,13 +94,13 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
   private DefaultEventTableModel<MediaFileContainer>           newMediaFileTableModel;
 
   /** UI components */
-  private JTable                                               tableMovies;
-  private JLabel                                               lblTitle;
-  private JLabel                                               lblDatasource;
-  private JLabel                                               lblFolderOld;
-  private JLabel                                               lblFolderNew;
-  private JTable                                               tableMediaFilesNew;
-  private JTable                                               tableMediaFilesOld;
+  private JTable tableMovies;
+  private JLabel lblTitle;
+  private JLabel lblDatasource;
+  private JLabel lblFolderOld;
+  private JLabel lblFolderNew;
+  private JTable tableMediaFilesNew;
+  private JTable tableMediaFilesOld;
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
@@ -109,9 +111,9 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(
+          new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JSplitPane splitPane = new JSplitPane();
         splitPane.setContinuousLayout(true);
@@ -151,11 +153,12 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
         {
           JPanel panelDetails = new JPanel();
           splitPane.setRightComponent(panelDetails);
-          panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-              FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              RowSpec.decode("6dlu"), RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+          panelDetails.setLayout(new FormLayout(
+              new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+                  ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+                  FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+                  FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("6dlu"), RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
           {
             lblTitle = new JLabel("");
             TmmFontHelper.changeFont(lblTitle, 1.33, Font.BOLD);
@@ -186,9 +189,9 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           {
             JPanel panelMediaFiles = new JPanel();
             panelDetails.add(panelMediaFiles, "2, 10, 3, 1, fill, fill");
-            panelMediaFiles.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-                RowSpec.decode("fill:default:grow"), }));
+            panelMediaFiles.setLayout(new FormLayout(
+                new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+                new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
             {
               JLabel lblOldfiles = new JLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
               panelMediaFiles.add(lblOldfiles, "1, 1, default, default");
@@ -315,7 +318,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           return "";
 
         case 1:
-          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$        
+          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
       }
 
       throw new IllegalStateException();

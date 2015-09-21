@@ -39,7 +39,7 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
   private static final Logger         LOGGER = LoggerFactory.getLogger(MovieReloadMediaInformationTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
 
-  private List<Movie>                 moviesToReload;
+  private List<Movie> moviesToReload;
 
   public MovieReloadMediaInformationTask(List<Movie> movies) {
     super(BUNDLE.getString("movie.updatemediainfo"));

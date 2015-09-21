@@ -40,43 +40,42 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeAndSeasonParser {
-  private final static Logger LOGGER                = LoggerFactory.getLogger(TvShowEpisodeAndSeasonParser.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowEpisodeAndSeasonParser.class);
 
   // foo.s01.e01, foo.s01_e01, S01E02 foo, S01 - E02
-  private static Pattern      pattern1              = Pattern.compile("[Ss]([0-9]+)[\\]\\[ _.-]*[Ee]([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern pattern1 = Pattern.compile("[Ss]([0-9]+)[\\]\\[ _.-]*[Ee]([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
 
   // foo.ep01, foo.EP_01
-  private static Pattern      pattern2              = Pattern.compile("[ _.-]()[Ee][Pp]?_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern pattern2 = Pattern.compile("[ _.-]()[Ee][Pp]?_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
 
   // foo.yyyy.mm.dd.*
-  private static Pattern      date1                 = Pattern.compile("([0-9]{4})[.-]([0-9]{2})[.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern date1 = Pattern.compile("([0-9]{4})[.-]([0-9]{2})[.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
 
   // foo.mm.dd.yyyy.*
-  private static Pattern      date2                 = Pattern.compile("([0-9]{2})[.-]([0-9]{2})[.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
+  private static Pattern date2 = Pattern.compile("([0-9]{2})[.-]([0-9]{2})[.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
 
   // foo.1x09* or just /1x09*
-  private static Pattern      pattern5              = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern pattern5 = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
 
   // foo.103*, 103 foo - DEACTIVATE, it produces too much false positives on years
   // /** The pattern6. */
   // private static Pattern pattern6 = Pattern.compile("[\\\\/\\._ -]([0-9]+)([0-9][0-9])([\\._ -][^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // Part I, Pt.VI
-  private static Pattern      pattern7              = Pattern.compile("[\\/ _.-]p(?:ar)?t[ _.-]()([ivx]+)([ _.-][^\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern pattern7 = Pattern.compile("[\\/ _.-]p(?:ar)?t[ _.-]()([ivx]+)([ _.-][^\\/]*)$", Pattern.CASE_INSENSITIVE);
 
-  private static Pattern      stackingMarkerPattern = Pattern.compile(
-                                                        "((.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck]|d)[ _.-]*([0-9]|[a-d])+)|^[a-d]{1})(.*?)",
-                                                        Pattern.CASE_INSENSITIVE);
+  private static Pattern stackingMarkerPattern = Pattern.compile("((.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck]|d)[ _.-]*([0-9]|[a-d])+)|^[a-d]{1})(.*?)",
+      Pattern.CASE_INSENSITIVE);
 
   // new parsing logic
-  private static Pattern      episodePattern        = Pattern.compile("[epx_-]+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      episodePattern2       = Pattern.compile("episode[\\. _-]*(\\d{1,2})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      romanPattern          = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonPattern         = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonMultiEP         = Pattern.compile("s(\\d{1,4})((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonMultiEP2        = Pattern.compile("(\\d{1,4})(?=x)((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
-  private static Pattern      numbers2Pattern       = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
-  private static Pattern      numbers3Pattern       = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
-  private static Pattern      tvMultipartMatching   = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
+  private static Pattern episodePattern      = Pattern.compile("[epx_-]+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
+  private static Pattern episodePattern2     = Pattern.compile("episode[\\. _-]*(\\d{1,2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern romanPattern        = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
+  private static Pattern seasonPattern       = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
+  private static Pattern seasonMultiEP       = Pattern.compile("s(\\d{1,4})((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
+  private static Pattern seasonMultiEP2      = Pattern.compile("(\\d{1,4})(?=x)((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
+  private static Pattern numbers2Pattern     = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
+  private static Pattern numbers3Pattern     = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
+  private static Pattern tvMultipartMatching = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
 
   /**
    * Detect episode from filename.

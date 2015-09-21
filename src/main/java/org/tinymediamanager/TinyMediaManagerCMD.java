@@ -50,17 +50,17 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  */
 public class TinyMediaManagerCMD {
-  private static final Logger     LOGGER          = LoggerFactory.getLogger(TinyMediaManagerCMD.class);
-  private static boolean          updateMovies    = false;
-  private static boolean          updateTv        = false;
-  private static boolean          scrapeNew       = false;
-  private static boolean          scrapeUnscraped = false;
-  private static boolean          renameNew       = false;
-  private static boolean          checkFiles      = false;
+  private static final Logger LOGGER          = LoggerFactory.getLogger(TinyMediaManagerCMD.class);
+  private static boolean      updateMovies    = false;
+  private static boolean      updateTv        = false;
+  private static boolean      scrapeNew       = false;
+  private static boolean      scrapeUnscraped = false;
+  private static boolean      renameNew       = false;
+  private static boolean      checkFiles      = false;
 
   // datasource IDs
-  private static HashSet<Integer> updateMovieDs   = new HashSet<Integer>();
-  private static HashSet<Integer> updateTvDs      = new HashSet<Integer>();
+  private static HashSet<Integer> updateMovieDs = new HashSet<Integer>();
+  private static HashSet<Integer> updateTvDs    = new HashSet<Integer>();
 
   /**
    * parse command line params

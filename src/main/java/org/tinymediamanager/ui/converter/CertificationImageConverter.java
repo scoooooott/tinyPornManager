@@ -34,7 +34,7 @@ import org.tinymediamanager.ui.movies.MovieGenresPanel;
 public class CertificationImageConverter extends Converter<Certification, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CertificationImageConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();

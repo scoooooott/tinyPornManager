@@ -33,7 +33,7 @@ public class JNILoader {
       System.load(nativepath);
     }
     catch (Error e) {
-      // could not load it from the native dir - try to load it per lib name 
+      // could not load it from the native dir - try to load it per lib name
       LOGGER.warn(e.getMessage());
       System.loadLibrary(libName);
     }

@@ -32,7 +32,7 @@ public enum MovieTrailerQuality {
   HD_720("720p", Arrays.asList("HD", "720p")), 
   HD_1080("1080p", Arrays.asList("HD", "1080p"));  // @formatter:on
 
-  private String       displayText;
+  private String displayText;
   private List<String> possibleQualities;
 
   private MovieTrailerQuality(String text, List<String> qualities) {

@@ -61,22 +61,24 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 3181909355114738346L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieMediaFilesPanel.class);
 
-  private MovieSelectionModel         movieSelectionModel;
+  private MovieSelectionModel movieSelectionModel;
 
-  private JLabel                      lblFilesT;
-  private LinkLabel                   lblMoviePath;
-  private JLabel                      lblDateAddedT;
-  private JLabel                      lblDateAdded;
-  private JLabel                      lblMoviePathT;
+  private JLabel    lblFilesT;
+  private LinkLabel lblMoviePath;
+  private JLabel    lblDateAddedT;
+  private JLabel    lblDateAdded;
+  private JLabel    lblMoviePathT;
   // private JButton btnPlay;
 
   /** The media file event list. */
-  private EventList<MediaFile>        mediaFileEventList;
-  private MediaFilesPanel             panelMediaFiles;
+  private EventList<MediaFile> mediaFileEventList;
+  private MediaFilesPanel      panelMediaFiles;
 
   /**
    * Instantiates a new movie media information panel.
@@ -89,10 +91,12 @@ public class MovieMediaFilesPanel extends JPanel {
     mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
     add(lblDateAddedT, "2, 2");
@@ -190,8 +194,8 @@ public class MovieMediaFilesPanel extends JPanel {
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-                ex.getLocalizedMessage() }));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
           }
         }
       }

@@ -41,10 +41,10 @@ import javax.swing.UIManager;
 public class VerticalTextIcon extends JComponent implements Icon, SwingConstants {
   private static final long serialVersionUID = -1386867808010437959L;
 
-  private FontMetrics       fm;
-  private String            text;
-  private int               width, height;
-  private boolean           clockwize;
+  private FontMetrics fm;
+  private String      text;
+  private int         width, height;
+  private boolean     clockwize;
 
   /**
    * Instantiates a new vertical text icon.

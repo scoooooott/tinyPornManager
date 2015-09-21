@@ -54,91 +54,93 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class MovieDetailsPanel extends JPanel {
 
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 6273970118830324299L;
+  private static final long serialVersionUID = 6273970118830324299L;
 
   /** The logger. */
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel         movieSelectionModel;
+  private MovieSelectionModel movieSelectionModel;
 
   /** The lbl original title t. */
-  private JLabel                      lblOriginalTitleT;
+  private JLabel lblOriginalTitleT;
 
   /** The lbl original title. */
-  private JLabel                      lblOriginalTitle;
+  private JLabel lblOriginalTitle;
 
   /** The lbl production t. */
-  private JLabel                      lblProductionT;
+  private JLabel lblProductionT;
 
   /** The lbl production. */
-  private JLabel                      lblProduction;
+  private JLabel lblProduction;
 
   /** The lbl genres t. */
-  private JLabel                      lblGenresT;
+  private JLabel lblGenresT;
 
   /** The lbl genres. */
-  private JLabel                      lblGenres;
+  private JLabel lblGenres;
 
   /** The lbl certification t. */
-  private JLabel                      lblCertificationT;
+  private JLabel lblCertificationT;
 
   /** The lbl certification. */
-  private JLabel                      lblCertification;
+  private JLabel lblCertification;
 
   /** The lbl imdb id t. */
-  private JLabel                      lblImdbIdT;
+  private JLabel lblImdbIdT;
 
   /** The lbl tmdb id t. */
-  private JLabel                      lblTmdbIdT;
+  private JLabel lblTmdbIdT;
 
   /** The lbl imdb id. */
-  private LinkLabel                   lblImdbId;
+  private LinkLabel lblImdbId;
 
   /** The lbl tmdb id. */
-  private LinkLabel                   lblTmdbId;
+  private LinkLabel lblTmdbId;
 
   /** The lbl runtime t. */
-  private JLabel                      lblRuntimeT;
+  private JLabel lblRuntimeT;
 
   /** The lbl runtime. */
-  private JLabel                      lblRuntime;
+  private JLabel lblRuntime;
 
   /** The lbl minutes. */
-  private JLabel                      lblMinutes;
+  private JLabel lblMinutes;
 
   /** The lbl tags t. */
-  private JLabel                      lblTagsT;
+  private JLabel lblTagsT;
 
   /** The lbl tags. */
-  private JLabel                      lblTags;
+  private JLabel lblTags;
 
   /** The lbl movie path t. */
-  private JLabel                      lblMoviePathT;
+  private JLabel lblMoviePathT;
 
   /** The lbl movie path. */
-  private LinkLabel                   lblMoviePath;
+  private LinkLabel lblMoviePath;
 
   /** The lbl movieset t. */
-  private JLabel                      lblMoviesetT;
+  private JLabel lblMoviesetT;
 
   /** The lbl movie set. */
-  private JLabel                      lblMovieSet;
+  private JLabel lblMovieSet;
 
   /** The lbl spoken languages t. */
-  private JLabel                      lblSpokenLanguagesT;
+  private JLabel lblSpokenLanguagesT;
 
   /** The lbl spoken languages. */
-  private JLabel                      lblSpokenLanguages;
-  private JButton                     btnPlay;
-  private JLabel                      lblCountryT;
-  private JLabel                      lblCountry;
-  private JLabel                      lblReleaseDateT;
-  private JLabel                      lblReleaseDate;
+  private JLabel  lblSpokenLanguages;
+  private JButton btnPlay;
+  private JLabel  lblCountryT;
+  private JLabel  lblCountry;
+  private JLabel  lblReleaseDateT;
+  private JLabel  lblReleaseDate;
 
   /**
    * Instantiates a new movie details panel.
@@ -149,16 +151,18 @@ public class MovieDetailsPanel extends JPanel {
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(lblOriginalTitleT, "2, 2");
@@ -176,8 +180,8 @@ public class MovieDetailsPanel extends JPanel {
           TmmUIHelper.openFile(mf.getFile());
         }
         catch (Exception e) {
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -256,8 +260,8 @@ public class MovieDetailsPanel extends JPanel {
         }
         catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -277,8 +281,8 @@ public class MovieDetailsPanel extends JPanel {
         }
         catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -302,8 +306,8 @@ public class MovieDetailsPanel extends JPanel {
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-                ex.getLocalizedMessage() }));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
           }
         }
       }
@@ -339,8 +343,8 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_12.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_12 = BeanProperty.create("selectedMovie.tmdbId");
-    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
     autoBinding_13.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.certification.name");

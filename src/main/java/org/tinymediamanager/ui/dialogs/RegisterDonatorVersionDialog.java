@@ -54,13 +54,15 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class RegisterDonatorVersionDialog extends TmmDialog {
   private static final long           serialVersionUID = 9111695923659250520L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(RegisterDonatorVersionDialog.class);
 
   /** UI components */
-  private JTextField                  tfName;
-  private JTextField                  tfEmailAddress;
+  private JTextField tfName;
+  private JTextField tfEmailAddress;
 
   public RegisterDonatorVersionDialog() {
     super(BUNDLE.getString("tmm.registerdonator"), "registerDonator"); //$NON-NLS-1$
@@ -74,10 +76,11 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
-      panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
+      panelContent.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
+              FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
 
       {
         JTextArea textArea = new JTextArea();
@@ -159,7 +162,7 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
         panelButtons.add(btnRegister);
       }
       {
-        JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$ 
+        JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
         btnClose.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent arg0) {

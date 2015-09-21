@@ -50,39 +50,43 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class FileTypesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 9136097757447080369L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
-  private JPanel                      panelVideoFiletypes;
-  private JTextField                  tfVideoFiletype;
-  private JList                       listVideoFiletypes;
-  private JPanel                      panelSubtitleFiletypes;
-  private JTextField                  tfSubtitleFiletype;
-  private JList                       listSubtitleFiletypes;
-  private JList                       listSortPrefixes;
-  private JTextField                  tfSortPrefix;
-  private JPanel                      panelAudioFiletypes;
-  private JList                       listAudioFiletypes;
-  private JTextField                  tfAudioFiletype;
+  private Settings   settings = Settings.getInstance();
+  private JPanel     panelVideoFiletypes;
+  private JTextField tfVideoFiletype;
+  private JList      listVideoFiletypes;
+  private JPanel     panelSubtitleFiletypes;
+  private JTextField tfSubtitleFiletype;
+  private JList      listSubtitleFiletypes;
+  private JList      listSortPrefixes;
+  private JTextField tfSortPrefix;
+  private JPanel     panelAudioFiletypes;
+  private JList      listAudioFiletypes;
+  private JTextField tfAudioFiletype;
 
   /**
    * Instantiates a new general settings panel.
    */
   public FileTypesSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min)"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     panelVideoFiletypes = new JPanel();
-    panelVideoFiletypes.setBorder(new TitledBorder(
-        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.videofiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    panelVideoFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelVideoFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.videofiletypes"), //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelVideoFiletypes.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
     panelVideoFiletypes.add(scrollPaneVideoFiletypes, "2, 2, 5, 1, fill, fill");
@@ -125,12 +129,13 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
 
     panelSubtitleFiletypes = new JPanel();
     add(panelSubtitleFiletypes, "4, 2, fill, fill");
-    panelSubtitleFiletypes.setBorder(new TitledBorder(
-        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.extrafiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    panelSubtitleFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelSubtitleFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.extrafiletypes"), //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelSubtitleFiletypes.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
     JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
     panelSubtitleFiletypes.add(scrollPaneSubtitleFiletypes, "2, 2, 5, 1, fill, fill");
 
@@ -170,12 +175,13 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
 
     panelAudioFiletypes = new JPanel();
     add(panelAudioFiletypes, "6, 2, fill, fill");
-    panelAudioFiletypes.setBorder(new TitledBorder(
-        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.audiofiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    panelAudioFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelAudioFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.audiofiletypes"), //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelAudioFiletypes.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
     JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
     panelAudioFiletypes.add(scrollPaneAudioFiletypes, "2, 2, 5, 1, fill, fill");
 
@@ -215,12 +221,13 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
 
     JPanel panelSortOptions = new JPanel();
     panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
     add(panelSortOptions, "2, 4, 3, 1, fill, fill");
-    panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelSortOptions.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPaneSortPrefixes = new JScrollPane();
     panelSortOptions.add(scrollPaneSortPrefixes, "2, 2, 5, 1, fill, fill");

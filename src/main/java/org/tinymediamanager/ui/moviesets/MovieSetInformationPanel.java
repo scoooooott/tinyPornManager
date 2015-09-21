@@ -55,53 +55,55 @@ import static org.tinymediamanager.core.Constants.POSTER;
  */
 public class MovieSetInformationPanel extends JPanel {
 
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long             serialVersionUID = -8166784589262658147L;
+  private static final long serialVersionUID = -8166784589262658147L;
 
   /** The selection model. */
-  private MovieSetSelectionModel        selectionModel;
+  private MovieSetSelectionModel selectionModel;
 
   /** The lbl movie set name. */
-  private JLabel                        lblMovieSetName;
+  private JLabel lblMovieSetName;
 
   /** The table assigned movies. */
-  private JTable                        tableAssignedMovies;
+  private JTable tableAssignedMovies;
 
   /** The lbl movie set poster. */
-  private ImageLabel                    lblMovieSetPoster;
+  private ImageLabel lblMovieSetPoster;
 
   /** The panel. */
-  private JPanel                        panel;
+  private JPanel panel;
 
   /** The layered pane. */
-  private JLayeredPane                  layeredPane;
+  private JLayeredPane layeredPane;
 
   /** The lbl movie set fanart. */
-  private ImageLabel                    lblMovieSetFanart;
+  private ImageLabel lblMovieSetFanart;
 
   /** The panel south. */
-  private JSplitPane                    panelSouth;
+  private JSplitPane panelSouth;
 
   /** The scroll pane overview. */
-  private JScrollPane                   scrollPaneOverview;
+  private JScrollPane scrollPaneOverview;
 
   /** The tp overview. */
-  private JTextPane                     tpOverview;
+  private JTextPane tpOverview;
 
   /** The panel overview. */
-  private JPanel                        panelOverview;
+  private JPanel panelOverview;
 
   /** The lbl overview. */
-  private JLabel                        lblOverview;
+  private JLabel lblOverview;
 
   /** The media file event list. */
-  private EventList<Movie>              movieEventList;
+  private EventList<Movie> movieEventList;
 
   /** The media file table model. */
-  private DefaultEventTableModel<Movie> movieTableModel  = null;
+  private DefaultEventTableModel<Movie> movieTableModel = null;
 
   /**
    * Instantiates a new movie set information panel.
@@ -111,16 +113,16 @@ public class MovieSetInformationPanel extends JPanel {
    */
   public MovieSetInformationPanel(MovieSetSelectionModel model) {
     this.selectionModel = model;
-    movieEventList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+    movieEventList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()),
+        GlazedLists.beanConnector(Movie.class));
 
     setLayout(new BorderLayout(0, 0));
 
     panel = new JPanel();
     add(panel, BorderLayout.CENTER);
-    panel
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("180px:grow"), ColumnSpec.decode("1px"), },
-            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("pref:grow"),
-                RowSpec.decode("bottom:default"), }));
+    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("180px:grow"), ColumnSpec.decode("1px"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("pref:grow"),
+            RowSpec.decode("bottom:default"), }));
 
     lblMovieSetName = new JLabel("");
     TmmFontHelper.changeFont(lblMovieSetName, 1.5, Font.BOLD);
@@ -128,9 +130,8 @@ public class MovieSetInformationPanel extends JPanel {
 
     layeredPane = new JLayeredPane();
     panel.add(layeredPane, "1, 3, 2, 1, fill, fill");
-    layeredPane.setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("120px"), ColumnSpec.decode("200px:grow"), }, new RowSpec[] {
-            RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
+    layeredPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("120px"), ColumnSpec.decode("200px:grow"), },
+        new RowSpec[] { RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
 
     lblMovieSetPoster = new ImageLabel();
     lblMovieSetPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
@@ -150,8 +151,8 @@ public class MovieSetInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     panelSouth.setLeftComponent(panelOverview);
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
 
     lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
     panelOverview.add(lblOverview, "1, 2");
@@ -165,8 +166,8 @@ public class MovieSetInformationPanel extends JPanel {
 
     JPanel panelMovies = new JPanel();
     panelSouth.setRightComponent(panelMovies);
-    panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow(3)"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("203px:grow"), }));
+    panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow(3)"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("203px:grow"), }));
 
     movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(movieEventList), new MovieInMovieSetTableFormat());
     // tableAssignedMovies = new JTable(movieTableModel);

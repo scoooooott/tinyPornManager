@@ -39,7 +39,7 @@ public class MovieFindMissingAction extends AbstractAction {
   private static final long           serialVersionUID = 7873846965534352231L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      datasource       = null;
+  private String datasource = null;
 
   /**
    * find missing movies in the given datasource

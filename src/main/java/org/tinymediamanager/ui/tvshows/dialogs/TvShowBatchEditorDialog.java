@@ -63,20 +63,22 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = 3527478264068979388L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowList                  tvShowList       = TvShowList.getInstance();
-  private List<TvShow>                tvShowsToEdit;
-  private List<TvShowEpisode>         tvShowEpisodesToEdit;
-  private boolean                     episodesChanged  = false;
-  private boolean                     tvShowsChanged   = false;
+  private TvShowList          tvShowList      = TvShowList.getInstance();
+  private List<TvShow>        tvShowsToEdit;
+  private List<TvShowEpisode> tvShowEpisodesToEdit;
+  private boolean             episodesChanged = false;
+  private boolean             tvShowsChanged  = false;
 
   /** UI components */
-  private JComboBox                   cbGenres;
-  private JComboBox                   cbTags;
-  private JCheckBox                   chckbxWatched;
-  private JSpinner                    spSeason;
+  private JComboBox cbGenres;
+  private JComboBox cbTags;
+  private JCheckBox chckbxWatched;
+  private JSpinner  spSeason;
 
   /**
    * Instantiates a new movie batch editor.
@@ -98,11 +100,12 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     JPanel panelTvShows = new JPanel();
     panelTvShows.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.tvshow"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     getContentPane().add(panelTvShows, BorderLayout.NORTH);
-    panelTvShows.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelTvShows.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre"));//$NON-NLS-1$
     panelTvShows.add(lblGenres, "2, 2, right, default");
@@ -204,11 +207,11 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       JPanel panelTvShowEpisodes = new JPanel();
       panelTvShowEpisodes.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.episode"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
       getContentPane().add(panelTvShowEpisodes, BorderLayout.CENTER);
-      panelTvShowEpisodes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelTvShowEpisodes.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+              FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       panelTvShowEpisodes.add(lblWatched, "2, 2, right, default");

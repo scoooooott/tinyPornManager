@@ -32,7 +32,7 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
 public class MovieSetTreeNode extends DefaultMutableTreeNode {
 
   /** The Constant serialVersionUID. */
-  private static final long                   serialVersionUID = 1095499645850717752L;
+  private static final long serialVersionUID = 1095499645850717752L;
 
   /** The Constant nodeComparator. */
   protected static final Comparator<TreeNode> nodeComparator;

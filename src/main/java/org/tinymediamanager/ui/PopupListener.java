@@ -27,9 +27,8 @@ import org.tinymediamanager.ui.tvshows.PopupListenerData;
 
 /**
  * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
- * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When
- * the popup event occurs, that object's appropriate
- * method is invoked.
+ * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When the popup event
+ * occurs, that object's appropriate method is invoked.
  * 
  * @see PopupMenuEvent
  */

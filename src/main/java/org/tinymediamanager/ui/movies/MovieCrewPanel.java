@@ -55,9 +55,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieCrewPanel extends JPanel {
-  private static final long                     serialVersionUID   = 2972207353452870494L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle           BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 2972207353452870494L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                   selectionModel;
   private EventList<MovieProducer>              producerEventList  = null;
@@ -66,24 +68,26 @@ public class MovieCrewPanel extends JPanel {
   /**
    * UI elements
    */
-  private JLabel                                lblDirectorT;
-  private JLabel                                lblWriterT;
-  private JLabel                                lblProducer;
-  private JTable                                tableProducer;
-  private JLabel                                lblDirector;
-  private JLabel                                lblWriter;
+  private JLabel lblDirectorT;
+  private JLabel lblWriterT;
+  private JLabel lblProducer;
+  private JTable tableProducer;
+  private JLabel lblDirector;
+  private JLabel lblWriter;
 
   public MovieCrewPanel(MovieSelectionModel model) {
     selectionModel = model;
-    producerEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieProducer>(new BasicEventList<MovieProducer>(), GlazedLists
-        .beanConnector(MovieProducer.class)));
+    producerEventList = GlazedLists.threadSafeList(
+        new ObservableElementList<MovieProducer>(new BasicEventList<MovieProducer>(), GlazedLists.beanConnector(MovieProducer.class)));
     ProducerTableModel = new DefaultEventTableModel<MovieProducer>(GlazedListsSwing.swingThreadProxyList(producerEventList),
         new ProducerTableFormat());
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("80px"), RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"), RowSpec.decode("default:grow"),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
     add(lblDirectorT, "2, 2");

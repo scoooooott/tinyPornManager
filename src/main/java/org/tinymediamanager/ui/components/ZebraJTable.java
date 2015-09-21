@@ -49,8 +49,8 @@ public class ZebraJTable extends JTable {
   private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
   private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
 
-  private ArrayList<TableColumn>        indexedColumns   = new ArrayList<TableColumn>();
-  private Map<Object, TableColumn>      hiddenColumns    = new HashMap<Object, TableColumn>();
+  private ArrayList<TableColumn>   indexedColumns = new ArrayList<TableColumn>();
+  private Map<Object, TableColumn> hiddenColumns  = new HashMap<Object, TableColumn>();
 
   public ZebraJTable() {
     super();

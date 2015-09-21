@@ -36,7 +36,7 @@ import javax.swing.SwingUtilities;
  * @author Manuel Laggner
  */
 public class TableSpinnerEditor extends DefaultCellEditor {
-  private static final long      serialVersionUID = -4249251950819118622L;
+  private static final long serialVersionUID = -4249251950819118622L;
 
   private JSpinner               spinner;
   private JSpinner.DefaultEditor editor;

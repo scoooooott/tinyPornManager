@@ -44,10 +44,10 @@ import java.util.List;
  */
 public class MovieSetArtworkHelper {
   private static final List<MediaFileType> SUPPORTED_ARTWORK_TYPES     = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART,
-                                                                           MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARART);
+      MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
-  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
    * find and assign movie set artwork in the artwork folder

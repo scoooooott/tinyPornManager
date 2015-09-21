@@ -55,15 +55,17 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 8176824801347872222L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private Settings settings = Settings.getInstance();
 
-  private JTable                      tableWolDevices;
-  private JTextField                  tfXbmcHost;
-  private JTextField                  tfXbmcUsername;
-  private JPasswordField              tfXbmcPassword;
+  private JTable         tableWolDevices;
+  private JTextField     tfXbmcHost;
+  private JTextField     tfXbmcUsername;
+  private JPasswordField tfXbmcPassword;
 
   public ExternalDevicesSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
@@ -73,10 +75,11 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
     JPanel panelWol = new JPanel();
     panelWol.setBorder(new TitledBorder(null, BUNDLE.getString("tmm.wakeonlan"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelWol, "2, 2, fill, fill");
-    panelWol.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(50dlu;default):grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("max(40dlu;default)"), }));
+    panelWol.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(50dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("max(100px;default)"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(40dlu;default)"), }));
 
     JScrollPane spWolDevices = new JScrollPane();
     panelWol.add(spWolDevices, "2, 2, 1, 5, fill, fill");
@@ -135,10 +138,11 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
     panelXBMC.setVisible(false);
     panelXBMC.setBorder(new TitledBorder(null, "Kodi / XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelXBMC, "2, 4, fill, fill");
-    panelXBMC.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelXBMC.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblXbmcHost = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
     panelXBMC.add(lblXbmcHost, "2, 2, right, default");

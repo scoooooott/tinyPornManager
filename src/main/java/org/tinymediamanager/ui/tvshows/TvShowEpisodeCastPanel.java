@@ -57,21 +57,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeCastPanel extends JPanel {
-  private static final long                   serialVersionUID = 4712144916016763491L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 4712144916016763491L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowEpisodeSelectionModel   selectionModel;
-  private EventList<TvShowActor>              actorEventList   = null;
-  private DefaultEventTableModel<TvShowActor> actorTableModel  = null;
+  private EventList<TvShowActor>              actorEventList  = null;
+  private DefaultEventTableModel<TvShowActor> actorTableModel = null;
 
   /**
    * UI elements
    */
-  private ZebraJTable                         tableActors;
-  private ImageLabel                          lblActorImage;
-  private JLabel                              lblDirector;
-  private JLabel                              lblWriter;
+  private ZebraJTable tableActors;
+  private ImageLabel  lblActorImage;
+  private JLabel      lblDirector;
+  private JLabel      lblWriter;
 
   /**
    * Instantiates a new tv show episode cast panel.
@@ -81,15 +83,15 @@ public class TvShowEpisodeCastPanel extends JPanel {
    */
   public TvShowEpisodeCastPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<TvShowActor>(new BasicEventList<TvShowActor>(), GlazedLists
-        .beanConnector(TvShowActor.class)));
+    actorEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<TvShowActor>(new BasicEventList<TvShowActor>(), GlazedLists.beanConnector(TvShowActor.class)));
     actorTableModel = new DefaultEventTableModel<TvShowActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("125px"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:max(125px;default):grow"), }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("125px"), },
+        new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), }));
 
     JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
     add(lblDirectorT, "2, 2");

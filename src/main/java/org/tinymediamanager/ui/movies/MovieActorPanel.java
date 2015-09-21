@@ -53,25 +53,28 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieActorPanel extends JPanel {
-  private static final long                  serialVersionUID = 2972207353452870494L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 2972207353452870494L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                selectionModel;
-  private EventList<MovieActor>              actorEventList   = null;
-  private DefaultEventTableModel<MovieActor> actorTableModel  = null;
+  private EventList<MovieActor>              actorEventList  = null;
+  private DefaultEventTableModel<MovieActor> actorTableModel = null;
   private ActorImageLabel                    lblActorThumb;
   private JTable                             tableCast;
 
   public MovieActorPanel(MovieSelectionModel model) {
     selectionModel = model;
-    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieActor>(new BasicEventList<MovieActor>(), GlazedLists
-        .beanConnector(MovieActor.class)));
+    actorEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<MovieActor>(new BasicEventList<MovieActor>(), GlazedLists.beanConnector(MovieActor.class)));
     actorTableModel = new DefaultEventTableModel<MovieActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("125px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:80px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("125px"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:80px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     tableCast = new ZebraJTable(actorTableModel);
     JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);

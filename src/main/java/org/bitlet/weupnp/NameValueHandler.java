@@ -45,7 +45,7 @@ public class NameValueHandler extends DefaultHandler {
   /**
    * The last read element
    */
-  private String              currentElement;
+  private String currentElement;
 
   /**
    * Creates a new instance of a <tt>NameValueHandler</tt>, storing values in the supplied map

@@ -63,14 +63,16 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
-  private static final long               serialVersionUID = 3317576458848699068L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                         //$NON-NLS-1$
+  private static final long           serialVersionUID = 3317576458848699068L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisode                   episode;
   private ITvShowMetadataProvider         metadataProvider;
   private MediaEpisode                    metadata;
-  private List<TvShowEpisodeChooserModel> episodesFound    = ObservableCollections.observableList(new ArrayList<TvShowEpisodeChooserModel>());
+  private List<TvShowEpisodeChooserModel> episodesFound = ObservableCollections.observableList(new ArrayList<TvShowEpisodeChooserModel>());
   private JTable                          table;
   private JTextArea                       taPlot;
 
@@ -111,8 +113,9 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     JPanel bottomPanel = new JPanel();
     getContentPane().add(bottomPanel, "2, 4, fill, top");
 
-    bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+    bottomPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JPanel buttonPane = new JPanel();
@@ -222,8 +225,8 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   }
 
   protected void initDataBindings() {
-    JTableBinding<TvShowEpisodeChooserModel, List<TvShowEpisodeChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(
-        UpdateStrategy.READ, episodesFound, table);
+    JTableBinding<TvShowEpisodeChooserModel, List<TvShowEpisodeChooserModel>, JTable> jTableBinding = SwingBindings
+        .createJTableBinding(UpdateStrategy.READ, episodesFound, table);
     //
     BeanProperty<TvShowEpisodeChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("season");
     jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);

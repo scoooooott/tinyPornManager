@@ -46,27 +46,27 @@ public class StarRater extends JPanel {
   private List<StarListener> listeners = new ArrayList<StarListener>();
 
   /** The number of stars n. */
-  private int                stars;
+  private int stars;
 
   /**
    * The factor which the ratin will divided (i.e. rating 0 - 10 displayed with 5 stars)
    */
-  private int                factor;
+  private int factor;
 
   /** The rating [0, n]. 0 = no rating. */
-  private float              rating;
+  private float rating;
 
   /** The rating which has to be painted (rating / factor). */
-  private float              paintRating;
+  private float paintRating;
 
   /** The selection [0, n]. 0 = no selection. */
-  private int                selection;
+  private int selection;
 
   /** The rollover [0, n]. 0 = no rollover. */
-  private int                rollover;
+  private int rollover;
 
   /** True for clicked this time. */
-  private boolean            done;
+  private boolean done;
 
   /**
    * The constructor.

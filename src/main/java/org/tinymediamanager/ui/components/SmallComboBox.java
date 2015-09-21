@@ -76,7 +76,7 @@ public class SmallComboBox extends JComboBox {
   class SmallComboBoxRenderer extends JPanel implements ListCellRenderer {
     private static final long serialVersionUID = 7291014994809111069L;
 
-    private JLabel            labelItem        = new JLabel();
+    private JLabel labelItem = new JLabel();
 
     public SmallComboBoxRenderer() {
       setLayout(new GridBagLayout());

@@ -57,12 +57,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MediaFilesPanel extends JPanel {
-  private static final long                 serialVersionUID    = -4929581173434859034L;
-  private static final Logger               LOGGER              = LoggerFactory.getLogger(MediaFilesPanel.class);
-  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -4929581173434859034L;
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JScrollPane                       scrollPaneFiles;
-  private JTable                            tableFiles;
+  private JScrollPane scrollPaneFiles;
+  private JTable      tableFiles;
 
   private EventList<MediaFile>              mediaFileEventList;
   private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
@@ -210,8 +210,8 @@ public class MediaFilesPanel extends JPanel {
           }
           catch (Exception e) {
             LOGGER.error("open file", e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
-                e.getLocalizedMessage() }));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
           }
         }
         // open the graphic in the lightbox

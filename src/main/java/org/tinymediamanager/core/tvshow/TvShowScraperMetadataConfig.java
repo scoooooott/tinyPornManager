@@ -28,40 +28,40 @@ import org.tinymediamanager.core.AbstractModelObject;
 public class TvShowScraperMetadataConfig extends AbstractModelObject {
 
   /** The title. */
-  private boolean title         = true;
+  private boolean title = true;
 
   /** The plot. */
-  private boolean plot          = true;
+  private boolean plot = true;
 
   /** The rating. */
-  private boolean rating        = true;
+  private boolean rating = true;
 
   /** The runtime. */
-  private boolean runtime       = true;
+  private boolean runtime = true;
 
   /** The year. */
-  private boolean year          = true;
+  private boolean year = true;
 
   /** The aired. */
-  private boolean aired         = true;
+  private boolean aired = true;
 
   /** The status. */
-  private boolean status        = true;
+  private boolean status = true;
 
   /** The certification. */
   private boolean certification = true;
 
   /** The cast. */
-  private boolean cast          = true;
+  private boolean cast = true;
 
   /** The genres. */
-  private boolean genres        = true;
+  private boolean genres = true;
 
   /** The artwork. */
-  private boolean artwork       = true;
+  private boolean artwork = true;
 
   /** The episodes. */
-  private boolean episodes      = true;
+  private boolean episodes = true;
 
   /**
    * Instantiates a new scraper metadata config.

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.thirdparty;
-import static java.util.Collections.*;
+
+import static java.util.Collections.*;
 
 import java.lang.reflect.Method;
 
@@ -25,7 +26,6 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
-
 /**
  * The Interface MediaInfoLibrary.
  * 
@@ -35,14 +35,14 @@ interface MediaInfoLibrary extends Library {
 
   /** The instance. */
   MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
-                                singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
+      singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
 
-                                  @Override
-                                  public String getFunctionName(NativeLibrary lib, Method method) {
-                                    // MediaInfo_New(), MediaInfo_Open() ...
-                                    return "MediaInfo_" + method.getName();
-                                  }
-                                }));
+        @Override
+        public String getFunctionName(NativeLibrary lib, Method method) {
+          // MediaInfo_New(), MediaInfo_Open() ...
+          return "MediaInfo_" + method.getName();
+        }
+      }));
 
   /**
    * Create a new handle.

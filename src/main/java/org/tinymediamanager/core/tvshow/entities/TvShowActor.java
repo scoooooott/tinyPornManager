@@ -32,13 +32,13 @@ public class TvShowActor extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
   @JsonProperty
-  private String             name      = "";
+  private String name      = "";
   @JsonProperty
-  private String             character = "";
+  private String character = "";
   @JsonProperty
-  private String             thumb     = "";
+  private String thumb     = "";
   @JsonProperty
-  private String             thumbPath = "";
+  private String thumbPath = "";
 
   public TvShowActor() {
   }

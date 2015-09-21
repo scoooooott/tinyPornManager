@@ -28,11 +28,11 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
   private TaskType                   type;
   protected TaskState                state     = TaskState.CREATED;
 
-  protected String                   taskName;
-  protected String                   taskDescription;
-  protected int                      workUnits;
-  protected int                      progressDone;
-  protected boolean                  cancel;
+  protected String  taskName;
+  protected String  taskDescription;
+  protected int     workUnits;
+  protected int     progressDone;
+  protected boolean cancel;
 
   protected TmmTask(String taskName, int workUnits, TaskType type) {
     this.taskName = taskName;

@@ -43,15 +43,17 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MessageHistoryDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID = -5054005564554148578L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MessageHistoryDialog.class);
   private static final int            REFRESH_PERIOD   = 1000;
 
-  private JTextArea                   taMessages;
+  private JTextArea taMessages;
 
-  private int                         logByteCount     = 0;
-  private final Timer                 timerRefresh;
+  private int         logByteCount = 0;
+  private final Timer timerRefresh;
 
   public MessageHistoryDialog() {
     super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$

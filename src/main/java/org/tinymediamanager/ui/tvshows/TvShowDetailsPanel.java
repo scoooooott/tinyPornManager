@@ -51,22 +51,24 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowDetailsPanel extends JPanel {
   private static final long           serialVersionUID = -1569492065407109019L;
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final TvShowSelectionModel  selectionModel;
+  private final TvShowSelectionModel selectionModel;
 
   /** UI components */
-  private JLabel                      lblGenres;
-  private JLabel                      lblCertification;
-  private LinkLabel                   lblThetvdbId;
-  private LinkLabel                   lblImdbId;
-  private LinkLabel                   lblPath;
-  private JLabel                      lblPremiered;
-  private JLabel                      lblStudio;
-  private JLabel                      lblStatus;
-  private JLabel                      lblYear;
-  private JLabel                      lblTags;
+  private JLabel    lblGenres;
+  private JLabel    lblCertification;
+  private LinkLabel lblThetvdbId;
+  private LinkLabel lblImdbId;
+  private LinkLabel lblPath;
+  private JLabel    lblPremiered;
+  private JLabel    lblStudio;
+  private JLabel    lblStatus;
+  private JLabel    lblYear;
+  private JLabel    lblTags;
 
   /**
    * Instantiates a new tv show details panel.
@@ -76,8 +78,9 @@ public class TvShowDetailsPanel extends JPanel {
    */
   public TvShowDetailsPanel(TvShowSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow(2)"), },
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow(2)"), },
         new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
@@ -117,8 +120,8 @@ public class TvShowDetailsPanel extends JPanel {
         }
         catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -145,8 +148,8 @@ public class TvShowDetailsPanel extends JPanel {
         }
         catch (Exception e) {
           LOGGER.error("browse to thetvdb", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -196,8 +199,8 @@ public class TvShowDetailsPanel extends JPanel {
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-                ex.getLocalizedMessage() }));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
           }
         }
       }

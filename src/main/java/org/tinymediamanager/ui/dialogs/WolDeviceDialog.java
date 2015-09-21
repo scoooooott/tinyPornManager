@@ -45,15 +45,17 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WolDeviceDialog extends TmmDialog {
   private static final long           serialVersionUID = -8293021735704401080L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private WolDevice                   device           = null;
+  private WolDevice device = null;
 
-  private JTextField                  tfName;
-  private JTextField                  tfMacAddress;
-  private final Action                actionSave       = new SaveAction();
-  private final Action                actionCancel     = new CancelAction();
+  private JTextField   tfName;
+  private JTextField   tfMacAddress;
+  private final Action actionSave   = new SaveAction();
+  private final Action actionCancel = new CancelAction();
 
   /**
    * constructor for creating a device
@@ -62,11 +64,11 @@ public class WolDeviceDialog extends TmmDialog {
     super(BUNDLE.getString("tmm.wakeonlandevice"), "wolDialog"); //$NON-NLS-1$
     setResizable(false);
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+    getContentPane().setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblDeviceName = new JLabel(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
@@ -83,7 +85,7 @@ public class WolDeviceDialog extends TmmDialog {
     getContentPane().add(tfMacAddress, "4, 4, 5, 1, fill, default");
     tfMacAddress.setColumns(10);
 
-    JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$  
+    JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
     btnSave.setAction(actionSave);
     getContentPane().add(btnSave, "6, 6");
 

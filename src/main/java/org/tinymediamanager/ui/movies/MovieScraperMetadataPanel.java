@@ -39,27 +39,29 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperMetadataPanel extends JPanel {
   private static final long           serialVersionUID = 1053348917399322570L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieScraperMetadataConfig  config;
+  private MovieScraperMetadataConfig config;
 
   /**
    * UI Elements
    */
-  private JCheckBox                   chckbxTitle;
-  private JCheckBox                   chckbxOriginalTitle;
-  private JCheckBox                   chckbxTagline;
-  private JCheckBox                   chckbxPlot;
-  private JCheckBox                   chckbxRating;
-  private JCheckBox                   chckbxRuntime;
-  private JCheckBox                   chckbxYear;
-  private JCheckBox                   chckbxCertification;
-  private JCheckBox                   chckbxCast;
-  private JCheckBox                   chckbxGenres;
-  private JCheckBox                   chckbxArtwork;
-  private JCheckBox                   chckbxTrailer;
-  private JCheckBox                   chckbxCollection;
+  private JCheckBox chckbxTitle;
+  private JCheckBox chckbxOriginalTitle;
+  private JCheckBox chckbxTagline;
+  private JCheckBox chckbxPlot;
+  private JCheckBox chckbxRating;
+  private JCheckBox chckbxRuntime;
+  private JCheckBox chckbxYear;
+  private JCheckBox chckbxCertification;
+  private JCheckBox chckbxCast;
+  private JCheckBox chckbxGenres;
+  private JCheckBox chckbxArtwork;
+  private JCheckBox chckbxTrailer;
+  private JCheckBox chckbxCollection;
 
   /**
    * Instantiates a new movie scraper metadata panel.
@@ -69,11 +71,13 @@ public class MovieScraperMetadataPanel extends JPanel {
    */
   public MovieScraperMetadataPanel(MovieScraperMetadataConfig config) {
     this.config = config;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"),
-        FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"),
-        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC,
+            ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
@@ -128,48 +132,48 @@ public class MovieScraperMetadataPanel extends JPanel {
     autoBinding.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_1 = BeanProperty.create("originalTitle");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_1, chckbxOriginalTitle, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_1, chckbxOriginalTitle, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_2 = BeanProperty.create("tagline");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_2, chckbxTagline, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_2, chckbxTagline, jCheckBoxBeanProperty);
     autoBinding_2.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_3 = BeanProperty.create("plot");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_3, chckbxPlot, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_3, chckbxPlot, jCheckBoxBeanProperty);
     autoBinding_3.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_4 = BeanProperty.create("rating");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_4, chckbxRating, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_4, chckbxRating, jCheckBoxBeanProperty);
     autoBinding_4.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_5 = BeanProperty.create("runtime");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_5, chckbxRuntime, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_5, chckbxRuntime, jCheckBoxBeanProperty);
     autoBinding_5.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_6 = BeanProperty.create("year");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_6, chckbxYear, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_6, chckbxYear, jCheckBoxBeanProperty);
     autoBinding_6.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_7 = BeanProperty.create("certification");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_7, chckbxCertification, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_7, chckbxCertification, jCheckBoxBeanProperty);
     autoBinding_7.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_8 = BeanProperty.create("cast");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_8, chckbxCast, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_8, chckbxCast, jCheckBoxBeanProperty);
     autoBinding_8.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_9 = BeanProperty.create("genres");
-    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        config, scraperMetadataConfigBeanProperty_9, chckbxGenres, jCheckBoxBeanProperty);
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, config,
+        scraperMetadataConfigBeanProperty_9, chckbxGenres, jCheckBoxBeanProperty);
     autoBinding_9.bind();
     //
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty_10 = BeanProperty.create("artwork");

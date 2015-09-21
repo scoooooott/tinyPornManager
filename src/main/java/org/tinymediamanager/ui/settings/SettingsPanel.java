@@ -42,18 +42,20 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class SettingsPanel extends JPanel {
   private static final long           serialVersionUID = -3509434882626534578L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /**
    * UI components
    */
-  private JPanel                      buttonBar;
-  private ButtonGroup                 buttonGroup;
-  private Component                   currentComponent;
-  private JPanel                      panelTmmSettings;
-  private JPanel                      panelMovieSettings;
-  private JPanel                      panelTvShowSettings;
+  private JPanel      buttonBar;
+  private ButtonGroup buttonGroup;
+  private Component   currentComponent;
+  private JPanel      panelTmmSettings;
+  private JPanel      panelMovieSettings;
+  private JPanel      panelTvShowSettings;
 
   /**
    * Create the panel.
@@ -72,22 +74,22 @@ public class SettingsPanel extends JPanel {
      * General settings
      */
     panelTmmSettings = new TmmSettingsContainerPanel();
-    addButton(
-        BUNDLE.getString("Settings.general"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelTmmSettings); //$NON-NLS-1$
+    addButton(BUNDLE.getString("Settings.general"), //$NON-NLS-1$
+        new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelTmmSettings);
 
     /*
      * Movie settings
      */
     panelMovieSettings = MovieUIModule.getInstance().getSettingsPanel();
-    addButton(
-        BUNDLE.getString("Settings.movies"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), panelMovieSettings); //$NON-NLS-1$
+    addButton(BUNDLE.getString("Settings.movies"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), //$NON-NLS-1$
+        panelMovieSettings);
 
     /*
      * TV show settings
      */
     panelTvShowSettings = TvShowUIModule.getInstance().getSettingsPanel();
-    addButton(
-        BUNDLE.getString("Settings.tvshow"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/tv_show.png")), panelTvShowSettings); //$NON-NLS-1$
+    addButton(BUNDLE.getString("Settings.tvshow"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/tv_show.png")), //$NON-NLS-1$
+        panelTvShowSettings);
 
   }
 

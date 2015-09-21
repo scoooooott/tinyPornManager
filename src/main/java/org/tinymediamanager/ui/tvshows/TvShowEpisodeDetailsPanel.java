@@ -54,21 +54,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeDetailsPanel extends JPanel {
-  private static final long                 serialVersionUID = -5598009673335010850L;
-  private final static Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -5598009673335010850L;
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowEpisodeSelectionModel selectionModel;
 
   /** UI components */
-  private LinkLabel                         lblPath;
-  private JLabel                            lblSeason;
-  private JLabel                            lblEpisode;
-  private JLabel                            lblAired;
-  private JButton                           btnPlay;
-  private JLabel                            lblTags;
-  private JLabel                            lblDateAdded;
+  private LinkLabel lblPath;
+  private JLabel    lblSeason;
+  private JLabel    lblEpisode;
+  private JLabel    lblAired;
+  private JButton   btnPlay;
+  private JLabel    lblTags;
+  private JLabel    lblDateAdded;
 
   /**
    * Instantiates a new tv show episode details panel.
@@ -78,8 +80,9 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
    */
   public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"),
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, },
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"),
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -103,8 +106,8 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
         }
         catch (Exception e) {
           LOGGER.error("open file", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
-              e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     });
@@ -158,8 +161,8 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-                ex.getLocalizedMessage() }));
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
           }
         }
       }

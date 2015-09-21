@@ -55,62 +55,64 @@ import static org.tinymediamanager.core.Constants.*;
  * @author Manuel Laggner
  */
 public class MovieInformationPanel extends JPanel {
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = -8527284262749511617L;
+  private static final long serialVersionUID = -8527284262749511617L;
 
   /** The split pane vertical. */
-  private JSplitPane                  splitPaneVertical;
+  private JSplitPane splitPaneVertical;
 
   /** The panel top. */
-  private JPanel                      panelTop;
+  private JPanel panelTop;
 
   /** The panel movie logos. */
-  private JPanel                      panelMovieLogos;
+  private JPanel panelMovieLogos;
 
   /** The panel rating. */
-  private StarRater                   panelRatingStars;
+  private StarRater panelRatingStars;
 
   /** The lbl watched image. */
-  private JLabel                      lblWatchedImage;
+  private JLabel lblWatchedImage;
 
   /** The lbl movie name. */
-  private JLabel                      lblMovieName;
+  private JLabel lblMovieName;
 
   /** The label rating. */
-  private JLabel                      lblRating;
+  private JLabel lblRating;
 
   /** The lbl vote count. */
-  private JLabel                      lblVoteCount;
+  private JLabel lblVoteCount;
 
   /** The lbl original name. */
-  private JLabel                      lblTagline;
+  private JLabel lblTagline;
 
   /** The lbl certification image. */
-  private JLabel                      lblCertificationImage;
+  private JLabel lblCertificationImage;
 
   /** The lbl movie background. */
-  private ImageLabel                  lblMovieBackground;
+  private ImageLabel lblMovieBackground;
 
   /** The lbl movie poster. */
-  private ImageLabel                  lblMoviePoster;
+  private ImageLabel lblMoviePoster;
 
   // /** The table cast. */
   // private JTable tableCast;
 
   /** The tabbed pane movie details. */
-  private JTabbedPane                 tabbedPaneMovieDetails;
+  private JTabbedPane tabbedPaneMovieDetails;
 
   /** The panel overview. */
-  private JPanel                      panelOverview;
+  private JPanel panelOverview;
 
   /** The panel movie cast. */
-  private MovieCrewPanel              panelMovieCrew;
+  private MovieCrewPanel panelMovieCrew;
 
   /** The panel details. */
-  private JPanel                      panelDetails;
+  private JPanel panelDetails;
   //
   // /** The lbl director t. */
   // private JLabel lblDirectorT;
@@ -128,32 +130,32 @@ public class MovieInformationPanel extends JPanel {
   // private JLabel lblActors;
 
   /** The text pane. */
-  private JTextPane                   tpOverview;
+  private JTextPane tpOverview;
 
   /** The panel media information. */
-  private JPanel                      panelMediaInformation;
+  private JPanel panelMediaInformation;
 
   /** The panel media files. */
-  private JPanel                      panelMediaFiles;
+  private JPanel panelMediaFiles;
 
   // /** The lbl actor thumb. */
   // private ActorImageLabel lblActorThumb;
 
   /** The panel movie trailer. */
-  private MovieTrailerPanel           panelMovieTrailer;
+  private MovieTrailerPanel panelMovieTrailer;
 
   /** The movie selection model. */
-  private MovieSelectionModel         movieSelectionModel;
+  private MovieSelectionModel movieSelectionModel;
 
   /** The lbl media logo resolution. */
-  private JLabel                      lblMediaLogoResolution;
+  private JLabel lblMediaLogoResolution;
 
   /** The lbl media logo video codec. */
-  private JLabel                      lblMediaLogoVideoCodec;
+  private JLabel lblMediaLogoVideoCodec;
 
   /** The lbl media logo audio. */
-  private JLabel                      lblMediaLogoAudio;
-  private JLabel                      lblTop250;
+  private JLabel lblMediaLogoAudio;
+  private JLabel lblTop250;
 
   /**
    * Instantiates a new movie information panel.
@@ -177,9 +179,9 @@ public class MovieInformationPanel extends JPanel {
     panelTop = new JPanel();
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
-        RowSpec.decode("top:pref:grow"), }));
+    panelTop.setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"), RowSpec.decode("top:pref:grow"), }));
 
     JPanel panelMovieHeader = new JPanel();
     panelTop.add(panelMovieHeader, "2, 1, 3, 1, fill, top");
@@ -195,9 +197,11 @@ public class MovieInformationPanel extends JPanel {
 
     JPanel panelRatingTagline = new JPanel();
     panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);
-    panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px:grow"), }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
+    panelRatingTagline
+        .setLayout(new FormLayout(
+            new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+                FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px:grow"), },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
 
     lblRating = new JLabel("");
     panelRatingTagline.add(lblRating, "2, 2, left, center");
@@ -223,9 +227,9 @@ public class MovieInformationPanel extends JPanel {
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 4, 1, fill, fill");
-    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px:grow"),
-        ColumnSpec.decode("default:grow(10)"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px:grow"),
-        RowSpec.decode("fill:80px:grow(3)"), }));
+    layeredPaneImages.setLayout(new FormLayout(
+        new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px:grow"), ColumnSpec.decode("default:grow(10)"), },
+        new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px:grow"), RowSpec.decode("fill:80px:grow(3)"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
     lblMovieBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
@@ -263,8 +267,8 @@ public class MovieInformationPanel extends JPanel {
     panelLogos.add(lblMediaLogoAudio);
 
     JPanel panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:min:grow"), }));
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:min:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
     panelBottom.add(tabbedPaneMovieDetails, "1, 2, fill, fill");
@@ -275,8 +279,8 @@ public class MovieInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.plot"), null, panelOverview, null); //$NON-NLS-1$
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:default:grow"), }));
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
     // panelMovieDetails.add(tabbedPaneMovieDetails, "2, 3, fill, fill");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
@@ -411,8 +415,8 @@ public class MovieInformationPanel extends JPanel {
     //
     BeanProperty<MovieSelectionModel, Certification> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.certification");
     BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
-    AutoBinding<MovieSelectionModel, Certification, JLabel, Icon> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_6, lblCertificationImage, jLabelBeanProperty_2);
+    AutoBinding<MovieSelectionModel, Certification, JLabel, Icon> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_6, lblCertificationImage, jLabelBeanProperty_2);
     autoBinding_7.setConverter(new CertificationImageConverter());
     autoBinding_7.bind();
     //

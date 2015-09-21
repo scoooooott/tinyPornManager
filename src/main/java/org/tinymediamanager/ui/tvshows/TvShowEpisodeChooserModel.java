@@ -32,11 +32,11 @@ public class TvShowEpisodeChooserModel extends AbstractModelObject {
   public static final TvShowEpisodeChooserModel emptyResult = new TvShowEpisodeChooserModel();
 
   // private ITvShowMetadataProvider metadataProvider = null;
-  private MediaEpisode                          mediaEpisode;
-  private String                                title       = "";
-  private String                                overview    = "";
-  private int                                   season      = -1;
-  private int                                   episode     = -1;
+  private MediaEpisode mediaEpisode;
+  private String       title    = "";
+  private String       overview = "";
+  private int          season   = -1;
+  private int          episode  = -1;
 
   public TvShowEpisodeChooserModel(ITvShowMetadataProvider metadataProvider, MediaEpisode episode) {
     // this.metadataProvider = metadataProvider;

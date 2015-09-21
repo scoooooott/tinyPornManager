@@ -64,8 +64,8 @@ public class TvShowChangeSeasonPosterAction extends AbstractAction {
         ImageLabel imageLabel = new ImageLabel();
         HashMap<String, Object> ids = season.getTvShow().getIds();
         ids.put("tvShowSeason", season.getSeason());
-        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON, TvShowList.getInstance()
-            .getAvailableArtworkScrapers(), imageLabel, null, null, MediaType.TV_SHOW);
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON, TvShowList.getInstance().getAvailableArtworkScrapers(), imageLabel,
+            null, null, MediaType.TV_SHOW);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
 

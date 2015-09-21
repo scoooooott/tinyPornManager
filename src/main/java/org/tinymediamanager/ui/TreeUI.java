@@ -79,10 +79,8 @@ public class TreeUI extends BaseTreeUI {
 
   /**
    * The listener interface for receiving rowSelection events. The class that is interested in processing a rowSelection event implements this
-   * interface, and the object created with that class is registered with a component using the component's
-   * <code>addRowSelectionListener<code> method. When
-   * the rowSelection event occurs, that object's appropriate
-   * method is invoked.
+   * interface, and the object created with that class is registered with a component using the component's <code>addRowSelectionListener
+   * <code> method. When the rowSelection event occurs, that object's appropriate method is invoked.
    * 
    * @see RowSelectionEvent
    */

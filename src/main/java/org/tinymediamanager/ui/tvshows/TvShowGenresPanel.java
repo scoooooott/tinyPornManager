@@ -37,10 +37,10 @@ import org.tinymediamanager.scraper.MediaGenres;
 public class TvShowGenresPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long    serialVersionUID = -7111036144770559630L;
+  private static final long serialVersionUID = -7111036144770559630L;
 
   /** The Constant LOGGER. */
-  private static final Logger  LOGGER           = LoggerFactory.getLogger(TvShowGenresPanel.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowGenresPanel.class);
 
   /** The model. */
   private TvShowSelectionModel tvShowSelectionModel;

@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 public class JPresetTextField extends JTextField {
   private static final long serialVersionUID = -7316054018368081957L;
 
-  private String            textWhenNothingEntered;
+  private String textWhenNothingEntered;
 
   public JPresetTextField(String presetText) {
     this.textWhenNothingEntered = presetText;

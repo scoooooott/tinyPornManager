@@ -24,50 +24,32 @@ package org.tinymediamanager.core.movie;
 public enum MoviePosterNaming {
 
   /** [moviename]-poster.png */
-  MOVIENAME_POSTER_PNG,
-  /** [moviename]-poster.jpg */
-  MOVIENAME_POSTER_JPG,
-  /** [moviename]-poster.tbn */
-  @Deprecated
-  MOVIENAME_POSTER_TBN,
+  MOVIENAME_POSTER_PNG, /** [moviename]-poster.jpg */
+  MOVIENAME_POSTER_JPG, /** [moviename]-poster.tbn */
+  @Deprecated MOVIENAME_POSTER_TBN,
 
   /** [filename].png */
-  FILENAME_PNG,
-  /** [filename].jpg */
-  FILENAME_JPG,
-  /** [filename].tbn */
-  @Deprecated
-  FILENAME_TBN,
+  FILENAME_PNG, /** [filename].jpg */
+  FILENAME_JPG, /** [filename].tbn */
+  @Deprecated FILENAME_TBN,
 
   /** [filename]-poster.png */
-  FILENAME_POSTER_PNG,
-  /** [filename]-poster.jpg */
-  FILENAME_POSTER_JPG,
-  /** [filename]-poster.tbn */
-  @Deprecated
-  FILENAME_POSTER_TBN,
+  FILENAME_POSTER_PNG, /** [filename]-poster.jpg */
+  FILENAME_POSTER_JPG, /** [filename]-poster.tbn */
+  @Deprecated FILENAME_POSTER_TBN,
 
   /** movie.png */
-  MOVIE_PNG,
-  /** movie.jpg */
-  MOVIE_JPG,
-  /** movie.tbn */
-  @Deprecated
-  MOVIE_TBN,
+  MOVIE_PNG, /** movie.jpg */
+  MOVIE_JPG, /** movie.tbn */
+  @Deprecated MOVIE_TBN,
 
   /** poster.png */
-  POSTER_PNG,
-  /** poster.jpg */
-  POSTER_JPG,
-  /** poster.tbn */
-  @Deprecated
-  POSTER_TBN,
+  POSTER_PNG, /** poster.jpg */
+  POSTER_JPG, /** poster.tbn */
+  @Deprecated POSTER_TBN,
 
   /** folder.png */
-  FOLDER_PNG,
-  /** folder.jpg */
-  FOLDER_JPG,
-  /** folder.tbn */
-  @Deprecated
-  FOLDER_TBN;
+  FOLDER_PNG, /** folder.jpg */
+  FOLDER_JPG, /** folder.tbn */
+  @Deprecated FOLDER_TBN;
 }

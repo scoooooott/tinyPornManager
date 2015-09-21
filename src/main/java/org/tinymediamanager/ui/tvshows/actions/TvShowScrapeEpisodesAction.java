@@ -37,7 +37,7 @@ public class TvShowScrapeEpisodesAction extends AbstractAction {
   private static final long           serialVersionUID = -75916665265142730L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private boolean                     withArtwork;
+  private boolean withArtwork;
 
   public TvShowScrapeEpisodesAction(boolean withArtwork) {
     this.withArtwork = withArtwork;

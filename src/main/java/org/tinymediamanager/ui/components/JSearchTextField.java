@@ -37,7 +37,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
   private static final long           serialVersionUID = 5684796522381134018L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      textWhenNotFocused;
+  private String textWhenNotFocused;
 
   /**
    * Instantiates a new j search text field.

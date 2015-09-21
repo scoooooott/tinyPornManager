@@ -23,8 +23,8 @@ import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.MainWindow;
 
 public class MovieSetUIModule implements ITmmUIModule {
-  private final static String          ID       = "movieSets";
-  private static MovieSetUIModule      instance = null;
+  private final static String     ID       = "movieSets";
+  private static MovieSetUIModule instance = null;
 
   private final MovieSetSelectionModel selectionModel;
 

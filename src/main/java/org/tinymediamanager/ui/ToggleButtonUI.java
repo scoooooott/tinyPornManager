@@ -39,8 +39,7 @@ public class ToggleButtonUI extends BaseToggleButtonUI {
   /*
    * (non-Javadoc)
    * 
-   * @see com.jtattoo.plaf.BaseToggleButtonUI#paintBackground(java.awt.Graphics,
-   * javax.swing.AbstractButton)
+   * @see com.jtattoo.plaf.BaseToggleButtonUI#paintBackground(java.awt.Graphics, javax.swing.AbstractButton)
    */
   @Override
   protected void paintBackground(Graphics g, AbstractButton b) {
@@ -109,8 +108,7 @@ public class ToggleButtonUI extends BaseToggleButtonUI {
   /*
    * (non-Javadoc)
    * 
-   * @see com.jtattoo.plaf.BaseToggleButtonUI#paintFocus(java.awt.Graphics,
-   * javax.swing.AbstractButton, java.awt.Rectangle, java.awt.Rectangle,
+   * @see com.jtattoo.plaf.BaseToggleButtonUI#paintFocus(java.awt.Graphics, javax.swing.AbstractButton, java.awt.Rectangle, java.awt.Rectangle,
    * java.awt.Rectangle)
    */
   protected void paintFocus(Graphics g, AbstractButton b, Rectangle viewRect, Rectangle textRect, Rectangle iconRect) {

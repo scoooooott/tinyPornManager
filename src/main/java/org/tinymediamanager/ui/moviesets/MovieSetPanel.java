@@ -73,27 +73,29 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class MovieSetPanel extends JPanel {
-  private static final long           serialVersionUID     = -7095093579735941697L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -7095093579735941697L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  MovieSelectionModel                 movieSelectionModel;
-  MovieSetSelectionModel              movieSetSelectionModel;
-  private MovieList                   movieList            = MovieList.getInstance();
-  private MovieSetTreeModel           treeModel;
-  private int                         width                = 0;
+  MovieSelectionModel       movieSelectionModel;
+  MovieSetSelectionModel    movieSetSelectionModel;
+  private MovieList         movieList = MovieList.getInstance();
+  private MovieSetTreeModel treeModel;
+  private int               width     = 0;
 
   /**
    * UI elements
    */
-  private JSplitPane                  splitPaneHorizontal;
-  private JTree                       tree;
-  private JLabel                      lblMovieSetCount;
+  private JSplitPane splitPaneHorizontal;
+  private JTree      tree;
+  private JLabel     lblMovieSetCount;
 
-  private final Action                actionAddMovieSet    = new MovieSetAddAction(false);
-  private final Action                actionRemoveMovieSet = new MovieSetRemoveAction(false);
-  private final Action                actionSearchMovieSet = new MovieSetSearchAction(false);
-  private final Action                actionEditMovieSet   = new MovieSetEditAction(false);
+  private final Action actionAddMovieSet    = new MovieSetAddAction(false);
+  private final Action actionRemoveMovieSet = new MovieSetRemoveAction(false);
+  private final Action actionSearchMovieSet = new MovieSetSearchAction(false);
+  private final Action actionEditMovieSet   = new MovieSetEditAction(false);
 
   /**
    * Instantiates a new movie set panel.
@@ -104,9 +106,9 @@ public class MovieSetPanel extends JPanel {
     movieSelectionModel = new MovieSelectionModel();
     treeModel = new MovieSetTreeModel(movieList.getMovieSetList());
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
 
     splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);
@@ -114,9 +116,9 @@ public class MovieSetPanel extends JPanel {
 
     JPanel panelMovieSetList = new JPanel();
     splitPaneHorizontal.setLeftComponent(panelMovieSetList);
-    panelMovieSetList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:322px:grow"), }));
+    panelMovieSetList
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), }, new RowSpec[] {
+            FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:322px:grow"), }));
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
@@ -182,9 +184,9 @@ public class MovieSetPanel extends JPanel {
       }
     };
     scrollPane.setColumnHeaderView(panelHeader);
-    panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+    panelHeader.setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMovieSetColumn = new JLabel(BUNDLE.getString("tmm.movieset")); //$NON-NLS-1$
     lblMovieSetColumn.setHorizontalAlignment(JLabel.CENTER);

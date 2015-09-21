@@ -41,31 +41,31 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
 
   /** The Constant SELECTED_MOVIE. */
-  private static final String               SELECTED_MOVIE = "selectedMovie";
+  private static final String SELECTED_MOVIE = "selectedMovie";
 
   /** The selected movies. */
-  private List<Movie>                       selectedMovies;
+  private List<Movie> selectedMovies;
 
   /** The selected movie. */
-  private Movie                             selectedMovie;
+  private Movie selectedMovie;
 
   /** The initial movie. */
-  private Movie                             initialMovie   = new Movie();
+  private Movie initialMovie = new Movie();
 
   /** The selection model. */
   private DefaultEventSelectionModel<Movie> selectionModel;
 
   /** The matcher editor. */
-  private MovieMatcherEditor                matcherEditor;
+  private MovieMatcherEditor matcherEditor;
 
   /** The table comparator chooser. */
-  private TableComparatorChooser<Movie>     tableComparatorChooser;
+  private TableComparatorChooser<Movie> tableComparatorChooser;
 
   /** The sorted list. */
-  private SortedList<Movie>                 sortedList;
+  private SortedList<Movie> sortedList;
 
   /** The property change listener. */
-  private PropertyChangeListener            propertyChangeListener;
+  private PropertyChangeListener propertyChangeListener;
 
   /**
    * Instantiates a new movie selection model. Usage in MoviePanel

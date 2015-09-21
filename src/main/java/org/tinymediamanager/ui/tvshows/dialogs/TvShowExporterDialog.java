@@ -62,19 +62,21 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowExporterDialog extends TmmDialog {
   private static final long           serialVersionUID = -2197076428245222349L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
 
-  private List<TvShow>                tvShows;
-  private List<ExportTemplate>        templatesFound;
+  private List<TvShow>         tvShows;
+  private List<ExportTemplate> templatesFound;
 
-  private JTextField                  tfExportDir;
-  private JList                       list;
-  private JLabel                      lblTemplateName;
-  private JLabel                      lblUrl;
-  private JTextPane                   tpDescription;
-  private JCheckBox                   chckbxTemplateWithDetail;
+  private JTextField tfExportDir;
+  private JList      list;
+  private JLabel     lblTemplateName;
+  private JLabel     lblUrl;
+  private JTextPane  tpDescription;
+  private JCheckBox  chckbxTemplateWithDetail;
 
   /**
    * Create the dialog.
@@ -86,11 +88,11 @@ public class TvShowExporterDialog extends TmmDialog {
     super(BUNDLE.getString("tvshow.export"), "tvShowExporter"); //$NON-NLS-1$
     setBounds(5, 5, 600, 300);
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    getContentPane().setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setResizeWeight(0.7);
@@ -104,10 +106,12 @@ public class TvShowExporterDialog extends TmmDialog {
 
     JPanel panelExporterDetails = new JPanel();
     splitPane.setRightComponent(panelExporterDetails);
-    panelExporterDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelExporterDetails.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            RowSpec.decode("default:grow"), }));
 
     lblTemplateName = new JLabel("");
     panelExporterDetails.add(lblTemplateName, "2, 2, 3, 1");
@@ -204,8 +208,8 @@ public class TvShowExporterDialog extends TmmDialog {
     //
     BeanProperty<JList, String> jListBeanProperty = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty,
-        lblTemplateName, jLabelBeanProperty);
+    AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty, lblTemplateName,
+        jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_1 = BeanProperty.create("selectedElement.url");

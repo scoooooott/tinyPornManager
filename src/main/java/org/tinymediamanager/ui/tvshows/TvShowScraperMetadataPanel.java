@@ -40,23 +40,25 @@ import com.jgoodies.forms.layout.FormSpecs;
  */
 public class TvShowScraperMetadataPanel extends JPanel {
   private static final long           serialVersionUID = 2417066912659769559L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowScraperMetadataConfig config;
 
-  private JCheckBox                   chckbxTitle;
-  private JCheckBox                   chckbxPlot;
-  private JCheckBox                   chckbxRating;
-  private JCheckBox                   chckbxRuntime;
-  private JCheckBox                   chckbxYear;
-  private JCheckBox                   chckbxCertification;
-  private JCheckBox                   chckbxCast;
-  private JCheckBox                   chckbxGenres;
-  private JCheckBox                   chckbxArtwork;
-  private JCheckBox                   chckbxScrapeEpisodes;
-  private JCheckBox                   chckbxAired;
-  private JCheckBox                   chckbxStatus;
+  private JCheckBox chckbxTitle;
+  private JCheckBox chckbxPlot;
+  private JCheckBox chckbxRating;
+  private JCheckBox chckbxRuntime;
+  private JCheckBox chckbxYear;
+  private JCheckBox chckbxCertification;
+  private JCheckBox chckbxCast;
+  private JCheckBox chckbxGenres;
+  private JCheckBox chckbxArtwork;
+  private JCheckBox chckbxScrapeEpisodes;
+  private JCheckBox chckbxAired;
+  private JCheckBox chckbxStatus;
 
   /**
    * Instantiates a new tv show scraper metadata panel.
@@ -66,26 +68,13 @@ public class TvShowScraperMetadataPanel extends JPanel {
    */
   public TvShowScraperMetadataPanel(TvShowScraperMetadataConfig config) {
     this.config = config;
-    setLayout(new FormLayout(new ColumnSpec[] {
-        FormSpecs.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("left:default"),
-        ColumnSpec.decode("15dlu"),
-        ColumnSpec.decode("left:default"),
-        ColumnSpec.decode("15dlu"),
-        ColumnSpec.decode("left:default"),
-        ColumnSpec.decode("15dlu"),
-        ColumnSpec.decode("left:default"),
-        FormSpecs.RELATED_GAP_COLSPEC,},
-      new RowSpec[] {
-        FormSpecs.RELATED_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-        FormSpecs.DEFAULT_ROWSPEC,
-        FormSpecs.RELATED_GAP_ROWSPEC,}));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"),
+            ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"), ColumnSpec.decode("left:default"), ColumnSpec.decode("15dlu"),
+            ColumnSpec.decode("left:default"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");

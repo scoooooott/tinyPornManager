@@ -85,47 +85,48 @@ import java.util.ResourceBundle;
  * @author Manuel Laggner
  */
 public class MainWindow extends JFrame {
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                   //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
   private static final long           serialVersionUID = 1L;
 
-  public final static Image           LOGO             = Toolkit.getDefaultToolkit().getImage(
-                                                           MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
+  public final static Image LOGO = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
 
   /** The action about. */
-  private final Action                actionAbout      = new AboutAction();
+  private final Action actionAbout = new AboutAction();
 
   /** The action feedback. */
-  private final Action                actionFeedback   = new FeedbackAction();
+  private final Action actionFeedback = new FeedbackAction();
 
   /** The action bug report. */
-  private final Action                actionBugReport  = new BugReportAction();
+  private final Action actionBugReport = new BugReportAction();
 
   /** The action donate. */
-  private final Action                actionDonate     = new DonateAction();
+  private final Action actionDonate = new DonateAction();
 
   /** The instance. */
-  private static MainWindow           instance;
+  private static MainWindow instance;
 
   /** The panel movies. */
-  private JPanel                      panelMovies;
-  private JPanel                      panelMovieSets;
-  private JPanel                      panelTvShows;
+  private JPanel panelMovies;
+  private JPanel panelMovieSets;
+  private JPanel panelTvShows;
 
   /** The panel status bar. */
-  private JPanel                      panelStatusBar;
+  private JPanel panelStatusBar;
 
   /** The lbl loading img. */
-  private JLabel                      lblLoadingImg;
+  private JLabel lblLoadingImg;
 
   /** The status task. */
   // private StatusbarThread statusTask;
-  private List<String>                messagesList;
+  private List<String> messagesList;
 
-  private LightBoxPanel               lightBoxPanel;
+  private LightBoxPanel lightBoxPanel;
 
-  private JDialog                     settingsDialog;
+  private JDialog settingsDialog;
 
   /**
    * Create the application.
@@ -192,8 +193,8 @@ public class MainWindow extends JFrame {
         }
         catch (Exception ex) {
           LOGGER.error("open filemanager", ex);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-              ex.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });
@@ -354,19 +355,19 @@ public class MainWindow extends JFrame {
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(500px;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    getContentPane().setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(500px;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
     JLayeredPane content = new JLayeredPane();
-    content.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("right:270px"), }, new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
+    content.setLayout(
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:270px"), },
+            new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
     getContentPane().add(content, "1, 2, fill, fill");
 
     JPanel mainPanel = new JPanel();
-    mainPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec
-        .decode("fill:max(500px;default):grow") }));
+    mainPanel.setLayout(
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow") }));
     content.add(mainPanel, "1, 1, 3, 1, fill, fill");
     content.setLayer(mainPanel, 1);
 
@@ -412,7 +413,7 @@ public class MainWindow extends JFrame {
     }, AWTEvent.MOUSE_EVENT_MASK);
 
     // temp info for users using Java 6
-    if (SystemUtils.IS_JAVA_1_6){
+    if (SystemUtils.IS_JAVA_1_6) {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
@@ -431,7 +432,7 @@ public class MainWindow extends JFrame {
     // if there are some threads running, display exit confirmation
     if (TmmTaskManager.getInstance().poolRunning()) {
       confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); // $NON-NLS-1$
     }
     if (confirm == JOptionPane.YES_OPTION) {
       LOGGER.info("bye bye");

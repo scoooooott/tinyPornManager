@@ -53,7 +53,9 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class UpdateDialog extends TmmDialog {
   private static final long           serialVersionUID = 535315282932742179L;
-  /** @wbp.nls.resourceBundle messages */
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(UpdateDialog.class);
 
@@ -63,10 +65,10 @@ public class UpdateDialog extends TmmDialog {
     {
       JPanel panel = new JPanel();
       getContentPane().add(panel, BorderLayout.CENTER);
-      panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, }));
+      panel.setLayout(
+          new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC,
+                  FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JTextPane lblUpdateInfo = new JTextPane();
       lblUpdateInfo.setOpaque(false);
@@ -103,10 +105,11 @@ public class UpdateDialog extends TmmDialog {
     {
       JPanel panel = new JPanel();
       getContentPane().add(panel, BorderLayout.SOUTH);
-      panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+      panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+              FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JPanel buttonPanel = new JPanel();
       EqualsLayout layout = new EqualsLayout(5);
@@ -142,8 +145,8 @@ public class UpdateDialog extends TmmDialog {
   @Override
   public Dimension getPreferredSize() {
     Dimension superPref = super.getPreferredSize();
-    return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700), (int) (500 > superPref.getHeight() ? superPref.getHeight()
-        : 500));
+    return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700),
+        (int) (500 > superPref.getHeight() ? superPref.getHeight() : 500));
   }
 
   private String prepareTextAsHtml(String originalText) {

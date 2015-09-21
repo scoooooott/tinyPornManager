@@ -65,38 +65,40 @@ import com.jtattoo.plaf.AbstractLookAndFeel;
  */
 public class TvShowExtendedSearchPanel extends RoundedPanel {
   private static final long            serialVersionUID = 5003714573168481816L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$
   private static final float           FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
   private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
-  private TvShowTreeModel              tvShowTreeModel;
-  private JTree                        tree;
-  private TvShowList                   tvShowList       = TvShowList.getInstance();
+  private TvShowTreeModel tvShowTreeModel;
+  private JTree           tree;
+  private TvShowList      tvShowList = TvShowList.getInstance();
 
   /** UI components */
-  private JCheckBox                    cbFilterDatasource;
-  private JComboBox                    cbDatasource;
-  private JCheckBox                    cbFilterCast;
-  private JTextField                   tfCastMember;
-  private JCheckBox                    cbFilterMissingMetadata;
-  private JCheckBox                    cbFilterMissingArtwork;
-  private JCheckBox                    cbFilterMissingSubtitles;
-  private JCheckBox                    cbFilterNewEpisodes;
-  private JCheckBox                    cbFilterWatched;
-  private JComboBox                    cbWatched;
-  private JCheckBox                    cbFilterGenres;
-  private JComboBox                    cbGenres;
-  private JCheckBox                    cbFilterTag;
-  private JComboBox                    cbTag;
-  private JCheckBox                    cbFilterVideoCodec;
-  private JComboBox                    cbVideoCodec;
-  private JCheckBox                    cbFilterAudioCodec;
-  private JComboBox                    cbAudioCodec;
-  private JCheckBox                    cbFilterVideoFormat;
-  private JComboBox                    cbVideoFormat;
+  private JCheckBox  cbFilterDatasource;
+  private JComboBox  cbDatasource;
+  private JCheckBox  cbFilterCast;
+  private JTextField tfCastMember;
+  private JCheckBox  cbFilterMissingMetadata;
+  private JCheckBox  cbFilterMissingArtwork;
+  private JCheckBox  cbFilterMissingSubtitles;
+  private JCheckBox  cbFilterNewEpisodes;
+  private JCheckBox  cbFilterWatched;
+  private JComboBox  cbWatched;
+  private JCheckBox  cbFilterGenres;
+  private JComboBox  cbGenres;
+  private JCheckBox  cbFilterTag;
+  private JComboBox  cbTag;
+  private JCheckBox  cbFilterVideoCodec;
+  private JComboBox  cbVideoCodec;
+  private JCheckBox  cbFilterAudioCodec;
+  private JComboBox  cbAudioCodec;
+  private JCheckBox  cbFilterVideoFormat;
+  private JComboBox  cbVideoFormat;
 
-  private final Action                 actionFilter     = new FilterAction();
+  private final Action actionFilter = new FilterAction();
 
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
@@ -111,8 +113,10 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     addMouseListener(new MouseAdapter() {
     });
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormFactory.UNRELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
