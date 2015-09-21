@@ -4,12 +4,12 @@ IMPORTANT: with the update to version 2.7 the internal database will be deleted 
            internal changes. You only need to re-import (update data sources) your movies
            and TV shows
 
-With the update to 2.7 there massive changes under the hood of tinyMediaManager:
-- moved source code management to github and changed build to maven
-- changed the internal database engine from objectdb to H2-MVStore + JSON
+With the update to 2.7 there are massive changes under the hood of tinyMediaManager:
+- moved source code management to GitHub and changed the build system to maven
+- changed the internal database engine from ObjectDB to H2-MVStore + JSON
   this change makes tinyMediaManager more robust and faster
 - introduced a new infrastructure for scrapers which makes developing new 
-  scrapers less complex
+  scrapers less complex and opens the scraper interface to other developers
 
 + rewrote all scrapers from scratch (including optimizations and bug fixes)
 + added a very special scraper for all that who have Kodi installed ;) (donator only)
@@ -17,7 +17,7 @@ With the update to 2.7 there massive changes under the hood of tinyMediaManager:
 + added automatic trailer download at scrape (dropped donator only status for trailer download)
 + added "date added" to the columns of the movie list
 + enhanced UI language to enable country specific translations (e.g. pt_BR)
-+ changed trakt.tv login mode to PIN auth
++ changed trakt.tv login mode to PIN auth (you may re-check your settings)
 + added media info editor (some fields from media info are now maintain able)
 + added title sortable to TV shows section
 + added displayepisode and displayseason for TV shows
@@ -27,10 +27,10 @@ x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
 x several fixes in the movie renamer               
 x reworked internal representation of artwork file names/url
-  (performace boost for movie sets) 
+  (high performance boost for movie sets) 
 x reworked movie name detection  
-x enhanced detection of extras (like samples, trailers, ..)
-x updated all templates to our actual data model
+x enhanced detection of extras (samples, trailers, ..)
+x updated all templates to our actual data model and JMTE 3.2
 x fixed special character handling of sort titles
 x fixed real offline startup
 x fixed cleanup on artwork scraping
