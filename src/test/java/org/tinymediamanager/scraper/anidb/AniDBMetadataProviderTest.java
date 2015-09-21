@@ -60,7 +60,7 @@ public class AniDBMetadataProviderTest {
     ITvShowMetadataProvider mp = new AniDBMetadataProvider();
 
     MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW);
-    options.set(SearchParam.TITLE, "Spider Riders");
+    options.set(SearchParam.QUERY, "Spider Riders");
     try {
       List<MediaSearchResult> results = mp.search(options);
 
@@ -68,7 +68,7 @@ public class AniDBMetadataProviderTest {
         System.out.println(result.getTitle() + " " + result.getId() + " " + result.getScore());
       }
 
-      options.set(SearchParam.TITLE, "Spice and Wolf");
+      options.set(SearchParam.QUERY, "Spice and Wolf");
       results = mp.search(options);
     }
     catch (Exception e) {
