@@ -83,10 +83,6 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     List<MediaSearchResult> l = new ArrayList<MediaSearchResult>();
     String arg = options.get(MediaSearchOptions.SearchParam.QUERY);
 
-    if (StringUtils.isBlank(arg)) {
-      arg = options.get(MediaSearchOptions.SearchParam.TITLE);
-    }
-
     // cannot search without any title/query
     if (StringUtils.isBlank(arg)) {
       return l;
