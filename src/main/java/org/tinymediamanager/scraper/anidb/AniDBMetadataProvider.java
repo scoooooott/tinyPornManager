@@ -448,10 +448,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
-      searchString = options.get(MediaSearchOptions.SearchParam.TITLE);
-    }
-
     // return an empty search result if no query provided
     if (StringUtils.isEmpty(searchString)) {
       return results;
