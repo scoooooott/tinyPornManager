@@ -216,27 +216,22 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-tmdb</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-tvdb</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-imdb</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-anidb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-fanarttv</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-hdtrailers</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-imdb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
 								<artifactItem>
@@ -254,9 +249,34 @@
 									<artifactId>scraper-ofdb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
+								<!--artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-opensubtitles</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem-->
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-rottentomatoes</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<!--artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-thesubdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem-->
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-tmdb</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem>
+								<!-- artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-trakt</artifactId>
+									<version>1.0-SNAPSHOT</version>
+								</artifactItem-->
+								<artifactItem>
+									<groupId>org.tinymediamanager</groupId>
+									<artifactId>scraper-tvdb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
 								<artifactItem>
