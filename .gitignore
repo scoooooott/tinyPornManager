@@ -16,3 +16,8 @@ pom.xml.*
 
 #Eclipse
 .classpath
+
+#TMM
+/cache/
+/data/
+/ignore/
