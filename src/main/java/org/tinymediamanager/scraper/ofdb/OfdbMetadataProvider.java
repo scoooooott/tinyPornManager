@@ -543,28 +543,6 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
     }
 
-    // 3. search for title
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE)) && (filme == null || filme.isEmpty())) {
-      try {
-        String title = options.get(MediaSearchOptions.SearchParam.TITLE);
-        searchQuery = title;
-        title = MetadataUtil.removeNonSearchCharacters(title);
-        searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
-        LOGGER.debug("search with title: " + title);
-
-        Url url = new Url(searchString);
-        InputStream in = url.getInputStream();
-        Document doc = Jsoup.parse(in, "UTF-8", "");
-        in.close();
-        // only look for movie links
-        filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-        LOGGER.debug("found " + filme.size() + " search results");
-      }
-      catch (Exception e) {
-        LOGGER.error("failed to search for " + searchQuery + ": " + e.getMessage());
-      }
-    }
-
     if (filme == null || filme.isEmpty()) {
       LOGGER.debug("nothing found :(");
       return resultList;
