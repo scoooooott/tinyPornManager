@@ -58,6 +58,10 @@ public final class ConfigHelper {
     Properties properties = new Properties();
     InputStream input = null;
     try {
+      File data = new File(CONFIG_FOLDER);
+      if (!data.exists()) {
+        data.mkdir();
+      }
       input = new FileInputStream(new File(CONFIG_FOLDER, filename));
       properties.load(input);
     }
@@ -149,6 +153,10 @@ public final class ConfigHelper {
 
     OutputStream output = null;
     try {
+      File data = new File(CONFIG_FOLDER);
+      if (!data.exists()) {
+        data.mkdir();
+      }
       output = new FileOutputStream(new File(CONFIG_FOLDER, filename));
       properties.store(output, null);
       // properties.store(output, null);
