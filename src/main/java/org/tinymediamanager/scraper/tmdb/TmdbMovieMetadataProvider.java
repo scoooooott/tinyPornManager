@@ -89,10 +89,6 @@ class TmdbMovieMetadataProvider {
       searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.TITLE))) {
-      searchString = query.get(MediaSearchOptions.SearchParam.TITLE);
-    }
-
     if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
       try {
         year = Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
