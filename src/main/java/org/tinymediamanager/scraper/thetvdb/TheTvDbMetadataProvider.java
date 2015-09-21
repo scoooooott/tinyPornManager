@@ -131,10 +131,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       searchString = options.get(SearchParam.QUERY);
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(SearchParam.TITLE))) {
-      searchString = options.get(SearchParam.TITLE);
-    }
-
     // return an empty search result if no query provided
     if (StringUtils.isEmpty(searchString)) {
       return results;

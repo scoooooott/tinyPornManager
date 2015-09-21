@@ -55,7 +55,7 @@ public class TheTvDbMetadataProviderTest {
       mp = new TheTvDbMetadataProvider();
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW);
 
-      options.set(SearchParam.TITLE, title);
+      options.set(SearchParam.QUERY, title);
       options.set(SearchParam.LANGUAGE, language);
 
       List<MediaSearchResult> results = mp.search(options);
