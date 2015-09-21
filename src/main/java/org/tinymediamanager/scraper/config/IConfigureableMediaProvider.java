@@ -20,8 +20,7 @@ import java.util.Map;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 /**
- * This interface extends the main media provider interface with loading and
- * setting a configuration
+ * This interface extends the main media provider interface with loading and setting a configuration
  *
  * @author Manuel Laggner
  * @since 1.0

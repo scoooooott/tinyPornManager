@@ -18,8 +18,7 @@ package org.tinymediamanager.scraper.http;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This class is holding the proxy settings. After changing the proxy settings,
- * a new HTTP-Client is being created automatically
+ * This class is holding the proxy settings. After changing the proxy settings, a new HTTP-Client is being created automatically
  * 
  * @author Manuel Laggner
  * @since 1.0

@@ -30,8 +30,7 @@ import com.squareup.okhttp.Response;
 import org.tinymediamanager.scraper.util.Pair;
 
 /**
- * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files
- * which can't the streamed via a ByteArrayInputStream).
+ * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).
  * 
  * @author Manuel Laggner
  */
@@ -43,8 +42,7 @@ public class StreamingUrl extends Url {
   }
 
   /**
-   * get the InputStream of the content. Be aware: using this class needs you to
-   * close the connection per hand calling the method closeConnection()
+   * get the InputStream of the content. Be aware: using this class needs you to close the connection per hand calling the method closeConnection()
    * 
    * @return the InputStream of the content
    */

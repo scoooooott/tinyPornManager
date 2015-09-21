@@ -22,8 +22,8 @@ package org.tinymediamanager.scraper.util;
  * @since 1.0
  */
 public class ApiKey {
-  private static final String  SALT     = "3FF2EC019C627B9652257EBAD71812269851E84295370EB132882F88C0A59A76";
-  private static final String  IV       = "E17D2C9927726ACEFE7510B1BDD3D439";
+  private static final String SALT = "3FF2EC019C627B9652257EBAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String IV   = "E17D2C9927726ACEFE7510B1BDD3D439";
 
   private static final AesUtil AES_UTIL = new AesUtil(128, 100);
 

@@ -39,9 +39,8 @@ public class UrlUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(UrlUtil.class);
 
   /**
-   * Casts url string to URI, and does the correct encoding (rfc2396) of query
-   * string ONLY (eg "|" character). URLEncoder encodes everything which might
-   * break commons.http
+   * Casts url string to URI, and does the correct encoding (rfc2396) of query string ONLY (eg "|" character). URLEncoder encodes everything which
+   * might break commons.http
    * 
    * @param url
    *          the url as string
@@ -109,8 +108,7 @@ public class UrlUtil {
   }
 
   /**
-   * Returns the the entire Url Path except the filename, like doing a basedir
-   * on a filename.
+   * Returns the the entire Url Path except the filename, like doing a basedir on a filename.
    * 
    * @param url
    *          the url
@@ -182,8 +180,7 @@ public class UrlUtil {
   }
 
   /**
-   * get the correct name/extension/filename of url (even with parameters! -
-   * commons-io CANNOT)
+   * get the correct name/extension/filename of url (even with parameters! - commons-io CANNOT)
    * 
    * @param url
    *          the url
@@ -267,8 +264,7 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE;
-   * rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
    * but with correct OS and language values
    */
   public static String generateUA() {
@@ -278,8 +274,7 @@ public class UrlUtil {
   /**
    * generates a valid user-agent <br>
    * something like:<br>
-   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE;
-   * rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
    * but with correct OS and language values
    * 
    * @param language

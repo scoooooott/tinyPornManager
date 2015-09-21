@@ -21,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * String Similarity taken from:
- * http://www.catalysoft.com/articles/StrikeAMatch.html
+ * String Similarity taken from: http://www.catalysoft.com/articles/StrikeAMatch.html
  * 
  * @author seans
  * 

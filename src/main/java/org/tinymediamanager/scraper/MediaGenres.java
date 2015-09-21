@@ -29,8 +29,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * The class/dynaenum MediaGenres. This class stores all default known genres
- * along with some different parsing informations
+ * The class/dynaenum MediaGenres. This class stores all default known genres along with some different parsing informations
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -111,8 +110,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   }
 
   /**
-   * Iterates over all found languages and gets the "alternative name" of
-   * specified property
+   * Iterates over all found languages and gets the "alternative name" of specified property
    * 
    * @param propName
    *          the property
@@ -138,8 +136,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   }
 
   /**
-   * get all available Languages. Here we use reflection to get rid of the
-   * dependency to the tmm core. If org.tinymediamanager.core.Utils is not in
+   * get all available Languages. Here we use reflection to get rid of the dependency to the tmm core. If org.tinymediamanager.core.Utils is not in
    * our classpath, we only use en as available language
    * 
    * @return all available languages

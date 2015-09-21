@@ -320,7 +320,7 @@ public class StrgUtils {
     for (String prfx : COMMON_TITLE_PREFIXES) {
       String delim = " "; // one spaces as delim
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no
-                                       // space between prefix and title
+                                      // space between prefix and title
         delim = "";
       }
       title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");

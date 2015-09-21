@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 /**
  * With this annotation you can declare public fields of scraper config classes to be persisted/stored
  * 
- * there are two parameters which can be used to encrypt the setting (e.g. for storing passwords) - <b>encrypt</b>
- * toggle encryption - <b>encryptionKey</b> set a specific encryption key
+ * there are two parameters which can be used to encrypt the setting (e.g. for storing passwords) - <b>encrypt</b> toggle encryption -
+ * <b>encryptionKey</b> set a specific encryption key
  * 
  * @author Manuel Laggner
  * @since 1.0

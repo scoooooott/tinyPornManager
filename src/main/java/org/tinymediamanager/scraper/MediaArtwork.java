@@ -264,8 +264,7 @@ public class MediaArtwork {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -277,8 +276,7 @@ public class MediaArtwork {
   }
 
   /**
-   * This class represents a combination of image size and the correspondin url
-   * for an artwork
+   * This class represents a combination of image size and the correspondin url for an artwork
    * 
    * @author Manuel Laggner
    * @since 1.0
@@ -325,8 +323,7 @@ public class MediaArtwork {
     }
 
     /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others;
-     * then: score
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
     public int compare(MediaArtwork arg0, MediaArtwork arg1) {

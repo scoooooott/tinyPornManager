@@ -16,8 +16,7 @@
 package org.tinymediamanager.scraper.mediaprovider;
 
 /**
- * The Interface IMovieArtworkProvider. All movie artwork providers must
- * implement this interface
+ * The Interface IMovieArtworkProvider. All movie artwork providers must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0

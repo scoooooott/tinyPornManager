@@ -137,8 +137,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Stores a metadata in the internal map. Do not store IDs here. Use the ID
-   * map
+   * Stores a metadata in the internal map. Do not store IDs here. Use the ID map
    * 
    * @param key
    *          the key
@@ -174,8 +173,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Integer value for a given key. Integer are passed right thru,
-   * whilst other type are casted to an Integer
+   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer
    * 
    * @param key
    *          the key
@@ -186,9 +184,8 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Integer value for a given key. Integer are passed right thru,
-   * whilst other type are casted to an Integer. If any error occur, the default
-   * value will be returned
+   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer. If any error occur, the
+   * default value will be returned
    * 
    * @param key
    *          the key
@@ -215,8 +212,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Float value for a given key. Float are passed right thru, whilst
-   * other type are casted to an Float
+   * Gets the Float value for a given key. Float are passed right thru, whilst other type are casted to an Float
    * 
    * @param key
    *          the key
@@ -241,8 +237,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Double value for a given key. Double are passed right thru, whilst
-   * other type are casted to an Double
+   * Gets the Double value for a given key. Double are passed right thru, whilst other type are casted to an Double
    * 
    * @param key
    *          the key
@@ -267,8 +262,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the Date value for a given key. Date are passed right thru, whilst
-   * trying to parse String to Date object. Other types are returned with an
+   * Gets the Date value for a given key. Date are passed right thru, whilst trying to parse String to Date object. Other types are returned with an
    * initial value
    * 
    * @param key
@@ -478,8 +472,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Adds the trailer. To use only when scraping the metadata also provides the
-   * trailers
+   * Adds the trailer. To use only when scraping the metadata also provides the trailers
    * 
    * @param trailer
    *          the trailer
@@ -535,8 +528,7 @@ public class MediaMetadata {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

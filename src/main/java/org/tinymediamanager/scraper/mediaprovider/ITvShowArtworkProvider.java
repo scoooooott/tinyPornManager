@@ -16,8 +16,7 @@
 package org.tinymediamanager.scraper.mediaprovider;
 
 /**
- * The Interface ITvShowArtworkProvider. All TV show artwork providers must
- * implement this interface
+ * The Interface ITvShowArtworkProvider. All TV show artwork providers must implement this interface
  * 
  * @author Manuel Laggner
  * @since 1.0

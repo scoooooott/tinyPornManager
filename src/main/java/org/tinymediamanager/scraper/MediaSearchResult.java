@@ -28,17 +28,17 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @since 1.0
  */
 public class MediaSearchResult implements Comparable<MediaSearchResult> {
-  private String              providerId;
-  private String              url;
-  private String              title;
-  private String              year;
-  private String              originalTitle;
-  private String              id;
-  private float               score;
-  private String              imdbId;
-  private MediaMetadata       metadata  = null;
-  private MediaType           type;
-  private String              posterUrl;
+  private String        providerId;
+  private String        url;
+  private String        title;
+  private String        year;
+  private String        originalTitle;
+  private String        id;
+  private float         score;
+  private String        imdbId;
+  private MediaMetadata metadata = null;
+  private MediaType     type;
+  private String        posterUrl;
 
   public MediaSearchResult(String providerId) {
     this.providerId = providerId;

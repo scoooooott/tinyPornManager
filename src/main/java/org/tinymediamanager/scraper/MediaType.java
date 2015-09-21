@@ -16,8 +16,7 @@
 package org.tinymediamanager.scraper;
 
 /**
- * The enum MediaType. This enum represents all type of media tinyMediaManager
- * understands
+ * The enum MediaType. This enum represents all type of media tinyMediaManager understands
  * 
  * @author Manuel Laggner
  * @since 1.0

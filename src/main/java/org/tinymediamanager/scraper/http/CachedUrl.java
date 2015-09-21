@@ -34,8 +34,7 @@ import org.tinymediamanager.scraper.util.Pair;
 import com.squareup.okhttp.Headers;
 
 /**
- * The class CachedUrl is used to cache some sort of Urls (e.g. when they are
- * accessed several times in a short period)
+ * The class CachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)
  */
 public class CachedUrl extends Url {
   private final static CacheMap<String, CachedRequest> CACHE = new CacheMap<String, CachedRequest>(60, 5);

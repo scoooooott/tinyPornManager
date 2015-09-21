@@ -22,8 +22,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * The class ProviderInfo is used to store provider related information for
- * further usage.
+ * The class ProviderInfo is used to store provider related information for further usage.
  * 
  * @author Manuel Laggner
  * @since 1.0
@@ -154,8 +153,7 @@ public class MediaProviderInfo {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

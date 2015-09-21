@@ -42,9 +42,8 @@ import org.tinymediamanager.scraper.util.Pair;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
- * The Class Url. Used to make simple, blocking URL requests. The request is
- * temporarily streamed into a ByteArrayInputStream, before the InputStream is
- * passed to the caller.
+ * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
+ * is passed to the caller.
  * 
  * @author Manuel Laggner / Myron Boyle
  */
@@ -325,9 +324,8 @@ public class Url {
   }
 
   /**
-   * the number of bytes of the content, or a negative number if unknown. If the
-   * content length is known but exceeds Long.MAX_VALUE, a negative number is
-   * returned.
+   * the number of bytes of the content, or a negative number if unknown. If the content length is known but exceeds Long.MAX_VALUE, a negative number
+   * is returned.
    * 
    * @return the content length
    */

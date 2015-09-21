@@ -981,7 +981,7 @@ public enum CountryCode {
 
   ;
 
-  private static final Map<String, CountryCode>  alpha3Map  = new HashMap<String, CountryCode>();
+  private static final Map<String, CountryCode> alpha3Map = new HashMap<String, CountryCode>();
   private static final Map<Integer, CountryCode> numericMap = new HashMap<Integer, CountryCode>();
 
   static {
@@ -991,9 +991,9 @@ public enum CountryCode {
     }
   }
 
-  private final String                           name;
-  private final String                           alpha3;
-  private final int                              numeric;
+  private final String name;
+  private final String alpha3;
+  private final int numeric;
 
   private CountryCode(String name, String alpha3, int numeric) {
     this.name = name;
@@ -1038,12 +1038,12 @@ public enum CountryCode {
   }
 
   /**
-   * Get a CountryCode that corresponds to a given ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">alpha-2</a> or <a
-   * href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">alpha-3</a> code.
+   * Get a CountryCode that corresponds to a given ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">alpha-2</a> or
+   * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">alpha-3</a> code.
    * 
    * @param code
-   *          An ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" >alpha-2</a> or <a
-   *          href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3" >alpha-3</a> code.
+   *          An ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" >alpha-2</a> or
+   *          <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3" >alpha-3</a> code.
    * 
    * @return A CountryCode instance, or null if not found.
    */
