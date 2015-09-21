@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -51,6 +50,11 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -59,21 +63,18 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 /**
  * The Class MovieTrailerPanel.
  * 
  * @author Manuel Laggner
  */
 public class MovieTrailerPanel extends JPanel {
-  private static final long                    serialVersionUID  = 2506465845096043845L;
-  /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle          BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger                  LOGGER            = LoggerFactory.getLogger(MovieTrailerPanel.class);
+  private static final long           serialVersionUID = 2506465845096043845L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieTrailerPanel.class);
 
   private MovieSelectionModel                  movieSelectionModel;
   private JTable                               table;
@@ -88,11 +89,11 @@ public class MovieTrailerPanel extends JPanel {
    */
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieTrailer>(new BasicEventList<MovieTrailer>(), GlazedLists
-        .beanConnector(MovieTrailer.class)));
+    trailerEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<MovieTrailer>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class)));
     trailerTableModel = new DefaultEventTableModel<MovieTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -173,12 +174,7 @@ public class MovieTrailerPanel extends JPanel {
       switch (column) {
         case 0:
           if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
-            if (Globals.isDonator()) {
-              return IconManager.DOWNLOAD;
-            }
-            else {
-              return IconManager.DOWNLOAD_DISABLED;
-            }
+            return IconManager.DOWNLOAD;
           }
           return null;
 
@@ -250,14 +246,9 @@ public class MovieTrailerPanel extends JPanel {
         MovieTrailer trailer = trailerEventList.get(row);
 
         if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
-          if (Globals.isDonator()) {
-            Movie movie = movieSelectionModel.getSelectedMovie();
-            MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
-            TmmTaskManager.getInstance().addDownloadTask(task);
-          }
-          else {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.donatorfunction.hint"));
-          }
+          Movie movie = movieSelectionModel.getSelectedMovie();
+          MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+          TmmTaskManager.getInstance().addDownloadTask(task);
         }
       }
 
@@ -272,8 +263,8 @@ public class MovieTrailerPanel extends JPanel {
         }
         catch (Exception ex) {
           LOGGER.error(ex.getMessage());
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              ex.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     }
