@@ -30,7 +30,6 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   private String url      = "";
   private String quality  = "";
   private String provider = "";
-  private String size     = "";
   private String date     = "";
 
   public String getName() {

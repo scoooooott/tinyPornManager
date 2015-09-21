@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class MediaSearchOptions {
   public enum SearchParam {
-    QUERY, TITLE, YEAR, IMDBID, TMDBID, SEASON, EPISODE, LANGUAGE, COUNTRY, COLLECTION_INFO, IMDB_FOREIGN_LANGUAGE, FILE
+    QUERY, YEAR, IMDBID, TMDBID, SEASON, EPISODE, LANGUAGE, COUNTRY, COLLECTION_INFO, IMDB_FOREIGN_LANGUAGE, FILE
   }
 
   private Map<SearchParam, String> options = new HashMap<SearchParam, String>();
@@ -36,8 +36,8 @@ public class MediaSearchOptions {
     this.type = type;
   }
 
-  public MediaSearchOptions(MediaType type, String title) {
-    this(type, SearchParam.TITLE, title);
+  public MediaSearchOptions(MediaType type, String query) {
+    this(type, SearchParam.QUERY, query);
   }
 
   public MediaSearchOptions(MediaType type, SearchParam field, String value) {
