@@ -14,12 +14,23 @@ With the update to 2.7 there massive changes under the hood of tinyMediaManager:
 + rewrote all scrapers from scratch (including optimizations and bug fixes)
 + added a very special scraper for all that who have Kodi installed ;) (donator only)
 + assign movie sets feature is now free for all (dropped donator only status)
++ added automatic trailer download at scrape (dropped donator only status for trailer download)
 + added "date added" to the columns of the movie list
 + enhanced UI language to enable country specific translations (e.g. pt_BR)
++ changed trakt.tv login mode to PIN auth
++ added media info editor (some fields from media info are now maintain able)
++ added title sortable to TV shows section
++ added displayepisode and displayseason for TV shows
++ added option to persist UI filter settings
 x changed NFO rewriting behavior to be less aggressive
 x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
 x several fixes in the movie renamer               
-x reworked internal representation of artwork file names/url 
-x reworked movie name detection
+x reworked internal representation of artwork file names/url
   (performace boost for movie sets) 
+x reworked movie name detection  
+x enhanced detection of extras (like samples, trailers, ..)
+x updated all templates to our actual data model
+x fixed special character handling of sort titles
+x fixed real offline startup
+x fixed cleanup on artwork scraping
