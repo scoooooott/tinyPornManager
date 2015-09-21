@@ -107,10 +107,6 @@ public abstract class ImdbParser {
     }
 
     if (StringUtils.isEmpty(searchTerm)) {
-      searchTerm = query.get(MediaSearchOptions.SearchParam.TITLE);
-    }
-
-    if (StringUtils.isEmpty(searchTerm)) {
       return result;
     }
 
