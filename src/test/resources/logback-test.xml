@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger{40}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.tinymediamanager" level="TRACE" />
+    <logger name="org.tinymediamanager.scraper.http.CachedUrl" level="WARN" />
+    <logger name="sun.net.www.protocol.http.HttpURLConnection" level="TRACE" />
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>

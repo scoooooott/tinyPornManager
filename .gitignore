@@ -1,5 +1,4 @@
 *.class
-/cache/
 
 # Package Files #
 *.jar
@@ -17,3 +16,8 @@ pom.xml.*
 
 #Eclipse
 .classpath
+
+#TMM
+/cache/
+/data/
+/ignore/
