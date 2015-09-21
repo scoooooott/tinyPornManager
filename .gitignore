@@ -1,0 +1,18 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+#Maven
+target
+release.properties
+pom.xml.*
+
+#IntelliJ IDEA
+.idea/
+*.iml
+
+#Eclipse
+.classpath
