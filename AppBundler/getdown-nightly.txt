@@ -40,7 +40,6 @@ resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
 resource = changelog.txt
-resource = [!windows] env.txt                       #still distribute an empty env.txt for a while to clean all old installations
 
 # translations
 %LOCALES%
