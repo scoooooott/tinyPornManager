@@ -48,7 +48,6 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -56,6 +55,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -497,7 +497,7 @@ public class MovieList extends AbstractModelObject {
           options.set(SearchParam.TMDBID, String.valueOf(movie.getTmdbId()));
           idFound = true;
         }
-        options.set(SearchParam.TITLE, movie.getTitle());
+        options.set(SearchParam.QUERY, movie.getTitle());
         if (!movie.getYear().isEmpty()) {
           options.set(SearchParam.YEAR, movie.getYear());
         }

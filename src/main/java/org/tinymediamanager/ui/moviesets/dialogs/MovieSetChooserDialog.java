@@ -57,13 +57,13 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -309,7 +309,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET);
-          options.set(SearchParam.TITLE, searchTerm);
+          options.set(SearchParam.QUERY, searchTerm);
           options.set(SearchParam.LANGUAGE, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name());
           List<MediaSearchResult> movieSets = mp.search(options);
           movieSetsFound.clear();
