@@ -21,8 +21,7 @@ import org.tinymediamanager.scraper.config.ConfigHelper;
 import org.tinymediamanager.scraper.config.ScraperSetting;
 
 /**
- * The class ImdbMetadataProviderConfig used to store/persist and serve settings
- * for the ImdbMetadataProvider
+ * The class ImdbMetadataProviderConfig used to store/persist and serve settings for the ImdbMetadataProvider
  *
  * @author Manuel Laggner
  * @since 1.0
@@ -35,11 +34,11 @@ class ImdbMetadataProviderConfig {
 
   @ScraperSetting
   public Boolean scrapeCollectionInfo = false;
-  
+
   @ScraperSetting
   public Boolean filterUnwantedCategories = true;
 
-  private static ImdbMetadataProviderConfig loadSettings() {
+  static ImdbMetadataProviderConfig loadSettings() {
     ImdbMetadataProviderConfig config = new ImdbMetadataProviderConfig();
 
     // load the config via reflection

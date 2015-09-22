@@ -16,9 +16,8 @@ public class ImdbMetadataProviderConfigTest {
     config.scrapeCollectionInfo = false;
     config.useTmdb = false;
 
-    config = ImdbMetadataProviderConfig.SETTINGS;
+    config = ImdbMetadataProviderConfig.loadSettings();
     Assert.assertTrue(config.useTmdb);
     Assert.assertTrue(config.scrapeCollectionInfo);
   }
-
 }
