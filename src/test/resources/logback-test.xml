@@ -7,9 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.tinymediamanager" level="TRACE" />
-    <logger name="org.tinymediamanager.scraper.http.CachedUrl" level="WARN" />
-    <logger name="sun.net.www.protocol.http.HttpURLConnection" level="TRACE" />
+    <logger name="org.tinymediamanager" level="DEBUG" />
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
