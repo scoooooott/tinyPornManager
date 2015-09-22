@@ -7,11 +7,9 @@
         </encoder>
     </appender>
 
-    <logger name="com.moviejukebox.themoviedb" level="ERROR" />
-    <logger name="org.tinymediamanager" level="TRACE" />
-    <logger name="org.tinymediamanager.scraper.http.CachedUrl" level="WARN" />
+    <logger name="org.tinymediamanager" level="DEBUG" />
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
     </root>
 
