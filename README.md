@@ -7,7 +7,7 @@ tinyMediaManager is free and will stay free. If you appreciate all the effort th
 [![Donate][1]][2]
 
 [1]: https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
-[2]: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=manuel.laggner@gmail.com&lc=GB&item_name=tinyMediaManager&currency_code=EUR&bn=PP-DonationsBF:btn_donate_LG.gif:NonHosted
+[2]: http://www.tinymediamanager.org/donate.php
 
 ##Version 2##
 Version 2.6.8 has been released on 08. June 2015.
