@@ -6,12 +6,18 @@
 	<parent>
 		<groupId>org.tinymediamanager</groupId>
 		<artifactId>tmm-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<artifactId>tinyMediaManager</artifactId>
 	<version>2.7-SNAPSHOT</version>
 	<name>tinyMediaManager</name>
+
+	<scm>
+		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
+		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+	</scm>
 
 	<properties>
 		<transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
@@ -249,31 +255,22 @@
 									<artifactId>scraper-ofdb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
-								<!--artifactItem>
-									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-opensubtitles</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem-->
+								<!--artifactItem> <groupId>org.tinymediamanager</groupId> <artifactId>scraper-opensubtitles</artifactId> 
+									<version>1.0-SNAPSHOT</version> </artifactItem -->
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-rottentomatoes</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
-								<!--artifactItem>
-									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-thesubdb</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem-->
+								<!--artifactItem> <groupId>org.tinymediamanager</groupId> <artifactId>scraper-thesubdb</artifactId> 
+									<version>1.0-SNAPSHOT</version> </artifactItem -->
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-tmdb</artifactId>
 									<version>1.0-SNAPSHOT</version>
 								</artifactItem>
-								<!-- artifactItem>
-									<groupId>org.tinymediamanager</groupId>
-									<artifactId>scraper-trakt</artifactId>
-									<version>1.0-SNAPSHOT</version>
-								</artifactItem-->
+								<!-- artifactItem> <groupId>org.tinymediamanager</groupId> <artifactId>scraper-trakt</artifactId> 
+									<version>1.0-SNAPSHOT</version> </artifactItem -->
 								<artifactItem>
 									<groupId>org.tinymediamanager</groupId>
 									<artifactId>scraper-tvdb</artifactId>
