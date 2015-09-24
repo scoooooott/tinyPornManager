@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>tmm-parent</artifactId>
-    <groupId>org.tinymediamanager</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<artifactId>tmm-parent</artifactId>
+		<groupId>org.tinymediamanager</groupId>
+		<version>1.0</version>
+	</parent>
 
-  <artifactId>scraper-moviemeter</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>MovieMeter.nl scraper</name>
-  <description>A MovieMeter.nl scraper for tinyMediaManager</description>
+	<groupId>org.tinymediamanager.plugins</groupId>
+	<artifactId>scraper-moviemeter</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.tinymediamanager</groupId>
-      <artifactId>api-scraper</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+	<name>MovieMeter.nl scraper</name>
+	<description>A MovieMeter.nl scraper for tinyMediaManager</description>
+	<url>http://www.tinyMediaManager.org</url>
+
+	<scm>
+		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
+		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.tinymediamanager</groupId>
+			<artifactId>api-scraper</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 </project>
-
-
