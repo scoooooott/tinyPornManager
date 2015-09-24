@@ -16,6 +16,12 @@
 	<description>API for tinyMediaManager scrapers</description>
 	<url>http://www.tinyMediaManager.org</url>
 
+	<scm>
+		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
+		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
