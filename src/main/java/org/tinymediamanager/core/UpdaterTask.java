@@ -44,6 +44,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
   private static final String REGULAR_PATH = "/build";
   private static final String LEGACY_PATH  = "/java6";
   private String              changelog    = "";
+  private boolean             forceUpdate  = false;
 
   /**
    * Instantiates a new updater task.
@@ -128,17 +129,20 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       if (!localDigest.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
 
+        Url gd = new Url(remoteUrl + "getdown.txt?z=" + System.currentTimeMillis()); // cache bust
+        String remoteGD = IOUtils.toString(gd.getInputStream(), "UTF-8");
+        if (remoteGD.contains("forceUpdate")) {
+          forceUpdate = true;
+        }
         if (changeReleasePath) {
           // we're up/downgrading dist - DL txts..
           LOGGER.debug("Switching distribution due to java versoin, preloading correct files.");
-          Url gd = new Url(remoteUrl + "getdown.txt");
-          String remoteGD = IOUtils.toString(gd.getInputStream(), "UTF-8");
           FileUtils.writeStringToFile(getdownFile, remoteGD, "UTF-8");
           FileUtils.writeStringToFile(digestFile, remoteDigest, "UTF-8");
         }
 
         // download changelog.txt for preview
-        Url upd = new Url(remoteUrl + "changelog.txt");
+        Url upd = new Url(remoteUrl + "changelog.txt?z=" + System.currentTimeMillis()); // cache bust
         changelog = IOUtils.toString(upd.getInputStream(), "UTF-8");
         return true;
       }
@@ -208,5 +212,14 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
 
   public String getChangelog() {
     return changelog;
+  }
+
+  /**
+   * when forced, do not ask for confirmation dialog.
+   * 
+   * @return
+   */
+  public boolean isForcedUpdate() {
+    return forceUpdate;
   }
 }
