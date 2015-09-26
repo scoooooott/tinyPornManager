@@ -72,24 +72,22 @@ public class Settings extends AbstractModelObject {
   /**
    * Constants mainly for events
    */
-  private final static String CONFIG_FILE            = "config.xml";
-  private final static String TITLE_PREFIX           = "titlePrefix";
-  private final static String PREFIX                 = "prefix";
-  private final static String VIDEO_FILE_TYPE        = "videoFileTypes";
-  private final static String AUDIO_FILE_TYPE        = "audioFileTypes";
-  private final static String SUBTITLE_FILE_TYPE     = "subtitleFileTypes";
-  private final static String FILETYPE               = "filetype";
-  private final static String PROXY_HOST             = "proxyHost";
-  private final static String PROXY_PORT             = "proxyPort";
-  private final static String PROXY_USERNAME         = "proxyUsername";
-  private final static String PROXY_PASSWORD         = "proxyPassword";
-  private final static String CLEAR_CACHE_SHUTDOWN   = "clearCacheShutdown";
-  private final static String IMAGE_CACHE            = "imageCache";
-  private final static String IMAGE_CACHE_TYPE       = "imageCacheType";
-  private final static String IMAGE_CACHE_BACKGROUND = "imageCacheBackground";
-  private final static String LANGUAGE               = "language";
-  private final static String WOL_DEVICES            = "wolDevices";
-  private final static String SHOW_NOTIFICATIONS     = "showNotifications";
+  private final static String CONFIG_FILE        = "config.xml";
+  private final static String TITLE_PREFIX       = "titlePrefix";
+  private final static String PREFIX             = "prefix";
+  private final static String VIDEO_FILE_TYPE    = "videoFileTypes";
+  private final static String AUDIO_FILE_TYPE    = "audioFileTypes";
+  private final static String SUBTITLE_FILE_TYPE = "subtitleFileTypes";
+  private final static String FILETYPE           = "filetype";
+  private final static String PROXY_HOST         = "proxyHost";
+  private final static String PROXY_PORT         = "proxyPort";
+  private final static String PROXY_USERNAME     = "proxyUsername";
+  private final static String PROXY_PASSWORD     = "proxyPassword";
+  private final static String IMAGE_CACHE        = "imageCache";
+  private final static String IMAGE_CACHE_TYPE   = "imageCacheType";
+  private final static String LANGUAGE           = "language";
+  private final static String WOL_DEVICES        = "wolDevices";
+  private final static String SHOW_NOTIFICATIONS = "showNotifications";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -128,9 +126,7 @@ public class Settings extends AbstractModelObject {
 
   private boolean                     imageCache                  = true;
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
-  private boolean                     imageCacheBackground        = false;
   private boolean                     dirty                       = false;
-  private boolean                     clearCacheShutdown          = false;
   private MovieSettings               movieSettings               = null;
   private TvShowSettings              tvShowSettings              = null;
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
@@ -784,27 +780,6 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Checks if is clear cache shutdown.
-   * 
-   * @return true, if is clear cache shutdown
-   */
-  public boolean isClearCacheShutdown() {
-    return clearCacheShutdown;
-  }
-
-  /**
-   * Sets the clear cache shutdown.
-   * 
-   * @param newValue
-   *          the new clear cache shutdown
-   */
-  public void setClearCacheShutdown(boolean newValue) {
-    boolean oldValue = this.clearCacheShutdown;
-    this.clearCacheShutdown = newValue;
-    firePropertyChange(CLEAR_CACHE_SHUTDOWN, oldValue, newValue);
-  }
-
-  /**
    * Sets the movie settings.
    * 
    * @param movieSettings
@@ -915,15 +890,6 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Checks if is image cache background.
-   * 
-   * @return true, if is image cache background
-   */
-  public boolean isImageCacheBackground() {
-    return imageCacheBackground;
-  }
-
-  /**
    * Sets the image cache type.
    * 
    * @param newValue
@@ -933,18 +899,6 @@ public class Settings extends AbstractModelObject {
     CacheType oldValue = this.imageCacheType;
     this.imageCacheType = newValue;
     firePropertyChange(IMAGE_CACHE_TYPE, oldValue, newValue);
-  }
-
-  /**
-   * Sets the image cache background.
-   * 
-   * @param newValue
-   *          the new image cache background
-   */
-  public void setImageCacheBackground(boolean newValue) {
-    boolean oldValue = this.imageCacheBackground;
-    this.imageCacheBackground = newValue;
-    firePropertyChange(IMAGE_CACHE_BACKGROUND, oldValue, newValue);
   }
 
   /**

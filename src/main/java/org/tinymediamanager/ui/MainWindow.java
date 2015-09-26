@@ -474,12 +474,10 @@ public class MainWindow extends JFrame {
         TmmTaskManager.getInstance().shutdownNow();
         // close database connection
         TmmModuleManager.getInstance().shutDown();
-        // clear cache directory
-        if (Globals.settings.isClearCacheShutdown()) {
-          File cache = new File("cache" + File.separator + "url");
-          if (cache.exists()) {
-            FileUtils.deleteDirectory(cache);
-          }
+        // clear HTTP cache directory
+        File cache = new File("cache" + File.separator + "url");
+        if (cache.exists()) {
+          FileUtils.deleteDirectory(cache);
         }
       }
       catch (Exception ex) {

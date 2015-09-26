@@ -96,11 +96,9 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextField     tfProxyPort;
   private JTextField     tfProxyUsername;
   private JPasswordField tfProxyPassword;
-  private JCheckBox      chckbxClearCacheShutdown;
   private JPanel         panelCache;
   private JLabel         lblImageCacheQuality;
   private JComboBox      cbImageCacheQuality;
-  private JCheckBox      chckbxBuildImageCache;
   private JCheckBox      chckbxImageCache;
   private JPanel         panelUI;
   private JLabel         lblUiLanguage;
@@ -260,27 +258,19 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
     add(panelCache, "2, 4, fill, fill");
     panelCache.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));//$NON-NLS-1$
-    panelCache.add(chckbxClearCacheShutdown, "2, 2, 3, 1");
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));//$NON-NLS-1$
-    panelCache.add(chckbxImageCache, "2, 4, 3, 1");
+    panelCache.add(chckbxImageCache, "2, 2, 3, 1");
 
     lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));//$NON-NLS-1$
-    panelCache.add(lblImageCacheQuality, "2, 6, right, default");
+    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
 
     cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
-    panelCache.add(cbImageCacheQuality, "4, 6, fill, default");
-
-    chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecachebackground"));//$NON-NLS-1$
-    chckbxBuildImageCache.setVisible(false);
-    panelCache.add(chckbxBuildImageCache, "2, 8, 3, 1");
+    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -583,24 +573,14 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         settingsBeanProperty_3, tfProxyPassword, jPasswordFieldBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("clearCacheShutdown");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_4, chckbxClearCacheShutdown, jCheckBoxBeanProperty);
-    autoBinding_4.bind();
-    //
     BeanProperty<Settings, CacheType> settingsBeanProperty_7 = BeanProperty.create("imageCacheType");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     AutoBinding<Settings, CacheType, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, cbImageCacheQuality, jComboBoxBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_8 = BeanProperty.create("imageCacheBackground");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_8, chckbxBuildImageCache, jCheckBoxBeanProperty);
-    autoBinding_6.bind();
-    //
     BeanProperty<Settings, Boolean> settingsBeanProperty_9 = BeanProperty.create("imageCache");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_7.bind();
