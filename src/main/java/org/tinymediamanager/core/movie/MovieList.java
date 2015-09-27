@@ -487,7 +487,6 @@ public class MovieList extends AbstractModelObject {
       options.set(SearchParam.LANGUAGE, langu.name());
       options.set(SearchParam.COUNTRY, MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry().getAlpha2());
       options.set(SearchParam.COLLECTION_INFO, Boolean.toString(Globals.settings.getMovieScraperMetadataConfig().isCollection()));
-      options.set(SearchParam.IMDB_FOREIGN_LANGUAGE, Boolean.toString(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage()));
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
           options.set(SearchParam.IMDBID, movie.getImdbId());

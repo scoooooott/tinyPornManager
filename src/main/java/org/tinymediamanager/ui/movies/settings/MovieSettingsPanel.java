@@ -337,16 +337,16 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panel.add(cbNfoFormat, "3, 1, fill, default");
     cbNfoFormat.setModel(new DefaultComboBoxModel<>(MovieConnectors.values()));
 
-    JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming"));
+    JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
     panel.add(lblNfoFileNaming, "1, 3, right, default");
 
-    cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo");
+    cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
     panel.add(cbMovieNfoFilename1, "3, 3");
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panel.add(cbMovieNfoFilename2, "3, 4");
 
-    cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle") + ".nfo");
+    cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle")); //$NON-NLS-1$
     panel.add(cbMovieNfoFilename3, "3, 5");
     cbMovieNfoFilename3.addItemListener(new ItemListener() {
       @Override

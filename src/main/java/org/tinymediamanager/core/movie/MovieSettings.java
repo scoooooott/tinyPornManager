@@ -71,7 +71,6 @@ public class MovieSettings extends AbstractModelObject {
   private final static String MOVIE_TRAILER_SCRAPERS               = "movieTrailerScrapers";
   private final static String SCRAPE_BEST_IMAGE                    = "scrapeBestImage";
   private final static String WRITE_ACTOR_IMAGES                   = "writeActorImages";
-  private final static String IMDB_SCRAPE_FOREIGN_LANGU            = "imdbScrapeForeignLanguage";
   private final static String SCRAPER_LANGU                        = "scraperLanguage";
   private final static String CERTIFICATION_COUNTRY                = "certificationCountry";
   private final static String SCRAPER_THRESHOLD                    = "scraperThreshold";
@@ -127,56 +126,68 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String> movieSkipFolders = ObservableCollections.observableList(new ArrayList<String>());
 
-  private MovieConnectors     movieConnector                           = MovieConnectors.XBMC;
-  private String              movieRenamerPathname                     = "$T ($Y)";
-  private String              movieRenamerFilename                     = "$T ($Y) $V $A";
-  private boolean             movieRenamerSpaceSubstitution            = false;
-  private String              movieRenamerSpaceReplacement             = "_";
-  private boolean             movieRenamerNfoCleanup                   = false;
-  private boolean             imdbScrapeForeignLanguage                = false;
-  private String              movieScraper                             = Constants.TMDB;
-  private PosterSizes         imagePosterSize                          = PosterSizes.BIG;
-  private FanartSizes         imageFanartSize                          = FanartSizes.LARGE;
-  private boolean             imageExtraThumbs                         = false;
-  private boolean             imageExtraThumbsResize                   = true;
-  private int                 imageExtraThumbsSize                     = 300;
-  private int                 imageExtraThumbsCount                    = 5;
-  private boolean             imageExtraFanart                         = false;
-  private int                 imageExtraFanartCount                    = 5;
-  private boolean             enableMovieSetArtworkMovieFolder         = true;
-  private boolean             enableMovieSetArtworkFolder              = false;
-  private String              movieSetArtworkFolder                    = "MoviesetArtwork";
-  private boolean             scrapeBestImage                          = true;
-  private boolean             imageLanguagePriority                    = true;
-  private boolean             imageLogo                                = false;
-  private boolean             imageBanner                              = false;
-  private boolean             imageClearart                            = false;
-  private boolean             imageDiscart                             = false;
-  private boolean             imageThumb                               = false;
-  private boolean             writeActorImages                         = false;
-  private MediaLanguages      scraperLanguage                          = MediaLanguages.en;
-  private CountryCode         certificationCountry                     = CountryCode.US;
-  private double              scraperThreshold                         = 0.75;
-  private boolean             detectMovieMultiDir                      = false;
-  private boolean             buildImageCacheOnImport                  = false;
-  private boolean             movieRenamerCreateMoviesetForSingleMovie = false;
-  private boolean             runtimeFromMediaInfo                     = false;
-  private boolean             asciiReplacement                         = false;
-  private boolean             yearColumnVisible                        = true;
-  private boolean             ratingColumnVisible                      = true;
-  private boolean             nfoColumnVisible                         = true;
-  private boolean             dateAddedColumnVisible                   = true;
-  private boolean             imageColumnVisible                       = true;
-  private boolean             trailerColumnVisible                     = true;
-  private boolean             subtitleColumnVisible                    = true;
-  private boolean             watchedColumnVisible                     = true;
-  private boolean             scraperFallback                          = false;
-  private boolean             useTrailerPreference                     = false;
-  private boolean             automaticTrailerDownload                 = false;
-  private MovieTrailerQuality trailerQuality                           = MovieTrailerQuality.HD_720;
-  private MovieTrailerSources trailerSource                            = MovieTrailerSources.YOUTUBE;
-  private boolean             syncTrakt                                = false;
-  private boolean             storeUiFilters                           = false;
+  // data sources / NFO settings
+  private boolean         detectMovieMultiDir     = false;
+  private boolean         buildImageCacheOnImport = false;
+  private MovieConnectors movieConnector          = MovieConnectors.XBMC;
+
+  // renamer
+  private String  movieRenamerPathname                     = "$T ($Y)";
+  private String  movieRenamerFilename                     = "$T ($Y) $V $A";
+  private boolean movieRenamerSpaceSubstitution            = false;
+  private String  movieRenamerSpaceReplacement             = "_";
+  private boolean movieRenamerNfoCleanup                   = false;
+  private boolean movieRenamerCreateMoviesetForSingleMovie = false;
+  private boolean asciiReplacement                         = false;
+
+  // meta data scraper
+  private String         movieScraper         = Constants.TMDB;
+  private MediaLanguages scraperLanguage      = MediaLanguages.en;
+  private CountryCode    certificationCountry = CountryCode.US;
+  private double         scraperThreshold     = 0.75;
+  private boolean        scraperFallback      = false;
+
+  // artwork scraper
+  private PosterSizes imagePosterSize                  = PosterSizes.BIG;
+  private FanartSizes imageFanartSize                  = FanartSizes.LARGE;
+  private boolean     imageExtraThumbs                 = false;
+  private boolean     imageExtraThumbsResize           = true;
+  private int         imageExtraThumbsSize             = 300;
+  private int         imageExtraThumbsCount            = 5;
+  private boolean     imageExtraFanart                 = false;
+  private int         imageExtraFanartCount            = 5;
+  private boolean     enableMovieSetArtworkMovieFolder = true;
+  private boolean     enableMovieSetArtworkFolder      = false;
+  private String      movieSetArtworkFolder            = "MoviesetArtwork";
+  private boolean     scrapeBestImage                  = true;
+  private boolean     imageLanguagePriority            = true;
+  private boolean     imageLogo                        = false;
+  private boolean     imageBanner                      = false;
+  private boolean     imageClearart                    = false;
+  private boolean     imageDiscart                     = false;
+  private boolean     imageThumb                       = false;
+  private boolean     writeActorImages                 = false;
+
+  // trailer scraper
+  private boolean             useTrailerPreference     = false;
+  private boolean             automaticTrailerDownload = false;
+  private MovieTrailerQuality trailerQuality           = MovieTrailerQuality.HD_720;
+  private MovieTrailerSources trailerSource            = MovieTrailerSources.YOUTUBE;
+
+  // misc
+  private boolean runtimeFromMediaInfo = false;
+  private boolean syncTrakt            = false;
+
+  // UI settings
+  private boolean yearColumnVisible      = true;
+  private boolean ratingColumnVisible    = false;
+  private boolean nfoColumnVisible       = true;
+  private boolean dateAddedColumnVisible = false;
+  private boolean imageColumnVisible     = true;
+  private boolean trailerColumnVisible   = true;
+  private boolean subtitleColumnVisible  = true;
+  private boolean watchedColumnVisible   = true;
+  private boolean storeUiFilters         = false;
 
   public MovieSettings() {
   }
@@ -442,16 +453,6 @@ public class MovieSettings extends AbstractModelObject {
     String oldValue = this.movieScraper;
     this.movieScraper = newValue;
     firePropertyChange(MOVIE_SCRAPER, oldValue, newValue);
-  }
-
-  public boolean isImdbScrapeForeignLanguage() {
-    return imdbScrapeForeignLanguage;
-  }
-
-  public void setImdbScrapeForeignLanguage(boolean newValue) {
-    boolean oldValue = this.imdbScrapeForeignLanguage;
-    this.imdbScrapeForeignLanguage = newValue;
-    firePropertyChange(IMDB_SCRAPE_FOREIGN_LANGU, oldValue, newValue);
   }
 
   public void addMovieArtworkScraper(String newValue) {
