@@ -45,7 +45,7 @@ public class FaqAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    String url = StringEscapeUtils.unescapeHtml4("http://www.tinymediamanager.org/index.php/faq/");
+    String url = StringEscapeUtils.unescapeHtml4("https://github.com/tinyMediaManager/tinyMediaManager/wiki/FAQ");
     try {
       TmmUIHelper.browseUrl(url);
     }
