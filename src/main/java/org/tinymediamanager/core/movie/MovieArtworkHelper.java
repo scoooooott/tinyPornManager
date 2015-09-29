@@ -71,6 +71,39 @@ public class MovieArtworkHelper {
     }
   }
 
+  public static void downloadMissingArtwork(Movie movie) {
+    MediaFileType[] mfts = MediaFileType.getGraphicMediaFileTypes();
+
+    // do for all known graphical MediaFileTypes
+    for (MediaFileType mft : mfts) {
+
+      List<MediaFile> mfs = movie.getMediaFiles(mft);
+      if (mfs.isEmpty()) {
+        // not in our list? get'em!
+        switch (mft) {
+          case FANART:
+            downloadFanart(movie);
+            break;
+          case POSTER:
+            downloadPoster(movie);
+            break;
+          case BANNER:
+          case CLEARART:
+          case DISCART:
+          case LOGO:
+          case THUMB:
+          case EXTRAFANART:
+          case EXTRATHUMB:
+            downloadExtraArtwork(movie, mft);
+            break;
+          default:
+            break;
+        }
+      }
+
+    }
+  }
+
   private static void downloadFanart(Movie movie) {
     String fanartUrl = movie.getArtworkUrl(MediaFileType.FANART);
     if (StringUtils.isBlank(fanartUrl)) {

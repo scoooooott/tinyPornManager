@@ -15,6 +15,12 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,15 +32,11 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.http.Url;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * The class TvShowArtworkHelper . A helper class for managing TV show artwork
@@ -80,6 +82,44 @@ public class TvShowArtworkHelper {
     // get image in thread
     MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, true);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
+  }
+
+  public static void downloadMissingArtwork(TvShow show) {
+    String url = "";
+    String filename = "";
+    MediaFileType[] mfts = MediaFileType.getGraphicMediaFileTypes();
+
+    // do for all known graphical MediaFileTypes
+    for (MediaFileType mft : mfts) {
+
+      List<MediaFile> mfs = show.getMediaFiles(mft);
+      if (mfs.isEmpty()) {
+        // not in our list? get'em!
+        switch (mft) {
+          case FANART:
+          case POSTER:
+          case BANNER:
+          case CLEARART:
+          case DISCART:
+          case LOGO:
+          case THUMB:
+          case EXTRAFANART:
+          case EXTRATHUMB:
+            url = show.getArtworkUrl(mft);
+            filename = mft.name().toLowerCase() + "." + FilenameUtils.getExtension(url);
+            break;
+          case SEASON_POSTER: // TODO: valid? can't find it elsewhere
+          default:
+            break;
+        }
+        if (StringUtils.isBlank(url) || StringUtils.isBlank(filename)) {
+          continue;
+        }
+        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(mft), filename, true);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
+      }
+
+    }
   }
 
   /**

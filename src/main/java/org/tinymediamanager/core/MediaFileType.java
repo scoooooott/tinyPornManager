@@ -26,6 +26,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 public enum MediaFileType {
 
   // ordering of list = ordering of type in GUI ;)
+  // do not forget to add new items to generic methods in this class!!!
 
   // @formatter:off
   VIDEO, 
@@ -35,17 +36,17 @@ public enum MediaFileType {
   AUDIO, 
   SUBTITLE, 
   NFO, 
-  POSTER, 
-  FANART, 
-  BANNER,
-  CLEARART,
-  DISCART,
-  LOGO,
-  THUMB,   
-  SEASON_POSTER,
-  EXTRAFANART, 
-  EXTRATHUMB,  
-  GRAPHIC,
+  POSTER, // gfx
+  FANART, // gfx 
+  BANNER, // gfx
+  CLEARART, // gfx
+  DISCART, // gfx
+  LOGO, // gfx
+  THUMB, // gfx
+  SEASON_POSTER, // gfx
+  EXTRAFANART, // gfx
+  EXTRATHUMB, // gfx
+  GRAPHIC, // NO gfx (since not a searchable type)
   TEXT, // various text infos, like BDinfo.txt or others...
   UNKNOWN;
   // @formatter:on
@@ -125,4 +126,27 @@ public enum MediaFileType {
         throw new IllegalStateException();
     }
   }
+
+  /**
+   * get all artwork types
+   *
+   * @return list of MediaFileTypes for artwork
+   */
+  public static MediaFileType[] getGraphicMediaFileTypes() {
+    // @formatter:off
+    return new MediaFileType[] {
+        MediaFileType.FANART,
+        MediaFileType.POSTER,
+        MediaFileType.BANNER,
+        MediaFileType.CLEARART,
+        MediaFileType.DISCART,
+        MediaFileType.LOGO,
+        MediaFileType.THUMB,
+        MediaFileType.SEASON_POSTER,
+        MediaFileType.EXTRAFANART,
+        MediaFileType.EXTRATHUMB
+    };
+    // @formatter:on
+  }
+
 }
