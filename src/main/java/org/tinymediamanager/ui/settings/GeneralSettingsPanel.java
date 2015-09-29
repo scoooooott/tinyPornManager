@@ -42,6 +42,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.io.FileUtils;
@@ -109,7 +110,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextField     tfMediaPlayer;
   private JButton        btnSearchMediaPlayer;
   private JTextPane      tpMediaPlayer;
-  private JSeparator     separator;
   private JTextPane      tpFontHint;
   private JLabel         lblFontFamily;
   private JLabel         lblFontSize;
@@ -125,41 +125,31 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JLabel         lblMb;
   private JPanel         panelMisc;
   private JLabel         lblMissingTranslation;
-  private JPanel         panelUILanguage;
-  private JPanel         panelTransifex;
   private LinkLabel      lblLinkTransifex;
+  private JPanel         panel;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min):grow"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(200px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min):grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("max(200px;default):grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     panelUI = new JPanel();
     panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
     add(panelUI, "2, 2, 3, 1, fill, fill");
     panelUI.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"),
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    panelUILanguage = new JPanel();
-    panelUI.add(panelUILanguage, "2, 2, 3, 1, fill, fill");
-    panelUILanguage
-        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-            new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
-
-    lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language"));
-    panelUILanguage.add(lblUiLanguage, "1, 1, right, default");
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
     LocaleComboBox actualLocale = null;
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
     Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
@@ -170,29 +160,59 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         actualLocale = localeComboBox;
       }
     }
+
+    lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language"));
+    panelUI.add(lblUiLanguage, "2, 2");
     cbLanguage = new JComboBox(locales.toArray());
-    panelUILanguage.add(cbLanguage, "3, 1, fill, top");
+    panelUI.add(cbLanguage, "4, 2");
+
     if (actualLocale != null) {
       cbLanguage.setSelectedItem(actualLocale);
     }
 
-    // listen to changes of the combo box
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    };
-    cbLanguage.addItemListener(listener);
+    JSeparator separator = new JSeparator();
+    separator.setOrientation(SwingConstants.VERTICAL);
+    panelUI.add(separator, "8, 2, 1, 9");
 
-    panelTransifex = new JPanel();
-    panelUI.add(panelTransifex, "6, 2, fill, fill");
-    panelTransifex.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
-        new RowSpec[] { RowSpec.decode("15px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+    lblFontFamily = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
+    panelUI.add(lblFontFamily, "10, 2, right, default");
+    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
+    cbFontFamily.setSelectedItem(Globals.settings.getFontFamily());
+    int index = cbFontFamily.getSelectedIndex();
+    if (index < 0) {
+      cbFontFamily.setSelectedItem("Dialog");
+      index = cbFontFamily.getSelectedIndex();
+    }
+    if (index < 0) {
+      cbFontFamily.setSelectedIndex(0);
+    }
+    panelUI.add(cbFontFamily, "12, 2, fill, default");
 
-    lblMissingTranslation = new JLabel(BUNDLE.getString("tmm.helptranslate"));//$NON-NLS-1$
-    panelTransifex.add(lblMissingTranslation, "1, 1");
+    lblFontSize = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
+    panelUI.add(lblFontSize, "10, 4, right, default");
+
+    cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
+    cbFontSize.setSelectedItem(Globals.settings.getFontSize());
+    index = cbFontSize.getSelectedIndex();
+    if (index < 0) {
+      cbFontSize.setSelectedIndex(0);
+    }
+
+    panelUI.add(cbFontSize, "12, 4, fill, default");
+
+    panel = new JPanel();
+    panelUI.add(panel, "2, 6, 5, 1, fill, fill");
+    panel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+    lblMissingTranslation = new JLabel(BUNDLE.getString("tmm.helptranslate"));
+    panel.add(lblMissingTranslation, "1, 1, 5, 1");
 
     lblLinkTransifex = new LinkLabel("https://www.transifex.com/projects/p/tinymediamanager/");
+    panel.add(lblLinkTransifex, "1, 3, 5, 1");
     lblLinkTransifex.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         try {
@@ -205,72 +225,59 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panelTransifex.add(lblLinkTransifex, "1, 3");
-
-    lblLanguageHint = new JLabel("");
-    TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
-    panelUI.add(lblLanguageHint, "2, 4, 5, 1");
-
-    chckbxShowNotifications = new JCheckBox(BUNDLE.getString("Settings.shownotifications")); //$NON-NLS-1$
-    panelUI.add(chckbxShowNotifications, "2, 6, 5, 1");
-
-    separator = new JSeparator();
-    panelUI.add(separator, "2, 8, 5, 1");
 
     tpFontHint = new JTextPane();
     tpFontHint.setOpaque(false);
     TmmFontHelper.changeFont(tpFontHint, 0.833);
     tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-    panelUI.add(tpFontHint, "2, 10, 5, 1");
+    panelUI.add(tpFontHint, "10, 6, 5, 1");
 
-    lblFontFamily = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
-    panelUI.add(lblFontFamily, "2, 12, right, default");
+    chckbxShowNotifications = new JCheckBox(BUNDLE.getString("Settings.shownotifications")); //$NON-NLS-1$
+    panelUI.add(chckbxShowNotifications, "2, 8, 5, 1");
 
-    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
-    cbFontFamily.setSelectedItem(Globals.settings.getFontFamily());
-    int index = cbFontFamily.getSelectedIndex();
-    if (index < 0) {
-      cbFontFamily.setSelectedItem("Dialog");
-      index = cbFontFamily.getSelectedIndex();
-    }
-    if (index < 0) {
-      cbFontFamily.setSelectedIndex(0);
-    }
-    panelUI.add(cbFontFamily, "4, 12, fill, default");
-
-    lblFontSize = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
-    panelUI.add(lblFontSize, "2, 14, right, default");
-
-    cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
-    cbFontSize.setSelectedItem(Globals.settings.getFontSize());
-    index = cbFontSize.getSelectedIndex();
-    if (index < 0) {
-      cbFontSize.setSelectedIndex(0);
-    }
-    panelUI.add(cbFontSize, "4, 14, fill, default");
+    lblLanguageHint = new JLabel("");
+    TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
+    panelUI.add(lblLanguageHint, "2, 10, 5, 1");
 
     lblFontChangeHint = new JLabel("");
     TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-    panelUI.add(lblFontChangeHint, "2, 16, 5, 1");
+    panelUI.add(lblFontChangeHint, "10, 10, 5, 1");
 
-    panelCache = new JPanel();
-    panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelCache, "2, 4, fill, fill");
-    panelCache.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+    panelMemory = new JPanel();
+    panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelMemory, "2, 4, fill, fill");
+    panelMemory.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("250px:grow(4)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(20dlu;default)"),
+            ColumnSpec.decode("left:default:grow(5)"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));//$NON-NLS-1$
-    panelCache.add(chckbxImageCache, "2, 2, 3, 1");
+    lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
+    panelMemory.add(lblMemoryT, "2, 1");
 
-    lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));//$NON-NLS-1$
-    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
+    sliderMemory = new JSlider();
+    sliderMemory.setPaintLabels(true);
+    sliderMemory.setPaintTicks(true);
+    sliderMemory.setSnapToTicks(true);
+    sliderMemory.setMajorTickSpacing(512);
+    sliderMemory.setMinorTickSpacing(128);
+    sliderMemory.setMinimum(256);
+    sliderMemory.setMaximum(2048);
+    sliderMemory.setValue(512);
+    panelMemory.add(sliderMemory, "4, 1, fill, default");
 
-    cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
-    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
+    lblMemory = new JLabel("512"); //$NON-NLS-1$
+    panelMemory.add(lblMemory, "6, 1, right, default");
+
+    lblMb = new JLabel("MB");
+    panelMemory.add(lblMb, "7, 1, left, default");
+
+    tpMemoryHint = new JTextPane();
+    tpMemoryHint.setOpaque(false);
+    tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(tpMemoryHint, 0.833);
+    panelMemory.add(tpMemoryHint, "2, 3, 6, 1, fill, fill");
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -313,14 +320,43 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
+    panelCache = new JPanel();
+    panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
+    add(panelCache, "2, 6, fill, fill");
+    panelCache.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
+
+    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));//$NON-NLS-1$
+    panelCache.add(chckbxImageCache, "2, 2, 3, 1");
+
+    lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));//$NON-NLS-1$
+    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
+
+    cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
+    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
+
+    panelMisc = new JPanel();
+    panelMisc.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.misc"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelMisc, "4, 6, fill, fill");
+    panelMisc.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
+    panelMisc.add(chckbxDeleteTrash, "2, 2, 3, 1");
+
     panelMediaPlayer = new JPanel();
     panelMediaPlayer.setBorder(new TitledBorder(null, "MediaPlayer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelMediaPlayer, "2, 6, fill, fill");
+    add(panelMediaPlayer, "2, 8, fill, fill");
     panelMediaPlayer.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     tpMediaPlayer = new JTextPane();
     tpMediaPlayer.setOpaque(false);
@@ -344,58 +380,20 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     });
     panelMediaPlayer.add(btnSearchMediaPlayer, "4, 4");
 
-    panelMisc = new JPanel();
-    panelMisc.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.misc"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMisc, "4, 6, fill, fill");
-    panelMisc.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
-    panelMisc.add(chckbxDeleteTrash, "2, 2, 3, 1");
-
-    panelMemory = new JPanel();
-    panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMemory, "2, 8, fill, fill");
-    panelMemory.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("250px:grow(4)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(20dlu;default)"),
-            ColumnSpec.decode("left:default:grow(5)"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
-    panelMemory.add(lblMemoryT, "2, 1");
-
-    sliderMemory = new JSlider();
-    sliderMemory.setPaintLabels(true);
-    sliderMemory.setPaintTicks(true);
-    sliderMemory.setSnapToTicks(true);
-    sliderMemory.setMajorTickSpacing(512);
-    sliderMemory.setMinorTickSpacing(128);
-    sliderMemory.setMinimum(256);
-    sliderMemory.setMaximum(2048);
-    sliderMemory.setValue(512);
-    panelMemory.add(sliderMemory, "4, 1, fill, default");
-
-    lblMemory = new JLabel("512"); //$NON-NLS-1$
-    panelMemory.add(lblMemory, "6, 1, right, default");
-
-    lblMb = new JLabel("MB");
-    panelMemory.add(lblMb, "7, 1, left, default");
-
-    tpMemoryHint = new JTextPane();
-    tpMemoryHint.setOpaque(false);
-    tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(tpMemoryHint, 0.833);
-    panelMemory.add(tpMemoryHint, "2, 3, 6, 1, fill, fill");
-
     initDataBindings();
-    cbFontFamily.addItemListener(listener);
-    cbFontSize.addItemListener(listener);
 
     initMemorySlider();
+
+    // listen to changes of the combo box
+    ItemListener listener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    };
+
+    cbLanguage.addItemListener(listener);
+    cbFontSize.addItemListener(listener);
+    cbFontFamily.addItemListener(listener);
   }
 
   /**
