@@ -164,7 +164,7 @@ public class MovieExtraImageFetcher implements Runnable {
         throw new Exception("renaming temp file failed: " + filename);
       }
 
-      movie.setArtwork(tempFile, type);
+      movie.setArtwork(destinationFile, type);
       movie.saveToDb();
       movie.callbackForWrittenArtwork(MediaFileType.getMediaArtworkType(type));
     }
@@ -197,9 +197,8 @@ public class MovieExtraImageFetcher implements Runnable {
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRAFANART);
+        folder.mkdirs();
       }
-
-      folder.mkdirs();
 
       // fetch and store images
       for (int i = 0; i < fanarts.size(); i++) {
@@ -248,9 +247,8 @@ public class MovieExtraImageFetcher implements Runnable {
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.THUMB);
+        folder.mkdirs();
       }
-
-      folder.mkdirs();
 
       // fetch and store images
       for (int i = 0; i < thumbs.size(); i++) {
