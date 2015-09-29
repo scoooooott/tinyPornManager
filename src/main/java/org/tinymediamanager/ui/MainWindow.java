@@ -475,9 +475,9 @@ public class MainWindow extends JFrame {
         // close database connection
         TmmModuleManager.getInstance().shutDown();
         // clear HTTP cache directory
-        File cache = new File("cache" + File.separator + "url");
-        if (cache.exists()) {
-          FileUtils.deleteQuietly(cache);
+        File urlcache = new File("cache", "url");
+        if (urlcache.exists()) {
+          FileUtils.deleteDirectory(urlcache);
         }
       }
       catch (Exception ex) {
