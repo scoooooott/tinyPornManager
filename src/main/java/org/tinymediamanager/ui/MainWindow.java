@@ -477,7 +477,7 @@ public class MainWindow extends JFrame {
         // clear HTTP cache directory
         File cache = new File("cache" + File.separator + "url");
         if (cache.exists()) {
-          FileUtils.deleteDirectory(cache);
+          FileUtils.deleteQuietly(cache);
         }
       }
       catch (Exception ex) {
