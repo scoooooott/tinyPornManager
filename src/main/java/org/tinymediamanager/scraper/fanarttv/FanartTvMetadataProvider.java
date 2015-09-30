@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -33,14 +31,15 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.fanarttv.entities.Image;
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
- * The Class FanartTvMetadataProvider. An artwork provider for the site
- * fanart.tv
+ * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
  *
  * @author Manuel Laggner
  */
@@ -74,8 +73,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   public FanartTvMetadataProvider(String clientKey) throws Exception {
     if (api == null) {
       try {
-        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"),
-            clientKey);
+        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"), clientKey);
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
@@ -316,8 +314,8 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     MOVIETHUMB(1000, 562, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
     SEASONTHUMB(500, 281, MediaArtworkType.SEASON, FanartSizes.SMALL.getOrder()),
     TVTHUMB(500, 281, MediaArtworkType.THUMB, FanartSizes.MEDIUM.getOrder()),
-    MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()),
-    SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.MEDIUM.getOrder()),
+    MOVIEBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
+    SHOWBACKGROUND(1920, 1080, MediaArtworkType.BACKGROUND, FanartSizes.LARGE.getOrder()),
     MOVIEPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
     TVPOSTER(1000, 1426, MediaArtworkType.POSTER, PosterSizes.LARGE.getOrder()),
     SEASONPOSTER(1000, 1426, MediaArtworkType.SEASON, MediaArtwork.PosterSizes.LARGE.getOrder()),
