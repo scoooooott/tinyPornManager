@@ -152,8 +152,10 @@ public class MovieExtraImageFetcher implements Runnable {
       }
 
       // delete the old one if exisiting
-      File oldFile = new File(movie.getPath(), oldFilename);
-      Utils.deleteFileSafely(oldFile);
+      if (StringUtils.isNotBlank(oldFilename)) {
+        File oldFile = new File(movie.getPath(), oldFilename);
+        Utils.deleteFileSafely(oldFile);
+      }
 
       // delete new destination if existing
       File destinationFile = new File(movie.getPath(), filename);
@@ -197,8 +199,8 @@ public class MovieExtraImageFetcher implements Runnable {
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRAFANART);
-        folder.mkdirs();
       }
+      folder.mkdirs();
 
       // fetch and store images
       for (int i = 0; i < fanarts.size(); i++) {
@@ -247,8 +249,8 @@ public class MovieExtraImageFetcher implements Runnable {
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
         movie.removeAllMediaFiles(MediaFileType.THUMB);
-        folder.mkdirs();
       }
+      folder.mkdirs();
 
       // fetch and store images
       for (int i = 0; i < thumbs.size(); i++) {
