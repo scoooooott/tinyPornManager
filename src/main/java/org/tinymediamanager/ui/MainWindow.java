@@ -53,7 +53,6 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -71,7 +70,6 @@ import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
-import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExitAction;
 import org.tinymediamanager.ui.actions.FaqAction;
@@ -185,11 +183,6 @@ public class MainWindow extends JFrame {
     JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
     cache.setMnemonic(KeyEvent.VK_C);
     tools.add(cache);
-
-    JMenuItem clearUrlCache = new JMenuItem(new ClearUrlCacheAction());
-    clearUrlCache.setMnemonic(KeyEvent.VK_U);
-    cache.add(clearUrlCache);
-    cache.addSeparator();
     JMenuItem clearImageCache = new JMenuItem(new ClearImageCacheAction());
     clearImageCache.setMnemonic(KeyEvent.VK_I);
     cache.add(clearImageCache);
@@ -474,11 +467,6 @@ public class MainWindow extends JFrame {
         TmmTaskManager.getInstance().shutdownNow();
         // close database connection
         TmmModuleManager.getInstance().shutDown();
-        // clear HTTP cache directory
-        File urlcache = new File("cache", "url");
-        if (urlcache.exists()) {
-          FileUtils.deleteDirectory(urlcache);
-        }
       }
       catch (Exception ex) {
         LOGGER.warn("", ex);
