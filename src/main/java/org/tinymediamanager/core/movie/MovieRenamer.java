@@ -173,6 +173,7 @@ public class MovieRenamer {
     // FIXME: what? when?
     boolean posterRenamed = false;
     boolean fanartRenamed = false;
+    boolean downloadMissingArtworks = false;
 
     // check if a datasource is set
     if (StringUtils.isEmpty(movie.getDataSource())) {
@@ -258,6 +259,7 @@ public class MovieRenamer {
             return;
           }
           movie.setMultiMovieDir(false);
+          downloadMissingArtworks = true; // yay - we upgraded our movie, so we could try to get additional artworks :)
         }
         else {
           // ######################################################################
@@ -535,6 +537,11 @@ public class MovieRenamer {
           FileUtils.deleteQuietly(cl.getFile().getParentFile()); // no need for backup ;)
         }
       }
+    }
+
+    if (downloadMissingArtworks) {
+      LOGGER.debug("Yay - movie upgrade :) download missing artworks");
+      MovieArtworkHelper.downloadMissingArtwork(movie);
     }
   }
 

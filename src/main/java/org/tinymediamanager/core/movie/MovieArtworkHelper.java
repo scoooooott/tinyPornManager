@@ -71,7 +71,26 @@ public class MovieArtworkHelper {
     }
   }
 
+  /**
+   * downloads all missing artworks<br>
+   * adheres the user artwork settings
+   * 
+   * @param movie
+   *          for specified movie
+   */
   public static void downloadMissingArtwork(Movie movie) {
+    downloadMissingArtwork(movie, false);
+  }
+
+  /**
+   * downloads all missing artworks
+   * 
+   * @param movie
+   *          for specified movie
+   * @param force
+   *          if forced, we ignore the artwork settings and download all known
+   */
+  public static void downloadMissingArtwork(Movie movie, boolean force) {
     MediaFileType[] mfts = MediaFileType.getGraphicMediaFileTypes();
 
     // do for all known graphical MediaFileTypes
@@ -82,19 +101,49 @@ public class MovieArtworkHelper {
         // not in our list? get'em!
         switch (mft) {
           case FANART:
-            downloadFanart(movie);
+            if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty() || force) {
+              downloadFanart(movie);
+            }
             break;
           case POSTER:
-            downloadPoster(movie);
+            if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty() || force) {
+              downloadPoster(movie);
+            }
             break;
           case BANNER:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case CLEARART:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case DISCART:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case LOGO:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case THUMB:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case EXTRAFANART:
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
+            break;
           case EXTRATHUMB:
-            downloadExtraArtwork(movie, mft);
+            if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() || force) {
+              downloadExtraArtwork(movie, mft);
+            }
             break;
           default:
             break;
@@ -376,62 +425,57 @@ public class MovieArtworkHelper {
     // fanart
     setBestFanart(movie, artwork);
 
-    if (!movie.isMultiMovieDir()) {
-      // logo
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
-        setBestArtwork(movie, artwork, MediaArtworkType.LOGO);
-      }
-      // clearart
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
-        setBestArtwork(movie, artwork, MediaArtworkType.CLEARART);
-      }
-      // banner
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
-        setBestArtwork(movie, artwork, MediaArtworkType.BANNER);
-      }
-      // thumb
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
-        setBestArtwork(movie, artwork, MediaArtworkType.THUMB);
-      }
-      // disc art
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
-        setBestArtwork(movie, artwork, MediaArtworkType.DISC);
-      }
+    if (movie.isMultiMovieDir()) {
+      // just save the urls and do not download nor set ;)
+      setBestArtwork(movie, artwork, MediaArtworkType.LOGO, false);
+      setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, false);
+      setBestArtwork(movie, artwork, MediaArtworkType.BANNER, false);
+      setBestArtwork(movie, artwork, MediaArtworkType.THUMB, false);
+      setBestArtwork(movie, artwork, MediaArtworkType.DISC, false);
+    }
+    else {
+      setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
+      setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.MOVIE_SETTINGS.isImageClearart());
+      setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.MOVIE_SETTINGS.isImageBanner());
+      setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.MOVIE_SETTINGS.isImageThumb());
+      setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
+    }
 
-      // extrathumbs
-      List<String> extrathumbs = new ArrayList<String>();
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
-        for (MediaArtwork art : artwork) {
-          // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND
-              && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
-            extrathumbs.add(art.getDefaultUrl());
-            if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
-              break;
-            }
+    // extrathumbs
+    List<String> extrathumbs = new ArrayList<String>();
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
+      for (MediaArtwork art : artwork) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+          extrathumbs.add(art.getDefaultUrl());
+          if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
+            break;
           }
         }
-        movie.setExtraThumbs(extrathumbs);
-        if (extrathumbs.size() > 0) {
+      }
+      movie.setExtraThumbs(extrathumbs);
+      if (extrathumbs.size() > 0) {
+        if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRATHUMB);
         }
       }
+    }
 
-      // extrafanarts
-      List<String> extrafanarts = new ArrayList<String>();
-      if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
-        for (MediaArtwork art : artwork) {
-          // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND
-              && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
-            extrafanarts.add(art.getDefaultUrl());
-            if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
-              break;
-            }
+    // extrafanarts
+    List<String> extrafanarts = new ArrayList<String>();
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
+      for (MediaArtwork art : artwork) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+          extrafanarts.add(art.getDefaultUrl());
+          if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
+            break;
           }
         }
-        movie.setExtraFanarts(extrafanarts);
-        if (extrafanarts.size() > 0) {
+      }
+      movie.setExtraFanarts(extrafanarts);
+      if (extrafanarts.size() > 0) {
+        if (!movie.isMultiMovieDir()) {
           downloadArtwork(movie, MediaFileType.EXTRAFANART);
         }
       }
@@ -571,14 +615,25 @@ public class MovieArtworkHelper {
     }
   }
 
-  /*
+  /**
    * choose the best artwork for this movie
+   * 
+   * @param movie
+   *          our movie
+   * @param artwork
+   *          the artwork list
+   * @param type
+   *          the type to download
+   * @param download
+   *          indicates, whether to download and add, OR JUST SAVE THE URL for a later download
    */
-  private static void setBestArtwork(Movie movie, List<MediaArtwork> artwork, MediaArtworkType type) {
+  private static void setBestArtwork(Movie movie, List<MediaArtwork> artwork, MediaArtworkType type, boolean download) {
     for (MediaArtwork art : artwork) {
       if (art.getType() == type) {
         movie.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
-        downloadArtwork(movie, MediaFileType.getMediaFileType(type));
+        if (download) {
+          downloadArtwork(movie, MediaFileType.getMediaFileType(type));
+        }
         break;
       }
     }
