@@ -66,6 +66,7 @@ import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
@@ -93,6 +94,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.sun.jna.Platform;
 
 import ch.swingfx.twinkle.NotificationBuilder;
 import ch.swingfx.twinkle.window.Positions;
@@ -439,6 +441,16 @@ public class MainWindow extends JFrame {
         @Override
         public void run() {
           JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("tmm.java6")); //$NON-NLS-1$
+        }
+      });
+    }
+
+    // inform user is MI could not be loaded
+    if (Platform.isLinux() && StringUtils.isBlank(MediaInfo.version())) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          JOptionPane.showMessageDialog(MainWindow.this, BUNDLE.getString("mediainfo.failed.linux")); //$NON-NLS-1$
         }
       });
     }
