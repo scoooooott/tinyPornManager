@@ -16,6 +16,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jna.Platform;
+
 /**
  * {@code JNILoader}.
  *
@@ -29,7 +31,12 @@ public class JNILoader {
     // Try to load the native library from the native dir
     try {
       String nativepath = new File(".").getCanonicalPath();
-      nativepath += "/native/mac-" + System.getProperty("os.arch") + "/lib" + libName + ".jnilib";
+      if (Platform.is64Bit()) {
+        nativepath += "/native/mac-x64/lib" + libName + ".jnilib";
+      }
+      else {
+        nativepath += "/native/mac-x86/lib" + libName + ".jnilib";
+      }
       System.load(nativepath);
     }
     catch (Error e) {
