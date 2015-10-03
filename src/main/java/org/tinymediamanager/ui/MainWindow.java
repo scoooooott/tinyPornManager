@@ -79,6 +79,7 @@ import org.tinymediamanager.ui.actions.ForumAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.LightBoxPanel;
 import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
@@ -112,41 +113,42 @@ public class MainWindow extends JFrame {
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
   private static final long           serialVersionUID = 1L;
 
-  public final static Image LOGO = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
+  public final static Image           LOGO             = Toolkit.getDefaultToolkit()
+      .getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
 
   /** The action about. */
-  private final Action actionAbout = new AboutAction();
+  private final Action                actionAbout      = new AboutAction();
 
   /** The action feedback. */
-  private final Action actionFeedback = new FeedbackAction();
+  private final Action                actionFeedback   = new FeedbackAction();
 
   /** The action bug report. */
-  private final Action actionBugReport = new BugReportAction();
+  private final Action                actionBugReport  = new BugReportAction();
 
   /** The action donate. */
-  private final Action actionDonate = new DonateAction();
+  private final Action                actionDonate     = new DonateAction();
 
   /** The instance. */
-  private static MainWindow instance;
+  private static MainWindow           instance;
 
   /** The panel movies. */
-  private JPanel panelMovies;
-  private JPanel panelMovieSets;
-  private JPanel panelTvShows;
+  private JPanel                      panelMovies;
+  private JPanel                      panelMovieSets;
+  private JPanel                      panelTvShows;
 
   /** The panel status bar. */
-  private JPanel panelStatusBar;
+  private JPanel                      panelStatusBar;
 
   /** The lbl loading img. */
-  private JLabel lblLoadingImg;
+  private JLabel                      lblLoadingImg;
 
   /** The status task. */
   // private StatusbarThread statusTask;
-  private List<String> messagesList;
+  private List<String>                messagesList;
 
-  private LightBoxPanel lightBoxPanel;
+  private LightBoxPanel               lightBoxPanel;
 
-  private JDialog settingsDialog;
+  private JDialog                     settingsDialog;
 
   /**
    * Create the application.
@@ -282,6 +284,8 @@ public class MainWindow extends JFrame {
     mnTmm = new JMenu(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
     mnTmm.setMnemonic(KeyEvent.VK_H);
     menuBar.add(mnTmm);
+
+    mnTmm.add(new WikiAction()).setMnemonic(KeyEvent.VK_W);
 
     JMenuItem mntmFaq = mnTmm.add(new FaqAction());
     mntmFaq.setMnemonic(KeyEvent.VK_F);
