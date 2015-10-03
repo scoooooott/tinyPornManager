@@ -33,12 +33,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -115,40 +113,16 @@ public class MainWindow extends JFrame {
 
   public final static Image           LOGO             = Toolkit.getDefaultToolkit()
       .getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
-
-  /** The action about. */
-  private final Action                actionAbout      = new AboutAction();
-
-  /** The action feedback. */
-  private final Action                actionFeedback   = new FeedbackAction();
-
-  /** The action bug report. */
-  private final Action                actionBugReport  = new BugReportAction();
-
-  /** The action donate. */
-  private final Action                actionDonate     = new DonateAction();
-
-  /** The instance. */
   private static MainWindow           instance;
 
-  /** The panel movies. */
   private JPanel                      panelMovies;
   private JPanel                      panelMovieSets;
   private JPanel                      panelTvShows;
-
-  /** The panel status bar. */
   private JPanel                      panelStatusBar;
 
-  /** The lbl loading img. */
-  private JLabel                      lblLoadingImg;
-
-  /** The status task. */
-  // private StatusbarThread statusTask;
   private List<String>                messagesList;
 
   private LightBoxPanel               lightBoxPanel;
-
-  private JDialog                     settingsDialog;
 
   /**
    * Create the application.
@@ -174,6 +148,7 @@ public class MainWindow extends JFrame {
     if (!Globals.isDonator()) {
       mnTmm.add(new RegisterDonatorVersionAction());
     }
+
     mnTmm.add(new SettingsAction());
     mnTmm.addSeparator();
     mnTmm.add(new ExitAction());
@@ -273,12 +248,8 @@ public class MainWindow extends JFrame {
 
     mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
     mnTmm.setMnemonic(KeyEvent.VK_C);
-    JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
-    mntmFeedback.setMnemonic(KeyEvent.VK_F);
-
-    JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
-    mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
-    mntmBugReport.setMnemonic(KeyEvent.VK_B);
+    mnTmm.add(new FeedbackAction()).setMnemonic(KeyEvent.VK_F);
+    mnTmm.add(new BugReportAction()).setMnemonic(KeyEvent.VK_B);
     menuBar.add(mnTmm);
 
     mnTmm = new JMenu(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
@@ -286,20 +257,15 @@ public class MainWindow extends JFrame {
     menuBar.add(mnTmm);
 
     mnTmm.add(new WikiAction()).setMnemonic(KeyEvent.VK_W);
-
-    JMenuItem mntmFaq = mnTmm.add(new FaqAction());
-    mntmFaq.setMnemonic(KeyEvent.VK_F);
-
-    JMenuItem mntmForum = mnTmm.add(new ForumAction());
-    mntmForum.setMnemonic(KeyEvent.VK_O);
-
+    mnTmm.add(new FaqAction()).setMnemonic(KeyEvent.VK_F);
+    mnTmm.add(new ForumAction()).setMnemonic(KeyEvent.VK_O);
     mnTmm.addSeparator();
-    JMenuItem mntmAbout = mnTmm.add(actionAbout);
-    mntmAbout.setMnemonic(KeyEvent.VK_A);
+
+    mnTmm.add(new AboutAction()).setMnemonic(KeyEvent.VK_A);
 
     menuBar.add(Box.createGlue());
 
-    JButton btnDonate = new JButton(actionDonate);
+    JButton btnDonate = new JButton(new DonateAction());
     btnDonate.setBorderPainted(false);
     btnDonate.setFocusPainted(false);
     btnDonate.setContentAreaFilled(false);
