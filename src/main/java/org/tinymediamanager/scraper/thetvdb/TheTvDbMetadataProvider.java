@@ -104,6 +104,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+    LOGGER.debug("getting metadata: " + mediaScrapeOptions);
     switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
         return getTvShowMetadata(mediaScrapeOptions);
@@ -205,7 +206,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
    * clear the search string to minimize search problem with the API
    */
   private String clearSearchString(String searchString) {
-
     // replace all kinds of accent characters with their base variant
     String cleanedString = Normalizer.normalize(searchString, Normalizer.Form.NFD);
     cleanedString = cleanedString.replaceAll("\\p{M}", "");
@@ -477,6 +477,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getting artwork: " + options);
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
     String id = "";
 
@@ -605,6 +606,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getting episode list: " + options);
     List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
     String id = "";
 
@@ -798,8 +800,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others;
-     * then: score
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
     public int compare(Banner arg0, Banner arg1) {
