@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaEntityExporter;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -107,20 +108,15 @@ public class MovieExporter extends MediaEntityExporter {
       }
       detailsDir.mkdirs();
 
-      String renamerTemplate = "";
-      if (StringUtils.isNotBlank(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename())) {
-        renamerTemplate = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename();
-      }
-      else {
-        // default
-        renamerTemplate = "$T ($Y) $V $A";
-      }
-
       for (MediaEntity me : moviesToExport) {
         Movie movie = (Movie) me;
         LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(renamerTemplate, movie) + "." + fileExtension);
+        String detailFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+        if (StringUtils.isBlank(detailFilename)) {
+          detailFilename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+        }
+        File detailsExportFile = new File(detailsDir, detailFilename + "." + fileExtension);
 
         root = new HashMap<String, Object>();
         root.put("movie", movie);
@@ -176,7 +172,11 @@ public class MovieExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
-        return MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+        String filename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+        if (StringUtils.isNotBlank(filename)) {
+          return filename;
+        }
+        return Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
       }
       return null;
     }

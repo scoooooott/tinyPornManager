@@ -50,9 +50,9 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -68,15 +68,15 @@ public class MovieExporterDialog extends TmmDialog {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieExporterDialog.class);
 
-  private List<Movie>          movies;
-  private List<ExportTemplate> templatesFound;
+  private List<Movie>                 movies;
+  private List<ExportTemplate>        templatesFound;
 
-  private JTextField tfExportDir;
-  private JList      list;
-  private JLabel     lblTemplateName;
-  private JLabel     lblUrl;
-  private JTextPane  tpDescription;
-  private JCheckBox  chckbxTemplateWithDetail;
+  private JTextField                  tfExportDir;
+  private JList                       list;
+  private JLabel                      lblTemplateName;
+  private JLabel                      lblUrl;
+  private JTextPane                   tpDescription;
+  private JCheckBox                   chckbxTemplateWithDetail;
 
   /**
    * Create the dialog.
@@ -88,15 +88,14 @@ public class MovieExporterDialog extends TmmDialog {
     super(BUNDLE.getString("movie.export"), "movieExporter"); //$NON-NLS-1$
     setBounds(5, 5, 600, 300);
 
-    getContentPane().setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    getContentPane().setLayout(
+        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("100dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setResizeWeight(0.7);
-    getContentPane().add(splitPane, "2, 2, 3, 1, fill, fill");
+    getContentPane().add(splitPane, "2, 2, fill, fill");
 
     JScrollPane scrollPane = new JScrollPane();
     splitPane.setLeftComponent(scrollPane);
@@ -107,10 +106,10 @@ public class MovieExporterDialog extends TmmDialog {
     JPanel panelExporterDetails = new JPanel();
     splitPane.setRightComponent(panelExporterDetails);
     panelExporterDetails.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
             RowSpec.decode("default:grow"), }));
 
     lblTemplateName = new JLabel("");
@@ -133,11 +132,18 @@ public class MovieExporterDialog extends TmmDialog {
     scrollPaneDescription.setViewportView(tpDescription);
     splitPane.setDividerLocation(300);
 
+    JPanel panelDestination = new JPanel();
+    getContentPane().add(panelDestination, "2, 4, fill, fill");
+    panelDestination
+        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
+
     tfExportDir = new JTextField();
-    getContentPane().add(tfExportDir, "2, 4, fill, default");
+    panelDestination.add(tfExportDir, "1, 1, fill, default");
     tfExportDir.setColumns(10);
 
     JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination")); //$NON-NLS-1$
+    panelDestination.add(btnSetDestination, "3, 1");
     btnSetDestination.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory")); //$NON-NLS-1$
@@ -146,11 +152,10 @@ public class MovieExporterDialog extends TmmDialog {
         }
       }
     });
-    getContentPane().add(btnSetDestination, "4, 4");
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
-    getContentPane().add(panelButtons, "2, 6, 3, 1, fill, fill");
+    getContentPane().add(panelButtons, "2, 6, fill, fill");
 
     JButton btnExport = new JButton("Export");
     btnExport.setIcon(IconManager.EXPORT);
