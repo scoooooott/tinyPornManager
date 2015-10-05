@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -31,31 +31,42 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.matchers.MatcherEditor;
+import ca.odell.glazedlists.swing.AdvancedTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 /**
  * The TvShowEpisodeChooserDialog is used for searching a special episode
@@ -63,18 +74,20 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = 3317576458848699068L;
+  private static final long                                serialVersionUID = 3317576458848699068L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowEpisode                   episode;
-  private ITvShowMetadataProvider         metadataProvider;
-  private MediaEpisode                    metadata;
-  private List<TvShowEpisodeChooserModel> episodesFound = ObservableCollections.observableList(new ArrayList<TvShowEpisodeChooserModel>());
-  private JTable                          table;
-  private JTextArea                       taPlot;
+  private TvShowEpisode                                    episode;
+  private ITvShowMetadataProvider                          metadataProvider;
+  private MediaEpisode                                     metadata;
+  private ObservableElementList<TvShowEpisodeChooserModel> episodeEventList;
+
+  private JTable                                           table;
+  private JTextArea                                        taPlot;
+  private JTextField                                       textField;
 
   public TvShowEpisodeChooserDialog(TvShowEpisode ep, ITvShowMetadataProvider mp) {
     super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser"); //$NON-NLS-1$
@@ -83,24 +96,72 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     this.episode = ep;
     this.metadataProvider = mp;
     this.metadata = new MediaEpisode(mp.getProviderInfo().getId());
+    episodeEventList = new ObservableElementList<TvShowEpisodeChooserModel>(
+        GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()), GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
+    SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<TvShowEpisodeChooserModel>(
+        GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
+
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
             new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:405px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
                 RowSpec.decode("fill:37px"), FormFactory.RELATED_GAP_ROWSPEC, }));
     {
-
       JSplitPane splitPane = new JSplitPane();
       getContentPane().add(splitPane, "2, 2, fill, fill");
 
+      JPanel panelLeft = new JPanel();
+      panelLeft.setLayout(
+          new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200dlu:grow"),
+                  FormSpecs.RELATED_GAP_ROWSPEC, }));
+
+      textField = new JSearchTextField();
+      panelLeft.add(textField, "2, 2, fill, default");
+      textField.setColumns(10);
+
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setMinimumSize(new Dimension(200, 23));
-      splitPane.setLeftComponent(scrollPane);
+      panelLeft.add(scrollPane, "2, 4, fill, fill");
+      splitPane.setLeftComponent(panelLeft);
 
-      table = new JTable();
+      MatcherEditor<TvShowEpisodeChooserModel> textMatcherEditor = new TextComponentMatcherEditor<TvShowEpisodeChooserModel>(textField,
+          new TvShowEpisodeChooserModelFilterator());
+      FilterList<TvShowEpisodeChooserModel> textFilteredEpisodes = new FilterList<TvShowEpisodeChooserModel>(sortedEpisodes, textMatcherEditor);
+      AdvancedTableModel<TvShowEpisodeChooserModel> episodeTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredEpisodes,
+          new EpisodeTableFormat());
+      DefaultEventSelectionModel<TvShowEpisodeChooserModel> selectionModel = new DefaultEventSelectionModel<TvShowEpisodeChooserModel>(
+          textFilteredEpisodes);
+      final List<TvShowEpisodeChooserModel> selectedEpisodes = selectionModel.getSelected();
+
+      selectionModel.addListSelectionListener(new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+          if (e.getValueIsAdjusting()) {
+            return;
+          }
+          // display first selected episode
+          if (!selectedEpisodes.isEmpty()) {
+            TvShowEpisodeChooserModel episode = selectedEpisodes.get(0);
+            taPlot.setText(episode.getOverview());
+          }
+          else {
+            taPlot.setText("");
+          }
+          taPlot.setCaretPosition(0);
+        }
+      });
+
+      table = new JTable(episodeTableModel);
+      table.setSelectionModel(selectionModel);
       scrollPane.setViewportView(table);
 
+      JPanel panelRight = new JPanel();
+      panelRight.setLayout(
+          new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
       JScrollPane scrollPane_1 = new JScrollPane();
-      splitPane.setRightComponent(scrollPane_1);
+      panelRight.add(scrollPane_1, "2, 2, fill, fill");
+      splitPane.setRightComponent(panelRight);
 
       taPlot = new JTextArea();
       taPlot.setEditable(false);
@@ -137,14 +198,9 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     cancelButton.setActionCommand("Cancel");
     cancelButton.addActionListener(this);
 
-    initDataBindings();
-
-    // column titles
-    table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+    // column widths
     table.getColumnModel().getColumn(0).setMaxWidth(50);
-    table.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     table.getColumnModel().getColumn(1).setMaxWidth(50);
-    table.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
 
     SearchTask task = new SearchTask();
     task.execute();
@@ -183,7 +239,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       int row = table.getSelectedRow();
       if (row >= 0) {
         row = table.convertRowIndexToModel(row);
-        TvShowEpisodeChooserModel episode = episodesFound.get(row);
+        TvShowEpisodeChooserModel episode = episodeEventList.get(row);
         if (episode != TvShowEpisodeChooserModel.emptyResult) {
           metadata = episode.getMediaEpisode();
         }
@@ -214,7 +270,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
       try {
         for (MediaEpisode episode : metadataProvider.getEpisodeList(options)) {
-          episodesFound.add(new TvShowEpisodeChooserModel(metadataProvider, episode));
+          episodeEventList.add(new TvShowEpisodeChooserModel(metadataProvider, episode));
         }
       }
       catch (Exception e) {
@@ -224,25 +280,72 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     }
   }
 
-  protected void initDataBindings() {
-    JTableBinding<TvShowEpisodeChooserModel, List<TvShowEpisodeChooserModel>, JTable> jTableBinding = SwingBindings
-        .createJTableBinding(UpdateStrategy.READ, episodesFound, table);
-    //
-    BeanProperty<TvShowEpisodeChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("season");
-    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);
-    //
-    BeanProperty<TvShowEpisodeChooserModel, String> tvShowChooserModelBeanProperty_1 = BeanProperty.create("episode");
-    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty_1).setEditable(false);
-    //
-    BeanProperty<TvShowEpisodeChooserModel, String> tvShowChooserModelBeanProperty_2 = BeanProperty.create("title");
-    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty_2).setEditable(false);
-    //
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, taPlot,
-        jTextAreaBeanProperty);
-    autoBinding.bind();
+  private class TvShowEpisodeChooserModelFilterator implements TextFilterator<TvShowEpisodeChooserModel> {
+    @Override
+    public void getFilterStrings(List<String> baseList, TvShowEpisodeChooserModel model) {
+      baseList.add(model.getTitle());
+      baseList.add(model.getOverview());
+    }
+  }
+
+  private class EpisodeComparator implements Comparator<TvShowEpisodeChooserModel> {
+    @Override
+    public int compare(TvShowEpisodeChooserModel o1, TvShowEpisodeChooserModel o2) {
+      if (o1.getSeason() < o2.getSeason()) {
+        return -1;
+      }
+
+      if (o1.getSeason() > o2.getSeason()) {
+        return 1;
+      }
+
+      if (o1.getEpisode() < o2.getEpisode()) {
+        return -1;
+      }
+
+      if (o1.getEpisode() > o2.getEpisode()) {
+        return 1;
+      }
+
+      return 0;
+    }
+  }
+
+  private class EpisodeTableFormat implements TableFormat<TvShowEpisodeChooserModel> {
+    @Override
+    public int getColumnCount() {
+      return 3;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0:
+          return BUNDLE.getString("metatag.season"); //$NON-NLS-1$
+
+        case 1:
+          return BUNDLE.getString("metatag.episode"); //$NON-NLS-1$
+
+        case 2:
+          return BUNDLE.getString("metatag.title"); //$NON-NLS-1$
+      }
+      return null;
+    }
+
+    @Override
+    public Object getColumnValue(TvShowEpisodeChooserModel baseObject, int column) {
+      switch (column) {
+        case 0:
+          return baseObject.getSeason();
+
+        case 1:
+          return baseObject.getEpisode();
+
+        case 2:
+          return baseObject.getTitle();
+      }
+      return null;
+    }
+
   }
 }
