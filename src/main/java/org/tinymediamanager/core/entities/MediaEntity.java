@@ -48,42 +48,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public abstract class MediaEntity extends AbstractModelObject {
-  protected static Comparator<MediaFile> mediaFileComparator = null;
-
   /** The id for the database. */
-  protected UUID                         dbId                = UUID.randomUUID();
+  protected UUID                       dbId              = UUID.randomUUID();
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>(0);
+  protected HashMap<String, Object>    ids               = new HashMap<String, Object>(0);
 
   @JsonProperty
-  protected String                       title               = "";
+  protected String                     title             = "";
   @JsonProperty
-  protected String                       originalTitle       = "";
+  protected String                     originalTitle     = "";
   @JsonProperty
-  protected String                       year                = "";
+  protected String                     year              = "";
   @JsonProperty
-  protected String                       plot                = "";
+  protected String                     plot              = "";
   @JsonProperty
-  protected float                        rating              = 0f;
+  protected float                      rating            = 0f;
   @JsonProperty
-  protected String                       path                = "";
+  protected String                     path              = "";
   @JsonProperty
-  protected Date                         dateAdded           = new Date();
+  protected Date                       dateAdded         = new Date();
   @JsonProperty
-  protected String                       productionCompany   = "";
+  protected String                     productionCompany = "";
   @JsonProperty
-  protected boolean                      scraped             = false;
+  protected boolean                    scraped           = false;
 
   @JsonProperty
-  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
+  private List<MediaFile>              mediaFiles        = new ArrayList<MediaFile>();
   @JsonProperty
-  protected Map<MediaFileType, String>   artworkUrlMap       = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<MediaFileType, String>();
 
-  protected boolean                      duplicate           = false;
-  public boolean                         justAdded           = false;
-  protected ReadWriteLock                readWriteLock       = new ReentrantReadWriteLock();
+  protected boolean                    duplicate         = false;
+  public boolean                       justAdded         = false;
+  protected ReadWriteLock              readWriteLock     = new ReentrantReadWriteLock();
 
   public MediaEntity() {
   }
@@ -96,6 +94,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   protected void sortMediaFiles() {
+    Comparator<MediaFile> mediaFileComparator = getMediaFileComparator();
     if (mediaFileComparator != null) {
       Collections.sort(mediaFiles, mediaFileComparator);
     }
@@ -640,4 +639,6 @@ public abstract class MediaEntity extends AbstractModelObject {
   abstract public void deleteFromDb();
 
   abstract public void callbackForWrittenArtwork(MediaArtworkType type);
+
+  abstract protected Comparator<MediaFile> getMediaFileComparator();
 }

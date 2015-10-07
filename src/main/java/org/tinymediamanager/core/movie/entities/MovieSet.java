@@ -31,6 +31,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -45,17 +46,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MovieSet extends MediaEntity {
-  private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
+  private static final Comparator<Movie>     MOVIE_SET_COMPARATOR  = new MovieInMovieSetComparator();
+  private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new MovieMediaFileComparator();
 
   @JsonProperty
-  private List<UUID>                     movieIds             = new ArrayList<UUID>();
+  private List<UUID>                         movieIds              = new ArrayList<UUID>();
 
-  private List<Movie>                    movies               = new ArrayList<Movie>(0);
-  private String                         titleSortable        = "";
-
-  static {
-    mediaFileComparator = new MovieMediaFileComparator();
-  }
+  private List<Movie>                        movies                = new ArrayList<Movie>(0);
+  private String                             titleSortable         = "";
 
   /**
    * Instantiates a new movieset. To initialize the propertychangesupport after loading
@@ -71,6 +69,11 @@ public class MovieSet extends MediaEntity {
 
     // search for artwork in the artwork folder
     MovieSetArtworkHelper.findArtworkInArtworkFolder(this);
+  }
+
+  @Override
+  protected Comparator<MediaFile> getMediaFileComparator() {
+    return MEDIA_FILE_COMPARATOR;
   }
 
   @Override

@@ -67,10 +67,15 @@ public class TmmUILogAppender extends OutputStreamAppender<ILoggingEvent> {
     final byte[] buffer;
     final int size;
 
-    synchronized (lock) {
+    try {
+      lock.lock();
       size = BUFFER.size();
       buffer = (from < size) ? BUFFER.toByteArray(from) : null;
     }
+    finally {
+      lock.unlock();
+    }
+
     return new LogOutput(size, (buffer != null) ? new String(buffer, 0, buffer.length) : "");
   }
 

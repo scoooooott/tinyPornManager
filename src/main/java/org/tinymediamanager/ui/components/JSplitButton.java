@@ -319,7 +319,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     int h = img.getHeight();
     BufferedImage dimg = new BufferedImage(w, h, img.getType());
     Graphics2D g = dimg.createGraphics();
-    g.rotate(Math.toRadians(angle), w / 2, h / 2);
+    g.rotate(Math.toRadians(angle), w / 2.d, h / 2.d);
     g.drawImage(img, null, 0, 0);
     return dimg;
   }
