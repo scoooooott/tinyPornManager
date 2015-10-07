@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ import javax.swing.ImageIcon;
 
 public class IconManager {
   private final static ImageIcon           EMPTY_IMAGE       = new ImageIcon(IconManager.class.getResource("images/empty.png"));
-  private final static Map<URL, ImageIcon> ICON_CACHE        = new HashMap<URL, ImageIcon>();
+  private final static Map<URI, ImageIcon> ICON_CACHE        = new HashMap<>();
 
   public final static ImageIcon            APPLY             = loadImage("apply.png");
   public final static ImageIcon            ARROW_UP          = loadImage("arrow-up.png");
@@ -82,12 +83,24 @@ public class IconManager {
    * @return the image or an empty image (1x1 px transparent) if it is not loadable
    */
   public static ImageIcon loadImageFromURL(URL url) {
+    URI uri = null;
+
     if (url == null) {
       return EMPTY_IMAGE;
     }
 
+    try {
+      uri = url.toURI();
+      if (uri == null) {
+        return EMPTY_IMAGE;
+      }
+    }
+    catch (Exception e) {
+      return EMPTY_IMAGE;
+    }
+
     // read cache
-    ImageIcon icon = ICON_CACHE.get(url);
+    ImageIcon icon = ICON_CACHE.get(uri);
 
     if (icon == null) {
       try {
@@ -100,7 +113,7 @@ public class IconManager {
           icon = EMPTY_IMAGE;
         }
       }
-      ICON_CACHE.put(url, icon);
+      ICON_CACHE.put(uri, icon);
     }
 
     return icon;

@@ -21,6 +21,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -43,12 +44,10 @@ import org.tinymediamanager.ui.IconManager;
  * The class MediaScraperComboBox provides a combobox with the scraper logo next to the text
  * 
  * @author Manuel Laggner
- *
- * @param <E>
  */
 public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   private static final long   serialVersionUID = 7845502706645523958L;
-  private Map<URL, ImageIcon> imageCache;
+  private Map<URI, ImageIcon> imageCache;
 
   public MediaScraperComboBox() {
     super();
@@ -101,12 +100,18 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   private ImageIcon getIcon(URL url) {
-    ImageIcon logo = imageCache.get(url);
-    if (logo == null) {
-      logo = getScaledIcon(IconManager.loadImageFromURL(url));
-      imageCache.put(url, logo);
+    try {
+      URI uri = url.toURI();
+      ImageIcon logo = imageCache.get(uri);
+      if (logo == null) {
+        logo = getScaledIcon(IconManager.loadImageFromURL(url));
+        imageCache.put(uri, logo);
+      }
+      return logo;
     }
-    return logo;
+    catch (Exception ignored) {
+    }
+    return null;
   }
 
   private ImageIcon getScaledIcon(ImageIcon original) {

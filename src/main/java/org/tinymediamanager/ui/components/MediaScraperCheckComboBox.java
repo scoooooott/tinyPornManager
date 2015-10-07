@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class MediaScraperCheckComboBox extends CheckComboBox {
     private static final long   serialVersionUID = -5195029492716016109L;
     protected JPanel            panel            = new JPanel();
     protected JLabel            label            = new JLabel();
-    private Map<URL, ImageIcon> imageCache;
+    private Map<URI, ImageIcon> imageCache;
 
     public IconCheckListRenderer() {
       super();
@@ -125,12 +126,18 @@ public class MediaScraperCheckComboBox extends CheckComboBox {
     }
 
     private ImageIcon getIcon(URL url) {
-      ImageIcon logo = imageCache.get(url);
-      if (logo == null) {
-        logo = getScaledIcon(IconManager.loadImageFromURL(url));
-        imageCache.put(url, logo);
+      try {
+        URI uri = url.toURI();
+        ImageIcon logo = imageCache.get(uri);
+        if (logo == null) {
+          logo = getScaledIcon(IconManager.loadImageFromURL(url));
+          imageCache.put(uri, logo);
+        }
+        return logo;
       }
-      return logo;
+      catch (Exception ignored) {
+      }
+      return null;
     }
 
     private ImageIcon getScaledIcon(ImageIcon original) {
