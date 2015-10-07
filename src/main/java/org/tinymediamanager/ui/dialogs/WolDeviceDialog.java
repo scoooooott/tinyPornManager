@@ -50,12 +50,12 @@ public class WolDeviceDialog extends TmmDialog {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private WolDevice device = null;
+  private WolDevice                   device           = null;
 
-  private JTextField   tfName;
-  private JTextField   tfMacAddress;
-  private final Action actionSave   = new SaveAction();
-  private final Action actionCancel = new CancelAction();
+  private JTextField                  tfName;
+  private JTextField                  tfMacAddress;
+  private final Action                actionSave       = new SaveAction();
+  private final Action                actionCancel     = new CancelAction();
 
   /**
    * constructor for creating a device

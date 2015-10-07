@@ -31,12 +31,12 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieExtendedComparator.class);
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieExtendedComparator.class);
 
-  private SortColumn        sortColumn;
-  private boolean           sortAscending;
-  private RuleBasedCollator stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+  private SortColumn                  sortColumn;
+  private boolean                     sortAscending;
+  private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   public enum SortColumn {
     TITLE(BUNDLE.getString("metatag.title")), //$NON-NLS-1$ ,

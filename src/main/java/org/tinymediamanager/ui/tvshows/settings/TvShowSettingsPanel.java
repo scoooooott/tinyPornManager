@@ -69,15 +69,15 @@ public class TvShowSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings      settings = Settings.getInstance();
-  private JLabel        lblImageCache;
-  private JCheckBox     chckbxImageCache;
-  private JLabel        lblImageCacheHint;
-  private JCheckBox     chckbxTraktTv;
-  private final JButton btnClearTraktTvShows;
-  private JCheckBox     cbDvdOrder;
-  private JList<String> listDatasources;
-  private JList<String> listExclude;
+  private Settings                    settings         = Settings.getInstance();
+  private JLabel                      lblImageCache;
+  private JCheckBox                   chckbxImageCache;
+  private JLabel                      lblImageCacheHint;
+  private JCheckBox                   chckbxTraktTv;
+  private final JButton               btnClearTraktTvShows;
+  private JCheckBox                   cbDvdOrder;
+  private JList<String>               listDatasources;
+  private JList<String>               listExclude;
 
   /**
    * Instantiates a new tv show settings panel.

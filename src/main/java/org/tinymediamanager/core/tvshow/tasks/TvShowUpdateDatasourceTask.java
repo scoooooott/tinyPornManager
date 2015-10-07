@@ -57,37 +57,37 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                       //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String>   skipFolders           = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String skipFoldersRegex = "^[.][\\w@]+.*";
+  private static final String         skipFoldersRegex      = "^[.][\\w@]+.*";
 
   // MacOS ignore
-  private static final String skipFilesStartingWith = "._";
+  private static final String         skipFilesStartingWith = "._";
 
   // regexp patterns for artwork search
-  private static final Pattern posterPattern1   = Pattern.compile("(?i)(poster|folder)\\..{2,4}");
-  private static final Pattern posterPattern2   = Pattern.compile("(?i).*-poster\\..{2,4}");
-  private static final Pattern fanartPattern1   = Pattern.compile("(?i)fanart\\..{2,4}");
-  private static final Pattern fanartPattern2   = Pattern.compile("(?i).*(-|.)fanart\\..{2,4}");
-  private static final Pattern bannerPattern1   = Pattern.compile("(?i)banner\\..{2,4}");
-  private static final Pattern bannerPattern2   = Pattern.compile("(?i).*(-|.)banner\\..{2,4}");
-  private static final Pattern clearartPattern1 = Pattern.compile("(?i)clearart\\..{2,4}");
-  private static final Pattern clearartPattern2 = Pattern.compile("(?i).*(-|.)clearart\\..{2,4}");
-  private static final Pattern logoPattern1     = Pattern.compile("(?i)logo\\..{2,4}");
-  private static final Pattern logoPattern2     = Pattern.compile("(?i).*(-|.)logo\\..{2,4}");
-  private static final Pattern thumbPattern1    = Pattern.compile("(?i)thumb\\..{2,4}");
-  private static final Pattern thumbPattern2    = Pattern.compile("(?i).*(-|.)thumb\\..{2,4}");
-  private static final Pattern seasonPattern    = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static final Pattern        posterPattern1        = Pattern.compile("(?i)(poster|folder)\\..{2,4}");
+  private static final Pattern        posterPattern2        = Pattern.compile("(?i).*-poster\\..{2,4}");
+  private static final Pattern        fanartPattern1        = Pattern.compile("(?i)fanart\\..{2,4}");
+  private static final Pattern        fanartPattern2        = Pattern.compile("(?i).*(-|.)fanart\\..{2,4}");
+  private static final Pattern        bannerPattern1        = Pattern.compile("(?i)banner\\..{2,4}");
+  private static final Pattern        bannerPattern2        = Pattern.compile("(?i).*(-|.)banner\\..{2,4}");
+  private static final Pattern        clearartPattern1      = Pattern.compile("(?i)clearart\\..{2,4}");
+  private static final Pattern        clearartPattern2      = Pattern.compile("(?i).*(-|.)clearart\\..{2,4}");
+  private static final Pattern        logoPattern1          = Pattern.compile("(?i)logo\\..{2,4}");
+  private static final Pattern        logoPattern2          = Pattern.compile("(?i).*(-|.)logo\\..{2,4}");
+  private static final Pattern        thumbPattern1         = Pattern.compile("(?i)thumb\\..{2,4}");
+  private static final Pattern        thumbPattern2         = Pattern.compile("(?i).*(-|.)thumb\\..{2,4}");
+  private static final Pattern        seasonPattern         = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
 
-  private List<String> dataSources;
-  private List<File>   tvShowFolders = new ArrayList<File>();
-  private TvShowList   tvShowList;
+  private List<String>                dataSources;
+  private List<File>                  tvShowFolders         = new ArrayList<File>();
+  private TvShowList                  tvShowList;
 
   /**
    * Instantiates a new scrape task - to update all datasources

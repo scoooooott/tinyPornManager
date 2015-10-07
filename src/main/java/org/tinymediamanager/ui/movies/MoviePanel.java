@@ -117,127 +117,127 @@ public class MoviePanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle   BUNDLE                       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long             serialVersionUID             = 1L;
 
   /** The logger. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MoviePanel.class);
+  private final static Logger           LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
 
   /** The movie list. */
-  private MovieList movieList;
+  private MovieList                     movieList;
 
   /** The text field. */
-  private JTextField textField;
+  private JTextField                    textField;
 
   /** The table. */
-  private ZebraJTable table;
+  private ZebraJTable                   table;
 
   /** The action update data sources. */
-  private final Action actionUpdateDataSources = new MovieUpdateDatasourceAction(false);
+  private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
 
   /** The action update data sources. */
-  private final Action actionUpdateDataSources2 = new MovieUpdateDatasourceAction(true);
+  private final Action                  actionUpdateDataSources2     = new MovieUpdateDatasourceAction(true);
 
   /** The action scrape. */
-  private final Action actionScrape = new MovieSingleScrapeAction(false);
+  private final Action                  actionScrape                 = new MovieSingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action actionScrape2 = new MovieSingleScrapeAction(true);
+  private final Action                  actionScrape2                = new MovieSingleScrapeAction(true);
 
   /** The action edit movie. */
-  private final Action actionEditMovie = new MovieEditAction(false);
+  private final Action                  actionEditMovie              = new MovieEditAction(false);
 
   /** The action edit movie. */
-  private final Action actionEditMovie2 = new MovieEditAction(true);
+  private final Action                  actionEditMovie2             = new MovieEditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action actionScrapeUnscraped = new MovieUnscrapedScrapeAction();
+  private final Action                  actionScrapeUnscraped        = new MovieUnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action actionScrapeSelected = new MovieSelectedScrapeAction();
+  private final Action                  actionScrapeSelected         = new MovieSelectedScrapeAction();
 
   /** The action scrape metadata selected. */
-  private final Action actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
-  private final Action actionAssignMovieSets        = new MovieAssignMovieSetAction();
-  private final Action actionRenamerPreview         = new MovieRenamePreviewAction();
-  private final Action actionSyncTrakt              = new MovieSyncTraktTvAction();
-  private final Action actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
-  private final Action actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
-  private final Action actionTrailerDownload        = new MovieTrailerDownloadAction();
+  private final Action                  actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
+  private final Action                  actionAssignMovieSets        = new MovieAssignMovieSetAction();
+  private final Action                  actionRenamerPreview         = new MovieRenamePreviewAction();
+  private final Action                  actionSyncTrakt              = new MovieSyncTraktTvAction();
+  private final Action                  actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
+  private final Action                  actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
+  private final Action                  actionTrailerDownload        = new MovieTrailerDownloadAction();
 
   /** The action rename. */
-  private final Action actionRename = new MovieRenameAction(false);
+  private final Action                  actionRename                 = new MovieRenameAction(false);
 
   /** The action rename2. */
-  private final Action actionRename2 = new MovieRenameAction(true);
+  private final Action                  actionRename2                = new MovieRenameAction(true);
 
   /** The action remove2. */
-  private final Action actionRemove2 = new MovieRemoveAction();
-  private final Action actionDelete2 = new MovieDeleteAction();
+  private final Action                  actionRemove2                = new MovieRemoveAction();
+  private final Action                  actionDelete2                = new MovieDeleteAction();
 
   /** The action export. */
-  private final Action actionExport = new MovieExportAction();
+  private final Action                  actionExport                 = new MovieExportAction();
 
-  private final Action actionRewriteNfo = new MovieRewriteNfoAction();
+  private final Action                  actionRewriteNfo             = new MovieRewriteNfoAction();
 
   /** The panel movie count. */
-  private JPanel panelMovieCount;
+  private JPanel                        panelMovieCount;
 
   /** The lbl movie count. */
-  private JLabel lblMovieCount;
+  private JLabel                        lblMovieCount;
 
   /** The lbl movie count int. */
-  private JLabel lblMovieCountTotal;
+  private JLabel                        lblMovieCountTotal;
 
   /** The btn ren. */
-  private JButton btnRen;
+  private JButton                       btnRen;
 
   /** The menu. */
-  private JMenu menu;
+  private JMenu                         menu;
 
   /** The movie table model. */
   private DefaultEventTableModel<Movie> movieTableModel;
 
   /** The movie selection model. */
-  MovieSelectionModel movieSelectionModel;
+  MovieSelectionModel                   movieSelectionModel;
 
   /** The sorted movies. */
-  private SortedList<Movie> sortedMovies;
+  private SortedList<Movie>             sortedMovies;
 
   /** The text filtered movies. */
-  private FilterList<Movie> textFilteredMovies;
+  private FilterList<Movie>             textFilteredMovies;
 
   /** The panel extended search. */
-  private JPanel panelExtendedSearch;
+  private JPanel                        panelExtendedSearch;
 
   /** The lbl movie count of. */
-  private JLabel lblMovieCountOf;
+  private JLabel                        lblMovieCountOf;
 
   /** The lbl movie count filtered. */
-  private JLabel lblMovieCountFiltered;
+  private JLabel                        lblMovieCountFiltered;
 
   /** The split pane horizontal. */
-  private JSplitPane splitPaneHorizontal;
+  private JSplitPane                    splitPaneHorizontal;
 
   /** The panel right. */
-  private MovieInformationPanel panelRight;
+  private MovieInformationPanel         panelRight;
 
   /** The btn media information. */
-  private JButton btnMediaInformation;
+  private JButton                       btnMediaInformation;
 
   /** The action media information. */
-  private final Action actionMediaInformation = new MovieMediaInformationAction(false);
+  private final Action                  actionMediaInformation       = new MovieMediaInformationAction(false);
 
   /** The action media information2. */
-  private final Action actionMediaInformation2 = new MovieMediaInformationAction(true);
+  private final Action                  actionMediaInformation2      = new MovieMediaInformationAction(true);
 
   /** The action batch edit. */
-  private final Action actionBatchEdit      = new MovieBatchEditAction();
-  private final Action actionSetWatchedFlag = new MovieSetWatchedFlagAction();
+  private final Action                  actionBatchEdit              = new MovieBatchEditAction();
+  private final Action                  actionSetWatchedFlag         = new MovieSetWatchedFlagAction();
 
-  private final Action actionClearImageCache = new MovieClearImageCacheAction();
+  private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
 
   /**
    * Create the panel.
@@ -793,8 +793,8 @@ public class MoviePanel extends JPanel {
 
   private void addKeyListener() {
     table.addKeyListener(new KeyListener() {
-      private long lastKeypress = 0;
-      private String searchTerm = "";
+      private long   lastKeypress = 0;
+      private String searchTerm   = "";
 
       @Override
       public void keyTyped(KeyEvent arg0) {

@@ -57,90 +57,90 @@ public class MovieDetailsPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 6273970118830324299L;
+  private static final long           serialVersionUID = 6273970118830324299L;
 
   /** The logger. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieDetailsPanel.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The lbl original title t. */
-  private JLabel lblOriginalTitleT;
+  private JLabel                      lblOriginalTitleT;
 
   /** The lbl original title. */
-  private JLabel lblOriginalTitle;
+  private JLabel                      lblOriginalTitle;
 
   /** The lbl production t. */
-  private JLabel lblProductionT;
+  private JLabel                      lblProductionT;
 
   /** The lbl production. */
-  private JLabel lblProduction;
+  private JLabel                      lblProduction;
 
   /** The lbl genres t. */
-  private JLabel lblGenresT;
+  private JLabel                      lblGenresT;
 
   /** The lbl genres. */
-  private JLabel lblGenres;
+  private JLabel                      lblGenres;
 
   /** The lbl certification t. */
-  private JLabel lblCertificationT;
+  private JLabel                      lblCertificationT;
 
   /** The lbl certification. */
-  private JLabel lblCertification;
+  private JLabel                      lblCertification;
 
   /** The lbl imdb id t. */
-  private JLabel lblImdbIdT;
+  private JLabel                      lblImdbIdT;
 
   /** The lbl tmdb id t. */
-  private JLabel lblTmdbIdT;
+  private JLabel                      lblTmdbIdT;
 
   /** The lbl imdb id. */
-  private LinkLabel lblImdbId;
+  private LinkLabel                   lblImdbId;
 
   /** The lbl tmdb id. */
-  private LinkLabel lblTmdbId;
+  private LinkLabel                   lblTmdbId;
 
   /** The lbl runtime t. */
-  private JLabel lblRuntimeT;
+  private JLabel                      lblRuntimeT;
 
   /** The lbl runtime. */
-  private JLabel lblRuntime;
+  private JLabel                      lblRuntime;
 
   /** The lbl minutes. */
-  private JLabel lblMinutes;
+  private JLabel                      lblMinutes;
 
   /** The lbl tags t. */
-  private JLabel lblTagsT;
+  private JLabel                      lblTagsT;
 
   /** The lbl tags. */
-  private JLabel lblTags;
+  private JLabel                      lblTags;
 
   /** The lbl movie path t. */
-  private JLabel lblMoviePathT;
+  private JLabel                      lblMoviePathT;
 
   /** The lbl movie path. */
-  private LinkLabel lblMoviePath;
+  private LinkLabel                   lblMoviePath;
 
   /** The lbl movieset t. */
-  private JLabel lblMoviesetT;
+  private JLabel                      lblMoviesetT;
 
   /** The lbl movie set. */
-  private JLabel lblMovieSet;
+  private JLabel                      lblMovieSet;
 
   /** The lbl spoken languages t. */
-  private JLabel lblSpokenLanguagesT;
+  private JLabel                      lblSpokenLanguagesT;
 
   /** The lbl spoken languages. */
-  private JLabel  lblSpokenLanguages;
-  private JButton btnPlay;
-  private JLabel  lblCountryT;
-  private JLabel  lblCountry;
-  private JLabel  lblReleaseDateT;
-  private JLabel  lblReleaseDate;
+  private JLabel                      lblSpokenLanguages;
+  private JButton                     btnPlay;
+  private JLabel                      lblCountryT;
+  private JLabel                      lblCountry;
+  private JLabel                      lblReleaseDateT;
+  private JLabel                      lblReleaseDate;
 
   /**
    * Instantiates a new movie details panel.

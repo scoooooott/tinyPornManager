@@ -100,40 +100,42 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = -3104541519073924724L;
+  private static final long                                                 serialVersionUID      = -3104541519073924724L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle("messages",              //$NON-NLS-1$
+      new UTF8Control());
+  private static final Logger                                               LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                  movieList             = MovieList.getInstance();
-  private Movie                      movieToScrape;
-  private List<MovieChooserModel>    moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private MediaScraper               mediaScraper;
-  private List<MediaScraper>         artworkScrapers;
-  private List<MediaScraper>         trailerScrapers;
-  private boolean                    continueQueue         = true;
+  private MovieList                                                         movieList             = MovieList.getInstance();
+  private Movie                                                             movieToScrape;
+  private List<MovieChooserModel>                                           moviesFound           = ObservableCollections
+      .observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig                                        scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper                                                      mediaScraper;
+  private List<MediaScraper>                                                artworkScrapers;
+  private List<MediaScraper>                                                trailerScrapers;
+  private boolean                                                           continueQueue         = true;
 
-  private SearchTask activeSearchTask;
+  private SearchTask                                                        activeSearchTask;
 
   /**
    * UI components
    */
-  private final JPanel         contentPanel = new JPanel();
-  private JTextField           textFieldSearchString;
-  private MediaScraperComboBox cbScraper;
-  private JTable               table;
-  private JLabel               lblMovieName;
-  private JTextPane            tpMovieDescription;
-  private ImageLabel           lblMoviePoster;
-  private JLabel               lblProgressAction;
-  private JProgressBar         progressBar;
-  private JLabel               lblTagline;
-  private JButton              okButton;
-  private JLabel               lblPath;
-  private JComboBox            cbLanguage;
+  private final JPanel                                                      contentPanel          = new JPanel();
+  private JTextField                                                        textFieldSearchString;
+  private MediaScraperComboBox                                              cbScraper;
+  private JTable                                                            table;
+  private JLabel                                                            lblMovieName;
+  private JTextPane                                                         tpMovieDescription;
+  private ImageLabel                                                        lblMoviePoster;
+  private JLabel                                                            lblProgressAction;
+  private JProgressBar                                                      progressBar;
+  private JLabel                                                            lblTagline;
+  private JButton                                                           okButton;
+  private JLabel                                                            lblPath;
+  private JComboBox                                                         cbLanguage;
 
   private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
   private AutoBinding<JTable, String, JLabel, String>                       autoBinding;

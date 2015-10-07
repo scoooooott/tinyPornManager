@@ -34,13 +34,13 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Comparator<Movie>     movieComparator  = new MovieComparator();
-  private Comparator<String>    stringComparator = new StringComparator();
-  private Comparator<Float>     floatComparator  = new FloatComparator();
-  private Comparator<ImageIcon> imageComparator  = new ImageComparator();
-  private Comparator<Date>      dateComparator   = new DateComparator();
+  private Comparator<Movie>           movieComparator  = new MovieComparator();
+  private Comparator<String>          stringComparator = new StringComparator();
+  private Comparator<Float>           floatComparator  = new FloatComparator();
+  private Comparator<ImageIcon>       imageComparator  = new ImageComparator();
+  private Comparator<Date>            dateComparator   = new DateComparator();
 
   @Override
   public int getColumnCount() {

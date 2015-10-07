@@ -98,42 +98,42 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = 7702248909791283043L;
+  private static final long                                     serialVersionUID = 7702248909791283043L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
+  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Date                                     INITIAL_DATE     = new Date(0);
 
-  private TvShowList        tvShowList    = TvShowList.getInstance();
-  private TvShowEpisode     episodeToEdit;
-  private List<TvShowActor> cast          = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>      tags          = ObservableCollections.observableList(new ArrayList<String>());
-  private List<MediaFile>   mediaFiles    = new ArrayList<MediaFile>();
-  private boolean           continueQueue = true;
+  private TvShowList                                            tvShowList       = TvShowList.getInstance();
+  private TvShowEpisode                                         episodeToEdit;
+  private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<MediaFile>                                       mediaFiles       = new ArrayList<MediaFile>();
+  private boolean                                               continueQueue    = true;
 
-  private JTextField           tfTitle;
-  private JLabel               lblFilename;
-  private JSpinner             spEpisode;
-  private JSpinner             spSeason;
-  private JSpinner             spRating;
-  private JSpinner             spDvdSeason;
-  private JSpinner             spDvdEpisode;
-  private JCheckBox            cbDvdOrder;
-  private JSpinner             spDisplaySeason;
-  private JSpinner             spDisplayEpisode;
-  private JSpinner             spFirstAired;
-  private JSpinner             spDateAdded;
-  private JCheckBox            chckbxWatched;
-  private ImageLabel           lblThumb;
-  private JTextArea            taPlot;
-  private JTextField           tfDirector;
-  private JTextField           tfWriter;
-  private JTable               tableGuests;
-  private JComboBox            cbTags;
-  private JList                listTags;
-  private MediaFileEditorPanel mediaFilesPanel;
+  private JTextField                                            tfTitle;
+  private JLabel                                                lblFilename;
+  private JSpinner                                              spEpisode;
+  private JSpinner                                              spSeason;
+  private JSpinner                                              spRating;
+  private JSpinner                                              spDvdSeason;
+  private JSpinner                                              spDvdEpisode;
+  private JCheckBox                                             cbDvdOrder;
+  private JSpinner                                              spDisplaySeason;
+  private JSpinner                                              spDisplayEpisode;
+  private JSpinner                                              spFirstAired;
+  private JSpinner                                              spDateAdded;
+  private JCheckBox                                             chckbxWatched;
+  private ImageLabel                                            lblThumb;
+  private JTextArea                                             taPlot;
+  private JTextField                                            tfDirector;
+  private JTextField                                            tfWriter;
+  private JTable                                                tableGuests;
+  private JComboBox                                             cbTags;
+  private JList                                                 listTags;
+  private MediaFileEditorPanel                                  mediaFilesPanel;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
   private JListBinding<String, List<String>, JList>             jListBinding;

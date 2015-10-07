@@ -54,11 +54,11 @@ public class MessageDialog extends JDialog {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JLabel      lblImage;
-  private JLabel      lblText;
-  private JLabel      lblDescription;
-  private JScrollPane scrollPane;
-  private JTextPane   textPane;
+  private JLabel                      lblImage;
+  private JLabel                      lblText;
+  private JLabel                      lblDescription;
+  private JScrollPane                 scrollPane;
+  private JTextPane                   textPane;
 
   public MessageDialog(Window owner, String title) {
     super(owner, title);

@@ -63,9 +63,9 @@ public class FeedbackDialog extends TmmDialog {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackDialog.class);
 
-  private JTextField tfName;
-  private JTextArea  textArea;
-  private JTextField tfEmail;
+  private JTextField                  tfName;
+  private JTextArea                   textArea;
+  private JTextField                  tfEmail;
 
   /**
    * Instantiates a new feedback dialog.

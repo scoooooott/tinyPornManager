@@ -58,61 +58,61 @@ public class MovieInformationPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -8527284262749511617L;
+  private static final long           serialVersionUID = -8527284262749511617L;
 
   /** The split pane vertical. */
-  private JSplitPane splitPaneVertical;
+  private JSplitPane                  splitPaneVertical;
 
   /** The panel top. */
-  private JPanel panelTop;
+  private JPanel                      panelTop;
 
   /** The panel movie logos. */
-  private JPanel panelMovieLogos;
+  private JPanel                      panelMovieLogos;
 
   /** The panel rating. */
-  private StarRater panelRatingStars;
+  private StarRater                   panelRatingStars;
 
   /** The lbl watched image. */
-  private JLabel lblWatchedImage;
+  private JLabel                      lblWatchedImage;
 
   /** The lbl movie name. */
-  private JLabel lblMovieName;
+  private JLabel                      lblMovieName;
 
   /** The label rating. */
-  private JLabel lblRating;
+  private JLabel                      lblRating;
 
   /** The lbl vote count. */
-  private JLabel lblVoteCount;
+  private JLabel                      lblVoteCount;
 
   /** The lbl original name. */
-  private JLabel lblTagline;
+  private JLabel                      lblTagline;
 
   /** The lbl certification image. */
-  private JLabel lblCertificationImage;
+  private JLabel                      lblCertificationImage;
 
   /** The lbl movie background. */
-  private ImageLabel lblMovieBackground;
+  private ImageLabel                  lblMovieBackground;
 
   /** The lbl movie poster. */
-  private ImageLabel lblMoviePoster;
+  private ImageLabel                  lblMoviePoster;
 
   // /** The table cast. */
   // private JTable tableCast;
 
   /** The tabbed pane movie details. */
-  private JTabbedPane tabbedPaneMovieDetails;
+  private JTabbedPane                 tabbedPaneMovieDetails;
 
   /** The panel overview. */
-  private JPanel panelOverview;
+  private JPanel                      panelOverview;
 
   /** The panel movie cast. */
-  private MovieCrewPanel panelMovieCrew;
+  private MovieCrewPanel              panelMovieCrew;
 
   /** The panel details. */
-  private JPanel panelDetails;
+  private JPanel                      panelDetails;
   //
   // /** The lbl director t. */
   // private JLabel lblDirectorT;
@@ -130,32 +130,32 @@ public class MovieInformationPanel extends JPanel {
   // private JLabel lblActors;
 
   /** The text pane. */
-  private JTextPane tpOverview;
+  private JTextPane                   tpOverview;
 
   /** The panel media information. */
-  private JPanel panelMediaInformation;
+  private JPanel                      panelMediaInformation;
 
   /** The panel media files. */
-  private JPanel panelMediaFiles;
+  private JPanel                      panelMediaFiles;
 
   // /** The lbl actor thumb. */
   // private ActorImageLabel lblActorThumb;
 
   /** The panel movie trailer. */
-  private MovieTrailerPanel panelMovieTrailer;
+  private MovieTrailerPanel           panelMovieTrailer;
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The lbl media logo resolution. */
-  private JLabel lblMediaLogoResolution;
+  private JLabel                      lblMediaLogoResolution;
 
   /** The lbl media logo video codec. */
-  private JLabel lblMediaLogoVideoCodec;
+  private JLabel                      lblMediaLogoVideoCodec;
 
   /** The lbl media logo audio. */
-  private JLabel lblMediaLogoAudio;
-  private JLabel lblTop250;
+  private JLabel                      lblMediaLogoAudio;
+  private JLabel                      lblTop250;
 
   /**
    * Instantiates a new movie information panel.

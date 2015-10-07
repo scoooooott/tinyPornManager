@@ -32,8 +32,8 @@ import javax.swing.border.Border;
 public class JIconTextField extends JTextField {
   private static final long serialVersionUID = 5165830719829198726L;
 
-  private Icon   icon;
-  private Insets dummyInsets;
+  private Icon              icon;
+  private Insets            dummyInsets;
 
   public JIconTextField() {
     super();

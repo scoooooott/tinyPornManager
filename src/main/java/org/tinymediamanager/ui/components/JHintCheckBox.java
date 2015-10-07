@@ -36,22 +36,22 @@ import javax.swing.border.Border;
 public class JHintCheckBox extends JCheckBox {
   private static final long serialVersionUID = -3513765234706901506L;
 
-  private Icon         hintIcon;
-  private Insets       dummyInsets;
-  private MouseAdapter tooltipAdatapter = new MouseAdapter() {
-    final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-    final int dismissDelayMinutes = (int) TimeUnit.MINUTES.toMillis(10);                // 10 minutes
+  private Icon              hintIcon;
+  private Insets            dummyInsets;
+  private MouseAdapter      tooltipAdatapter = new MouseAdapter() {
+                                               final int   defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+                                               final int   dismissDelayMinutes   = (int) TimeUnit.MINUTES.toMillis(10);              // 10 minutes
 
-    @Override
-    public void mouseEntered(MouseEvent me) {
-      ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
-    }
+                                               @Override
+                                               public void mouseEntered(MouseEvent me) {
+                                                 ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
+                                               }
 
-    @Override
-    public void mouseExited(MouseEvent me) {
-      ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
-    }
-  };
+                                               @Override
+                                               public void mouseExited(MouseEvent me) {
+                                                 ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+                                               }
+                                             };
 
   public JHintCheckBox() {
     super();

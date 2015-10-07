@@ -85,49 +85,49 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private static final float           FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
   private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
-  private MovieList           movieList = MovieList.getInstance();
-  private MovieSelectionModel movieSelectionModel;
+  private MovieList                    movieList        = MovieList.getInstance();
+  private MovieSelectionModel          movieSelectionModel;
 
   /**
    * UI Elements
    */
-  private JCheckBox  cbFilterWatched;
-  private JComboBox  cbGenre;
-  private JComboBox  cbSortColumn;
-  private JComboBox  cbSortOrder;
-  private JComboBox  cbWatched;
-  private JCheckBox  cbFilterGenre;
-  private JCheckBox  cbFilterCast;
-  private JTextField tfCastMember;
-  private JCheckBox  cbFilterTag;
-  private JComboBox  cbTag;
-  private JCheckBox  cbFilterDuplicates;
-  private JCheckBox  cbFilterMovieset;
-  private JComboBox  cbMovieset;
-  private JCheckBox  cbFilterVideoFormat;
-  private JComboBox  cbVideoFormat;
-  private JCheckBox  cbFilterVideoCodec;
-  private JComboBox  cbVideoCodec;
-  private JCheckBox  cbFilterAudioCodec;
-  private JComboBox  cbAudioCodec;
-  private JCheckBox  cbFilterDatasource;
-  private JComboBox  cbDatasource;
-  private JCheckBox  cbFilterMissingMetadata;
-  private JCheckBox  cbFilterMissingArtwork;
-  private JCheckBox  cbFilterMissingSubtitles;
+  private JCheckBox                    cbFilterWatched;
+  private JComboBox                    cbGenre;
+  private JComboBox                    cbSortColumn;
+  private JComboBox                    cbSortOrder;
+  private JComboBox                    cbWatched;
+  private JCheckBox                    cbFilterGenre;
+  private JCheckBox                    cbFilterCast;
+  private JTextField                   tfCastMember;
+  private JCheckBox                    cbFilterTag;
+  private JComboBox                    cbTag;
+  private JCheckBox                    cbFilterDuplicates;
+  private JCheckBox                    cbFilterMovieset;
+  private JComboBox                    cbMovieset;
+  private JCheckBox                    cbFilterVideoFormat;
+  private JComboBox                    cbVideoFormat;
+  private JCheckBox                    cbFilterVideoCodec;
+  private JComboBox                    cbVideoCodec;
+  private JCheckBox                    cbFilterAudioCodec;
+  private JComboBox                    cbAudioCodec;
+  private JCheckBox                    cbFilterDatasource;
+  private JComboBox                    cbDatasource;
+  private JCheckBox                    cbFilterMissingMetadata;
+  private JCheckBox                    cbFilterMissingArtwork;
+  private JCheckBox                    cbFilterMissingSubtitles;
 
-  private final Action actionSort   = new SortAction();
-  private final Action actionFilter = new FilterAction();
-  private JCheckBox    cbFilterNewMovies;
-  private JLabel       lblNewMovies;
-  private JCheckBox    cbFilterCertification;
-  private JLabel       lblCertification;
-  private JComboBox    cbCertification;
-  private JCheckBox    cbFilterMediaSource;
-  private JComboBox    cbMediaSource;
-  private JCheckBox    cbFilterYear;
-  private JLabel       lblYear;
-  private JSpinner     spYear;
+  private final Action                 actionSort       = new SortAction();
+  private final Action                 actionFilter     = new FilterAction();
+  private JCheckBox                    cbFilterNewMovies;
+  private JLabel                       lblNewMovies;
+  private JCheckBox                    cbFilterCertification;
+  private JLabel                       lblCertification;
+  private JComboBox                    cbCertification;
+  private JCheckBox                    cbFilterMediaSource;
+  private JComboBox                    cbMediaSource;
+  private JCheckBox                    cbFilterYear;
+  private JLabel                       lblYear;
+  private JSpinner                     spYear;
 
   /**
    * Instantiates a new movie extended search

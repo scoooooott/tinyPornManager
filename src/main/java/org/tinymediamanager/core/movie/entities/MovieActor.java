@@ -34,13 +34,13 @@ public class MovieActor extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
   @JsonProperty
-  private String name      = "";
+  private String             name      = "";
   @JsonProperty
-  private String character = "";
+  private String             character = "";
   @JsonProperty
-  private String thumbUrl  = "";
+  private String             thumbUrl  = "";
   @JsonProperty
-  private String thumbPath = "";
+  private String             thumbPath = "";
 
   public MovieActor() {
   }

@@ -61,8 +61,8 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
   private final static Logger         LOGGER           = LoggerFactory.getLogger(RegisterDonatorVersionDialog.class);
 
   /** UI components */
-  private JTextField tfName;
-  private JTextField tfEmailAddress;
+  private JTextField                  tfName;
+  private JTextField                  tfEmailAddress;
 
   public RegisterDonatorVersionDialog() {
     super(BUNDLE.getString("tmm.registerdonator"), "registerDonator"); //$NON-NLS-1$

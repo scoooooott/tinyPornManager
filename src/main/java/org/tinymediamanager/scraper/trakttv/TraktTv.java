@@ -73,7 +73,7 @@ import retrofit.client.Response;
  */
 
 public class TraktTv {
-  private static final String CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+  private static final String      CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TraktTv.class);
   private static final TraktV2     TRAKT        = createTraktApi();
@@ -81,7 +81,7 @@ public class TraktTv {
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
       "Scraper for Trakt.tv; yes, we can scraper here too :)");
 
-  private SyncResponse response;
+  private SyncResponse             response;
 
   private static TraktV2 createTraktApi() {
     TraktV2 api = new TraktV2();

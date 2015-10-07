@@ -34,20 +34,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MovieTrailer extends AbstractModelObject implements Comparable<MovieTrailer> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieTrailer.class);
+  private static final Logger LOGGER   = LoggerFactory.getLogger(MovieTrailer.class);
 
   @JsonProperty
-  private String  name     = "";
+  private String              name     = "";
   @JsonProperty
-  private String  url      = "";
+  private String              url      = "";
   @JsonProperty
-  private String  quality  = "";
+  private String              quality  = "";
   @JsonProperty
-  private String  provider = "";
+  private String              provider = "";
   @JsonProperty
-  private Boolean inNfo    = Boolean.FALSE;
+  private Boolean             inNfo    = Boolean.FALSE;
   @JsonProperty
-  private String  date     = "";
+  private String              date     = "";
 
   public MovieTrailer() {
   }

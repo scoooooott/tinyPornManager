@@ -37,10 +37,10 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
   private static final long serialVersionUID = 6366300597464784607L;
 
   /** The search for. */
-  private String searchFor;
+  private String            searchFor;
 
   /** The lap. */
-  private long lap;
+  private long              lap;
 
   /**
    * The Class CBDocument.

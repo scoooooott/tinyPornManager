@@ -24,8 +24,8 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsContainerPanel;
 
 public class TvShowUIModule implements ITmmUIModule {
-  private final static String   ID       = "tvShows";
-  private static TvShowUIModule instance = null;
+  private final static String        ID       = "tvShows";
+  private static TvShowUIModule      instance = null;
 
   private final TvShowSelectionModel selectionModel;
   private final JPanel               settingsPanel;

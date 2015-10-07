@@ -84,68 +84,68 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger LOGGER = LoggerFactory.getLogger(Movie.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
 
   @JsonProperty
-  private String           sortTitle       = "";
+  private String              sortTitle       = "";
   @JsonProperty
-  private String           tagline         = "";
+  private String              tagline         = "";
   @JsonProperty
-  private int              votes           = 0;
+  private int                 votes           = 0;
   @JsonProperty
-  private int              runtime         = 0;
+  private int                 runtime         = 0;
   @JsonProperty
-  private String           director        = "";
+  private String              director        = "";
   @JsonProperty
-  private String           writer          = "";
+  private String              writer          = "";
   @JsonProperty
-  private String           dataSource      = "";
+  private String              dataSource      = "";
   @JsonProperty
-  private boolean          watched         = false;
+  private boolean             watched         = false;
   @JsonProperty
-  private boolean          isDisc          = false;
+  private boolean             isDisc          = false;
   @JsonProperty
-  private String           spokenLanguages = "";
+  private String              spokenLanguages = "";
   @JsonProperty
-  private boolean          subtitles       = false;
+  private boolean             subtitles       = false;
   @JsonProperty
-  private String           country         = "";
+  private String              country         = "";
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date             releaseDate     = null;
+  private Date                releaseDate     = null;
   @JsonProperty
-  private boolean          multiMovieDir   = false;                    // we detected more movies in same folder
+  private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
   @JsonProperty
-  private int              top250          = 0;
+  private int                 top250          = 0;
   @JsonProperty
-  private MovieMediaSource mediaSource     = MovieMediaSource.UNKNOWN; // DVD, Bluray, etc
+  private MovieMediaSource    mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
   @JsonProperty
-  private boolean          videoIn3D       = false;
+  private boolean             videoIn3D       = false;
   @JsonProperty
-  private Certification    certification   = Certification.NOT_RATED;
+  private Certification       certification   = Certification.NOT_RATED;
   @JsonProperty
-  private UUID             movieSetId;
+  private UUID                movieSetId;
 
   @JsonProperty
-  private List<String>        genres       = new ArrayList<String>(1);
+  private List<String>        genres          = new ArrayList<String>(1);
   @JsonProperty
-  private List<String>        tags         = new ArrayList<String>(0);
+  private List<String>        tags            = new ArrayList<String>(0);
   @JsonProperty
-  private List<String>        extraThumbs  = new ArrayList<String>(0);
+  private List<String>        extraThumbs     = new ArrayList<String>(0);
   @JsonProperty
-  private List<String>        extraFanarts = new ArrayList<String>(0);
+  private List<String>        extraFanarts    = new ArrayList<String>(0);
   @JsonProperty
-  private List<MovieActor>    actors       = new ArrayList<MovieActor>();
+  private List<MovieActor>    actors          = new ArrayList<MovieActor>();
   @JsonProperty
-  private List<MovieProducer> producers    = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
   @JsonProperty
-  private List<MovieTrailer>  trailer      = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer>  trailer         = new ArrayList<MovieTrailer>(0);
 
-  private MovieSet          movieSet;
-  private String            titleSortable   = "";
-  private boolean           newlyAdded      = false;
-  private Date              lastWatched     = null;
-  private List<MediaGenres> genresForAccess = new ArrayList<MediaGenres>(0);
+  private MovieSet            movieSet;
+  private String              titleSortable   = "";
+  private boolean             newlyAdded      = false;
+  private Date                lastWatched     = null;
+  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();

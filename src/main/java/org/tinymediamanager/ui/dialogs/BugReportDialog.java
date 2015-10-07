@@ -75,11 +75,11 @@ public class BugReportDialog extends TmmDialog {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
-  private JTextField tfName;
-  private JTextArea  textArea;
-  private JTextField tfEmail;
-  private JCheckBox  chckbxLogs;
-  private JCheckBox  chckbxConfigxml;
+  private JTextField                  tfName;
+  private JTextArea                   textArea;
+  private JTextField                  tfEmail;
+  private JCheckBox                   chckbxLogs;
+  private JCheckBox                   chckbxConfigxml;
 
   /**
    * Instantiates a new feedback dialog.

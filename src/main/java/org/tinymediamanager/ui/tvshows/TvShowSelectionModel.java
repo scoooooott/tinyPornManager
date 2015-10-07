@@ -35,10 +35,10 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
  * @author Manuel Laggner
  */
 public class TvShowSelectionModel extends AbstractModelObject {
-  private static final String SELECTED_TV_SHOW = "selectedTvShow";
+  private static final String    SELECTED_TV_SHOW = "selectedTvShow";
 
   private TvShow                 selectedTvShow;
-  private TvShow                 initalTvShow = new TvShow();
+  private TvShow                 initalTvShow     = new TvShow();
   private PropertyChangeListener propertyChangeListener;
   private JTree                  tree;
 

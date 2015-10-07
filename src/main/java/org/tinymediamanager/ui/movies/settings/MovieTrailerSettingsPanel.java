@@ -77,14 +77,14 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieTrailerSettingsPanel extends ScrollablePanel {
-  private static final long           serialVersionUID = -1607146878528487625L;
+  private static final long              serialVersionUID = -1607146878528487625L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  private MovieSettings                  settings = Settings.getInstance().getMovieSettings();
-  private List<TrailerScraper>           scrapers = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
+  private MovieSettings                  settings         = Settings.getInstance().getMovieSettings();
+  private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
   private JTable                         tableTrailerScraper;
   private JTextPane                      tpScraperDescription;
   private JComboBox<MovieTrailerSources> cbTrailerSource;

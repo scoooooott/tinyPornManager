@@ -69,15 +69,15 @@ public class MovieBatchEditorDialog extends TmmDialog {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieList   movieList = MovieList.getInstance();
-  private List<Movie> moviesToEdit;
-  private boolean     changed   = false;
+  private MovieList                   movieList        = MovieList.getInstance();
+  private List<Movie>                 moviesToEdit;
+  private boolean                     changed          = false;
 
-  private JComboBox  cbGenres;
-  private JComboBox  cbTags;
-  private JComboBox  cbMovieSet;
-  private JCheckBox  chckbxWatched;
-  private JTextField tfLanguage;
+  private JComboBox                   cbGenres;
+  private JComboBox                   cbTags;
+  private JComboBox                   cbMovieSet;
+  private JCheckBox                   chckbxWatched;
+  private JTextField                  tfLanguage;
 
   /**
    * Instantiates a new movie batch editor.

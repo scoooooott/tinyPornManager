@@ -33,7 +33,7 @@ import org.jdesktop.beansbinding.Converter;
 public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();

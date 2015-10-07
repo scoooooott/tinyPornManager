@@ -48,27 +48,27 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
-  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Color          EVEN_ROW_COLOR = new Color(241, 245, 250);
+  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Color          EVEN_ROW_COLOR             = new Color(241, 245, 250);
 
-  private JPanel tvShowPanel      = new JPanel();
-  private JLabel tvShowTitle      = new JLabel();
-  private JLabel tvShowInfo       = new JLabel();
-  private JLabel tvShowNfoLabel   = new JLabel();
-  private JLabel tvShowImageLabel = new JLabel();
+  private JPanel                      tvShowPanel                = new JPanel();
+  private JLabel                      tvShowTitle                = new JLabel();
+  private JLabel                      tvShowInfo                 = new JLabel();
+  private JLabel                      tvShowNfoLabel             = new JLabel();
+  private JLabel                      tvShowImageLabel           = new JLabel();
 
-  private JPanel tvShowSeasonPanel = new JPanel();
-  private JLabel tvShowSeasonTitle = new JLabel();
+  private JPanel                      tvShowSeasonPanel          = new JPanel();
+  private JLabel                      tvShowSeasonTitle          = new JLabel();
 
-  private JPanel tvShowEpisodePanel         = new JPanel();
-  private JLabel tvShowEpisodeTitle         = new JLabel();
-  private JLabel tvShowEpisodeNfoLabel      = new JLabel();
-  private JLabel tvShowEpisodeImageLabel    = new JLabel();
-  private JLabel tvShowEpisodeSubtitleLabel = new JLabel();
+  private JPanel                      tvShowEpisodePanel         = new JPanel();
+  private JLabel                      tvShowEpisodeTitle         = new JLabel();
+  private JLabel                      tvShowEpisodeNfoLabel      = new JLabel();
+  private JLabel                      tvShowEpisodeImageLabel    = new JLabel();
+  private JLabel                      tvShowEpisodeSubtitleLabel = new JLabel();
 
-  private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-  private final Color             defaultColor    = tvShowTitle.getForeground();
-  private final Color             newlyAddedColor = new Color(76, 143, 72);
+  private DefaultTreeCellRenderer     defaultRenderer            = new DefaultTreeCellRenderer();
+  private final Color                 defaultColor               = tvShowTitle.getForeground();
+  private final Color                 newlyAddedColor            = new Color(76, 143, 72);
 
   /**
    * Instantiates a new tv show tree cell renderer.

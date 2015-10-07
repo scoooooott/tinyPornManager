@@ -30,8 +30,8 @@ public class MovieSearchAndScrapeOptions {
   private MovieScraperMetadataConfig scraperMetadataConfig;
   private MediaScraper               metadataScraper;
 
-  private List<MediaScraper> artworkScrapers = new ArrayList<>();
-  private List<MediaScraper> trailerScrapers = new ArrayList<>();
+  private List<MediaScraper>         artworkScrapers = new ArrayList<>();
+  private List<MediaScraper>         trailerScrapers = new ArrayList<>();
 
   /**
    * Instantiates a new movie search and scrape config.

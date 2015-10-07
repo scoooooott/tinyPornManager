@@ -53,7 +53,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
   private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
   private MediaScraper                     scraper;
 
-  private boolean scraped;
+  private boolean                          scraped;
 
   public MovieSetChooserModel(MediaSearchResult result) {
     this.result = result;

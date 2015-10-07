@@ -66,63 +66,63 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
-  private static Settings     instance;
+  private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
+  private static Settings             instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String CONFIG_FILE        = "config.xml";
-  private final static String TITLE_PREFIX       = "titlePrefix";
-  private final static String PREFIX             = "prefix";
-  private final static String VIDEO_FILE_TYPE    = "videoFileTypes";
-  private final static String AUDIO_FILE_TYPE    = "audioFileTypes";
-  private final static String SUBTITLE_FILE_TYPE = "subtitleFileTypes";
-  private final static String FILETYPE           = "filetype";
-  private final static String PROXY_HOST         = "proxyHost";
-  private final static String PROXY_PORT         = "proxyPort";
-  private final static String PROXY_USERNAME     = "proxyUsername";
-  private final static String PROXY_PASSWORD     = "proxyPassword";
-  private final static String IMAGE_CACHE        = "imageCache";
-  private final static String IMAGE_CACHE_TYPE   = "imageCacheType";
-  private final static String LANGUAGE           = "language";
-  private final static String WOL_DEVICES        = "wolDevices";
-  private final static String SHOW_NOTIFICATIONS = "showNotifications";
+  private final static String         CONFIG_FILE                 = "config.xml";
+  private final static String         TITLE_PREFIX                = "titlePrefix";
+  private final static String         PREFIX                      = "prefix";
+  private final static String         VIDEO_FILE_TYPE             = "videoFileTypes";
+  private final static String         AUDIO_FILE_TYPE             = "audioFileTypes";
+  private final static String         SUBTITLE_FILE_TYPE          = "subtitleFileTypes";
+  private final static String         FILETYPE                    = "filetype";
+  private final static String         PROXY_HOST                  = "proxyHost";
+  private final static String         PROXY_PORT                  = "proxyPort";
+  private final static String         PROXY_USERNAME              = "proxyUsername";
+  private final static String         PROXY_PASSWORD              = "proxyPassword";
+  private final static String         IMAGE_CACHE                 = "imageCache";
+  private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
+  private final static String         LANGUAGE                    = "language";
+  private final static String         WOL_DEVICES                 = "wolDevices";
+  private final static String         SHOW_NOTIFICATIONS          = "showNotifications";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
-  private final List<String> titlePrefix = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>          titlePrefix                 = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String> videoFileTypes = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>          videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = AUDIO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String> audioFileTypes = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>          audioFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String> subtitleFileTypes = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>          subtitleFileTypes           = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = WOL_DEVICES)
-  private final List<WolDevice> wolDevices = ObservableCollections.observableList(new ArrayList<WolDevice>());
+  private final List<WolDevice>       wolDevices                  = ObservableCollections.observableList(new ArrayList<WolDevice>());
 
   @XmlAttribute
-  private String version = "";
+  private String                      version                     = "";
 
-  private String proxyHost;
-  private String proxyPort;
-  private String proxyUsername;
-  private String proxyPassword;
+  private String                      proxyHost;
+  private String                      proxyPort;
+  private String                      proxyUsername;
+  private String                      proxyPassword;
 
-  private String traktAccessToken  = "";
-  private String traktRefreshToken = "";
-  private String fanartClientKey   = "";
+  private String                      traktAccessToken            = "";
+  private String                      traktRefreshToken           = "";
+  private String                      fanartClientKey             = "";
 
-  private String xbmcHost     = "";
-  private String xbmcUsername = "";
-  private String xbmcPassword = "";
+  private String                      xbmcHost                    = "";
+  private String                      xbmcUsername                = "";
+  private String                      xbmcPassword                = "";
 
   private boolean                     imageCache                  = true;
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
@@ -133,16 +133,16 @@ public class Settings extends AbstractModelObject {
   private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
 
   // language 2 char - saved to config
-  private String  language;
-  private boolean showNotifications = true;
-  private String  mediaPlayer       = "";
+  private String                      language;
+  private boolean                     showNotifications           = true;
+  private String                      mediaPlayer                 = "";
 
-  private int    fontSize   = 12;
-  private String fontFamily = "Dialog";
+  private int                         fontSize                    = 12;
+  private String                      fontFamily                  = "Dialog";
 
-  private boolean deleteTrashOnExit = false;
+  private boolean                     deleteTrashOnExit           = false;
 
-  private PropertyChangeListener propertyChangeListener;
+  private PropertyChangeListener      propertyChangeListener;
 
   /**
    * Instantiates a new settings.

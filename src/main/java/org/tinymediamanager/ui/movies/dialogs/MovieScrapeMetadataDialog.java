@@ -57,11 +57,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
-  private static final long           serialVersionUID = 3826984454317979241L;
+  private static final long           serialVersionUID           = 3826984454317979241L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
   private MediaScraperComboBox        cbMetadataScraper;

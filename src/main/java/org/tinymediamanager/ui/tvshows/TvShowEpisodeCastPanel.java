@@ -57,23 +57,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeCastPanel extends JPanel {
-  private static final long           serialVersionUID = 4712144916016763491L;
+  private static final long                   serialVersionUID = 4712144916016763491L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowEpisodeSelectionModel   selectionModel;
-  private EventList<TvShowActor>              actorEventList  = null;
-  private DefaultEventTableModel<TvShowActor> actorTableModel = null;
+  private EventList<TvShowActor>              actorEventList   = null;
+  private DefaultEventTableModel<TvShowActor> actorTableModel  = null;
 
   /**
    * UI elements
    */
-  private ZebraJTable tableActors;
-  private ImageLabel  lblActorImage;
-  private JLabel      lblDirector;
-  private JLabel      lblWriter;
+  private ZebraJTable                         tableActors;
+  private ImageLabel                          lblActorImage;
+  private JLabel                              lblDirector;
+  private JLabel                              lblWriter;
 
   /**
    * Instantiates a new tv show episode cast panel.

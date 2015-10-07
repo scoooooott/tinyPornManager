@@ -38,13 +38,13 @@ public class ReleaseInfo {
   private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseInfo.class);
 
   /** The version. */
-  private static String version;
+  private static String       version;
 
   /** The build. */
-  private static String build;
+  private static String       build;
 
   /** The build date. */
-  private static String buildDate;
+  private static String       buildDate;
 
   static {
     FileInputStream fileInputStream = null;

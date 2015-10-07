@@ -70,8 +70,8 @@ import ca.odell.glazedlists.ObservableElementList;
  * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieList.class);
-  private static MovieList    instance;
+  private static final Logger          LOGGER                   = LoggerFactory.getLogger(MovieList.class);
+  private static MovieList             instance;
 
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;

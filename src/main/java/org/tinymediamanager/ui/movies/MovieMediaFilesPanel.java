@@ -67,18 +67,18 @@ public class MovieMediaFilesPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieMediaFilesPanel.class);
 
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
-  private JLabel    lblFilesT;
-  private LinkLabel lblMoviePath;
-  private JLabel    lblDateAddedT;
-  private JLabel    lblDateAdded;
-  private JLabel    lblMoviePathT;
+  private JLabel                      lblFilesT;
+  private LinkLabel                   lblMoviePath;
+  private JLabel                      lblDateAddedT;
+  private JLabel                      lblDateAdded;
+  private JLabel                      lblMoviePathT;
   // private JButton btnPlay;
 
   /** The media file event list. */
-  private EventList<MediaFile> mediaFileEventList;
-  private MediaFilesPanel      panelMediaFiles;
+  private EventList<MediaFile>        mediaFileEventList;
+  private MediaFilesPanel             panelMediaFiles;
 
   /**
    * Instantiates a new movie media information panel.

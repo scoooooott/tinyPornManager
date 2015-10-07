@@ -40,8 +40,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeMediaFilesPanel extends JPanel {
-  private static final long serialVersionUID = 6409916197348303643L;
-  private MediaFilesPanel   panelMediaFiles;
+  private static final long           serialVersionUID = 6409916197348303643L;
+  private MediaFilesPanel             panelMediaFiles;
 
   private EventList<MediaFile>        mediaFileEventList;
   private TvShowEpisodeSelectionModel selectionModel;

@@ -103,22 +103,22 @@ public class ImageChooserDialog extends TmmDialog {
     POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
   }
 
-  private DownloadTask       task;
-  private List<MediaScraper> artworkScrapers;
-  private List<String>       extraThumbs;
-  private List<String>       extraFanarts;
+  private DownloadTask         task;
+  private List<MediaScraper>   artworkScrapers;
+  private List<String>         extraThumbs;
+  private List<String>         extraFanarts;
 
   /** UI components */
-  private final JPanel        contentPanel = new JPanel();
-  private JProgressBar        progressBar;
-  private JLabel              lblProgressAction;
-  private JPanel              panelImages;
-  private ImageLabel          imageLabel;
-  private JScrollPane         scrollPane;
-  private ImageType           type;
-  private MediaType           mediaType;
-  private ButtonGroup         buttonGroup  = new ButtonGroup();
-  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
+  private final JPanel         contentPanel    = new JPanel();
+  private JProgressBar         progressBar;
+  private JLabel               lblProgressAction;
+  private JPanel               panelImages;
+  private ImageLabel           imageLabel;
+  private JScrollPane          scrollPane;
+  private ImageType            type;
+  private MediaType            mediaType;
+  private ButtonGroup          buttonGroup     = new ButtonGroup();
+  private List<JToggleButton>  buttons         = new ArrayList<JToggleButton>();
 
   private final Action         actionOK        = new OkAction();
   private final Action         actionCancel    = new CancelAction();

@@ -38,18 +38,18 @@ public class MovieUIModule implements ITmmUIModule {
   private final static String         ID       = "movies";
   private static MovieUIModule        instance = null;
 
-  private MoviePanel listPanel;
-  private JPanel     detailPanel;
-  private JPanel     settingsPanel;
+  private MoviePanel                  listPanel;
+  private JPanel                      detailPanel;
+  private JPanel                      settingsPanel;
 
-  private final MovieSelectionModel selectionModel;
+  private final MovieSelectionModel   selectionModel;
 
-  private Action searchAction;
-  private Action editAction;
-  private Action updateAction;
+  private Action                      searchAction;
+  private Action                      editAction;
+  private Action                      updateAction;
 
-  private JPopupMenu searchPopupMenu;
-  private JPopupMenu editPopupMenu;
+  private JPopupMenu                  searchPopupMenu;
+  private JPopupMenu                  editPopupMenu;
 
   private MovieUIModule() {
     // this will be used in v3

@@ -42,18 +42,18 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class MovieModuleManager implements ITmmModule {
   public static final MovieSettings MOVIE_SETTINGS = Globals.settings.getMovieSettings();
 
-  private static final String       MODULE_TITLE = "Movie management";
-  private static final String       MOVIE_DB     = "movies.db";
+  private static final String       MODULE_TITLE   = "Movie management";
+  private static final String       MOVIE_DB       = "movies.db";
   private static MovieModuleManager instance;
 
-  private boolean      enabled;
-  private MVStore      mvStore;
-  private ObjectMapper objectMapper;
-  private ObjectWriter movieObjectWriter;
-  private ObjectWriter movieSetObjectWriter;
+  private boolean                   enabled;
+  private MVStore                   mvStore;
+  private ObjectMapper              objectMapper;
+  private ObjectWriter              movieObjectWriter;
+  private ObjectWriter              movieSetObjectWriter;
 
-  private MVMap<UUID, String> movieMap;
-  private MVMap<UUID, String> movieSetMap;
+  private MVMap<UUID, String>       movieMap;
+  private MVMap<UUID, String>       movieSetMap;
 
   private MovieModuleManager() {
     enabled = false;

@@ -50,12 +50,12 @@ public class SettingsPanel extends JPanel {
   /**
    * UI components
    */
-  private JPanel      buttonBar;
-  private ButtonGroup buttonGroup;
-  private Component   currentComponent;
-  private JPanel      panelTmmSettings;
-  private JPanel      panelMovieSettings;
-  private JPanel      panelTvShowSettings;
+  private JPanel                      buttonBar;
+  private ButtonGroup                 buttonGroup;
+  private Component                   currentComponent;
+  private JPanel                      panelTmmSettings;
+  private JPanel                      panelMovieSettings;
+  private JPanel                      panelTvShowSettings;
 
   /**
    * Create the panel.

@@ -34,13 +34,13 @@ public class MovieProducer extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
   @JsonProperty
-  private String name      = "";
+  private String             name      = "";
   @JsonProperty
-  private String role      = "";
+  private String             role      = "";
   @JsonProperty
-  private String thumbUrl  = "";
+  private String             thumbUrl  = "";
   @JsonProperty
-  private String thumbPath = "";
+  private String             thumbPath = "";
 
   public MovieProducer() {
   }

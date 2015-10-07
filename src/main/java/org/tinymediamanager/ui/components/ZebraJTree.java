@@ -29,16 +29,16 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 public class ZebraJTree extends JTree {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -8401898893090686850L;
+  private static final long       serialVersionUID = -8401898893090686850L;
 
   /** The row colors. */
-  public java.awt.Color rowColors[] = new java.awt.Color[2];
+  public java.awt.Color           rowColors[]      = new java.awt.Color[2];
 
   /** The draw stripes. */
-  private boolean drawStripes = false;
+  private boolean                 drawStripes      = false;
 
   /** The default renderer. */
-  private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
+  private DefaultTreeCellRenderer defaultRenderer  = new DefaultTreeCellRenderer();
 
   /**
    * Instantiates a new zebra j tree.
@@ -176,7 +176,7 @@ public class ZebraJTree extends JTree {
     public javax.swing.tree.TreeCellRenderer ren = null;
 
     /** The ed. */
-    public javax.swing.tree.TreeCellEditor ed = null;
+    public javax.swing.tree.TreeCellEditor   ed  = null;
 
     /*
      * (non-Javadoc)

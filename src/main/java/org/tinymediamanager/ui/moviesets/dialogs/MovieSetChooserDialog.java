@@ -88,23 +88,23 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
-  private MovieSet                   movieSetToScrape;
-  private List<MovieSetChooserModel> movieSetsFound = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
-  private final Action               actionSearch   = new SearchAction();
-  private boolean                    continueQueue  = true;
+  private MovieSet                    movieSetToScrape;
+  private List<MovieSetChooserModel>  movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private final Action                actionSearch     = new SearchAction();
+  private boolean                     continueQueue    = true;
 
-  private JLabel       lblProgressAction;
-  private JProgressBar progressBar;
-  private JTextField   tfMovieSetName;
-  private JTable       tableMovieSets;
-  private JTextArea    lblMovieSetName;
-  private ImageLabel   lblMovieSetPoster;
-  private JTable       tableMovies;
-  private JCheckBox    cbAssignMovies;
-  private JButton      btnOk;
+  private JLabel                      lblProgressAction;
+  private JProgressBar                progressBar;
+  private JTextField                  tfMovieSetName;
+  private JTable                      tableMovieSets;
+  private JTextArea                   lblMovieSetName;
+  private ImageLabel                  lblMovieSetPoster;
+  private JTable                      tableMovies;
+  private JCheckBox                   cbAssignMovies;
+  private JButton                     btnOk;
 
   /**
    * Instantiates a new movie set chooser panel.

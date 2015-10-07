@@ -34,7 +34,7 @@ public class TmmUIMessageCollector implements IMessageListener {
   private static final ResourceBundle       BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   public static final TmmUIMessageCollector instance = new TmmUIMessageCollector();
 
-  private List<Message> messages = new CopyOnWriteArrayList<Message>();
+  private List<Message>                     messages = new CopyOnWriteArrayList<Message>();
 
   private TmmUIMessageCollector() {
   }

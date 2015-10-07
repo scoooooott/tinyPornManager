@@ -65,11 +65,11 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * @author Manuel Laggner
  */
 public class TvShowSeasonInformationPanel extends JPanel {
-  private static final long           serialVersionUID = 1911808562993073590L;
+  private static final long                     serialVersionUID  = 1911808562993073590L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle           BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<TvShowEpisode>              episodeEventList;
   private EventList<MediaFile>                  mediaFileEventList;
@@ -77,22 +77,22 @@ public class TvShowSeasonInformationPanel extends JPanel {
   private TvShowSeasonSelectionModel            tvShowSeasonSelectionModel;
 
   /** UI components */
-  private JSplitPane      splitPaneVertical;
-  private JPanel          panelTop;
-  private ImageLabel      lblTvShowPoster;
-  private JLabel          lblPosterSize;
-  private JPanel          panelRight;
-  private JPanel          panelLeft;
-  private JLabel          lblTvshowTitle;
-  private JLabel          lblSeasonT;
-  private JLabel          lblSeason;
-  private JSeparator      separator;
-  private JLabel          lblEpisodelistT;
-  private JScrollPane     scrollPaneEpisodes;
-  private JTable          tableEpisodes;
-  private JPanel          panelBottom;
-  private JLabel          lblMediaFiles;
-  private MediaFilesPanel panelMediaFiles;
+  private JSplitPane                            splitPaneVertical;
+  private JPanel                                panelTop;
+  private ImageLabel                            lblTvShowPoster;
+  private JLabel                                lblPosterSize;
+  private JPanel                                panelRight;
+  private JPanel                                panelLeft;
+  private JLabel                                lblTvshowTitle;
+  private JLabel                                lblSeasonT;
+  private JLabel                                lblSeason;
+  private JSeparator                            separator;
+  private JLabel                                lblEpisodelistT;
+  private JScrollPane                           scrollPaneEpisodes;
+  private JTable                                tableEpisodes;
+  private JPanel                                panelBottom;
+  private JLabel                                lblMediaFiles;
+  private MediaFilesPanel                       panelMediaFiles;
 
   /**
    * Instantiates a new tv show information panel.

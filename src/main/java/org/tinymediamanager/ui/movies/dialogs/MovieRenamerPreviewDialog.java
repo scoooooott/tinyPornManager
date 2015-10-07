@@ -78,11 +78,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
-  private static final long           serialVersionUID = -8162631708278089277L;
+  private static final long                                    serialVersionUID = -8162631708278089277L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer>              results;
   private SortedList<MovieRenamerPreviewContainer>             sortedResults;
@@ -94,13 +94,13 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
   private DefaultEventTableModel<MediaFileContainer>           newMediaFileTableModel;
 
   /** UI components */
-  private JTable tableMovies;
-  private JLabel lblTitle;
-  private JLabel lblDatasource;
-  private JLabel lblFolderOld;
-  private JLabel lblFolderNew;
-  private JTable tableMediaFilesNew;
-  private JTable tableMediaFilesOld;
+  private JTable                                               tableMovies;
+  private JLabel                                               lblTitle;
+  private JLabel                                               lblDatasource;
+  private JLabel                                               lblFolderOld;
+  private JLabel                                               lblFolderNew;
+  private JTable                                               tableMediaFilesNew;
+  private JTable                                               tableMediaFilesOld;
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$

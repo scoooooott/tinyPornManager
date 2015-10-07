@@ -72,30 +72,30 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** UI components */
-  private JSplitPane  splitPaneVertical;
-  private JPanel      panelTop;
-  private JPanel      panelTvShowLogos;
-  private StarRater   panelRatingStars;
-  private JLabel      lblTvShowName;
-  private JLabel      lblRating;
-  private JLabel      lblVoteCount;
-  private JLabel      lblEpisodeTitle;
-  private JLabel      lblCertificationImage;
-  private ImageLabel  lblEpisodeThumb;
-  private ImageLabel  lblSeasonPoster;
-  private JPanel      panelBottom;
-  private JTextPane   tpOverview;
-  private JPanel      panelLogos;
-  private JTabbedPane tabbedPaneTvShowEpisodeDetails;
-  private JPanel      panelActors;
-  private JPanel      panelDetails;
-  private JPanel      panelMediaInformation;
-  private JPanel      panelMediaFiles;
-  private JLabel      lblMediaLogoResolution;
-  private JLabel      lblMediaLogoVideoCodec;
-  private JLabel      lblMediaLogoAudio;
-  private JPanel      panelWatched;
-  private JLabel      lblWatched;
+  private JSplitPane                  splitPaneVertical;
+  private JPanel                      panelTop;
+  private JPanel                      panelTvShowLogos;
+  private StarRater                   panelRatingStars;
+  private JLabel                      lblTvShowName;
+  private JLabel                      lblRating;
+  private JLabel                      lblVoteCount;
+  private JLabel                      lblEpisodeTitle;
+  private JLabel                      lblCertificationImage;
+  private ImageLabel                  lblEpisodeThumb;
+  private ImageLabel                  lblSeasonPoster;
+  private JPanel                      panelBottom;
+  private JTextPane                   tpOverview;
+  private JPanel                      panelLogos;
+  private JTabbedPane                 tabbedPaneTvShowEpisodeDetails;
+  private JPanel                      panelActors;
+  private JPanel                      panelDetails;
+  private JPanel                      panelMediaInformation;
+  private JPanel                      panelMediaFiles;
+  private JLabel                      lblMediaLogoResolution;
+  private JLabel                      lblMediaLogoVideoCodec;
+  private JLabel                      lblMediaLogoAudio;
+  private JPanel                      panelWatched;
+  private JLabel                      lblWatched;
 
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
   private JPanel                      panelLeft;

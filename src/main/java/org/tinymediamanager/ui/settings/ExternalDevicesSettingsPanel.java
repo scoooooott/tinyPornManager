@@ -60,12 +60,12 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings settings = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
-  private JTable         tableWolDevices;
-  private JTextField     tfXbmcHost;
-  private JTextField     tfXbmcUsername;
-  private JPasswordField tfXbmcPassword;
+  private JTable                      tableWolDevices;
+  private JTextField                  tfXbmcHost;
+  private JTextField                  tfXbmcUsername;
+  private JPasswordField              tfXbmcPassword;
 
   public ExternalDevicesSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },

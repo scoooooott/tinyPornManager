@@ -91,48 +91,48 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  private Settings             settings = Settings.getInstance();
-  private List<ArtworkScraper> scrapers = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
+  private Settings                    settings         = Settings.getInstance();
+  private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
-  private JComboBox   cbImagePosterSize;
-  private JComboBox   cbImageFanartSize;
-  private JCheckBox   cbMoviePosterFilename2;
-  private JCheckBox   cbMoviePosterFilename4;
-  private JCheckBox   cbMoviePosterFilename6;
-  private JCheckBox   cbMoviePosterFilename7;
-  private JCheckBox   cbMovieFanartFilename1;
-  private JCheckBox   cbMovieFanartFilename2;
-  private JCheckBox   cbMoviePosterFilename8;
-  private JCheckBox   cbActorImages;
-  private JTextPane   tpFileNamingHint;
-  private JCheckBox   chckbxEnableExtrathumbs;
-  private JCheckBox   chckbxEnableExtrafanart;
-  private JCheckBox   chckbxResizeExtrathumbsTo;
-  private JSpinner    spExtrathumbWidth;
-  private JLabel      lblDownload;
-  private JSpinner    spDownloadCountExtrathumbs;
-  private JLabel      lblDownloadCount;
-  private JSpinner    spDownloadCountExtrafanart;
-  private JCheckBox   chckbxStoreMoviesetArtwork;
-  private JTextField  tfMovieSetArtworkFolder;
-  private JLabel      lblFoldername;
-  private JButton     btnSelectFolder;
-  private JCheckBox   cbMovieFanartFilename3;
-  private JCheckBox   chckbxBanner;
-  private JCheckBox   chckbxLogo;
-  private JCheckBox   chckbxThumb;
-  private JCheckBox   chckbxDiscArt;
-  private JCheckBox   chckbxClearArt;
-  private JPanel      panelExtraArtwork;
-  private JCheckBox   chckbxMovieSetArtwork;
-  private JScrollPane scrollPaneScraper;
-  private JPanel      panelScraperDetails;
-  private JTable      tableScraper;
-  private JTextPane   tpScraperDescription;
-  private JPanel      panelScraperOptions;
-  private JPanel      panelFileNaming;
+  private JComboBox                   cbImagePosterSize;
+  private JComboBox                   cbImageFanartSize;
+  private JCheckBox                   cbMoviePosterFilename2;
+  private JCheckBox                   cbMoviePosterFilename4;
+  private JCheckBox                   cbMoviePosterFilename6;
+  private JCheckBox                   cbMoviePosterFilename7;
+  private JCheckBox                   cbMovieFanartFilename1;
+  private JCheckBox                   cbMovieFanartFilename2;
+  private JCheckBox                   cbMoviePosterFilename8;
+  private JCheckBox                   cbActorImages;
+  private JTextPane                   tpFileNamingHint;
+  private JCheckBox                   chckbxEnableExtrathumbs;
+  private JCheckBox                   chckbxEnableExtrafanart;
+  private JCheckBox                   chckbxResizeExtrathumbsTo;
+  private JSpinner                    spExtrathumbWidth;
+  private JLabel                      lblDownload;
+  private JSpinner                    spDownloadCountExtrathumbs;
+  private JLabel                      lblDownloadCount;
+  private JSpinner                    spDownloadCountExtrafanart;
+  private JCheckBox                   chckbxStoreMoviesetArtwork;
+  private JTextField                  tfMovieSetArtworkFolder;
+  private JLabel                      lblFoldername;
+  private JButton                     btnSelectFolder;
+  private JCheckBox                   cbMovieFanartFilename3;
+  private JCheckBox                   chckbxBanner;
+  private JCheckBox                   chckbxLogo;
+  private JCheckBox                   chckbxThumb;
+  private JCheckBox                   chckbxDiscArt;
+  private JCheckBox                   chckbxClearArt;
+  private JPanel                      panelExtraArtwork;
+  private JCheckBox                   chckbxMovieSetArtwork;
+  private JScrollPane                 scrollPaneScraper;
+  private JPanel                      panelScraperDetails;
+  private JTable                      tableScraper;
+  private JTextPane                   tpScraperDescription;
+  private JPanel                      panelScraperOptions;
+  private JPanel                      panelFileNaming;
 
   /**
    * Instantiates a new movie image settings panel.

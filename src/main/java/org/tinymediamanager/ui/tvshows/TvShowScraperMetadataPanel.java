@@ -47,18 +47,18 @@ public class TvShowScraperMetadataPanel extends JPanel {
 
   private TvShowScraperMetadataConfig config;
 
-  private JCheckBox chckbxTitle;
-  private JCheckBox chckbxPlot;
-  private JCheckBox chckbxRating;
-  private JCheckBox chckbxRuntime;
-  private JCheckBox chckbxYear;
-  private JCheckBox chckbxCertification;
-  private JCheckBox chckbxCast;
-  private JCheckBox chckbxGenres;
-  private JCheckBox chckbxArtwork;
-  private JCheckBox chckbxScrapeEpisodes;
-  private JCheckBox chckbxAired;
-  private JCheckBox chckbxStatus;
+  private JCheckBox                   chckbxTitle;
+  private JCheckBox                   chckbxPlot;
+  private JCheckBox                   chckbxRating;
+  private JCheckBox                   chckbxRuntime;
+  private JCheckBox                   chckbxYear;
+  private JCheckBox                   chckbxCertification;
+  private JCheckBox                   chckbxCast;
+  private JCheckBox                   chckbxGenres;
+  private JCheckBox                   chckbxArtwork;
+  private JCheckBox                   chckbxScrapeEpisodes;
+  private JCheckBox                   chckbxAired;
+  private JCheckBox                   chckbxStatus;
 
   /**
    * Instantiates a new tv show scraper metadata panel.

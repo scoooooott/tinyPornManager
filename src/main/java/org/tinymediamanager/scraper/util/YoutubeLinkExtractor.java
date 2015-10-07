@@ -104,10 +104,10 @@ public class YoutubeLinkExtractor {
   private static Pattern patternSubfunction     = Pattern.compile("([a-zA-Z]*?)[.]?(\\w+?)\\([^)]*?\\)");
   private static Pattern playerUrlPattern       = Pattern.compile("\\\"assets\\\":\\{.*?\\\"js\\\":\\\"(.*?)\\\"");
 
-  private String youtubeUrl;
-  private String id;
-  private String jsonConfiguration;
-  private String playerJavascript;
+  private String         youtubeUrl;
+  private String         id;
+  private String         jsonConfiguration;
+  private String         playerJavascript;
 
   public YoutubeLinkExtractor(String youtubeUrl) {
     this.youtubeUrl = youtubeUrl;

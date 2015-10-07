@@ -35,12 +35,12 @@ import org.slf4j.LoggerFactory;
  * @author Myron Boyle, Manuel Laggner
  */
 public abstract class TmmThreadPool extends TmmTask {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TmmThreadPool.class);
+  private static final Logger       LOGGER  = LoggerFactory.getLogger(TmmThreadPool.class);
 
   private ThreadPoolExecutor        pool    = null;
   private CompletionService<Object> service = null;
 
-  protected String poolname;
+  protected String                  poolname;
 
   protected TmmThreadPool(String taskName) {
     super(taskName, 0, TaskType.MAIN_TASK);

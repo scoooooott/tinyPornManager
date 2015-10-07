@@ -84,45 +84,45 @@ import org.tinymediamanager.scraper.util.ParserUtils;
     "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers" })
 public class MovieToMpNfoConnector {
 
-  private static final Logger LOGGER  = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
-  private static JAXBContext  context = initContext();
+  private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
+  private static JAXBContext  context       = initContext();
 
-  private String id            = "";
-  private String title         = "";
-  private String originaltitle = "";
-  private String sorttitle     = "";
-  private float  rating        = 0;
-  private int    votes         = 0;
-  private String year          = "";
-  private String outline       = "";
-  private String plot          = "";
-  private String tagline       = "";
-  private String runtime       = "";
-  private String thumb         = "";
-  private String director      = "";
-  private String studio        = "";
-  private String mpaa          = "";
-  private String credits       = "";
-  private String country       = "";
+  private String              id            = "";
+  private String              title         = "";
+  private String              originaltitle = "";
+  private String              sorttitle     = "";
+  private float               rating        = 0;
+  private int                 votes         = 0;
+  private String              year          = "";
+  private String              outline       = "";
+  private String              plot          = "";
+  private String              tagline       = "";
+  private String              runtime       = "";
+  private String              thumb         = "";
+  private String              director      = "";
+  private String              studio        = "";
+  private String              mpaa          = "";
+  private String              credits       = "";
+  private String              country       = "";
 
   @XmlElement
-  private String premiered = "";
+  private String              premiered     = "";
 
   @XmlElementWrapper(name = "fanart")
   @XmlElement(name = "thumb")
-  private List<String> fanart;
+  private List<String>        fanart;
 
   @XmlAnyElement(lax = true)
-  private List<Object> actors;
+  private List<Object>        actors;
 
   @XmlAnyElement(lax = true)
-  private List<Object> producers;
+  private List<Object>        producers;
 
   @XmlElementWrapper(name = "genres")
   @XmlElement(name = "genre")
-  private List<String> genres;
+  private List<String>        genres;
 
-  private List<MovieSets> sets;
+  private List<MovieSets>     sets;
 
   @XmlElementWrapper(name = "ids")
   private Map<String, Object> ids;
@@ -1030,7 +1030,7 @@ public class MovieToMpNfoConnector {
     private String name;
 
     /** The order. */
-    private int order;
+    private int    order;
 
     /**
      * Instantiates a new movie sets.

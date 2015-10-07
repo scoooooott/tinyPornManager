@@ -54,17 +54,17 @@ public class GatewayDiscover {
   /**
    * The SSDP port
    */
-  public static final int PORT = 1900;
+  public static final int                 PORT    = 1900;
 
   /**
    * The broadcast address to use when trying to contact UPnP devices
    */
-  public static final String IP = "239.255.255.250";
+  public static final String              IP      = "239.255.255.250";
 
   /**
    * The timeout to set for the initial broadcast request
    */
-  private static final int TIMEOUT = 10000;
+  private static final int                TIMEOUT = 10000;
 
   /**
    * A map of the GatewayDevices discovered so far. The assumption is that a machine is connected to up to a Gateway Device per InetAddress

@@ -51,30 +51,30 @@ public class TvShowSettings extends AbstractModelObject {
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String> tvShowDataSources = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_ARTWORK_SCRAPERS)
   @XmlElement(name = ENTRY)
-  private final List<String> tvShowArtworkScrapers = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  tvShowArtworkScrapers       = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
-  private final List<String> tvShowSkipFolders = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  tvShowSkipFolders           = ObservableCollections.observableList(new ArrayList<String>());
 
-  private String         tvShowScraper            = Constants.TVDB;
-  private boolean        scrapeBestImage          = true;
-  private MediaLanguages scraperLanguage          = MediaLanguages.en;
-  private CountryCode    certificationCountry     = CountryCode.US;
-  private String         renamerTvShowFoldername  = "$N ($Y)";
-  private String         renamerSeasonFoldername  = "Season $1";
-  private String         renamerFilename          = "$N - S$2E$E - $T";
-  private boolean        useRenamerThumbPostfix   = true;
-  private boolean        buildImageCacheOnImport  = false;
-  private boolean        asciiReplacement         = false;
-  private boolean        renamerSpaceSubstitution = false;
-  private String         renamerSpaceReplacement  = "_";
-  private boolean        syncTrakt                = false;
-  private boolean        dvdOrder                 = false;
+  private String              tvShowScraper               = Constants.TVDB;
+  private boolean             scrapeBestImage             = true;
+  private MediaLanguages      scraperLanguage             = MediaLanguages.en;
+  private CountryCode         certificationCountry        = CountryCode.US;
+  private String              renamerTvShowFoldername     = "$N ($Y)";
+  private String              renamerSeasonFoldername     = "Season $1";
+  private String              renamerFilename             = "$N - S$2E$E - $T";
+  private boolean             useRenamerThumbPostfix      = true;
+  private boolean             buildImageCacheOnImport     = false;
+  private boolean             asciiReplacement            = false;
+  private boolean             renamerSpaceSubstitution    = false;
+  private String              renamerSpaceReplacement     = "_";
+  private boolean             syncTrakt                   = false;
+  private boolean             dvdOrder                    = false;
 
   public TvShowSettings() {
   }

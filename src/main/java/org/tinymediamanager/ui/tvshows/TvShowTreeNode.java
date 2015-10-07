@@ -33,7 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 public class TvShowTreeNode extends DefaultMutableTreeNode {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -1316609340104597133L;
+  private static final long    serialVersionUID = -1316609340104597133L;
 
   /** The node comparator. */
   private Comparator<TreeNode> nodeComparator;

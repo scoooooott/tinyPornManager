@@ -47,7 +47,7 @@ public class MovieSetArtworkHelper {
       MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
+  private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
    * find and assign movie set artwork in the artwork folder

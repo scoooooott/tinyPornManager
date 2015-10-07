@@ -69,50 +69,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class TvShow extends MediaEntity {
-  private static final Logger        LOGGER        = LoggerFactory.getLogger(TvShow.class);
-  private static TvShowArtworkHelper artworkHelper = new TvShowArtworkHelper();
+  private static final Logger         LOGGER             = LoggerFactory.getLogger(TvShow.class);
+  private static TvShowArtworkHelper  artworkHelper      = new TvShowArtworkHelper();
 
   @JsonProperty
-  private String        dataSource    = "";
+  private String                      dataSource         = "";
   @JsonProperty
-  private String        director      = "";
+  private String                      director           = "";
   @JsonProperty
-  private String        writer        = "";
+  private String                      writer             = "";
   @JsonProperty
-  private int           runtime       = 0;
+  private int                         runtime            = 0;
   @JsonProperty
-  private int           votes         = 0;
+  private int                         votes              = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date          firstAired    = null;
+  private Date                        firstAired         = null;
   @JsonProperty
-  private String        status        = "";
+  private String                      status             = "";
   @JsonProperty
-  private String        studio        = "";
+  private String                      studio             = "";
   @JsonProperty
-  private boolean       watched       = false;
+  private boolean                     watched            = false;
   @JsonProperty
-  private String        sortTitle     = "";
+  private String                      sortTitle          = "";
   @JsonProperty
-  private Certification certification = Certification.NOT_RATED;
+  private Certification               certification      = Certification.NOT_RATED;
 
   @JsonProperty
-  private List<String>             genres             = new ArrayList<String>(1);
+  private List<String>                genres             = new ArrayList<String>(1);
   @JsonProperty
-  private List<String>             tags               = new ArrayList<String>(0);
+  private List<String>                tags               = new ArrayList<String>(0);
   @JsonProperty
-  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>(0);
+  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @JsonProperty
-  private List<TvShowActor>        actors             = new ArrayList<TvShowActor>();
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
 
-  private List<TvShowEpisode>         episodes        = new ArrayList<TvShowEpisode>();
-  private HashMap<Integer, MediaFile> seasonPosters   = new HashMap<Integer, MediaFile>(0);
-  private List<TvShowSeason>          seasons         = new ArrayList<TvShowSeason>(1);
-  private List<MediaGenres>           genresForAccess = new ArrayList<MediaGenres>(1);
-  private String                      titleSortable   = "";
-  private Date                        lastWatched     = null;
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
+  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
+  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(1);
+  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(1);
+  private String                      titleSortable      = "";
+  private Date                        lastWatched        = null;
 
-  private PropertyChangeListener propertyChangeListener;
+  private PropertyChangeListener      propertyChangeListener;
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();

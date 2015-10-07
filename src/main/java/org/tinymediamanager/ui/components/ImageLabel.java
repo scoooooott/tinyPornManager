@@ -53,23 +53,23 @@ public class ImageLabel extends JLabel {
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
   }
 
-  private static final long             serialVersionUID = -2524445544386464158L;
-  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static Font                   FONT;
+  private static final long                  serialVersionUID   = -2524445544386464158L;
+  protected static final ResourceBundle      BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static Font                        FONT;
 
-  protected BufferedImage scaledImage;
-  protected String        imageUrl;
-  protected String        imagePath;
-  protected Position      position           = Position.TOP_LEFT;
-  protected String        alternativeText    = null;
-  protected boolean       drawBorder;
-  protected boolean       drawFullWidth;
-  protected boolean       enabledLightbox    = false;
-  protected boolean       useCache           = true;
-  protected float         desiredAspectRatio = 0f;
+  protected BufferedImage                    scaledImage;
+  protected String                           imageUrl;
+  protected String                           imagePath;
+  protected Position                         position           = Position.TOP_LEFT;
+  protected String                           alternativeText    = null;
+  protected boolean                          drawBorder;
+  protected boolean                          drawFullWidth;
+  protected boolean                          enabledLightbox    = false;
+  protected boolean                          useCache           = true;
+  protected float                            desiredAspectRatio = 0f;
 
-  protected SwingWorker<BufferedImage, Void> worker           = null;
-  protected MouseListener                    lightboxListener = null;
+  protected SwingWorker<BufferedImage, Void> worker             = null;
+  protected MouseListener                    lightboxListener   = null;
 
   static {
     try {

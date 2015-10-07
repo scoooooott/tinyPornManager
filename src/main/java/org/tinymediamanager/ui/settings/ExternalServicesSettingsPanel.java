@@ -59,9 +59,9 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings     settings      = Settings.getInstance();
-  private final JPanel panelFanartTv = new JPanel();
-  private JTextField   tfFanartClientKey;
+  private Settings                    settings         = Settings.getInstance();
+  private final JPanel                panelFanartTv    = new JPanel();
+  private JTextField                  tfFanartClientKey;
 
   public ExternalServicesSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },

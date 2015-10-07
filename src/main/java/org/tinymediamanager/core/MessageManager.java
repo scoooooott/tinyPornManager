@@ -26,7 +26,7 @@ import java.util.List;
 public class MessageManager {
   public final static MessageManager instance;
 
-  private List<IMessageListener> listeners;
+  private List<IMessageListener>     listeners;
 
   static {
     instance = new MessageManager();

@@ -32,9 +32,9 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
  * @author Manuel Laggner
  */
 public class TvShowRootTreeNode extends DefaultMutableTreeNode {
-  private static final long serialVersionUID = 6510900885675830369L;
+  private static final long    serialVersionUID = 6510900885675830369L;
 
-  private RuleBasedCollator    stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+  private RuleBasedCollator    stringCollator   = (RuleBasedCollator) RuleBasedCollator.getInstance();
   private Comparator<TreeNode> nodeComparator;
 
   /**

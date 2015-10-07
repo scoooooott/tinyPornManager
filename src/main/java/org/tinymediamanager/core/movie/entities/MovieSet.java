@@ -48,10 +48,10 @@ public class MovieSet extends MediaEntity {
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
   @JsonProperty
-  private List<UUID> movieIds = new ArrayList<UUID>();
+  private List<UUID>                     movieIds             = new ArrayList<UUID>();
 
-  private List<Movie> movies        = new ArrayList<Movie>(0);
-  private String      titleSortable = "";
+  private List<Movie>                    movies               = new ArrayList<Movie>(0);
+  private String                         titleSortable        = "";
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();

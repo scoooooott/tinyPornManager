@@ -41,18 +41,18 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class ImagePreviewDialog extends TmmDialog {
-  private static final long           serialVersionUID = -7479476493187235867L;
+  private static final long                serialVersionUID = -7479476493187235867L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
+  private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger              LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 
   private String                           imageUrl;
   private SwingWorker<BufferedImage, Void> worker;
-  private ImageViewer                      imgViewer = new ImageViewer();
+  private ImageViewer                      imgViewer        = new ImageViewer();
 
-  private JLabel lblLoadingInfo;
+  private JLabel                           lblLoadingInfo;
 
   public ImagePreviewDialog(String urlToImage) {
     super("", "imagePreview");

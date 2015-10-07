@@ -63,11 +63,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MediaFileEditorPanel extends JPanel {
-  private static final long           serialVersionUID = -2416409052145301941L;
+  private static final long                                                   serialVersionUID = -2416409052145301941L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                                         BUNDLE           = ResourceBundle.getBundle("messages",  //$NON-NLS-1$
+      new UTF8Control());
 
   private List<MediaFileContainer>                                            mediaFiles;
   private JTable                                                              tableMediaFiles;

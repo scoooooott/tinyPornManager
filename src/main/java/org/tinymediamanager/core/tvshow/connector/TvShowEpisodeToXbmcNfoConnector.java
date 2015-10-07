@@ -64,50 +64,50 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
     "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
-  private static final Logger LOGGER  = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
-  private static JAXBContext  context = initContext();
+  private static final Logger LOGGER         = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static JAXBContext  context        = initContext();
 
-  private String season         = "";
-  private String episode        = "";
-  private String displayseason  = "";
-  private String displayepisode = "";
-  private String uniqueid       = "";
-  private String title          = "";
-  private String showtitle      = "";
-  private float  rating         = 0;
-  private int    votes          = 0;
-  private String plot           = "";
-  private String studio         = "";
-  private String mpaa           = "";
-  private String aired          = "";
-  private String premiered      = "";
+  private String              season         = "";
+  private String              episode        = "";
+  private String              displayseason  = "";
+  private String              displayepisode = "";
+  private String              uniqueid       = "";
+  private String              title          = "";
+  private String              showtitle      = "";
+  private float               rating         = 0;
+  private int                 votes          = 0;
+  private String              plot           = "";
+  private String              studio         = "";
+  private String              mpaa           = "";
+  private String              aired          = "";
+  private String              premiered      = "";
 
   @XmlElement
-  private int     playcount = 0;
+  private int                 playcount      = 0;
   @XmlElement
-  private boolean watched   = false;
+  private boolean             watched        = false;
 
   @XmlAnyElement(lax = true)
-  private List<Object> actors;
+  private List<Object>        actors;
 
   @XmlElement(name = "credits")
-  private List<String> credits;
+  private List<String>        credits;
 
   @XmlElement(name = "director")
-  private List<String> director;
+  private List<String>        director;
 
   @XmlElement(name = "tag")
-  private List<String> tags;
+  private List<String>        tags;
 
   @XmlAnyElement(lax = true)
-  private List<Object> unsupportedElements;
+  private List<Object>        unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  String thumb;
+  String                      thumb;
 
   @XmlElement
-  String lastplayed;
+  String                      lastplayed;
 
   private static JAXBContext initContext() {
     try {

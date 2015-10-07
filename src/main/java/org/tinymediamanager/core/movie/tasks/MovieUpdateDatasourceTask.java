@@ -66,20 +66,20 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+  private static final List<String>   skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
       "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String skipFoldersRegex = "^[.][\\w@]+.*";
-  private static Pattern      video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
+  private static final String         skipFoldersRegex = "^[.][\\w@]+.*";
+  private static Pattern              video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
-  private List<String>  dataSources;
-  private MovieList     movieList;
-  private HashSet<File> filesFound = new HashSet<File>();
+  private List<String>                dataSources;
+  private MovieList                   movieList;
+  private HashSet<File>               filesFound       = new HashSet<File>();
 
   public MovieUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));

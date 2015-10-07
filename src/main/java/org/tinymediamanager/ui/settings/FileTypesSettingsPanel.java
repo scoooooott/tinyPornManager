@@ -55,18 +55,18 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings   settings = Settings.getInstance();
-  private JPanel     panelVideoFiletypes;
-  private JTextField tfVideoFiletype;
-  private JList      listVideoFiletypes;
-  private JPanel     panelSubtitleFiletypes;
-  private JTextField tfSubtitleFiletype;
-  private JList      listSubtitleFiletypes;
-  private JList      listSortPrefixes;
-  private JTextField tfSortPrefix;
-  private JPanel     panelAudioFiletypes;
-  private JList      listAudioFiletypes;
-  private JTextField tfAudioFiletype;
+  private Settings                    settings         = Settings.getInstance();
+  private JPanel                      panelVideoFiletypes;
+  private JTextField                  tfVideoFiletype;
+  private JList                       listVideoFiletypes;
+  private JPanel                      panelSubtitleFiletypes;
+  private JTextField                  tfSubtitleFiletype;
+  private JList                       listSubtitleFiletypes;
+  private JList                       listSortPrefixes;
+  private JTextField                  tfSortPrefix;
+  private JPanel                      panelAudioFiletypes;
+  private JList                       listAudioFiletypes;
+  private JTextField                  tfAudioFiletype;
 
   /**
    * Instantiates a new general settings panel.

@@ -45,19 +45,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetTreeCellRenderer implements TreeCellRenderer {
-  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Color          EVEN_ROW_COLOR = new Color(241, 245, 250);
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Color          EVEN_ROW_COLOR     = new Color(241, 245, 250);
 
-  private JPanel movieSetPanel      = new JPanel();
-  private JPanel moviePanel         = new JPanel();
-  private JLabel movieSetTitle      = new JLabel();
-  private JLabel movieTitle         = new JLabel();
-  private JLabel movieSetInfo       = new JLabel();
-  private JLabel movieSetImageLabel = new JLabel();
-  private JLabel movieNfoLabel      = new JLabel();
-  private JLabel movieImageLabel    = new JLabel();
+  private JPanel                      movieSetPanel      = new JPanel();
+  private JPanel                      moviePanel         = new JPanel();
+  private JLabel                      movieSetTitle      = new JLabel();
+  private JLabel                      movieTitle         = new JLabel();
+  private JLabel                      movieSetInfo       = new JLabel();
+  private JLabel                      movieSetImageLabel = new JLabel();
+  private JLabel                      movieNfoLabel      = new JLabel();
+  private JLabel                      movieImageLabel    = new JLabel();
 
-  private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
+  private DefaultTreeCellRenderer     defaultRenderer    = new DefaultTreeCellRenderer();
 
   public MovieSetTreeCellRenderer() {
     movieSetPanel.setLayout(

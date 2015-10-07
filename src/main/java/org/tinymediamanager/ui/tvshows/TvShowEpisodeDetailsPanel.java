@@ -54,23 +54,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeDetailsPanel extends JPanel {
-  private static final long           serialVersionUID = -5598009673335010850L;
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
+  private static final long                 serialVersionUID = -5598009673335010850L;
+  private final static Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowEpisodeSelectionModel selectionModel;
 
   /** UI components */
-  private LinkLabel lblPath;
-  private JLabel    lblSeason;
-  private JLabel    lblEpisode;
-  private JLabel    lblAired;
-  private JButton   btnPlay;
-  private JLabel    lblTags;
-  private JLabel    lblDateAdded;
+  private LinkLabel                         lblPath;
+  private JLabel                            lblSeason;
+  private JLabel                            lblEpisode;
+  private JLabel                            lblAired;
+  private JButton                           btnPlay;
+  private JLabel                            lblTags;
+  private JLabel                            lblDateAdded;
 
   /**
    * Instantiates a new tv show episode details panel.

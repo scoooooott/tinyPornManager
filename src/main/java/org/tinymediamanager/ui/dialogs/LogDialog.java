@@ -46,10 +46,10 @@ public class LogDialog extends TmmDialog implements ActionListener {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(LogDialog.class);
   private static final int            REFRESH_PERIOD   = 1000;
 
-  private JTextArea taLogs;
+  private JTextArea                   taLogs;
 
-  private int         logByteCount = 0;
-  private final Timer timerRefresh;
+  private int                         logByteCount     = 0;
+  private final Timer                 timerRefresh;
 
   public LogDialog() {
     super(BUNDLE.getString("logwindow.title"), "log"); //$NON-NLS-1$

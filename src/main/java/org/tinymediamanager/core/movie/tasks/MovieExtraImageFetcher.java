@@ -47,8 +47,8 @@ import org.tinymediamanager.scraper.http.Url;
 public class MovieExtraImageFetcher implements Runnable {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcher.class);
 
-  private Movie         movie;
-  private MediaFileType type;
+  private Movie               movie;
+  private MediaFileType       type;
 
   public MovieExtraImageFetcher(Movie movie, MediaFileType type) {
     this.movie = movie;

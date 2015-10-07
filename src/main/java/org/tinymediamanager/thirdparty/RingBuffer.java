@@ -34,28 +34,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class RingBuffer<T> {
 
   /** The max size. */
-  private final int maxSize;
+  private final int              maxSize;
 
   /** The data. */
-  private T[] data;
+  private T[]                    data;
 
   /** The head. */
-  private int head;
+  private int                    head;
 
   /** The tail. */
-  private int tail;
+  private int                    tail;
 
   /** The tail wrap count. */
-  private int tailWrapCount;
+  private int                    tailWrapCount;
 
   /** The in overflow. */
-  private boolean inOverflow = false;
+  private boolean                inOverflow = false;
 
   /** The count. */
-  private AtomicInteger count = new AtomicInteger();
+  private AtomicInteger          count      = new AtomicInteger();
 
   /** The mod count. */
-  private AtomicInteger modCount = new AtomicInteger();
+  private AtomicInteger          modCount   = new AtomicInteger();
 
   /** The head lock. */
   private ReentrantReadWriteLock headLock;

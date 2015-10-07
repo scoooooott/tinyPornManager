@@ -50,10 +50,10 @@ public class MessageHistoryDialog extends TmmDialog implements ActionListener {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MessageHistoryDialog.class);
   private static final int            REFRESH_PERIOD   = 1000;
 
-  private JTextArea taMessages;
+  private JTextArea                   taMessages;
 
-  private int         logByteCount = 0;
-  private final Timer timerRefresh;
+  private int                         logByteCount     = 0;
+  private final Timer                 timerRefresh;
 
   public MessageHistoryDialog() {
     super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$

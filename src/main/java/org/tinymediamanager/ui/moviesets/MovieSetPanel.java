@@ -73,29 +73,29 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class MovieSetPanel extends JPanel {
-  private static final long           serialVersionUID = -7095093579735941697L;
+  private static final long           serialVersionUID     = -7095093579735941697L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  MovieSelectionModel       movieSelectionModel;
-  MovieSetSelectionModel    movieSetSelectionModel;
-  private MovieList         movieList = MovieList.getInstance();
-  private MovieSetTreeModel treeModel;
-  private int               width     = 0;
+  MovieSelectionModel                 movieSelectionModel;
+  MovieSetSelectionModel              movieSetSelectionModel;
+  private MovieList                   movieList            = MovieList.getInstance();
+  private MovieSetTreeModel           treeModel;
+  private int                         width                = 0;
 
   /**
    * UI elements
    */
-  private JSplitPane splitPaneHorizontal;
-  private JTree      tree;
-  private JLabel     lblMovieSetCount;
+  private JSplitPane                  splitPaneHorizontal;
+  private JTree                       tree;
+  private JLabel                      lblMovieSetCount;
 
-  private final Action actionAddMovieSet    = new MovieSetAddAction(false);
-  private final Action actionRemoveMovieSet = new MovieSetRemoveAction(false);
-  private final Action actionSearchMovieSet = new MovieSetSearchAction(false);
-  private final Action actionEditMovieSet   = new MovieSetEditAction(false);
+  private final Action                actionAddMovieSet    = new MovieSetAddAction(false);
+  private final Action                actionRemoveMovieSet = new MovieSetRemoveAction(false);
+  private final Action                actionSearchMovieSet = new MovieSetSearchAction(false);
+  private final Action                actionEditMovieSet   = new MovieSetEditAction(false);
 
   /**
    * Instantiates a new movie set panel.

@@ -51,8 +51,8 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowScrapeTask extends TmmThreadPool {
-  private final static Logger         LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static Logger          LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
+  private static final ResourceBundle  BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<TvShow>                 tvShowsToScrape;
   private boolean                      doSearch;

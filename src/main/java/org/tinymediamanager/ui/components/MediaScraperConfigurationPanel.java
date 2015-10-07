@@ -56,9 +56,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private IConfigureableMediaProvider mediaProvider;
-  private boolean                     dirty = false;
+  private boolean                     dirty            = false;
 
-  private JPanel configPanel;
+  private JPanel                      configPanel;
 
   public MediaScraperConfigurationPanel(IConfigureableMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;

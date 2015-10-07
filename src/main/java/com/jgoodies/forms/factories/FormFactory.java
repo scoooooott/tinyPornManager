@@ -21,15 +21,15 @@ public class FormFactory {
   public static final ColumnSpec GROWING_BUTTON_COLSPEC      = FormSpecs.GROWING_BUTTON_COLSPEC;
 
   /* Rows */
-  public static final RowSpec MIN_ROWSPEC                 = FormSpecs.MIN_ROWSPEC;
-  public static final RowSpec PREF_ROWSPEC                = FormSpecs.PREF_ROWSPEC;
-  public static final RowSpec DEFAULT_ROWSPEC             = FormSpecs.DEFAULT_ROWSPEC;
-  public static final RowSpec GLUE_ROWSPEC                = FormSpecs.GLUE_ROWSPEC;
-  public static final RowSpec LABEL_COMPONENT_GAP_ROWSPEC = FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC;
-  public static final RowSpec RELATED_GAP_ROWSPEC         = FormSpecs.RELATED_GAP_ROWSPEC;
-  public static final RowSpec UNRELATED_GAP_ROWSPEC       = FormSpecs.UNRELATED_GAP_ROWSPEC;
-  public static final RowSpec NARROW_LINE_GAP_ROWSPEC     = FormSpecs.NARROW_LINE_GAP_ROWSPEC;
-  public static final RowSpec LINE_GAP_ROWSPEC            = FormSpecs.LINE_GAP_ROWSPEC;
-  public static final RowSpec PARAGRAPH_GAP_ROWSPEC       = FormSpecs.PARAGRAPH_GAP_ROWSPEC;
-  public static final RowSpec BUTTON_ROWSPEC              = FormSpecs.BUTTON_ROWSPEC;
+  public static final RowSpec    MIN_ROWSPEC                 = FormSpecs.MIN_ROWSPEC;
+  public static final RowSpec    PREF_ROWSPEC                = FormSpecs.PREF_ROWSPEC;
+  public static final RowSpec    DEFAULT_ROWSPEC             = FormSpecs.DEFAULT_ROWSPEC;
+  public static final RowSpec    GLUE_ROWSPEC                = FormSpecs.GLUE_ROWSPEC;
+  public static final RowSpec    LABEL_COMPONENT_GAP_ROWSPEC = FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC;
+  public static final RowSpec    RELATED_GAP_ROWSPEC         = FormSpecs.RELATED_GAP_ROWSPEC;
+  public static final RowSpec    UNRELATED_GAP_ROWSPEC       = FormSpecs.UNRELATED_GAP_ROWSPEC;
+  public static final RowSpec    NARROW_LINE_GAP_ROWSPEC     = FormSpecs.NARROW_LINE_GAP_ROWSPEC;
+  public static final RowSpec    LINE_GAP_ROWSPEC            = FormSpecs.LINE_GAP_ROWSPEC;
+  public static final RowSpec    PARAGRAPH_GAP_ROWSPEC       = FormSpecs.PARAGRAPH_GAP_ROWSPEC;
+  public static final RowSpec    BUTTON_ROWSPEC              = FormSpecs.BUTTON_ROWSPEC;
 }

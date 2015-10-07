@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public class MediaInfoVideoFormatConverter extends Converter<String, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfoVideoFormatConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoVideoFormatConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();

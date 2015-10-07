@@ -97,12 +97,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = 2371518113606870230L;
+  private static final long           serialVersionUID      = 2371518113606870230L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
   private TvShowList                  tvShowList            = TvShowList.getInstance();
   private TvShow                      tvShowToScrape;
@@ -113,18 +113,18 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private boolean                     continueQueue         = true;
 
   /** UI components */
-  private final JPanel         contentPanel = new JPanel();
-  private JTextField           textFieldSearchString;
-  private MediaScraperComboBox cbScraper;
-  private JComboBox            cbLanguage;
-  private JTable               table;
-  private JTextArea            lblTvShowName;
-  private JTextPane            tpTvShowOverview;
-  private ImageLabel           lblTvShowPoster;
-  private JLabel               lblProgressAction;
-  private JProgressBar         progressBar;
-  private JButton              okButton;
-  private JLabel               lblPath;
+  private final JPanel                contentPanel          = new JPanel();
+  private JTextField                  textFieldSearchString;
+  private MediaScraperComboBox        cbScraper;
+  private JComboBox                   cbLanguage;
+  private JTable                      table;
+  private JTextArea                   lblTvShowName;
+  private JTextPane                   tpTvShowOverview;
+  private ImageLabel                  lblTvShowPoster;
+  private JLabel                      lblProgressAction;
+  private JProgressBar                progressBar;
+  private JButton                     okButton;
+  private JLabel                      lblPath;
 
   /**
    * Instantiates a new tv show chooser dialog.

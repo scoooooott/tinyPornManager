@@ -51,56 +51,56 @@ public class GatewayDevice {
    */
   private static final int HTTP_RECEIVE_TIMEOUT = 7000;
 
-  private String st;
-  private String location;
-  private String serviceType;
-  private String serviceTypeCIF;
-  private String urlBase;
-  private String controlURL;
-  private String controlURLCIF;
-  private String eventSubURL;
-  private String eventSubURLCIF;
-  private String sCPDURL;
-  private String sCPDURLCIF;
-  private String deviceType;
-  private String deviceTypeCIF;
+  private String           st;
+  private String           location;
+  private String           serviceType;
+  private String           serviceTypeCIF;
+  private String           urlBase;
+  private String           controlURL;
+  private String           controlURLCIF;
+  private String           eventSubURL;
+  private String           eventSubURLCIF;
+  private String           sCPDURL;
+  private String           sCPDURLCIF;
+  private String           deviceType;
+  private String           deviceTypeCIF;
 
   // description data
 
   /**
    * The friendly (human readable) name associated with this device
    */
-  private String friendlyName;
+  private String           friendlyName;
 
   /**
    * The device manufacturer name
    */
-  private String manufacturer;
+  private String           manufacturer;
 
   /**
    * The model description as a string
    */
-  private String modelDescription;
+  private String           modelDescription;
 
   /**
    * The URL that can be used to access the IGD interface
    */
-  private String presentationURL;
+  private String           presentationURL;
 
   /**
    * The address used to reach this machine from the GatewayDevice
    */
-  private InetAddress localAddress;
+  private InetAddress      localAddress;
 
   /**
    * The model number (used by the manufacturer to identify the product)
    */
-  private String modelNumber;
+  private String           modelNumber;
 
   /**
    * The model name
    */
-  private String modelName;
+  private String           modelName;
 
   /**
    * Creates a new instance of GatewayDevice

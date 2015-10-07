@@ -88,30 +88,30 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
-  private Settings settings = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
-  private List<MovieScraper> scrapers = ObservableCollections.observableList(new ArrayList<MovieScraper>());
+  private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
   /**
    * UI Elements
    */
-  private JComboBox   cbScraperLanguage;
-  private JComboBox   cbCertificationCountry;
-  private JCheckBox   chckbxAutomaticallyScrapeImages;
-  private JPanel      panelScraperMetadata;
-  private JPanel      panelScraperMetadataContainer;
-  private JTextPane   lblScraperThresholdHint;
-  private JPanel      panelAutomaticScraper;
-  private JSlider     sliderThreshold;
-  private JCheckBox   chckbxScraperFallback;
-  private JCheckBox   chckbxImageLanguage;
-  private JPanel      panelScraperDetails;
-  private JPanel      panelScraperOptions;
-  private JTextPane   tpScraperDescription;
-  private JScrollPane scrollPaneScraper;
-  private JTable      tableScraper;
+  private JComboBox                   cbScraperLanguage;
+  private JComboBox                   cbCertificationCountry;
+  private JCheckBox                   chckbxAutomaticallyScrapeImages;
+  private JPanel                      panelScraperMetadata;
+  private JPanel                      panelScraperMetadataContainer;
+  private JTextPane                   lblScraperThresholdHint;
+  private JPanel                      panelAutomaticScraper;
+  private JSlider                     sliderThreshold;
+  private JCheckBox                   chckbxScraperFallback;
+  private JCheckBox                   chckbxImageLanguage;
+  private JPanel                      panelScraperDetails;
+  private JPanel                      panelScraperOptions;
+  private JTextPane                   tpScraperDescription;
+  private JScrollPane                 scrollPaneScraper;
+  private JTable                      tableScraper;
 
   /**
    * Instantiates a new movie scraper settings panel.

@@ -43,12 +43,12 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask implements Runnable {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+  private static final Logger           LOGGER           = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
   private final List<TvShowEpisode>     episodes;
   private final ITvShowMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
 
-  private boolean scrapeThumb;
+  private boolean                       scrapeThumb;
 
   /**
    * Instantiates a new tv show episode scrape task.

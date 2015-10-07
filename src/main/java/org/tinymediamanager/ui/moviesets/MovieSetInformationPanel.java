@@ -58,52 +58,52 @@ public class MovieSetInformationPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -8166784589262658147L;
+  private static final long             serialVersionUID = -8166784589262658147L;
 
   /** The selection model. */
-  private MovieSetSelectionModel selectionModel;
+  private MovieSetSelectionModel        selectionModel;
 
   /** The lbl movie set name. */
-  private JLabel lblMovieSetName;
+  private JLabel                        lblMovieSetName;
 
   /** The table assigned movies. */
-  private JTable tableAssignedMovies;
+  private JTable                        tableAssignedMovies;
 
   /** The lbl movie set poster. */
-  private ImageLabel lblMovieSetPoster;
+  private ImageLabel                    lblMovieSetPoster;
 
   /** The panel. */
-  private JPanel panel;
+  private JPanel                        panel;
 
   /** The layered pane. */
-  private JLayeredPane layeredPane;
+  private JLayeredPane                  layeredPane;
 
   /** The lbl movie set fanart. */
-  private ImageLabel lblMovieSetFanart;
+  private ImageLabel                    lblMovieSetFanart;
 
   /** The panel south. */
-  private JSplitPane panelSouth;
+  private JSplitPane                    panelSouth;
 
   /** The scroll pane overview. */
-  private JScrollPane scrollPaneOverview;
+  private JScrollPane                   scrollPaneOverview;
 
   /** The tp overview. */
-  private JTextPane tpOverview;
+  private JTextPane                     tpOverview;
 
   /** The panel overview. */
-  private JPanel panelOverview;
+  private JPanel                        panelOverview;
 
   /** The lbl overview. */
-  private JLabel lblOverview;
+  private JLabel                        lblOverview;
 
   /** The media file event list. */
-  private EventList<Movie> movieEventList;
+  private EventList<Movie>              movieEventList;
 
   /** The media file table model. */
-  private DefaultEventTableModel<Movie> movieTableModel = null;
+  private DefaultEventTableModel<Movie> movieTableModel  = null;
 
   /**
    * Instantiates a new movie set information panel.

@@ -19,9 +19,9 @@ import com.jgoodies.forms.layout.RowSpec;
 public class LightBoxPanel extends JPanel {
   private static final long serialVersionUID = -674987974365646512L;
 
-  private ImageLabel image;
-  private LightBox   lightBox;
-  private JFrame     frame;
+  private ImageLabel        image;
+  private LightBox          lightBox;
+  private JFrame            frame;
 
   public LightBoxPanel() {
     lightBox = new LightBox();

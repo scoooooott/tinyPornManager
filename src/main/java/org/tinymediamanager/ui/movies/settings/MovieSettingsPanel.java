@@ -79,28 +79,28 @@ public class MovieSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                   settings = Settings.getInstance();
-  private JComboBox<MovieConnectors> cbNfoFormat;
-  private JCheckBox                  cbMovieNfoFilename1;
-  private JCheckBox                  cbMovieNfoFilename2;
-  private JCheckBox                  cbMovieNfoFilename3;
-  private JCheckBox                  chckbxMultipleMoviesPerFolder;
-  private JCheckBox                  chckbxImageCache;
-  private JTextField                 tfAddBadword;
-  private JList<String>              listBadWords;
-  private JList<String>              listDataSources;
-  private JCheckBox                  chckbxYear;
-  private JCheckBox                  chckbxTrailer;
-  private JCheckBox                  chckbxSubtitles;
-  private JCheckBox                  chckbxImages;
-  private JCheckBox                  chckbxNfo;
-  private JCheckBox                  chckbxRuntimeFromMf;
-  private JCheckBox                  chckbxTraktTv;
-  private JCheckBox                  chckbxWatched;
-  private JCheckBox                  chckbxRating;
-  private JCheckBox                  chckbxDateAdded;
-  private JCheckBox                  chckbxSaveUiFilter;
-  private JList<String>              listIgnore;
+  private Settings                    settings         = Settings.getInstance();
+  private JComboBox<MovieConnectors>  cbNfoFormat;
+  private JCheckBox                   cbMovieNfoFilename1;
+  private JCheckBox                   cbMovieNfoFilename2;
+  private JCheckBox                   cbMovieNfoFilename3;
+  private JCheckBox                   chckbxMultipleMoviesPerFolder;
+  private JCheckBox                   chckbxImageCache;
+  private JTextField                  tfAddBadword;
+  private JList<String>               listBadWords;
+  private JList<String>               listDataSources;
+  private JCheckBox                   chckbxYear;
+  private JCheckBox                   chckbxTrailer;
+  private JCheckBox                   chckbxSubtitles;
+  private JCheckBox                   chckbxImages;
+  private JCheckBox                   chckbxNfo;
+  private JCheckBox                   chckbxRuntimeFromMf;
+  private JCheckBox                   chckbxTraktTv;
+  private JCheckBox                   chckbxWatched;
+  private JCheckBox                   chckbxRating;
+  private JCheckBox                   chckbxDateAdded;
+  private JCheckBox                   chckbxSaveUiFilter;
+  private JList<String>               listIgnore;
 
   /**
    * Instantiates a new movie settings panel.

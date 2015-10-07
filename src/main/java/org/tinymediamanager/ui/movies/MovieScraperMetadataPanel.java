@@ -44,24 +44,24 @@ public class MovieScraperMetadataPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieScraperMetadataConfig config;
+  private MovieScraperMetadataConfig  config;
 
   /**
    * UI Elements
    */
-  private JCheckBox chckbxTitle;
-  private JCheckBox chckbxOriginalTitle;
-  private JCheckBox chckbxTagline;
-  private JCheckBox chckbxPlot;
-  private JCheckBox chckbxRating;
-  private JCheckBox chckbxRuntime;
-  private JCheckBox chckbxYear;
-  private JCheckBox chckbxCertification;
-  private JCheckBox chckbxCast;
-  private JCheckBox chckbxGenres;
-  private JCheckBox chckbxArtwork;
-  private JCheckBox chckbxTrailer;
-  private JCheckBox chckbxCollection;
+  private JCheckBox                   chckbxTitle;
+  private JCheckBox                   chckbxOriginalTitle;
+  private JCheckBox                   chckbxTagline;
+  private JCheckBox                   chckbxPlot;
+  private JCheckBox                   chckbxRating;
+  private JCheckBox                   chckbxRuntime;
+  private JCheckBox                   chckbxYear;
+  private JCheckBox                   chckbxCertification;
+  private JCheckBox                   chckbxCast;
+  private JCheckBox                   chckbxGenres;
+  private JCheckBox                   chckbxArtwork;
+  private JCheckBox                   chckbxTrailer;
+  private JCheckBox                   chckbxCollection;
 
   /**
    * Instantiates a new movie scraper metadata panel.

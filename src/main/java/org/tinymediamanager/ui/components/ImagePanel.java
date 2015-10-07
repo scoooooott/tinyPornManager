@@ -59,8 +59,8 @@ public class ImagePanel extends JPanel implements HierarchyListener {
    * UI components
    */
 
-  private JPanel      panelImages;
-  private JScrollPane scrollPane;
+  private JPanel              panelImages;
+  private JScrollPane         scrollPane;
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;

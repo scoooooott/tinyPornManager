@@ -56,19 +56,19 @@ public class TvShowDetailsPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final TvShowSelectionModel selectionModel;
+  private final TvShowSelectionModel  selectionModel;
 
   /** UI components */
-  private JLabel    lblGenres;
-  private JLabel    lblCertification;
-  private LinkLabel lblThetvdbId;
-  private LinkLabel lblImdbId;
-  private LinkLabel lblPath;
-  private JLabel    lblPremiered;
-  private JLabel    lblStudio;
-  private JLabel    lblStatus;
-  private JLabel    lblYear;
-  private JLabel    lblTags;
+  private JLabel                      lblGenres;
+  private JLabel                      lblCertification;
+  private LinkLabel                   lblThetvdbId;
+  private LinkLabel                   lblImdbId;
+  private LinkLabel                   lblPath;
+  private JLabel                      lblPremiered;
+  private JLabel                      lblStudio;
+  private JLabel                      lblStatus;
+  private JLabel                      lblYear;
+  private JLabel                      lblTags;
 
   /**
    * Instantiates a new tv show details panel.

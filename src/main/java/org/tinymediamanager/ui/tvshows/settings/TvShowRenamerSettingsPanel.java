@@ -82,11 +82,11 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * @author Manuel Laggner
  */
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long           serialVersionUID = 5189531235704401313L;
+  private static final long               serialVersionUID = 5189531235704401313L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
   private List<String>                    spaceReplacement = new ArrayList<String>(Arrays.asList("_", ".", "-"));
@@ -95,22 +95,22 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   /**
    * UI components
    */
-  private JTextPane     txtpntAsciiHint;
-  private JLabel        lblSeasonFolderName;
-  private JLabel        lblExample;
-  private JComboBox     cbTvShowForPreview;
-  private JTextField    tfSeasonFoldername;
-  private JCheckBox     chckbxAsciiReplacement;
-  private JComboBox     cbSpaceReplacement;
-  private JHintCheckBox chckbxSpaceReplacement;
-  private JPanel        panelExample;
-  private JComboBox     cbEpisodeForPreview;
-  private JScrollPane   scrollPane;
-  private JTable        tableExamples;
-  private JLabel        lblTvShowFolder;
-  private JTextField    tfTvShowFolder;
-  private JTextField    tfEpisodeFilename;
-  private JLabel        lblEpisodeFileName;
+  private JTextPane                       txtpntAsciiHint;
+  private JLabel                          lblSeasonFolderName;
+  private JLabel                          lblExample;
+  private JComboBox                       cbTvShowForPreview;
+  private JTextField                      tfSeasonFoldername;
+  private JCheckBox                       chckbxAsciiReplacement;
+  private JComboBox                       cbSpaceReplacement;
+  private JHintCheckBox                   chckbxSpaceReplacement;
+  private JPanel                          panelExample;
+  private JComboBox                       cbEpisodeForPreview;
+  private JScrollPane                     scrollPane;
+  private JTable                          tableExamples;
+  private JLabel                          lblTvShowFolder;
+  private JTextField                      tfTvShowFolder;
+  private JTextField                      tfEpisodeFilename;
+  private JLabel                          lblEpisodeFileName;
 
   public TvShowRenamerSettingsPanel() {
     setLayout(

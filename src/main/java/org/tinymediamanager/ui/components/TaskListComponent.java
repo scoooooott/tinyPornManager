@@ -26,18 +26,18 @@ public class TaskListComponent extends JPanel {
   private static final int            BETWEENTEXTMARGIN = 3;
   private static final ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  static final int ITEM_WIDTH = 400;
+  static final int                    ITEM_WIDTH        = 400;
 
-  private TmmTaskHandle taskHandle;
+  private TmmTaskHandle               taskHandle;
 
-  private JLabel       mainLabel;
-  private JLabel       dynaLabel;
-  private JProgressBar bar;
-  private JButton      closeButton;
+  private JLabel                      mainLabel;
+  private JLabel                      dynaLabel;
+  private JProgressBar                bar;
+  private JButton                     closeButton;
 
-  private int mainHeight;
-  private int dynaHeight;
-  private int buttonWidth;
+  private int                         mainHeight;
+  private int                         dynaHeight;
+  private int                         buttonWidth;
 
   public TaskListComponent(TmmTaskHandle handle) {
     setFocusable(true);

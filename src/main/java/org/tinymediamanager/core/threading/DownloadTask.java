@@ -45,14 +45,14 @@ import com.squareup.okhttp.Headers;
  * @author Myron Boyle, Manuel Laggner
  */
 public class DownloadTask extends TmmTask {
-  private static final Logger         LOGGER = LoggerFactory.getLogger(DownloadTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
+  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String        url;
-  private File          file;
-  private MediaEntity   media;
-  private MediaFileType fileType;
-  private String        userAgent = "";
+  private String                      url;
+  private File                        file;
+  private MediaEntity                 media;
+  private MediaFileType               fileType;
+  private String                      userAgent = "";
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>

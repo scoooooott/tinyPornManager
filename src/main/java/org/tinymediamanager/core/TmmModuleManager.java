@@ -30,7 +30,7 @@ public class TmmModuleManager {
   private static final Logger     LOGGER = LoggerFactory.getLogger(TmmModuleManager.class);
   private static TmmModuleManager instance;
 
-  private Set<ITmmModule> modules;
+  private Set<ITmmModule>         modules;
 
   private TmmModuleManager() {
     modules = new LinkedHashSet<ITmmModule>();

@@ -51,7 +51,7 @@ public class TmmUIHelper {
   @SuppressWarnings("rawtypes")
   public static Class         swt    = null;
 
-  private static File lastDir;
+  private static File         lastDir;
 
   public static void init() throws ClassNotFoundException {
     // if (SystemUtils.IS_OS_LINUX) {

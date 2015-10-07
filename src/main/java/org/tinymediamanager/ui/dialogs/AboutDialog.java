@@ -68,8 +68,8 @@ public class AboutDialog extends TmmDialog {
       + "ShevAbam, abrupt_neurosis, lynxstrike, Spegni, carfesh, vekheoqf, keleniki, htrex, namuit, stickell, Voltinus, Zwanzig, vipkoza"
       + "Amarante.pt_BR, TaniaC, maopequena, leandrofuscaldi, dukobpa3, bleuge";
 
-  private final JPanel contentPanel = new JPanel();
-  private final Action action       = new SwingAction();
+  private final JPanel                contentPanel     = new JPanel();
+  private final Action                action           = new SwingAction();
 
   public AboutDialog() {
     super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$

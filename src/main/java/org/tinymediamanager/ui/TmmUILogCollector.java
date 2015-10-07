@@ -28,7 +28,7 @@ public class TmmUILogCollector {
   public final static String            APPENDER = "UI";
   public static final TmmUILogCollector instance = new TmmUILogCollector();
 
-  private final TmmUILogAppender logAppender;
+  private final TmmUILogAppender        logAppender;
 
   // just to trigger class loading and initializing
   public static void init() {

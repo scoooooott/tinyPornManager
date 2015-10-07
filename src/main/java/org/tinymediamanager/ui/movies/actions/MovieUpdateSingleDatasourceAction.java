@@ -36,7 +36,7 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
   private static final long           serialVersionUID = 6885253964781733478L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String datasource;
+  private String                      datasource;
 
   public MovieUpdateSingleDatasourceAction(String datasource) {
     this.datasource = datasource;

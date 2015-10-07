@@ -34,11 +34,11 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class MediaFileInformationFetcherTask implements Callable<Object> {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
+  private final static Logger LOGGER      = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
-  private List<MediaFile> mediaFiles;
-  private MediaEntity     mediaEntity;
-  private boolean         forceUpdate = false;
+  private List<MediaFile>     mediaFiles;
+  private MediaEntity         mediaEntity;
+  private boolean             forceUpdate = false;
 
   /**
    * Instantiates a new media file information fetcher task.

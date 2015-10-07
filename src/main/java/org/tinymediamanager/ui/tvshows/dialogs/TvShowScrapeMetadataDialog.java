@@ -56,18 +56,18 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowScrapeMetadataDialog extends TmmDialog {
-  private static final long           serialVersionUID = 6120530120703772160L;
+  private static final long            serialVersionUID            = 6120530120703772160L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();
   private boolean                      startScrape                 = true;
 
   /** UI components */
-  private MediaScraperComboBox cbMetadataScraper;
-  private CheckComboBox        cbArtworkScraper;
+  private MediaScraperComboBox         cbMetadataScraper;
+  private CheckComboBox                cbArtworkScraper;
 
   public TvShowScrapeMetadataDialog(String title) {
     super(title, "updateMetadata");

@@ -37,11 +37,11 @@ import org.tinymediamanager.scraper.http.Url;
 public class MediaEntityImageFetcherTask implements Runnable {
   private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
 
-  private MediaEntity      entity;
-  private String           url;
-  private MediaArtworkType type;
-  private String           filename;
-  private boolean          firstImage;
+  private MediaEntity         entity;
+  private String              url;
+  private MediaArtworkType    type;
+  private String              filename;
+  private boolean             firstImage;
 
   public MediaEntityImageFetcherTask(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.entity = entity;

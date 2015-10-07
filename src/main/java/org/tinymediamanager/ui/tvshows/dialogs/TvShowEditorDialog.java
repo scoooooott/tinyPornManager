@@ -102,53 +102,58 @@ import ca.odell.glazedlists.EventList;
  * @author Manuel Laggner
  */
 public class TvShowEditorDialog extends TmmDialog {
-  private static final long           serialVersionUID = 3270218410302989845L;
+  private static final long                                                                       serialVersionUID = 3270218410302989845L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private final static ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private final static ResourceBundle                                                             BUNDLE           = ResourceBundle
+      .getBundle("messages", new UTF8Control());                                                                                              //$NON-NLS-1$
+  private static final Date                                                                       INITIAL_DATE     = new Date(0);
 
-  private TvShow                             tvShowToEdit;
-  private TvShowList                         tvShowList    = TvShowList.getInstance();
-  private List<TvShowActor>                  actors        = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<MediaGenres>                  genres        = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private EventList<MediaId>                 ids           = new BasicEventList<>();
-  private List<String>                       tags          = ObservableCollections.observableList(new ArrayList<String>());
-  private List<TvShowEpisodeEditorContainer> episodes      = ObservableCollections.observableList(new ArrayList<TvShowEpisodeEditorContainer>());
-  private boolean                            continueQueue = true;
+  private TvShow                                                                                  tvShowToEdit;
+  private TvShowList                                                                              tvShowList       = TvShowList.getInstance();
+  private List<TvShowActor>                                                                       actors           = ObservableCollections
+      .observableList(new ArrayList<TvShowActor>());
+  private List<MediaGenres>                                                                       genres           = ObservableCollections
+      .observableList(new ArrayList<MediaGenres>());
+  private EventList<MediaId>                                                                      ids              = new BasicEventList<>();
+  private List<String>                                                                            tags             = ObservableCollections
+      .observableList(new ArrayList<String>());
+  private List<TvShowEpisodeEditorContainer>                                                      episodes         = ObservableCollections
+      .observableList(new ArrayList<TvShowEpisodeEditorContainer>());
+  private boolean                                                                                 continueQueue    = true;
 
   /**
    * UI elements
    */
-  private final JPanel details1Panel = new JPanel();
-  private final JPanel details2Panel = new JPanel();
-  private final JPanel episodesPanel = new JPanel();
-  private JTextField   tfTitle;
-  private JSpinner     spYear;
-  private JTextPane    tpPlot;
-  private JTable       tableActors;
-  private JLabel       lvlTvShowPath;
-  private ImageLabel   lblPoster;
-  private ImageLabel   lblFanart;
-  private ImageLabel   lblBanner;
-  private JSpinner     spRuntime;
-  private JTextField   tfStudio;
-  private JList        listGenres;
-  private JComboBox    cbGenres;
-  private JSpinner     spRating;
-  private JComboBox    cbCertification;
-  private JComboBox    cbStatus;
+  private final JPanel                                                                            details1Panel    = new JPanel();
+  private final JPanel                                                                            details2Panel    = new JPanel();
+  private final JPanel                                                                            episodesPanel    = new JPanel();
+  private JTextField                                                                              tfTitle;
+  private JSpinner                                                                                spYear;
+  private JTextPane                                                                               tpPlot;
+  private JTable                                                                                  tableActors;
+  private JLabel                                                                                  lvlTvShowPath;
+  private ImageLabel                                                                              lblPoster;
+  private ImageLabel                                                                              lblFanart;
+  private ImageLabel                                                                              lblBanner;
+  private JSpinner                                                                                spRuntime;
+  private JTextField                                                                              tfStudio;
+  private JList                                                                                   listGenres;
+  private JComboBox                                                                               cbGenres;
+  private JSpinner                                                                                spRating;
+  private JComboBox                                                                               cbCertification;
+  private JComboBox                                                                               cbStatus;
   // private JTable tableTrailer;
-  private JComboBox    cbTags;
-  private JList        listTags;
-  private JSpinner     spDateAdded;
-  private JSpinner     spPremiered;
-  private JTable       tableEpisodes;
-  private JTextField   tfSorttitle;
-  private ImageLabel   lblLogo;
-  private ImageLabel   lblClearart;
-  private ImageLabel   lblThumb;
+  private JComboBox                                                                               cbTags;
+  private JList                                                                                   listTags;
+  private JSpinner                                                                                spDateAdded;
+  private JSpinner                                                                                spPremiered;
+  private JTable                                                                                  tableEpisodes;
+  private JTextField                                                                              tfSorttitle;
+  private ImageLabel                                                                              lblLogo;
+  private ImageLabel                                                                              lblClearart;
+  private ImageLabel                                                                              lblThumb;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable>                                   jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>                                     jListBinding;

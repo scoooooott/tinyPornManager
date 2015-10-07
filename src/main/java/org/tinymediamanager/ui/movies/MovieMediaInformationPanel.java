@@ -53,19 +53,19 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel movieSelectionModel;
-  private JLabel              lblRuntime;
-  private JCheckBox           chckbxWatched;
-  private JPanel              panelVideoStreamDetails;
-  private JLabel              lblVideoCodec;
-  private JLabel              lblVideoResolution;
-  private JLabel              lblVideoBitrate;
-  private JPanel              panelAudioStreamT;
-  private JPanel              panelAudioStreamDetails;
-  private JPanel              panelSubtitleT;
-  private JPanel              panelSubtitleDetails;
-  private JLabel              lblSourceT;
-  private JLabel              lblSource;
+  private MovieSelectionModel         movieSelectionModel;
+  private JLabel                      lblRuntime;
+  private JCheckBox                   chckbxWatched;
+  private JPanel                      panelVideoStreamDetails;
+  private JLabel                      lblVideoCodec;
+  private JLabel                      lblVideoResolution;
+  private JLabel                      lblVideoBitrate;
+  private JPanel                      panelAudioStreamT;
+  private JPanel                      panelAudioStreamDetails;
+  private JPanel                      panelSubtitleT;
+  private JPanel                      panelSubtitleDetails;
+  private JLabel                      lblSourceT;
+  private JLabel                      lblSource;
 
   /**
    * Instantiates a new movie media information panel.

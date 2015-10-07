@@ -105,67 +105,71 @@ import ca.odell.glazedlists.EventList;
  * @author Manuel Laggner
  */
 public class MovieEditorDialog extends TmmDialog {
-  private static final long           serialVersionUID = -286251957529920347L;
+  private static final long                                         serialVersionUID = -286251957529920347L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private static final ResourceBundle                               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static final Date                                         INITIAL_DATE     = new Date(0);
 
-  private Movie               movieToEdit;
-  private MovieList           movieList     = MovieList.getInstance();
-  private List<MovieActor>    cast          = ObservableCollections.observableList(new ArrayList<MovieActor>());
-  private List<MovieProducer> producers     = ObservableCollections.observableList(new ArrayList<MovieProducer>());
-  private List<MediaGenres>   genres        = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MovieTrailer>  trailers      = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
-  private List<String>        tags          = ObservableCollections.observableList(new ArrayList<String>());
-  private EventList<MediaId>  ids           = new BasicEventList<>();
-  private List<MediaFile>     mediaFiles    = new ArrayList<MediaFile>();
-  private List<String>        extrathumbs   = new ArrayList<String>();
-  private List<String>        extrafanarts  = new ArrayList<String>();
-  private boolean             continueQueue = true;
+  private Movie                                                     movieToEdit;
+  private MovieList                                                 movieList        = MovieList.getInstance();
+  private List<MovieActor>                                          cast             = ObservableCollections
+      .observableList(new ArrayList<MovieActor>());
+  private List<MovieProducer>                                       producers        = ObservableCollections
+      .observableList(new ArrayList<MovieProducer>());
+  private List<MediaGenres>                                         genres           = ObservableCollections
+      .observableList(new ArrayList<MediaGenres>());
+  private List<MovieTrailer>                                        trailers         = ObservableCollections
+      .observableList(new ArrayList<MovieTrailer>());
+  private List<String>                                              tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private EventList<MediaId>                                        ids              = new BasicEventList<>();
+  private List<MediaFile>                                           mediaFiles       = new ArrayList<MediaFile>();
+  private List<String>                                              extrathumbs      = new ArrayList<String>();
+  private List<String>                                              extrafanarts     = new ArrayList<String>();
+  private boolean                                                   continueQueue    = true;
 
-  private final JPanel         details1Panel = new JPanel();
-  private final JPanel         details2Panel = new JPanel();
-  private JTextField           tfTitle;
-  private JTextField           tfOriginalTitle;
-  private JSpinner             spYear;
-  private JTextPane            tpPlot;
-  private JTextField           tfDirector;
-  private JTable               tableActors;
-  private JLabel               lblMoviePath;
-  private ImageLabel           lblPoster;
-  private ImageLabel           lblFanart;
-  private JTextField           tfWriter;
-  private JSpinner             spRuntime;
-  private JTextPane            tfProductionCompanies;
-  private JList                listGenres;
-  private JComboBox            cbGenres;
-  private JSpinner             spRating;
-  private JComboBox            cbCertification;
-  private JCheckBox            cbWatched;
-  private JTextPane            tpTagline;
-  private JTable               tableTrailer;
-  private JTable               tableProducers;
-  private JComboBox            cbTags;
-  private JList                listTags;
-  private JSpinner             spDateAdded;
-  private JComboBox            cbMovieSet;
-  private JTextField           tfSorttitle;
-  private JTextField           tfSpokenLanguages;
-  private JTextField           tfCountry;
-  private JSpinner             spReleaseDate;
-  private JSpinner             spTop250;
-  private JComboBox            cbSource;
-  private JCheckBox            chckbxVideo3D;
-  private JTable               tableIds;
-  private MediaFileEditorPanel mediaFilesPanel;
+  private final JPanel                                              details1Panel    = new JPanel();
+  private final JPanel                                              details2Panel    = new JPanel();
+  private JTextField                                                tfTitle;
+  private JTextField                                                tfOriginalTitle;
+  private JSpinner                                                  spYear;
+  private JTextPane                                                 tpPlot;
+  private JTextField                                                tfDirector;
+  private JTable                                                    tableActors;
+  private JLabel                                                    lblMoviePath;
+  private ImageLabel                                                lblPoster;
+  private ImageLabel                                                lblFanart;
+  private JTextField                                                tfWriter;
+  private JSpinner                                                  spRuntime;
+  private JTextPane                                                 tfProductionCompanies;
+  private JList                                                     listGenres;
+  private JComboBox                                                 cbGenres;
+  private JSpinner                                                  spRating;
+  private JComboBox                                                 cbCertification;
+  private JCheckBox                                                 cbWatched;
+  private JTextPane                                                 tpTagline;
+  private JTable                                                    tableTrailer;
+  private JTable                                                    tableProducers;
+  private JComboBox                                                 cbTags;
+  private JList                                                     listTags;
+  private JSpinner                                                  spDateAdded;
+  private JComboBox                                                 cbMovieSet;
+  private JTextField                                                tfSorttitle;
+  private JTextField                                                tfSpokenLanguages;
+  private JTextField                                                tfCountry;
+  private JSpinner                                                  spReleaseDate;
+  private JSpinner                                                  spTop250;
+  private JComboBox                                                 cbSource;
+  private JCheckBox                                                 chckbxVideo3D;
+  private JTable                                                    tableIds;
+  private MediaFileEditorPanel                                      mediaFilesPanel;
 
-  private ImageLabel lblLogo;
-  private ImageLabel lblBanner;
-  private ImageLabel lblClearart;
-  private ImageLabel lblThumb;
-  private ImageLabel lblDisc;
+  private ImageLabel                                                lblLogo;
+  private ImageLabel                                                lblBanner;
+  private ImageLabel                                                lblClearart;
+  private ImageLabel                                                lblThumb;
+  private ImageLabel                                                lblDisc;
 
   private JTableBinding<MovieActor, List<MovieActor>, JTable>       jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>       jListBinding;

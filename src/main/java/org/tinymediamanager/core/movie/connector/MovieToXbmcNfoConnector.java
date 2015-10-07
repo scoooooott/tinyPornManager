@@ -96,137 +96,137 @@ public class MovieToXbmcNfoConnector {
   private static JAXBContext   context               = initContext();
 
   @XmlElement
-  private String title = "";
+  private String               title                 = "";
 
   @XmlElement
-  private String originaltitle = "";
+  private String               originaltitle         = "";
 
   @XmlElement
-  private String year = "";
+  private String               year                  = "";
 
   @XmlElement
-  private String outline = "";
+  private String               outline               = "";
 
   @XmlElement
-  private String plot = "";
+  private String               plot                  = "";
 
   @XmlElement
-  private String tagline = "";
+  private String               tagline               = "";
 
   @XmlElement
-  private String runtime = "";
+  private String               runtime               = "";
 
   @XmlElement
-  private String thumb = "";
+  private String               thumb                 = "";
 
   @XmlElement
-  private String fanart = "";
+  private String               fanart                = "";
 
   @XmlElement
-  private String id = "";
+  private String               id                    = "";
 
   @XmlElementWrapper(name = "ids")
-  private Map<String, Object> ids;
+  private Map<String, Object>  ids;
 
   @XmlElement
-  private String studio = "";
+  private String               studio                = "";
 
   @XmlElement
-  private String country = "";
+  private String               country               = "";
 
   @XmlElement
-  private String mpaa = "";
+  private String               mpaa                  = "";
 
   @XmlElement(name = "certification")
-  private String certifications = "";
+  private String               certifications        = "";
 
   @XmlElement
-  private String trailer = "";
+  private String               trailer               = "";
 
   @XmlElement
-  private String set = "";
+  private String               set                   = "";
 
   @XmlElement
-  private String sorttitle = "";
+  private String               sorttitle             = "";
 
   @XmlElement
-  private boolean watched = false;
+  private boolean              watched               = false;
 
   @XmlElement
-  private float rating = 0;
+  private float                rating                = 0;
 
   @XmlElement
-  private int votes = 0;
+  private int                  votes                 = 0;
 
   @XmlElement
-  private int playcount = 0;
+  private int                  playcount             = 0;
 
   @XmlElement
-  private int tmdbId = 0;
+  private int                  tmdbId                = 0;
 
   @XmlElement
-  private Fileinfo fileinfo;
+  private Fileinfo             fileinfo;
 
   @XmlElement
-  private String premiered = "";
+  private String               premiered             = "";
 
   @XmlElement(name = "director")
-  private List<String> director;
+  private List<String>         director;
 
   @XmlAnyElement(lax = true)
-  private List<Object> actors;
+  private List<Object>         actors;
 
   @XmlAnyElement(lax = true)
-  private List<Object> producers;
+  private List<Object>         producers;
 
   @XmlElement(name = "genre")
-  private List<String> genres;
+  private List<String>         genres;
 
   @XmlElement(name = "credits")
-  private List<String> credits;
+  private List<String>         credits;
 
   @XmlElement(name = "tag")
-  private List<String> tags;
+  private List<String>         tags;
 
   @XmlElement
-  private String top250;
+  private String               top250;
 
   @XmlElement
-  private String languages;
+  private String               languages;
 
   @XmlAnyElement(lax = true)
-  private List<Object> unsupportedElements;
+  private List<Object>         unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  private String epbookmark;
+  private String               epbookmark;
 
   @XmlElement
-  private String lastplayed;
+  private String               lastplayed;
 
   @XmlElement
-  private String status;
+  private String               status;
 
   @XmlElement
-  private String code;
+  private String               code;
 
   @XmlElement
-  private String aired;
+  private String               aired;
 
   @XmlElement
-  private Object resume;
+  private Object               resume;
 
   @XmlElement
-  private String dateadded;
+  private String               dateadded;
 
   @XmlElement
-  private Object keywords;
+  private Object               keywords;
 
   @XmlElement
-  private Object poster;
+  private Object               poster;
 
   @XmlElement
-  private Object url;
+  private Object               url;
 
   // @XmlElement(name = "rotten-tomatoes")
   // private Object rottentomatoes;
@@ -939,10 +939,10 @@ public class MovieToXbmcNfoConnector {
    */
   static class Streamdetails {
     @XmlElement
-    private Video video;
+    private Video          video;
 
     @XmlElement
-    private List<Audio> audio;
+    private List<Audio>    audio;
 
     @XmlElement
     private List<Subtitle> subtitle;
@@ -965,13 +965,13 @@ public class MovieToXbmcNfoConnector {
     private String aspect;
 
     @XmlElement
-    private int width;
+    private int    width;
 
     @XmlElement
-    private int height;
+    private int    height;
 
     @XmlElement
-    private int durationinseconds;
+    private int    durationinseconds;
 
     @XmlElement
     private String stereomode;

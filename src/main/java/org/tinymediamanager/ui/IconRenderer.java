@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 public class IconRenderer extends DefaultTableCellRenderer {
   private static final long serialVersionUID = 400599451709865596L;
 
-  private String tooltip;
+  private String            tooltip;
 
   /**
    * Instantiates a new icon renderer.

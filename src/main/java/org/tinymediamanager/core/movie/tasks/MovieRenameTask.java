@@ -38,7 +38,7 @@ public class MovieRenameTask extends TmmThreadPool {
   private final static Logger         LOGGER = LoggerFactory.getLogger(MovieRenameTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<Movie> moviesToRename;
+  private List<Movie>                 moviesToRename;
 
   /**
    * Instantiates a new movie rename task.

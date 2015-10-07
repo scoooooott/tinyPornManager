@@ -42,7 +42,7 @@ public class MovieActorImageFetcher implements Runnable {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcher.class);
 
-  private Movie movie;
+  private Movie               movie;
 
   public MovieActorImageFetcher(Movie movie) {
     this.movie = movie;

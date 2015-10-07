@@ -29,12 +29,12 @@ public abstract class MediaEntityExporter {
   private final static Logger   LOGGER             = LoggerFactory.getLogger(MediaEntityExporter.class);
   protected static final String TEMPLATE_DIRECTORY = "templates";
 
-  protected Engine     engine;
-  protected Properties properties;
-  protected String     fileExtension;
-  protected String     listTemplate   = "";
-  protected String     detailTemplate = "";
-  protected File       templateDir;
+  protected Engine              engine;
+  protected Properties          properties;
+  protected String              fileExtension;
+  protected String              listTemplate       = "";
+  protected String              detailTemplate     = "";
+  protected File                templateDir;
 
   public enum TemplateType {
     MOVIE, TV_SHOW

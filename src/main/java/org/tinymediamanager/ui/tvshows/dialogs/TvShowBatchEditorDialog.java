@@ -68,17 +68,17 @@ public class TvShowBatchEditorDialog extends TmmDialog {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowList          tvShowList      = TvShowList.getInstance();
-  private List<TvShow>        tvShowsToEdit;
-  private List<TvShowEpisode> tvShowEpisodesToEdit;
-  private boolean             episodesChanged = false;
-  private boolean             tvShowsChanged  = false;
+  private TvShowList                  tvShowList       = TvShowList.getInstance();
+  private List<TvShow>                tvShowsToEdit;
+  private List<TvShowEpisode>         tvShowEpisodesToEdit;
+  private boolean                     episodesChanged  = false;
+  private boolean                     tvShowsChanged   = false;
 
   /** UI components */
-  private JComboBox cbGenres;
-  private JComboBox cbTags;
-  private JCheckBox chckbxWatched;
-  private JSpinner  spSeason;
+  private JComboBox                   cbGenres;
+  private JComboBox                   cbTags;
+  private JCheckBox                   chckbxWatched;
+  private JSpinner                    spSeason;
 
   /**
    * Instantiates a new movie batch editor.

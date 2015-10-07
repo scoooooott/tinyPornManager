@@ -26,10 +26,10 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class ClearTraktTvTask extends TmmTask {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private boolean clearMovies  = false;
-  private boolean clearTvShows = false;
+  private boolean                     clearMovies  = false;
+  private boolean                     clearTvShows = false;
 
   public ClearTraktTvTask(boolean clearMovies, boolean clearTvShows) {
     super(BUNDLE.getString("trakt.clear"), 0, TaskType.BACKGROUND_TASK);

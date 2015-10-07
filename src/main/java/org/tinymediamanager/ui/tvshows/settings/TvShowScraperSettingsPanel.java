@@ -85,34 +85,34 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
-  private Settings             settings        = Settings.getInstance();
-  private List<TvShowScraper>  scrapers        = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
-  private List<ArtworkScraper> artworkScrapers = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
+  private Settings                    settings         = Settings.getInstance();
+  private List<TvShowScraper>         scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
+  private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
   /** UI components */
-  private JComboBox    cbScraperTmdbLanguage;
-  private JComboBox    cbCountry;
-  private JCheckBox    chckbxAutomaticallyScrapeImages;
-  private JPanel       panelScraperMetadata;
-  private JPanel       panelScraperMetadataContainer;
-  private JPanel       panelArtworkScrapers;
-  private JSeparator   separator_1;
-  private JRadioButton rdbtnThumbWithPostfix;
-  private JRadioButton rdbtnThumbWoPostfix;
-  private JLabel       lblNewLabel;
-  private ButtonGroup  btnGroupThumbFilenaming;
-  private JScrollPane  scrollPaneScraper;
-  private JTable       tableScraper;
-  private JPanel       panelScraperDetails;
-  private JTextPane    tpScraperDescription;
-  private JScrollPane  scrollPaneArtworkScraper;
-  private JTable       tableArtworkScraper;
-  private JPanel       panelArtworkScraperDetails;
-  private JTextPane    tpArtworkScraperDescription;
-  private JPanel       panelScraperOptions;
-  private JPanel       panelArtworkScraperOptions;
+  private JComboBox                   cbScraperTmdbLanguage;
+  private JComboBox                   cbCountry;
+  private JCheckBox                   chckbxAutomaticallyScrapeImages;
+  private JPanel                      panelScraperMetadata;
+  private JPanel                      panelScraperMetadataContainer;
+  private JPanel                      panelArtworkScrapers;
+  private JSeparator                  separator_1;
+  private JRadioButton                rdbtnThumbWithPostfix;
+  private JRadioButton                rdbtnThumbWoPostfix;
+  private JLabel                      lblNewLabel;
+  private ButtonGroup                 btnGroupThumbFilenaming;
+  private JScrollPane                 scrollPaneScraper;
+  private JTable                      tableScraper;
+  private JPanel                      panelScraperDetails;
+  private JTextPane                   tpScraperDescription;
+  private JScrollPane                 scrollPaneArtworkScraper;
+  private JTable                      tableArtworkScraper;
+  private JPanel                      panelArtworkScraperDetails;
+  private JTextPane                   tpArtworkScraperDescription;
+  private JPanel                      panelScraperOptions;
+  private JPanel                      panelArtworkScraperOptions;
 
   /**
    * Instantiates a new movie scraper settings panel.

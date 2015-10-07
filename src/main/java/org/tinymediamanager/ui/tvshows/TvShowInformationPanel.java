@@ -70,31 +70,31 @@ public class TvShowInformationPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** UI components */
-  private JSplitPane  splitPaneVertical;
-  private JTabbedPane tabbedPaneTvShowDetails;
-  private JPanel      panelTop;
-  private JPanel      panelTvShowLogos;
-  private StarRater   panelRatingStars;
-  private JLabel      lblTvShowName;
-  private JLabel      lblRating;
-  private JLabel      lblVoteCount;
-  private JLabel      lblCertificationImage;
-  private ImageLabel  lblTvShowBackground;
-  private JLabel      lblFanartSize;
-  private ImageLabel  lblTvShowPoster;
-  private JLabel      lblPosterSize;
-  private ImageLabel  lblTvShowBanner;
-  private JLabel      lblBannerSize;
-  private JPanel      panelBottom;
-  private JTextPane   tpOverview;
-  private JPanel      panelMediaInformation;
-  private JPanel      panelRight;
-  private JPanel      panelLeft;
-  private JLabel      lblPlot;
-  private JSeparator  separator;
-  private JSeparator  separator_1;
+  private JSplitPane                  splitPaneVertical;
+  private JTabbedPane                 tabbedPaneTvShowDetails;
+  private JPanel                      panelTop;
+  private JPanel                      panelTvShowLogos;
+  private StarRater                   panelRatingStars;
+  private JLabel                      lblTvShowName;
+  private JLabel                      lblRating;
+  private JLabel                      lblVoteCount;
+  private JLabel                      lblCertificationImage;
+  private ImageLabel                  lblTvShowBackground;
+  private JLabel                      lblFanartSize;
+  private ImageLabel                  lblTvShowPoster;
+  private JLabel                      lblPosterSize;
+  private ImageLabel                  lblTvShowBanner;
+  private JLabel                      lblBannerSize;
+  private JPanel                      panelBottom;
+  private JTextPane                   tpOverview;
+  private JPanel                      panelMediaInformation;
+  private JPanel                      panelRight;
+  private JPanel                      panelLeft;
+  private JLabel                      lblPlot;
+  private JSeparator                  separator;
+  private JSeparator                  separator_1;
 
-  private TvShowSelectionModel tvShowSelectionModel;
+  private TvShowSelectionModel        tvShowSelectionModel;
 
   /**
    * Instantiates a new tv show information panel.

@@ -49,24 +49,24 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
-  private static final ResourceBundle   BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger           LOGGER      = LoggerFactory.getLogger(MovieChooserModel.class);
-  public static final MovieChooserModel emptyResult = new MovieChooserModel();
+  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
+  public static final MovieChooserModel emptyResult      = new MovieChooserModel();
 
-  private MediaScraper       metadataProvider = null;
-  private List<MediaScraper> artworkScrapers  = null;
-  private List<MediaScraper> trailerScrapers  = null;
+  private MediaScraper                  metadataProvider = null;
+  private List<MediaScraper>            artworkScrapers  = null;
+  private List<MediaScraper>            trailerScrapers  = null;
 
-  private MediaLanguages    language     = null;
-  private MediaSearchResult result       = null;
-  private MediaMetadata     metadata     = null;
-  private String            name         = "";
-  private String            overview     = "";
-  private String            year         = "";
-  private String            combinedName = "";
-  private String            posterUrl    = "";
-  private String            tagline      = "";
-  private boolean           scraped      = false;
+  private MediaLanguages                language         = null;
+  private MediaSearchResult             result           = null;
+  private MediaMetadata                 metadata         = null;
+  private String                        name             = "";
+  private String                        overview         = "";
+  private String                        year             = "";
+  private String                        combinedName     = "";
+  private String                        posterUrl        = "";
+  private String                        tagline          = "";
+  private boolean                       scraped          = false;
 
   public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers,
       MediaSearchResult result, MediaLanguages language) {

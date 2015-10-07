@@ -41,7 +41,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
  * @author Manuel Laggner
  */
 public class MediaIdTable extends JTable {
-  private static final long serialVersionUID = 8010722883277208728L;
+  private static final long   serialVersionUID = 8010722883277208728L;
 
   private Map<String, Object> idMap;
   private EventList<MediaId>  idList;

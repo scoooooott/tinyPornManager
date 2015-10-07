@@ -44,8 +44,8 @@ public class MovieFindMissingTask extends TmmThreadPool {
   private static final Logger         LOGGER = LoggerFactory.getLogger(MovieFindMissingTask.class);
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<String> dataSources;
-  private MovieList    movieList;
+  private List<String>                dataSources;
+  private MovieList                   movieList;
 
   public MovieFindMissingTask() {
     super(BUNDLE.getString("movie.findmissing"));

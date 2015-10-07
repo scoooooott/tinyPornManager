@@ -44,11 +44,11 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Myron Boyle
  */
 public class TvShowRenamer {
-  private static final Logger         LOGGER   = LoggerFactory.getLogger(TvShowRenamer.class);
-  private static final TvShowSettings SETTINGS = Globals.settings.getTvShowSettings();
+  private static final Logger         LOGGER                   = LoggerFactory.getLogger(TvShowRenamer.class);
+  private static final TvShowSettings SETTINGS                 = Globals.settings.getTvShowSettings();
 
   // the regexp to find the episode relevant tokens which have to be repeated on multi ep files
-  private static final Pattern multiEpisodeTokenPattern = Pattern
+  private static final Pattern        multiEpisodeTokenPattern = Pattern
       .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)?");
 
   /**

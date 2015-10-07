@@ -55,11 +55,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieCrewPanel extends JPanel {
-  private static final long           serialVersionUID = 2972207353452870494L;
+  private static final long                     serialVersionUID   = 2972207353452870494L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle           BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                   selectionModel;
   private EventList<MovieProducer>              producerEventList  = null;
@@ -68,12 +68,12 @@ public class MovieCrewPanel extends JPanel {
   /**
    * UI elements
    */
-  private JLabel lblDirectorT;
-  private JLabel lblWriterT;
-  private JLabel lblProducer;
-  private JTable tableProducer;
-  private JLabel lblDirector;
-  private JLabel lblWriter;
+  private JLabel                                lblDirectorT;
+  private JLabel                                lblWriterT;
+  private JLabel                                lblProducer;
+  private JTable                                tableProducer;
+  private JLabel                                lblDirector;
+  private JLabel                                lblWriter;
 
   public MovieCrewPanel(MovieSelectionModel model) {
     selectionModel = model;

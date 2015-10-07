@@ -38,7 +38,7 @@ public class LinkLabel extends JLabel {
   /**
    * The normal text set by the user.
    */
-  private String text;
+  private String            text;
 
   /**
    * Creates a new LinkLabel with the given text.

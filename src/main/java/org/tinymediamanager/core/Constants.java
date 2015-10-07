@@ -21,9 +21,9 @@ package org.tinymediamanager.core;
  * @author Manuel Laggner
  */
 public final class Constants {
-  public final static String BACKUP_FOLDER = ".deletedByTMM";
-  public final static String LOCALE_FOLDER = "locale";
-  public final static String CONFIG_FOLDER = "data";
+  public final static String BACKUP_FOLDER          = ".deletedByTMM";
+  public final static String LOCALE_FOLDER          = "locale";
+  public final static String CONFIG_FOLDER          = "data";
 
   public final static String ACTORS                 = "actors";
   public final static String ADDED_EPISODE          = "addedEpisode";
@@ -106,10 +106,10 @@ public final class Constants {
 
   // some hardcoded, well known meta data provider IDs
   // may add new ones in MediaEntity.setId()
-  public final static String TMDB  = "tmdb";
-  public final static String IMDB  = "imdb";
-  public final static String TVDB  = "tvdb";
-  public final static String TRAKT = "trakt";
+  public final static String TMDB                   = "tmdb";
+  public final static String IMDB                   = "imdb";
+  public final static String TVDB                   = "tvdb";
+  public final static String TRAKT                  = "trakt";
 
   private Constants() {
   }

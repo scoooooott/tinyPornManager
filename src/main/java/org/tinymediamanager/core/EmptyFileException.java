@@ -25,7 +25,7 @@ import java.io.File;
 public class EmptyFileException extends Exception {
   private static final long serialVersionUID = -7369038801049706860L;
 
-  private File file;
+  private File              file;
 
   public EmptyFileException(File file) {
     this.file = file;

@@ -57,14 +57,14 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger LOGGER   = LoggerFactory.getLogger(TvShowList.class);
-  private static TvShowList   instance = null;
+  private static final Logger    LOGGER                = LoggerFactory.getLogger(TvShowList.class);
+  private static TvShowList      instance              = null;
 
-  private List<TvShow> tvShowList            = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
-  private List<String> tvShowTagsObservable  = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String> episodeTagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String> videoCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String> audioCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<TvShow>           tvShowList            = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<String>           tvShowTagsObservable  = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>           episodeTagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>           videoCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>           audioCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
 
   private PropertyChangeListener propertyChangeListener;
 

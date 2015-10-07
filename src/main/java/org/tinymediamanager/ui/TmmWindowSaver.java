@@ -53,7 +53,7 @@ public class TmmWindowSaver implements AWTEventListener {
   private final static String   PROPERTIES_FILE = "tmm_ui.prop";
   private static TmmWindowSaver instance;
 
-  private Properties properties;
+  private Properties            properties;
 
   private TmmWindowSaver() {
     properties = new Properties();

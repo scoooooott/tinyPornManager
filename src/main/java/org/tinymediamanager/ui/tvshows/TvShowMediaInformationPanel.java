@@ -61,43 +61,43 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowMediaInformationPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1610264727610254912L;
+  private static final long           serialVersionUID = 1610264727610254912L;
 
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
 
   /** The logger. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowMediaInformationPanel.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowMediaInformationPanel.class);
 
   /** The selection model. */
-  private TvShowSelectionModel selectionModel;
+  private TvShowSelectionModel        selectionModel;
 
   /** The lbl path. */
-  private LinkLabel lblTvShowPath;
+  private LinkLabel                   lblTvShowPath;
 
   /** The lbl date added t. */
-  private JLabel lblDateAddedT;
+  private JLabel                      lblDateAddedT;
 
   /** The lbl date added. */
-  private JLabel lblDateAdded;
+  private JLabel                      lblDateAdded;
 
   /** The cb watched. */
-  private JCheckBox cbWatched;
+  private JCheckBox                   cbWatched;
 
   /** The lbl watched t. */
-  private JLabel lblWatchedT;
+  private JLabel                      lblWatchedT;
 
   /** The lbl path t. */
-  private JLabel lblTvShowPathT;
+  private JLabel                      lblTvShowPathT;
 
   // /** The btn play. */
   // private JButton btnPlay;
 
   /** The media file event list. */
-  private EventList<MediaFile> mediaFileEventList;
-  private MediaFilesPanel      panelMediaFiles;
+  private EventList<MediaFile>        mediaFileEventList;
+  private MediaFilesPanel             panelMediaFiles;
 
   /**
    * Instantiates a new tv show media information panel.
