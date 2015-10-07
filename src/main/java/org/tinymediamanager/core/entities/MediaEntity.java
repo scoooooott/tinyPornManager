@@ -368,7 +368,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   public int getIdAsInt(String key) {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get(key)));
+      id = Integer.parseInt(String.valueOf(ids.get(key)));
     }
     catch (Exception e) {
       return 0;

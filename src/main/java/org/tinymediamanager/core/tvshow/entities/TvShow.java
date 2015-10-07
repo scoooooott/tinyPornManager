@@ -796,7 +796,7 @@ public class TvShow extends MediaEntity {
   public int getTraktId() {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get(TRAKT)));
+      id = Integer.parseInt(String.valueOf(ids.get(TRAKT)));
     }
     catch (Exception e) {
       return 0;

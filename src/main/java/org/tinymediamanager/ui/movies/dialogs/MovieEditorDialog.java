@@ -868,7 +868,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       int year = 0;
       try {
-        year = Integer.valueOf(movie.getYear());
+        year = Integer.parseInt(movie.getYear());
       }
       catch (Exception ignored) {
       }

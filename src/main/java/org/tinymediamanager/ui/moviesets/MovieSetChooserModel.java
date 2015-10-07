@@ -28,13 +28,13 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -59,7 +59,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
     this.result = result;
 
     setName(result.getTitle());
-    setTmdbId(Integer.valueOf(result.getId()));
+    setTmdbId(Integer.parseInt(result.getId()));
     setPosterUrl(result.getPosterUrl());
 
     try {

@@ -335,15 +335,15 @@ public class TvShowEpisodeToXbmcNfoConnector {
       episode.setRating(xbmc.getRating());
 
       try {
-        episode.setEpisode(Integer.valueOf(xbmc.getEpisode()));
-        episode.setSeason(Integer.valueOf(xbmc.getSeason()));
+        episode.setEpisode(Integer.parseInt(xbmc.getEpisode()));
+        episode.setSeason(Integer.parseInt(xbmc.getSeason()));
       }
       catch (NumberFormatException e) {
       }
 
       try {
-        episode.setDisplayEpisode(Integer.valueOf(xbmc.getDisplayepisode()));
-        episode.setDisplaySeason(Integer.valueOf(xbmc.getDisplayseason()));
+        episode.setDisplayEpisode(Integer.parseInt(xbmc.getDisplayepisode()));
+        episode.setDisplaySeason(Integer.parseInt(xbmc.getDisplayseason()));
       }
       catch (NumberFormatException e) {
       }

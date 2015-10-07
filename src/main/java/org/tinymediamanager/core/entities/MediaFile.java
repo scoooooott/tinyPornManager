@@ -1236,9 +1236,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
           try {
             String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
-            stream.setBitrate(Integer.valueOf(br) / 1024);
+            stream.setBitrate(Integer.parseInt(br) / 1024);
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
           String language = getMediaInfo(StreamKind.Audio, i, "Language");
           if (language.isEmpty()) {
@@ -1335,7 +1335,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
         try {
           String br = getMediaInfo(StreamKind.Audio, 0, "BitRate");
-          stream.setBitrate(Integer.valueOf(br) / 1024);
+          stream.setBitrate(Integer.parseInt(br) / 1024);
         }
         catch (Exception e) {
         }
@@ -1440,7 +1440,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         String br = getMediaInfo(StreamKind.General, 0, "OverallBitRate");
         if (!br.isEmpty()) {
           try {
-            setOverallBitRate(Integer.valueOf(br) / 1024); // in kbps
+            setOverallBitRate(Integer.parseInt(br) / 1024); // in kbps
           }
           catch (NumberFormatException e) {
             setOverallBitRate(0);
@@ -1455,7 +1455,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         String dur = getMediaInfo(StreamKind.General, 0, "Duration");
         if (!dur.isEmpty()) {
           try {
-            setDuration(Integer.valueOf(dur) / 1000);
+            setDuration(Integer.parseInt(dur) / 1000);
           }
           catch (NumberFormatException e) {
             setDuration(0);

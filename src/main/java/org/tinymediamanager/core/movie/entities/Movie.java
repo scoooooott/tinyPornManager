@@ -541,7 +541,7 @@ public class Movie extends MediaEntity {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get(TMDB)));
+      id = Integer.parseInt(String.valueOf(ids.get(TMDB)));
     }
     catch (Exception e) {
       return 0;
@@ -569,7 +569,7 @@ public class Movie extends MediaEntity {
   public int getTraktId() {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get(TRAKT)));
+      id = Integer.parseInt(String.valueOf(ids.get(TRAKT)));
     }
     catch (Exception e) {
       return 0;

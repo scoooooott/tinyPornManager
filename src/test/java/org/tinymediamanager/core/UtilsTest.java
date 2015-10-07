@@ -17,9 +17,9 @@ public class UtilsTest {
     HashMap<String, Object> ids = new HashMap<String, Object>(0);
     ids.put("STR1", "str1");
     ids.put("STR2", "1000");
-    ids.put("INT1", Integer.valueOf("1000"));
+    ids.put("INT1", Integer.parseInt("1000"));
     ids.put("DUPE", "2000");
-    ids.put("DUPE", Integer.valueOf("1000").intValue());
+    ids.put("DUPE", 1000);
     for (String s : ids.keySet()) {
       Object o = ids.get(s);
       System.out.println(s + "  " + o + "  " + (o instanceof String ? "String" : "") + (o instanceof Integer ? "Integer" : ""));

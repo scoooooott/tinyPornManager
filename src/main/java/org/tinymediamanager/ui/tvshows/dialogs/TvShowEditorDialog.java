@@ -615,7 +615,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
       int year = 0;
       try {
-        year = Integer.valueOf(tvShow.getYear());
+        year = Integer.parseInt(tvShow.getYear());
       }
       catch (Exception e) {
       }
