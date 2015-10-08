@@ -204,16 +204,19 @@ public class ImageCache {
             desiredWidth = 1000;
           }
           break;
+
         case POSTER:
           if (originalImage.getHeight() > 500) {
             desiredWidth = 350;
           }
           break;
+
         case EXTRAFANART:
         case THUMB:
         case BANNER:
         case GRAPHIC:
           desiredWidth = 300;
+          break;
 
         default:
           break;
@@ -303,7 +306,7 @@ public class ImageCache {
   public static void invalidateCachedImage(String path) {
     File cachedFile = new File(ImageCache.getCacheDir(), ImageCache.getCachedFileName(path) + ".jpg");
     if (cachedFile.exists()) {
-      cachedFile.delete();
+      Utils.deleteFileSafely(cachedFile);
     }
   }
 
@@ -352,7 +355,7 @@ public class ImageCache {
    * 
    * @param path
    *          the path to the original image
-   * @return
+   * @return true/false
    */
   public static boolean isImageCached(String path) {
     if (!Globals.settings.isImageCache()) {
@@ -385,6 +388,16 @@ public class ImageCache {
     }
   }
 
+  /**
+   * calculate a new size which fits into maxWidth and maxHeight
+   * 
+   * @param maxWidth
+   * @param maxHeight
+   * @param originalWidth
+   * @param originalHeight
+   * @param respectFactor
+   * @return the calculated new size
+   */
   public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
     Point size = new Point();
     if (respectFactor) {

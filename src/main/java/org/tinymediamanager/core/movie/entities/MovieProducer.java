@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -121,5 +122,10 @@ public class MovieProducer extends AbstractModelObject {
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder().append(name).append(role).append(thumbUrl).build();
   }
 }

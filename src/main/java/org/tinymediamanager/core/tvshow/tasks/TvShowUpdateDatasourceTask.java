@@ -558,7 +558,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    */
   private void findAdditionalTvShowFiles(TvShow tvShow, File directory) {
     // find tv show images for this TV show; NOTE: the NFO has been found in TvShow.parseNFO()
-    List<File> completeDirContents = new ArrayList<File>(Arrays.asList(directory.listFiles()));
+    File[] contents = directory.listFiles();
+    if (contents == null) {
+      return;
+    }
+
+    List<File> completeDirContents = Arrays.asList(contents);
 
     // search season posters first (-poster pattern would find season posters)
     for (File file : completeDirContents) {

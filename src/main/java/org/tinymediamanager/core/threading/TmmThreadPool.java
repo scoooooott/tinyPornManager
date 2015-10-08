@@ -88,7 +88,7 @@ public abstract class TmmThreadPool extends TmmTask {
   protected void submitTask(Runnable task) {
     if (!cancel) {
       workUnits++;
-      service.submit(task, null);
+      service.submit(task, "");
     }
   }
 

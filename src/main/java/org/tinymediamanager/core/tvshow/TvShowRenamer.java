@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -320,8 +321,13 @@ public class TvShowRenamer {
   }
 
   private static void cleanEmptyDir(File dir) {
-    if (dir.isDirectory() && dir.listFiles().length == 0) {
-      dir.delete();
+    File[] contents = dir.listFiles();
+    if (contents == null) {
+      return;
+    }
+
+    if (dir.isDirectory() && contents.length == 0) {
+      FileUtils.deleteQuietly(dir);
       cleanEmptyDir(dir.getParentFile());
     }
   }

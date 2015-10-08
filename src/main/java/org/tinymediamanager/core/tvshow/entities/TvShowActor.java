@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow.entities;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -119,5 +120,10 @@ public class TvShowActor extends AbstractModelObject {
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder().append(name).append(character).append(thumb).build();
   }
 }

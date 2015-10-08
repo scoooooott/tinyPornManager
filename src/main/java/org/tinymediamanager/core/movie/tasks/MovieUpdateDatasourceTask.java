@@ -222,10 +222,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     if (files == null || files.isEmpty()) {
       return;
     }
-    List<File> completeDirContents = new ArrayList<File>(Arrays.asList(parentDir.listFiles()));
+    File[] contents = parentDir.listFiles();
+    if (contents == null) {
+      return;
+    }
+
+    List<File> completeDirContents = Arrays.asList(contents);
 
     // just compare filename length, start with longest b/c of overlapping names
     Collections.sort(files, new Comparator<File>() {
+      @Override
       public int compare(File file1, File file2) {
         return file2.getName().length() - file1.getName().length();
       }

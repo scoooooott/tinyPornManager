@@ -113,6 +113,10 @@ public abstract class MediaEntityExporter {
 
     // search ever subdir
     File[] templateDirs = root.listFiles();
+    if (templateDirs == null) {
+      return templatesFound;
+    }
+
     for (File dir : templateDirs) {
       if (!dir.isDirectory()) {
         continue;

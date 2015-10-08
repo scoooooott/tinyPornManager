@@ -15,12 +15,10 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -240,31 +238,6 @@ public class Utils {
   }
 
   /**
-   * Read file as string. DEPRECATED: use FileUtils.readFileToString(file)
-   * 
-   * @param file
-   *          the file
-   * @return the string
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   */
-  @Deprecated
-  public static String readFileAsString(File file) throws java.io.IOException {
-    StringBuffer fileData = new StringBuffer(1000);
-    BufferedReader reader = new BufferedReader(new FileReader(file));
-    char[] buf = new char[1024];
-    int numRead = 0;
-    while ((numRead = reader.read(buf)) != -1) {
-      String readData = String.valueOf(buf, 0, numRead);
-      fileData.append(readData);
-      buf = new char[1024];
-    }
-
-    reader.close();
-    return fileData.toString();
-  }
-
-  /**
    * Clean stacking markers.
    * 
    * @param filename
@@ -413,6 +386,9 @@ public class Utils {
             InputStream in = url.getInputStream();
             in.close();
           }
+        }
+        catch (RuntimeException e) {
+          throw e;
         }
         catch (Exception e) {
           LOGGER.warn("could not ping our update server...");
@@ -737,25 +713,27 @@ public class Utils {
     loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
       File[] props = new File(Constants.LOCALE_FOLDER).listFiles();
-      for (File file : props) {
-        // String l = file.getName().substring(9, 11); // messages_XX.properties
-        Matcher matcher = localePattern.matcher(file.getName());
-        if (matcher.matches()) {
-          Locale myloc = null;
+      if (props != null) {
+        for (File file : props) {
+          // String l = file.getName().substring(9, 11); // messages_XX.properties
+          Matcher matcher = localePattern.matcher(file.getName());
+          if (matcher.matches()) {
+            Locale myloc = null;
 
-          String language = matcher.group(1);
-          String country = matcher.group(2);
+            String language = matcher.group(1);
+            String country = matcher.group(2);
 
-          if (country != null) {
-            // found language & country
-            myloc = new Locale(language, country);
-          }
-          else {
-            // found only language
-            myloc = getLocaleFromLanguage(language);
-          }
-          if (myloc != null && !loc.contains(myloc)) {
-            loc.add(myloc);
+            if (country != null) {
+              // found language & country
+              myloc = new Locale(language, country);
+            }
+            else {
+              // found only language
+              myloc = getLocaleFromLanguage(language);
+            }
+            if (myloc != null && !loc.contains(myloc)) {
+              loc.add(myloc);
+            }
           }
         }
       }
