@@ -504,7 +504,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateTvShowTags(TvShow tvShow) {
-    for (String tagInTvShow : tvShow.getTags()) {
+    for (String tagInTvShow : new ArrayList<>(tvShow.getTags())) {
       boolean tagFound = false;
       for (String tag : tvShowTagsObservable) {
         if (tagInTvShow.equals(tag)) {
@@ -534,7 +534,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateEpisodeTags(TvShowEpisode episode) {
-    for (String tagEpisode : episode.getTags()) {
+    for (String tagEpisode : new ArrayList<>(episode.getTags())) {
       boolean tagFound = false;
       for (String tag : episodeTagsObservable) {
         if (tagEpisode.equals(tag)) {

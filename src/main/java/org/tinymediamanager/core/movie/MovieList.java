@@ -681,7 +681,7 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateTags(Movie movie) {
-    for (String tagInMovie : movie.getTags()) {
+    for (String tagInMovie : new ArrayList<>(movie.getTags())) {
       boolean tagFound = false;
       for (String tag : tagsObservable) {
         if (tagInMovie.equals(tag)) {
