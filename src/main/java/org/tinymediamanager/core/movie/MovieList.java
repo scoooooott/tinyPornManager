@@ -295,7 +295,7 @@ public class MovieList extends AbstractModelObject {
   void loadMoviesFromDatabase(MVMap<UUID, String> movieMap, ObjectMapper objectMapper) {
     // load movies
     movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
-    ObjectReader movieObjectReader = objectMapper.reader(Movie.class);
+    ObjectReader movieObjectReader = objectMapper.readerFor(Movie.class);
 
     for (UUID uuid : movieMap.keyList()) {
       String json = "";
@@ -316,7 +316,7 @@ public class MovieList extends AbstractModelObject {
   void loadMovieSetsFromDatabase(MVMap<UUID, String> movieSetMap, ObjectMapper objectMapper) {
     // load movie sets
     movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>()));
-    ObjectReader movieSetObjectReader = objectMapper.reader(MovieSet.class);
+    ObjectReader movieSetObjectReader = objectMapper.readerFor(MovieSet.class);
 
     for (UUID uuid : movieSetMap.keyList()) {
       try {

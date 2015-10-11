@@ -39,7 +39,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -47,6 +46,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -231,7 +231,7 @@ public class TvShowList extends AbstractModelObject {
    */
   void loadTvShowsFromDatabase(MVMap<UUID, String> tvShowMap, ObjectMapper objectMapper) {
     // load all TV shows from the database
-    ObjectReader tvShowObjectReader = objectMapper.reader(TvShow.class);
+    ObjectReader tvShowObjectReader = objectMapper.readerFor(TvShow.class);
 
     for (UUID uuid : tvShowMap.keyList()) {
       try {
@@ -253,7 +253,7 @@ public class TvShowList extends AbstractModelObject {
    */
   void loadEpisodesFromDatabase(MVMap<UUID, String> episodesMap, ObjectMapper objectMapper) {
     // load all episodes from the database
-    ObjectReader episodeObjectReader = objectMapper.reader(TvShowEpisode.class);
+    ObjectReader episodeObjectReader = objectMapper.readerFor(TvShowEpisode.class);
     int episodeCount = 0;
 
     for (UUID uuid : episodesMap.keyList()) {
