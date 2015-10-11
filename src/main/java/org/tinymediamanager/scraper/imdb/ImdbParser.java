@@ -15,6 +15,22 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,21 +51,6 @@ import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.UrlUtil;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
 
 /**
  * The abstract class ImdbParser holds all relevant parsing logic which can be used either by the movie parser and TV show parser
@@ -335,10 +336,13 @@ public abstract class ImdbParser {
   static String getAcceptLanguage(String language, String country) {
     List<String> languageString = new ArrayList<>();
 
-    // first: take the preferred language from settings
+    // first: take the preferred language from settings,
+    // but validate whether it is legal or not
     if (StringUtils.isNotBlank(language) && StringUtils.isNotBlank(country)) {
-      String combined = language + "-" + country;
-      languageString.add(combined.toLowerCase());
+      if (LocaleUtils.isAvailableLocale(new Locale(language, country))) {
+        String combined = language + "-" + country;
+        languageString.add(combined.toLowerCase());
+      }
     }
 
     // also build langu & default country
