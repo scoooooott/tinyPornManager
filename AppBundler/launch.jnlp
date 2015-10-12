@@ -14,7 +14,7 @@
     </security>
     <resources>
         <j2se version="1.7+" href="http://java.sun.com/products/autodl/j2se"
-            java-vm-args="-Xmx250M" />
+            java-vm-args="-Xmx250M -Djava.net.preferIPv4Stack=true" />
         <property name="MyApplicationProperty" value="myApplicationPropertyValue" />
         <jar href="tmm.jar" main="true" />
 %WEBSTARTLIBS%    </resources>
