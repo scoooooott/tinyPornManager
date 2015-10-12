@@ -63,7 +63,6 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -71,8 +70,6 @@ import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
 import com.sun.jna.Platform;
-
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 /**
  * The Class TinyMediaManager.
@@ -138,18 +135,6 @@ public class TinyMediaManager {
     LOGGER.info("java.version     : " + System.getProperty("java.version"));
     if (Globals.isRunningJavaWebStart()) {
       LOGGER.info("java.webstart    : true");
-    }
-
-    // initialize SWT if found
-    try {
-      TmmUIHelper.init();
-      LOGGER.info("java.swt         : true");
-      if (TmmUIHelper.swt != null) {
-        NativeInterface.open();
-      }
-    }
-    catch (ClassNotFoundException e2) {
-      LOGGER.info("java.swt         : false");
     }
 
     // START character encoding debug
@@ -572,10 +557,6 @@ public class TinyMediaManager {
         }
       }
     });
-
-    if (TmmUIHelper.swt != null) {
-      NativeInterface.runEventPump();
-    }
   }
 
   /**
