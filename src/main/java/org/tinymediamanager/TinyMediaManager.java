@@ -119,6 +119,25 @@ public class TinyMediaManager {
       System.exit(1);
     }
 
+    // HACK for Java 7 and JavaFX not being in boot classpath
+    // In Java 8 and on, this is installed inside jre/lib/ext
+    // see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8003171 and references
+    // so we check if it is already existent in "new" directory, and if not, load it via reflection ;o)
+    String dir = new File(LaunchUtil.getJVMPath()).getParentFile().getParent(); // bin, one deeper
+    File jfx = new File(dir, "lib/ext/jfxrt.jar");
+    if (!jfx.exists()) {
+      // java 7
+      jfx = new File(dir, "lib/jfxrt.jar");
+      if (jfx.exists()) {
+        try {
+          TmmOsUtils.addPath(jfx.getAbsolutePath());
+        }
+        catch (Exception e) {
+          LOGGER.debug("failed to load JavaFX - using old styles...");
+        }
+      }
+    }
+
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2015 Manuel Laggner ===");
     LOGGER.info("=====================================================");

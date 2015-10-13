@@ -18,6 +18,10 @@ package org.tinymediamanager;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
@@ -31,9 +35,9 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class TmmOsUtils {
-  private static final Logger LOGGER       = LoggerFactory.getLogger(TmmOsUtils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmmOsUtils.class);
 
-  public static final String  DESKTOP_FILE = "tinyMediaManager.desktop";
+  public static final String DESKTOP_FILE = "tinyMediaManager.desktop";
 
   /**
    * create a .desktop file for linux and unix (not osx)
@@ -79,5 +83,21 @@ public class TmmOsUtils {
     catch (IOException e) {
       LOGGER.warn(e.getMessage());
     }
+  }
+
+  /**
+   * need to do add path to Classpath with reflection since the URLClassLoader.addURL(URL url) method is protected:
+   * 
+   * @param s
+   * @throws Exception
+   */
+  public static void addPath(String s) throws Exception {
+    File f = new File(s);
+    URI u = f.toURI();
+    URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    Class<URLClassLoader> urlClass = URLClassLoader.class;
+    Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
+    method.setAccessible(true);
+    method.invoke(urlClassLoader, new Object[] { u.toURL() });
   }
 }
