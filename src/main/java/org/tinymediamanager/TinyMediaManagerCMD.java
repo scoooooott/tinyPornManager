@@ -121,7 +121,8 @@ public class TinyMediaManagerCMD {
         "=== tinyMediaManager (c) 2012-2015 Manuel Laggner ===\n" +
         "=====================================================\n" +
         "\n" +
-        "    SYNTAX: java -jar tmm.jar <parameters>\n" +
+        "    SYNTAX Windows: tinyMediaManagerCMD.exe <parameters>\n" +
+        "           Linux:   ./tinyMediaManagerCMD.sh <parameters>\n" +
         "\n" +
         "PARAMETERS:\n" +
         "\n" +
