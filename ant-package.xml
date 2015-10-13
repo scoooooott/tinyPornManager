@@ -255,7 +255,7 @@
 		<copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
 
 		<!-- create webstart file (currently w/o plugins) -->
-		<copy file="AppBundler/launch.jnlp" tofile="${build.dir}/launch.jnlp" />
+		<copy file="AppBundler/webstart.php" tofile="${build.dir}/webstart.php" />
 		<pathconvert property="webstart" refid="classpath.default" pathsep="">
 			<mapper>
 				<chainedmapper>
@@ -265,7 +265,7 @@
 			</mapper>
 		</pathconvert>
 		<!-- echo message="${webstart}" /-->
-		<replace file="${build.dir}/launch.jnlp" token="%WEBSTARTLIBS%" value="${webstart}" />
+		<replace file="${build.dir}/webstart.php" token="%WEBSTARTLIBS%" value="${webstart}" />
 
 		<!-- finally create checksums -->
 		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="AppBundler/getdown.jar" />
