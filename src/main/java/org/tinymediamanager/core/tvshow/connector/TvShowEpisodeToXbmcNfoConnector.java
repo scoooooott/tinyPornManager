@@ -51,6 +51,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.ParserUtils;
@@ -62,52 +64,56 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
-    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "unsupportedElements" })
+    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "fileinfo",
+    "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
-  private static final Logger LOGGER         = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
-  private static JAXBContext  context        = initContext();
+  private static final Logger LOGGER  = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static JAXBContext  context = initContext();
 
-  private String              season         = "";
-  private String              episode        = "";
-  private String              displayseason  = "";
-  private String              displayepisode = "";
-  private String              uniqueid       = "";
-  private String              title          = "";
-  private String              showtitle      = "";
-  private float               rating         = 0;
-  private int                 votes          = 0;
-  private String              plot           = "";
-  private String              studio         = "";
-  private String              mpaa           = "";
-  private String              aired          = "";
-  private String              premiered      = "";
+  private String season         = "";
+  private String episode        = "";
+  private String displayseason  = "";
+  private String displayepisode = "";
+  private String uniqueid       = "";
+  private String title          = "";
+  private String showtitle      = "";
+  private float  rating         = 0;
+  private int    votes          = 0;
+  private String plot           = "";
+  private String studio         = "";
+  private String mpaa           = "";
+  private String aired          = "";
+  private String premiered      = "";
 
   @XmlElement
-  private int                 playcount      = 0;
+  private int     playcount = 0;
   @XmlElement
-  private boolean             watched        = false;
+  private boolean watched   = false;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        actors;
+  private List<Object> actors;
+
+  @XmlElement
+  private Fileinfo fileinfo;
 
   @XmlElement(name = "credits")
-  private List<String>        credits;
+  private List<String> credits;
 
   @XmlElement(name = "director")
-  private List<String>        director;
+  private List<String> director;
 
   @XmlElement(name = "tag")
-  private List<String>        tags;
+  private List<String> tags;
 
   @XmlAnyElement(lax = true)
-  private List<Object>        unsupportedElements;
+  private List<Object> unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  String                      thumb;
+  String thumb;
 
   @XmlElement
-  String                      lastplayed;
+  String lastplayed;
 
   private static JAXBContext initContext() {
     try {
@@ -251,6 +257,56 @@ public class TvShowEpisodeToXbmcNfoConnector {
       for (String tag : episode.getTags()) {
         xbmc.tags.add(tag);
       }
+
+      // fileinfo
+      Fileinfo info = new Fileinfo();
+      for (MediaFile mediaFile : episode.getMediaFiles(MediaFileType.VIDEO)) {
+        if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
+          break;
+        }
+
+        info.streamdetails.video.codec = mediaFile.getVideoCodec();
+        info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
+        info.streamdetails.video.width = mediaFile.getVideoWidth();
+        info.streamdetails.video.height = mediaFile.getVideoHeight();
+        info.streamdetails.video.durationinseconds = mediaFile.getDuration();
+        // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
+        if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
+          info.streamdetails.video.stereomode = "left_right";
+        }
+        else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
+          info.streamdetails.video.stereomode = "top_bottom"; // maybe?
+        }
+
+        for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
+          Audio audio = new Audio();
+
+          if (StringUtils.isNotBlank(as.getCodec())) {
+            audio.codec = as.getCodec().replaceAll("-", "_");
+          }
+          else {
+            audio.codec = as.getCodec();
+          }
+          audio.language = as.getLanguage();
+          audio.channels = String.valueOf(as.getChannelsAsInt());
+          info.streamdetails.audio.add(audio);
+        }
+        for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
+          Subtitle sub = new Subtitle();
+          sub.language = ss.getLanguage();
+          info.streamdetails.subtitle.add(sub);
+        }
+        break;
+      }
+      // add external subtitles to NFO
+      for (MediaFile mediaFile : episode.getMediaFiles(MediaFileType.SUBTITLE)) {
+        for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
+          Subtitle sub = new Subtitle();
+          sub.language = ss.getLanguage();
+          info.streamdetails.subtitle.add(sub);
+        }
+      }
+      xbmc.fileinfo = info;
 
       // add all unsupported tags again
       xbmc.unsupportedElements.addAll(unsupportedTags);
@@ -668,5 +724,82 @@ public class TvShowEpisodeToXbmcNfoConnector {
     // clean NFO string and retry
     StringReader in = new StringReader(ParserUtils.cleanNfo(part));
     return (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
+  }
+
+  /*
+   * inner class holding file informations
+   */
+  static class Fileinfo {
+    @XmlElement
+    Streamdetails streamdetails;
+
+    public Fileinfo() {
+      streamdetails = new Streamdetails();
+    }
+  }
+
+  /*
+   * inner class holding details of audio and video stream
+   */
+  static class Streamdetails {
+    @XmlElement
+    private Video video;
+
+    @XmlElement
+    private List<Audio> audio;
+
+    @XmlElement
+    private List<Subtitle> subtitle;
+
+    public Streamdetails() {
+      video = new Video();
+      audio = new ArrayList<Audio>();
+      subtitle = new ArrayList<Subtitle>();
+    }
+  }
+
+  /*
+   * inner class holding details of the video stream
+   */
+  static class Video {
+    @XmlElement
+    private String codec;
+
+    @XmlElement
+    private String aspect;
+
+    @XmlElement
+    private int width;
+
+    @XmlElement
+    private int height;
+
+    @XmlElement
+    private int durationinseconds;
+
+    @XmlElement
+    private String stereomode;
+  }
+
+  /*
+   * inner class holding details of the audio stream
+   */
+  static class Audio {
+    @XmlElement
+    private String codec;
+
+    @XmlElement
+    private String language;
+
+    @XmlElement
+    private String channels;
+  }
+
+  /*
+   * inner class holding details of the subtitle stream
+   */
+  static class Subtitle {
+    @XmlElement
+    private String language;
   }
 }
