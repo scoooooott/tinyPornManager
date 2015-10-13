@@ -563,7 +563,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       return;
     }
 
-    List<File> completeDirContents = Arrays.asList(contents);
+    List<File> completeDirContents = new ArrayList<>(Arrays.asList(contents));
 
     // search season posters first (-poster pattern would find season posters)
     for (File file : completeDirContents) {

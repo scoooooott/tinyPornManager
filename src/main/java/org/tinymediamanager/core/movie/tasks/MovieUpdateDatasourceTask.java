@@ -227,7 +227,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       return;
     }
 
-    List<File> completeDirContents = Arrays.asList(contents);
+    List<File> completeDirContents = new ArrayList<>(Arrays.asList(contents));
 
     // just compare filename length, start with longest b/c of overlapping names
     Collections.sort(files, new Comparator<File>() {
@@ -355,7 +355,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
       // list all type VIDEO files
-      List<File> files = Arrays.asList(movieDir.listFiles(new FileFilter() {
+      List<File> files = new ArrayList<>(Arrays.asList(movieDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
           if (file.getName().equals(".tmmignore")) {
@@ -366,7 +366,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
           return new MediaFile(file).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
         }
-      }));
+      })));
 
       // .tmmignore or no video file found, abort scanning
       if (files.contains(new File(movieDir, ".tmmignore")) || files.isEmpty()) {
