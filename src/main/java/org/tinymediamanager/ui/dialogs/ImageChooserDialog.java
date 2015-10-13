@@ -608,6 +608,7 @@ public class ImageChooserDialog extends TmmDialog {
       }
 
       if (artwork != null) {
+        imageLabel.clearImage();
         if (resolution != null) {
           imageLabel.setImageUrl(resolution.getUrl());
         }
@@ -880,6 +881,7 @@ public class ImageChooserDialog extends TmmDialog {
       File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
       if (file != null && file.exists() && file.isFile()) {
         String fileName = file.getPath();
+        imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);
         task.cancel(true);
         setVisible(false);
