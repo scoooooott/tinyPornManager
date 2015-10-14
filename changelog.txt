@@ -22,6 +22,10 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
 + added title sortable to TV shows section
 + added displayepisode and displayseason for TV shows
 + added option to persist UI filter settings
++ added native file- and directory-open dialogs
++ updated mediainfo to 0.7.78 and generalized folder structure
++ added <streamdetails> tag for episodes
++ refactored episode chooser (search for episode is now available)
 x changed NFO rewriting behavior to be less aggressive
 x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
@@ -34,3 +38,7 @@ x updated all templates to our actual data model and JMTE 3.2
 x fixed special character handling of sort titles
 x fixed real offline startup
 x fixed cleanup on artwork scraping
+x fixed NFO importing issue when having multiple tags
+x fixed display of "never ending" tasks
+x fixed file name generation of movie/tv show export templates 
+x many smaller fixes and enhancements
