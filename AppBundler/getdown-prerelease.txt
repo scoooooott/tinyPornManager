@@ -26,6 +26,9 @@ plugin = locale/*
 # files to be deleted
 # delete = abc.jar
 
+# cleanup - check folder for unreferenced files and delete
+deleteAbandonedFilesInDir = lib
+
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update
