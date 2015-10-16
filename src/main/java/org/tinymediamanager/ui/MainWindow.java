@@ -74,6 +74,7 @@ import org.tinymediamanager.ui.actions.ExitAction;
 import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.ForumAction;
+import org.tinymediamanager.ui.actions.LaunchUpdaterAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
@@ -150,6 +151,8 @@ public class MainWindow extends JFrame {
     }
 
     mnTmm.add(new SettingsAction());
+    mnTmm.addSeparator();
+    mnTmm.add(new LaunchUpdaterAction());
     mnTmm.addSeparator();
     mnTmm.add(new ExitAction());
     initialize();
