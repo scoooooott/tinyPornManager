@@ -95,6 +95,26 @@ public class ReleaseInfo {
   }
 
   /**
+   * Gets the live version or nightly/prerel/svn build string<br>
+   * useful for reporting
+   * 
+   * @return the version
+   */
+  public static String getVersionForReporting() {
+    String v = version;
+    if (isSvnBuild()) {
+      v = "SVN";
+    }
+    else if (isNightly()) {
+      v = "NIGHTLY";
+    }
+    else if (isPreRelease()) {
+      v = "PRE-RELEASE";
+    }
+    return v;
+  }
+
+  /**
    * Gets the builds the.
    * 
    * @return the builds the

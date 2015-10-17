@@ -364,7 +364,7 @@ public class Utils {
                 + "&tid=UA-35564534-5"
                 + "&cid=" + uuid 
                 + "&an=tinyMediaManager" 
-                + "&av=" + ReleaseInfo.getBuild() // svn revision number (or nightly/prerel)
+                + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR svn/nightly/prerel string
                 + "&t=event"
                 + "&ec=" + event
                 + "&ea=" + event 
