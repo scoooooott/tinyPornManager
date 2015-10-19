@@ -102,6 +102,49 @@ public class UpgradeTasks {
       FileUtils.deleteQuietly(new File("objectdb.conf"));
       FileUtils.deleteQuietly(new File("log"));
       Globals.settings.removeSubtitleFileType(".idx"); // aww, we never removed...
+
+      // cleaup of native folder
+      cleanupNativeFolder();
+    }
+  }
+
+  /**
+   * cleanup the native folder
+   * 
+   * only the specified folders should survive
+   * 
+   * Windows: windows-x86 windows-x64 Linux: linux-x86 linux-x64 Mac OSX: mac-x86 mac-x64
+   */
+  private static void cleanupNativeFolder() {
+    // no cleanup in SVN
+    if (ReleaseInfo.isSvnBuild()) {
+      return;
+    }
+
+    try {
+      File[] nativeFiles = new File("native").listFiles();
+      if (nativeFiles == null) {
+        return;
+      }
+
+      for (File file : nativeFiles) {
+        if (!file.isDirectory()) {
+          continue;
+        }
+
+        if (Platform.isWindows() && !"windows-x86".equals(file.getName()) && !"windows-x64".equals(file.getName())) {
+          FileUtils.deleteQuietly(file);
+        }
+        else if (Platform.isLinux() && !"linux-x86".equals(file.getName()) && !"linux-x64".equals(file.getName())) {
+          FileUtils.deleteQuietly(file);
+        }
+        else if (Platform.isMac() && !"mac-x86".equals(file.getName()) && !"mac-x64".equals(file.getName())) {
+          FileUtils.deleteQuietly(file);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.warn("failed to cleanup native folder: " + e.getMessage());
     }
   }
 
