@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -373,13 +374,15 @@ public class Utils {
                 + session
                 + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
                 + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
-                + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 
                 + "&cd1=" + getEncProp("os.name") 
                 + "&cd2=" + getEncProp("os.arch") 
                 + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
                 + "&cd4=" + ReleaseInfo.getVersion() // TMM version eg 2.5.5
                 + "&cd5=" + (Globals.isDonator() ? "1" : "0")
                 + "&z=" + System.currentTimeMillis();
+            if (!GraphicsEnvironment.isHeadless()) {
+              ga += "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height; 
+            }
             // @formatter:on
             Url url = new Url("http://www.google-analytics.com/collect?" + ga);
 
