@@ -253,6 +253,7 @@ public class License {
       String response = IOUtils.toString(new InputStreamReader(connection.getInputStream(), "UTF-8"));
       writer.close();
       if (response != null && response.isEmpty()) {
+        LOGGER.warn("empty response at license generation; code " + connection.getResponseCode());
         return false;
       }
 
@@ -278,5 +279,4 @@ public class License {
       return false;
     }
   }
-
 }

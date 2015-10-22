@@ -135,6 +135,7 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
           public void actionPerformed(ActionEvent e) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
+              LOGGER.debug("registering for donator version: ", tfEmailAddress.getText());
               Properties p = new Properties();
               p.setProperty("user", tfName.getText());
               p.setProperty("email", tfEmailAddress.getText());
