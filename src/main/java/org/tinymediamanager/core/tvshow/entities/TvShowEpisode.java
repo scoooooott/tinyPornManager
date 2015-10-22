@@ -101,7 +101,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private List<String>                       tags                  = new ArrayList<String>(0);
 
   private TvShow                             tvShow                = null;
-  private boolean                            newlyAdded            = false;
   private Date                               lastWatched           = null;
 
   /**
@@ -884,14 +883,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void deleteFromDb() {
     // delete this episode from the database
     TvShowList.getInstance().removeEpisodeFromDb(this);
-  }
-
-  public boolean isNewlyAdded() {
-    return this.newlyAdded;
-  }
-
-  public void setNewlyAdded(boolean newlyAdded) {
-    this.newlyAdded = newlyAdded;
   }
 
   /**

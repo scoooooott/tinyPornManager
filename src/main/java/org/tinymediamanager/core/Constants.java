@@ -62,6 +62,7 @@ public final class Constants {
   public final static String MOVIESET               = "movieset";
   public final static String MOVIESET_TITLE         = "movieSetTitle";
   public final static String NAME                   = "name";
+  public final static String NEWLY_ADDED            = "newlyAdded";
   public final static String NFO_FILENAME           = "nfoFilename";
   public final static String ORIGINAL_TITLE         = "originalTitle";
   public final static String PATH                   = "path";

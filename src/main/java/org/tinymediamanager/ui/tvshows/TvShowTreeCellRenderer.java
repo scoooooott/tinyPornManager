@@ -25,6 +25,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
@@ -82,6 +83,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
     TmmFontHelper.changeFont(tvShowTitle, Font.BOLD);
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
     tvShowTitle.setMinimumSize(new Dimension(0, 0));
+    tvShowTitle.setHorizontalTextPosition(SwingConstants.LEADING);
     tvShowPanel.add(tvShowTitle, "1, 1");
 
     tvShowPanel.add(tvShowNfoLabel, "3, 1, 1, 2");
@@ -94,11 +96,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
     tvShowSeasonPanel.setLayout(new BoxLayout(tvShowSeasonPanel, BoxLayout.Y_AXIS));
     tvShowSeasonPanel.add(tvShowSeasonTitle);
+    tvShowSeasonTitle.setHorizontalTextPosition(SwingConstants.LEADING);
 
     tvShowEpisodePanel.setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("center:20px"),
             ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
     tvShowEpisodeTitle.setMinimumSize(new Dimension(0, 0));
+    tvShowEpisodeTitle.setHorizontalTextPosition(SwingConstants.LEADING);
     tvShowEpisodePanel.add(tvShowEpisodeTitle, "1, 1");
     tvShowEpisodePanel.add(tvShowEpisodeNfoLabel, "3, 1");
     tvShowEpisodePanel.add(tvShowEpisodeImageLabel, "4, 1");
@@ -131,10 +135,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         }
 
         if (tvShow.isNewlyAdded()) {
-          tvShowTitle.setForeground(newlyAddedColor);
+          tvShowTitle.setIcon(IconManager.NEW);
         }
         else {
-          tvShowTitle.setForeground(defaultColor);
+          tvShowTitle.setIcon(null);
         }
 
         tvShowInfo.setText(tvShow.getSeasons().size() + " " + BUNDLE.getString("metatag.seasons") + " - " + tvShow.getEpisodes().size() + " " //$NON-NLS-1$
@@ -157,10 +161,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowSeasonPanel.setEnabled(tree.isEnabled());
 
         if (season.isNewlyAdded()) {
-          tvShowSeasonTitle.setForeground(newlyAddedColor);
+          tvShowSeasonTitle.setIcon(IconManager.NEW);
         }
         else {
-          tvShowSeasonTitle.setForeground(defaultColor);
+          tvShowSeasonTitle.setIcon(null);
         }
 
         tvShowSeasonPanel.invalidate();
@@ -184,10 +188,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         }
 
         if (episode.isNewlyAdded()) {
-          tvShowEpisodeTitle.setForeground(newlyAddedColor);
+          tvShowEpisodeTitle.setIcon(IconManager.NEW);
         }
         else {
-          tvShowEpisodeTitle.setForeground(defaultColor);
+          tvShowEpisodeTitle.setIcon(null);
         }
 
         tvShowEpisodePanel.setEnabled(tree.isEnabled());

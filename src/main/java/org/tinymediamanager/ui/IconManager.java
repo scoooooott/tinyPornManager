@@ -52,6 +52,7 @@ public class IconManager {
   public final static ImageIcon            LIST_ADD          = loadImage("list-add.png");
   public final static ImageIcon            LIST_REMOVE       = loadImage("list-remove.png");
   public final static ImageIcon            LOADING           = loadImage("loading.gif");
+  public final static ImageIcon            NEW               = loadImage("new.png");
   public final static ImageIcon            PLAY_SMALL        = loadImage("play-small.png");
   public final static ImageIcon            PLAY              = loadImage("play.png");
   public final static ImageIcon            PROCESS_STOP      = loadImage("process-stop.png");

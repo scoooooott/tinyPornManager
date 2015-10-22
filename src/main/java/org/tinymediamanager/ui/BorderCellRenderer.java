@@ -15,12 +15,12 @@
  */
 package org.tinymediamanager.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -32,15 +32,8 @@ import org.tinymediamanager.core.movie.entities.Movie;
  * @author Manuel Laggner
  */
 public class BorderCellRenderer extends DefaultTableCellRenderer {
+  private static final long serialVersionUID = -6545791732880295743L;
 
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent (javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-   */
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     setForeground(table.getForeground());
@@ -63,8 +56,11 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
       Movie movie = (Movie) value;
       setValue(movie.getTitleSortable());
       if (movie.isNewlyAdded()) {
-        setForeground(new Color(76, 143, 72));
-        // TmmFontHelper.changeFont(this, 0.916);
+        setHorizontalTextPosition(SwingConstants.LEADING);
+        setIcon(IconManager.NEW);
+      }
+      else {
+        setIcon(null);
       }
     }
     else if (value != null) {

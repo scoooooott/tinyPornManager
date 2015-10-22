@@ -145,7 +145,6 @@ public class Movie extends MediaEntity {
 
   private MovieSet                           movieSet;
   private String                             titleSortable         = "";
-  private boolean                            newlyAdded            = false;
   private Date                               lastWatched           = null;
   private List<MediaGenres>                  genresForAccess       = new ArrayList<MediaGenres>(0);
 
@@ -1535,25 +1534,6 @@ public class Movie extends MediaEntity {
    */
   public void setDisc(boolean isDisc) {
     this.isDisc = isDisc;
-  }
-
-  /**
-   * has this movie been newlay added in our list?!
-   * 
-   * @return true/false
-   */
-  public boolean isNewlyAdded() {
-    return this.newlyAdded;
-  }
-
-  /**
-   * has this movie been newlay added in our list?!
-   * 
-   * @param newlyAdded
-   *          true/false
-   */
-  public void setNewlyAdded(boolean newlyAdded) {
-    this.newlyAdded = newlyAdded;
   }
 
   /**

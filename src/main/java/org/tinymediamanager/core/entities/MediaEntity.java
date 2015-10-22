@@ -73,6 +73,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                     productionCompany = "";
   @JsonProperty
   protected boolean                    scraped           = false;
+  @JsonProperty
+  protected boolean                    newlyAdded        = false;
 
   @JsonProperty
   private List<MediaFile>              mediaFiles        = new ArrayList<MediaFile>();
@@ -80,7 +82,6 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<MediaFileType, String>();
 
   protected boolean                    duplicate         = false;
-  public boolean                       justAdded         = false;
   protected ReadWriteLock              readWriteLock     = new ReentrantReadWriteLock();
 
   public MediaEntity() {
@@ -632,6 +633,16 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void fireEventForChangedMediaInformation() {
     firePropertyChange(MEDIA_INFORMATION, false, true);
+  }
+
+  public boolean isNewlyAdded() {
+    return this.newlyAdded;
+  }
+
+  public void setNewlyAdded(boolean newValue) {
+    boolean oldValue = this.newlyAdded;
+    this.newlyAdded = newValue;
+    firePropertyChange(NEWLY_ADDED, oldValue, newValue);
   }
 
   abstract public void saveToDb();

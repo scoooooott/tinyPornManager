@@ -108,9 +108,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       long start = System.currentTimeMillis();
       List<File> imageFiles = new ArrayList<File>();
 
-      // cleanup just added for a new UDS run
+      // cleanup newlyadded for a new UDS run
       for (Movie movie : movieList.getMovies()) {
-        movie.justAdded = false;
+        movie.setNewlyAdded(false);
       }
 
       for (String ds : dataSources) {
@@ -301,7 +301,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         movie.setDataSource(datasource);
         movie.setNewlyAdded(true);
-        movie.justAdded = true;
         movie.setPath(mf.getPath());
 
         movieList.addMovie(movie);
@@ -499,8 +498,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie.setDataSource(dataSource);
           movie.setDateAdded(new Date());
           movie.setNewlyAdded(true);
-
-          movie.justAdded = true;
 
           movie.findActorImages(); // TODO: find as MediaFiles
           LOGGER.debug("store movie into DB " + movie.getTitle());
@@ -816,7 +813,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // have a look if that movie has just been added -> so we don't need any cleanup
-        if (!movie.justAdded) {
+        if (!movie.isNewlyAdded()) {
           // check and delete all not found MediaFiles
           boolean dirty = false;
           List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());

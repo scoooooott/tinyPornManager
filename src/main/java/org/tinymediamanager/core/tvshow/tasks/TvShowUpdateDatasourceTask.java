@@ -137,12 +137,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       long start = System.currentTimeMillis();
       start();
 
-      // cleanup just added for a new UDS run
+      // cleanup newlyadded for a new UDS run
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          episode.justAdded = false;
+          episode.setNewlyAdded(false);
         }
-        tvShow.justAdded = false;
+        tvShow.setNewlyAdded(false);
       }
 
       // here we have 2 ways of updating:
@@ -415,7 +415,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   private void cleanup(TvShow tvShow) {
     boolean dirty = false;
-    if (!tvShow.justAdded) {
+    if (!tvShow.isNewlyAdded()) {
       // check and delete all not found MediaFiles
       List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
@@ -533,7 +533,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       if (tvShow != null) {
         tvShow.setDataSource(datasource);
         // tvShow.saveToDb();
-        tvShow.justAdded = true;
+        tvShow.setNewlyAdded(true);
         tvShowList.addTvShow(tvShow);
       }
     }
