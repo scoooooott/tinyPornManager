@@ -9,11 +9,14 @@ tinyMediaManager is free and will stay free. If you appreciate all the effort th
 [1]: https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
 [2]: http://www.tinymediamanager.org/donate.php
 
-##Version 2##
-Version 2.6.8 has been released on 08. June 2015.
-
 ##Features##
 [http://www.tinymediamanager.org/index.php/features/](http://www.tinymediamanager.org/index.php/features/)
+
+## Release
+you will find the latest release at [http://release.tinymediamanager.org](http://release.tinymediamanager.org) 
+
+## Changelog
+[http://www.tinymediamanager.org/index.php/changelog/](http://www.tinymediamanager.org/index.php/changelog/)
 
 ##Screenshots##
 more screenshots at [http://www.tinymediamanager.org/index.php/screenshots/](http://www.tinymediamanager.org/index.php/screenshots/)
