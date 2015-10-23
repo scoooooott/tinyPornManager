@@ -30,4 +30,5 @@ Project Logging
 ---------------
 This project uses SLF4J (http://www.slf4j.org) to abstract the logging in the project.
 
-
+## Issues
+All issues for tinyMediaManager and its components are managed at https://github.com/tinyMediaManager/tinyMediaManager/issues
