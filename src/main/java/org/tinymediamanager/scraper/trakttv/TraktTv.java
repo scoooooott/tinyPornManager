@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -181,7 +183,7 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get diff of TMM <-> Trakt collection
     // *****************************************************************************
-    LOGGER.info("got " + tmmMovies.size() + " movies for Trakt.tv collection sync");
+    LOGGER.info("got up to " + tmmMovies.size() + " movies for Trakt.tv collection sync");
 
     // get ALL Trakt movies in collection
     List<BaseMovie> traktMovies = new ArrayList<BaseMovie>();
@@ -595,6 +597,9 @@ public class TraktTv {
     }
     LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
 
+    // remember which episodes are already in trakt
+    Set<TvShowEpisode> episodesInTrakt = new HashSet<>();
+
     for (BaseShow traktShow : traktShows) {
       for (TvShow tmmShow : tvShows) {
         if (matches(tmmShow, traktShow.show.ids)) {
@@ -616,10 +621,16 @@ public class TraktTv {
           for (BaseSeason bs : traktShow.seasons) {
             for (BaseEpisode be : bs.episodes) {
               TvShowEpisode tmmEP = tmmShow.getEpisode(bs.number, be.number);
+              if (tmmEP == null) {
+                continue;
+              }
+
+              episodesInTrakt.add(tmmEP);
+
               // update ep IDs - NOT YET POSSIBLE
               // boolean dirty = updateIDs(tmmEP, be.ids);
 
-              if (tmmEP != null && be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
+              if (be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
                 tmmEP.setDateAdded(be.collected_at.toDate());
                 dirty = true;
               }
@@ -640,7 +651,7 @@ public class TraktTv {
     LOGGER.info("Adding " + tvShows.size() + " TvShows to Trakt.tv collection");
     // send show per show; sending all together may result too often in a timeout
     for (TvShow tvShow : tvShows) {
-      SyncShow show = toSyncShow(tvShow, false);
+      SyncShow show = toSyncShow(tvShow, false, episodesInTrakt);
       if (show == null) {
         continue;
       }
@@ -748,11 +759,11 @@ public class TraktTv {
     // *****************************************************************************
     // 2) add all our shows to Trakt watched
     // *****************************************************************************
-    LOGGER.info("Adding " + tvShows.size() + " TvShows as watched on Trakt.tv");
+    LOGGER.info("Adding up to " + tvShows.size() + " TvShows as watched on Trakt.tv");
     // send show per show; sending all together may result too often in a timeout
     for (TvShow show : tvShows) {
       // get items to sync
-      SyncShow sync = toSyncShow(show, true);
+      SyncShow sync = toSyncShow(show, true, new HashSet<TvShowEpisode>());
       if (sync == null) {
         continue;
       }
@@ -952,17 +963,25 @@ public class TraktTv {
   }
 
   private SyncMovie toSyncMovie(Movie tmmMovie, boolean watched) {
+    boolean hasId = false;
     SyncMovie movie = null;
 
     MovieIds ids = new MovieIds();
     if (!tmmMovie.getIdAsString(Constants.IMDB).isEmpty()) {
       ids.imdb = tmmMovie.getIdAsString(Constants.IMDB);
+      hasId = true;
     }
     if (tmmMovie.getIdAsInt(Constants.TMDB) != 0) {
       ids.tmdb = tmmMovie.getIdAsInt(Constants.TMDB);
+      hasId = true;
     }
     if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0) {
       ids.trakt = tmmMovie.getIdAsInt(providerInfo.getId());
+      hasId = true;
+    }
+
+    if (!hasId) {
+      return movie;
     }
 
     // we have to decide what we send; trakt behaves differenty when sending data to sync collection and sync history.
@@ -986,25 +1005,36 @@ public class TraktTv {
     return movie;
   }
 
-  private SyncShow toSyncShow(TvShow tmmShow, boolean watched) {
+  private SyncShow toSyncShow(TvShow tmmShow, boolean watched, Set<TvShowEpisode> episodesInTrakt) {
+    boolean hasId = false;
+
     SyncShow show = null;
     ShowIds ids = new ShowIds();
     if (!tmmShow.getIdAsString(Constants.IMDB).isEmpty()) {
       ids.imdb = tmmShow.getIdAsString(Constants.IMDB);
+      hasId = true;
     }
     if (tmmShow.getIdAsInt(Constants.TMDB) != 0) {
       ids.tmdb = tmmShow.getIdAsInt(Constants.TMDB);
+      hasId = true;
     }
     if (tmmShow.getIdAsInt(Constants.TVDB) != 0) {
       ids.tvdb = tmmShow.getIdAsInt(Constants.TVDB);
+      hasId = true;
     }
     if (tmmShow.getIdAsInt(providerInfo.getId()) != 0) {
       ids.trakt = tmmShow.getIdAsInt(providerInfo.getId());
+      hasId = true;
     }
     // not used atm
     // if (tmmShow.getIdAsInt(Constants.TVRAGEID) != 0) {
     // ids.tvrage = tmmShow.getIdAsInt(Constants.TVRAGEID);
+    // hasId = true;
     // }
+
+    if (!hasId) {
+      return show;
+    }
 
     ArrayList<SyncSeason> ss = new ArrayList<SyncSeason>();
     boolean foundS = false;
@@ -1024,8 +1054,10 @@ public class TraktTv {
         }
         else {
           // sync collection
-          se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())));
-          foundEP = true;
+          if (!episodesInTrakt.contains(tmmEp)) {
+            se.add(new SyncEpisode().number(tmmEp.getEpisode()).collectedAt(new DateTime(tmmEp.getDateAdded())));
+            foundEP = true;
+          }
         }
       }
       if (foundEP) {
