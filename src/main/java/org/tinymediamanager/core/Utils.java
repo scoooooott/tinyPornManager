@@ -387,7 +387,13 @@ public class Utils {
             Url url = new Url("http://www.google-analytics.com/collect?" + ga);
 
             InputStream in = url.getInputStream();
-            in.close();
+            if (in != null) {
+              try {
+                in.close();
+              }
+              catch (Exception ignored) {
+              }
+            }
           }
         }
         catch (RuntimeException e) {
