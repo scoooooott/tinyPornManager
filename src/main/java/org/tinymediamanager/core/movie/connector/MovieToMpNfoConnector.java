@@ -81,7 +81,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers" })
+    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -107,6 +107,12 @@ public class MovieToMpNfoConnector {
 
   @XmlElement
   private String              premiered     = "";
+
+  @XmlElement
+  private boolean             watched       = false;
+
+  @XmlElement
+  private int                 playcount     = 0;
 
   @XmlElementWrapper(name = "fanart")
   @XmlElement(name = "thumb")
@@ -219,6 +225,14 @@ public class MovieToMpNfoConnector {
     mp.ids.putAll(movie.getIds());
     mp.setStudio(movie.getProductionCompany());
     mp.setCountry(movie.getCountry());
+
+    mp.watched = movie.isWatched();
+    if (mp.watched) {
+      mp.playcount = 1;
+    }
+    else {
+      mp.playcount = 0;
+    }
 
     // certification
     if (movie.getCertification() != null) {
@@ -374,6 +388,12 @@ public class MovieToMpNfoConnector {
       movie.setWriter(mp.getCredits());
       movie.setProductionCompany(mp.getStudio());
       movie.setCountry(mp.getCountry());
+
+      movie.setWatched(mp.watched);
+      if (mp.playcount > 0) {
+        movie.setWatched(true);
+      }
+
       if (!StringUtils.isEmpty(mp.getMpaa())) {
         movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
       }
