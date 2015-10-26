@@ -257,7 +257,7 @@ public class BugReportDialog extends TmmDialog {
                 try {
                   ZipEntry ze = new ZipEntry("config.xml");
                   zos.putNextEntry(ze);
-                  FileInputStream in = new FileInputStream("config.xml");
+                  FileInputStream in = new FileInputStream(new File("data", "config.xml"));
 
                   IOUtils.copy(in, zos);
                   in.close();
