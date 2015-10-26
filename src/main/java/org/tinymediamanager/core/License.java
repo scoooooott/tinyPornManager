@@ -57,6 +57,17 @@ public class License {
       if (ip != null) {
         // we are connected to Internet/router and have an IP
         NetworkInterface ni = NetworkInterface.getByInetAddress(ip);
+        if (ni == null) {
+          // search for other interfaces
+          Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+          while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface network = networkInterfaces.nextElement();
+            if (!network.isLoopback()) {
+              ni = network;
+              break;
+            }
+          }
+        }
         String macAddress = formatMac(ni.getHardwareAddress());
         if (macAddress != null && !macAddress.isEmpty()) {
           return macAddress;
@@ -64,6 +75,7 @@ public class License {
       }
     }
     catch (Exception e) {
+      e.printStackTrace();
       LOGGER.warn("Error getting MAC from LocalHost IP - not connected to internet/router?");
     }
 
