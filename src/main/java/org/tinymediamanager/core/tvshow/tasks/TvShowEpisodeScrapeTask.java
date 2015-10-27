@@ -27,14 +27,14 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 
 /**
@@ -43,21 +43,24 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask implements Runnable {
-  private static final Logger           LOGGER           = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+  private static final Logger       LOGGER = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
-  private final List<TvShowEpisode>     episodes;
-  private final ITvShowMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
+  private final List<TvShowEpisode> episodes;
+  private final MediaScraper        mediaScraper;
 
-  private boolean                       scrapeThumb;
+  private boolean                   scrapeThumb;
 
   /**
    * Instantiates a new tv show episode scrape task.
    * 
    * @param episodes
-   *          the episodes
+   *          the episodes to scrape
+   * @param mediaScraper
+   *          the media scraper to use
    */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes) {
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper) {
     this.episodes = episodes;
+    this.mediaScraper = mediaScraper;
     this.scrapeThumb = true;
   }
 
@@ -66,11 +69,14 @@ public class TvShowEpisodeScrapeTask implements Runnable {
    * 
    * @param episodes
    *          the episodes
+   * @param mediaScraper
+   *          the media scraper to use
    * @param scrapeThumb
    *          should we also scrape thumbs?
    */
-  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, boolean scrapeThumb) {
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, boolean scrapeThumb) {
     this.episodes = episodes;
+    this.mediaScraper = mediaScraper;
     this.scrapeThumb = scrapeThumb;
   }
 
@@ -107,7 +113,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       try {
-        MediaMetadata metadata = metadataProvider.getMetadata(options);
+        MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
         if (StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           episode.setMetadata(metadata);
         }

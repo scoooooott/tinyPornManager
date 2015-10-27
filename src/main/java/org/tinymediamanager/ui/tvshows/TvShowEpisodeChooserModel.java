@@ -18,8 +18,8 @@ package org.tinymediamanager.ui.tvshows;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -31,15 +31,15 @@ public class TvShowEpisodeChooserModel extends AbstractModelObject {
   private static final ResourceBundle           BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   public static final TvShowEpisodeChooserModel emptyResult = new TvShowEpisodeChooserModel();
 
-  // private ITvShowMetadataProvider metadataProvider = null;
+  private MediaScraper                          mediaScraper;
   private MediaEpisode                          mediaEpisode;
   private String                                title       = "";
   private String                                overview    = "";
   private int                                   season      = -1;
   private int                                   episode     = -1;
 
-  public TvShowEpisodeChooserModel(ITvShowMetadataProvider metadataProvider, MediaEpisode episode) {
-    // this.metadataProvider = metadataProvider;
+  public TvShowEpisodeChooserModel(MediaScraper mediaScraper, MediaEpisode episode) {
+    this.mediaScraper = mediaScraper;
     this.mediaEpisode = episode;
 
     setTitle(episode.title);

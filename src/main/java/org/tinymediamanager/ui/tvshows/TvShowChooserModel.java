@@ -45,26 +45,25 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowChooserModel extends AbstractModelObject {
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger            LOGGER           = LoggerFactory.getLogger(TvShowChooserModel.class);
-  public static final TvShowChooserModel emptyResult      = new TvShowChooserModel();
+  private static final ResourceBundle    BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger            LOGGER          = LoggerFactory.getLogger(TvShowChooserModel.class);
+  public static final TvShowChooserModel emptyResult     = new TvShowChooserModel();
 
-  private ITvShowMetadataProvider        metadataProvider = null;
-  private List<MediaScraper>             artworkScrapers  = null;
-  private MediaLanguages                 language         = null;
-  private MediaSearchResult              result           = null;
-  private MediaMetadata                  metadata         = null;
-  private String                         name             = "";
-  private String                         overview         = "";
-  private String                         year             = "";
-  private String                         combinedName     = "";
-  private String                         posterUrl        = "";
-  private String                         tagline          = "";
-  private boolean                        scraped          = false;
+  private MediaScraper                   mediaScraper    = null;
+  private List<MediaScraper>             artworkScrapers = null;
+  private MediaLanguages                 language        = null;
+  private MediaSearchResult              result          = null;
+  private MediaMetadata                  metadata        = null;
+  private String                         name            = "";
+  private String                         overview        = "";
+  private String                         year            = "";
+  private String                         combinedName    = "";
+  private String                         posterUrl       = "";
+  private String                         tagline         = "";
+  private boolean                        scraped         = false;
 
-  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<MediaScraper> artworkScrapers, MediaSearchResult result,
-      MediaLanguages language) {
-    this.metadataProvider = metadataProvider;
+  public TvShowChooserModel(MediaScraper mediaScraper, List<MediaScraper> artworkScrapers, MediaSearchResult result, MediaLanguages language) {
+    this.mediaScraper = mediaScraper;
     this.artworkScrapers = artworkScrapers;
     // this.trailerProviders = trailerProviders;
     this.result = result;
@@ -154,7 +153,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       options.setResult(result);
       options.setLanguage(language);
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
-      metadata = metadataProvider.getMetadata(options);
+      metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
 
@@ -232,5 +231,4 @@ public class TvShowChooserModel extends AbstractModelObject {
   public String getTagline() {
     return tagline;
   }
-
 }

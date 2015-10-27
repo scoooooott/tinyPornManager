@@ -46,13 +46,11 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
-import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -1226,21 +1224,18 @@ public class TvShow extends MediaEntity {
   }
 
   /**
-   * Scrape all episodes.
+   * get all episodes to scraper (with season or ep number == -1)
+   * 
+   * @return a list of all episodes to scrape
    */
-  public void scrapeAllEpisodes() {
+  public List<TvShowEpisode> getEpisodesToScrape() {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
     for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
         episodes.add(episode);
       }
     }
-
-    // scrape episodes in a task
-    if (episodes.size() > 0) {
-      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
-      TmmTaskManager.getInstance().addUnnamedTask(task);
-    }
+    return episodes;
   }
 
   /**

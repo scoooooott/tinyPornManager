@@ -67,7 +67,7 @@ public class TvShowScrapeNewItemsAction extends AbstractAction {
 
     // now start the scrape tasks
     // epsiode scraping can run in background
-    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(newEpisodes);
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(newEpisodes, TvShowList.getInstance().getDefaultMediaScraper());
     TmmTaskManager.getInstance().addUnnamedTask(task);
 
     // whereas tv show scraping has to run in foreground

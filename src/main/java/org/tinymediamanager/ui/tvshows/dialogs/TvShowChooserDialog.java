@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -65,7 +66,8 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -108,7 +110,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private TvShow                      tvShowToScrape;
   private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
-  private ITvShowMetadataProvider     metadataProvider;
+  private MediaScraper                mediaScraper;
   private List<MediaScraper>          artworkScrapers;
   private boolean                     continueQueue         = true;
 
@@ -116,7 +118,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private final JPanel                contentPanel          = new JPanel();
   private JTextField                  textFieldSearchString;
   private MediaScraperComboBox        cbScraper;
-  private JComboBox                   cbLanguage;
+  private JComboBox<MediaLanguages>   cbLanguage;
   private JTable                      table;
   private JTextArea                   lblTvShowName;
   private JTextPane                   tpTvShowOverview;
@@ -140,7 +142,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     // copy the values
     TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
-    metadataProvider = tvShowList.getMetadataProvider();
+    mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
     // trailerProviders = tvShowList.getTrailerProviders();
 
@@ -198,6 +200,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         btnSearch.setIcon(IconManager.SEARCH);
         panelSearchField.add(btnSearch, "8, 1");
         btnSearch.addActionListener(new ActionListener() {
+          @Override
           public void actionPerformed(ActionEvent arg0) {
             searchTvShow(textFieldSearchString.getText());
           }
@@ -209,7 +212,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(lblLanguage, "2, 3, right, default");
       }
       {
-        cbLanguage = new JComboBox(MediaLanguages.values());
+        cbLanguage = new JComboBox<>();
+        cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
         cbLanguage.setSelectedItem(Globals.settings.getTvShowSettings().getScraperLanguage());
         cbLanguage.addActionListener(new ActionListener() {
           @Override
@@ -438,7 +442,12 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
           // scrape episodes
           if (scraperMetadataConfig.isEpisodes()) {
-            tvShowToScrape.scrapeAllEpisodes();
+            List<TvShowEpisode> episodesToScrape = tvShowToScrape.getEpisodesToScrape();
+            // scrape episodes in a task
+            if (!episodesToScrape.isEmpty()) {
+              TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, mediaScraper);
+              TmmTaskManager.getInstance().addUnnamedTask(task);
+            }
           }
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -505,17 +514,17 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, metadataProvider, language);
+      List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, mediaScraper, language);
       tvShowsFound.clear();
       if (searchResult.size() == 0) {
         // display empty result
         tvShowsFound.add(TvShowChooserModel.emptyResult);
       }
       else {
-        ITvShowMetadataProvider mpFromResult = null;
+        MediaScraper mpFromResult = null;
         for (MediaSearchResult result : searchResult) {
           if (mpFromResult == null) {
-            mpFromResult = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
+            mpFromResult = tvShowList.getMediaScraperById(result.getProviderId());
           }
           tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkScrapers, result, language));
         }
@@ -608,8 +617,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
-      metadataProvider = (ITvShowMetadataProvider) selectedScraper.getMediaProvider();
+      mediaScraper = (MediaScraper) cbScraper.getSelectedItem();
       searchTvShow(textFieldSearchString.getText());
     }
   }

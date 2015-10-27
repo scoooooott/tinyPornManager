@@ -344,58 +344,14 @@ public class TvShowList extends AbstractModelObject {
     return scraper;
   }
 
+  public MediaScraper getMediaScraperById(String providerId) {
+    return MediaScraper.getMediaScraperById(providerId, ScraperType.TV_SHOW);
+  }
+
   public List<MediaScraper> getAvailableMediaScrapers() {
     List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.TV_SHOW);
     Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
     return availableScrapers;
-  }
-
-  /**
-   * Gets the metadata provider.
-   * 
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
-   */
-  @Deprecated
-  public ITvShowMetadataProvider getMetadataProvider() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
-    }
-    return (ITvShowMetadataProvider) scraper.getMediaProvider();
-  }
-
-  /**
-   * Gets the metadata provider.
-   * 
-   * @param scraper
-   *          the scraper
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
-   */
-  @Deprecated
-  public ITvShowMetadataProvider getMetadataProvider(MediaScraper scraper) {
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.TV_SHOW);
-    }
-    return (ITvShowMetadataProvider) scraper.getMediaProvider();
-  }
-
-  /**
-   * Gets the metadata provider from a searchresult's providerId.
-   * 
-   * @param providerId
-   *          the scraper
-   * @return the metadata provider
-   * @deprecated use the MediaScraper methods now
-   */
-  @Deprecated
-  public ITvShowMetadataProvider getMetadataProvider(String providerId) {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(providerId, ScraperType.TV_SHOW);
-    if (scraper == null) {
-      scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.TV_SHOW);
-    }
-    return (ITvShowMetadataProvider) scraper.getMediaProvider();
   }
 
   /**
@@ -445,12 +401,12 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
-   * @param metadataProvider
-   *          the metadata provider
+   * @param mediaScraper
+   *          the media scraper
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, ITvShowMetadataProvider metadataProvider) {
-    return searchTvShow(searchTerm, metadataProvider, Globals.settings.getTvShowSettings().getScraperLanguage());
+  public List<MediaSearchResult> searchTvShow(String searchTerm, MediaScraper mediaScraper) {
+    return searchTvShow(searchTerm, mediaScraper, Globals.settings.getTvShowSettings().getScraperLanguage());
   }
 
   /**
@@ -458,23 +414,27 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
-   * @param metadataProvider
-   *          the metadata provider
+   * @param mediaScraper
+   *          the media scraper
    * @param language
    *          the language to search with
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, ITvShowMetadataProvider metadataProvider, MediaLanguages language) {
+  public List<MediaSearchResult> searchTvShow(String searchTerm, MediaScraper mediaScraper, MediaLanguages language) {
     // format searchstring
     // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {
-      ITvShowMetadataProvider provider = metadataProvider;
-      // get a new metadataprovider if nothing is set
-      if (provider == null) {
-        provider = getMetadataProvider();
+      ITvShowMetadataProvider provider;
+
+      if (mediaScraper == null) {
+        provider = (ITvShowMetadataProvider) getDefaultMediaScraper().getMediaProvider();
       }
+      else {
+        provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
+      }
+
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
       options.set(SearchParam.LANGUAGE, language.name());
       options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());

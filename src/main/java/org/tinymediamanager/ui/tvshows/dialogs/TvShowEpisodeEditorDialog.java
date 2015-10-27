@@ -67,7 +67,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaEpisode;
@@ -75,6 +74,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -557,13 +557,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
     // scrape
     if ("Scrape".equals(e.getActionCommand())) {
-      ScrapeTask task = new ScrapeTask(TvShowList.getInstance().getMetadataProvider());
+      ScrapeTask task = new ScrapeTask(TvShowList.getInstance().getDefaultMediaScraper());
       task.execute();
     }
 
     // search
     if ("Search".equals(e.getActionCommand())) {
-      TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, TvShowList.getInstance().getMetadataProvider());
+      TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, TvShowList.getInstance().getDefaultMediaScraper());
       dialog.setLocationRelativeTo(this);
       dialog.setVisible(true);
       MediaEpisode metadata = dialog.getMetadata();
@@ -583,10 +583,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   }
 
   private class ScrapeTask extends SwingWorker<Void, Void> {
-    ITvShowMetadataProvider mp;
+    MediaScraper mediaScraper;
 
-    public ScrapeTask(ITvShowMetadataProvider mp) {
-      this.mp = mp;
+    public ScrapeTask(MediaScraper mediaScraper) {
+      this.mediaScraper = mediaScraper;
     }
 
     @Override
@@ -602,7 +602,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       options.setId(MediaMetadata.EPISODE_NR, spEpisode.getValue().toString());
 
       try {
-        MediaMetadata metadata = mp.getMetadata(options);
+        MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
 
         // if nothing has been found -> open the search box
         if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {

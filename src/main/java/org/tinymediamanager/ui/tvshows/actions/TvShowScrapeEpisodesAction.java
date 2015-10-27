@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
@@ -29,7 +30,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
- * The class TvShowScrapeEpisodesAction. To Scrape episode data
+ * The class TvShowScrapeEpisodesAction. To Scrape episode data with the default scraper
  * 
  * @author Manuel Laggner
  */
@@ -55,7 +56,7 @@ public class TvShowScrapeEpisodesAction extends AbstractAction {
   public void actionPerformed(ActionEvent arg0) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
-    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, withArtwork);
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, TvShowList.getInstance().getDefaultMediaScraper(), withArtwork);
     TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }

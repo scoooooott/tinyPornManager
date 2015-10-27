@@ -33,8 +33,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -42,6 +41,8 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -108,7 +109,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
       try {
         // set up scrapers
         TvShowScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
-        ITvShowMetadataProvider mediaMetadataProvider = tvShowList.getMetadataProvider(options.getMetadataScraper());
+        MediaScraper mediaMetadataScraper = options.getMetadataScraper();
         List<MediaScraper> artworkScrapers = options.getArtworkScrapers();
 
         // scrape tv show
@@ -116,7 +117,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
         // search for tv show
         MediaSearchResult result1 = null;
         if (doSearch) {
-          List<MediaSearchResult> results = tvShowList.searchTvShow(tvShow.getTitle(), mediaMetadataProvider);
+          List<MediaSearchResult> results = tvShowList.searchTvShow(tvShow.getTitle(), mediaMetadataScraper);
           if (results != null && !results.isEmpty()) {
             result1 = results.get(0);
             // check if there is an other result with 100% score
@@ -159,7 +160,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
             }
 
             // override scraper with one from search result
-            mediaMetadataProvider = tvShowList.getMetadataProvider(result1.getProviderId());
+            mediaMetadataScraper = tvShowList.getMediaScraperById(result1.getProviderId());
             // scrape metadata if wanted
             MediaMetadata md = null;
 
@@ -167,13 +168,18 @@ public class TvShowScrapeTask extends TmmThreadPool {
                 || scraperMetadataConfig.isAired() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
                 || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                 || scraperMetadataConfig.isYear()) {
-              md = mediaMetadataProvider.getMetadata(options);
+              md = ((ITvShowMetadataProvider) mediaMetadataScraper.getMediaProvider()).getMetadata(options);
               tvShow.setMetadata(md, scraperMetadataConfig);
             }
 
             // scrape episodes
             if (scraperMetadataConfig.isEpisodes()) {
-              tvShow.scrapeAllEpisodes();
+              List<TvShowEpisode> episodesToScrape = tvShow.getEpisodesToScrape();
+              // scrape episodes in a task
+              if (!episodesToScrape.isEmpty()) {
+                TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, mediaMetadataScraper);
+                TmmTaskManager.getInstance().addUnnamedTask(task);
+              }
             }
 
             // scrape artwork if wanted

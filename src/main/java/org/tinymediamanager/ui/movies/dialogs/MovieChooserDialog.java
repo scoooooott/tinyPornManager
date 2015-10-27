@@ -72,7 +72,6 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -655,8 +654,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaScraper selectedScraper = (MediaScraper) cbScraper.getSelectedItem();
-      mediaScraper = selectedScraper;
+      mediaScraper = (MediaScraper) cbScraper.getSelectedItem();
       searchMovie(textFieldSearchString.getText(), movieToScrape);
     }
   }
@@ -697,7 +695,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           MediaScraper mpFromResult = null;
           for (MediaSearchResult result : searchResult) {
             if (mpFromResult == null) {
-              mpFromResult = MovieList.getInstance().getMediaScraperById(result.getProviderId());
+              mpFromResult = movieList.getMediaScraperById(result.getProviderId());
             }
             moviesFound.add(new MovieChooserModel(mpFromResult, artworkScrapers, trailerScrapers, result, language));
             // get metadataProvider from searchresult

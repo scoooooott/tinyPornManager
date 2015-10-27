@@ -40,6 +40,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -81,7 +82,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private static final ResourceBundle                      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisode                                    episode;
-  private ITvShowMetadataProvider                          metadataProvider;
+  private MediaScraper                                     mediaScraper;
   private MediaEpisode                                     metadata;
   private ObservableElementList<TvShowEpisodeChooserModel> episodeEventList;
 
@@ -89,13 +90,13 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private JTextArea                                        taPlot;
   private JTextField                                       textField;
 
-  public TvShowEpisodeChooserDialog(TvShowEpisode ep, ITvShowMetadataProvider mp) {
+  public TvShowEpisodeChooserDialog(TvShowEpisode ep, MediaScraper mediaScraper) {
     super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser"); //$NON-NLS-1$
     setBounds(5, 5, 600, 400);
 
     this.episode = ep;
-    this.metadataProvider = mp;
-    this.metadata = new MediaEpisode(mp.getProviderInfo().getId());
+    this.mediaScraper = mediaScraper;
+    this.metadata = new MediaEpisode(mediaScraper.getId());
     episodeEventList = new ObservableElementList<TvShowEpisodeChooserModel>(
         GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()), GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
     SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<TvShowEpisodeChooserModel>(
@@ -269,8 +270,8 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       }
 
       try {
-        for (MediaEpisode episode : metadataProvider.getEpisodeList(options)) {
-          episodeEventList.add(new TvShowEpisodeChooserModel(metadataProvider, episode));
+        for (MediaEpisode episode : ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options)) {
+          episodeEventList.add(new TvShowEpisodeChooserModel(mediaScraper, episode));
         }
       }
       catch (Exception e) {
