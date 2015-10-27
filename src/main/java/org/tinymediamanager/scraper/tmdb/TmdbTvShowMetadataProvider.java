@@ -228,7 +228,7 @@ class TmdbTvShowMetadataProvider {
     TvShowComplete complete = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      complete = api.tvService().tv(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS));
+      complete = api.tvService().tv(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS));
     }
 
     if (complete == null) {
@@ -268,6 +268,15 @@ class TmdbTvShowMetadataProvider {
         md.addCastMember(cm);
       }
     }
+
+    // external IDs
+    if (complete.external_ids != null && complete.external_ids.tvdb_id != null) {
+      md.setId(MediaMetadata.TVDB, complete.external_ids.tvdb_id);
+    }
+    // not yet used
+    // if (complete.external_ids != null && complete.external_ids.tvrage_id!= null) {
+    // md.setId(MediaMetadata.TV_RAGE, complete.external_ids.tvdb_id);
+    // }
 
     return md;
   }
