@@ -750,6 +750,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               tvShow.addEpisode(episode);
             }
           }
+          else {
+            // episode already added; look if any new additional files have been added
+            for (TvShowEpisode episode : episodes) {
+              if (findAdditionalEpisodeFiles(episode, file, content)) {
+                episode.saveToDb();
+              }
+            }
+          }
         } // end skipFilesStartingWith
       } // end isFile
 
@@ -896,7 +904,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
-
+    else {
+      // episode already added; look if any new additional files have been added
+      for (TvShowEpisode episode : episodes) {
+        if (findAdditionalEpisodeFiles(episode, firstVideoFile, content)) {
+          episode.saveToDb();
+        }
+      }
+    }
   }
 
   /**
@@ -910,11 +925,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    *          the video file
    * @param directoryContents
    *          the directory contents
+   * @return indicator whether something new has been found or not
    */
-  private void findAdditionalEpisodeFiles(TvShowEpisode episode, File videoFile, File[] directoryContents) {
+  private boolean findAdditionalEpisodeFiles(TvShowEpisode episode, File videoFile, File[] directoryContents) {
+    boolean newFileFound = false;
+    List<MediaFile> existingMediaFiles = episode.getMediaFiles();
+
     for (File file : directoryContents) {
       if (file.isFile()) {
         MediaFile mf = new MediaFile(file);
+        if (existingMediaFiles.contains(mf)) {
+          continue;
+        }
         if (mf.getType().equals(MediaFileType.VIDEO) || !mf.getBasename().startsWith(FilenameUtils.getBaseName(videoFile.getName()))
             || file.getName().startsWith(skipFilesStartingWith)) { // MacOS ignore)
           continue;
@@ -933,6 +955,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
         episode.addToMediaFiles(mf);
+        newFileFound = true;
       }
       else {
         if (file.getName().equalsIgnoreCase("subs") || file.getName().equalsIgnoreCase("subtitle")) {
@@ -944,16 +967,22 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             for (File subDirFile : subDirContent) {
               if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
                 MediaFile mf = new MediaFile(subDirFile);
+                if (existingMediaFiles.contains(mf)) {
+                  continue;
+                }
                 if (mf.getType() == MediaFileType.SUBTITLE) {
                   episode.setSubtitles(true);
                 }
                 episode.addToMediaFiles(mf);
+                newFileFound = true;
               }
             }
           }
         }
       }
     }
+
+    return newFileFound;
   }
 
   @Override
