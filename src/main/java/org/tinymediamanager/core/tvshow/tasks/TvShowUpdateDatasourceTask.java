@@ -678,7 +678,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               TvShowEpisode ep = tvShow.getEpisode(result.season, result.episodes.get(0));
               if (ep != null) {
                 ep.setNewlyAdded(true);
-                ep.addToMediaFiles(new MediaFile(file));
+                ep.addToMediaFiles(mf);
                 continue;
               }
             }
@@ -702,7 +702,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               for (TvShowEpisode e : episodesInNfo) {
                 e.setPath(dir.getPath());
                 e.setTvShow(tvShow);
-                e.addToMediaFiles(new MediaFile(file));
+                e.addToMediaFiles(mf);
+                e.setDateAddedFromMediaFile(mf);
                 findAdditionalEpisodeFiles(e, file, content);
                 e.setNewlyAdded(true);
                 e.saveToDb();
@@ -725,7 +726,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
                 episode.setPath(dir.getPath());
                 episode.setTvShow(tvShow);
-                episode.addToMediaFiles(new MediaFile(file));
+                episode.addToMediaFiles(mf);
+                episode.setDateAddedFromMediaFile(mf);
                 findAdditionalEpisodeFiles(episode, file, content);
                 episode.setNewlyAdded(true);
                 episode.saveToDb();
@@ -743,7 +745,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setTitle(FilenameUtils.getBaseName(file.getName()));
               episode.setTvShow(tvShow);
               episode.setFirstAired(result.date);
-              episode.addToMediaFiles(new MediaFile(file));
+              episode.addToMediaFiles(mf);
+              episode.setDateAddedFromMediaFile(mf);
               findAdditionalEpisodeFiles(episode, file, content);
               episode.setNewlyAdded(true);
               episode.saveToDb();
@@ -868,6 +871,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setDisc(true);
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
+          episode.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
           episode.saveToDb();
           tvShow.addEpisode(episode);
@@ -882,6 +886,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             e.addToMediaFiles(videoFiles);
             e.setNewlyAdded(true);
             // e.findImages();
+            e.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
             findAdditionalEpisodeFiles(e, firstVideoFile, content);
             e.saveToDb();
             tvShow.addEpisode(e);
@@ -898,6 +903,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setDisc(true);
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
+          episode.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
           episode.saveToDb();
           tvShow.addEpisode(episode);
@@ -954,6 +960,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             mf.setType(MediaFileType.THUMB);
           }
         }
+
         episode.addToMediaFiles(mf);
         newFileFound = true;
       }

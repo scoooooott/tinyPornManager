@@ -19,6 +19,8 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -297,6 +299,18 @@ public abstract class MediaEntity extends AbstractModelObject {
     this.dateAdded = newValue;
     firePropertyChange(DATE_ADDED, oldValue, newValue);
     firePropertyChange(DATE_ADDED_AS_STRING, oldValue, newValue);
+  }
+
+  public void setDateAddedFromMediaFile(MediaFile mf) {
+    try {
+      BasicFileAttributes view = Files.readAttributes(mf.getFile().toPath(), BasicFileAttributes.class);
+      Date dateCreated = new Date(view.creationTime().toMillis());
+      if (dateCreated.compareTo(dateAdded) < 0) {
+        setDateAdded(dateCreated);
+      }
+    }
+    catch (Exception e) {
+    }
   }
 
   public String getProductionCompany() {

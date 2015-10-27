@@ -678,6 +678,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case VIDEO:
             LOGGER.debug("parsing video file " + mf.getFilename());
             movie.addToMediaFiles(mf);
+            movie.setDateAddedFromMediaFile(mf);
             if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
               movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
             }
