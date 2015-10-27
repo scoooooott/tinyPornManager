@@ -47,7 +47,7 @@ import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
 class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
 
-  private Tmdb api;
+  private Tmdb                api;
 
   public TmdbTvShowMetadataProvider(Tmdb api) {
     this.api = api;
@@ -331,6 +331,8 @@ class TmdbTvShowMetadataProvider {
       return md;
     }
 
+    md.storeMetadata(MediaMetadata.EPISODE_NR, episode.episode_number);
+    md.storeMetadata(MediaMetadata.SEASON_NR, episode.season_number);
     md.setId(TmdbMetadataProvider.providerInfo.getId(), episode.id);
     md.storeMetadata(MediaMetadata.TITLE, episode.name);
     md.storeMetadata(MediaMetadata.PLOT, episode.overview);
