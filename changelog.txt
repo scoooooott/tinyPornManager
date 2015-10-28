@@ -26,6 +26,9 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
 + updated mediainfo to 0.7.78 and generalized folder structure
 + added <streamdetails> tag for episodes
 + refactored episode chooser (search for episode is now available)
++ take the date added from the video file where possible
++ changed behavior of the _new_ state: it will now be dropped at the next update data source  
+  the new indicator changed from the green font to an icon
 x changed NFO rewriting behavior to be less aggressive
 x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
@@ -40,5 +43,8 @@ x fixed real offline startup
 x fixed cleanup on artwork scraping
 x fixed NFO importing issue when having multiple tags
 x fixed display of "never ending" tasks
-x fixed file name generation of movie/tv show export templates 
+x fixed file name generation of movie/tv show export templates
+x fixed finding of additional files for episodes
+x fixed writing of watched state in MediaPortal NFO
+x fixed/improved trakt.tv episode sync   
 x many smaller fixes and enhancements
