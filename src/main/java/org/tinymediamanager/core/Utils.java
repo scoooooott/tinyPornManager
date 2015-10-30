@@ -279,7 +279,7 @@ public class Utils {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
       }
     }
-    return "";
+    return filename; // no cleanup, return 1:1
   }
 
   /**

@@ -110,6 +110,25 @@ public class UtilsTest {
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-2.mkv"), 0); // nah
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-a.mkv"), 1);
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-b.mkv"), 2);
+
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-cd1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-PaRt1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013) DvD1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013).disk3.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-cd 1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-PaRt 1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013) DvD 1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013).disk 3.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-cd1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-1of2.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-1 of 2.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-(1 of 2).mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-(1-2).mkv"), "Movie Name (2013)-(1-2).mkv"); // nah
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-1.mkv"), "Movie Name (2013)-1.mkv"); // nah
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-2.mkv"), "Movie Name (2013)-2.mkv"); // nah
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-a.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-b.mkv"), "Movie Name (2013).mkv");
+
   }
 
   @Test
