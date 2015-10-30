@@ -239,17 +239,47 @@ public class Utils {
   }
 
   /**
-   * Clean stacking markers.
+   * Clean stacking markers.<br>
+   * Same logic as detection, but just returning string w/o
    * 
    * @param filename
-   *          the filename
+   *          the filename WITH extension
    * @return the string
    */
   public static String cleanStackingMarkers(String filename) {
     if (!StringUtils.isEmpty(filename)) {
-      return filename.replaceAll("(?i)([\\( _.-]*(cd|dvd|part|pt|dis[ck])([0-9]{1,2})[\\) _.-]*)", "").trim();
+      // see http://kodi.wiki/view/Advancedsettings.xml#moviestacking
+      // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
+
+      // <cd/dvd/part/pt/disk/disc> <0-N>
+      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)");
+      Matcher m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+      }
+
+      // <cd/dvd/part/pt/disk/disc> <a-d>
+      regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+      }
+
+      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter
+      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+      }
+
+      // moviename-1of2.avi, moviename-1 of 2.avi
+      regex = Pattern.compile("(?i)(.*?)[ \\(_.-]*([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+      }
     }
-    return filename;
+    return "";
   }
 
   /**
@@ -284,7 +314,7 @@ public class Utils {
   public static String getStackingMarker(String filename) {
     if (!StringUtils.isEmpty(filename)) {
       // see http://kodi.wiki/view/Advancedsettings.xml#moviestacking
-      // basically returning <regexp>(Title)(Volume)(Ignore)(Extension)</regexp>
+      // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
       Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)");

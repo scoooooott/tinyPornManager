@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -42,12 +43,12 @@ public class MovieRenamerPreview {
     String newVideoBasename = "";
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {
       // we are NOT renaming any files, so we keep the same name on renaming ;)
-      newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
     }
     else {
       // since we rename, generate the new basename
       MediaFile ftr = MovieRenamer.generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0);
-      newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
+      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
     }
 
     // VIDEO needs to be renamed first, since all others depend on that name!!!

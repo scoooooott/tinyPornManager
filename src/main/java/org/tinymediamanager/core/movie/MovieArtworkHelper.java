@@ -280,7 +280,7 @@ public class MovieArtworkHelper {
 
   public static String getFanartFilename(MovieFanartNaming fanart, Movie movie, String newMovieFilename) {
     String filename = "";
-    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(newMovieFilename));
+    String mediafile = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
 
     switch (fanart) {
       case FANART_PNG:
@@ -344,7 +344,7 @@ public class MovieArtworkHelper {
 
   public static String getPosterFilename(MoviePosterNaming poster, Movie movie, String newMovieFilename) {
     String filename = "";
-    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(newMovieFilename));
+    String mediafile = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:

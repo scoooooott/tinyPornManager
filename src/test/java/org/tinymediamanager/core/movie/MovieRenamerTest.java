@@ -84,7 +84,7 @@ public class MovieRenamerTest {
           newFiles.add(ftr);
           if (newVideoFileName.isEmpty()) {
             // so remember first renamed video file basename (w/o stacking or extension)
-            newVideoFileName = Utils.cleanStackingMarkers(ftr.getBasename());
+            newVideoFileName = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
           }
         }
 

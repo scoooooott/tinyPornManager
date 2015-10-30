@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +115,7 @@ public class MovieExporter extends MediaEntityExporter {
         // get preferred movie name like set up in movie renamer
         String detailFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
         if (StringUtils.isBlank(detailFilename)) {
-          detailFilename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+          detailFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
         }
         File detailsExportFile = new File(detailsDir, detailFilename + "." + fileExtension);
 
@@ -176,7 +177,7 @@ public class MovieExporter extends MediaEntityExporter {
         if (StringUtils.isNotBlank(filename)) {
           return filename;
         }
-        return Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+        return FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
       }
       return null;
     }

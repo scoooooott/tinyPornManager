@@ -953,9 +953,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // check if it is a poster
         if (mf.getType() == MediaFileType.GRAPHIC) {
           LOGGER.debug("parsing unknown graphic " + mf.getFilename());
-          String vfilename = FilenameUtils.getBaseName(videoFile.getName());
-          if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
-              || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
+          String vfilename = videoFile.getName();
+          if (FilenameUtils.getBaseName(vfilename).equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
+              || FilenameUtils.getBaseName(Utils.cleanStackingMarkers(vfilename)).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename
+                                                                                                                                             // w/o
+                                                                                                                                             // stacking
               || episode.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
             mf.setType(MediaFileType.THUMB);
           }

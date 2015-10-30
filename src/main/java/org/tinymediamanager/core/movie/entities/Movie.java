@@ -1184,8 +1184,8 @@ public class Movie extends MediaEntity {
           }
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-          filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
+          String movieFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
+          filename += movieFilename + ".nfo"; // w/o stacking information
         }
         break;
       case MOVIE_NFO:
@@ -1220,7 +1220,7 @@ public class Movie extends MediaEntity {
   public String getTrailerBasename() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return Utils.cleanStackingMarkers(mfs.get(0).getBasename());
+      return FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename()));
     }
     return null;
   }
