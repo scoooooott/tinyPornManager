@@ -253,6 +253,28 @@ public class Utils {
   }
 
   /**
+   * Returns the stacking information from FOLDER name
+   * 
+   * @param filename
+   *          the filename
+   * @return the stacking information
+   */
+  public static String getFolderStackingMarker(String filename) {
+    if (!StringUtils.isEmpty(filename)) {
+      // see http://kodi.wiki/view/Advancedsettings.xml#moviestacking
+      // basically returning <regexp>(Title)(Volume)(Ignore)(Extension)</regexp>
+
+      // <cd/dvd/part/pt/disk/disc> <0-N>
+      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$");
+      Matcher m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(2);
+      }
+    }
+    return "";
+  }
+
+  /**
    * Returns the stacking information from filename
    * 
    * @param filename

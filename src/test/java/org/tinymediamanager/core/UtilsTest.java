@@ -13,13 +13,13 @@ import org.junit.Test;
 public class UtilsTest {
 
   // own method to get some logging ;)
-  public static void assertEqual(Object description, Object object) {
+  public static void assertEqual(Object expected, Object actual) {
     try {
-      Assert.assertEquals(description, object);
-      System.out.println(description + " - passed");
+      Assert.assertEquals(expected, actual);
+      System.out.println(expected + " - passed");
     }
     catch (AssertionError e) {
-      System.out.println(description + " - FAILED: " + e.getMessage());
+      System.out.println(expected + " - FAILED: " + e.getMessage());
       throw e;
     }
   }
@@ -90,6 +90,8 @@ public class UtilsTest {
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-2.mkv"), ""); // do not detect - could be sequel in MMD
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-a.mkv"), "a");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-b.mkv"), "b");
+
+    assertEqual(Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"), "dvd1"); // folder - check without extension
 
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-cd1.mkv"), 1);
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-PaRt1.mkv"), 1);
