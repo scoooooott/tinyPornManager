@@ -11,6 +11,7 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
 - introduced a new infrastructure for scrapers which makes developing new 
   scrapers less complex and opens the scraper interface to other developers
 
++ better detection of "stacking" markers
 + rewrote all scrapers from scratch (including optimizations and bug fixes)
 + added a very special scraper for all that who have Kodi installed ;) (donator only)
 + assign movie sets feature is now free for all (dropped donator only status)
