@@ -261,9 +261,49 @@ public class Utils {
    */
   public static String getStackingMarker(String filename) {
     if (!StringUtils.isEmpty(filename)) {
-      return StrgUtils.substr(filename, "(?i)((cd|dvd|part|pt|dis[ck])([0-9]{1,2}))");
+      // see http://kodi.wiki/view/Advancedsettings.xml#moviestacking
+      // basically returning <regexp>(Title)(Volume)(Ignore)(Extension)</regexp>
+
+      // <cd/dvd/part/pt/disk/disc> <0-N>
+      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)");
+      Matcher m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(2);
+      }
+
+      // <cd/dvd/part/pt/disk/disc> <a-d>
+      regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(2);
+      }
+
+      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter
+      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(2);
+      }
+
+      // moviename-1of2.avi, moviename-1 of 2.avi
+      regex = Pattern.compile("(?i)(.*?)[ \\(_.-]*([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$");
+      m = regex.matcher(filename);
+      if (m.matches()) {
+        return m.group(2);
+      }
     }
     return "";
+  }
+
+  public static String substr(String str, String pattern) {
+    Pattern regex = Pattern.compile(pattern);
+    Matcher m = regex.matcher(str);
+    if (m.find()) {
+      return m.group(1);
+    }
+    else {
+      return "";
+    }
   }
 
   /**
@@ -271,10 +311,15 @@ public class Utils {
    * 
    * @param filename
    *          the filename
-   * @return the stacking information
+   * @return the stacking prefix - might be empty
    */
   public static String getStackingPrefix(String filename) {
-    return getStackingMarker(filename).replaceAll("[0-9]", "");
+    String stack = getStackingMarker(filename).replaceAll("[0-9]", "");
+    if (stack.length() == 1 || stack.contains("of")) {
+      // A-D and (X of Y) - no prefix here
+      stack = "";
+    }
+    return stack;
   }
 
   /**
@@ -288,6 +333,22 @@ public class Utils {
     if (!StringUtils.isEmpty(filename)) {
       String stack = getStackingMarker(filename);
       if (!stack.isEmpty()) {
+        if (stack.equalsIgnoreCase("a")) {
+          return 1;
+        }
+        else if (stack.equalsIgnoreCase("b")) {
+          return 2;
+        }
+        else if (stack.equalsIgnoreCase("c")) {
+          return 3;
+        }
+        else if (stack.equalsIgnoreCase("d")) {
+          return 4;
+        }
+        if (stack.contains("of")) {
+          stack = stack.replaceAll("of.*", ""); // strip all after "of", so we have the first number
+        }
+
         try {
           int s = Integer.parseInt(stack.replaceAll("[^0-9]", "")); // remove all non numbers
           return s;
