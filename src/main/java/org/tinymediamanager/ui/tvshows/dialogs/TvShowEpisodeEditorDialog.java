@@ -321,6 +321,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       detailsPanel.add(scrollPaneGuests, "4, 22, 13, 7, fill, fill");
 
       tableGuests = new JTable();
+      tableGuests.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPaneGuests.setViewportView(tableGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$

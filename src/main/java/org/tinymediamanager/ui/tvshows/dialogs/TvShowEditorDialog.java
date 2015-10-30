@@ -388,6 +388,7 @@ public class TvShowEditorDialog extends TmmDialog {
       details2Panel.add(scrollPane, "4, 2, 1, 7");
       {
         tableActors = new JTable();
+        tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         scrollPane.setViewportView(tableActors);
       }
     }

@@ -518,6 +518,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPane = new JScrollPane();
       details2Panel.add(scrollPane, "4, 2, 1, 11");
       tableActors = new JTable();
+      tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPane.setViewportView(tableActors);
     }
     {
@@ -528,6 +529,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPane = new JScrollPane();
       details2Panel.add(scrollPane, "8, 2, 1, 11");
       tableProducers = new JTable();
+      tableProducers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPane.setViewportView(tableProducers);
     }
     {
@@ -657,6 +659,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPaneTrailer = new JScrollPane();
       details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
       tableTrailer = new JTable();
+      tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPaneTrailer.setViewportView(tableTrailer);
     }
     {
