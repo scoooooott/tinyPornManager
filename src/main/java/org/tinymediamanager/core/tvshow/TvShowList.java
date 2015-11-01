@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
@@ -57,14 +58,14 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger    LOGGER                = LoggerFactory.getLogger(TvShowList.class);
-  private static TvShowList      instance              = null;
+  private static final Logger    LOGGER     = LoggerFactory.getLogger(TvShowList.class);
+  private static TvShowList      instance   = null;
 
-  private List<TvShow>           tvShowList            = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
-  private List<String>           tvShowTagsObservable  = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String>           episodeTagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String>           videoCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String>           audioCodecsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<TvShow>           tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<String>           tvShowTagsObservable;
+  private List<String>           episodeTagsObservable;
+  private List<String>           videoCodecsObservable;
+  private List<String>           audioCodecsObservable;
 
   private PropertyChangeListener propertyChangeListener;
 
@@ -72,6 +73,12 @@ public class TvShowList extends AbstractModelObject {
    * Instantiates a new TvShowList.
    */
   private TvShowList() {
+    // create the lists
+    tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+
     // the tag listener: its used to always have a full list of all tags used in tmm
     propertyChangeListener = new PropertyChangeListener() {
       @Override

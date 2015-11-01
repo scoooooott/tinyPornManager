@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
@@ -70,26 +71,28 @@ import ca.odell.glazedlists.ObservableElementList;
  * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
-  private static final Logger          LOGGER                   = LoggerFactory.getLogger(MovieList.class);
+  private static final Logger          LOGGER             = LoggerFactory.getLogger(MovieList.class);
   private static MovieList             instance;
 
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;
   private PropertyChangeListener       tagListener;
-  private List<String>                 tagsObservable           = ObservableCollections
-      .observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String>                 videoCodecsObservable    = ObservableCollections
-      .observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<String>                 audioCodecsObservable    = ObservableCollections
-      .observableList(Collections.synchronizedList(new ArrayList<String>()));
-  private List<Certification>          certificationsObservable = ObservableCollections
-      .observableList(Collections.synchronizedList(new ArrayList<Certification>()));
-  private final Comparator<MovieSet>   movieSetComparator       = new MovieSetComparator();
+  private List<String>                 tagsObservable;
+  private List<String>                 videoCodecsObservable;
+  private List<String>                 audioCodecsObservable;
+  private List<Certification>          certificationsObservable;
+  private final Comparator<MovieSet>   movieSetComparator = new MovieSetComparator();
 
   /**
    * Instantiates a new movie list.
    */
   private MovieList() {
+    // create all lists
+    tagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    audioCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
+    certificationsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<Certification>());
+
     // the tag listener: its used to always have a full list of all tags used in tmm
     tagListener = new PropertyChangeListener() {
       @Override
@@ -767,13 +770,13 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    for (String tag : tagsObservable) {
-      if (tag.equals(newTag)) {
+    synchronized (tagsObservable) {
+      if (tagsObservable.contains(newTag)) {
         return;
       }
+      tagsObservable.add(newTag);
     }
 
-    tagsObservable.add(newTag);
     firePropertyChange("tag", null, tagsObservable);
   }
 
@@ -782,13 +785,13 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    for (String codec : videoCodecsObservable) {
-      if (codec.equals(newCodec)) {
+    synchronized (videoCodecsObservable) {
+      if (videoCodecsObservable.contains(newCodec)) {
         return;
       }
+      videoCodecsObservable.add(newCodec);
     }
 
-    videoCodecsObservable.add(newCodec);
     firePropertyChange("videoCodec", null, videoCodecsObservable);
   }
 
@@ -797,13 +800,13 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    for (String codec : audioCodecsObservable) {
-      if (codec.equals(newCodec)) {
+    synchronized (audioCodecsObservable) {
+      if (audioCodecsObservable.contains(newCodec)) {
         return;
       }
+      audioCodecsObservable.add(newCodec);
     }
 
-    audioCodecsObservable.add(newCodec);
     firePropertyChange("audioCodec", null, audioCodecsObservable);
   }
 
@@ -812,10 +815,14 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    if (!certificationsObservable.contains(newCert)) {
+    synchronized (certificationsObservable) {
+      if (certificationsObservable.contains(newCert)) {
+        return;
+      }
       certificationsObservable.add(newCert);
-      firePropertyChange("certification", null, certificationsObservable);
     }
+
+    firePropertyChange("certification", null, certificationsObservable);
   }
 
   /**
