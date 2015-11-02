@@ -66,7 +66,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -347,8 +347,7 @@ public class MoviePanel extends JPanel {
     btnMediaInformation.setAction(actionMediaInformation);
     toolBar.add(btnMediaInformation);
 
-    // textField = new JTextField();
-    textField = new JSearchTextField();
+    textField = EnhancedTextField.createSearchTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(13);
 

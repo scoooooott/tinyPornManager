@@ -46,7 +46,7 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
 
@@ -116,7 +116,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
               new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200dlu:grow"),
                   FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-      textField = new JSearchTextField();
+      textField = EnhancedTextField.createSearchTextField();
       panelLeft.add(textField, "2, 2, fill, default");
       textField.setColumns(10);
 
@@ -207,6 +207,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     task.execute();
 
     MouseListener mouseListener = new MouseListener() {
+
       @Override
       public void mouseReleased(MouseEvent e) {
       }
@@ -229,6 +230,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
           actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
         }
       }
+
     };
     table.addMouseListener(mouseListener);
   }
