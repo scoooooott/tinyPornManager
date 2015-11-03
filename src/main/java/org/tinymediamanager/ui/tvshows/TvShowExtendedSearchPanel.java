@@ -48,9 +48,9 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.SmallCheckBoxUI;
 import org.tinymediamanager.ui.SmallTextFieldBorder;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.RoundedPanel;
 import org.tinymediamanager.ui.components.SmallComboBox;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
+import org.tinymediamanager.ui.panels.RoundedPanel;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 
 import com.jgoodies.forms.factories.FormFactory;

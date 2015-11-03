@@ -43,7 +43,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.MediaFilesPanel;
+import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
 import com.jgoodies.forms.factories.FormFactory;

@@ -79,7 +79,6 @@ import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.WikiAction;
-import org.tinymediamanager.ui.components.LightBoxPanel;
 import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
@@ -123,8 +122,6 @@ public class MainWindow extends JFrame {
 
   private List<String>                messagesList;
 
-  private LightBoxPanel               lightBoxPanel;
-
   /**
    * Create the application.
    * 
@@ -137,7 +134,6 @@ public class MainWindow extends JFrame {
     setMinimumSize(new Dimension(1000, 700));
 
     instance = this;
-    lightBoxPanel = new LightBoxPanel();
 
     JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
@@ -529,7 +525,6 @@ public class MainWindow extends JFrame {
   }
 
   public void createLightbox(String pathToFile, String urlToFile) {
-    lightBoxPanel.setImageLocation(pathToFile, urlToFile);
-    lightBoxPanel.showLightBox(instance);
+    LightBox.showLightBox(instance, pathToFile, urlToFile);
   }
 }

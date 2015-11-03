@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
+package org.tinymediamanager.ui.panels;
 
 import java.awt.Cursor;
 import java.awt.Point;
@@ -50,6 +50,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import org.tinymediamanager.ui.components.ZebraJTable;
 
 /**
  * The Class MediaFilesPanel.

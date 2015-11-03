@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
+package org.tinymediamanager.ui.panels;
 
 import java.awt.FlowLayout;
 import java.awt.Point;

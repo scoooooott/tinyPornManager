@@ -40,7 +40,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ScrollablePanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
