@@ -115,12 +115,6 @@
 			<artifactId>scaling</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<dependency>
-			<!-- https://github.com/harryjoy/Light-box-jar/tree/master/harsh/p/raval/lightbox -->
-			<groupId>harsh.p.raval</groupId>
-			<artifactId>lightbox</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
