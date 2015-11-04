@@ -374,8 +374,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       List<File> files = new ArrayList<>(Arrays.asList(fileArray));
 
-      // .tmmignore or no video file found, abort scanning
-      if (files.contains(new File(movieDir, ".tmmignore")) || files.isEmpty()) {
+      if (files.contains(new File(movieDir, ".tmmignore"))) {
         return;
       }
 
