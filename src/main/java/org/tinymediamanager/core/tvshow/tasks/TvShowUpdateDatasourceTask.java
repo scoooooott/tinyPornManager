@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -134,7 +135,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     try {
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
       start();
 
       // cleanup newlyadded for a new UDS run
@@ -156,8 +158,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // update TV show
         updateTvShows();
       }
-      long end = System.currentTimeMillis();
-      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.info("Done updating datasource :) - took " + stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);

@@ -1018,23 +1018,6 @@ public class Utils {
   }
 
   /**
-   * Converts milliseconds to HH:MM:SS
-   * 
-   * @param msec
-   * @return formatted time
-   */
-  public static String MSECtoHHMMSS(long msec) {
-    if (msec == 0) {
-      return "";
-    }
-    long sec = msec / 1000; // sec
-    int seconds = (int) sec % 60;
-    int minutes = (int) (sec / 60) % 60;
-    int hours = (int) (sec / (60 * 60)) % 24;
-    return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
-  }
-
-  /**
    * create a ProcessBuilder for restarting TMM
    * 
    * @return the process builder
