@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.License;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -257,7 +258,7 @@ public class BugReportDialog extends TmmDialog {
                 try {
                   ZipEntry ze = new ZipEntry("config.xml");
                   zos.putNextEntry(ze);
-                  FileInputStream in = new FileInputStream(new File("data", "config.xml"));
+                  FileInputStream in = new FileInputStream(new File(Constants.CONFIG_FOLDER, "config.xml"));
 
                   IOUtils.copy(in, zos);
                   in.close();
