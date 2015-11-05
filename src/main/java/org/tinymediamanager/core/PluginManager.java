@@ -72,6 +72,7 @@ public class PluginManager {
       LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
 
       // dedicated folder just for plugins
+      stopWatch.reset();
       stopWatch.start();
       LOGGER.debug("loading external plugins...");
       if (LOGGER.isTraceEnabled()) {
