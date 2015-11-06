@@ -19,7 +19,7 @@ public class UtilsTest {
       System.out.println(expected + " - passed");
     }
     catch (AssertionError e) {
-      System.out.println(expected + " - FAILED: " + e.getMessage());
+      System.err.println(expected + " - FAILED: " + e.getMessage());
       throw e;
     }
   }
@@ -73,6 +73,8 @@ public class UtilsTest {
 
   @Test
   public void detectStackingMarkers() {
+    assertEqual("", Utils.getStackingMarker("2 Guns (2013) x264-720p DTS-6ch.mkv"));
+
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt1.mkv"), "PaRt1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013) DvD1.mkv"), "DvD1");

@@ -330,8 +330,8 @@ public class Utils {
         return m.group(2);
       }
 
-      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter
-      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(.*?)(\\.[^.]+)$");
+      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
+      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(\\.[^.]+)$");
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
