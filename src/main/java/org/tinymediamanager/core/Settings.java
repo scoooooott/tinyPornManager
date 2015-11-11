@@ -764,7 +764,8 @@ public class Settings extends AbstractModelObject {
       // System.setProperty("java.net.useSystemProxies", "true");
     }
     try {
-      ProxySettings.setProxySettings(getProxyHost(), Integer.parseInt(getProxyPort()), getProxyUsername(), getProxyPassword());
+      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort()), getProxyUsername(),
+          getProxyPassword());
     }
     catch (NumberFormatException e) {
       LOGGER.error("could not parse proxy port: " + e.getMessage());
