@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 public class MovieRenamerTest {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamerTest.class);
@@ -56,6 +58,21 @@ public class MovieRenamerTest {
     // ds/A/file3.mkv <- single, but since we have another movie deeper, this MUST be a MultiMovieDir
     // ds/A/title/file5.mkv single
 
+  }
+
+  @Test
+  public void testRename() {
+    MediaInfoUtils.loadMediaInfo();
+
+    Movie m = new Movie();
+    m.setTitle("The Dish");
+    m.setYear("2000");
+    MediaFile mf = new MediaFile(new File("target/test-classes/samples", "thx_scarface-DWEU.vob"));
+    mf.gatherMediaInformation();
+    m.addToMediaFiles(mf);
+
+    Assert.assertEquals("The Dish (2000) MPEG-480p AC3-6ch", MovieRenamer.createDestinationForFilename("$T ($Y) $V $A", m));
+    Assert.assertEquals("The Dish (2000)", MovieRenamer.createDestinationForFoldername("$T ($Y)", m));
   }
 
   @Test
