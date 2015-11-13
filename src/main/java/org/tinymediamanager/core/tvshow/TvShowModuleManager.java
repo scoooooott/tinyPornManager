@@ -25,6 +25,7 @@ import org.h2.mvstore.MVStore;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -74,12 +75,12 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public void startUp() throws Exception {
     // do a DB backup, and keep last 15 copies
-    File db = new File(Constants.CONFIG_FOLDER, TV_SHOW_DB);
+    File db = new File(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB);
     Utils.createBackupFile(db);
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Constants.CONFIG_FOLDER + File.separatorChar + TV_SHOW_DB).compressHigh().open();
+    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + TV_SHOW_DB).compressHigh().open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -153,6 +154,6 @@ public class TvShowModuleManager implements ITmmModule {
 
   @Override
   public void initializeDatabase() throws Exception {
-    FileUtils.deleteQuietly(new File(Constants.CONFIG_FOLDER, TV_SHOW_DB));
+    FileUtils.deleteQuietly(new File(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB));
   }
 }

@@ -22,7 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -63,7 +63,7 @@ public class UpgradeTasks {
 
   private static void moveToConfigFolder(File f) {
     if (f.exists()) {
-      File fnew = new File(Constants.CONFIG_FOLDER, f.getName());
+      File fnew = new File(Settings.getInstance().getSettingsFolder(), f.getName());
       try {
         Utils.moveFileSafe(f, fnew);
       }
