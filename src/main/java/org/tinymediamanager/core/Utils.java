@@ -269,7 +269,7 @@ public class Utils {
       regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(\\.[^.]+)$");
       m = regex.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+        return m.group(1) + m.group(3); // just return String w/o stacking
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
