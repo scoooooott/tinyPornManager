@@ -54,7 +54,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -157,8 +156,6 @@ public class TvShowEditorDialog extends TmmDialog {
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable>                                   jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>                                     jListBinding;
-  // private JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1;
-  private JComboBoxBinding<String, TvShowList, JComboBox>                                         jComboBinding;
   private JListBinding<String, List<String>, JList>                                               jListBinding_1;
   private JTableBinding<TvShowEpisodeEditorContainer, List<TvShowEpisodeEditorContainer>, JTable> jTableBinding_2;
   private JTable                                                                                  tableIds;
@@ -1192,10 +1189,6 @@ public class TvShowEditorDialog extends TmmDialog {
     jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    BeanProperty<TvShowList, List<String>> tvShowListBeanProperty = BeanProperty.create("tagsInTvShows");
-    jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, tvShowList, tvShowListBeanProperty, cbTags);
-    jComboBinding.bind();
-    //
     jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     jListBinding_1.bind();
     //
@@ -1224,8 +1217,6 @@ public class TvShowEditorDialog extends TmmDialog {
     super.dispose();
     jTableBinding.unbind();
     jListBinding.unbind();
-    // jTableBinding_1.unbind();
-    jComboBinding.unbind();
     jListBinding_1.unbind();
     jTableBinding_2.unbind();
   }
