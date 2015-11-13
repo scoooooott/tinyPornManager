@@ -204,7 +204,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (subdir.isDirectory()) {
           // check if there is a .tmmignore in this directory
           File tmmIgnore = new File(subdir, ".tmmignore");
-          if (!tmmIgnore.exists()) {
+          File tmmIgnore2 = new File(subdir, "tmmignore");
+          if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
             submitTask(new FindTvShowTask(subdir, path));
           }
         }
@@ -770,7 +771,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
-        if (!tmmIgnore.exists()) {
+        File tmmIgnore2 = new File(file, "tmmignore");
+        if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
           // dig deeper
           if (file.getName().toUpperCase().equals("VIDEO_TS")) {
             findTvEpisodesAsDisc(tvShow, file);

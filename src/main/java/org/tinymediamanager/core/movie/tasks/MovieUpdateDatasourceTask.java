@@ -359,7 +359,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       File[] fileArray = movieDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
-          if (file.getName().equals(".tmmignore")) {
+          if (file.getName().equals(".tmmignore") || file.getName().equals("tmmignore")) {
             return true;
           }
           if (file.isDirectory() || file.getName().startsWith("._")) { // MacOS ignore
@@ -376,7 +376,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       List<File> files = new ArrayList<>(Arrays.asList(fileArray));
 
-      if (files.contains(new File(movieDir, ".tmmignore"))) {
+      if (files.contains(new File(movieDir, ".tmmignore")) || files.contains(new File(movieDir, "tmmignore"))) {
         return;
       }
 
