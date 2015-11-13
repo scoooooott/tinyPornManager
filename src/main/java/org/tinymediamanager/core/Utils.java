@@ -265,8 +265,8 @@ public class Utils {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
       }
 
-      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter
-      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(.*?)(\\.[^.]+)$");
+      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
+      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(\\.[^.]+)$");
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
