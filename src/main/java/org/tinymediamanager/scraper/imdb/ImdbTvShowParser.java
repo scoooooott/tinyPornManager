@@ -15,6 +15,17 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,18 +42,6 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
-
 /**
  * The class ImdbTvShowParser is used to parse TV show site of imdb.com
  * 
@@ -52,7 +51,7 @@ public class ImdbTvShowParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbTvShowParser.class);
   private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Movies|TV Episode|Short|Video Game)\\).*"); // stripped out
 
-  private ImdbSiteDefinition imdbSite;
+  private ImdbSiteDefinition   imdbSite;
 
   public ImdbTvShowParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.TV_SHOW);
@@ -108,8 +107,17 @@ public class ImdbTvShowParser extends ImdbParser {
   MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
+    String imdbId = "";
+
+    // imdbId from searchResult
+    if (options.getResult() != null) {
+      imdbId = options.getResult().getIMDBId();
+    }
+
     // imdbid from scraper option
-    String imdbId = options.getImdbId();
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = options.getImdbId();
+    }
 
     if (!MetadataUtil.isValidImdbId(imdbId)) {
       return md;
@@ -123,6 +131,12 @@ public class ImdbTvShowParser extends ImdbParser {
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
     parseCombinedPage(doc, options, md);
+
+    // get plot
+    url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/plotsummary");
+    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().name(), options.getCountry().getAlpha2()));
+    doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+    parsePlotsummaryPage(doc, options, md);
 
     return md;
   }

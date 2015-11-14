@@ -806,6 +806,35 @@ public abstract class ImdbParser {
     return md;
   }
 
+  protected MediaMetadata parsePlotsummaryPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+    // imdb.com has another site structure
+    if (getImdbSite() == ImdbSiteDefinition.IMDB_COM) {
+      Elements zebraList = doc.getElementsByClass("zebraList");
+      if (zebraList != null && !zebraList.isEmpty()) {
+        Elements odd = zebraList.get(0).getElementsByClass("odd");
+        if (odd.isEmpty()) {
+          odd = zebraList.get(0).getElementsByClass("even"); // sometimes imdb has even
+        }
+        if (odd.size() > 0) {
+          Elements p = odd.get(0).getElementsByTag("p");
+          if (p.size() > 0) {
+            String plot = cleanString(p.get(0).text());
+            md.storeMetadata(MediaMetadata.PLOT, plot);
+          }
+        }
+      }
+    }
+    else {
+      Element wiki = doc.getElementById("swiki.2.1");
+      if (wiki != null) {
+        String plot = cleanString(wiki.ownText());
+        md.storeMetadata(MediaMetadata.PLOT, plot);
+      }
+    }
+
+    return md;
+  }
+
   protected MediaCastMember parseCastMember(Element row) {
     Elements td = row.getElementsByTag("td");
     MediaCastMember cm = new MediaCastMember();

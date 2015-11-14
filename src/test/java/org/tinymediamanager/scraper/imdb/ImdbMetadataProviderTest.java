@@ -358,7 +358,7 @@ public class ImdbMetadataProviderTest {
       checkCastMembers(castMembers, 10, md);
 
       // check production company
-      checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Tim Burton Productions", md);
+      checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Teen Cartoon Films, Tim Burton Productions", md);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -416,7 +416,7 @@ public class ImdbMetadataProviderTest {
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
-      checkCastMembers(castMembers, 85, md);
+      checkCastMembers(castMembers, 86, md);
 
       // check production company
       checkProductionCompany("Universal Pictures, Atlas Entertainment, Classico", md);

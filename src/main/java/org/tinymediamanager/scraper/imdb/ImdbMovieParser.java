@@ -15,6 +15,13 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,13 +33,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-import java.util.regex.Pattern;
-
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
-
 /**
  * The class ImdbMovieParser is used to parse the movie sites at imdb.com
  * 
@@ -42,7 +42,7 @@ public class ImdbMovieParser extends ImdbParser {
   private static final Logger  LOGGER                  = LoggerFactory.getLogger(ImdbMovieParser.class);
   private static final Pattern UNWANTED_SEARCH_RESULTS = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*");
 
-  private ImdbSiteDefinition imdbSite;
+  private ImdbSiteDefinition   imdbSite;
 
   public ImdbMovieParser(ImdbSiteDefinition imdbSite) {
     super(MediaType.MOVIE);
@@ -136,7 +136,6 @@ public class ImdbMovieParser extends ImdbParser {
 
     Document doc;
     doc = futureCombined.get();
-
     parseCombinedPage(doc, options, md);
 
     /*
@@ -144,31 +143,7 @@ public class ImdbMovieParser extends ImdbParser {
      */
     // build the url
     doc = futurePlotsummary.get();
-
-    // imdb.com has another site structure
-    if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-      Elements zebraList = doc.getElementsByClass("zebraList");
-      if (zebraList != null && !zebraList.isEmpty()) {
-        Elements odd = zebraList.get(0).getElementsByClass("odd");
-        if (odd.isEmpty()) {
-          odd = zebraList.get(0).getElementsByClass("even"); // sometimes imdb has even
-        }
-        if (odd.size() > 0) {
-          Elements p = odd.get(0).getElementsByTag("p");
-          if (p.size() > 0) {
-            String plot = cleanString(p.get(0).ownText());
-            md.storeMetadata(MediaMetadata.PLOT, plot);
-          }
-        }
-      }
-    }
-    else {
-      Element wiki = doc.getElementById("swiki.2.1");
-      if (wiki != null) {
-        String plot = cleanString(wiki.ownText());
-        md.storeMetadata(MediaMetadata.PLOT, plot);
-      }
-    }
+    parsePlotsummaryPage(doc, options, md);
 
     // title also from chosen site if we are not scraping akas.imdb.com
     if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
