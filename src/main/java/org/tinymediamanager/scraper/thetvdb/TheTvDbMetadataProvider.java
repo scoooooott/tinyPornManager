@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
-import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -141,8 +140,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     String country = options.get(SearchParam.COUNTRY); // for passing the
                                                        // country to the scrape
 
-    searchString = clearSearchString(searchString);
-
     // search via the api
     List<Series> series = null;
     synchronized (tvdb) {
@@ -200,21 +197,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     Collections.reverse(results);
 
     return results;
-  }
-
-  /*
-   * clear the search string to minimize search problem with the API
-   */
-  private String clearSearchString(String searchString) {
-    // replace all kinds of accent characters with their base variant
-    String cleanedString = Normalizer.normalize(searchString, Normalizer.Form.NFD);
-    cleanedString = cleanedString.replaceAll("\\p{M}", "");
-
-    // cleanedString = cleanedString.replaceAll("\\p{Punct}", ""); // too much?
-    // better: just keep chars which are not a-zA-Z0-9 AND the space and dash
-    cleanedString = cleanedString.replaceAll("[^\\p{Alnum}\\s\\-]", "");
-
-    return cleanedString;
   }
 
   private MediaSearchResult createSearchResult(Series show, MediaSearchOptions options, String searchString) {

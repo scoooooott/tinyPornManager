@@ -23,6 +23,8 @@ public class TheTvDbMetadataProviderTest {
     searchShow("Drugs, Inc", "en", "174501");
     searchShow("Yu-Gi-Oh!", "en", "113561");
     searchShow("What's the Big Idea?", "en", "268282");
+    searchShow("Wallace & Gromit", "en", "78996");
+    searchShow("SOKO Kitzbühel", "de", "101241");
   }
 
   private void searchShow(String title, String language, String id) {
