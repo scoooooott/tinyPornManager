@@ -654,11 +654,16 @@ public class ImageChooserDialog extends TmmDialog {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
             @SuppressWarnings("rawtypes")
             JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraThumbs.add(size.getUrl());
+            if (cb.getSelectedItem() instanceof ImageSizeAndUrl) {
+              ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+              if (size != null) {
+                extraThumbs.add(size.getUrl());
+              }
+              else {
+                extraThumbs.add(artwork.getDefaultUrl());
+              }
             }
-            else {
+            else if (cb.getSelectedItem() instanceof String) {
               extraThumbs.add(artwork.getDefaultUrl());
             }
           }
@@ -681,11 +686,16 @@ public class ImageChooserDialog extends TmmDialog {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
             @SuppressWarnings("rawtypes")
             JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraFanarts.add(size.getUrl());
+            if (cb.getSelectedItem() instanceof ImageSizeAndUrl) {
+              ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+              if (size != null) {
+                extraFanarts.add(size.getUrl());
+              }
+              else {
+                extraFanarts.add(artwork.getDefaultUrl());
+              }
             }
-            else {
+            else if (cb.getSelectedItem() instanceof String) {
               extraFanarts.add(artwork.getDefaultUrl());
             }
           }
