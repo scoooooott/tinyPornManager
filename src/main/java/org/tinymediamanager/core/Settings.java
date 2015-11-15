@@ -195,7 +195,7 @@ public class Settings extends AbstractModelObject {
       // need to do here, since this is called quite in the beginning
 
       File cfgFolder = new File("config"); // old impl
-      if (cfgFolder.exists()) {
+      if (cfgFolder.exists() && cfgFolder.isDirectory()) {
         try {
           Utils.moveDirectorySafe(cfgFolder, new File(".", folder));
         }
@@ -210,7 +210,7 @@ public class Settings extends AbstractModelObject {
       }
 
       File oldCfg = new File(CONFIG_FILE);
-      if (oldCfg.exists()) {
+      if (oldCfg.exists() && oldCfg.isFile()) {
         try {
           File newCfg = new File(folder, CONFIG_FILE);
           Utils.moveFileSafe(oldCfg, newCfg);
@@ -728,7 +728,7 @@ public class Settings extends AbstractModelObject {
    *          the new proxy password
    */
   public void setProxyPassword(String newValue) {
-    newValue = StringEscapeUtils.escapeXml(newValue);
+    newValue = StringEscapeUtils.escapeXml10(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
