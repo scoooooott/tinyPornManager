@@ -51,13 +51,12 @@ import com.uwetrottmann.tmdb.entities.Videos;
 import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
 
 /**
- * The class TmdbMovieMetadataProvider is used to provide metadata for movies
- * from tmdb
+ * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
  */
 class TmdbMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieMetadataProvider.class);
 
-  private Tmdb api;
+  private Tmdb                api;
 
   public TmdbMovieMetadataProvider(Tmdb api) {
     this.api = api;
@@ -78,7 +77,7 @@ class TmdbMovieMetadataProvider {
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
 
     String searchString = "";
-    int year = 0;
+    Integer year = null;
 
     // check type
     if (query.getMediaType() != MediaType.MOVIE) {
@@ -94,7 +93,6 @@ class TmdbMovieMetadataProvider {
         year = Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
       }
       catch (Exception e) {
-        year = 0;
       }
     }
 
