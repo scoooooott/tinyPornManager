@@ -61,6 +61,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
@@ -81,7 +82,8 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount" })
+    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount",
+    "source" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -113,6 +115,9 @@ public class MovieToMpNfoConnector {
 
   @XmlElement
   private int                 playcount     = 0;
+
+  @XmlElement
+  private String              source        = "";
 
   @XmlElementWrapper(name = "fanart")
   @XmlElement(name = "thumb")
@@ -237,6 +242,10 @@ public class MovieToMpNfoConnector {
     // certification
     if (movie.getCertification() != null) {
       mp.setMpaa(movie.getCertification().name());
+    }
+
+    if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+      mp.source = movie.getMediaSource().name();
     }
 
     // // filename and path
@@ -396,6 +405,17 @@ public class MovieToMpNfoConnector {
 
       if (!StringUtils.isEmpty(mp.getMpaa())) {
         movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
+      }
+
+      if (StringUtils.isNotBlank(mp.source)) {
+        try {
+          MovieMediaSource source = MovieMediaSource.valueOf(mp.source);
+          if (source != null) {
+            movie.setMediaSource(source);
+          }
+        }
+        catch (Exception ignored) {
+        }
       }
 
       // movieset

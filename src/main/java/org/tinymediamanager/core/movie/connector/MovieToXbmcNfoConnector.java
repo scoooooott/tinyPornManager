@@ -65,6 +65,7 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
@@ -89,7 +90,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
-    "keywords", "poster", "url", "languages", "unsupportedElements" })
+    "keywords", "poster", "url", "languages", "source", "unsupportedElements" })
 public class MovieToXbmcNfoConnector {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");
@@ -227,6 +228,9 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   private Object               url;
+
+  @XmlElement
+  private String               source;
 
   // @XmlElement(name = "rotten-tomatoes")
   // private Object rottentomatoes;
@@ -437,6 +441,9 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.sorttitle = movie.getSortTitle();
+    if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+      xbmc.source = movie.getMediaSource().name();
+    }
 
     // fileinfo
     Fileinfo info = new Fileinfo();
@@ -667,6 +674,17 @@ public class MovieToXbmcNfoConnector {
         movie.setWatched(true);
       }
       movie.setSpokenLanguages(xbmc.languages);
+
+      if (StringUtils.isNotBlank(xbmc.source)) {
+        try {
+          MovieMediaSource source = MovieMediaSource.valueOf(xbmc.source);
+          if (source != null) {
+            movie.setMediaSource(source);
+          }
+        }
+        catch (Exception ignored) {
+        }
+      }
 
       // movieset
       if (StringUtils.isNotEmpty(xbmc.set)) {

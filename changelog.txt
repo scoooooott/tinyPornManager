@@ -30,6 +30,7 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
 + take the date added from the video file where possible
 + changed behavior of the _new_ state: it will now be dropped at the next update data source  
   the new indicator changed from the green font to an icon
++ added media source to NFO
 x changed NFO rewriting behavior to be less aggressive
 x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
