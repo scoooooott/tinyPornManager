@@ -15,13 +15,18 @@
  */
 package org.tinymediamanager.scraper.http;
 
-import com.squareup.okhttp.*;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.squareup.okhttp.Authenticator;
+import com.squareup.okhttp.ConnectionPool;
+import com.squareup.okhttp.Credentials;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 /**
  * The class HttpClient. To construct our HTTP client for internet access
@@ -47,13 +52,6 @@ public class TmmHttpClient {
     client.setConnectTimeout(10, TimeUnit.SECONDS);
     client.setWriteTimeout(10, TimeUnit.SECONDS);
     client.setReadTimeout(30, TimeUnit.SECONDS);
-
-    // default caching (cache/url - 5mb)
-    try {
-      client.setCache(new Cache(new File("cache/url"), 5000000));
-    }
-    catch (Exception ignored) {
-    }
 
     // proxy
     if ((ProxySettings.INSTANCE.useProxy())) {
