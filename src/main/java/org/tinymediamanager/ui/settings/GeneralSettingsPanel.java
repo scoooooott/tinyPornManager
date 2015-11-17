@@ -73,6 +73,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.sun.jna.Platform;
 
 /**
  * The Class GeneralSettingsPanel.
@@ -373,7 +374,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isFile()) {
+        if (file != null && file.exists() && (file.isFile() || Platform.isMac())) {
           tfMediaPlayer.setText(file.getPath());
         }
       }
