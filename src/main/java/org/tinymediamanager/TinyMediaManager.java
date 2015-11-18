@@ -353,19 +353,15 @@ public class TinyMediaManager {
             dialog.pack();
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
-            System.exit(1);
           }
-          else {
-            // any other ex
-            throw (e);
-          }
+          System.exit(1);
         }
         catch (Exception e) {
           LOGGER.error("Exception while start of tmm", e);
           if (!GraphicsEnvironment.isHeadless()) {
             MessageDialog.showExceptionWindow(e);
-            System.exit(1);
           }
+          System.exit(1);
         }
       }
 
