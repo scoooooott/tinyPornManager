@@ -148,6 +148,9 @@ public class MediaIdTable extends JTable {
 
     @Override
     public Object getColumnValue(MediaId arg0, int arg1) {
+      if (arg0 == null) {
+        return null;
+      }
       switch (arg1) {
         case 0:
           return arg0.key;
@@ -160,6 +163,9 @@ public class MediaIdTable extends JTable {
 
     @Override
     public MediaId setColumnValue(MediaId arg0, Object arg1, int arg2) {
+      if (arg0 == null || arg1 == null) {
+        return null;
+      }
       switch (arg2) {
         case 0:
           arg0.key = arg1.toString();
