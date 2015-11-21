@@ -82,61 +82,49 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount",
+    "fanart", "mpaa", "imdb", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount",
     "source" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
   private static JAXBContext  context       = initContext();
 
-  private String              id            = "";
-  private String              title         = "";
-  private String              originaltitle = "";
-  private String              sorttitle     = "";
-  private float               rating        = 0;
-  private int                 votes         = 0;
-  private String              year          = "";
-  private String              outline       = "";
-  private String              plot          = "";
-  private String              tagline       = "";
-  private String              runtime       = "";
-  private String              thumb         = "";
-  private String              director      = "";
-  private String              studio        = "";
-  private String              mpaa          = "";
-  private String              credits       = "";
-  private String              country       = "";
-
-  @XmlElement
-  private String              premiered     = "";
-
-  @XmlElement
-  private boolean             watched       = false;
-
-  @XmlElement
-  private int                 playcount     = 0;
-
-  @XmlElement
-  private String              source        = "";
-
-  @XmlElementWrapper(name = "fanart")
+  public String               title         = "";
+  public String               originaltitle = "";
+  public String               sorttitle     = "";
+  @XmlElementWrapper
+  @XmlElement(name = "set", type = MovieSets.class)
+  public List<MovieSets>      sets;
+  public float                rating        = 0;
+  public String               year          = "";
+  public int                  votes         = 0;
+  public String               outline       = "";
+  public String               plot          = "";
+  public String               tagline       = "";
+  public String               runtime       = "";
+  public String               thumb         = "";
+  @XmlElementWrapper
   @XmlElement(name = "thumb")
-  private List<String>        fanart;
-
+  public List<String>         fanart;
+  public String               mpaa          = "";
+  public String               imdb          = "";
+  @XmlElementWrapper(name = "ids")
+  public Map<String, Object>  ids;
+  @XmlElementWrapper
+  @XmlElement(name = "genre")
+  public List<String>         genres;
+  public String               studio        = "";
+  public String               country       = "";
+  public String               premiered     = "";
+  public String               credits       = "";
+  public String               director      = "";
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
-
   @XmlAnyElement(lax = true)
   private List<Object>        producers;
-
-  @XmlElementWrapper(name = "genres")
-  @XmlElement(name = "genre")
-  private List<String>        genres;
-
-  private List<MovieSets>     sets;
-
-  @XmlElementWrapper(name = "ids")
-  private Map<String, Object> ids;
+  public boolean              watched       = false;
+  public int                  playcount     = 0;
+  public String               source        = "";
 
   private static JAXBContext initContext() {
     try {
@@ -155,10 +143,10 @@ public class MovieToMpNfoConnector {
   public MovieToMpNfoConnector() {
     actors = new ArrayList();
     producers = new ArrayList();
-    genres = new ArrayList<String>();
-    fanart = new ArrayList<String>();
-    sets = new ArrayList<MovieSets>();
-    ids = new HashMap<String, Object>();
+    genres = new ArrayList<>();
+    fanart = new ArrayList<>();
+    sets = new ArrayList<>();
+    ids = new HashMap<>();
   }
 
   /**
@@ -173,40 +161,62 @@ public class MovieToMpNfoConnector {
       return;
     }
 
+    MovieToMpNfoConnector mp = createInstanceFromMovie(movie);
+
+    // and marshall it
+    List<MovieNfoNaming> nfoNames = new ArrayList<MovieNfoNaming>();
+    if (movie.isMultiMovieDir()) {
+      // Fixate the name regardless of setting
+      nfoNames.add(MovieNfoNaming.FILENAME_NFO);
+    }
+    else {
+      nfoNames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+    }
+    writeNfoFiles(movie, mp, nfoNames);
+  }
+
+  /**
+   * create an instance from the given movie
+   * 
+   * @param movie
+   *          the movie to create the instance for
+   * @return the newly created instance
+   */
+  static MovieToMpNfoConnector createInstanceFromMovie(Movie movie) {
     MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
     // set data
-    mp.setTitle(movie.getTitle());
-    mp.setOriginaltitle(movie.getOriginalTitle());
+    mp.title = movie.getTitle();
+    mp.originaltitle = movie.getOriginalTitle();
 
-    mp.setSorttitle(movie.getSortTitle());
+    mp.sorttitle = movie.getSortTitle();
     // if sort title is empty, insert the title sortable
-    if (StringUtils.isBlank(mp.getSorttitle())) {
-      mp.setSorttitle(movie.getTitleSortable());
+    if (StringUtils.isBlank(mp.sorttitle)) {
+      mp.sorttitle = movie.getTitleSortable();
     }
 
-    mp.setRating(movie.getRating());
-    mp.setVotes(movie.getVotes());
-    mp.setYear(movie.getYear());
+    mp.rating = movie.getRating();
+    mp.votes = movie.getVotes();
+    mp.year = movie.getYear();
     mp.premiered = movie.getReleaseDateFormatted();
-    mp.setPlot(movie.getPlot());
+    mp.plot = movie.getPlot();
 
     // outline is only the first 200 characters of the plot
-    if (StringUtils.isNotBlank(mp.getPlot()) && mp.getPlot().length() > 200) {
-      int spaceIndex = mp.getPlot().indexOf(" ", 200);
+    if (StringUtils.isNotBlank(mp.plot) && mp.plot.length() > 200) {
+      int spaceIndex = mp.plot.indexOf(" ", 200);
       if (spaceIndex > 0) {
-        mp.setOutline(mp.getPlot().substring(0, spaceIndex) + "...");
+        mp.outline = mp.plot.substring(0, spaceIndex) + "...";
       }
       else {
-        mp.setOutline(mp.getPlot());
+        mp.outline = mp.plot;
       }
     }
-    else if (StringUtils.isNotBlank(mp.getPlot())) {
-      mp.setOutline(mp.getPlot());
+    else if (StringUtils.isNotBlank(mp.plot)) {
+      mp.outline = mp.plot;
     }
 
-    mp.setTagline(movie.getTagline());
-    mp.setRuntime(String.valueOf(movie.getRuntime()));
-    mp.setThumb(FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.POSTER)));
+    mp.tagline = movie.getTagline();
+    mp.runtime = String.valueOf(movie.getRuntime());
+    mp.thumb = FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.POSTER));
 
     // fanarts: is extrafanart is activated - put up to 5 fanarts into the NFO; else take the only fanart
     List<MediaFile> extrafanarts = movie.getMediaFiles(MediaFileType.EXTRAFANART);
@@ -216,7 +226,7 @@ public class MovieToMpNfoConnector {
 
         File fanart = mf.getFile();
         String fanartPath = new File(movie.getPath()).toURI().relativize(fanart.toURI()).getPath();
-        mp.addFanart(fanartPath);
+        mp.fanart.add(fanartPath);
 
         if (i == 4) {
           break;
@@ -224,12 +234,12 @@ public class MovieToMpNfoConnector {
       }
     }
     else {
-      mp.addFanart(FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.FANART)));
+      mp.fanart.add(FilenameUtils.getName(movie.getArtworkFilename(MediaFileType.FANART)));
     }
-    mp.setId(movie.getImdbId());
+    mp.imdb = movie.getImdbId();
     mp.ids.putAll(movie.getIds());
-    mp.setStudio(movie.getProductionCompany());
-    mp.setCountry(movie.getCountry());
+    mp.studio = movie.getProductionCompany();
+    mp.country = movie.getCountry();
 
     mp.watched = movie.isWatched();
     if (mp.watched) {
@@ -241,7 +251,7 @@ public class MovieToMpNfoConnector {
 
     // certification
     if (movie.getCertification() != null) {
-      mp.setMpaa(movie.getCertification().name());
+      mp.mpaa = movie.getCertification().name();
     }
 
     if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
@@ -253,8 +263,8 @@ public class MovieToMpNfoConnector {
     // mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
     // }
 
-    mp.setDirector(movie.getDirector());
-    mp.setCredits(movie.getWriter());
+    mp.director = movie.getDirector();
+    mp.credits = movie.getWriter();
     for (MovieActor cast : movie.getActors()) {
       mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
@@ -264,30 +274,24 @@ public class MovieToMpNfoConnector {
     }
 
     for (MediaGenres genre : movie.getGenres()) {
-      mp.addGenre(genre.toString());
+      mp.genres.add(genre.toString());
     }
 
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
       MovieSets set = new MovieSets(movieSet.getTitle(), movieSet.getMovieIndex(movie) + 1);
-      mp.addSet(set);
+      mp.sets.add(set);
     }
 
-    // and marshall it
+    return mp;
+  }
+
+  static void writeNfoFiles(Movie movie, MovieToMpNfoConnector mp, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
     List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
 
-    List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
-    if (movie.isMultiMovieDir()) {
-      // Fixate the name regardless of setting
-      nfonames.add(MovieNfoNaming.FILENAME_NFO);
-    }
-    else {
-      nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
-    }
-    for (MovieNfoNaming name : nfonames) {
-
+    for (MovieNfoNaming name : nfoNames) {
       try {
         nfoFilename = movie.getNfoFilename(name);
         if (nfoFilename.isEmpty()) {
@@ -350,25 +354,26 @@ public class MovieToMpNfoConnector {
     try {
       MovieToMpNfoConnector mp = parseNFO(nfoFilename);
       movie = new Movie();
-      movie.setTitle(mp.getTitle());
-      movie.setSortTitle(mp.getSorttitle());
-      movie.setOriginalTitle(mp.getOriginaltitle());
-      movie.setRating(mp.getRating());
-      movie.setVotes(mp.getVotes());
-      movie.setYear(mp.getYear());
+      movie.setTitle(mp.title);
+      movie.setOriginalTitle(mp.originaltitle);
+      movie.setSortTitle(mp.sorttitle);
+
+      movie.setRating(mp.rating);
+      movie.setVotes(mp.votes);
+      movie.setYear(mp.year);
       try {
         movie.setReleaseDate(mp.premiered);
       }
       catch (ParseException e) {
       }
-      movie.setPlot(mp.getPlot());
-      movie.setTagline(mp.getTagline());
+      movie.setPlot(mp.plot);
+      movie.setTagline(mp.tagline);
       try {
-        String rt = mp.getRuntime().replaceAll("[^0-9]", "");
+        String rt = mp.runtime.replaceAll("[^0-9]", "");
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + mp.getRuntime());
+        LOGGER.warn("could not parse runtime: " + mp.runtime);
       }
 
       for (Entry<String, Object> entry : mp.ids.entrySet()) {
@@ -390,21 +395,21 @@ public class MovieToMpNfoConnector {
       }
 
       if (StringUtils.isBlank(movie.getImdbId())) {
-        movie.setImdbId(mp.id);
+        movie.setImdbId(mp.imdb);
       }
 
-      movie.setDirector(mp.getDirector());
-      movie.setWriter(mp.getCredits());
-      movie.setProductionCompany(mp.getStudio());
-      movie.setCountry(mp.getCountry());
+      movie.setDirector(mp.director);
+      movie.setWriter(mp.credits);
+      movie.setProductionCompany(mp.studio);
+      movie.setCountry(mp.country);
 
       movie.setWatched(mp.watched);
       if (mp.playcount > 0) {
         movie.setWatched(true);
       }
 
-      if (!StringUtils.isEmpty(mp.getMpaa())) {
-        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
+      if (!StringUtils.isEmpty(mp.mpaa)) {
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.mpaa));
       }
 
       if (StringUtils.isNotBlank(mp.source)) {
@@ -419,22 +424,22 @@ public class MovieToMpNfoConnector {
       }
 
       // movieset
-      if (mp.getSets() != null && mp.getSets().size() > 0) {
-        MovieSets sets = mp.getSets().get(0);
+      if (mp.sets != null && !mp.sets.isEmpty()) {
+        MovieSets sets = mp.sets.get(0);
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(sets.getName(), 0);
+        MovieSet movieSet = movieList.getMovieSet(sets.name, 0);
 
         // add movie to movieset
         if (movieSet != null) {
           movie.setMovieSet(movieSet);
-          movie.setSortTitle(sets.getName() + String.format("%02d", sets.getOrder()));
+          movie.setSortTitle(sets.name + String.format("%02d", sets.order));
         }
       }
 
       for (Actor actor : mp.getActors()) {
-        MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
-        cast.setThumbUrl(actor.getThumb());
+        MovieActor cast = new MovieActor(actor.name, actor.role);
+        cast.setThumbUrl(actor.thumb);
         movie.addActor(cast);
       }
 
@@ -444,7 +449,7 @@ public class MovieToMpNfoConnector {
         movie.addProducer(cast);
       }
 
-      for (String genre : mp.getGenres()) {
+      for (String genre : mp.genres) {
         String[] genres = genre.split("/");
         for (String g : genres) {
           MediaGenres genreFound = MediaGenres.getGenre(g.trim());
@@ -517,25 +522,6 @@ public class MovieToMpNfoConnector {
   }
 
   /**
-   * Adds the genre.
-   * 
-   * @param genre
-   *          the genre
-   */
-  public void addGenre(String genre) {
-    genres.add(genre);
-  }
-
-  /**
-   * Gets the genres.
-   * 
-   * @return the genres
-   */
-  public List<String> getGenres() {
-    return this.genres;
-  }
-
-  /**
    * Adds the actor.
    * 
    * @param name
@@ -587,449 +573,19 @@ public class MovieToMpNfoConnector {
     return pureProducers;
   }
 
-  /**
-   * Gets the title.
-   * 
-   * @return the title
-   */
-  @XmlElement(name = "title")
-  public String getTitle() {
-    return title;
-  }
-
-  /**
-   * Sets the title.
-   * 
-   * @param title
-   *          the new title
-   */
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  /**
-   * Gets the originaltitle.
-   * 
-   * @return the originaltitle
-   */
-  @XmlElement(name = "originaltitle")
-  public String getOriginaltitle() {
-    return originaltitle;
-  }
-
-  /**
-   * Sets the originaltitle.
-   * 
-   * @param originaltitle
-   *          the new originaltitle
-   */
-  public void setOriginaltitle(String originaltitle) {
-    this.originaltitle = originaltitle;
-  }
-
-  @XmlElement(name = "sorttitle")
-  public String getSorttitle() {
-    return sorttitle;
-  }
-
-  public void setSorttitle(String sorttitle) {
-    this.sorttitle = sorttitle;
-  }
-
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
-  @XmlElement(name = "rating")
-  public float getRating() {
-    return rating;
-  }
-
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
-  public void setRating(float rating) {
-    this.rating = rating;
-  }
-
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
-  @XmlElement(name = "votes")
-  public int getVotes() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param votes
-   *          the new votes
-   */
-  public void setVotes(int votes) {
-    this.votes = votes;
-  }
-
-  /**
-   * Gets the year.
-   * 
-   * @return the year
-   */
-  @XmlElement(name = "year")
-  public String getYear() {
-    return year;
-  }
-
-  /**
-   * Sets the year.
-   * 
-   * @param year
-   *          the new year
-   */
-  public void setYear(String year) {
-    this.year = year;
-  }
-
-  /**
-   * Gets the outline.
-   * 
-   * @return the outline
-   */
-  @XmlElement(name = "outline")
-  public String getOutline() {
-    return outline;
-  }
-
-  /**
-   * Sets the outline.
-   * 
-   * @param outline
-   *          the new outline
-   */
-  public void setOutline(String outline) {
-    this.outline = outline;
-  }
-
-  /**
-   * Gets the plot.
-   * 
-   * @return the plot
-   */
-  @XmlElement(name = "plot")
-  public String getPlot() {
-    return plot;
-  }
-
-  /**
-   * Sets the plot.
-   * 
-   * @param plot
-   *          the new plot
-   */
-  public void setPlot(String plot) {
-    this.plot = plot;
-  }
-
-  /**
-   * Gets the tagline.
-   * 
-   * @return the tagline
-   */
-  @XmlElement(name = "tagline")
-  public String getTagline() {
-    return tagline;
-  }
-
-  /**
-   * Sets the tagline.
-   * 
-   * @param tagline
-   *          the new tagline
-   */
-  public void setTagline(String tagline) {
-    this.tagline = tagline;
-  }
-
-  /**
-   * Gets the runtime.
-   * 
-   * @return the runtime
-   */
-  @XmlElement(name = "runtime")
-  public String getRuntime() {
-    return runtime;
-  }
-
-  /**
-   * Sets the runtime.
-   * 
-   * @param runtime
-   *          the new runtime
-   */
-  public void setRuntime(String runtime) {
-    this.runtime = runtime;
-  }
-
-  @XmlElement(name = "thumb")
-  public String getThumb() {
-    return thumb;
-  }
-
-  public void setThumb(String thumb) {
-    this.thumb = thumb;
-  }
-
-  public List<String> getFanart() {
-    return fanart;
-  }
-
-  public void addFanart(String fanart) {
-    this.fanart.add(fanart);
-  }
-
-  /**
-   * Gets the id.
-   * 
-   * @return the id
-   */
-  @XmlElement(name = "imdb")
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * Sets the id.
-   * 
-   * @param id
-   *          the new id
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
-  @XmlElement(name = "director")
-  public String getDirector() {
-    return director;
-  }
-
-  /**
-   * Sets the director.
-   * 
-   * @param director
-   *          the new director
-   */
-  public void setDirector(String director) {
-    this.director = director;
-  }
-
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
-  @XmlElement(name = "studio")
-  public String getStudio() {
-    return studio;
-  }
-
-  /**
-   * Sets the studio.
-   * 
-   * @param studio
-   *          the new studio
-   */
-  public void setStudio(String studio) {
-    this.studio = studio;
-  }
-
-  @XmlElement(name = "country")
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  /**
-   * Gets the mpaa.
-   * 
-   * @return the mpaa
-   */
-  @XmlElement(name = "mpaa")
-  public String getMpaa() {
-    return mpaa;
-  }
-
-  /**
-   * Sets the mpaa.
-   * 
-   * @param mpaa
-   *          the new mpaa
-   */
-  public void setMpaa(String mpaa) {
-    this.mpaa = mpaa;
-  }
-
-  /**
-   * Gets the credits.
-   * 
-   * @return the credits
-   */
-  @XmlElement(name = "credits")
-  public String getCredits() {
-    return credits;
-  }
-
-  /**
-   * Sets the credits.
-   * 
-   * @param credits
-   *          the new credits
-   */
-  public void setCredits(String credits) {
-    this.credits = credits;
-  }
-
-  /**
-   * Gets the sets.
-   * 
-   * @return the sets
-   */
-  @XmlElementWrapper
-  @XmlElement(name = "set", type = MovieSets.class)
-  public List<MovieSets> getSets() {
-    return this.sets;
-  }
-
-  /**
-   * Adds the set.
-   * 
-   * @param set
-   *          the set
-   */
-  public void addSet(MovieSets set) {
-    this.sets.add(set);
-  }
-
-  /**
-   * Sets the sets.
-   * 
-   * @param sets
-   *          the new sets
-   */
-  public void setSets(List<MovieSets> sets) {
-    this.sets = sets;
-  }
-
   // inner class actor to represent actors
-  /**
-   * The Class Actor.
-   * 
-   * @author Manuel Laggner
-   */
   @XmlRootElement(name = "actor")
   public static class Actor {
+    public String name;
+    public String role;
+    public String thumb;
 
-    /** The name. */
-    private String name;
-
-    /** The role. */
-    private String role;
-
-    /** The thumb. */
-    private String thumb;
-
-    /**
-     * Instantiates a new actor.
-     */
     public Actor() {
     }
 
-    /**
-     * Instantiates a new actor.
-     * 
-     * @param name
-     *          the name
-     * @param role
-     *          the role
-     * @param thumb
-     *          the thumb
-     */
     public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
-      this.thumb = thumb;
-    }
-
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    @XmlElement(name = "name")
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *          the new name
-     */
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    /**
-     * Gets the role.
-     * 
-     * @return the role
-     */
-    @XmlElement(name = "role")
-    public String getRole() {
-      return role;
-    }
-
-    /**
-     * Sets the role.
-     * 
-     * @param role
-     *          the new role
-     */
-    public void setRole(String role) {
-      this.role = role;
-    }
-
-    /**
-     * Gets the thumb.
-     * 
-     * @return the thumb
-     */
-    @XmlElement(name = "thumb")
-    public String getThumb() {
-      return thumb;
-    }
-
-    /**
-     * Sets the thumb.
-     * 
-     * @param thumb
-     *          the new thumb
-     */
-    public void setThumb(String thumb) {
       this.thumb = thumb;
     }
   }
@@ -1039,14 +595,9 @@ public class MovieToMpNfoConnector {
    */
   @XmlRootElement(name = "producer")
   public static class Producer {
-    @XmlElement
-    private String name;
-
-    @XmlElement
-    private String role;
-
-    @XmlElement
-    private String thumb;
+    public String name;
+    public String role;
+    public String thumb;
 
     public Producer() {
     }
@@ -1059,78 +610,19 @@ public class MovieToMpNfoConnector {
   }
 
   // inner class actor to represent movie sets
-  /**
-   * The Class MovieSets.
-   * 
-   * @author Manuel Laggner
-   */
   public static class MovieSets {
+    @XmlValue
+    public String name;
+    @XmlAttribute(name = "order")
+    public int    order;
 
-    /** The name. */
-    private String name;
-
-    /** The order. */
-    private int    order;
-
-    /**
-     * Instantiates a new movie sets.
-     */
     public MovieSets() {
 
     }
 
-    /**
-     * Instantiates a new movie sets.
-     * 
-     * @param name
-     *          the name
-     * @param order
-     *          the order
-     */
     public MovieSets(String name, int order) {
       this.name = name;
       this.order = order;
     }
-
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    @XmlValue
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Gets the order.
-     * 
-     * @return the order
-     */
-    @XmlAttribute(name = "order")
-    public int getOrder() {
-      return order;
-    }
-
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *          the new name
-     */
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    /**
-     * Sets the order.
-     * 
-     * @param order
-     *          the new order
-     */
-    public void setOrder(int order) {
-      this.order = order;
-    }
-
   }
 }

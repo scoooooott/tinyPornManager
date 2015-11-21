@@ -50,9 +50,9 @@ public class MovieProducer extends AbstractModelObject {
     this.name = name;
   }
 
-  public MovieProducer(String name, String character) {
+  public MovieProducer(String name, String role) {
     this.name = name;
-    this.role = character;
+    this.role = role;
   }
 
   public void setName(String newValue) {
