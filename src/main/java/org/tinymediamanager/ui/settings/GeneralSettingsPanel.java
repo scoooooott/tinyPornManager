@@ -426,13 +426,17 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   /**
    * Helper class for customized toString() method, to get the Name in localized language.
    */
-  private class LocaleComboBox {
+  public static class LocaleComboBox {
     private Locale       loc;
     private List<Locale> countries;
 
-    private LocaleComboBox(Locale loc) {
+    public LocaleComboBox(Locale loc) {
       this.loc = loc;
       countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase());
+    }
+
+    public Locale getLocale() {
+      return loc;
     }
 
     @Override

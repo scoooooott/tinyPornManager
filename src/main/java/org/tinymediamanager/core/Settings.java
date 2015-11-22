@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.io.IOUtils;
@@ -145,6 +146,8 @@ public class Settings extends AbstractModelObject {
   private boolean                     deleteTrashOnExit           = false;
 
   private PropertyChangeListener      propertyChangeListener;
+  @XmlTransient
+  public boolean                      newConfig                   = false;
 
   /**
    * Instantiates a new settings.
@@ -234,6 +237,7 @@ public class Settings extends AbstractModelObject {
         catch (Exception e) {
           LOGGER.warn("could not load settings - creating default ones...");
           Settings.instance = new Settings();
+          Settings.instance.newConfig = true;
           Settings.instance.settingsFolder = folder;
           Settings.instance.writeDefaultSettings();
         }
@@ -638,6 +642,8 @@ public class Settings extends AbstractModelObject {
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
     movieSettings.addMovieArtworkScraper(Constants.TMDB);
+
+    tvShowSettings.addTvShowArtworkScraper(Constants.TVDB);
 
     setProxyFromSystem();
 

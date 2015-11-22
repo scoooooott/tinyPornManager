@@ -461,6 +461,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     }
   }
 
+  /*
+   * inti data bindings
+   */
+  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieSettings.movieConnector");
     BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

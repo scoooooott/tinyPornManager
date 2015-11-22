@@ -64,6 +64,7 @@ import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
+import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
 import com.sun.jna.Platform;
 
@@ -307,6 +308,12 @@ public class TinyMediaManager {
 
             TmmWindowSaver.getInstance().loadSettings(window);
             window.setVisible(true);
+
+            // wizard for new user
+            if (Globals.settings.newConfig) {
+              TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
+              wizard.setVisible(true);
+            }
 
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
