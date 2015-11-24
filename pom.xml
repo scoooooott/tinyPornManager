@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.floreysoft</groupId>
@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2-mvstore</artifactId>
-			<version>1.4.188</version>
+			<version>1.4.190</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jtidy</groupId>
