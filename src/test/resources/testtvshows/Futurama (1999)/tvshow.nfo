@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:07 - tinyMediaManager SVN -->
+<tvshow>
+    <title>Futurama</title>
+    <sorttitle></sorttitle>
+    <year>1999</year>
+    <rating>9.2</rating>
+    <votes>0</votes>
+    <plot>A late 20th-century New York City pizza delivery boy, Philip J. Fry, after being unwittingly cryogenically frozen for one thousand years, finds employment at Planet Express, an interplanetary delivery company in the 31st century.</plot>
+    <mpaa>TV-14</mpaa>
+    <episodeguide>
+        <url cache="73871.xml">http://www.thetvdb.com/api/1D62F2F90030C444/series/73871/all/en.xml</url>
+    </episodeguide>
+    <id>73871</id>
+    <genre>Animation</genre>
+    <genre>Comedy</genre>
+    <genre>Science Fiction</genre>
+    <premiered>1999-03-28</premiered>
+    <status>Ended</status>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+</tvshow>

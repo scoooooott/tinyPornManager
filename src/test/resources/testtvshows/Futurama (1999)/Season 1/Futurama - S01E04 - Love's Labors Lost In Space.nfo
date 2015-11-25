@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>Love's Labors Lost In Space</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.3</rating>
+    <votes>0</votes>
+    <season>1</season>
+    <episode>4</episode>
+    <uniqueid>131177</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>On a mission intended to save endangered animals on a collapsing planet, Leela and the crew run into legendary starship captain Zapp Brannigan. A self-proclaimed ladies man, Zapp sees Leela as a potential new conquest. When the captain refuses to aid the animal rescue, Leela and her crew try to leave Zapp's starship. But Zapp throws Fry and Bender in jail, and summons Leela to his "Lovenasium". They ultimately escape and arrive on the doomed planet, where Leela finally finds love - with a cute, and very useful, creature named Nibbler.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Brian Kelley</credits>
+    <director>Brian Sheesley</director>
+    <aired>1999-04-13</aired>
+    <premiered>1999-04-13</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>David X. Cohen</name>
+    </actor>
+</episodedetails>

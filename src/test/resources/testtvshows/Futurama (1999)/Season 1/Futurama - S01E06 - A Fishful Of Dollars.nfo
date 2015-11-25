@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>A Fishful Of Dollars</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.5</rating>
+    <votes>0</votes>
+    <season>1</season>
+    <episode>6</episode>
+    <uniqueid>131179</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>A thousand years is a long time to save up money, and Fry's savings account has been racking up interest. When Fry discovers just how much - over 4 billion dollars - Fry goes a little overboard. After completely redecorating the apartment, splurging on expensive spa days and treating his friends to innumerable luxuries, Fry discovers the ultimate expense. Anchovies. This rare delicacy as been extinct for years, and Fry must battle the evil conglomerate known as Mom, plus Pamela Anderson Lee's head in a jar, to get them!</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Patric M. Verrone</credits>
+    <director>Ron Hughart</director>
+    <director>Gregg Vanzo</director>
+    <aired>1999-04-27</aired>
+    <premiered>1999-04-27</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Pamela Anderson</name>
+    </actor>
+    <actor>
+        <name>Byrne Offutt</name>
+    </actor>
+</episodedetails>

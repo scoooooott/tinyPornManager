@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:09 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>Space Pilot 3000</title>
+    <showtitle>Futurama</showtitle>
+    <rating>8.0</rating>
+    <votes>0</votes>
+    <season>1</season>
+    <episode>1</episode>
+    <uniqueid>131174</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>Fry, a 20th-century New-York pizza delivery boy receives a prank call and is frozen in a capsule and wakes up in year 2999. He meets an alien named Leela that wants to assign his permanent career... delivery boy. Fry refuses, so he escapes. He then meets Bender, a robot who likes to drink and has suicidal tendencies. Together, they start running away from Leela, arriving to the ruins of old New York. Leela finds them, but instead of inserting the permanent chip on Fry, she removes her own. All three go to Prof. Hubert Farnsworth's house, Fry's only living relative, becoming his new space crew.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Matt Groening</credits>
+    <credits>David X. Cohen</credits>
+    <director>Rich Moore</director>
+    <director>Gregg Vanzo</director>
+    <aired>1999-03-28</aired>
+    <premiered>1999-03-28</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Dick Clark</name>
+    </actor>
+    <actor>
+        <name>Leonard Nimoy</name>
+    </actor>
+    <actor>
+        <name>Byrne Offutt</name>
+    </actor>
+</episodedetails>

@@ -1,0 +1,18 @@
+Breaking Bad:
+- season 1 with a standard dir/file structure
+- season 2 with multi ep files
+- season 3 with multi file eps
+- season 4 with DVD/BD structure
+- season 5 with subfolders
+
+Firefly:
+- multi episode file
+- DVD order
+- no season folder (flat)
+
+Futurama:
+- messy/mixed setup (mixed file/folder structures)
+- season 1 with NFO/images
+- season 2 with NFO/images/samples/subs
+- season 3 with subfolders/images/subs
+

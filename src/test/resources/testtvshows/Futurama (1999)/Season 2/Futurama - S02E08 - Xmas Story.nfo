@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>Xmas Story</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.6</rating>
+    <votes>0</votes>
+    <season>2</season>
+    <episode>8</episode>
+    <uniqueid>131190</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>To apologize for an inconsiderate remark, Fry searches for the perfect Xmas gift for Leela, all the while trying to avoid the murderous SantaBot, whose standards for niceness are astronomically high.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>David X. Cohen</credits>
+    <director>Peter Avanzino</director>
+    <aired>1999-12-19</aired>
+    <premiered>1999-12-19</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Goodman</name>
+    </actor>
+    <actor>
+        <name>Conan O'Brien</name>
+    </actor>
+    <actor>
+        <name>Byrne Offutt</name>
+    </actor>
+</episodedetails>

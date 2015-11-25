@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>The Deep South</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.6</rating>
+    <votes>0</votes>
+    <season>2</season>
+    <episode>16</episode>
+    <uniqueid>131198</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>A fishing trip over the ocean takes a turn for the worse when a colossal mouth bass pulls the Planet Express ship to the bottom of the sea. There, Fry falls in love with a mermaid named Umbriel, and the crew discovers the sunken city of Atlanta, Georgia.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>J. Stewart Burns</credits>
+    <director>Bret Haaland</director>
+    <aired>2000-04-16</aired>
+    <premiered>2000-04-16</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Donovan</name>
+    </actor>
+    <actor>
+        <name>Parker Posey</name>
+    </actor>
+</episodedetails>

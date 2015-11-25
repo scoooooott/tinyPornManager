@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>Why Must I Be a Crustacean in Love</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.4</rating>
+    <votes>0</votes>
+    <season>2</season>
+    <episode>9</episode>
+    <uniqueid>131191</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>When Dr. Zoidberg runs amok during the Decapodian mating season, Fry sets out to teach him how to woo a mate. Things backfire when Zoidberg's desired mate falls for Fry instead, and Zoidberg challenges Fry to a battle to the death.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Eric Kaplan</credits>
+    <director>Brian Sheesley</director>
+    <aired>2000-02-06</aired>
+    <premiered>2000-02-06</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+</episodedetails>

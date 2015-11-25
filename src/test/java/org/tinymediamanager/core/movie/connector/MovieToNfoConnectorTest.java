@@ -36,6 +36,7 @@ public class MovieToNfoConnectorTest {
 
   @Test
   public void testKodiNfo() {
+    FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));
     try {
       Movie movie = createXbmcMovie();
 
@@ -75,8 +76,6 @@ public class MovieToNfoConnectorTest {
       // unmarshal it
       Movie newMovie = MovieToXbmcNfoConnector.getData(nfoFile);
       compareMovies(movie, newMovie);
-
-      FileUtils.deleteQuietly(nfoFile);
     }
     catch (Exception e) {
       fail(e.getMessage());
@@ -85,6 +84,7 @@ public class MovieToNfoConnectorTest {
 
   @Test
   public void testMediaPortalNfo() {
+    FileUtils.deleteQuietly(new File("target/test-classes/mp_nfo/"));
     try {
       Movie movie = createMpMovie();
 
@@ -112,8 +112,6 @@ public class MovieToNfoConnectorTest {
       // unmarshal it
       Movie newMovie = MovieToMpNfoConnector.getData(nfoFile);
       compareMovies(movie, newMovie);
-
-      FileUtils.deleteQuietly(nfoFile);
     }
     catch (Exception e) {
       fail(e.getMessage());
