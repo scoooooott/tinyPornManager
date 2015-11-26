@@ -252,28 +252,28 @@ public class Utils {
       // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)");
+      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)", Pattern.CASE_INSENSITIVE);
       Matcher m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
       }
 
       // <cd/dvd/part/pt/disk/disc> <a-d>
-      regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
       }
 
       // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
-      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3); // just return String w/o stacking
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
-      regex = Pattern.compile("(?i)(.*?)[ \\(_.-]*([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
@@ -294,8 +294,8 @@ public class Utils {
       // see http://kodi.wiki/view/Advancedsettings.xml#moviestacking
       // basically returning <regexp>(Title)(Volume)(Ignore)(Extension)</regexp>
 
-      // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$");
+      // <cd/dvd/part/pt/disk/disc> <0-N> // FIXME: check for first delimiter (optional/mandatory)!
+      Pattern regex = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$", Pattern.CASE_INSENSITIVE);
       Matcher m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
@@ -317,28 +317,28 @@ public class Utils {
       // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)");
+      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)", Pattern.CASE_INSENSITIVE);
       Matcher m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // <cd/dvd/part/pt/disk/disc> <a-d>
-      regex = Pattern.compile("(?i)(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
-      regex = Pattern.compile("(?i)(.*?)[ _.-]+([a-d])(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
-      regex = Pattern.compile("(?i)(.*?)[ \\(_.-]*([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$");
+      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
