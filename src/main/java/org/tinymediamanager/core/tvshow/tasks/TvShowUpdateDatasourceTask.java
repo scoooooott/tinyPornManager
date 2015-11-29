@@ -828,7 +828,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, firstVideoFile);
     if (episodes.size() == 0) {
       String relativePath = new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath();
-      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
+      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(firstVideoFile.getParentFile().getPath(),
+          tvShow.getTitle());
+      // EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
       if (result.season == -1) {
         // did the search find a season?

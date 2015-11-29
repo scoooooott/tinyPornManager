@@ -317,14 +317,14 @@ public class Utils {
       // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)", Pattern.CASE_INSENSITIVE);
+      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       Matcher m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // <cd/dvd/part/pt/disk/disc> <a-d>
-      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
@@ -338,7 +338,7 @@ public class Utils {
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
-      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
       m = regex.matcher(filename);
       if (m.matches()) {
         return m.group(2);
