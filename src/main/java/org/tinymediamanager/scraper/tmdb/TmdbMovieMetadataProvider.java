@@ -49,6 +49,7 @@ import com.uwetrottmann.tmdb.entities.ProductionCountry;
 import com.uwetrottmann.tmdb.entities.SpokenLanguage;
 import com.uwetrottmann.tmdb.entities.Videos;
 import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
+import com.uwetrottmann.tmdb.enumerations.ExternalSource;
 
 /**
  * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
@@ -336,7 +337,7 @@ class TmdbMovieMetadataProvider {
    *           any exception which can be thrown while scraping
    */
   int getTmdbIdFromImdbId(String imdbId) throws Exception {
-    FindResults findResults = api.findService().find(imdbId, null, null);
+    FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null);
     if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
       // and now get the full data
       return findResults.movie_results.get(0).id;
