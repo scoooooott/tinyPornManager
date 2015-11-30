@@ -339,7 +339,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     try {
       String option = options.getId(MediaMetadata.SEASON_NR);
-      if (option != null) {
+      if (option != null && !("-1".equals(option))) {
         seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
         episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
       }
