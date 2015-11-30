@@ -659,7 +659,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     Arrays.sort(content);
     for (File file : content) {
-      if (file.isFile()) {
+      // flat DVD structure
+      if (file.isFile() && (file.getName().toUpperCase().startsWith("VIDEO_TS") || file.getName().toUpperCase().startsWith("VTS_"))) {
+        findTvEpisodesAsDisc(tvShow, file.getParentFile());
+      }
+      // single files
+      else if (file.isFile()) {
         if (!file.getName().startsWith(skipFilesStartingWith)) {
           MediaFile mf = new MediaFile(file);
           // check filetype - we only proceed here if it's a video file
