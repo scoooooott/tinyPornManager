@@ -92,6 +92,10 @@ public class UtilsTest {
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-2.mkv"), ""); // do not detect - could be sequel in MMD
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-a.mkv"), "a");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-b.mkv"), "b");
+    assertEqual(Utils.getStackingMarker("Movie Name Part 4 (2013).mkv"), ""); // no inbetween matching
+    assertEqual(Utils.getStackingMarker("Movie Name CD 1 (2013).mkv"), ""); // no inbetween matching
+    assertEqual(Utils.getStackingMarker("Movie Name 3of4 (2013).mkv"), ""); // no inbetween matching
+    assertEqual(Utils.getStackingMarker("Movie Name Part 4 (2013)-Part 1.mkv"), "Part 1"); // no inbetween matching, but ending matching
 
     assertEqual(Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"), "dvd1"); // folder - check without extension
 
@@ -119,6 +123,7 @@ public class UtilsTest {
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013).disk3.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-cd 1.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-PaRt 1.mkv"), "Movie Name (2013).mkv");
+    assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-part a.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013) DvD 1.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013).disk 3.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-cd1.mkv"), "Movie Name (2013).mkv");

@@ -69,13 +69,31 @@ import org.tinymediamanager.ui.TmmWindowSaver;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Utils {
-  private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
-  private static final Pattern                      localePattern     = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
+  private static final Logger                       LOGGER                = LoggerFactory.getLogger(Utils.class);
+  private static final Pattern                      localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
       Pattern.CASE_INSENSITIVE);
-  /**
-   * Map of all known English/UserLocalized String to base locale, key is LOWERCASE
-   */
-  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP = generateSubtitleLanguageArray();
+  // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
+  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP     = generateSubtitleLanguageArray();
+
+  // <cd/dvd/part/pt/disk/disc> <0-N>
+  private static final Pattern                      stackingPattern1      = Pattern
+      .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+
+  // <cd/dvd/part/pt/disk/disc> <a-d>
+  private static final Pattern                      stackingPattern2      = Pattern
+      .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+
+  // moviename-a.avi // modified mandatory delimiter, and AD must be at end!
+  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$",
+      Pattern.CASE_INSENSITIVE);
+
+  // moviename-1of2.avi, moviename-1 of 2.avi
+  private static final Pattern                      stackingPattern4      = Pattern
+      .compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+
+  // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N>
+  private static final Pattern                      folderStackingPattern = Pattern
+      .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$", Pattern.CASE_INSENSITIVE);
 
   private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
     Map<String, Locale> langArray = new HashMap<String, Locale>();
@@ -252,31 +270,27 @@ public class Utils {
       // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(.*?)(\\.[^.]+)", Pattern.CASE_INSENSITIVE);
-      Matcher m = regex.matcher(filename);
+      Matcher m = stackingPattern1.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+        return m.group(1) + m.group(3); // just return String w/o stacking
       }
 
       // <cd/dvd/part/pt/disk/disc> <a-d>
-      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      m = stackingPattern2.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+        return m.group(1) + m.group(3); // just return String w/o stacking
       }
 
-      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
-      regex = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      // moviename-2.avi // modified mandatory delimiter, and AD must be at end!
+      m = stackingPattern3.matcher(filename);
       if (m.matches()) {
         return m.group(1) + m.group(3); // just return String w/o stacking
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
-      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ ]?of[ ]?[0-9])[ \\)_-]?(.*?)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      m = stackingPattern4.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3) + m.group(4); // just return String w/o stacking
+        return m.group(1) + m.group(3); // just return String w/o stacking
       }
     }
     return filename; // no cleanup, return 1:1
@@ -295,8 +309,7 @@ public class Utils {
       // basically returning <regexp>(Title)(Volume)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N> // FIXME: check for first delimiter (optional/mandatory)!
-      Pattern regex = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$", Pattern.CASE_INSENSITIVE);
-      Matcher m = regex.matcher(filename);
+      Matcher m = folderStackingPattern.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
@@ -317,29 +330,25 @@ public class Utils {
       // basically returning <regexp>(Title)(Stacking)(Ignore)(Extension)</regexp>
 
       // <cd/dvd/part/pt/disk/disc> <0-N>
-      Pattern regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      Matcher m = regex.matcher(filename);
+      Matcher m = stackingPattern1.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // <cd/dvd/part/pt/disk/disc> <a-d>
-      regex = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      m = stackingPattern2.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
-      // moviename-a-xvid.avi, moviename-b.avi // modified mandatory delimiter, and AD must be at end!
-      regex = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      // moviename-a.avi // modified mandatory delimiter, and AD must be at end!
+      m = stackingPattern3.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
 
       // moviename-1of2.avi, moviename-1 of 2.avi
-      regex = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-      m = regex.matcher(filename);
+      m = stackingPattern4.matcher(filename);
       if (m.matches()) {
         return m.group(2);
       }
