@@ -86,7 +86,7 @@ class TmdbTrailerProvider {
         }
         MediaTrailer trailer = new MediaTrailer();
         trailer.setName(video.name);
-        trailer.setQuality(String.valueOf(video.size));
+        trailer.setQuality(String.valueOf(video.size) + "p");
         trailer.setProvider(video.site);
         trailer.setUrl(video.key);
 
