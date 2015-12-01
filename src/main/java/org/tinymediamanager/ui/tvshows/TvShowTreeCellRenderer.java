@@ -68,8 +68,6 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
   private JLabel                      tvShowEpisodeSubtitleLabel = new JLabel();
 
   private DefaultTreeCellRenderer     defaultRenderer            = new DefaultTreeCellRenderer();
-  private final Color                 defaultColor               = tvShowTitle.getForeground();
-  private final Color                 newlyAddedColor            = new Color(76, 143, 72);
 
   /**
    * Instantiates a new tv show tree cell renderer.
