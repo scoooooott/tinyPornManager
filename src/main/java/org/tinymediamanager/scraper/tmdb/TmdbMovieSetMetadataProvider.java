@@ -15,19 +15,24 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.Collection;
 import com.uwetrottmann.tmdb.entities.CollectionResultsPage;
 import com.uwetrottmann.tmdb.entities.Part;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
-import org.tinymediamanager.scraper.util.ListUtils;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
@@ -35,7 +40,7 @@ import java.util.List;
 class TmdbMovieSetMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbMovieSetMetadataProvider.class);
 
-  private Tmdb api;
+  private Tmdb                api;
 
   public TmdbMovieSetMetadataProvider(Tmdb api) {
     this.api = api;
@@ -130,6 +135,7 @@ class TmdbMovieSetMetadataProvider {
 
       // if collection title/overview is not availbale, rescrape in en
       if (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) {
+        TmdbConnectionCounter.trackConnections();
         Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null);
 
         if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInEn.name)) {
@@ -145,20 +151,16 @@ class TmdbMovieSetMetadataProvider {
     md.setId(MediaMetadata.TMDB_SET, collection.id);
     md.storeMetadata(MediaMetadata.TITLE, collection.name);
     md.storeMetadata(MediaMetadata.PLOT, collection.overview);
-    md.storeMetadata(MediaMetadata.POSTER_URL,
-        TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
-    md.storeMetadata(MediaMetadata.BACKGROUND_URL,
-        TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
+    md.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
+    md.storeMetadata(MediaMetadata.BACKGROUND_URL, TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
 
     // add all movies belonging to this movie set
     for (Part part : ListUtils.nullSafe(collection.parts)) {
       MediaMetadata mdSubItem = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
       mdSubItem.setId(TmdbMetadataProvider.providerInfo.getId(), part.id);
       mdSubItem.storeMetadata(MediaMetadata.TITLE, part.title);
-      mdSubItem.storeMetadata(MediaMetadata.POSTER_URL,
-          TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
-      mdSubItem.storeMetadata(MediaMetadata.BACKGROUND_URL,
-          TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
+      mdSubItem.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
+      mdSubItem.storeMetadata(MediaMetadata.BACKGROUND_URL, TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
       mdSubItem.storeMetadata(MediaMetadata.RELEASE_DATE, part.release_date);
       md.addSubItem(mdSubItem);
     }

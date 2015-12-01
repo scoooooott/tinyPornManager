@@ -35,7 +35,7 @@ import com.uwetrottmann.tmdb.entities.Videos.Video;
 class TmdbTrailerProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTrailerProvider.class);
 
-  private Tmdb api;
+  private Tmdb                api;
 
   public TmdbTrailerProvider(Tmdb api) {
     this.api = api;
@@ -70,9 +70,10 @@ class TmdbTrailerProvider {
     LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
 
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       // get trailers from tmdb (with specified langu and without)
+      TmdbConnectionCounter.trackConnections();
       Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name());
+      TmdbConnectionCounter.trackConnections();
       Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "");
 
       List<Video> videos = new ArrayList<>();

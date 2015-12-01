@@ -261,13 +261,13 @@ class TmdbMovieMetadataProvider {
     LOGGER.debug("TMDB: getMetadata: tmdbId = " + tmdbId + "; imdbId = " + imdbId);
     Movie movie = null;
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       if (tmdbId == 0 && MetadataUtil.isValidImdbId(imdbId)) {
         try {
           // get the tmdbId via the imdbId
           int tempTmdbId = getTmdbIdFromImdbId(imdbId);
           if (tempTmdbId > 0) {
             // and now get the full data
+            TmdbConnectionCounter.trackConnections();
             movie = api.moviesService().summary(tempTmdbId, options.getLanguage().name(),
                 new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASES));
           }
@@ -280,6 +280,7 @@ class TmdbMovieMetadataProvider {
       }
       if (movie == null && tmdbId != 0) {
         try {
+          TmdbConnectionCounter.trackConnections();
           movie = api.moviesService().summary(tmdbId, options.getLanguage().name(),
               new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASES));
           // movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
@@ -337,6 +338,7 @@ class TmdbMovieMetadataProvider {
    *           any exception which can be thrown while scraping
    */
   int getTmdbIdFromImdbId(String imdbId) throws Exception {
+    TmdbConnectionCounter.trackConnections();
     FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null);
     if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
       // and now get the full data
@@ -378,9 +380,8 @@ class TmdbMovieMetadataProvider {
     List<Videos.Video> tmdbTrailers = new ArrayList<Videos.Video>();
 
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
-
       // get trailers from tmdb (with specified langu and without)
+      TmdbConnectionCounter.trackConnections();
       Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name());
       if (tmdbVideos != null) {
         for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
@@ -390,6 +391,7 @@ class TmdbMovieMetadataProvider {
         }
       }
 
+      TmdbConnectionCounter.trackConnections();
       Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, null);
       if (tmdbVideosWoLang != null) {
         for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {

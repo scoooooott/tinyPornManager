@@ -323,8 +323,8 @@ class TmdbTvShowMetadataProvider {
     // get the data from tmdb
     TvEpisode episode = null;
     synchronized (api) {
-      TmdbConnectionCounter.trackConnections();
       // get episode via season listing -> improves caching performance
+      TmdbConnectionCounter.trackConnections();
       TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null);
       if (fullSeason != null) {
         for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
