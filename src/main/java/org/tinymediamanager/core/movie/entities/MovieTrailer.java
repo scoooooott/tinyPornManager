@@ -17,6 +17,7 @@ package org.tinymediamanager.core.movie.entities;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -181,5 +182,27 @@ public class MovieTrailer extends AbstractModelObject implements Comparable<Movi
   @Override
   public int hashCode() {
     return this.getUrl().hashCode();
+  }
+
+  /**
+   * the comparator QualityComparator is used to sort the trailers on their quality to take the "best" one
+   */
+  public static class QualityComparator implements Comparator<MovieTrailer> {
+    @Override
+    public int compare(MovieTrailer o1, MovieTrailer o2) {
+      int quality1 = 0;
+      int quality2 = 0;
+      try {
+        quality1 = Integer.parseInt(o1.quality.replace("p", ""));
+      }
+      catch (Exception e) {
+      }
+      try {
+        quality2 = Integer.parseInt(o2.quality.replace("p", ""));
+      }
+      catch (Exception e) {
+      }
+      return quality2 - quality1;
+    }
   }
 }

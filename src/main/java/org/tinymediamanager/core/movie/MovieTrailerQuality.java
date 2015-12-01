@@ -28,9 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 public enum MovieTrailerQuality {
 
   //@formatter:off
-  SD("SD", Arrays.asList("480p")), 
-  HD_720("720p", Arrays.asList("HD", "720p")), 
-  HD_1080("1080p", Arrays.asList("HD", "1080p"));  // @formatter:on
+  SD("SD", Arrays.asList("SD", "480p", "360p", "225p", "180p", "135p", "90p")), 
+  HD_720("720p", Arrays.asList("HD", "720p", "720")), 
+  HD_1080("1080p", Arrays.asList("HD", "1080p", "1080"));  
+  // @formatter:on
 
   private String       displayText;
   private List<String> possibleQualities;
@@ -50,6 +51,22 @@ public enum MovieTrailerQuality {
       }
     }
     return false;
+  }
+
+  /**
+   * parse out the matching MovieTrailerQuality for the given string
+   * 
+   * @param quality
+   *          the given string
+   * @return the found quality or SD as fallback
+   */
+  public static MovieTrailerQuality getMovieTrailerQuality(String quality) {
+    for (MovieTrailerQuality q : MovieTrailerQuality.values()) {
+      if (q.containsQuality(quality)) {
+        return q;
+      }
+    }
+    return SD;
   }
 
   @Override
