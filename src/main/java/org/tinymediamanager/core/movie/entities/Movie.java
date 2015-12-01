@@ -1097,7 +1097,10 @@ public class Movie extends MediaEntity {
           if (!actorName.equals(actor.getThumbPath())) {
             // rename
             try {
-              FileUtils.moveFile(new File(actor.getThumbPath()), new File(actorName));
+              File oldFile = new File(actor.getThumbPath());
+              if (oldFile.exists()) {
+                FileUtils.moveFile(oldFile, new File(actorName));
+              }
             }
             catch (IOException e) {
               LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
