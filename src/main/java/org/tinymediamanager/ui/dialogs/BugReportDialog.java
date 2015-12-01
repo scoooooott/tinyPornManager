@@ -53,7 +53,6 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -86,21 +85,22 @@ public class BugReportDialog extends TmmDialog {
    */
   public BugReportDialog() {
     super(BUNDLE.getString("BugReport"), "bugReport"); //$NON-NLS-1$
-    setBounds(100, 100, 550, 470);
+    setBounds(100, 100, 600, 470);
 
-    getContentPane().setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    getContentPane().setLayout(
+        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, "2, 2, fill, fill");
     panelContent.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("250dlu:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+            RowSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
@@ -140,6 +140,14 @@ public class BugReportDialog extends TmmDialog {
     textPane.setText(BUNDLE.getString("BugReport.hint"));//$NON-NLS-1$
     textPane.setOpaque(false);
     panelContent.add(textPane, "2, 11, 3, 1, fill, fill");
+
+    final JLabel lblHintImage = new JLabel(IconManager.INFO);
+    panelContent.add(lblHintImage, "2, 13");
+
+    final JTextPane tpHint = new JTextPane();
+    tpHint.setOpaque(false);
+    tpHint.setText(BUNDLE.getString("BugReport.hint2"));//$NON-NLS-1$
+    panelContent.add(tpHint, "4, 13, fill, fill");
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
@@ -294,5 +302,10 @@ public class BugReportDialog extends TmmDialog {
     }
     Request request = new Request.Builder().url(url).post(multipartBuilder.build()).build();
     client.newCall(request).execute();
+  }
+
+  @Override
+  public void pack() {
+    // pack will mess this dialog up
   }
 }
