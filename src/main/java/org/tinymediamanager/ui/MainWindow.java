@@ -30,7 +30,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -95,9 +94,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.sun.jna.Platform;
 
-import ch.swingfx.twinkle.NotificationBuilder;
-import ch.swingfx.twinkle.window.Positions;
-
 /**
  * The Class MainWindow.
  * 
@@ -119,8 +115,6 @@ public class MainWindow extends JFrame {
   private JPanel                      panelMovieSets;
   private JPanel                      panelTvShows;
   private JPanel                      panelStatusBar;
-
-  private List<String>                messagesList;
 
   /**
    * Create the application.
@@ -208,8 +202,7 @@ public class MainWindow extends JFrame {
     tmmMessages.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        JDialog messageDialog = new MessageHistoryDialog();
-        messageDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        JDialog messageDialog = MessageHistoryDialog.getInstance();
         messageDialog.setVisible(true);
       }
     });
@@ -387,7 +380,7 @@ public class MainWindow extends JFrame {
         closeTmm();
       }
     });
-    MessageManager.instance.addListener(new UIMessageListener());
+
     MessageManager.instance.addListener(TmmUIMessageCollector.instance);
 
     // mouse event listener for context menu
@@ -502,26 +495,6 @@ public class MainWindow extends JFrame {
    */
   public static JFrame getFrame() {
     return instance;
-  }
-
-  public void addMessage(String title, String message) {
-    if (Globals.settings.isShowNotifications()) {
-      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-          .withPosition(Positions.SOUTH_EAST);
-      builder.showNotification();
-    }
-  }
-
-  public void addMessage(MessageLevel level, String title, String message) {
-    if (Globals.settings.isShowNotifications()) {
-      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-          .withPosition(Positions.SOUTH_EAST).withIcon(IconManager.ERROR);
-      builder.showNotification();
-    }
-
-    if (messagesList != null) {
-      messagesList.add(message + ": " + title);
-    }
   }
 
   public void createLightbox(String pathToFile, String urlToFile) {

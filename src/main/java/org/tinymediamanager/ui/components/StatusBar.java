@@ -24,12 +24,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -49,10 +53,13 @@ import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmUIMessageCollector;
+import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -62,6 +69,10 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class StatusBar extends JPanel implements TmmTaskListener {
   private static final long                     serialVersionUID = -6375900257553323558L;
+  /**
+   * @wbp.nls.resourceBundle messages
+   */
+  private static final ResourceBundle           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Map<TmmTaskHandle, TaskListComponent> taskMap;
   private TmmTaskHandle                         activeTask;
@@ -73,13 +84,20 @@ public class StatusBar extends JPanel implements TmmTaskListener {
   private JPopupMenu                            popup;
   private PopupPane                             pane;
 
-  private final int                             preferredHeight;
+  private int                                   preferredHeight;
+  private JButton                               btnNotifications;
 
   public StatusBar() {
+    initComponents();
+  }
+
+  private void initComponents() {
     taskMap = new HashMap<TmmTaskHandle, TaskListComponent>();
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
 
     label = new JLabel();
     bar = new JProgressBar();
@@ -125,6 +143,54 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     popup.add(pane);
 
     TmmTaskManager.getInstance().addTaskListener(this);
+
+    btnNotifications = new JButton(IconManager.INFO);
+    btnNotifications.setBorderPainted(false);
+    btnNotifications.setOpaque(false);
+    btnNotifications.setContentAreaFilled(false);
+    btnNotifications.setBorder(BorderFactory.createEmptyBorder());
+    btnNotifications.setFocusPainted(false);
+    btnNotifications.setVisible(false);
+    btnNotifications.setEnabled(false);
+    btnNotifications.setToolTipText(BUNDLE.getString("notifications.new")); //$NON-NLS-1$
+    btnNotifications.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    btnNotifications.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        MessageHistoryDialog dialog = MessageHistoryDialog.getInstance();
+        dialog.setVisible(true);
+      }
+    });
+    add(btnNotifications, "9, 1");
+
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if ("messages".equals(evt.getPropertyName())) {
+          if (TmmUIMessageCollector.instance.getNewMessagesCount() > 0) {
+            btnNotifications.setVisible(true);
+            btnNotifications.setEnabled(true);
+            btnNotifications.setText("" + TmmUIMessageCollector.instance.getNewMessagesCount());
+          }
+          else {
+            btnNotifications.setVisible(false);
+            btnNotifications.setEnabled(false);
+          }
+          btnNotifications.repaint();
+        }
+      }
+    };
+    TmmUIMessageCollector.instance.addPropertyChangeListener(propertyChangeListener);
   }
 
   public void showPopup() {

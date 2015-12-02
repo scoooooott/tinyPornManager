@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.Date;
+
 /**
  * The Class Message, used to transport messages inside tmm.
  * 
@@ -30,6 +32,7 @@ public class Message {
   private String[]     messageIdParams;
   private Object       messageSender;
   private String[]     messageSenderParams;
+  private Date         messageDate;
 
   /**
    * Instantiates a new message.
@@ -119,6 +122,7 @@ public class Message {
     messageId = id;
     messageIdParams = idParams;
     messageSenderParams = senderParams;
+    messageDate = new Date();
   }
 
   public String getMessageId() {
@@ -139,5 +143,9 @@ public class Message {
 
   public String[] getIdParams() {
     return messageIdParams;
+  }
+
+  public Date getMessageDate() {
+    return messageDate;
   }
 }

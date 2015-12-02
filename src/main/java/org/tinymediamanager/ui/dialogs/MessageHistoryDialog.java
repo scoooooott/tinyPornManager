@@ -20,95 +20,91 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIMessageCollector;
+import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.panels.MessagePanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 
 /**
  * The class MessageHistoryDialog is used to display a history of all messages in a window
  * 
  * @author Manuel Laggner
  */
-public class MessageHistoryDialog extends TmmDialog implements ActionListener {
+public class MessageHistoryDialog extends TmmDialog {
   private static final long           serialVersionUID = -5054005564554148578L;
   /**
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MessageHistoryDialog.class);
-  private static final int            REFRESH_PERIOD   = 1000;
+  private static MessageHistoryDialog instance;
 
-  private JTextArea                   taMessages;
-
-  private int                         logByteCount     = 0;
-  private final Timer                 timerRefresh;
-
-  public MessageHistoryDialog() {
+  private MessageHistoryDialog() {
     super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
-    setBounds(5, 5, 1000, 590);
-
-    timerRefresh = new Timer(REFRESH_PERIOD, this);
-    timerRefresh.setInitialDelay(0);
+    setModal(false);
+    setModalityType(ModalityType.MODELESS);
 
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     getContentPane().add(scrollPane, "2, 2, fill, fill");
 
-    taMessages = new JTextArea();
-    scrollPane.setViewportView(taMessages);
-    taMessages.setEditable(false);
-    taMessages.setWrapStyleWord(true);
-    taMessages.setLineWrap(true);
+    DefaultEventListModel<Message> messageListModel = new DefaultEventListModel<>(TmmUIMessageCollector.instance.getMessages());
+    @SuppressWarnings("unchecked")
+    final JList<Message> listMessages = new JList<>(messageListModel);
+    listMessages.setCellRenderer(new MessagePanel());
+    scrollPane.setViewportView(listMessages);
 
-    taMessages.setText(TmmUIMessageCollector.instance.getMessagesAsString());
-    {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          setVisible(false);
-        }
-      });
-      getContentPane().add(btnClose, "2, 4, right, default");
+    final JPanel panelButtons = new JPanel();
+    EqualsLayout layout = new EqualsLayout(5);
+    layout.setMinWidth(100);
+    panelButtons.setLayout(layout);
+    getContentPane().add(panelButtons, "2, 4, fill, fill");
+
+    JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+    panelButtons.add(btnClose);
+    btnClose.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        TmmUIMessageCollector.instance.resetNewMessageCount();
+        setVisible(false);
+      }
+    });
+  }
+
+  public static MessageHistoryDialog getInstance() {
+    if (instance == null) {
+      instance = new MessageHistoryDialog();
     }
-    timerRefresh.start();
+    return instance;
   }
 
   @Override
-  public void actionPerformed(ActionEvent ae) {
-    if (ae.getSource() == timerRefresh) {
-      String messages = TmmUIMessageCollector.instance.getMessagesAsString();
-      messages = messages.replace(taMessages.getText(), "");
-
-      final Document doc = taMessages.getDocument();
-      try {
-        doc.insertString(doc.getLength(), messages, null);
-      }
-      catch (BadLocationException ble) {
-        LOGGER.error("bad location: ", ble);
-      }
-      taMessages.setCaretPosition(taMessages.getText().length());
+  public void setVisible(boolean visible) {
+    if (visible) {
+      TmmWindowSaver.getInstance().loadSettings(this);
+      pack();
+      setLocationRelativeTo(MainWindow.getActiveInstance());
+      super.setVisible(true);
     }
-  }
-
-  @Override
-  public void pack() {
-    // do not let it pack - it looks weird
+    else {
+      super.setVisible(false);
+    }
   }
 }

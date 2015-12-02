@@ -137,7 +137,6 @@ public class Settings extends AbstractModelObject {
 
   // language 2 char - saved to config
   private String                      language;
-  private boolean                     showNotifications           = true;
   private String                      mediaPlayer                 = "";
 
   private int                         fontSize                    = 12;
@@ -968,16 +967,6 @@ public class Settings extends AbstractModelObject {
 
   public List<WolDevice> getWolDevices() {
     return wolDevices;
-  }
-
-  public void setShowNotifications(boolean newValue) {
-    boolean oldValue = showNotifications;
-    showNotifications = newValue;
-    firePropertyChange(SHOW_NOTIFICATIONS, oldValue, newValue);
-  }
-
-  public boolean isShowNotifications() {
-    return showNotifications;
   }
 
   @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
