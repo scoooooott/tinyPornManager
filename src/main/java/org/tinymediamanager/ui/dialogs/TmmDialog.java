@@ -22,6 +22,7 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
@@ -38,6 +39,15 @@ public abstract class TmmDialog extends JDialog {
 
   public TmmDialog(String title, String id) {
     super();
+    setTitle(title);
+    setName(id);
+    setIconImage(MainWindow.LOGO);
+    setModal(true);
+    setModalityType(ModalityType.APPLICATION_MODAL);
+  }
+
+  public TmmDialog(JFrame owner, String title, String id) {
+    super(owner);
     setTitle(title);
     setName(id);
     setIconImage(MainWindow.LOGO);
