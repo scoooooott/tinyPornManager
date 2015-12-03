@@ -189,8 +189,13 @@ public class ParserUtils {
    * @return the cleaned one
    */
   public static String removeStopwordsFromTvEpisodeName(String filename) {
+    String before = filename;
     for (String s : stopwords) {
-      filename = filename.replaceAll("(?i)\\W" + s, ""); // stopword must start with a non-word (else too global)
+      filename = filename.replaceAll("(?i)\\W" + s + "\\W", ""); // TV stopwords must start AND END with a non-word (else too global)
+      if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
+        LOGGER.trace("Removed some TV stopword (" + s + "): " + before + " -> " + filename);
+        before = filename;
+      }
     }
     return filename;
   }
