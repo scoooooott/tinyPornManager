@@ -175,7 +175,21 @@ public class TvShowEpisodeAndSeasonParser {
         result.season = s;
         return result;
       }
-    }
+      else {
+        // check if we have at least 2 subsequent numbers - parse this as episode
+        regex = numbers2Pattern;
+        m = regex.matcher(basename);
+        if (m.find()) {
+          // Filename contains only 2 subsequent numbers; parse this as EE
+          int ep = Integer.parseInt(m.group(1));
+          if (ep > 0 && !result.episodes.contains(ep)) {
+            result.episodes.add(ep);
+            LOGGER.trace("add found EP " + ep);
+          }
+          // return result; // do NOT return here, although we have 3 numbers (2 subsequent) we might parse the correct season later
+        }
+      }
+    } // FIXME: what if we have
     else if (numbers.length() == 2) { // eg 01
       regex = numbers2Pattern;
       m = regex.matcher(basename);

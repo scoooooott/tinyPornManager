@@ -114,7 +114,7 @@ public class TvShowTest {
 
     // ************************************************************************
     // various real world examples
-    Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen [2001]"));
+    Assert.assertEquals("S:1 E:4", detectEpisode("Season 1/04 Charlie Has Cancer-1.mp4"));
     Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen (2001)"));
     Assert.assertEquals("S:1 E:25", detectEpisode("Cowboy Bebop - S01E25 - The Real Folk Blues Part II.mkv")); // roman mixed with normal
     Assert.assertEquals("S:1 E:3", detectEpisode("The.Odd.Couple.2015.S01E03.720p.HDTV"));
