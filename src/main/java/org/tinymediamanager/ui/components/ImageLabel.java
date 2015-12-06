@@ -23,6 +23,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -287,7 +288,8 @@ public class ImageLabel extends JLabel {
       if (!getParent().isOpaque()) {
         text = "";
       }
-      Graphics2D g2 = (Graphics2D) g;
+      Graphics2D g2 = (Graphics2D) g.create();
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       AffineTransform orig = g2.getTransform();
       AffineTransform at = new AffineTransform(orig);
       at.translate(0, this.getHeight());
