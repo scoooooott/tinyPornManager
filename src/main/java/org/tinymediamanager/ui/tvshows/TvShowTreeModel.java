@@ -176,7 +176,12 @@ public class TvShowTreeModel implements TreeModel {
       if (index > -1) {
         TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { tvShow });
         for (TreeModelListener listener : listeners) {
-          listener.treeNodesInserted(event);
+          // catch problems with adding new nodes in a filtered tree
+          try {
+            listener.treeNodesInserted(event);
+          }
+          catch (NullPointerException npe) {
+          }
         }
       }
     }
@@ -211,7 +216,12 @@ public class TvShowTreeModel implements TreeModel {
         if (index > -1) {
           TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
           for (TreeModelListener listener : listeners) {
-            listener.treeNodesRemoved(event);
+            // catch problems with removing nodes in a filtered tree
+            try {
+              listener.treeNodesRemoved(event);
+            }
+            catch (NullPointerException npe) {
+            }
           }
         }
       }
@@ -242,14 +252,24 @@ public class TvShowTreeModel implements TreeModel {
       if (index > -1) {
         TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
         for (TreeModelListener listener : listeners) {
-          listener.treeNodesInserted(event);
+          // catch problems with adding new nodes in a filtered tree
+          try {
+            listener.treeNodesInserted(event);
+          }
+          catch (NullPointerException npe) {
+          }
         }
       }
 
       // inform listeners (root - to update the sum)
       TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
       for (TreeModelListener listener : listeners) {
-        listener.treeNodesChanged(event);
+        // catch problems with changing nodes in a filtered tree
+        try {
+          listener.treeNodesChanged(event);
+        }
+        catch (NullPointerException npe) {
+        }
       }
     }
     // }
@@ -283,14 +303,24 @@ public class TvShowTreeModel implements TreeModel {
         if (index > -1) {
           TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
           for (TreeModelListener listener : listeners) {
-            listener.treeNodesInserted(event);
+            // catch problems with adding new nodes in a filtered tree
+            try {
+              listener.treeNodesInserted(event);
+            }
+            catch (NullPointerException npe) {
+            }
           }
         }
 
         // inform listeners (root - to update the sum)
         TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
         for (TreeModelListener listener : listeners) {
-          listener.treeNodesChanged(event);
+          // catch problems with changing nodes in a filtered tree
+          try {
+            listener.treeNodesChanged(event);
+          }
+          catch (NullPointerException npe) {
+          }
         }
       }
     }
@@ -324,7 +354,12 @@ public class TvShowTreeModel implements TreeModel {
         if (index > -1) {
           TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
           for (TreeModelListener listener : listeners) {
-            listener.treeNodesRemoved(event);
+            // catch problems with removing nodes in a filtered tree
+            try {
+              listener.treeNodesRemoved(event);
+            }
+            catch (NullPointerException npe) {
+            }
           }
         }
 
@@ -367,7 +402,12 @@ public class TvShowTreeModel implements TreeModel {
         if (index > -1) {
           TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
           for (TreeModelListener listener : listeners) {
-            listener.treeNodesRemoved(event);
+            // catch problems with removing nodes in a filtered tree
+            try {
+              listener.treeNodesRemoved(event);
+            }
+            catch (NullPointerException npe) {
+            }
           }
         }
       }
