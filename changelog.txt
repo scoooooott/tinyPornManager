@@ -12,7 +12,8 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
   scrapers less complex and opens the scraper interface to other developers
 
 + added a basic setup wizard for new installations
-+ better detection of "stacking" markers
++ better detection of "stacking" markers (CD1, part1, ...)
++ added support excluding folder from scan (via a file .tmmignore or tmmignore and settings)
 + rewrote all scrapers from scratch (including optimizations and bug fixes)
 + added a very special scraper for all that who have Kodi installed ;) (donator only)
 + assign movie sets feature is now free for all (dropped donator only status)
@@ -32,15 +33,23 @@ With the update to 2.7 there are massive changes under the hood of tinyMediaMana
 + changed behavior of the _new_ state: it will now be dropped at the next update data source  
   the new indicator changed from the green font to an icon
 + added media source to NFO
+x fixed invoking the specified media player on OSX
+x included mediainfo fix for all platforms
+x changed the style of notifications to be less intrusive 
 x changed NFO rewriting behavior to be less aggressive
 x prevent setting incomplete meta data when scraping was not successful
 x adding special characters to the sort title prefixes is now possible
 x several fixes in the movie renamer               
 x reworked internal representation of artwork file names/url
-  (high performance boost for movie sets) 
+  (high performance boost for movie sets)  
+x changed bug reporting system 
 x reworked movie name detection  
+x reworked episode number detection
 x enhanced detection of extras (samples, trailers, ..)
 x updated all templates to our actual data model and JMTE 3.2
+x tweaked "best-trailer" detection
+x fixed auto complete combox
+x fixed scraping episodes with DVD ordering
 x fixed special character handling of sort titles
 x fixed real offline startup
 x fixed cleanup on artwork scraping
