@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -66,6 +67,7 @@ public class TvShowSeason extends AbstractModelObject {
 
   public void addEpisode(TvShowEpisode episode) {
     episodes.add(episode);
+    Collections.sort(episodes);
     episode.addPropertyChangeListener(listener);
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
