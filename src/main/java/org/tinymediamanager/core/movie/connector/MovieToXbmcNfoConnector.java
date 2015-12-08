@@ -122,6 +122,7 @@ public class MovieToXbmcNfoConnector {
   public Fileinfo              fileinfo;
   public boolean               watched               = false;
   public int                   playcount             = 0;
+  @XmlElement(name = "genre")
   public List<String>          genres;
   public String                studio                = "";
   public List<String>          credits;
