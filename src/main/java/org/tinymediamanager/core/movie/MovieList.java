@@ -20,6 +20,8 @@ import static org.tinymediamanager.core.Constants.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -415,11 +417,24 @@ public class MovieList extends AbstractModelObject {
    * @param path
    *          the path
    * @return the movie by path
+   * @deprecated use Java7 getMovieByPath(Path path) instead.
    */
+  @Deprecated
   public synchronized Movie getMovieByPath(File path) {
+    return getMovieByPath(path.toPath());
+  }
+
+  /**
+   * Gets the movie by path.
+   * 
+   * @param path
+   *          the path
+   * @return the movie by path
+   */
+  public synchronized Movie getMovieByPath(Path path) {
 
     for (Movie movie : movieList) {
-      if (new File(movie.getPath()).compareTo(path) == 0) {
+      if (Paths.get(movie.getPath()).compareTo(path) == 0) {
         LOGGER.debug("Ok, found already existing movie '" + movie.getTitle() + "' in DB (path: " + path + ")");
         return movie;
       }
@@ -434,11 +449,24 @@ public class MovieList extends AbstractModelObject {
    * @param path
    *          the path
    * @return the movie list
+   * @deprecated use Java7 getMoviesByPath(Path path) instead.
    */
+  @Deprecated
   public synchronized List<Movie> getMoviesByPath(File path) {
+    return getMoviesByPath(path.toPath());
+  }
+
+  /**
+   * Gets a list of movies by same path.
+   * 
+   * @param path
+   *          the path
+   * @return the movie list
+   */
+  public synchronized List<Movie> getMoviesByPath(Path path) {
     ArrayList<Movie> movies = new ArrayList<Movie>();
     for (Movie movie : movieList) {
-      if (new File(movie.getPath()).compareTo(path) == 0) {
+      if (Paths.get(movie.getPath()).compareTo(path) == 0) {
         movies.add(movie);
       }
     }
