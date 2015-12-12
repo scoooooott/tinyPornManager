@@ -23,8 +23,8 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 
 public class IconManager {
-  private final static ImageIcon           EMPTY_IMAGE       = new ImageIcon(IconManager.class.getResource("images/empty.png"));
   private final static Map<URI, ImageIcon> ICON_CACHE        = new HashMap<>();
+  public final static ImageIcon            EMPTY_IMAGE       = new ImageIcon(IconManager.class.getResource("images/empty.png"));
 
   public final static ImageIcon            APPLY             = loadImage("apply.png");
   public final static ImageIcon            ARROW_UP          = loadImage("arrow-up.png");

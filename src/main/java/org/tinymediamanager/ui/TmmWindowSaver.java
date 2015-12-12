@@ -40,7 +40,7 @@ import javax.swing.JFrame;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
@@ -60,7 +60,7 @@ public class TmmWindowSaver implements AWTEventListener {
 
     InputStream input = null;
     try {
-      input = new FileInputStream(new File(Constants.CONFIG_FOLDER, PROPERTIES_FILE));
+      input = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), PROPERTIES_FILE));
       properties.load(input);
     }
     catch (FileNotFoundException e) {
@@ -89,7 +89,7 @@ public class TmmWindowSaver implements AWTEventListener {
   private void writeProperties() {
     OutputStream output = null;
     try {
-      output = new FileOutputStream(new File(Constants.CONFIG_FOLDER, PROPERTIES_FILE));
+      output = new FileOutputStream(new File(Settings.getInstance().getSettingsFolder(), PROPERTIES_FILE));
       Properties tmp = new Properties() {
         private static final long serialVersionUID = 1L;
 

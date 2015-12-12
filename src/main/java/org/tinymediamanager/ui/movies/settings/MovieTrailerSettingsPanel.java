@@ -63,8 +63,8 @@ import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
-import org.tinymediamanager.ui.components.ScrollablePanel;
+import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;

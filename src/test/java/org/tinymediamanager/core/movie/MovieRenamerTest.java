@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 public class MovieRenamerTest {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamerTest.class);
@@ -59,6 +61,21 @@ public class MovieRenamerTest {
   }
 
   @Test
+  public void testRename() {
+    MediaInfoUtils.loadMediaInfo();
+
+    Movie m = new Movie();
+    m.setTitle("The Dish");
+    m.setYear("2000");
+    MediaFile mf = new MediaFile(new File("target/test-classes/samples", "thx_scarface-DWEU.vob"));
+    mf.gatherMediaInformation();
+    m.addToMediaFiles(mf);
+
+    Assert.assertEquals("The Dish (2000) MPEG-480p AC3-6ch", MovieRenamer.createDestinationForFilename("$T ($Y) $V $A", m));
+    Assert.assertEquals("The Dish (2000)", MovieRenamer.createDestinationForFoldername("$T ($Y)", m));
+  }
+
+  @Test
   public void checkDiff() {
     try {
       TmmModuleManager.getInstance().startUp();
@@ -84,7 +101,7 @@ public class MovieRenamerTest {
           newFiles.add(ftr);
           if (newVideoFileName.isEmpty()) {
             // so remember first renamed video file basename (w/o stacking or extension)
-            newVideoFileName = Utils.cleanStackingMarkers(ftr.getBasename());
+            newVideoFileName = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
           }
         }
 

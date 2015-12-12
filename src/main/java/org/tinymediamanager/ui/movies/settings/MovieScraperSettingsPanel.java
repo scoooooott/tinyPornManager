@@ -61,16 +61,16 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
-import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
+import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -318,7 +318,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   /*****************************************************************************************************
    * helper classes
    ****************************************************************************************************/
-  public class MovieScraper extends AbstractModelObject {
+  public static class MovieScraper extends AbstractModelObject {
     private MediaScraper scraper;
     private Icon         scraperLogo;
     private boolean      defaultScraper;
@@ -361,7 +361,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     private ImageIcon getScaledIcon(ImageIcon original) {
       Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(getFont());
+      FontMetrics fm = c.getFontMetrics(new JPanel().getFont());
 
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;

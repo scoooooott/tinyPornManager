@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.components.MediaFilesPanel;
+import org.tinymediamanager.ui.panels.MediaFilesPanel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;

@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -134,7 +135,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     try {
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
       start();
 
       // cleanup newlyadded for a new UDS run
@@ -156,8 +158,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // update TV show
         updateTvShows();
       }
-      long end = System.currentTimeMillis();
-      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.info("Done updating datasource :) - took " + stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -202,7 +204,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (subdir.isDirectory()) {
           // check if there is a .tmmignore in this directory
           File tmmIgnore = new File(subdir, ".tmmignore");
-          if (!tmmIgnore.exists()) {
+          File tmmIgnore2 = new File(subdir, "tmmignore");
+          if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
             submitTask(new FindTvShowTask(subdir, path));
           }
         }
@@ -656,7 +659,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     Arrays.sort(content);
     for (File file : content) {
-      if (file.isFile()) {
+      // flat DVD structure
+      if (file.isFile() && (file.getName().toUpperCase().startsWith("VIDEO_TS") || file.getName().toUpperCase().startsWith("VTS_"))) {
+        findTvEpisodesAsDisc(tvShow, file.getParentFile());
+      }
+      // single files
+      else if (file.isFile()) {
         if (!file.getName().startsWith(skipFilesStartingWith)) {
           MediaFile mf = new MediaFile(file);
           // check filetype - we only proceed here if it's a video file
@@ -768,7 +776,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
-        if (!tmmIgnore.exists()) {
+        File tmmIgnore2 = new File(file, "tmmignore");
+        if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
           // dig deeper
           if (file.getName().toUpperCase().equals("VIDEO_TS")) {
             findTvEpisodesAsDisc(tvShow, file);
@@ -824,7 +833,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, firstVideoFile);
     if (episodes.size() == 0) {
       String relativePath = new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath();
-      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
+      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(firstVideoFile.getParentFile().getPath(),
+          tvShow.getTitle());
+      // EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
       if (result.season == -1) {
         // did the search find a season?
@@ -953,9 +964,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // check if it is a poster
         if (mf.getType() == MediaFileType.GRAPHIC) {
           LOGGER.debug("parsing unknown graphic " + mf.getFilename());
-          String vfilename = FilenameUtils.getBaseName(videoFile.getName());
-          if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
-              || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
+          String vfilename = videoFile.getName();
+          if (FilenameUtils.getBaseName(vfilename).equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
+              || FilenameUtils.getBaseName(Utils.cleanStackingMarkers(vfilename)).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename
+                                                                                                                                             // w/o
+                                                                                                                                             // stacking
               || episode.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
             mf.setType(MediaFileType.THUMB);
           }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2015-09-29 14:45:10 - tinyMediaManager SVN -->
+<episodedetails>
+    <title>A Big Piece Of Garbage</title>
+    <showtitle>Futurama</showtitle>
+    <rating>7.4</rating>
+    <votes>0</votes>
+    <season>1</season>
+    <episode>8</episode>
+    <uniqueid>131181</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>A big piece of garbage that was released a thousand years ago is now on the way to Earth to destroy it. After Fry, Leela and Bender fail on placing a bomb on it, the city has to build another big piece of garbage, yet that may be a problem since trash doesn't exist in year 3000.</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Lewis Morton</credits>
+    <director>Susie Dietter</director>
+    <aired>1999-05-11</aired>
+    <premiered>1999-05-11</premiered>
+    <studio>Comedy Central</studio>
+    <actor>
+        <name>Billy West</name>
+        <role>Phillip J. Fry|Hubert J. Farnsworth|Zapp Brannigan|Zoidberg</role>
+        <thumb>http://thetvdb.com/banners/actors/28873.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Katey Sagal</name>
+        <role>Turanga Leela</role>
+        <thumb>http://thetvdb.com/banners/actors/28868.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John Di Maggio</name>
+        <role>Bender</role>
+        <thumb>http://thetvdb.com/banners/actors/28874.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Phil LaMarr</name>
+        <role>Hermes Conrad</role>
+        <thumb>http://thetvdb.com/banners/actors/28875.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Lauren Tom</name>
+        <role>Amy Wong</role>
+        <thumb>http://thetvdb.com/banners/actors/28872.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Ron Popeil</name>
+    </actor>
+    <actor>
+        <name>Nancy Cartwright</name>
+    </actor>
+    <actor>
+        <name>Byrne Offutt</name>
+    </actor>
+</episodedetails>

@@ -66,13 +66,14 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
-import org.tinymediamanager.ui.components.ScrollablePanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.sun.jna.Platform;
 
 /**
  * The Class GeneralSettingsPanel.
@@ -105,7 +106,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JLabel                      lblUiLanguage;
   private JComboBox                   cbLanguage;
   private JLabel                      lblLanguageHint;
-  private JCheckBox                   chckbxShowNotifications;
   private JPanel                      panelMediaPlayer;
   private JTextField                  tfMediaPlayer;
   private JButton                     btnSearchMediaPlayer;
@@ -149,7 +149,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
     LocaleComboBox actualLocale = null;
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
     Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
@@ -172,7 +172,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     JSeparator separator = new JSeparator();
     separator.setOrientation(SwingConstants.VERTICAL);
-    panelUI.add(separator, "8, 2, 1, 9");
+    panelUI.add(separator, "8, 2, 1, 7");
 
     lblFontFamily = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
     panelUI.add(lblFontFamily, "10, 2, right, default");
@@ -232,16 +232,13 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
     panelUI.add(tpFontHint, "10, 6, 5, 1");
 
-    chckbxShowNotifications = new JCheckBox(BUNDLE.getString("Settings.shownotifications")); //$NON-NLS-1$
-    panelUI.add(chckbxShowNotifications, "2, 8, 5, 1");
-
     lblLanguageHint = new JLabel("");
     TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
-    panelUI.add(lblLanguageHint, "2, 10, 5, 1");
+    panelUI.add(lblLanguageHint, "2, 8, 5, 1");
 
     lblFontChangeHint = new JLabel("");
     TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-    panelUI.add(lblFontChangeHint, "10, 10, 5, 1");
+    panelUI.add(lblFontChangeHint, "10, 8, 5, 1");
 
     panelMemory = new JPanel();
     panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -373,7 +370,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isFile()) {
+        if (file != null && file.exists() && (file.isFile() || Platform.isMac())) {
           tfMediaPlayer.setText(file.getPath());
         }
       }
@@ -425,13 +422,17 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   /**
    * Helper class for customized toString() method, to get the Name in localized language.
    */
-  private class LocaleComboBox {
+  public static class LocaleComboBox {
     private Locale       loc;
     private List<Locale> countries;
 
-    private LocaleComboBox(Locale loc) {
+    public LocaleComboBox(Locale loc) {
       this.loc = loc;
       countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase());
+    }
+
+    public Locale getLocale() {
+      return loc;
     }
 
     @Override
@@ -582,11 +583,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_7.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("showNotifications");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_5, chckbxShowNotifications, jCheckBoxBeanProperty);
-    autoBinding_8.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_6 = BeanProperty.create("mediaPlayer");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");

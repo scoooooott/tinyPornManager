@@ -81,7 +81,7 @@ public class TmmUIHelper {
     String fileType = "." + FilenameUtils.getExtension(file.getName());
     if (StringUtils.isNotBlank(Globals.settings.getMediaPlayer()) && Globals.settings.getAllSupportedFileTypes().contains(fileType)) {
       if (SystemUtils.IS_OS_MAC_OSX) {
-        Runtime.getRuntime().exec(new String[] { "open", Globals.settings.getMediaPlayer(), file.getAbsolutePath() });
+        Runtime.getRuntime().exec(new String[] { "open", Globals.settings.getMediaPlayer(), "--args", file.getAbsolutePath() });
       }
       else {
         Runtime.getRuntime().exec(new String[] { Globals.settings.getMediaPlayer(), file.getAbsolutePath() });

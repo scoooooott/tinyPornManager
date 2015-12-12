@@ -521,7 +521,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(getArtworkUrl(MediaFileType.THUMB))) {
+    if (StringUtils.isNotEmpty(getArtworkFilename(MediaFileType.THUMB))) {
       return true;
     }
     return false;

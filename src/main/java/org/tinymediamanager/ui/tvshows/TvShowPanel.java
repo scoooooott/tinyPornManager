@@ -70,7 +70,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTree;
@@ -194,7 +194,7 @@ public class TvShowPanel extends JPanel {
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
-    textField = new JSearchTextField();
+    textField = EnhancedTextField.createSearchTextField();
     panelTvShowTree.add(textField, "4, 1, right, bottom");
     textField.setColumns(12);
     textField.getDocument().addDocumentListener(new DocumentListener() {

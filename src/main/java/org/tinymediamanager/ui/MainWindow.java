@@ -30,7 +30,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -79,7 +78,6 @@ import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.actions.WikiAction;
-import org.tinymediamanager.ui.components.LightBoxPanel;
 import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
@@ -95,9 +93,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.sun.jna.Platform;
-
-import ch.swingfx.twinkle.NotificationBuilder;
-import ch.swingfx.twinkle.window.Positions;
 
 /**
  * The Class MainWindow.
@@ -121,10 +116,6 @@ public class MainWindow extends JFrame {
   private JPanel                      panelTvShows;
   private JPanel                      panelStatusBar;
 
-  private List<String>                messagesList;
-
-  private LightBoxPanel               lightBoxPanel;
-
   /**
    * Create the application.
    * 
@@ -137,7 +128,6 @@ public class MainWindow extends JFrame {
     setMinimumSize(new Dimension(1000, 700));
 
     instance = this;
-    lightBoxPanel = new LightBoxPanel();
 
     JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
@@ -212,8 +202,7 @@ public class MainWindow extends JFrame {
     tmmMessages.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        JDialog messageDialog = new MessageHistoryDialog();
-        messageDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        JDialog messageDialog = MessageHistoryDialog.getInstance();
         messageDialog.setVisible(true);
       }
     });
@@ -391,7 +380,7 @@ public class MainWindow extends JFrame {
         closeTmm();
       }
     });
-    MessageManager.instance.addListener(new UIMessageListener());
+
     MessageManager.instance.addListener(TmmUIMessageCollector.instance);
 
     // mouse event listener for context menu
@@ -508,28 +497,7 @@ public class MainWindow extends JFrame {
     return instance;
   }
 
-  public void addMessage(String title, String message) {
-    if (Globals.settings.isShowNotifications()) {
-      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-          .withPosition(Positions.SOUTH_EAST);
-      builder.showNotification();
-    }
-  }
-
-  public void addMessage(MessageLevel level, String title, String message) {
-    if (Globals.settings.isShowNotifications()) {
-      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-          .withPosition(Positions.SOUTH_EAST).withIcon(IconManager.ERROR);
-      builder.showNotification();
-    }
-
-    if (messagesList != null) {
-      messagesList.add(message + ": " + title);
-    }
-  }
-
   public void createLightbox(String pathToFile, String urlToFile) {
-    lightBoxPanel.setImageLocation(pathToFile, urlToFile);
-    lightBoxPanel.showLightBox(instance);
+    LightBox.showLightBox(instance, pathToFile, urlToFile);
   }
 }

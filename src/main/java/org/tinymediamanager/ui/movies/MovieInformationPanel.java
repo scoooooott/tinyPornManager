@@ -30,7 +30,7 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ImagePanel;
+import org.tinymediamanager.ui.panels.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 import org.tinymediamanager.ui.converter.MediaInfoAudioCodecConverter;

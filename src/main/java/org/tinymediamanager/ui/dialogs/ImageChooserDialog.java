@@ -78,8 +78,8 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
+import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.JPresetTextField;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -215,7 +215,7 @@ public class ImageChooserDialog extends TmmDialog {
       }
     }
     {
-      tfImageUrl = new JPresetTextField(BUNDLE.getString("image.inserturl")); //$NON-NLS-1$
+      tfImageUrl = new EnhancedTextField(BUNDLE.getString("image.inserturl")); //$NON-NLS-1$
       contentPanel.add(tfImageUrl, "2, 4, fill, default");
       tfImageUrl.setColumns(10);
       JButton btnAddImage = new JButton(BUNDLE.getString("image.downloadimage")); //$NON-NLS-1$
@@ -252,6 +252,7 @@ public class ImageChooserDialog extends TmmDialog {
               btnMarkExtrathumbs.setIcon(IconManager.CHECK_ALL);
               btnMarkExtrathumbs.setToolTipText(BUNDLE.getString("image.extrathumbs.markall")); //$NON-NLS-1$
               btnMarkExtrathumbs.addActionListener(new ActionListener() {
+
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                   for (JToggleButton button : buttons) {
@@ -281,12 +282,16 @@ public class ImageChooserDialog extends TmmDialog {
               panelExtraButtons.add(btnUnMarkExtrathumbs);
             }
             if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()
-                && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
+                && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart())
+
+            {
               JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
               separator.setPreferredSize(new Dimension(2, 16));
               panelExtraButtons.add(separator);
             }
-            if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
+            if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart())
+
+            {
               JLabel labelFanart = new JLabel("Extrafanart:");
               panelExtraButtons.add(labelFanart);
               JButton btnMarkExtrafanart = new JButton("");
@@ -335,6 +340,7 @@ public class ImageChooserDialog extends TmmDialog {
         bottomPane.add(lblProgressAction, "4, 4");
       }
       {
+
         JPanel buttonPane = new JPanel();
         EqualsLayout layout = new EqualsLayout(5);
         buttonPane.setLayout(layout);
@@ -344,6 +350,7 @@ public class ImageChooserDialog extends TmmDialog {
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
         buttonPane.add(okButton);
+
         getRootPane().setDefaultButton(okButton);
 
         JButton btnAddFile = new JButton(BUNDLE.getString("Button.addfile")); //$NON-NLS-1$
@@ -355,6 +362,7 @@ public class ImageChooserDialog extends TmmDialog {
         cancelButton.setActionCommand("Cancel");
         buttonPane.add(cancelButton);
       }
+
     }
 
     task = new DownloadTask(ids, this.artworkScrapers);
@@ -646,11 +654,16 @@ public class ImageChooserDialog extends TmmDialog {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
             @SuppressWarnings("rawtypes")
             JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraThumbs.add(size.getUrl());
+            if (cb.getSelectedItem() instanceof ImageSizeAndUrl) {
+              ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+              if (size != null) {
+                extraThumbs.add(size.getUrl());
+              }
+              else {
+                extraThumbs.add(artwork.getDefaultUrl());
+              }
             }
-            else {
+            else if (cb.getSelectedItem() instanceof String) {
               extraThumbs.add(artwork.getDefaultUrl());
             }
           }
@@ -673,11 +686,16 @@ public class ImageChooserDialog extends TmmDialog {
             MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
             @SuppressWarnings("rawtypes")
             JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraFanarts.add(size.getUrl());
+            if (cb.getSelectedItem() instanceof ImageSizeAndUrl) {
+              ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+              if (size != null) {
+                extraFanarts.add(size.getUrl());
+              }
+              else {
+                extraFanarts.add(artwork.getDefaultUrl());
+              }
             }
-            else {
+            else if (cb.getSelectedItem() instanceof String) {
               extraFanarts.add(artwork.getDefaultUrl());
             }
           }

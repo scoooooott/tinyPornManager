@@ -114,7 +114,8 @@ public class TvShowTest {
 
     // ************************************************************************
     // various real world examples
-    Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen [2001]"));
+    Assert.assertEquals("S:2 E:4", detectEpisode("Its Always Sunny In Philadelphia Season 02 Episode 04 Charlie Gets Crippled-1.mp4"));
+    Assert.assertEquals("S:1 E:4", detectEpisode("Season 1/04 Charlie Has Cancer-1.mp4"));
     Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen (2001)"));
     Assert.assertEquals("S:1 E:25", detectEpisode("Cowboy Bebop - S01E25 - The Real Folk Blues Part II.mkv")); // roman mixed with normal
     Assert.assertEquals("S:1 E:3", detectEpisode("The.Odd.Couple.2015.S01E03.720p.HDTV"));
@@ -186,7 +187,8 @@ public class TvShowTest {
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.s01e02.ext"));
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
     Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("name.s01e01.s01e02.s01e03.ext"));
-    Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01_1x02.ext"));
+    Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01_1x02.ext")); // works but shouldn't ;) _1 is detected as e1
+    Assert.assertEquals("S:2 E:11 E:12 E:13", detectEpisode("name.2x11_2x12_2x13.ext")); // worst case: _2 is always being detected as e2
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01 1x02.ext"));
     Assert.assertEquals("S:-1 E:1 E:2", detectEpisode("name.ep01.ep02.ext"));
 
@@ -196,20 +198,21 @@ public class TvShowTest {
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01x02.ext"));
     Assert.assertEquals("S:-1 E:1 E:2", detectEpisode("name.ep01_02.ext"));
 
-    // multi episode mixed; weird, but valid :p
-    Assert.assertEquals("S:1 E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));
+    // multi episode mixed; weird, but valid :p - we won't detect that now because the
+    // regexp would cause too much false positives
+    // Assert.assertEquals("S:1 E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));
 
     // split episode
     // TODO: detect split?
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.1.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01a.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01.1.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01a.ext"));
-    Assert.assertEquals("S:-1 E:1", detectEpisode("name.ep01.1.ext"));
+    Assert.assertEquals("S:1 E:1 Split", detectEpisode("name.s01e01.CD1.ext"));
+    Assert.assertEquals("S:1 E:1 Split", detectEpisode("name.s01e01.a.ext"));
+    Assert.assertEquals("S:1 E:1 Split", detectEpisode("name.1x01.part1.ext"));
+    Assert.assertEquals("S:1 E:1 Split", detectEpisode("name.1x01.pt.1.ext"));
+    Assert.assertEquals("S:-1 E:1", detectEpisode("name.ep01.1.ext")); // do not detect that one
     // Assert.assertEquals("S:1 E:1", detectEpisode("name.101.1.ext"));
-    Assert.assertEquals("S:-1 E:1", detectEpisode("name.ep01a_01b.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.1.s01e01.2.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01.1x01.2.ext"));
+    Assert.assertEquals("S:-1 E:1 Split", detectEpisode("name.ep01a_01.discb.ext"));
+    Assert.assertEquals("S:1 E:1 Split", detectEpisode("name.s01e01.1.s01e01.2.of.2.ext"));
+    Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01.1x01.2.ext")); // do not detect that one
 
   }
 
@@ -229,6 +232,9 @@ public class TvShowTest {
     for (int ep : result.episodes) {
       sb.append(" E:");
       sb.append(ep);
+    }
+    if (result.stackingMarkerFound) {
+      sb.append(" Split");
     }
     System.out.println(padRight(sb.toString().trim(), 40) + name);
     return sb.toString().trim();

@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>api-scraper</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.floreysoft</groupId>
@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2-mvstore</artifactId>
-			<version>1.4.188</version>
+			<version>1.4.190</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jtidy</groupId>
@@ -104,21 +104,9 @@
 			-Dpackaging=jar -Dfile=lib\twinkle.jar -DgroupId=ch.swingfx -DartifactId=twinkle 
 			-Dversion=1.0.0 -->
 		<dependency>
-			<!-- https://github.com/spreiter301/Twinkle -->
-			<groupId>ch.swingfx</groupId>
-			<artifactId>twinkle</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<!-- https://java.net/projects/javagraphics/sources/svn/show/trunk/src/com/bric?rev=2250 -->
 			<groupId>com.bric</groupId>
 			<artifactId>scaling</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<!-- https://github.com/harryjoy/Light-box-jar/tree/master/harsh/p/raval/lightbox -->
-			<groupId>harsh.p.raval</groupId>
-			<artifactId>lightbox</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
@@ -226,7 +214,7 @@
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
 									<artifactId>scraper-imdb</artifactId>
-									<version>1.2-SNAPSHOT</version>
+									<version>1.2</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
@@ -241,7 +229,7 @@
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
 									<artifactId>scraper-ofdb</artifactId>
-									<version>1.0</version>
+									<version>1.1</version>
 								</artifactItem>
 								<!--artifactItem> <groupId>org.tinymediamanager.plugins</groupId> 
 									<artifactId>scraper-opensubtitles</artifactId> <version>1.0-SNAPSHOT</version> 
@@ -257,19 +245,19 @@
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
 									<artifactId>scraper-tmdb</artifactId>
-									<version>1.1-SNAPSHOT</version>
+									<version>1.1</version>
 								</artifactItem>
 								<!-- artifactItem> <groupId>org.tinymediamanager.plugins</groupId> 
 									<artifactId>scraper-trakt</artifactId> <version>1.0-SNAPSHOT</version> </artifactItem -->
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
 									<artifactId>scraper-tvdb</artifactId>
-									<version>1.0</version>
+									<version>1.1</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.tinymediamanager.plugins</groupId>
 									<artifactId>scraper-zelluloid</artifactId>
-									<version>1.0</version>
+									<version>1.1</version>
 								</artifactItem>
 							</artifactItems>
 							<stripVersion>true</stripVersion>

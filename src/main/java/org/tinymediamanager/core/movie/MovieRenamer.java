@@ -77,7 +77,7 @@ public class MovieRenamer {
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase();
         if (mfs != null && mfs.size() > 0) {
-          String vname = Utils.cleanStackingMarkers(mfs.get(0).getBasename()).toLowerCase();
+          String vname = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename())).toLowerCase();
           shortname = sub.getBasename().toLowerCase().replace(vname, "");
         }
 
@@ -322,13 +322,13 @@ public class MovieRenamer {
     if (!isFilePatternValid()) {
       // Template empty or not even title set, so we are NOT renaming any files
       // we keep the same name on renaming ;)
-      newVideoBasename = Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename());
+      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
       LOGGER.warn("Filepattern is not valid - NOT renaming files!");
     }
     else {
       // since we rename, generate the new basename
       MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
-      newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
+      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
     }
     LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
 

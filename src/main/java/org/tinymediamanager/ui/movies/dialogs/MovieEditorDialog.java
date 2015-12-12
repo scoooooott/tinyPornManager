@@ -55,7 +55,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -83,7 +82,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.MediaFileEditorPanel;
+import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
@@ -144,14 +143,14 @@ public class MovieEditorDialog extends TmmDialog {
   private JSpinner                                                  spRuntime;
   private JTextPane                                                 tfProductionCompanies;
   private JList                                                     listGenres;
-  private JComboBox                                                 cbGenres;
+  private JComboBox<MediaGenres>                                    cbGenres;
   private JSpinner                                                  spRating;
   private JComboBox                                                 cbCertification;
   private JCheckBox                                                 cbWatched;
   private JTextPane                                                 tpTagline;
   private JTable                                                    tableTrailer;
   private JTable                                                    tableProducers;
-  private JComboBox                                                 cbTags;
+  private JComboBox<String>                                         cbTags;
   private JList                                                     listTags;
   private JSpinner                                                  spDateAdded;
   private JComboBox                                                 cbMovieSet;
@@ -174,7 +173,6 @@ public class MovieEditorDialog extends TmmDialog {
   private JTableBinding<MovieActor, List<MovieActor>, JTable>       jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>       jListBinding;
   private JTableBinding<MovieTrailer, List<MovieTrailer>, JTable>   jTableBinding_1;
-  private JComboBoxBinding<String, MovieList, JComboBox>            jComboBinding;
   private JListBinding<String, List<String>, JList>                 jListBinding_1;
   private JTableBinding<MovieProducer, List<MovieProducer>, JTable> jTableBinding_2;
 
@@ -518,6 +516,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPane = new JScrollPane();
       details2Panel.add(scrollPane, "4, 2, 1, 11");
       tableActors = new JTable();
+      tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPane.setViewportView(tableActors);
     }
     {
@@ -528,6 +527,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPane = new JScrollPane();
       details2Panel.add(scrollPane, "8, 2, 1, 11");
       tableProducers = new JTable();
+      tableProducers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPane.setViewportView(tableProducers);
     }
     {
@@ -638,14 +638,11 @@ public class MovieEditorDialog extends TmmDialog {
       details2Panel.add(btnRemoveTag, "6, 18, right, top");
     }
     {
-      // cbGenres = new JComboBox(MediaGenres2.values());
-      cbGenres = new AutocompleteComboBox(MediaGenres.values());
-      cbGenres.setEditable(true);
+      cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
       details2Panel.add(cbGenres, "4, 20");
     }
     {
-      cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
-      cbTags.setEditable(true);
+      cbTags = new AutocompleteComboBox<>(movieList.getTagsInMovies());
       details2Panel.add(cbTags, "8, 20");
     }
 
@@ -657,6 +654,7 @@ public class MovieEditorDialog extends TmmDialog {
       JScrollPane scrollPaneTrailer = new JScrollPane();
       details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
       tableTrailer = new JTable();
+      tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPaneTrailer.setViewportView(tableTrailer);
     }
     {
@@ -1494,7 +1492,6 @@ public class MovieEditorDialog extends TmmDialog {
     jTableBinding.unbind();
     jListBinding.unbind();
     jTableBinding_1.unbind();
-    jComboBinding.unbind();
     jListBinding_1.unbind();
     jTableBinding_2.unbind();
     mediaFilesPanel.unbindBindings();
@@ -1537,10 +1534,6 @@ public class MovieEditorDialog extends TmmDialog {
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
     jTableBinding_1.bind();
-    //
-    BeanProperty<MovieList, List<String>> movieListBeanProperty = BeanProperty.create("tagsInMovies");
-    jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, cbTags);
-    jComboBinding.bind();
     //
     jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     jListBinding_1.bind();

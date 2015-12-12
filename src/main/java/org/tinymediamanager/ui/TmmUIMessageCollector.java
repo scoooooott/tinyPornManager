@@ -15,84 +15,77 @@
  */
 package org.tinymediamanager.ui;
 
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.SwingUtilities;
 
+import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.IMessageListener;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.core.entities.MediaFile;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 
 /**
- * The class TmmUIMessageCollector is used the collect all shown messages (popups) in a dialog window
+ * The class TmmUIMessageCollector is used the collect all messages in a dialog window
  * 
  * @author Manuel Laggner
  */
-public class TmmUIMessageCollector implements IMessageListener {
-  private static final ResourceBundle       BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  public static final TmmUIMessageCollector instance = new TmmUIMessageCollector();
+public class TmmUIMessageCollector extends AbstractModelObject implements IMessageListener {
+  public static final TmmUIMessageCollector instance    = new TmmUIMessageCollector();
 
-  private List<Message>                     messages = new CopyOnWriteArrayList<Message>();
+  private final EventList<Message>          messages;
+  private int                               newMessages = 0;
 
   private TmmUIMessageCollector() {
+    messages = GlazedLists.threadSafeList(new BasicEventList<Message>());
   }
 
   @Override
-  public void pushMessage(Message message) {
-    messages.add(message);
+  public void pushMessage(final Message message) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        messages.add(message);
+        int oldValue = newMessages;
+        newMessages++;
+        firePropertyChange("messages", oldValue, newMessages);
+      }
+    });
   }
 
-  public String getMessagesAsString() {
-    return getMessagesAsString(0);
+  /**
+   * get the count of all collected messages
+   * 
+   * @return the count of all collected messages
+   */
+  public int getMessageCount() {
+    return messages.size();
   }
 
-  public String getMessagesAsString(int startFromMessage) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = startFromMessage; i < messages.size(); i++) {
-      try {
-        Message message = messages.get(i);
-        String msgid = "";
-        String sender = "";
+  /**
+   * get the count of all new messages
+   * 
+   * @return the count of all new messages
+   */
+  public int getNewMessagesCount() {
+    return newMessages;
+  }
 
-        if (message.getMessageSender() instanceof MediaEntity) {
-          // mediaEntity title: eg. Movie title
-          MediaEntity me = (MediaEntity) message.getMessageSender();
-          sender = me.getTitle();
-        }
-        else if (message.getMessageSender() instanceof MediaFile) {
-          // mediaFile: filename
-          MediaFile mf = (MediaFile) message.getMessageSender();
-          sender = mf.getFilename();
-        }
-        else {
-          try {
-            sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
-          }
-          catch (Exception e) {
-            sender = String.valueOf(message.getMessageSender());
-          }
-        }
+  /**
+   * reset the counter of new messages
+   */
+  public void resetNewMessageCount() {
+    int oldValue = newMessages;
+    newMessages = 0;
+    firePropertyChange("messages", oldValue, newMessages);
+  }
 
-        try {
-          // try to get a localized version
-          msgid = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageId()), message.getIdParams());
-        }
-        catch (Exception e) {
-          // simply take the id
-          msgid = message.getMessageId();
-        }
-        sb.append(msgid);
-        sb.append(" - ");
-        sb.append(sender);
-        sb.append("\n");
-
-      }
-      catch (Exception e) {
-        break;
-      }
-    }
-    return sb.toString();
+  /**
+   * get a list of all messages
+   * 
+   * @return the list containing all messages
+   */
+  public EventList<Message> getMessages() {
+    return messages;
   }
 }

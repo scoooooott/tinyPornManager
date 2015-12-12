@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
@@ -50,7 +50,8 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
   @Override
   protected void doInBackground() {
     try {
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
       LOGGER.info("get MediaInfo...");
       // update MediaInfo
       start();
@@ -62,8 +63,8 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
       }
 
       waitForCompletionOrCancel();
-      long end = System.currentTimeMillis();
-      LOGGER.info("Done getting MediaInfo - took " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.info("Done getting MediaInfo - took " + stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);

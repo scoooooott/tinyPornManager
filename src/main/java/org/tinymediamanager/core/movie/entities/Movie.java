@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -85,68 +86,70 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger                LOGGER                = LoggerFactory.getLogger(Movie.class);
-  private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new MovieMediaFileComparator();
+  private static final Logger                   LOGGER                     = LoggerFactory.getLogger(Movie.class);
+  private static final Comparator<MediaFile>    MEDIA_FILE_COMPARATOR      = new MovieMediaFileComparator();
+  private static final Comparator<MovieTrailer> TRAILER_QUALITY_COMPARATOR = new MovieTrailer.QualityComparator();
 
   @JsonProperty
-  private String                             sortTitle             = "";
+  private String                                sortTitle                  = "";
   @JsonProperty
-  private String                             tagline               = "";
+  private String                                tagline                    = "";
   @JsonProperty
-  private int                                votes                 = 0;
+  private int                                   votes                      = 0;
   @JsonProperty
-  private int                                runtime               = 0;
+  private int                                   runtime                    = 0;
   @JsonProperty
-  private String                             director              = "";
+  private String                                director                   = "";
   @JsonProperty
-  private String                             writer                = "";
+  private String                                writer                     = "";
   @JsonProperty
-  private String                             dataSource            = "";
+  private String                                dataSource                 = "";
   @JsonProperty
-  private boolean                            watched               = false;
+  private boolean                               watched                    = false;
   @JsonProperty
-  private boolean                            isDisc                = false;
+  private boolean                               isDisc                     = false;
   @JsonProperty
-  private String                             spokenLanguages       = "";
+  private String                                spokenLanguages            = "";
   @JsonProperty
-  private boolean                            subtitles             = false;
+  private boolean                               subtitles                  = false;
   @JsonProperty
-  private String                             country               = "";
+  private String                                country                    = "";
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date                               releaseDate           = null;
+  private Date                                  releaseDate                = null;
   @JsonProperty
-  private boolean                            multiMovieDir         = false;                               // we detected more movies in same folder
+  private boolean                               multiMovieDir              = false;                               // we detected more movies in
+                                                                                                                  // same folder
   @JsonProperty
-  private int                                top250                = 0;
+  private int                                   top250                     = 0;
   @JsonProperty
-  private MovieMediaSource                   mediaSource           = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
+  private MovieMediaSource                      mediaSource                = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
   @JsonProperty
-  private boolean                            videoIn3D             = false;
+  private boolean                               videoIn3D                  = false;
   @JsonProperty
-  private Certification                      certification         = Certification.NOT_RATED;
+  private Certification                         certification              = Certification.NOT_RATED;
   @JsonProperty
-  private UUID                               movieSetId;
+  private UUID                                  movieSetId;
 
   @JsonProperty
-  private List<String>                       genres                = new ArrayList<String>(1);
+  private List<String>                          genres                     = new ArrayList<String>(1);
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<String>(0);
+  private List<String>                          tags                       = new ArrayList<String>(0);
   @JsonProperty
-  private List<String>                       extraThumbs           = new ArrayList<String>(0);
+  private List<String>                          extraThumbs                = new ArrayList<String>(0);
   @JsonProperty
-  private List<String>                       extraFanarts          = new ArrayList<String>(0);
+  private List<String>                          extraFanarts               = new ArrayList<String>(0);
   @JsonProperty
-  private List<MovieActor>                   actors                = new ArrayList<MovieActor>();
+  private List<MovieActor>                      actors                     = new ArrayList<MovieActor>();
   @JsonProperty
-  private List<MovieProducer>                producers             = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer>                   producers                  = new ArrayList<MovieProducer>(0);
   @JsonProperty
-  private List<MovieTrailer>                 trailer               = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer>                    trailer                    = new ArrayList<MovieTrailer>(0);
 
-  private MovieSet                           movieSet;
-  private String                             titleSortable         = "";
-  private Date                               lastWatched           = null;
-  private List<MediaGenres>                  genresForAccess       = new ArrayList<MediaGenres>(0);
+  private MovieSet                              movieSet;
+  private String                                titleSortable              = "";
+  private Date                                  lastWatched                = null;
+  private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -937,6 +940,27 @@ public class Movie extends MediaEntity {
           }
         }
       }
+
+      // if not yet one has been found; sort by quality descending and take the first one which is lower or equal to the desired quality
+      if (preferredTrailer == null) {
+        List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
+        Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+        for (MovieTrailer trailer : sortedTrailers) {
+          if (desiredQuality.ordinal() >= MovieTrailerQuality.getMovieTrailerQuality(trailer.getQuality()).ordinal()) {
+            trailer.setInNfo(Boolean.TRUE);
+            preferredTrailer = trailer;
+            break;
+          }
+        }
+      }
+    } // end if MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference()
+
+    // if not yet one has been found; sort by quality descending and take the first one
+    if (preferredTrailer == null && !trailers.isEmpty()) {
+      List<MovieTrailer> sortedTrailers = new ArrayList<>(trailers);
+      Collections.sort(sortedTrailers, TRAILER_QUALITY_COMPARATOR);
+      preferredTrailer = sortedTrailers.get(0);
+      preferredTrailer.setInNfo(Boolean.TRUE);
     }
 
     // add trailers
@@ -957,7 +981,8 @@ public class Movie extends MediaEntity {
       addTrailer(trailer);
     }
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isAutomaticTrailerDownload() && getMediaFiles(MediaFileType.TRAILER).isEmpty() && !trailer.isEmpty()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference() && MovieModuleManager.MOVIE_SETTINGS.isAutomaticTrailerDownload()
+        && getMediaFiles(MediaFileType.TRAILER).isEmpty() && !trailer.isEmpty()) {
       MovieTrailer trailer = this.trailer.get(0);
       MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, this);
       TmmTaskManager.getInstance().addDownloadTask(task);
@@ -1072,7 +1097,10 @@ public class Movie extends MediaEntity {
           if (!actorName.equals(actor.getThumbPath())) {
             // rename
             try {
-              FileUtils.moveFile(new File(actor.getThumbPath()), new File(actorName));
+              File oldFile = new File(actor.getThumbPath());
+              if (oldFile.exists()) {
+                FileUtils.moveFile(oldFile, new File(actorName));
+              }
             }
             catch (IOException e) {
               LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
@@ -1085,11 +1113,6 @@ public class Movie extends MediaEntity {
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setTitle(java.lang.String)
-   */
   @Override
   public void setTitle(String newValue) {
     String oldValue = this.title;
@@ -1184,8 +1207,8 @@ public class Movie extends MediaEntity {
           }
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-          filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
+          String movieFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
+          filename += movieFilename + ".nfo"; // w/o stacking information
         }
         break;
       case MOVIE_NFO:
@@ -1220,7 +1243,7 @@ public class Movie extends MediaEntity {
   public String getTrailerBasename() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return Utils.cleanStackingMarkers(mfs.get(0).getBasename());
+      return FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename()));
     }
     return null;
   }

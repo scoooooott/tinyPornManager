@@ -59,14 +59,14 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperConfigurationPanel;
-import org.tinymediamanager.ui.components.ScrollablePanel;
+import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -367,7 +367,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   /*****************************************************************************************************
    * helper classes
    ****************************************************************************************************/
-  public class TvShowScraper extends AbstractModelObject {
+  public static class TvShowScraper extends AbstractModelObject {
     private MediaScraper scraper;
     private Icon         scraperLogo;
     private boolean      defaultScraper;
@@ -385,7 +385,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
     private ImageIcon getScaledIcon(ImageIcon original) {
       Canvas c = new Canvas();
-      FontMetrics fm = c.getFontMetrics(getFont());
+      FontMetrics fm = c.getFontMetrics(new JPanel().getFont());
 
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;
@@ -510,6 +510,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     }
   }
 
+  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("tvShowSettings.scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

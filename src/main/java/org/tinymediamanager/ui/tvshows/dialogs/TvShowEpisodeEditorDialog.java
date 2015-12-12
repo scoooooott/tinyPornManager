@@ -82,9 +82,9 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.MediaFileEditorPanel;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -321,6 +321,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       detailsPanel.add(scrollPaneGuests, "4, 22, 13, 7, fill, fill");
 
       tableGuests = new JTable();
+      tableGuests.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPaneGuests.setViewportView(tableGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
@@ -601,6 +602,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       options.setId(MediaMetadata.SEASON_NR, spSeason.getValue().toString());
       options.setId(MediaMetadata.EPISODE_NR, spEpisode.getValue().toString());
 
+      options.setId(MediaMetadata.SEASON_NR_DVD, spDvdSeason.getValue().toString());
+      options.setId(MediaMetadata.EPISODE_NR_DVD, spDvdEpisode.getValue().toString());
       try {
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
 
@@ -613,6 +616,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));
           taPlot.setText(metadata.getStringValue(MediaMetadata.PLOT));
           spFirstAired.setValue(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+
+          // set aireed or dvd ep/season
+          spSeason.setValue(metadata.getIntegerValue(MediaMetadata.SEASON_NR, -1));
+          spEpisode.setValue(metadata.getIntegerValue(MediaMetadata.EPISODE_NR, -1));
+          spDvdSeason.setValue(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD, -1));
+          spDvdEpisode.setValue(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD, -1));
 
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.THUMB) {

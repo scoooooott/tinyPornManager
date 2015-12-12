@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -63,7 +63,8 @@ public class MovieFindMissingTask extends TmmThreadPool {
   @Override
   public void doInBackground() {
     try {
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
 
       // build MF list
       ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
@@ -99,8 +100,8 @@ public class MovieFindMissingTask extends TmmThreadPool {
         }
       }
 
-      long end = System.currentTimeMillis();
-      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.info("Done finding missing movies :) - took " + stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);

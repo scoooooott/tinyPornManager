@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.io.IOUtils;
@@ -67,6 +68,8 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
+  private final static String         DEFAULT_CONFIG_FOLDER       = "data";
+  private String                      settingsFolder              = DEFAULT_CONFIG_FOLDER;
   private static Settings             instance;
 
   /**
@@ -134,7 +137,6 @@ public class Settings extends AbstractModelObject {
 
   // language 2 char - saved to config
   private String                      language;
-  private boolean                     showNotifications           = true;
   private String                      mediaPlayer                 = "";
 
   private int                         fontSize                    = 12;
@@ -143,6 +145,8 @@ public class Settings extends AbstractModelObject {
   private boolean                     deleteTrashOnExit           = false;
 
   private PropertyChangeListener      propertyChangeListener;
+  @XmlTransient
+  public boolean                      newConfig                   = false;
 
   /**
    * Instantiates a new settings.
@@ -167,36 +171,50 @@ public class Settings extends AbstractModelObject {
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
+  public String getSettingsFolder() {
+    return settingsFolder;
+  }
+
   /**
    * Gets the single instance of Settings.
    * 
    * @return single instance of Settings
    */
   public synchronized static Settings getInstance() {
+    return getInstance(DEFAULT_CONFIG_FOLDER);
+  }
+
+  /**
+   * Override our settings folder (defaults to "data")<br>
+   * <b>Should only be used for unit testing et all!</b><br>
+   * 
+   * @return single instance of Settings
+   */
+  public synchronized static Settings getInstance(String folder) {
     if (Settings.instance == null) {
 
       // upgrade/move into own config dir
       // need to do here, since this is called quite in the beginning
 
       File cfgFolder = new File("config"); // old impl
-      if (cfgFolder.exists()) {
+      if (cfgFolder.exists() && cfgFolder.isDirectory()) {
         try {
-          Utils.moveDirectorySafe(cfgFolder, new File(".", Constants.CONFIG_FOLDER));
+          Utils.moveDirectorySafe(cfgFolder, new File(".", folder));
         }
         catch (IOException e) {
           LOGGER.warn("error migrating config folder");
         }
       }
 
-      cfgFolder = new File(Constants.CONFIG_FOLDER);
+      cfgFolder = new File(folder);
       if (!cfgFolder.exists()) {
         cfgFolder.mkdir(); // don't care
       }
 
       File oldCfg = new File(CONFIG_FILE);
-      if (oldCfg.exists()) {
+      if (oldCfg.exists() && oldCfg.isFile()) {
         try {
-          File newCfg = new File(Constants.CONFIG_FOLDER, CONFIG_FILE);
+          File newCfg = new File(folder, CONFIG_FILE);
           Utils.moveFileSafe(oldCfg, newCfg);
         }
         catch (IOException e) {
@@ -210,12 +228,16 @@ public class Settings extends AbstractModelObject {
         context = JAXBContext.newInstance(Settings.class);
         Unmarshaller um = context.createUnmarshaller();
         try {
-          Reader in = new InputStreamReader(new FileInputStream(new File(Constants.CONFIG_FOLDER, CONFIG_FILE)), "UTF-8");
+          LOGGER.debug("Loading settings from " + folder);
+          Reader in = new InputStreamReader(new FileInputStream(new File(folder, CONFIG_FILE)), "UTF-8");
           Settings.instance = (Settings) um.unmarshal(in);
+          Settings.instance.settingsFolder = folder;
         }
         catch (Exception e) {
           LOGGER.warn("could not load settings - creating default ones...");
           Settings.instance = new Settings();
+          Settings.instance.newConfig = true;
+          Settings.instance.settingsFolder = folder;
           Settings.instance.writeDefaultSettings();
         }
         Settings.instance.clearDirty();
@@ -450,7 +472,7 @@ public class Settings extends AbstractModelObject {
         sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
       }
 
-      w = new FileWriter(new File(Constants.CONFIG_FOLDER, CONFIG_FILE));
+      w = new FileWriter(new File(settingsFolder, CONFIG_FILE));
       String xml = sb.toString();
       IOUtils.write(xml, w);
 
@@ -602,11 +624,15 @@ public class Settings extends AbstractModelObject {
     addTitlePrefix("La");
     addTitlePrefix("Les");
     addTitlePrefix("L'");
+    addTitlePrefix("L´");
+    addTitlePrefix("L`");
     addTitlePrefix("Un");
     addTitlePrefix("Une");
     addTitlePrefix("Des");
     addTitlePrefix("Du");
     addTitlePrefix("D'");
+    addTitlePrefix("D´");
+    addTitlePrefix("D`");
     Collections.sort(titlePrefix);
 
     movieSettings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
@@ -615,6 +641,8 @@ public class Settings extends AbstractModelObject {
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
     movieSettings.addMovieArtworkScraper(Constants.TMDB);
+
+    tvShowSettings.addTvShowArtworkScraper(Constants.TVDB);
 
     setProxyFromSystem();
 
@@ -705,7 +733,7 @@ public class Settings extends AbstractModelObject {
    *          the new proxy password
    */
   public void setProxyPassword(String newValue) {
-    newValue = StringEscapeUtils.escapeXml(newValue);
+    newValue = StringEscapeUtils.escapeXml10(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
@@ -760,7 +788,8 @@ public class Settings extends AbstractModelObject {
       // System.setProperty("java.net.useSystemProxies", "true");
     }
     try {
-      ProxySettings.setProxySettings(getProxyHost(), Integer.parseInt(getProxyPort()), getProxyUsername(), getProxyPassword());
+      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort()), getProxyUsername(),
+          getProxyPassword());
     }
     catch (NumberFormatException e) {
       LOGGER.error("could not parse proxy port: " + e.getMessage());
@@ -938,16 +967,6 @@ public class Settings extends AbstractModelObject {
 
   public List<WolDevice> getWolDevices() {
     return wolDevices;
-  }
-
-  public void setShowNotifications(boolean newValue) {
-    boolean oldValue = showNotifications;
-    showNotifications = newValue;
-    firePropertyChange(SHOW_NOTIFICATIONS, oldValue, newValue);
-  }
-
-  public boolean isShowNotifications() {
-    return showNotifications;
   }
 
   @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)

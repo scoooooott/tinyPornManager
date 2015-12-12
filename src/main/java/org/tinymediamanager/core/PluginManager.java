@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
@@ -57,7 +58,9 @@ public class PluginManager {
       pm = PluginManagerFactory.createPluginManager(props);
       pmu = new PluginManagerUtil(pm);
 
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
+
       LOGGER.debug("loading classpath plugins...");
       // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
 
@@ -65,11 +68,12 @@ public class PluginManager {
         // since we do not have them as dependencies, load all from classpath (we have dependent projects)
         pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
       }
-      long end = System.currentTimeMillis();
-      LOGGER.debug("Done loading classpath plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
 
       // dedicated folder just for plugins
-      start = System.currentTimeMillis();
+      stopWatch.reset();
+      stopWatch.start();
       LOGGER.debug("loading external plugins...");
       if (LOGGER.isTraceEnabled()) {
         pm.addPluginsFrom(new File("plugins/").toURI(), new OptionReportAfter());
@@ -77,8 +81,8 @@ public class PluginManager {
       else {
         pm.addPluginsFrom(new File("plugins/").toURI());
       }
-      end = System.currentTimeMillis();
-      LOGGER.debug("Done loading external plugins - took " + (end - start) + " - " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.debug("Done loading external plugins - took " + stopWatch);
     }
     return instance;
   }

@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -25,6 +26,7 @@ import org.h2.mvstore.MVStore;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -74,12 +76,12 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void startUp() throws Exception {
     // do a DB backup, and keep last 15 copies
-    File db = new File(Constants.CONFIG_FOLDER, MOVIE_DB);
+    File db = new File(Settings.getInstance().getSettingsFolder(), MOVIE_DB);
     Utils.createBackupFile(db);
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Constants.CONFIG_FOLDER + File.separatorChar + MOVIE_DB).compressHigh().open();
+    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + MOVIE_DB).compressHigh().open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -90,6 +92,7 @@ public class MovieModuleManager implements ITmmModule {
     objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
+    objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 
     movieObjectWriter = objectMapper.writerFor(Movie.class);
@@ -152,6 +155,6 @@ public class MovieModuleManager implements ITmmModule {
 
   @Override
   public void initializeDatabase() throws Exception {
-    FileUtils.deleteQuietly(new File(Constants.CONFIG_FOLDER, MOVIE_DB));
+    FileUtils.deleteQuietly(new File(Settings.getInstance().getSettingsFolder(), MOVIE_DB));
   }
 }

@@ -72,7 +72,7 @@ public class TvShowEpisodeAndSeasonParser {
   private static Pattern      romanPattern          = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonPattern         = Pattern.compile("(staffel|season|series)[\\s_.-]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP         = Pattern.compile("s(\\d{1,4})((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonMultiEP2        = Pattern.compile("(\\d{1,4})(?=x)((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonMultiEP2        = Pattern.compile("(\\d{1,4})(?=x)((?:([epx]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers2Pattern       = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers3Pattern       = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
   private static Pattern      tvMultipartMatching   = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
@@ -118,6 +118,8 @@ public class TvShowEpisodeAndSeasonParser {
     Matcher m;
 
     // remove problematic strings from name
+    String filename = FilenameUtils.getName(name);
+    String extension = FilenameUtils.getExtension(name);
     String basename = ParserUtils.removeStopwordsFromTvEpisodeName(name);
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {
@@ -137,8 +139,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
     basename = basename + " ";
 
-    // try to detect a stacking information from the detected name
-    result.stackingMarkerFound = !Utils.getStackingMarker(basename).isEmpty() ? true : false;
+    result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
 
     // season detection
     if (result.season == -1) {
@@ -174,7 +175,21 @@ public class TvShowEpisodeAndSeasonParser {
         result.season = s;
         return result;
       }
-    }
+      else {
+        // check if we have at least 2 subsequent numbers - parse this as episode
+        regex = numbers2Pattern;
+        m = regex.matcher(basename);
+        if (m.find()) {
+          // Filename contains only 2 subsequent numbers; parse this as EE
+          int ep = Integer.parseInt(m.group(1));
+          if (ep > 0 && !result.episodes.contains(ep)) {
+            result.episodes.add(ep);
+            LOGGER.trace("add found EP " + ep);
+          }
+          // return result; // do NOT return here, although we have 3 numbers (2 subsequent) we might parse the correct season later
+        }
+      }
+    } // FIXME: what if we have
     else if (numbers.length() == 2) { // eg 01
       regex = numbers2Pattern;
       m = regex.matcher(basename);
@@ -241,7 +256,10 @@ public class TvShowEpisodeAndSeasonParser {
     while (m.find()) {
       int s = -1;
       try {
-        s = Integer.parseInt(m.group(1));
+        // for the case of name.1x02x03.ext
+        if (m.group(2) != null && result.season == -1) {
+          s = Integer.parseInt(m.group(1));
+        }
         String eps = m.group(2); // name.s01"ep02-02-04".ext
         // now we have a string of 1-N episodes - parse them
         Pattern regex2 = episodePattern; // episode fixed to 1-2 chars

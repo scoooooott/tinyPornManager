@@ -35,14 +35,10 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -60,7 +56,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.thirdparty.MediaInfo;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUILogCollector;
@@ -68,6 +64,7 @@ import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
+import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
 import com.sun.jna.Platform;
 
@@ -256,8 +253,7 @@ public class TinyMediaManager {
             updateProgress(g2, "loading MediaInfo libs", 20);
             splash.update();
           }
-
-          loadMediaInfo();
+          MediaInfoUtils.loadMediaInfo();
 
           // load modules //////////////////////////////////////////////////
           if (g2 != null) {
@@ -313,6 +309,12 @@ public class TinyMediaManager {
             TmmWindowSaver.getInstance().loadSettings(window);
             window.setVisible(true);
 
+            // wizard for new user
+            if (Globals.settings.newConfig) {
+              TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
+              wizard.setVisible(true);
+            }
+
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
               // special case nightly/svn: if same snapshot version, do not display changelog
@@ -358,101 +360,15 @@ public class TinyMediaManager {
             dialog.pack();
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
-            System.exit(1);
           }
-          else {
-            // any other ex
-            throw (e);
-          }
+          System.exit(1);
         }
         catch (Exception e) {
           LOGGER.error("Exception while start of tmm", e);
           if (!GraphicsEnvironment.isHeadless()) {
             MessageDialog.showExceptionWindow(e);
-            System.exit(1);
           }
-        }
-      }
-
-      /**
-       * load media info from /native/*
-       * 
-       * @throws IOException
-       */
-      private void loadMediaInfo() throws IOException {
-        String nativepath = "native/";
-
-        // windows
-        if (Platform.isWindows()) {
-          nativepath += "windows";
-        }
-        // linux
-        else if (Platform.isLinux()) {
-          nativepath += "linux";
-        }
-        // osx
-        else if (Platform.isMac()) {
-          nativepath += "mac";
-        }
-
-        // https://en.wikipedia.org/wiki/X86-64
-        if (Platform.is64Bit()) {
-          nativepath += "-x64";
-        }
-        else {
-          nativepath += "-x86";
-        }
-
-        // on linux try to set the executable bit for the native libs
-        if (Platform.isLinux()) {
-          File[] nativeFiles = new File(nativepath).listFiles();
-          if (nativeFiles != null) {
-            // using PosixFilePermission to set file permissions 755
-            Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-            // add owners permission
-            perms.add(PosixFilePermission.OWNER_READ);
-            perms.add(PosixFilePermission.OWNER_WRITE);
-            perms.add(PosixFilePermission.OWNER_EXECUTE);
-            // add group permissions
-            perms.add(PosixFilePermission.GROUP_READ);
-            perms.add(PosixFilePermission.GROUP_EXECUTE);
-            // add others permissions
-            perms.add(PosixFilePermission.OTHERS_READ);
-            perms.add(PosixFilePermission.OTHERS_EXECUTE);
-
-            for (File file : nativeFiles) {
-              Files.setPosixFilePermissions(file.toPath(), perms);
-            }
-          }
-        }
-
-        String miv = "";
-        // need that, since we cannot try and reload/unload a Class
-        // MI does not load over UNC, so copy to temp
-        if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
-          LOGGER.debug("We're on a network UNC path!");
-          File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
-          File nativeDir = new File(tmpDir, nativepath);
-          FileUtils.copyDirectory(new File(nativepath), nativeDir); // same structure
-
-          System.setProperty("jna.library.path", nativeDir.getAbsolutePath());
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.getAbsolutePath());
-          miv = MediaInfo.version(); // load class
-        }
-        else {
-          System.setProperty("jna.library.path", nativepath);
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
-          miv = MediaInfo.version(); // load class
-        }
-
-        if (!StringUtils.isEmpty(miv)) {
-          LOGGER.info("Using " + miv);
-        }
-        else {
-          LOGGER.error("could not load MediaInfo!");
-          if (Platform.isLinux()) {
-            LOGGER.error("Please try do install the library from your distribution");
-          }
+          System.exit(1);
         }
       }
 

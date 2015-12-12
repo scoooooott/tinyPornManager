@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -105,7 +106,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     try {
-      long start = System.currentTimeMillis();
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
       List<File> imageFiles = new ArrayList<File>();
 
       // cleanup newlyadded for a new UDS run
@@ -206,8 +208,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 
-      long end = System.currentTimeMillis();
-      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
+      stopWatch.stop();
+      LOGGER.info("Done updating datasource :) - took " + stopWatch);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -239,7 +241,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     for (File file : files) {
       Movie movie = null;
       MediaFile mf = new MediaFile(file);
-      String basename = Utils.cleanStackingMarkers(mf.getBasename());
+      String basename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename()));
 
       // 1) check if MF is already assigned to a movie within path
       for (Movie m : movieList.getMoviesByPath(mf.getFile().getParentFile())) {
@@ -251,8 +253,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         for (MediaFile mfile : m.getMediaFiles(MediaFileType.VIDEO)) {
           // try to match like if we would create a new movie
-          String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(mfile.getBasename()));
-          String[] mfTY = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(mf.getBasename()));
+          String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfile.getFilename())));
+          String[] mfTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename())));
           if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title AND year (even empty) match
             LOGGER.debug("found possible movie '" + m.getTitle() + "' from filename " + file);
             movie = m;
@@ -357,7 +359,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       File[] fileArray = movieDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
-          if (file.getName().equals(".tmmignore")) {
+          if (file.getName().equals(".tmmignore") || file.getName().equals("tmmignore")) {
             return true;
           }
           if (file.isDirectory() || file.getName().startsWith("._")) { // MacOS ignore
@@ -374,8 +376,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       List<File> files = new ArrayList<>(Arrays.asList(fileArray));
 
-      // .tmmignore or no video file found, abort scanning
-      if (files.contains(new File(movieDir, ".tmmignore")) || files.isEmpty()) {
+      if (files.contains(new File(movieDir, ".tmmignore")) || files.contains(new File(movieDir, "tmmignore"))) {
         return;
       }
 
@@ -395,7 +396,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           // ignore disc files when trying to detect multi movie dir!
           continue;
         }
-        String[] ty = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName())));
+        String[] ty = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(file.getName())));
         h.add(ty[0] + ty[1]); // title+year, just temp
       }
       // more than 1, or if DS=dir then assume a multi dir (only second level is a normal movie dir)
@@ -523,9 +524,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               LOGGER.debug("parsing unknown graphic " + mf.getFilename());
               List<MediaFile> vid = movie.getMediaFiles(MediaFileType.VIDEO);
               if (vid != null && !vid.isEmpty()) {
-                String vfilename = FilenameUtils.getBaseName(vid.get(0).getFilename());
-                if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
-                    || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
+                String vfilename = vid.get(0).getFilename();
+                if (FilenameUtils.getBaseName(vfilename).equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
+                    || FilenameUtils.getBaseName(Utils.cleanStackingMarkers(vfilename)).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename
+                                                                                                                                                   // w/o
+                                                                                                                                                   // stacking
                     || movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
                   mf.setType(MediaFileType.POSTER);
                   movie.addToMediaFiles(mf);
@@ -603,7 +606,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
         // ok, regular structure
-        if (dirs.isEmpty() && level > 1 && !Utils.getStackingMarker(moviedir.getName()).isEmpty()) {
+        if (dirs.isEmpty() && level > 1 && !Utils.getFolderStackingMarker(moviedir.getName()).isEmpty()) {
           // no more dirs in that directory and at least 2 levels deep
           // stacking found (either on file or parent dir)
           // -> assume parent as movie dir"
