@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -91,6 +92,7 @@ public class MovieModuleManager implements ITmmModule {
     objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_SETTERS, false);
     objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
+    objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 
     movieObjectWriter = objectMapper.writerFor(Movie.class);
