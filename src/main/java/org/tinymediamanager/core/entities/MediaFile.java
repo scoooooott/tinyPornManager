@@ -590,7 +590,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   public void addSubtitle(MediaFileSubtitle subtitle) {
-    this.subtitles.add(subtitle);
+    if (!this.subtitles.contains(subtitle)) {
+      this.subtitles.add(subtitle);
+    }
   }
 
   /**
