@@ -600,9 +600,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
         }
 
+        LOGGER.debug("| parsing " + mf.getType().name() + " " + mf.getFilename());
         switch (mf.getType()) {
           case VIDEO:
-            LOGGER.debug("| parsing video file " + mf.getFilename());
             movie.addToMediaFiles(mf);
             movie.setDateAddedFromMediaFile(mf);
             if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
@@ -610,13 +610,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             }
             break;
 
-          case VIDEO_EXTRA:
-            LOGGER.debug("| parsing extra " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-            break;
-
           case TRAILER:
-            LOGGER.debug("| parsing trailer " + mf.getFilename());
             mf.gatherMediaInformation(); // do this exceptionally here, to set quality in one rush
             MovieTrailer mt = new MovieTrailer();
             mt.setName(mf.getFilename());
@@ -628,29 +622,11 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             break;
 
-          case SAMPLE:
-            LOGGER.debug("| parsing sample " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-            break;
-
           case SUBTITLE:
-            LOGGER.debug("| parsing subtitle " + mf.getFilename());
             if (!mf.isPacked()) {
               movie.setSubtitles(true);
               movie.addToMediaFiles(mf);
             }
-            break;
-
-          case NFO:
-          case TEXT:
-            LOGGER.debug("| parsing info/text file " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-            break;
-
-          case POSTER:
-          case SEASON_POSTER:
-            LOGGER.debug("| parsing poster " + mf.getFilename());
-            movie.addToMediaFiles(mf);
             break;
 
           case FANART:
@@ -659,30 +635,31 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               LOGGER.warn("problem: detected media file type FANART in extrafanart folder: " + mf.getPath());
               continue;
             }
-            LOGGER.debug("| parsing fanart " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-            break;
-
-          case EXTRAFANART:
-            LOGGER.debug("| parsing extrafanart " + mf.getFilename());
             movie.addToMediaFiles(mf);
             break;
 
           case THUMB:
-            LOGGER.debug("| parsing thumbnail " + mf.getFilename());
+            if (mf.getPath().toLowerCase().contains("extrathumbs")) { //
+              // there shouldn't be any files here
+              LOGGER.warn("| problem: detected media file type THUMB in extrathumbs folder: " + mf.getPath());
+              continue;
+            }
             movie.addToMediaFiles(mf);
             break;
 
+          case VIDEO_EXTRA:
+          case SAMPLE:
+          case NFO:
+          case TEXT:
+          case POSTER:
+          case SEASON_POSTER:
+          case EXTRAFANART:
+          case EXTRATHUMB:
           case AUDIO:
-            LOGGER.debug("| parsing audio stream " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-            break;
-
           case DISCART:
           case BANNER:
           case CLEARART:
           case LOGO:
-            LOGGER.debug("| parsing " + mf.getType().name().toLowerCase() + " " + mf.getFilename());
             movie.addToMediaFiles(mf);
             break;
 
@@ -697,7 +674,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // debug
         if (mf.getType() != MediaFileType.GRAPHIC && mf.getType() != MediaFileType.UNKNOWN && mf.getType() != MediaFileType.NFO
             && !movie.getMediaFiles().contains(mf)) {
-          LOGGER.error("Movie not added mf: " + mf.getFile().getPath());
+          LOGGER.error("| Movie not added mf: " + mf.getFile().getPath());
         }
 
       } // end new MF found

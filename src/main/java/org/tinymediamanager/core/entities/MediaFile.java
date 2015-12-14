@@ -361,6 +361,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // *-thumb.* or thumb.* or *-thumbXX.* or thumbXX.*
     matcher = thumbPattern.matcher(name);
     if (matcher.matches()) {
+      // decide between thumb and extrathumb
+      if (getPath().endsWith("extrathumbs")) {
+        return MediaFileType.EXTRATHUMB;
+      }
       return MediaFileType.THUMB;
     }
 
