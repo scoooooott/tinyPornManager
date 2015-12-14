@@ -83,8 +83,8 @@ public class Utils {
   private static final Pattern                      stackingPattern2      = Pattern
       .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
 
-  // moviename-a.avi // modified mandatory delimiter, and AD must be at end!
-  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$",
+  // moviename-a.avi // modified mandatory delimiter (but no space), and A-D must be at end!
+  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
   // moviename-1of2.avi, moviename-1 of 2.avi
