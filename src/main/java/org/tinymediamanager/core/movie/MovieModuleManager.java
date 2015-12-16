@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
@@ -48,6 +50,7 @@ public class MovieModuleManager implements ITmmModule {
 
   private static final String       MODULE_TITLE   = "Movie management";
   private static final String       MOVIE_DB       = "movies.db";
+  private static final Logger       LOGGER         = LoggerFactory.getLogger(MovieModuleManager.class);
   private static MovieModuleManager instance;
 
   private boolean                   enabled;
@@ -130,17 +133,17 @@ public class MovieModuleManager implements ITmmModule {
   }
 
   /**
-   * dumps a whole movie to standard output
+   * dumps a whole movie to logfile
    * 
    * @param movie
    */
   void dump(Movie movie) {
     try {
       JSONObject jsonObject = new JSONObject(movieObjectWriter.writeValueAsString(movie));
-      System.out.println(jsonObject.toString(4));
+      LOGGER.info(jsonObject.toString(4));
     }
     catch (JsonProcessingException e) {
-      e.printStackTrace();
+      LOGGER.error("Cannot parse JSON!", e);
     }
   }
 
