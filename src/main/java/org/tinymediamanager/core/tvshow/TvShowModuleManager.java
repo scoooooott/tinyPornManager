@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
+import org.json.JSONObject;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
@@ -32,6 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -125,6 +127,21 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public boolean isEnabled() {
     return enabled;
+  }
+
+  /**
+   * dumps a whole tvshow to standard output
+   * 
+   * @param movie
+   */
+  void dump(TvShow tvshow) {
+    try {
+      JSONObject jsonObject = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
+      System.out.println(jsonObject.toString(4));
+    }
+    catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
   }
 
   void persistTvShow(TvShow tvShow) throws Exception {
