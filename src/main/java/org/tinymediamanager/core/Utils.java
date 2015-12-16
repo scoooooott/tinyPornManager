@@ -53,6 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -155,6 +156,16 @@ public class Utils {
       return l.getISO3Language();
     }
     return "";
+  }
+
+  /**
+   * dumps a complete Object (incl sub-classes 5 levels deep) to System.out
+   * 
+   * @param o
+   *          the object to dump
+   */
+  public static void dumpObject(Object o) {
+    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5)));
   }
 
   /**
