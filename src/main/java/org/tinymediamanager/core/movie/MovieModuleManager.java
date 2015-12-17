@@ -137,7 +137,7 @@ public class MovieModuleManager implements ITmmModule {
    * 
    * @param movie
    */
-  void dump(Movie movie) {
+  public void dump(Movie movie) {
     try {
       JSONObject jsonObject = new JSONObject(movieObjectWriter.writeValueAsString(movie));
       LOGGER.info(jsonObject.toString(4));

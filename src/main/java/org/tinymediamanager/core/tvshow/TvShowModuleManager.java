@@ -137,7 +137,7 @@ public class TvShowModuleManager implements ITmmModule {
    * 
    * @param movie
    */
-  void dump(TvShow tvshow) {
+  public void dump(TvShow tvshow) {
     try {
       JSONObject jsonObject = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
       LOGGER.info(jsonObject.toString(4));
