@@ -202,7 +202,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.stackingMarker = Utils.getStackingMarker(f.getName());
     if (this.stackingMarker.isEmpty()) {
       // try to parse from parent directory
-      this.stackingMarker = Utils.getStackingMarker(FilenameUtils.getBaseName(getPath()));
+      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
     }
 
     if (this.type == MediaFileType.SUBTITLE) {
@@ -579,12 +579,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.stacking = stacking;
   }
 
+  public String getStackingMarker() {
+    return stackingMarker;
+  }
+
+  public void setStackingMarker(String stackingMarker) {
+    this.stackingMarker = stackingMarker;
+  }
+
   /**
    * this might be needed in case of "Harry Potter 7 - Part 1" - this is no stacking!
    */
   public void removeStackingInformation() {
-    this.stacking = 0;
-    this.stackingMarker = "";
+    setStacking(0);
+    setStackingMarker("");
   }
 
   public List<MediaFileSubtitle> getSubtitles() {

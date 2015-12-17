@@ -316,6 +316,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       LOGGER.debug("parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
+      movie.setDateAddedFromMediaFile(mf);
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
@@ -348,6 +349,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       movie.saveToDb();
     } // end for every file
+
+    // check stacking on all movie from this dir (it might have changed!)
+    for (Movie m : movieList.getMoviesByPath(parentDir)) {
+      m.reEvaluateStacking();
+    }
   }
 
   /**
@@ -538,6 +544,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
         }
 
+        movie.reEvaluateStacking();
         movie.saveToDb();
       }
     }

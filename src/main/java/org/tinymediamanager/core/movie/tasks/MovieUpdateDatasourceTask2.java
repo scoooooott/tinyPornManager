@@ -609,6 +609,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
+      movie.setDateAddedFromMediaFile(mf);
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
