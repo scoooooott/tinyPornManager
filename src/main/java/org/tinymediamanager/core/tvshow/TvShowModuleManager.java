@@ -140,7 +140,11 @@ public class TvShowModuleManager implements ITmmModule {
   public void dump(TvShow tvshow) {
     try {
       JSONObject jsonObject = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
-      LOGGER.info(jsonObject.toString(4));
+      for (TvShowEpisode ep : tvshow.getEpisodes()) {
+        JSONObject epJson = new JSONObject(episodeObjectWriter.writeValueAsString(ep));
+        jsonObject.put("S" + ep.getSeason() + "_E" + ep.getEpisode(), epJson);
+      }
+      LOGGER.info("Dumping TvShow:\n" + jsonObject.toString(4));
     }
     catch (JsonProcessingException e) {
       LOGGER.error("Cannot parse JSON!", e);

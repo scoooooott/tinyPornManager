@@ -140,7 +140,7 @@ public class MovieModuleManager implements ITmmModule {
   public void dump(Movie movie) {
     try {
       JSONObject jsonObject = new JSONObject(movieObjectWriter.writeValueAsString(movie));
-      LOGGER.info(jsonObject.toString(4));
+      LOGGER.info("Dumping Movie:\n" + jsonObject.toString(4));
     }
     catch (JsonProcessingException e) {
       LOGGER.error("Cannot parse JSON!", e);
