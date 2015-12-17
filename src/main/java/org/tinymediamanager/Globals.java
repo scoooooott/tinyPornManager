@@ -35,6 +35,8 @@ public class Globals {
 
   private static final boolean DONATOR  = License.isValid();
 
+  private static final boolean DEBUG    = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
+
   /**
    * Have we donated?
    * 
@@ -42,6 +44,15 @@ public class Globals {
    */
   public static boolean isDonator() {
     return DONATOR;
+  }
+
+  /**
+   * are we in our internal debug mode?
+   * 
+   * @return
+   */
+  public static boolean isDebug() {
+    return DEBUG;
   }
 
   /**
