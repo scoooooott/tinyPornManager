@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,12 +140,14 @@ public class TvShowModuleManager implements ITmmModule {
    */
   public void dump(TvShow tvshow) {
     try {
-      JSONObject jsonObject = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
+      JSONObject show = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
+      JSONArray episodes = new JSONArray();
       for (TvShowEpisode ep : tvshow.getEpisodes()) {
         JSONObject epJson = new JSONObject(episodeObjectWriter.writeValueAsString(ep));
-        jsonObject.put("S" + ep.getSeason() + "_E" + ep.getEpisode(), epJson);
+        episodes.put(epJson);
       }
-      LOGGER.info("Dumping TvShow:\n" + jsonObject.toString(4));
+      show.put("episodes", episodes);
+      LOGGER.info("Dumping TvShow:\n" + show.toString(4));
     }
     catch (JsonProcessingException e) {
       LOGGER.error("Cannot parse JSON!", e);
