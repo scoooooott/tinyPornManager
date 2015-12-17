@@ -734,7 +734,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       regex = Pattern.compile("<i>(.*?)</i>(.*?)<br>", Pattern.DOTALL); // get them as single trailer line
       m = regex.matcher(doc.getElementsByClass("clips").html());
       while (m.find()) {
-        LOGGER.info(doc.getElementsByClass("clips").html());
+        // LOGGER.info(doc.getElementsByClass("clips").html());
         // parse each line with 5 qualities
         String tname = m.group(1).trim();
         tname = tname.replaceFirst(":$", ""); // replace ending colon
