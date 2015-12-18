@@ -41,7 +41,7 @@ public abstract class TmmDialog extends JDialog {
     super();
     setTitle(title);
     setName(id);
-    setIconImage(MainWindow.LOGO);
+    setIconImages(MainWindow.LOGOS);
     setModal(true);
     setModalityType(ModalityType.APPLICATION_MODAL);
   }
@@ -50,7 +50,7 @@ public abstract class TmmDialog extends JDialog {
     super(owner);
     setTitle(title);
     setName(id);
-    setIconImage(MainWindow.LOGO);
+    setIconImages(MainWindow.LOGOS);
     setModal(true);
     setModalityType(ModalityType.APPLICATION_MODAL);
   }

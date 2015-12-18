@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,6 +43,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.images.Logo;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -86,10 +86,11 @@ public class AboutDialog extends TmmDialog {
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
     {
       JLabel lblLogo = new JLabel("");
-      lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/tmm96.png")));
+      lblLogo.setIcon(new Logo(92));
       contentPanel.add(lblLogo, "2, 2, 1, 9, default, top");
     }
     {
@@ -159,8 +160,12 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblMatthewSandersFor, "6, 22");
     }
     {
+      JLabel lblLblakya = new JLabel("Akya for the reworked logo");
+      contentPanel.add(lblLblakya, "6, 24");
+    }
+    {
       JPanel panelTranslators = new JPanel();
-      contentPanel.add(panelTranslators, "6, 24, fill, fill");
+      contentPanel.add(panelTranslators, "6, 26, fill, fill");
       panelTranslators
           .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
               new RowSpec[] { RowSpec.decode("top:default"), }));
@@ -179,11 +184,11 @@ public class AboutDialog extends TmmDialog {
     }
     {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 26");
+      contentPanel.add(lblLibs, "6, 28");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 28");
+      contentPanel.add(lblTester, "6, 30");
     }
     {
       JPanel buttonPane = new JPanel();

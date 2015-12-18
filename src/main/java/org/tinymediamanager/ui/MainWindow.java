@@ -30,6 +30,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -84,6 +86,7 @@ import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
+import org.tinymediamanager.ui.images.Logo;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -107,8 +110,7 @@ public class MainWindow extends JFrame {
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
   private static final long           serialVersionUID = 1L;
 
-  public final static Image           LOGO             = Toolkit.getDefaultToolkit()
-      .getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
+  public final static List<Image>     LOGOS            = createLogos();
   private static MainWindow           instance;
 
   private JPanel                      panelMovies;
@@ -269,6 +271,14 @@ public class MainWindow extends JFrame {
     checkForUpdate();
   }
 
+  private static List<Image> createLogos() {
+    List<Image> logos = new ArrayList<>();
+    for (int i = 32; i <= 256; i = i * 2) {
+      logos.add(new Logo(i).getImage());
+    }
+    return logos;
+  }
+
   private void checkForUpdate() {
     try {
       final UpdaterTask updateWorker = new UpdaterTask();
@@ -334,7 +344,7 @@ public class MainWindow extends JFrame {
    */
   private void initialize() {
     // set the logo
-    setIconImage(LOGO);
+    setIconImages(LOGOS);
     setBounds(5, 5, 1100, 727);
     // do nothing, we have our own windowClosing() listener
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
