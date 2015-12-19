@@ -151,8 +151,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case DISC:
             case LOGO:
               entity.setArtwork(new File(entity.getPath(), filename), MediaFileType.getMediaFileType(type));
-              entity.saveToDb();
               entity.callbackForWrittenArtwork(type);
+              entity.saveToDb();
               break;
 
             default:
@@ -187,8 +187,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case DISC:
             case LOGO:
               entity.setArtwork(new File(oldFilename), MediaFileType.getMediaFileType(type));
-              entity.saveToDb();
               entity.callbackForWrittenArtwork(type);
+              entity.saveToDb();
               break;
 
             default:

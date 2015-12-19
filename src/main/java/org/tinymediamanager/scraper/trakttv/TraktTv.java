@@ -236,8 +236,8 @@ public class TraktTv {
           }
 
           if (dirty) {
-            tmmMovie.saveToDb();
             tmmMovie.writeNFO();
+            tmmMovie.saveToDb();
           }
 
           // remove it from our list (no need to add)
@@ -461,8 +461,8 @@ public class TraktTv {
           }
 
           if (dirty) {
-            tmmMovie.saveToDb();
             tmmMovie.writeNFO();
+            tmmMovie.saveToDb();
           }
         }
       }

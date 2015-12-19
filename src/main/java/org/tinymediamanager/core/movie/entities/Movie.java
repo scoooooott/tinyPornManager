@@ -902,8 +902,8 @@ public class Movie extends MediaEntity {
     }
 
     // update DB
-    saveToDb();
     writeNFO();
+    saveToDb();
   }
 
   /**
@@ -989,8 +989,8 @@ public class Movie extends MediaEntity {
     }
 
     // persist
-    saveToDb();
     writeNFO();
+    saveToDb();
   }
 
   /**

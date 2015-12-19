@@ -515,12 +515,13 @@ public class MovieRenamer {
     renameSubtitles(movie);
 
     movie.gatherMediaFileInformation(false);
-    movie.saveToDb();
 
     // rewrite NFO if it's a MP NFO and there was a change with poster/fanart
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
       movie.writeNFO();
     }
+
+    movie.saveToDb();
 
     // ######################################################################
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"

@@ -55,6 +55,7 @@ public class MovieRewriteNfoAction extends AbstractAction {
       public void run() {
         for (Movie movie : selectedMovies) {
           movie.writeNFO();
+          movie.saveToDb();
         }
       }
     });

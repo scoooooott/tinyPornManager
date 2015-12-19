@@ -89,8 +89,8 @@ public class MovieExtraImageFetcher implements Runnable {
           return;
         }
 
-        movie.saveToDb();
         movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
+        movie.saveToDb();
       }
       else {
         LOGGER.info("Movie '" + movie.getTitle() + "' is within a multi-movie-directory - skip downloading of additional images.");
@@ -167,8 +167,8 @@ public class MovieExtraImageFetcher implements Runnable {
       }
 
       movie.setArtwork(destinationFile, type);
-      movie.saveToDb();
       movie.callbackForWrittenArtwork(MediaFileType.getMediaArtworkType(type));
+      movie.saveToDb();
     }
     catch (Exception e) {
       if (e instanceof InterruptedException) {
