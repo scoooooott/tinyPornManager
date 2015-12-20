@@ -11,6 +11,7 @@ import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 /**
  * This class cannot run, since Settings() is STATIC<br>
@@ -21,9 +22,11 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
  */
 public class MovieUpdateDatasourceTaskTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 16;
+  private static final int NUMBER_OF_EXPECTED_MOVIES = 17;
 
   public void setUpBeforeClass() throws Exception {
+    MediaInfoUtils.loadMediaInfo();
+
     // do not use @BeforeClass b/c of static settings
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();

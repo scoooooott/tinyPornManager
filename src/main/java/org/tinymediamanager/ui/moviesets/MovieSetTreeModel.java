@@ -340,8 +340,8 @@ public class MovieSetTreeModel implements TreeModel {
         MovieSet movieSet = (MovieSet) node.getUserObject();
         for (Movie movie : movieSet.getMovies()) {
           movie.setMovieSet(null);
-          movie.saveToDb();
           movie.writeNFO();
+          movie.saveToDb();
           nodeMap.remove(movie);
         }
         movieSet.removeAllMovies();
@@ -371,8 +371,8 @@ public class MovieSetTreeModel implements TreeModel {
         nodeMap.remove(movie);
 
         movie.setMovieSet(null);
-        movie.saveToDb();
         movie.writeNFO();
+        movie.saveToDb();
 
         // here we do not need to inform listeners - is already done via
         // propertychangesupport (movieSet.removeMovie)

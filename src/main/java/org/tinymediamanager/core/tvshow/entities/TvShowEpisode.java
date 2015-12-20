@@ -477,8 +477,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     // update DB
-    saveToDb();
     writeNFO();
+    saveToDb();
 
     // should we write a new thumb?
     if (writeNewThumb) {

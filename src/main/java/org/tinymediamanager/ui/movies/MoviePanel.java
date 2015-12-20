@@ -57,6 +57,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -70,6 +71,7 @@ import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.movies.actions.DebugDumpMovie;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
@@ -118,47 +120,17 @@ public class MoviePanel extends JPanel {
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle   BUNDLE                       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
   private static final long             serialVersionUID             = 1L;
+  private static final Logger           LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
 
-  /** The logger. */
-  private final static Logger           LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
-
-  /** The movie list. */
-  private MovieList                     movieList;
-
-  /** The text field. */
-  private JTextField                    textField;
-
-  /** The table. */
-  private ZebraJTable                   table;
-
-  /** The action update data sources. */
   private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
-
-  /** The action update data sources. */
   private final Action                  actionUpdateDataSources2     = new MovieUpdateDatasourceAction(true);
-
-  /** The action scrape. */
   private final Action                  actionScrape                 = new MovieSingleScrapeAction(false);
-
-  /** The action scrape. */
   private final Action                  actionScrape2                = new MovieSingleScrapeAction(true);
-
-  /** The action edit movie. */
   private final Action                  actionEditMovie              = new MovieEditAction(false);
-
-  /** The action edit movie. */
   private final Action                  actionEditMovie2             = new MovieEditAction(true);
-
-  /** The action scrape unscraped movies. */
   private final Action                  actionScrapeUnscraped        = new MovieUnscrapedScrapeAction();
-
-  /** The action scrape selected movies. */
   private final Action                  actionScrapeSelected         = new MovieSelectedScrapeAction();
-
-  /** The action scrape metadata selected. */
   private final Action                  actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
   private final Action                  actionAssignMovieSets        = new MovieAssignMovieSetAction();
   private final Action                  actionRenamerPreview         = new MovieRenamePreviewAction();
@@ -166,78 +138,38 @@ public class MoviePanel extends JPanel {
   private final Action                  actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
   private final Action                  actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
   private final Action                  actionTrailerDownload        = new MovieTrailerDownloadAction();
-
-  /** The action rename. */
   private final Action                  actionRename                 = new MovieRenameAction(false);
-
-  /** The action rename2. */
   private final Action                  actionRename2                = new MovieRenameAction(true);
-
-  /** The action remove2. */
   private final Action                  actionRemove2                = new MovieRemoveAction();
   private final Action                  actionDelete2                = new MovieDeleteAction();
-
-  /** The action export. */
   private final Action                  actionExport                 = new MovieExportAction();
-
   private final Action                  actionRewriteNfo             = new MovieRewriteNfoAction();
-
-  /** The panel movie count. */
-  private JPanel                        panelMovieCount;
-
-  /** The lbl movie count. */
-  private JLabel                        lblMovieCount;
-
-  /** The lbl movie count int. */
-  private JLabel                        lblMovieCountTotal;
-
-  /** The btn ren. */
-  private JButton                       btnRen;
-
-  /** The menu. */
-  private JMenu                         menu;
-
-  /** The movie table model. */
-  private DefaultEventTableModel<Movie> movieTableModel;
-
-  /** The movie selection model. */
-  MovieSelectionModel                   movieSelectionModel;
-
-  /** The sorted movies. */
-  private SortedList<Movie>             sortedMovies;
-
-  /** The text filtered movies. */
-  private FilterList<Movie>             textFilteredMovies;
-
-  /** The panel extended search. */
-  private JPanel                        panelExtendedSearch;
-
-  /** The lbl movie count of. */
-  private JLabel                        lblMovieCountOf;
-
-  /** The lbl movie count filtered. */
-  private JLabel                        lblMovieCountFiltered;
-
-  /** The split pane horizontal. */
-  private JSplitPane                    splitPaneHorizontal;
-
-  /** The panel right. */
-  private MovieInformationPanel         panelRight;
-
-  /** The btn media information. */
-  private JButton                       btnMediaInformation;
-
-  /** The action media information. */
+  private final Action                  debugDumpMovie               = new DebugDumpMovie();
   private final Action                  actionMediaInformation       = new MovieMediaInformationAction(false);
-
-  /** The action media information2. */
   private final Action                  actionMediaInformation2      = new MovieMediaInformationAction(true);
-
-  /** The action batch edit. */
   private final Action                  actionBatchEdit              = new MovieBatchEditAction();
   private final Action                  actionSetWatchedFlag         = new MovieSetWatchedFlagAction();
-
   private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
+
+  private MovieList                     movieList;
+  private JTextField                    textField;
+  private ZebraJTable                   table;
+  private JPanel                        panelMovieCount;
+  private JLabel                        lblMovieCount;
+  private JLabel                        lblMovieCountTotal;
+  private JButton                       btnRen;
+  private JMenu                         menu;
+  private DefaultEventTableModel<Movie> movieTableModel;
+  private SortedList<Movie>             sortedMovies;
+  private FilterList<Movie>             textFilteredMovies;
+  private JPanel                        panelExtendedSearch;
+  private JLabel                        lblMovieCountOf;
+  private JLabel                        lblMovieCountFiltered;
+  private JSplitPane                    splitPaneHorizontal;
+  private MovieInformationPanel         panelRight;
+  private JButton                       btnMediaInformation;
+
+  public MovieSelectionModel            movieSelectionModel;
 
   /**
    * Create the panel.
@@ -594,6 +526,12 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.add(actionDelete2);
+    if (Globals.isDebug()) {
+      JMenu menuDebug = new JMenu("Debug"); //$NON-NLS-1$
+      menuDebug.add(debugDumpMovie);
+      popupMenu.addSeparator();
+      popupMenu.add(menuDebug);
+    }
 
     MouseListener mouseListener = new MovieTableMouseListener(popupMenu, table);
     table.addMouseListener(mouseListener);

@@ -588,8 +588,8 @@ public class TvShow extends MediaEntity {
     setScraped(true);
 
     // update DB
-    saveToDb();
     writeNFO();
+    saveToDb();
   }
 
   /**

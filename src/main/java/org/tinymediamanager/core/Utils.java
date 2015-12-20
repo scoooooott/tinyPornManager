@@ -53,6 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -83,8 +84,8 @@ public class Utils {
   private static final Pattern                      stackingPattern2      = Pattern
       .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
 
-  // moviename-a.avi // modified mandatory delimiter, and AD must be at end!
-  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[ _.-]+([a-d])(\\.[^.]+)$",
+  // moviename-a.avi // modified mandatory delimiter (but no space), and A-D must be at end!
+  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
   // moviename-1of2.avi, moviename-1 of 2.avi
@@ -155,6 +156,16 @@ public class Utils {
       return l.getISO3Language();
     }
     return "";
+  }
+
+  /**
+   * dumps a complete Object (incl sub-classes 5 levels deep) to System.out
+   * 
+   * @param o
+   *          the object to dump
+   */
+  public static void dumpObject(Object o) {
+    System.out.println(ReflectionToStringBuilder.toString(o, new RecursiveToStringStyle(5)));
   }
 
   /**

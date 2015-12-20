@@ -23,6 +23,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
@@ -32,6 +36,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -46,6 +51,7 @@ public class TvShowModuleManager implements ITmmModule {
 
   private static final String        MODULE_TITLE     = "TV show management";
   private static final String        TV_SHOW_DB       = "tvshows.db";
+  private static final Logger        LOGGER           = LoggerFactory.getLogger(TvShowModuleManager.class);
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;
@@ -125,6 +131,27 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public boolean isEnabled() {
     return enabled;
+  }
+
+  /**
+   * dumps a whole tvshow to logfile
+   * 
+   * @param movie
+   */
+  public void dump(TvShow tvshow) {
+    try {
+      JSONObject show = new JSONObject(tvShowObjectWriter.writeValueAsString(tvshow));
+      JSONArray episodes = new JSONArray();
+      for (TvShowEpisode ep : tvshow.getEpisodes()) {
+        JSONObject epJson = new JSONObject(episodeObjectWriter.writeValueAsString(ep));
+        episodes.put(epJson);
+      }
+      show.put("episodes", episodes);
+      LOGGER.info("Dumping TvShow:\n" + show.toString(4));
+    }
+    catch (JsonProcessingException e) {
+      LOGGER.error("Cannot parse JSON!", e);
+    }
   }
 
   void persistTvShow(TvShow tvShow) throws Exception {

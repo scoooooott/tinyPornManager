@@ -75,6 +75,7 @@ import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
+import org.tinymediamanager.ui.tvshows.actions.DebugDumpShow;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
@@ -159,6 +160,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionSyncSelectedTrakt       = new TvShowSyncSelectedTraktTvAction();
   private final Action                actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
   private final Action                actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
+  private final Action                debugDumpShow                 = new DebugDumpShow();
 
   private int                         width                         = 0;
   private JTextField                  textField;
@@ -622,6 +624,13 @@ public class TvShowPanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(new ExpandAllAction());
     popupMenu.add(new CollapseAllAction());
+
+    if (Globals.isDebug()) {
+      JMenu menuDebug = new JMenu("Debug"); //$NON-NLS-1$
+      menuDebug.add(debugDumpShow);
+      popupMenu.addSeparator();
+      popupMenu.add(menuDebug);
+    }
 
     MouseListener popupListener = new PopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);

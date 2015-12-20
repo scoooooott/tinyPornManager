@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -73,6 +74,8 @@ public class UtilsTest {
 
   @Test
   public void detectStackingMarkers() {
+    assertEqual("Easy A", FilenameUtils.getBaseName(Utils.cleanStackingMarkers("Easy A.avi"))); // not a stacking format!
+
     assertEqual("", Utils.getStackingMarker("2 Guns (2013) x264-720p DTS-6ch.mkv"));
 
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");

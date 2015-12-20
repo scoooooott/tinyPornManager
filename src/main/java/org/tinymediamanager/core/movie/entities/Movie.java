@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -150,6 +149,7 @@ public class Movie extends MediaEntity {
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
   private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
+  private boolean                               stacked                    = false;
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -902,8 +902,8 @@ public class Movie extends MediaEntity {
     }
 
     // update DB
-    saveToDb();
     writeNFO();
+    saveToDb();
   }
 
   /**
@@ -989,8 +989,8 @@ public class Movie extends MediaEntity {
     }
 
     // persist
-    saveToDb();
     writeNFO();
+    saveToDb();
   }
 
   /**
@@ -1090,21 +1090,15 @@ public class Movie extends MediaEntity {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       for (MovieActor actor : actors) {
         if (StringUtils.isNotBlank(actor.getThumbPath())) {
-          // build expected filename
-          String actorName = getPath() + File.separator + MovieActor.ACTOR_DIR + File.separator + actor.getName().replace(" ", "_") + "."
-              + FilenameUtils.getExtension(actor.getThumbPath());
-          // check if equal
-          if (!actorName.equals(actor.getThumbPath())) {
-            // rename
-            try {
-              File oldFile = new File(actor.getThumbPath());
-              if (oldFile.exists()) {
-                FileUtils.moveFile(oldFile, new File(actorName));
-              }
-            }
-            catch (IOException e) {
-              LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-            }
+          try {
+            // build expected filename
+            File actorName = new File(getPath() + File.separator + MovieActor.ACTOR_DIR,
+                actor.getName().replace(" ", "_") + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+            File oldFile = new File(actor.getThumbPath());
+            Utils.moveFileSafe(oldFile, actorName);
+          }
+          catch (IOException e) {
+            LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
           }
         }
       }
@@ -1859,6 +1853,40 @@ public class Movie extends MediaEntity {
 
   public List<MovieProducer> getProducers() {
     return this.producers;
+  }
+
+  /**
+   * Is the movie "stacked" (more than one video file)
+   * 
+   * @return
+   */
+  public boolean isStacked() {
+    return stacked;
+  }
+
+  public void setStacked(boolean stacked) {
+    this.stacked = stacked;
+  }
+
+  /**
+   * ok, we might have detected some stacking MFs.<br>
+   * But if we only have ONE video file, reset stacking markers in this case<br>
+   * eg: "Harry Potter 7 - Part 1" is not stacked<br>
+   * CornerCase: what if HP7 has more files...?
+   */
+  public void reEvaluateStacking() {
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs.size() > 1) {
+      // ok, more video files means stacking
+      this.setStacked(true);
+    }
+    else {
+      // only ONE video? remove any stacking markers from MFs
+      this.setStacked(false);
+      for (MediaFile mf : mfs) {
+        mf.removeStackingInformation();
+      }
+    }
   }
 
   /**

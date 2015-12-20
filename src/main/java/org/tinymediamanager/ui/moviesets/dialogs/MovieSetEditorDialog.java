@@ -55,12 +55,12 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -478,8 +478,8 @@ public class MovieSetEditorDialog extends TmmDialog {
         Movie movie = movieSetToEdit.getMovies().get(i);
         if (!moviesInSet.contains(movie)) {
           movie.setMovieSet(null);
-          movie.saveToDb();
           movie.writeNFO();
+          movie.saveToDb();
           movieSetToEdit.removeMovie(movie);
         }
       }

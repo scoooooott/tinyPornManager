@@ -123,6 +123,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private int                                        durationInSecs     = 0;
   @JsonProperty
   private int                                        stacking           = 0;
+  @JsonProperty
+  private String                                     stackingMarker     = "";
 
   @JsonProperty
   private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
@@ -150,6 +152,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.overallBitRate = clone.overallBitRate;
     this.durationInSecs = clone.durationInSecs;
     this.stacking = clone.stacking;
+    this.stackingMarker = clone.stackingMarker;
     this.type = clone.type;
     this.audioStreams.addAll(clone.audioStreams);
     this.subtitles.addAll(clone.subtitles);
@@ -195,6 +198,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.stacking == 0) {
       // try to parse from parent directory
       this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
+    }
+    this.stackingMarker = Utils.getStackingMarker(f.getName());
+    if (this.stackingMarker.isEmpty()) {
+      // try to parse from parent directory
+      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
     }
 
     if (this.type == MediaFileType.SUBTITLE) {
@@ -361,6 +369,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // *-thumb.* or thumb.* or *-thumbXX.* or thumbXX.*
     matcher = thumbPattern.matcher(name);
     if (matcher.matches()) {
+      // decide between thumb and extrathumb
+      if (getPath().endsWith("extrathumbs")) {
+        return MediaFileType.EXTRATHUMB;
+      }
       return MediaFileType.THUMB;
     }
 
@@ -565,6 +577,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public void setStacking(int stacking) {
     this.stacking = stacking;
+  }
+
+  public String getStackingMarker() {
+    return stackingMarker;
+  }
+
+  public void setStackingMarker(String stackingMarker) {
+    this.stackingMarker = stackingMarker;
+  }
+
+  /**
+   * this might be needed in case of "Harry Potter 7 - Part 1" - this is no stacking!
+   */
+  public void removeStackingInformation() {
+    setStacking(0);
+    setStackingMarker("");
   }
 
   public List<MediaFileSubtitle> getSubtitles() {

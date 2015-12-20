@@ -745,13 +745,13 @@ public class ImageChooserDialog extends TmmDialog {
         }
       });
 
-      try {
-        if (artworkScrapers == null || artworkScrapers.size() == 0) {
-          return null;
-        }
+      if (artworkScrapers == null || artworkScrapers.size() == 0) {
+        return null;
+      }
 
-        // get images from all artworkproviders
-        for (MediaScraper scraper : artworkScrapers) {
+      // get images from all artworkproviders
+      for (MediaScraper scraper : artworkScrapers) {
+        try {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
@@ -836,15 +836,15 @@ public class ImageChooserDialog extends TmmDialog {
               LOGGER.warn("Thread interrupted");
             }
             catch (Exception e) {
-              LOGGER.error("DownloadTask", e);
+              LOGGER.error("DownloadTask displaying", e);
             }
 
           }
         }
-      }
-      catch (Exception e) {
-        LOGGER.error("DownloadTask", e);
-      }
+        catch (Exception e) {
+          LOGGER.error("DownloadTask", e);
+        }
+      } // end foreach scraper
 
       return null;
     }

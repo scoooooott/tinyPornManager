@@ -77,7 +77,13 @@ public class MovieRenamer {
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase();
         if (mfs != null && mfs.size() > 0) {
-          String vname = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename())).toLowerCase();
+          String vname = "";
+          if (m.isStacked()) {
+            vname = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename())).toLowerCase();
+          }
+          else {
+            vname = FilenameUtils.getBaseName(mfs.get(0).getFilename()).toLowerCase();
+          }
           shortname = sub.getBasename().toLowerCase().replace(vname, "");
         }
 
@@ -322,13 +328,23 @@ public class MovieRenamer {
     if (!isFilePatternValid()) {
       // Template empty or not even title set, so we are NOT renaming any files
       // we keep the same name on renaming ;)
-      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
+      if (movie.isStacked()) {
+        newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
+      }
+      else {
+        newVideoBasename = FilenameUtils.getBaseName(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+      }
       LOGGER.warn("Filepattern is not valid - NOT renaming files!");
     }
     else {
       // since we rename, generate the new basename
       MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
-      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
+      if (movie.isStacked()) {
+        newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
+      }
+      else {
+        newVideoBasename = FilenameUtils.getBaseName(ftr.getFilename());
+      }
     }
     LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
 
@@ -499,12 +515,13 @@ public class MovieRenamer {
     renameSubtitles(movie);
 
     movie.gatherMediaFileInformation(false);
-    movie.saveToDb();
 
     // rewrite NFO if it's a MP NFO and there was a change with poster/fanart
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
       movie.writeNFO();
     }
+
+    movie.saveToDb();
 
     // ######################################################################
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
@@ -817,7 +834,7 @@ public class MovieRenamer {
    * @return eg ".CD1" dependent of settings
    */
   private static String getStackingString(MediaFile mf) {
-    String stacking = Utils.getStackingMarker(mf.getFilename());
+    String stacking = mf.getStackingMarker();
     String delimiter = " ";
     if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
       delimiter = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();

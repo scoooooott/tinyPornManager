@@ -896,18 +896,18 @@ public class TvShowEditorDialog extends TmmDialog {
         }
 
         if (!found) {
-          container.tvShowEpisode.saveToDb();
           container.tvShowEpisode.writeNFO();
+          container.tvShowEpisode.saveToDb();
           tvShowToEdit.addEpisode(container.tvShowEpisode);
         }
         else if (shouldStore) {
-          container.tvShowEpisode.saveToDb();
           container.tvShowEpisode.writeNFO();
+          container.tvShowEpisode.saveToDb();
         }
       }
 
-      tvShowToEdit.saveToDb();
       tvShowToEdit.writeNFO();
+      tvShowToEdit.saveToDb();
 
       if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
         TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));

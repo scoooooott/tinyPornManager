@@ -82,12 +82,12 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -1127,8 +1127,8 @@ public class MovieEditorDialog extends TmmDialog {
         movieToEdit.setVotes(1);
       }
 
-      movieToEdit.saveToDb();
       movieToEdit.writeNFO();
+      movieToEdit.saveToDb();
 
       // if configured - sync with trakt.tv
       if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {

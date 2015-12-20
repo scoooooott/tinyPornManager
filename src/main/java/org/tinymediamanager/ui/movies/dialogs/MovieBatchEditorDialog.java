@@ -386,8 +386,8 @@ public class MovieBatchEditorDialog extends TmmDialog {
           if (changed) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (Movie movie : moviesToEdit) {
-              movie.saveToDb();
               movie.writeNFO();
+              movie.saveToDb();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
@@ -404,8 +404,8 @@ public class MovieBatchEditorDialog extends TmmDialog {
           // rewrite movies, if anything changed
           if (changed) {
             for (Movie movie : moviesToEdit) {
-              movie.saveToDb();
               movie.writeNFO();
+              movie.saveToDb();
             }
             // if configured - sync with trakt.tv
             if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
