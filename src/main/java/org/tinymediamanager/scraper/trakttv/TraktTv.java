@@ -638,8 +638,8 @@ public class TraktTv {
           }
 
           if (dirty) {
-            tmmShow.saveToDb();
             tmmShow.writeNFO();
+            tmmShow.saveToDb();
           }
         }
       }
@@ -749,8 +749,8 @@ public class TraktTv {
           }
 
           if (dirty) {
-            tmmShow.saveToDb();
             tmmShow.writeNFO();
+            tmmShow.saveToDb();
           }
         }
       }

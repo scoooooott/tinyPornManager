@@ -49,6 +49,7 @@ public class TvShowRewriteEpisodeNfoAction extends AbstractAction {
       public void run() {
         for (TvShowEpisode episode : selectedEpisodes) {
           episode.writeNFO();
+          episode.saveToDb();
         }
       }
     });

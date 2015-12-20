@@ -78,8 +78,8 @@ public class TvShowChangeToAiredOrderAction extends AbstractAction {
         episode.setAiredEpisode(episode.getDvdEpisode());
         episode.setDvdEpisode(-1);
         episode.setDvdSeason(-1);
-        episode.saveToDb();
         episode.writeNFO();
+        episode.saveToDb();
       }
     }
   }
