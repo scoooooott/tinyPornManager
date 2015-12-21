@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,6 +43,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.images.Logo;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -73,13 +73,13 @@ public class AboutDialog extends TmmDialog {
 
   public AboutDialog() {
     super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
-    setBounds(100, 100, 655, 450);
+    setBounds(100, 100, 655, 500);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("250dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
@@ -91,7 +91,7 @@ public class AboutDialog extends TmmDialog {
             RowSpec.decode("default:grow"), }));
     {
       JLabel lblLogo = new JLabel("");
-      lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/logo96.png")));
+      lblLogo.setIcon(new Logo(96));
       contentPanel.add(lblLogo, "2, 2, 1, 9, default, top");
     }
     {
@@ -169,7 +169,7 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(panelTranslators, "6, 26, fill, fill");
       panelTranslators
           .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
-              new RowSpec[] { RowSpec.decode("top:default"), }));
+              new RowSpec[] { RowSpec.decode("top:max(50dlu;pref)"), }));
       {
         JLabel lblTranslatorsT = new JLabel(BUNDLE.getString("tmm.translators")); //$NON-NLS-1$
         panelTranslators.add(lblTranslatorsT, "1, 1, right, top");
@@ -204,6 +204,11 @@ public class AboutDialog extends TmmDialog {
         getRootPane().setDefaultButton(okButton);
       }
     }
+  }
+
+  @Override
+  public void pack() {
+
   }
 
   private class SwingAction extends AbstractAction {

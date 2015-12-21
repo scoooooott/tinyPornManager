@@ -86,6 +86,7 @@ import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
+import org.tinymediamanager.ui.images.Logo;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -277,13 +278,12 @@ public class MainWindow extends JFrame {
    */
   private static List<Image> createLogos() {
     List<Image> logos = new ArrayList<>();
-    Toolkit tk = Toolkit.getDefaultToolkit();
 
-    logos.add(tk.getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/logo48.png")));
-    logos.add(tk.getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/logo64.png")));
-    logos.add(tk.getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/logo96.png")));
-    logos.add(tk.getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/logo128.png")));
-    logos.add(tk.getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/logo256.png")));
+    logos.add(new Logo(48).getImage());
+    logos.add(new Logo(64).getImage());
+    logos.add(new Logo(96).getImage());
+    logos.add(new Logo(128).getImage());
+    logos.add(new Logo(256).getImage());
 
     return logos;
   }
