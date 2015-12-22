@@ -77,14 +77,7 @@ public class MovieRenamer {
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase();
         if (mfs != null && mfs.size() > 0) {
-          String vname = "";
-          if (m.isStacked()) {
-            vname = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfs.get(0).getFilename())).toLowerCase();
-          }
-          else {
-            vname = FilenameUtils.getBaseName(mfs.get(0).getFilename()).toLowerCase();
-          }
-          shortname = sub.getBasename().toLowerCase().replace(vname, "");
+          shortname = sub.getBasename().toLowerCase().replace(m.getVideoBasenameWithoutStacking(), "");
         }
 
         if (sub.getFilename().toLowerCase().contains("forced")) {
@@ -328,23 +321,13 @@ public class MovieRenamer {
     if (!isFilePatternValid()) {
       // Template empty or not even title set, so we are NOT renaming any files
       // we keep the same name on renaming ;)
-      if (movie.isStacked()) {
-        newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
-      }
-      else {
-        newVideoBasename = FilenameUtils.getBaseName(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-      }
+      newVideoBasename = movie.getVideoBasenameWithoutStacking();
       LOGGER.warn("Filepattern is not valid - NOT renaming files!");
     }
     else {
       // since we rename, generate the new basename
       MediaFile ftr = generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0); // there can be only one
-      if (movie.isStacked()) {
-        newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
-      }
-      else {
-        newVideoBasename = FilenameUtils.getBaseName(ftr.getFilename());
-      }
+      newVideoBasename = FilenameUtils.getBaseName(ftr.getFilenameWithoutStacking());
     }
     LOGGER.debug("Our new basename for renaming: " + newVideoBasename);
 
@@ -615,10 +598,12 @@ public class MovieRenamer {
 
     // extra clone, just for easy adding the "default" ones ;)
     MediaFile defaultMF = null;
-    if (!newDestIsMultiMovieDir) {
-      defaultMF = new MediaFile(mf);
-      defaultMF.replacePathForRenamedFolder(new File(movie.getPath()), new File(newMovieDir));
-    }
+    String defaultMFext = "";
+    // if (!newDestIsMultiMovieDir) {
+    defaultMF = new MediaFile(mf);
+    defaultMF.replacePathForRenamedFolder(new File(movie.getPath()), new File(newMovieDir));
+    defaultMFext = "." + FilenameUtils.getExtension(defaultMF.getFilename());
+    // }
 
     switch (mf.getType()) {
       case VIDEO:
@@ -710,7 +695,7 @@ public class MovieRenamer {
           posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
         }
         for (MoviePosterNaming name : posternames) {
-          String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename + ".avi"); // dirty hack, but full filename needed
+          String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
           if (newPosterName != null && !newPosterName.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {
@@ -746,7 +731,7 @@ public class MovieRenamer {
           fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
         }
         for (MovieFanartNaming name : fanartnames) {
-          String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename + ".avi");// dirty hack, but full filename needed
+          String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
           if (newFanartName != null && !newFanartName.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {
@@ -772,40 +757,74 @@ public class MovieRenamer {
         break;
       // *************
       // OK, from here we check only the settings
-      // if we are in a MMD, NULL will be added
       // *************
       case BANNER:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
+          // reset filename: type.ext on single, <filename>-type.ext on MMD
+          if (newDestIsMultiMovieDir) {
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+          }
+          else {
+            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+          }
           newFiles.add(defaultMF);
         }
         break;
       case CLEARART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
+          // reset filename: type.ext on single, <filename>-type.ext on MMD
+          if (newDestIsMultiMovieDir) {
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+          }
+          else {
+            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+          }
           newFiles.add(defaultMF);
         }
         break;
       case DISCART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
-          newFiles.add(defaultMF);
-        }
-        break;
-      case EXTRAFANART:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
-          newFiles.add(defaultMF);
-        }
-        break;
-      case EXTRATHUMB:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()) {
+          // reset filename: type.ext on single, <filename>-type.ext on MMD
+          if (newDestIsMultiMovieDir) {
+            defaultMF.setFilename(newFilename + "-disc" + defaultMFext);
+          }
+          else {
+            defaultMF.setFilename("disc" + defaultMFext);
+          }
           newFiles.add(defaultMF);
         }
         break;
       case LOGO:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+          // reset filename: type.ext on single, <filename>-type.ext on MMD
+          if (newDestIsMultiMovieDir) {
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+          }
+          else {
+            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+          }
           newFiles.add(defaultMF);
         }
         break;
       case THUMB:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
+          // reset filename: type.ext on single, <filename>-type.ext on MMD
+          if (newDestIsMultiMovieDir) {
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+          }
+          else {
+            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+          }
+          newFiles.add(defaultMF);
+        }
+        break;
+      case EXTRAFANART:
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
+          newFiles.add(defaultMF);
+        }
+        break;
+      case EXTRATHUMB:
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
         }
         break;
@@ -834,13 +853,12 @@ public class MovieRenamer {
    * @return eg ".CD1" dependent of settings
    */
   private static String getStackingString(MediaFile mf) {
-    String stacking = mf.getStackingMarker();
     String delimiter = " ";
     if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
       delimiter = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();
     }
-    if (!stacking.isEmpty()) {
-      return delimiter + stacking;
+    if (!mf.getStackingMarker().isEmpty()) {
+      return delimiter + mf.getStackingMarker();
     }
     else if (mf.getStacking() != 0) {
       return delimiter + "CD" + mf.getStacking();

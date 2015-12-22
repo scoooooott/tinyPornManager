@@ -59,64 +59,74 @@ public class MovieExtraImageFetcher implements Runnable {
   public void run() {
     // try/catch block in the root of the thread to log crashes
     try {
+      String base = ""; // single movie dir - no prefix
+      if (movie.isMultiMovieDir()) {
+        base = movie.getVideoBasenameWithoutStacking();
+      }
+
+      switch (type) {
+        case LOGO:
+        case BANNER:
+        case CLEARART:
+        case THUMB:
+        case DISCART:
+          downloadArtwork(type, base);
+          break;
+        default:
+          break;
+      }
+
+      // just for single movies
       if (!movie.isMultiMovieDir()) {
         switch (type) {
-          case LOGO:
-          case BANNER:
-          case CLEARART:
-          case THUMB:
-          case DISCART:
-            // download logo
-            downloadArtwork(type);
-            break;
-
           case EXTRATHUMB:
-            // download extrathumbs
             downloadExtraThumbs();
             break;
-
           case EXTRAFANART:
-            // download extrafanart
             downloadExtraFanart();
             break;
-
           default:
-            return;
+            break;
         }
-
-        // check if tmm has been shut down
-        if (Thread.interrupted()) {
-          return;
-        }
-
-        movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
-        movie.saveToDb();
       }
       else {
-        LOGGER.info("Movie '" + movie.getTitle() + "' is within a multi-movie-directory - skip downloading of additional images.");
+        LOGGER.info("Movie '" + movie.getTitle() + "' is within a multi-movie-directory - skip downloading of " + type.name() + " images.");
       }
+
+      // check if tmm has been shut down
+      if (Thread.interrupted()) {
+        return;
+      }
+
+      movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
+      movie.saveToDb();
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.extraimage.threadcrashed"));
     }
+
   }
 
-  private void downloadArtwork(MediaFileType type) {
+  private void downloadArtwork(MediaFileType type, String basename) {
     String artworkUrl = movie.getArtworkUrl(type);
     if (StringUtils.isBlank(artworkUrl)) {
       return;
     }
 
-    String filename = "";
+    String filename = basename;
+    if (!filename.isEmpty()) {
+      filename += "-";
+    }
+
     try {
       String oldFilename = movie.getArtworkFilename(type);
       // we are lucky and have chosen our enums wisely - except the discart :(
       if (type == MediaFileType.DISCART) {
-        filename = "disc." + FilenameUtils.getExtension(artworkUrl);
+        filename += "disc." + FilenameUtils.getExtension(artworkUrl);
       }
       else {
-        filename = type.name().toLowerCase() + "." + FilenameUtils.getExtension(artworkUrl);
+        filename += type.name().toLowerCase() + "." + FilenameUtils.getExtension(artworkUrl);
       }
       movie.removeAllMediaFiles(type);
 
@@ -248,7 +258,7 @@ public class MovieExtraImageFetcher implements Runnable {
       File folder = new File(movie.getPath(), "extrathumbs");
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
-        movie.removeAllMediaFiles(MediaFileType.THUMB);
+        movie.removeAllMediaFiles(MediaFileType.EXTRATHUMB);
       }
       folder.mkdirs();
 
@@ -289,7 +299,7 @@ public class MovieExtraImageFetcher implements Runnable {
         outputStream.close();
         is.close();
 
-        MediaFile mf = new MediaFile(file, MediaFileType.THUMB);
+        MediaFile mf = new MediaFile(file, MediaFileType.EXTRATHUMB);
         mf.gatherMediaInformation();
         movie.addToMediaFiles(mf);
       }

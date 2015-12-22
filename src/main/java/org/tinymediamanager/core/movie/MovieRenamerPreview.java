@@ -43,12 +43,12 @@ public class MovieRenamerPreview {
     String newVideoBasename = "";
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {
       // we are NOT renaming any files, so we keep the same name on renaming ;)
-      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
+      newVideoBasename = movie.getVideoBasenameWithoutStacking();
     }
     else {
       // since we rename, generate the new basename
       MediaFile ftr = MovieRenamer.generateFilename(movie, movie.getMediaFiles(MediaFileType.VIDEO).get(0), newVideoBasename).get(0);
-      newVideoBasename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(ftr.getFilename()));
+      newVideoBasename = FilenameUtils.getBaseName(ftr.getFilenameWithoutStacking());
     }
 
     // VIDEO needs to be renamed first, since all others depend on that name!!!

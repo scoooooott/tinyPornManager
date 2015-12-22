@@ -523,6 +523,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return filename;
   }
 
+  /**
+   * it might be, that there "seems" to be a stacking marker in filename,<br>
+   * but the file is not stacked itself. Just return correct string.
+   * 
+   * @return
+   */
+  public String getFilenameWithoutStacking() {
+    String fname = "";
+    if (stackingMarker.isEmpty()) {
+      // no stacking, remove all occurences
+      fname = Utils.cleanStackingMarkers(filename);
+    }
+    else {
+      // stacking, so just remove knwon marker
+      fname = filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
+    }
+    return fname;
+  }
+
   public void setFilename(String newValue) {
     String oldValue = this.filename;
     this.filename = newValue;
