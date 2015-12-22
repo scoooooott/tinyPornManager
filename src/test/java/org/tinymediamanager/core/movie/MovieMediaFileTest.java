@@ -1,15 +1,34 @@
 package org.tinymediamanager.core.movie;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 public class MovieMediaFileTest {
+
+  @BeforeClass
+  public static void beforeClass() {
+    // preload seetings for log alignment ;)
+    Globals.isDebug();
+  }
+
+  // own method to get some logging ;)
+  public static void assertEqual(Object expected, Object actual) {
+    try {
+      Assert.assertEquals(expected, actual);
+      System.out.println(expected + " - passed");
+    }
+    catch (AssertionError e) {
+      System.err.println(expected + " - FAILED: " + e.getMessage());
+      throw e;
+    }
+  }
 
   @Test
   public void testUpdateMediaFilePath() {
@@ -29,6 +48,15 @@ public class MovieMediaFileTest {
 
     System.out.println("Movie Path: " + movie.getPath());
     System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFile().getAbsolutePath());
+  }
+
+  @Test
+  public void filenameWithoutStacking() {
+    MediaFile mf = new MediaFile(new File(".", "hp7 - part 1"));
+    System.out.println(mf.getFilenameWithoutStacking()); // not stacked
+    mf.setStacking(1);
+    mf.setStackingMarker("part 1");
+    System.out.println(mf.getFilenameWithoutStacking()); // stacked
   }
 
   @Test
@@ -72,9 +100,8 @@ public class MovieMediaFileTest {
       return;
     }
     File f = new File(".", filename + ".avi");
-    System.out.print("testing " + f + " for " + mft.name());
+    System.out.print("testing " + f + " for ");
     MediaFile mf = new MediaFile(f);
-    assertEquals(mft, mf.getType());
-    System.out.println("  ...ok");
+    assertEqual(mft, mf.getType());
   }
 }

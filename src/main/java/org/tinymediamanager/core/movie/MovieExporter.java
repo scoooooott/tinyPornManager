@@ -23,12 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaEntityExporter;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -115,7 +113,8 @@ public class MovieExporter extends MediaEntityExporter {
         // get preferred movie name like set up in movie renamer
         String detailFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
         if (StringUtils.isBlank(detailFilename)) {
-          detailFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
+          detailFilename = movie.getVideoBasenameWithoutStacking();
+          // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
         }
         File detailsExportFile = new File(detailsDir, detailFilename + "." + fileExtension);
 
@@ -177,7 +176,8 @@ public class MovieExporter extends MediaEntityExporter {
         if (StringUtils.isNotBlank(filename)) {
           return filename;
         }
-        return FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
+        return movie.getVideoBasenameWithoutStacking();
+        // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
       }
       return null;
     }

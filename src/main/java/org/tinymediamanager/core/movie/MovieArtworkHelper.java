@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
@@ -271,7 +270,7 @@ public class MovieArtworkHelper {
   public static String getFanartFilename(MovieFanartNaming fanart, Movie movie) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getFanartFilename(fanart, movie, mfs.get(0).getFilename());
+      return getFanartFilename(fanart, movie, movie.getVideoBasenameWithoutStacking());
     }
     else {
       return getFanartFilename(fanart, movie, ""); // no video files
@@ -280,7 +279,7 @@ public class MovieArtworkHelper {
 
   public static String getFanartFilename(MovieFanartNaming fanart, Movie movie, String newMovieFilename) {
     String filename = "";
-    String mediafile = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
+    String mediafile = newMovieFilename;
 
     switch (fanart) {
       case FANART_PNG:
@@ -335,7 +334,7 @@ public class MovieArtworkHelper {
   public static String getPosterFilename(MoviePosterNaming poster, Movie movie) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getPosterFilename(poster, movie, mfs.get(0).getFilename());
+      return getPosterFilename(poster, movie, movie.getVideoBasenameWithoutStacking());
     }
     else {
       return getPosterFilename(poster, movie, ""); // no video files
@@ -344,7 +343,7 @@ public class MovieArtworkHelper {
 
   public static String getPosterFilename(MoviePosterNaming poster, Movie movie, String newMovieFilename) {
     String filename = "";
-    String mediafile = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
+    String mediafile = newMovieFilename;
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
@@ -425,21 +424,12 @@ public class MovieArtworkHelper {
     // fanart
     setBestFanart(movie, artwork);
 
-    if (movie.isMultiMovieDir()) {
-      // just save the urls and do not download nor set ;)
-      setBestArtwork(movie, artwork, MediaArtworkType.LOGO, false);
-      setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, false);
-      setBestArtwork(movie, artwork, MediaArtworkType.BANNER, false);
-      setBestArtwork(movie, artwork, MediaArtworkType.THUMB, false);
-      setBestArtwork(movie, artwork, MediaArtworkType.DISC, false);
-    }
-    else {
-      setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
-      setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.MOVIE_SETTINGS.isImageClearart());
-      setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.MOVIE_SETTINGS.isImageBanner());
-      setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.MOVIE_SETTINGS.isImageThumb());
-      setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
-    }
+    // works now for single & multimovie
+    setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
+    setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.MOVIE_SETTINGS.isImageClearart());
+    setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.MOVIE_SETTINGS.isImageBanner());
+    setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.MOVIE_SETTINGS.isImageThumb());
+    setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
 
     // extrathumbs
     List<String> extrathumbs = new ArrayList<String>();

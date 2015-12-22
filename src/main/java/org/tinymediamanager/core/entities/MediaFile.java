@@ -306,8 +306,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // old impl: https://github.com/brentosmith/xbmc-dvdextras
       // Official: http://wiki.xbmc.org/index.php?title=Add-on:VideoExtras#File_Naming_Convention
       if (getFilename().contains(".EXTRAS.") // scene file naming (need to check first! upper case!)
-          || basename.matches("(?i).*[_.-]*extra[s]?$") // end with "-extra[s]"
-          || basename.matches("(?i).*[-]*extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
+          || basename.matches("(?i).*[_.-]+extra[s]?$") // end with "-extra[s]"
+          || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
           || foldername.equalsIgnoreCase("extras") // preferred folder name
           || foldername.equalsIgnoreCase("extra")) // preferred folder name
       {
@@ -521,6 +521,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getFilename() {
     return filename;
+  }
+
+  /**
+   * it might be, that there "seems" to be a stacking marker in filename,<br>
+   * but the file is not stacked itself. Just return correct string.
+   * 
+   * @return
+   */
+  public String getFilenameWithoutStacking() {
+    String fname = "";
+    if (stackingMarker.isEmpty()) {
+      // no stacking, remove all occurences
+      fname = Utils.cleanStackingMarkers(filename);
+    }
+    else {
+      // stacking, so just remove knwon marker
+      fname = filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
+    }
+    return fname;
   }
 
   public void setFilename(String newValue) {

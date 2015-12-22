@@ -353,6 +353,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     // check stacking on all movie from this dir (it might have changed!)
     for (Movie m : movieList.getMoviesByPath(parentDir)) {
       m.reEvaluateStacking();
+      m.saveToDb();
     }
   }
 

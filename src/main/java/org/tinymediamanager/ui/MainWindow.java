@@ -271,11 +271,20 @@ public class MainWindow extends JFrame {
     checkForUpdate();
   }
 
+  /**
+   * load all predefined logo sizes
+   * 
+   * @return a list of all predefined logos
+   */
   private static List<Image> createLogos() {
     List<Image> logos = new ArrayList<>();
-    for (int i = 32; i <= 256; i = i * 2) {
-      logos.add(new Logo(i).getImage());
-    }
+
+    logos.add(new Logo(48).getImage());
+    logos.add(new Logo(64).getImage());
+    logos.add(new Logo(96).getImage());
+    logos.add(new Logo(128).getImage());
+    logos.add(new Logo(256).getImage());
+
     return logos;
   }
 

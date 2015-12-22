@@ -1775,6 +1775,16 @@ public class Movie extends MediaEntity {
     return getMediaFiles(MediaFileType.VIDEO);
   }
 
+  /**
+   * gets the basename (without stacking)
+   * 
+   * @return
+   */
+  public String getVideoBasenameWithoutStacking() {
+    MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
+    return FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
+  }
+
   public int getTop250() {
     return top250;
   }
