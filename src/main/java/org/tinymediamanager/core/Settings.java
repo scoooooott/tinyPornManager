@@ -57,6 +57,10 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -169,6 +173,31 @@ public class Settings extends AbstractModelObject {
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
+
+    // activate default scrapers
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
+      movieSettings.addMovieArtworkScraper(ms.getId());
+    }
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
+      movieSettings.addMovieTrailerScraper(ms.getId());
+    }
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
+      tvShowSettings.addTvShowArtworkScraper(ms.getId());
+    }
+
+    // set default languages based on java instance
+    String defaultLang = Locale.getDefault().getLanguage();
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    if (cc != null) {
+      movieSettings.setCertificationCountry(cc);
+      tvShowSettings.setCertificationCountry(cc);
+    }
+    for (MediaLanguages ml : MediaLanguages.values()) {
+      if (ml.name().equals(defaultLang)) {
+        movieSettings.setScraperLanguage(ml);
+        tvShowSettings.setScraperLanguage(ml);
+      }
+    }
   }
 
   public String getSettingsFolder() {
