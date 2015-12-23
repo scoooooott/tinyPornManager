@@ -173,31 +173,6 @@ public class Settings extends AbstractModelObject {
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-
-    // activate default scrapers
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
-      movieSettings.addMovieArtworkScraper(ms.getId());
-    }
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
-      movieSettings.addMovieTrailerScraper(ms.getId());
-    }
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
-      tvShowSettings.addTvShowArtworkScraper(ms.getId());
-    }
-
-    // set default languages based on java instance
-    String defaultLang = Locale.getDefault().getLanguage();
-    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
-    if (cc != null) {
-      movieSettings.setCertificationCountry(cc);
-      tvShowSettings.setCertificationCountry(cc);
-    }
-    for (MediaLanguages ml : MediaLanguages.values()) {
-      if (ml.name().equals(defaultLang)) {
-        movieSettings.setScraperLanguage(ml);
-        tvShowSettings.setScraperLanguage(ml);
-      }
-    }
   }
 
   public String getSettingsFolder() {
@@ -669,9 +644,31 @@ public class Settings extends AbstractModelObject {
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
-    movieSettings.addMovieArtworkScraper(Constants.TMDB);
 
-    tvShowSettings.addTvShowArtworkScraper(Constants.TVDB);
+    // activate default scrapers
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
+      movieSettings.addMovieArtworkScraper(ms.getId());
+    }
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
+      movieSettings.addMovieTrailerScraper(ms.getId());
+    }
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
+      tvShowSettings.addTvShowArtworkScraper(ms.getId());
+    }
+
+    // set default languages based on java instance
+    String defaultLang = Locale.getDefault().getLanguage();
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    if (cc != null) {
+      movieSettings.setCertificationCountry(cc);
+      tvShowSettings.setCertificationCountry(cc);
+    }
+    for (MediaLanguages ml : MediaLanguages.values()) {
+      if (ml.name().equals(defaultLang)) {
+        movieSettings.setScraperLanguage(ml);
+        tvShowSettings.setScraperLanguage(ml);
+      }
+    }
 
     setProxyFromSystem();
 

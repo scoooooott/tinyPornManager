@@ -174,6 +174,15 @@ public class ReleaseInfo {
   }
 
   /**
+   * are we on the release version?
+   * 
+   * @return true/false if release build
+   */
+  public static boolean isReleaseBuild() {
+    return !isNightly() && !isPreRelease() && !isSvnBuild();
+  }
+
+  /**
    * gets the REAL version string out of the JAR file's manifest<br>
    * eg: 2.4 (r992)
    * 
