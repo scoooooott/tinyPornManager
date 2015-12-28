@@ -47,26 +47,34 @@ public class MediaFileAudioStream extends AbstractModelObject {
 
   /**
    * workaround for not changing the var to int.<br>
-   * channels usually filled like "6ch".
+   * channels usually filled like "5.1ch" or "8 / 6". Take the higher
    * 
    * @return channels as int
    */
   public int getChannelsAsInt() {
-    int ch = 0;
+    int highest = 0;
     if (!channels.isEmpty()) {
       try {
-        String[] c = channels.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
-        for (String s : c) {
-          if (s.matches("[0-9]+")) {
-            ch += Integer.parseInt(s);
+        String part = channels.replaceAll("[a-zA-Z]", ""); // remove "Ch" and other words (keep delims!)
+        String[] parts = part.split("/");
+        for (String p : parts) {
+          int ch = 0;
+          String[] c = p.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
+          for (String s : c) {
+            if (s.matches("[0-9]+")) {
+              ch += Integer.parseInt(s);
+            }
+          }
+          if (ch > highest) {
+            highest = ch;
           }
         }
       }
       catch (NumberFormatException e) {
-        ch = 0;
+        highest = 0;
       }
     }
-    return ch;
+    return highest;
   }
 
   public int getBitrate() {
