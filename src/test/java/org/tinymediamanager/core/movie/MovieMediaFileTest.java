@@ -117,5 +117,8 @@ public class MovieMediaFileTest {
     assertEqual(8, as.getChannelsAsInt());
     as.setChannels("8 / 6 Ch");
     assertEqual(8, as.getChannelsAsInt());
+
+    as.setChannels("4 / 5.2 / 8 / 6 / 7.3.1 / 9");
+    assertEqual(11, as.getChannelsAsInt());
   }
 }
