@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Image;
-import com.uwetrottmann.tmdb.entities.Images;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +28,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import com.uwetrottmann.tmdb.Tmdb;
+import com.uwetrottmann.tmdb.entities.Image;
+import com.uwetrottmann.tmdb.entities.Images;
 
 /**
  * The class TmdbArtworkProvider. For managing all artwork provided tasks with tmdb
@@ -62,6 +63,11 @@ class TmdbArtworkProvider {
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
       tmdbId = new TmdbMovieMetadataProvider(api).getTmdbIdFromImdbId(imdbId);
+    }
+
+    if (tmdbId == 0) {
+      LOGGER.debug("Cannot get artwork - neither imdb/tmdb set");
+      return new ArrayList<MediaArtwork>(0);
     }
 
     Images images = null;
