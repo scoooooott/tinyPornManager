@@ -222,11 +222,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       sub.setForced(true);
       shortname = shortname.replaceAll("\\p{Punct}*forced", "");
     }
-    for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
-      if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-        LOGGER.debug("found language '" + s + "' in subtitle '" + this.getFilename());
-        sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-        break;
+    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    for (String s : langArray) {
+      try {
+        if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+          LOGGER.debug("found language '" + s + "' in subtitle '" + this.getFilename());
+          sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
+          break;
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
       }
     }
     if (sub.getLanguage().isEmpty() && this.filename.endsWith(".sub")) {
@@ -1296,10 +1302,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               String shortname = getBasename().toLowerCase();
               Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
               for (String s : langArray) {
-                if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-                  LOGGER.debug("found language '" + s + "' in filename '" + this.getFilename());
-                  stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-                  break;
+                try {
+                  if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+                    LOGGER.debug("found language '" + s + "' in filename '" + this.getFilename());
+                    stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
+                    break;
+                  }
+                }
+                catch (Exception e) {
+                  LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
                 }
               }
             }
@@ -1394,10 +1405,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String shortname = getBasename().toLowerCase();
           Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
           for (String s : langArray) {
-            if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-              LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
-              stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-              break;
+            try {
+              if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+                LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
+                stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
+                break;
+              }
+            }
+            catch (Exception e) {
+              LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
             }
           }
         }

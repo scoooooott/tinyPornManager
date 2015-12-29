@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -81,8 +79,8 @@ public class UpgradeTasks {
    *          our current version
    */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
-    MovieList movieList = MovieList.getInstance();
-    TvShowList tvShowList = TvShowList.getInstance();
+    // MovieList movieList = MovieList.getInstance();
+    // TvShowList tvShowList = TvShowList.getInstance();
     String v = "" + oldVersion;
 
     if (StringUtils.isBlank(v)) {
@@ -105,6 +103,20 @@ public class UpgradeTasks {
 
       // cleaup of native folder
       cleanupNativeFolder();
+
+      // We do not migrate settings!
+      // We cannot determine, if a user has unset a value, or the default changed!
+      // So reSet some default values, but ONLY for release ONCE;
+      // else every start of prerel/nightly would reset this over and over again
+      if (ReleaseInfo.isReleaseBuild()) {
+        Globals.settings.getMovieSettings().setImageBanner(true);
+        Globals.settings.getMovieSettings().setImageLogo(true);
+        Globals.settings.getMovieSettings().setImageClearart(true);
+        Globals.settings.getMovieSettings().setImageDiscart(true);
+        Globals.settings.getMovieSettings().setImageThumb(true);
+        Globals.settings.getMovieSettings().setUseTrailerPreference(true);
+        Globals.settings.writeDefaultSettings(); // activate default plugins
+      }
     }
   }
 

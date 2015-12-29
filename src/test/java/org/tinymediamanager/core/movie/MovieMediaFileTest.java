@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 public class MovieMediaFileTest {
@@ -103,5 +104,21 @@ public class MovieMediaFileTest {
     System.out.print("testing " + f + " for ");
     MediaFile mf = new MediaFile(f);
     assertEqual(mft, mf.getType());
+  }
+
+  @Test
+  public void testAudioChannels() {
+    MediaFileAudioStream as = new MediaFileAudioStream();
+    as.setChannels("5.1");
+    assertEqual(6, as.getChannelsAsInt());
+    as.setChannels("5.1channels");
+    assertEqual(6, as.getChannelsAsInt());
+    as.setChannels("8 / 6");
+    assertEqual(8, as.getChannelsAsInt());
+    as.setChannels("8 / 6 Ch");
+    assertEqual(8, as.getChannelsAsInt());
+
+    as.setChannels("4 / 5.2 / 8 / 6 / 7.3.1 / 9");
+    assertEqual(11, as.getChannelsAsInt());
   }
 }

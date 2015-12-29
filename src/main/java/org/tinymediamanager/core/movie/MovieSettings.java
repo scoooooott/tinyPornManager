@@ -161,15 +161,15 @@ public class MovieSettings extends AbstractModelObject {
   private String                          movieSetArtworkFolder                    = "MoviesetArtwork";
   private boolean                         scrapeBestImage                          = true;
   private boolean                         imageLanguagePriority                    = true;
-  private boolean                         imageLogo                                = false;
-  private boolean                         imageBanner                              = false;
-  private boolean                         imageClearart                            = false;
-  private boolean                         imageDiscart                             = false;
-  private boolean                         imageThumb                               = false;
+  private boolean                         imageLogo                                = true;
+  private boolean                         imageBanner                              = true;
+  private boolean                         imageClearart                            = true;
+  private boolean                         imageDiscart                             = true;
+  private boolean                         imageThumb                               = true;
   private boolean                         writeActorImages                         = false;
 
   // trailer scraper
-  private boolean                         useTrailerPreference                     = false;
+  private boolean                         useTrailerPreference                     = true;
   private boolean                         automaticTrailerDownload                 = false;
   private MovieTrailerQuality             trailerQuality                           = MovieTrailerQuality.HD_720;
   private MovieTrailerSources             trailerSource                            = MovieTrailerSources.YOUTUBE;
