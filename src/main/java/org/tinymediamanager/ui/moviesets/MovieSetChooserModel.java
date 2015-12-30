@@ -144,6 +144,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+            options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+            options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
             try {
               MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));

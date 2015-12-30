@@ -757,6 +757,8 @@ public class ImageChooserDialog extends TmmDialog {
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+            options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+            options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
             options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());

@@ -39,9 +39,6 @@ import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -50,6 +47,9 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
@@ -163,6 +163,8 @@ public class MovieScrapeTask extends TmmThreadPool {
             options.setResult(result1);
             options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+            options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+            options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
 
             // we didn't do a search - pass imdbid and tmdbid from movie object
             if (!doSearch) {
@@ -254,6 +256,8 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setTmdbId(movie.getTmdbId());
       options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
 
       // scrape providers till one artwork has been found
       for (MediaScraper scraper : artworkScrapers) {

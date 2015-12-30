@@ -85,6 +85,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private MediaScraper                                     mediaScraper;
   private MediaEpisode                                     metadata;
   private ObservableElementList<TvShowEpisodeChooserModel> episodeEventList;
+  private final List<TvShowEpisodeChooserModel>            selectedEpisodes;
 
   private JTable                                           table;
   private JTextArea                                        taPlot;
@@ -132,7 +133,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
           new EpisodeTableFormat());
       DefaultEventSelectionModel<TvShowEpisodeChooserModel> selectionModel = new DefaultEventSelectionModel<TvShowEpisodeChooserModel>(
           textFilteredEpisodes);
-      final List<TvShowEpisodeChooserModel> selectedEpisodes = selectionModel.getSelected();
+      selectedEpisodes = selectionModel.getSelected();
 
       selectionModel.addListSelectionListener(new ListSelectionListener() {
         @Override
@@ -239,10 +240,8 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   public void actionPerformed(ActionEvent e) {
     // assign episode
     if ("OK".equals(e.getActionCommand())) {
-      int row = table.getSelectedRow();
-      if (row >= 0) {
-        row = table.convertRowIndexToModel(row);
-        TvShowEpisodeChooserModel episode = episodeEventList.get(row);
+      if (!selectedEpisodes.isEmpty()) {
+        TvShowEpisodeChooserModel episode = selectedEpisodes.get(0);
         if (episode != TvShowEpisodeChooserModel.emptyResult) {
           metadata = episode.getMediaEpisode();
         }
