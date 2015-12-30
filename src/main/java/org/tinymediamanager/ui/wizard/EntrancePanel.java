@@ -23,6 +23,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.images.Logo;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -64,7 +65,7 @@ class EntrancePanel extends JPanel {
     add(tpGreetingHeader, "2, 2, 7, 1, center, bottom");
 
     JLabel lblLogo = new JLabel("");
-    // lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/tmm96.png")));
+    lblLogo.setIcon(new Logo(96));
     add(lblLogo, "4, 5, default, top");
 
     JTextPane tpGreetingText = new JTextPane();
