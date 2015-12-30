@@ -196,6 +196,8 @@ public class MovieChooserModel extends AbstractModelObject {
     }
     options.setLanguage(language);
     options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+    options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+    options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
 
     // scrape providers till one artwork has been found
     for (MediaScraper artworkScraper : artworkScrapers) {
