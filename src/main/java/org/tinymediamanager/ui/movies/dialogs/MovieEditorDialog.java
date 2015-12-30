@@ -842,7 +842,16 @@ public class MovieEditorDialog extends TmmDialog {
       tfSpokenLanguages.setText(movie.getSpokenLanguages());
       tfCountry.setText(movie.getCountry());
 
-      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
+      {
+        int year = 0;
+        try {
+          year = Integer.parseInt(movie.getYear());
+        }
+        catch (Exception ignored) {
+        }
+        spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
+        spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
+      }
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
       spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
 
@@ -863,14 +872,6 @@ public class MovieEditorDialog extends TmmDialog {
       else {
         spReleaseDate.setValue(INITIAL_DATE);
       }
-
-      int year = 0;
-      try {
-        year = Integer.parseInt(movie.getYear());
-      }
-      catch (Exception ignored) {
-      }
-      spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
 
       for (MovieActor origCast : movie.getActors()) {
         MovieActor actor = new MovieActor();
