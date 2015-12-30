@@ -1,3 +1,9 @@
+Version 2.7.1
+=======================
+x fix startup problems
+x fix poster & fanart sizes
+
+
 Version 2.7
 =======================
 IMPORTANT: with the update to version 2.7 the internal database will be deleted due to
