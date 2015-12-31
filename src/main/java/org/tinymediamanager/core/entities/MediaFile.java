@@ -297,16 +297,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
-      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer")) {
-        return MediaFileType.TRAILER;
-      }
-
-      // we have some false positives too - make a more precise check
-      if (basename.matches("(?i).*[_.-]*sample$") // end with sample
-          || foldername.equalsIgnoreCase("sample")) { // sample folder name
-        return MediaFileType.SAMPLE;
-      }
-
       // has to fit TV & Movie naming...
       // String cleanName = ParserUtils.detectCleanMoviename(name); // tbc if useful...
       // old impl: https://github.com/brentosmith/xbmc-dvdextras
@@ -318,6 +308,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           || foldername.equalsIgnoreCase("extra")) // preferred folder name
       {
         return MediaFileType.VIDEO_EXTRA;
+      }
+
+      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer")) {
+        return MediaFileType.TRAILER;
+      }
+
+      // we have some false positives too - make a more precise check
+      if (basename.matches("(?i).*[_.-]*sample$") // end with sample
+          || foldername.equalsIgnoreCase("sample")) { // sample folder name
+        return MediaFileType.SAMPLE;
       }
 
       return MediaFileType.VIDEO;

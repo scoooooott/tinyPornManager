@@ -5,6 +5,7 @@ x fix startup problems
 x fix poster & fanart sizes
 x fix parsing of the year in the movie editor
 x fix filter in the episode chooser
+x rework "extras" detection 
 
 Version 2.7
 =======================

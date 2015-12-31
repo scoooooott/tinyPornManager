@@ -77,20 +77,17 @@ public class MovieMediaFileTest {
     checkExtra("The.Client.List.S02E04.Extra.gefaellig.GERMAN.DUBBED.DL.720p.WebHD.h264", mft);
     checkExtra("The.Amazing.World.of.Gumball.S03E06.The.Extras.720p.HDTV.x264", mft);
     checkExtra("", mft);
-    checkExtra("", mft);
-    checkExtra("", mft);
-    checkExtra("", mft);
 
     // video_extra
     mft = MediaFileType.VIDEO_EXTRA;
     checkExtra("Red.Shoe.Diaries.S01.EXTRAS.DVDRip.X264", mft);
+    checkExtra("Extra/extras/some-trailer", mft);
+    checkExtra("extras/someExtForSomeMovie-trailer", mft);
     checkExtra("extras/someExtForSomeMovie", mft);
     checkExtra("extra/The.Amazing.World.of.Gumball.S03E06.720p.HDTV.x264", mft);
     checkExtra("bla-blubb-extra", mft);
     checkExtra("bla-blubb-extra-something", mft);
     checkExtra("bla-blubb-extra-", mft);
-    checkExtra("", mft);
-    checkExtra("", mft);
     checkExtra("", mft);
 
     System.out.println("All fine :)");
@@ -109,6 +106,10 @@ public class MovieMediaFileTest {
   @Test
   public void testAudioChannels() {
     MediaFileAudioStream as = new MediaFileAudioStream();
+    as.setChannels("");
+    assertEqual(0, as.getChannelsAsInt());
+    as.setChannels("4");
+    assertEqual(4, as.getChannelsAsInt());
     as.setChannels("5.1");
     assertEqual(6, as.getChannelsAsInt());
     as.setChannels("5.1channels");
