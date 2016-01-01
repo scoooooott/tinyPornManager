@@ -34,7 +34,7 @@ import com.sun.jna.WString;
 interface MediaInfoLibrary extends Library {
 
   /** The instance. */
-  MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
+  MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary(MediaInfo.LibraryPath, MediaInfoLibrary.class,
       singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
 
         @Override

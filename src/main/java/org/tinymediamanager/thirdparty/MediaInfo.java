@@ -66,7 +66,6 @@ public class MediaInfo implements Closeable {
         else {
           LocalPath = "";
           NativeLibrary.getInstance("zen"); // Default path
-          NativeLibrary.getInstance("mediainfo"); // Default path
         }
         if (LocalPath.length() > 0) {
           try {
@@ -74,7 +73,6 @@ public class MediaInfo implements Closeable {
             LibraryPath = LocalPath + "libmediainfo.so.0";
           }
           catch (LinkageError e) {
-            NativeLibrary.getInstance("mediainfo"); // Default path
           }
         }
       }
