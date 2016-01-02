@@ -36,6 +36,19 @@ class ScraperFunction implements RegExpContainer {
   public ScraperFunction() {
   }
 
+  @Override
+  public ScraperFunction clone() {
+    ScraperFunction c = new ScraperFunction();
+    c.setClearBuffers(this.clearBuffers);
+    c.setDest(this.dest);
+    c.setAppendBuffer(this.appendBuffer);
+    c.setName(this.name);
+    for (RegExp r : this.regexps) {
+      c.addRegExp(r.clone());
+    }
+    return c;
+  }
+
   public boolean isClearBuffers() {
     return clearBuffers;
   }

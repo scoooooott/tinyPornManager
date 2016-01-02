@@ -39,6 +39,21 @@ class RegExp implements RegExpContainer {
   }
 
   @Override
+  public RegExp clone() {
+    RegExp c = new RegExp();
+    c.input = this.input;
+    c.output = this.output;
+    c.dest = this.dest;
+    c.conditional = this.conditional;
+    c.appendBuffer = this.appendBuffer;
+    c.expression = this.expression;
+    for (RegExp r : this.children) {
+      c.addRegExp(r.clone());
+    }
+    return c;
+  }
+
+  @Override
   public void addRegExp(RegExp regexp) {
     children.add(regexp);
   }
