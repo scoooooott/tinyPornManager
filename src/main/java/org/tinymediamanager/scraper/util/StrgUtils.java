@@ -225,6 +225,7 @@ public class StrgUtils {
     String result = null;
     if (null != input) {
       String normalized = Normalizer.normalize(input, Normalizer.Form.NFKD);
+      // https://stackoverflow.com/questions/9376621/folding-normalizing-ligatures-e-g-%C3%86-to-ae-using-corefoundation
 
       int len = normalized.length();
       result = processSpecialChars(normalized.toCharArray(), 0, len, replaceAllCapitalLetters);
