@@ -42,15 +42,15 @@ class KodiScraperProcessor {
   private static final Logger LOGGER            = LoggerFactory.getLogger(KodiScraperProcessor.class);
   private boolean             truncateLogging   = true;
 
-  private KodiScraper scraper = null;
+  private KodiScraper         scraper           = null;
 
   // 20 buffers in total; buffer 0 is always blank
-  private String buffers[] = new String[21];
+  private String              buffers[]         = new String[21];
 
   // options that match those in the <Settings> elements.
-  Map<String, String> options = new HashMap<String, String>();
+  Map<String, String>         options           = new HashMap<String, String>();
 
-  private static final int PATTERN_OPTIONS = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
+  private static final int    PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
 
   // private XbmcScraperConfiguration cfg = new XbmcScraperConfiguration();
 
@@ -125,19 +125,31 @@ class KodiScraperProcessor {
     ScraperFunction func = scraper.getFunction(function);
 
     if (func != null) {
-      LOGGER.debug("** BEGIN Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: "
-          + func.isClearBuffers());
+      func = scraper.getFunction(function).clone(); // get as clone, since we are changing regexps!!!
+      LOGGER.debug("** BEGIN Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
+
+      // Replacing our options in RegExps
+      RegExp[] res = func.getRegExps();
+      for (RegExp r : res) {
+        for (String key : options.keySet()) {
+          String rep = "$INFO[" + key + "]";
+          if (r.getInput().contains(rep) || r.getOutput().contains(rep)) {
+            String opt = options.get(key);
+            LOGGER.debug("Replacing Option " + rep + " with " + opt);
+            r.setInput(r.getInput().replace(rep, opt));
+            r.setOutput(r.getOutput().replace(rep, opt));
+          }
+        }
+      }
 
       if (func.isClearBuffers()) {
         clearBuffers();
       }
-
       setBuffers(input);
 
       executeRegexps(func.getRegExps());
 
-      LOGGER.debug("** END Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: "
-          + func.isClearBuffers());
+      LOGGER.debug("** END Function: " + func.getName() + "; Dest: " + func.getDest() + "; ClearBuffers: " + func.isClearBuffers());
       return getBuffer(func.getDest());
     }
     else {
@@ -177,8 +189,8 @@ class KodiScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    LOGGER.debug(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s",
-        r.getExpression().getExpression(), r.getDest(), r.getInput(), r.getOutput()));
+    LOGGER.debug(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(),
+        r.getInput(), r.getOutput()));
     Expression exp = r.getExpression();
 
     String in = getBuffer(r.getInput());
@@ -200,14 +212,12 @@ class KodiScraperProcessor {
     Matcher m = p.matcher(in);
     if (m.find()) {
       LOGGER.debug("Matched: Group Count: " + m.groupCount());
-      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)),
-          r.isAppendBuffer());
+      setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), r.isAppendBuffer());
 
       if (exp.isRepeat()) {
         while (m.find()) {
           LOGGER.debug("Repeat Matched.  Group Count: " + m.groupCount());
-          setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)),
-              r.isAppendBuffer());
+          setBuffer(r.getDest(), processOutputBuffers(r.getOutput(), toGroupArray(exp.getNoCleanArray(), m)), r.isAppendBuffer());
         }
       }
     }
@@ -424,8 +434,7 @@ class KodiScraperProcessor {
         // call the set buffer again with this result
         // setBuffer(buffer, proc.executeFunction(url.getFunctionName(), new
         // String[] {"", url.getTextContent()}), append);
-        text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</"
-            + m.group(1) + ">";
+        text = "<" + m.group(1) + ">" + proc.executeFunction(m.group(1), new String[] { "", m.group(2) }) + "</" + m.group(1) + ">";
       }
       catch (Exception e) {
         LOGGER.error("Failed to process function: " + text, e);
