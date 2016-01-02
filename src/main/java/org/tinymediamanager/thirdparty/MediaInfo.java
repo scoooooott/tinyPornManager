@@ -54,18 +54,19 @@ public class MediaInfo implements Closeable {
         // NativeLibrary.getInstance("zen");
         final ClassLoader loader = MediaInfo.class.getClassLoader();
         final String LocalPath;
+        NativeLibrary libzen = null;
         if (loader != null) {
           LocalPath = loader.getResource(MediaInfo.class.getName().replace('.', '/') + ".class").getPath().replace("MediaInfo.class", "");
           try {
-            NativeLibrary.getInstance(LocalPath + "libzen.so.0"); // Local path
+            libzen = NativeLibrary.getInstance(LocalPath + "libzen.so.0"); // Local path
           }
           catch (LinkageError e) {
-            NativeLibrary.getInstance("zen"); // Default path
+            libzen = NativeLibrary.getInstance("zen"); // Default path
           }
         }
         else {
           LocalPath = "";
-          NativeLibrary.getInstance("zen"); // Default path
+          libzen = NativeLibrary.getInstance("zen"); // Default path
         }
         if (LocalPath.length() > 0) {
           try {
@@ -73,6 +74,13 @@ public class MediaInfo implements Closeable {
             LibraryPath = LocalPath + "libmediainfo.so.0";
           }
           catch (LinkageError e) {
+            // okay; unload libzen and load the native one again
+            // fallback for problem when the shipped libzen could be loaded, but the MI lib not
+            if (libzen != null) {
+              libzen.dispose();
+              libzen = null;
+              NativeLibrary.getInstance("zen"); // Default path
+            }
           }
         }
       }
