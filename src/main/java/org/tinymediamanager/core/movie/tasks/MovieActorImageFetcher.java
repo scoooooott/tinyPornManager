@@ -111,7 +111,7 @@ public class MovieActorImageFetcher implements Runnable {
 
       // second download missing images
       for (MovieActor actor : movie.getActors()) {
-        String actorName = actor.getName().replace(" ", "_");
+        String actorName = actor.getName().replace(" ", "_").replaceAll("([\"\\\\:<>|/?*])", "");
 
         String providedFiletype = FilenameUtils.getExtension(actor.getThumbUrl());
         File actorImage = new File(actorsDirPath, actorName + "." + providedFiletype);
