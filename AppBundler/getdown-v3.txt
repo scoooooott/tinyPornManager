@@ -37,16 +37,6 @@ resource = changelog.txt
 %LOCALES%
 
 # mediainfo native libs
-resource = [linux-amd64] native/linux-x64/libmediainfo.so
-resource = [linux-amd64] native/linux-x64/libzen.so
-resource = [linux-x86-64] native/linux-x64/libmediainfo.so
-resource = [linux-x86-64] native/linux-x64/libzen.so
-resource = [linux-x64] native/linux-x64/libmediainfo.so
-resource = [linux-x64] native/linux-x64/libzen.so
-resource = [linux-i386] native/linux-x86/libmediainfo.so
-resource = [linux-i386] native/linux-x86/libzen.so
-resource = [linux-i686] native/linux-x86/libmediainfo.so
-resource = [linux-i686] native/linux-x86/libzen.so
 resource = [mac os x-x86_64] native/mac-x64/libmediainfo.dylib
 resource = [mac os x-i386] native/mac-x86/libmediainfo.dylib
 resource = [windows-amd64] native/windows-x64/MediaInfo.dll

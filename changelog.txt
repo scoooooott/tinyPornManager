@@ -1,3 +1,11 @@
+Version 2.7.2
+=======================
+LINUX: We've removed the shipped mediainfo library due to massive  between
+       different distributions. Please install the libmediainfo directly from
+       your package manager or from https://mediaarea.net/
+       
+x loading of mediainfo in linux
+
 Version 2.7.1
 =======================
 + added episode tags to the TV show bulk editor
