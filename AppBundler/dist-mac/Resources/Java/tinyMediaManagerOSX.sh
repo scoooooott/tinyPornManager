@@ -43,7 +43,7 @@ else
   ARGS="$ARGS -Xdock:icon=../tmm.icns"
 fi
 
-ARGS="$ARGS -Djava.net.preferIPv4Stack=true -Dappbase=http://www.tinymediamanager.org/"
+ARGS="$ARGS -Djava.net.preferIPv4Stack=true -Dappbase=http://www.tinymediamanager.org/ -XstartOnFirstThread"
 
 # execute it :)
 exec "$JAVACMD" ${ARGS} -jar getdown.jar .      
