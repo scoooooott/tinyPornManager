@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class TmmOsUtils {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TmmOsUtils.class);
+  private static final Logger LOGGER       = LoggerFactory.getLogger(TmmOsUtils.class);
 
-  public static final String DESKTOP_FILE = "tinyMediaManager.desktop";
+  public static final String  DESKTOP_FILE = "tinyMediaManager.desktop";
 
   /**
    * create a .desktop file for linux and unix (not osx)
