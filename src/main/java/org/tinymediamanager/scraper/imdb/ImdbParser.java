@@ -48,8 +48,9 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.http.Url;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -921,7 +922,18 @@ public abstract class ImdbParser {
     @Override
     public MediaMetadata call() throws Exception {
       try {
-        TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
+        IMovieMetadataProvider tmdb = null;
+        List<IMovieMetadataProvider> providers = PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class);
+        for (IMovieMetadataProvider provider : providers) {
+          if ("tmdb".equals(provider.getProviderInfo().getId())) {
+            tmdb = provider;
+            break;
+          }
+        }
+        if (tmdb == null) {
+          return null;
+        }
+
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
         options.setLanguage(language);
         options.setCountry(certificationCountry);
