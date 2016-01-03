@@ -16,10 +16,11 @@
 package org.tinymediamanager.scraper;
 
 import java.net.URL;
+import java.util.jar.Attributes;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.util.JarUtils;
 
 /**
  * The class ProviderInfo is used to store provider related information for further usage.
@@ -30,10 +31,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class MediaProviderInfo {
   private static final URL EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
 
-  private String id;
-  private String name;
-  private String description;
-  private URL    providerLogo;
+  private String           id;
+  private String           name;
+  private String           description;
+  private String           version;
+  private URL              providerLogo;
 
   /**
    * Instantiates a new provider info.
@@ -70,68 +72,30 @@ public class MediaProviderInfo {
     this.providerLogo = providerLogo;
   }
 
-  /**
-   * Gets the id.
-   * 
-   * @return the id
-   */
   public String getId() {
     return id;
   }
 
-  /**
-   * Sets the id.
-   * 
-   * @param id
-   *          the new id
-   */
   public void setId(String id) {
     this.id = id;
   }
 
-  /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Sets the name.
-   * 
-   * @param name
-   *          the new name
-   */
   public void setName(String name) {
     this.name = name;
   }
 
-  /**
-   * Gets the description.
-   * 
-   * @return the description
-   */
   public String getDescription() {
     return description;
   }
 
-  /**
-   * Sets the description.
-   * 
-   * @param description
-   *          the new description
-   */
   public void setDescription(String description) {
     this.description = description;
   }
 
-  /**
-   * Get the URL to the (embedded) provider logo
-   * 
-   * @return the URL to the logo
-   */
   public URL getProviderLogo() {
     if (providerLogo != null) {
       return providerLogo;
@@ -141,26 +105,38 @@ public class MediaProviderInfo {
     }
   }
 
-  /**
-   * Set the URL to the (embedded) provider logo
-   * 
-   * @param providerLogo
-   *          the URL to the logo
-   */
   public void setProviderLogo(URL providerLogo) {
     this.providerLogo = providerLogo;
   }
 
-  /**
-   * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
-   * </p>
-   * 
-   * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
-   */
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  /**
+   * just a convenient method to set version as String<br>
+   * Better use {@link #setVersion(Class<?> clazz)}
+   * 
+   * @param version
+   */
+  @Deprecated
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  /**
+   * sets the version of this plugin<br>
+   * Uses "class" to find correct jar in classpath, and extracts manifest information
+   * 
+   * @param clazz
+   *          the class, who is implementing this method
+   */
+  public void setVersion(Class<?> clazz) {
+    this.version = JarUtils.getManifestEntry(clazz, Attributes.Name.IMPLEMENTATION_VERSION.toString());
   }
 }
