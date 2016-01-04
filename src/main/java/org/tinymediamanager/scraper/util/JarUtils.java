@@ -1,9 +1,11 @@
 package org.tinymediamanager.scraper.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -65,12 +67,55 @@ public class JarUtils {
     String s = "";
     try {
       Manifest mf = getManifest(c);
-      Attributes attr = mf.getMainAttributes();
-      s = attr.getValue(entry);
+      if (mf != null) {
+        Attributes attr = mf.getMainAttributes();
+        s = attr.getValue(entry);
+      }
+      else {
+        // no jar/manifest found, but since it's a version call, try maven props
+        if (Attributes.Name.IMPLEMENTATION_VERSION.toString().equals(entry)) {
+          s = getVersionFromProject(c);
+        }
+      }
     }
     catch (Exception e) {
       // NPE if no manifest found
     }
     return s;
   }
+
+  /**
+   * tries to read version out of a built maven project
+   * 
+   * @param c
+   *          the classfile (we need to find the correct project)
+   * @return version or empty
+   */
+  @SuppressWarnings("rawtypes")
+  public static String getVersionFromProject(Class c) {
+
+    // TODO: further improvement:
+    // XML parse pom.xml, since it's always there
+
+    String v = "";
+    try {
+      String classname = "/" + c.getName().replaceAll("\\.", "/") + ".class";
+      URL jarURL = c.getResource(classname);
+      if (jarURL.getProtocol().equals("file")) {
+        // base path is the filesystem root of the "classpath" (classes | test-classes)
+        String basepath = jarURL.getPath().substring(0, jarURL.getPath().indexOf(classname));
+        File projectRoot = new File(basepath).getParentFile(); // go one level up
+        // assume there is already some generated manifest on filesystem
+        InputStream is = new FileInputStream(projectRoot + "/maven-archiver/pom.properties");
+        Properties p = new Properties();
+        p.load(is);
+        v = p.getProperty("version");
+      }
+    }
+    catch (Exception e) {
+      // do nothing
+    }
+    return v;
+  }
+
 }

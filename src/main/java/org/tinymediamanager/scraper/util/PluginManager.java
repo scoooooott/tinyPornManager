@@ -59,20 +59,7 @@ public class PluginManager {
 
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-
-      LOGGER.debug("loading classpath plugins...");
-      // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
-
-      // if (ReleaseInfo.getVersion().equals("SVN")) {
-      // since we do not have them as dependencies, load all from classpath (we have dependent projects)
-      pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
-      // }
-      stopWatch.stop();
-      LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
-
       // dedicated folder just for plugins
-      stopWatch.reset();
-      stopWatch.start();
       LOGGER.debug("loading external plugins...");
       if (LOGGER.isTraceEnabled()) {
         pm.addPluginsFrom(new File("plugins/").toURI(), new OptionReportAfter());
@@ -84,6 +71,19 @@ public class PluginManager {
       LOGGER.debug("Done loading external plugins - took " + stopWatch);
     }
     return instance;
+  }
+
+  /**
+   * loads plugins from classpath - needed for in-IDE development
+   */
+  public static void loadClasspathPlugins() {
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+    LOGGER.debug("loading classpath plugins...");
+    // pm.addPluginsFrom(ClassURI.CLASSPATH); // sloooow
+    pm.addPluginsFrom(ClassURI.CLASSPATH("org.tinymediamanager.scraper.**")); // 4 secs
+    stopWatch.stop();
+    LOGGER.debug("Done loading classpath plugins - took " + stopWatch);
   }
 
   /**
