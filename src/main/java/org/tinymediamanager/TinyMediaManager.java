@@ -289,6 +289,9 @@ public class TinyMediaManager {
           }
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
+          if (ReleaseInfo.isSvnBuild()) {
+            PluginManager.loadClasspathPlugins();
+          }
 
           // do upgrade tasks after database loading
           if (newVersion) {
