@@ -316,7 +316,8 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("9", "2009", "9", 7.0, 63365, "(1) To Protect Us...", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", md);
+      checkMovieDetails("9", "2009", "9", 7.0, 63365, "(1) To Protect Us...", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", "09-09-2009",
+          md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
@@ -366,7 +367,7 @@ public class ImdbMetadataProviderTest {
     }
 
     /*
-     * scrape akas.imdb.com - 12 Monkeys - tt0114746
+     * scrape www.imdb.com - 12 Monkeys - tt0114746
      */
     try {
       mp = new ImdbMetadataProvider();
@@ -382,7 +383,7 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("12 Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
-          "Chris Marker, David Webb Peoples, Janet Peoples", "16", md);
+          "Chris Marker, David Webb Peoples, Janet Peoples", "16", "05-01-1996", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -427,7 +428,7 @@ public class ImdbMetadataProviderTest {
     }
 
     /*
-     * scrape akas.imdb.com - Brave - tt1217209
+     * scrape www.imdb.com - Brave - tt1217209
      */
     try {
       mp = new ImdbMetadataProvider();
@@ -443,7 +444,7 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Brave", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
-          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi, Michael Arndt", "PG", md);
+          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
 
       // check poster
       // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
@@ -507,89 +508,77 @@ public class ImdbMetadataProviderTest {
 
       // check moviedetails
       checkMovieDetails("Merida - Legende der Highlands", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
-          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi, Michael Arndt", "PG", md);
+          "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
     }
     catch (Exception e) {
       e.printStackTrace();
       fail();
     }
-    //
-    // /*
-    // * scrape www.imdb.de - 9 - tt0472033
-    // */
-    // mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-    // options = new MediaScrapeOptions();
-    // options.setImdbId("tt0472033");
-    //
-    // md = null;
-    // try {
-    // MovieModuleManager.MOVIE_SETTINGS.setCertificationCountry(CountryCode.US);
-    // md = mp.getMetadata(options);
-    // }
-    // catch (Exception e) {
-    // }
-    //
-    // // did we get metadata?
-    // assertNotNull("MediaMetadata", md);
-    //
-    // // check moviedetails
-    // checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker",
-    // "Pamela Pettler, Shane Acker", "PG-13", md);
-    //
-    // // check poster
-    // //
-    // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
-    // // md);
-    //
-    // // check genres
-    // genres = new ArrayList<MediaGenres>();
-    // genres.add(MediaGenres.ANIMATION);
-    // genres.add(MediaGenres.ACTION);
-    // genres.add(MediaGenres.ADVENTURE);
-    // genres.add(MediaGenres.FANTASY);
-    // genres.add(MediaGenres.MYSTERY);
-    // genres.add(MediaGenres.SCIENCE_FICTION);
-    // genres.add(MediaGenres.THRILLER);
-    // checkGenres(genres, md);
-    //
-    // // check plot
-    // checkPlot(
-    // "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen
-    // \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der
-    // Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare
-    // kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten
-    // Tage der menschlichen Existenz, haben sich zu einer Mission
-    // zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von
-    // Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle
-    // gemeinsam gegen die Maschinen aufzubringen.",
-    // md);
-    //
-    // // check cast
-    // castMembers = new ArrayList<MediaCastMember>();
-    // cm = new MediaCastMember();
-    // cm.setName("Christopher Plummer");
-    // cm.setCharacter("#1 (voice)");
-    // cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
-    // cm.setType(CastType.ACTOR);
-    // castMembers.add(cm);
-    //
-    // cm = new MediaCastMember();
-    // cm.setName("Martin Landau");
-    // cm.setCharacter("#2 (voice)");
-    // cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
-    // cm.setType(CastType.ACTOR);
-    // castMembers.add(cm);
-    //
-    // checkCastMembers(castMembers, 10, md);
-    //
-    // // check production company
-    // checkProductionCompany("Focus Features, Relativity Media, Arc
-    // Productions, Starz Animation, Tim Burton Productions", md);
 
+    /*
+     * scrape www.imdb.com - Winnebago Man - tt1396557
+     */
+    try {
+      mp = new ImdbMetadataProvider();
+      options = new MediaScrapeOptions(MediaType.MOVIE);
+      options.setImdbId("tt1396557");
+      options.setCountry(CountryCode.US);
+      options.setLanguage(MediaLanguages.en);
+
+      md = mp.getMetadata(options);
+
+      // did we get metadata?
+      assertNotNull("MediaMetadata", md);
+
+      // check moviedetails
+      checkMovieDetails("Winnebago Man", "2009", "Winnebago Man", 7.2, 3890, "", 85, "Ben Steinbauer",
+          "Malcolm Pullinger, Ben Steinbauer, Louisa Hall, Joel Heller, Berndt Mader, Natasha Rosow", "", "14-03-2009", md);
+
+      // check poster
+      // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
+      // md);
+
+      // check genres
+      List<MediaGenres> genres = new ArrayList<MediaGenres>();
+      genres.add(MediaGenres.DOCUMENTARY);
+      genres.add(MediaGenres.BIOGRAPHY);
+      genres.add(MediaGenres.COMEDY);
+      ;
+      checkGenres(genres, md);
+
+      // check plot
+      checkPlot(
+          "Jack Rebney is the most famous man you've never heard of - after cursing his way through a Winnebago sales video, Rebney's outrageously funny outtakes became an underground sensation and made him an internet superstar. Filmmaker Ben Steinbauer journeys to the top of a mountain to find the recluse who unwittingly became the \"Winnebago Man.\"",
+          md);
+
+      // check cast
+      List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+      MediaCastMember cm = new MediaCastMember();
+      cm.setName("Jack Rebney");
+      cm.setCharacter("Himself");
+      cm.setType(CastType.ACTOR);
+      castMembers.add(cm);
+
+      cm = new MediaCastMember();
+      cm.setName("Ben Steinbauer");
+      cm.setCharacter("Himself");
+      cm.setType(CastType.ACTOR);
+      castMembers.add(cm);
+
+      checkCastMembers(castMembers, 14, md);
+
+      // check production company
+      checkProductionCompany("Bear Media, The, Field Guide Media", md);
+
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
   }
 
   private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
-      String director, String writer, String certification, MediaMetadata md) {
+      String director, String writer, String certification, String releaseDate, MediaMetadata md) {
     // title
     assertEquals("title ", title, md.getStringValue(MediaMetadata.TITLE));
     // year
@@ -625,6 +614,10 @@ public class ImdbMetadataProviderTest {
       sb.append(cm.getName());
     }
     assertEquals("writer", writer, sb.toString());
+
+    // date can differ depending on the IP address
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    assertNotEquals("release date", "", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
     // certification
     // assertEquals("certification",
     // Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(),
@@ -675,7 +668,8 @@ public class ImdbMetadataProviderTest {
       assertEquals("character", expected.getCharacter(), actual.getCharacter());
 
       // thumb
-      assertEquals("thumb", expected.getImageUrl(), actual.getImageUrl());
+      // changes some time; cannot check here
+      // assertNotEquals("thumb", "", actual.getImageUrl());
     }
   }
 

@@ -17,6 +17,10 @@ package org.tinymediamanager.scraper.imdb;
 
 import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
@@ -159,7 +163,21 @@ public class ImdbMovieParser extends ImdbParser {
         }
       }
     }
-    // }
+
+    // did we get a release date?
+    if (md.getDateValue(MediaMetadata.RELEASE_DATE) == null || md.getDateValue(MediaMetadata.RELEASE_DATE) == MediaMetadata.INITIAL_DATE) {
+      // get the date from the releaseinfo page
+      Future<Document> futureReleaseinfo;
+      sb = new StringBuilder(imdbSite.getSite());
+      sb.append("title/");
+      sb.append(imdbId);
+      sb.append("/releaseinfo");
+
+      worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
+      futureReleaseinfo = compSvcImdb.submit(worker);
+      doc = futureReleaseinfo.get();
+      parseReleaseinfoPage(doc, options, md);
+    }
 
     // get data from tmdb?
     if (futureTmdb != null && (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo)) {
@@ -192,6 +210,25 @@ public class ImdbMovieParser extends ImdbParser {
     // if we have still no original title, take the title
     if (StringUtils.isBlank(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
       md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
+    }
+
+    return md;
+  }
+
+  private MediaMetadata parseReleaseinfoPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
+    Element tableReleaseDates = doc.getElementById("release_dates");
+    if (tableReleaseDates != null) {
+      Elements columns = tableReleaseDates.getElementsByClass("release_date");
+      if (columns != null && !columns.isEmpty()) {
+        Element td = columns.first();
+        try {
+          SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
+          Date parsedDate = sdf.parse(td.text());
+          md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+        }
+        catch (ParseException ignored) {
+        }
+      }
     }
 
     return md;
