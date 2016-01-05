@@ -35,6 +35,7 @@ public enum MovieMediaSource {
   TS("Telesync"),
   DVDSCR("DVD Screener"),
   WEBRIP("Webrip"),
+  WEB_DL("Web-DL"),
   // and our fallback
   UNKNOWN("Unknown");  // @formatter:on
 
@@ -49,6 +50,7 @@ public enum MovieMediaSource {
   private static Pattern tsPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](ts|telesync|hdts)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern dvdscrPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvdscr)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern webripPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](webrip)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern webdlPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](web-dl|webdl)[ .\\-_/\\\\\\]\\)]?");
 
   private String         title;
 
@@ -95,6 +97,9 @@ public enum MovieMediaSource {
     }
     else if (webripPattern.matcher(fn).find()) {
       return MovieMediaSource.WEBRIP;
+    }
+    else if (webdlPattern.matcher(fn).find()) {
+      return MovieMediaSource.WEB_DL;
     }
     else if (vhsPattern.matcher(fn).find()) {
       return MovieMediaSource.VHS;
