@@ -371,7 +371,7 @@ public class MovieRenamer {
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.trace("Rename 1:1 " + vid.getType() + " " + vid.getFile().getAbsolutePath());
       MediaFile newMF = generateFilename(movie, vid, newVideoBasename).get(0); // there can be only one
-      boolean ok = movieFile(vid.getFile(), newMF.getFile());
+      boolean ok = moveFile(vid.getFile(), newMF.getFile());
       if (ok) {
         vid.setFile(newMF.getFile()); // update
       }
@@ -1133,7 +1133,7 @@ public class MovieRenamer {
    *          the new filename
    * @return true, when we moved file
    */
-  private static boolean movieFile(File oldFilename, File newFilename) {
+  private static boolean moveFile(File oldFilename, File newFilename) {
     try {
       boolean ok = Utils.moveFileSafe(oldFilename, newFilename);
       if (ok) {
@@ -1162,7 +1162,7 @@ public class MovieRenamer {
    * @return true, when we copied file OR DEST IS EXISTING
    */
   private static boolean copyFile(File oldFilename, File newFilename) {
-    if (!oldFilename.equals(newFilename)) {
+    if (!oldFilename.getAbsolutePath().equals(newFilename.getAbsolutePath())) {
       LOGGER.info("copy file " + oldFilename + " to " + newFilename);
       try {
         FileUtils.copyFile(oldFilename, newFilename, true);
