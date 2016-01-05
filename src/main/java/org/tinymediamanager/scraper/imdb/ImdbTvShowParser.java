@@ -138,6 +138,9 @@ public class ImdbTvShowParser extends ImdbParser {
     doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
     parsePlotsummaryPage(doc, options, md);
 
+    // populate id
+    md.setId(ImdbMetadataProvider.providerInfo.getId(), imdbId);
+
     return md;
   }
 

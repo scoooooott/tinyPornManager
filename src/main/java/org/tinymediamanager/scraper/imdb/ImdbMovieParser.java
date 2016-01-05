@@ -202,6 +202,7 @@ public class ImdbMovieParser extends ImdbParser {
           md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
           md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
         }
+        md.setId(tmdbMd.getProviderId(), tmdbMd.getId(tmdbMd.getProviderId()));
       }
       catch (Exception ignored) {
       }
@@ -211,6 +212,9 @@ public class ImdbMovieParser extends ImdbParser {
     if (StringUtils.isBlank(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
       md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
     }
+
+    // populate id
+    md.setId(ImdbMetadataProvider.providerInfo.getId(), imdbId);
 
     return md;
   }
