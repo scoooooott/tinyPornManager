@@ -231,4 +231,8 @@ public class TvShowChooserModel extends AbstractModelObject {
   public String getTagline() {
     return tagline;
   }
+
+  public MediaLanguages getLanguage() {
+    return language;
+  }
 }
