@@ -1164,6 +1164,11 @@ public class MovieRenamer {
   private static boolean copyFile(File oldFilename, File newFilename) {
     if (!oldFilename.getAbsolutePath().equals(newFilename.getAbsolutePath())) {
       LOGGER.info("copy file " + oldFilename + " to " + newFilename);
+      if (oldFilename.equals(newFilename)) {
+        // windows: name differs, but File() is the same!!!
+        // use move in this case, which handles this
+        return moveFile(oldFilename, newFilename);
+      }
       try {
         FileUtils.copyFile(oldFilename, newFilename, true);
         return true;
