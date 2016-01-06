@@ -631,20 +631,10 @@ public class Utils {
       if (!srcDir.isDirectory()) {
         throw new IOException("Source '" + srcDir + "' is not a directory");
       }
-      if (destDir.exists()) {
-        if (srcDir.equals(destDir)) {
-          // extra check for windows, where the File.equals is case insensitive
-          // so we know now, that the File is the same, but the absolute name does not match
-          // rename via temp file
-          LOGGER.warn("File seems the same, need to rename via a temp file!");
-          File tmp = new File(destDir.getAbsolutePath() + ".tmp");
-          moveDirectorySafe(srcDir, tmp);
-          moveDirectorySafe(tmp, destDir);
-          return true;
-        }
-        else {
-          throw new FileExistsException("Destination '" + destDir + "' already exists");
-        }
+      if (destDir.exists() && !srcDir.equals(destDir)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the Dir is the same, but the absolute name does not match
+        throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
       if (!destDir.getParentFile().exists()) {
         // create parent folder structure, else renameTo does not work
@@ -724,20 +714,10 @@ public class Utils {
       if (srcFile.isDirectory()) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (destFile.exists()) {
-        if (srcFile.equals(destFile)) {
-          // extra check for windows, where the File.equals is case insensitive
-          // so we know now, that the File is the same, but the absolute name does not match
-          // rename via temp file
-          LOGGER.warn("File seems the same, need to rename via a temp file!");
-          File tmp = new File(destFile.getAbsolutePath() + ".tmp");
-          moveFileSafe(srcFile, tmp);
-          moveFileSafe(tmp, destFile);
-          return true;
-        }
-        else {
-          throw new FileExistsException("Destination '" + destFile + "' already exists");
-        }
+      if (destFile.exists() && !srcFile.equals(destFile)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the File is the same, but the absolute name does not match
+        throw new FileExistsException("Destination '" + destFile + "' already exists");
       }
       if (destFile.isDirectory()) {
         throw new IOException("Destination '" + destFile + "' is a directory");
