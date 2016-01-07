@@ -29,13 +29,14 @@ import org.tinymediamanager.scraper.util.JarUtils;
  * @since 1.0
  */
 public class MediaProviderInfo {
-  private static final URL EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
+  private static final URL   EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
 
-  private String           id;
-  private String           name;
-  private String           description;
-  private String           version;
-  private URL              providerLogo;
+  private String             id;
+  private String             name;
+  private String             description;
+  private String             version;
+  private URL                providerLogo;
+  public MediaProviderConfig settings   = null;
 
   /**
    * Instantiates a new provider info.
@@ -51,6 +52,7 @@ public class MediaProviderInfo {
     this.id = id;
     this.name = name;
     this.description = description;
+    this.settings = new MediaProviderConfig(this);
   }
 
   /**
@@ -70,6 +72,7 @@ public class MediaProviderInfo {
     this.name = name;
     this.description = description;
     this.providerLogo = providerLogo;
+    this.settings = new MediaProviderConfig(this);
   }
 
   public String getId() {
