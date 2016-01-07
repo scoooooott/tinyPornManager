@@ -805,23 +805,19 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         // have a look if that movie has just been added -> so we don't need any cleanup
         if (!movie.isNewlyAdded()) {
           // check and delete all not found MediaFiles
-          boolean dirty = false;
           List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
           for (MediaFile mf : mediaFiles) {
             if (!filesFound.contains(mf.getFile())) {
               if (!mf.exists()) {
                 LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
                 movie.removeFromMediaFiles(mf);
-                dirty = true;
               }
               else {
                 LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
               }
             }
           }
-          if (dirty) {
-            movie.saveToDb();
-          }
+          movie.saveToDb();
         }
       }
     }

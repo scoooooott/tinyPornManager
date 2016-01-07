@@ -143,6 +143,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           episode.setNewlyAdded(false);
+          episode.saveToDb();
         }
         tvShow.setNewlyAdded(false);
       }
