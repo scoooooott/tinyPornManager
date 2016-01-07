@@ -242,12 +242,13 @@ public class TinyMediaManager {
           }
           LOGGER.info("starting tinyMediaManager");
 
-          // convert old database
-          // UpgradeTasks.convertDatabase(); // we need to check the exceptions before we can activate this
-
           // upgrade check
           String oldVersion = Globals.settings.getVersion();
           if (newVersion) {
+            if (g2 != null) {
+              updateProgress(g2, "upgrading to new version", 10);
+              splash.update();
+            }
             UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
             Globals.settings.setCurrentVersion();
             Globals.settings.saveSettings();
@@ -296,7 +297,7 @@ public class TinyMediaManager {
           // do upgrade tasks after database loading
           if (newVersion) {
             if (g2 != null) {
-              updateProgress(g2, "upgrading database to new version", 60);
+              updateProgress(g2, "upgrading database to new version", 70);
               splash.update();
             }
             UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
