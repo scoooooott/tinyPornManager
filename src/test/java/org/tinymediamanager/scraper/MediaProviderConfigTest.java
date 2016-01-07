@@ -43,6 +43,7 @@ public class MediaProviderConfigTest {
     mpi.settings.loadFromDir("target");
 
     // tests
+    mpi.settings.setValue("someBool", false);
     mpi.settings.setValue("language", "bb");
     assertEqual("bb", mpi.settings.getValue("language"));
     mpi.settings.setValue("language", "ff");

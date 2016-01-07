@@ -129,6 +129,15 @@ public class MediaProviderConfig {
     co.setValue(value);
   }
 
+  public void setValue(String key, boolean value) {
+    ConfigObject co = settings.get(key);
+    if (co == null) {
+      LOGGER.warn("Could not set '" + key + "=" + value + "' - key not defined!");
+      return;
+    }
+    co.setValue(String.valueOf(value));
+  }
+
   public void addBoolean(String key, boolean defaultValue) {
     ConfigObject co = new ConfigObject();
     co.setKey(key);
