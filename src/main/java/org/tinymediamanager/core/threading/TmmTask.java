@@ -121,13 +121,11 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
   @Override
   public void cancel() {
     this.cancel = true;
-    state = TaskState.CANCELLED;
-    informListeners();
+    setState(TaskState.CANCELLED);
   }
 
   protected void start() {
-    state = TaskState.STARTED;
-    informListeners();
+    setState(TaskState.STARTED);
   }
 
   protected void publishState(String taskDescription, int progress) {
@@ -146,8 +144,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
   }
 
   protected void finish() {
-    state = TaskState.FINISHED;
-    informListeners();
+    setState(TaskState.FINISHED);
   }
 
   @Override
