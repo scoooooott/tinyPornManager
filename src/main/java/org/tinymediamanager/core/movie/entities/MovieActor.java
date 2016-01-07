@@ -17,6 +17,8 @@ package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.io.File;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -93,6 +95,27 @@ public class MovieActor extends AbstractModelObject {
     String oldValue = this.thumbPath;
     thumbPath = newValue;
     firePropertyChange(THUMB_PATH, oldValue, newValue);
+  }
+
+  /**
+   * path is always absolute - change it here back to the movie root
+   * 
+   * @param movieDir
+   *          the movie root dir
+   * @return true, if path was changed<br>
+   *         false, when same
+   */
+  public boolean updateThumbRoot(String movieDir) {
+    String oldValue = this.thumbPath;
+    String newValue = movieDir + File.separator + thumbPath.substring(thumbPath.indexOf(ACTOR_DIR));
+    if (oldValue.equals(newValue)) {
+      return false;
+    }
+    else {
+      this.thumbPath = newValue;
+      firePropertyChange(THUMB_PATH, oldValue, newValue);
+      return true;
+    }
   }
 
   /**

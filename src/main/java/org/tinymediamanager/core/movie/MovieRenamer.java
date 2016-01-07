@@ -40,6 +40,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -492,6 +493,14 @@ public class MovieRenamer {
     movie.removeAllMediaFiles();
     movie.addToMediaFiles(needed);
     movie.setPath(newPathname);
+
+    // update .actors
+    for (MovieActor actor : movie.getActors()) {
+      if (StringUtils.isNotBlank(actor.getThumbPath())) {
+        actor.updateThumbRoot(newPathname);
+      }
+    }
+
     movie.saveToDb();
 
     // cleanup & rename subtitle files
