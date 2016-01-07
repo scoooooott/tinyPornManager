@@ -49,13 +49,26 @@ public class UpgradeTasks {
 
     // upgrade to v2.7 (OR DO THIS IF WE ARE INSIDE IDE)
     if (StrgUtils.compareVersion(v, "2.7") < 0 || ReleaseInfo.isSvnBuild()) {
-
       // migrate to config dir
       moveToConfigFolder(new File("movies.db"));
       moveToConfigFolder(new File("tvshows.db"));
       moveToConfigFolder(new File("scraper_imdb.conf"));
       moveToConfigFolder(new File("tmm_ui.prop"));
+    }
 
+    // upgrade to v2.7.2
+    if (StrgUtils.compareVersion(v, "2.7.2") < 0) {
+      // delete all linux-* files in native
+      if (Platform.isLinux()) {
+        File[] subdirs = new File("native").listFiles();
+        if (subdirs != null) {
+          for (File subdir : subdirs) {
+            if (subdir.isDirectory() && subdir.getName().startsWith("linux")) {
+              FileUtils.deleteQuietly(subdir);
+            }
+          }
+        }
+      }
     }
   }
 
