@@ -110,10 +110,11 @@ public class TvShowTest {
    */
   @Test
   public void testEpisodeMatching() {
-    // detectEpisode("");
+    // Assert.assertEquals("S: E:", detectEpisode(""));
 
     // ************************************************************************
     // various real world examples
+    Assert.assertEquals("S:2 E:17", detectEpisode("Brooklyn Nine-Nine S02E17 HDTV x264 AAC E-Subs [GWC].mp4"));
     Assert.assertEquals("S:2 E:4", detectEpisode("Its Always Sunny In Philadelphia Season 02 Episode 04 Charlie Gets Crippled-1.mp4"));
     Assert.assertEquals("S:1 E:4", detectEpisode("Season 1/04 Charlie Has Cancer-1.mp4"));
     Assert.assertEquals("S:1 E:9", detectEpisode("Band of Brothers - 109 - Wir Waren Wie Brüder - Warum Wir Kämpfen (2001)"));
