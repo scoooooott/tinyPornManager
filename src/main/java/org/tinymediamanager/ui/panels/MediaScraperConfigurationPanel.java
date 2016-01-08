@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -73,7 +74,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
     panelHead.add(lblScraperOptions);
 
     configPanel = createConfigPanel();
-    add(configPanel, BorderLayout.CENTER);
+    add(configPanel, BorderLayout.NORTH);
 
     // add a listener to determine when to save the settings
     addAncestorListener(new AncestorListener() {
@@ -150,6 +151,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
         default:
           // display as text
           JTextField tf = new JTextField(config.getValue(entry.getKey()));
+          tf.setPreferredSize(new Dimension(100, 24));
           tf.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent e) {
