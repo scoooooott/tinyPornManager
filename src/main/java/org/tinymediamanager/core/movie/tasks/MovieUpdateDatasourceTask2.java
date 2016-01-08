@@ -557,17 +557,17 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           LOGGER.debug("| found NFO '" + nfo.getFile() + "' - try to parse");
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(mf.getFile());
+              movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
               if (movie == null) {
                 // try the other
-                movie = MovieToMpNfoConnector.getData(mf.getFile());
+                movie = MovieToMpNfoConnector.getData(nfo.getFile());
               }
               break;
             case MP:
-              movie = MovieToMpNfoConnector.getData(mf.getFile());
+              movie = MovieToMpNfoConnector.getData(nfo.getFile());
               if (movie == null) {
                 // try the other
-                movie = MovieToXbmcNfoConnector.getData(mf.getFile());
+                movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
               }
               break;
           }
