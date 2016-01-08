@@ -55,7 +55,7 @@ public class ImdbMovieParser extends ImdbParser {
 
   @Override
   protected Pattern getUnwantedSearchResultPattern() {
-    if (ImdbMetadataProviderConfig.SETTINGS.filterUnwantedCategories) {
+    if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("filterUnwantedCategories")) {
       return UNWANTED_SEARCH_RESULTS;
     }
     return null;
@@ -133,7 +133,8 @@ public class ImdbMovieParser extends ImdbParser {
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
-    if (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo) {
+    if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
+        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo")) {
       Callable<MediaMetadata> worker2 = new TmdbWorker(imdbId, options.getLanguage(), options.getCountry());
       futureTmdb = compSvcTmdb.submit(worker2);
     }
@@ -180,10 +181,12 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // get data from tmdb?
-    if (futureTmdb != null && (ImdbMetadataProviderConfig.SETTINGS.useTmdb || ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo)) {
+    if (futureTmdb != null && (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")
+        || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
-        if (ImdbMetadataProviderConfig.SETTINGS.useTmdb && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null
+            && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
           // tmdbid
           md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
           // title
@@ -198,7 +201,7 @@ public class ImdbMovieParser extends ImdbParser {
           md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
           md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
         }
-        if (ImdbMetadataProviderConfig.SETTINGS.scrapeCollectionInfo && tmdbMd != null) {
+        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo") && tmdbMd != null) {
           md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
           md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
         }

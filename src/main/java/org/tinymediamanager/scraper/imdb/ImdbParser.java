@@ -566,7 +566,8 @@ public abstract class ImdbParser {
          * more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*") && !ImdbMetadataProviderConfig.SETTINGS.useTmdb) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*")
+            && !ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb")) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();

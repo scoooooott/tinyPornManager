@@ -7,17 +7,18 @@ public class ImdbMetadataProviderConfigTest {
 
   @Test
   public void testConfig() {
-    ImdbMetadataProviderConfig config = ImdbMetadataProviderConfig.SETTINGS;
-    config.useTmdb = true;
-    config.scrapeCollectionInfo = true;
-    config.save();
+    ImdbMetadataProvider mp = new ImdbMetadataProvider();
 
-    config.filterUnwantedCategories = false;
-    config.scrapeCollectionInfo = false;
-    config.useTmdb = false;
+    mp.getProviderInfo().getConfig().setValue("useTmdb", true);
+    mp.getProviderInfo().getConfig().setValue("scrapeCollectionInfo", true);
+    mp.getProviderInfo().getConfig().setValue("filterUnwantedCategories", false);
+    mp.getProviderInfo().getConfig().saveToDir("target");
 
-    config = ImdbMetadataProviderConfig.loadSettings();
-    Assert.assertTrue(config.useTmdb);
-    Assert.assertTrue(config.scrapeCollectionInfo);
+    mp = new ImdbMetadataProvider();
+    // force loading from target
+    mp.getProviderInfo().getConfig().loadFromDir("target");
+    Assert.assertTrue(mp.getProviderInfo().getConfig().getValueAsBool("useTmdb"));
+    Assert.assertTrue(mp.getProviderInfo().getConfig().getValueAsBool("scrapeCollectionInfo"));
+    Assert.assertFalse(mp.getProviderInfo().getConfig().getValueAsBool("filterUnwantedCategories"));
   }
 }

@@ -60,7 +60,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
   @Override
   protected Pattern getUnwantedSearchResultPattern() {
-    if (ImdbMetadataProviderConfig.SETTINGS.filterUnwantedCategories) {
+    if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("filterUnwantedCategories")) {
       return UNWANTED_SEARCH_RESULTS;
     }
     return null;
