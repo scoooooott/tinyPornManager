@@ -1,11 +1,26 @@
-package org.tinymediamanager.scraper;
+/*
+ * Copyright 2012 - 2015 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.tinymediamanager.scraper.config;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -13,12 +28,24 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.util.AesUtil;
 
+/**
+ * This class is used to provide a configuration interface for scrapers
+ * 
+ * @author Myron Boyle
+ */
 public class MediaProviderConfig {
-  private static final Logger           LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
-  private static final String           CONFIG_FOLDER = "data";
-  private HashMap<String, ConfigObject> settings      = new HashMap<String, ConfigObject>();
-  private String                        id            = "";
+  private static final Logger                        LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
+  private static final String                        CONFIG_FOLDER = "data";
+  private static final String                        SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
+  private static final String                        IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
+
+  private static final AesUtil                       AES_UTIL      = new AesUtil(128, 100);
+
+  private HashMap<String, MediaProviderConfigObject> settings      = new HashMap<>();
+  private String                                     id            = "";
 
   public MediaProviderConfig(MediaProviderInfo mpi) {
     this.id = mpi.getId();
@@ -40,8 +67,11 @@ public class MediaProviderConfig {
     File conf = new File(folder, "scraper_" + id + ".conf");
     try {
       p.load(new FileInputStream(conf));
-      for (ConfigObject co : settings.values()) {
+      for (MediaProviderConfigObject co : settings.values()) {
         String value = p.getProperty(co.getKey());
+        if (co.isEncrypt()) {
+          value = decryptField(value, co.getKey());
+        }
         co.setValue(value == null ? co.getDefaultValue() : value);
       }
     }
@@ -63,8 +93,12 @@ public class MediaProviderConfig {
       return;
     }
     Properties p = new Properties();
-    for (ConfigObject co : settings.values()) {
-      p.setProperty(co.getKey(), co.getValue());
+    for (MediaProviderConfigObject co : settings.values()) {
+      String value = co.getValue();
+      if (co.isEncrypt()) {
+        value = encryptField(value, co.getKey());
+      }
+      p.setProperty(co.getKey(), value);
     }
     File conf = new File(folder, "scraper_" + id + ".conf");
     try {
@@ -75,8 +109,21 @@ public class MediaProviderConfig {
     }
   }
 
+  /**
+   * indicate whether a config is available or not
+   * 
+   * @return true/false
+   */
+  public boolean hasConfig() {
+    return !settings.isEmpty();
+  }
+
   public Set<String> getAllEntries() {
     return settings.keySet();
+  }
+
+  public Map<String, MediaProviderConfigObject> getConfigObjects() {
+    return settings;
   }
 
   /**
@@ -88,7 +135,7 @@ public class MediaProviderConfig {
    * @return
    */
   public String getValue(String key) {
-    ConfigObject co = settings.get(key);
+    MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
       LOGGER.warn("Could not get value for key '" + key + "' - key not defined!");
       return "";
@@ -116,7 +163,7 @@ public class MediaProviderConfig {
   }
 
   public void setValue(String key, String value) {
-    ConfigObject co = settings.get(key);
+    MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
       LOGGER.warn("Could not set '" + key + "=" + value + "' - key not defined!");
       return;
@@ -130,7 +177,7 @@ public class MediaProviderConfig {
   }
 
   public void setValue(String key, boolean value) {
-    ConfigObject co = settings.get(key);
+    MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
       LOGGER.warn("Could not set '" + key + "=" + value + "' - key not defined!");
       return;
@@ -139,24 +186,32 @@ public class MediaProviderConfig {
   }
 
   public void addBoolean(String key, boolean defaultValue) {
-    ConfigObject co = new ConfigObject();
+    MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setKey(key);
     co.setValue(String.valueOf(defaultValue));
     co.setDefaultValue(String.valueOf(defaultValue));
+    co.setType(MediaProviderConfigObject.ConfigType.BOOL);
     settings.put(key, co);
   }
 
   public void addText(String key, String defaultValue) {
-    ConfigObject co = new ConfigObject();
+    addText(key, defaultValue, false);
+  }
+
+  public void addText(String key, String defaultValue, boolean encrypt) {
+    MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setKey(key);
     co.setValue(defaultValue);
     co.setDefaultValue(defaultValue);
+    co.setType(MediaProviderConfigObject.ConfigType.TEXT);
+    co.setEncrypt(true);
     settings.put(key, co);
   }
 
   public void addSelect(String key, String[] possibleValues, String defaultValue) {
-    ConfigObject co = new ConfigObject();
+    MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setKey(key);
+    co.setType(MediaProviderConfigObject.ConfigType.SELECT);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
     }
@@ -171,9 +226,10 @@ public class MediaProviderConfig {
   }
 
   public void addSelectIndex(String key, String[] possibleValues, String defaultValue) {
-    ConfigObject co = new ConfigObject();
+    MediaProviderConfigObject co = new MediaProviderConfigObject();
     co.setKey(key);
     co.setReturnListAsInt(true);
+    co.setType(MediaProviderConfigObject.ConfigType.SELECT_INDEX);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
     }
@@ -187,81 +243,16 @@ public class MediaProviderConfig {
     settings.put(key, co);
   }
 
+  private static String encryptField(String value, String key) {
+    return AES_UTIL.encrypt(SALT, IV, key, value);
+  }
+
+  private static String decryptField(String value, String key) {
+    return AES_UTIL.decrypt(SALT, IV, key, value);
+  }
+
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
-
-  static class ConfigObject {
-    String            key             = "";
-    String            value           = "";
-    String            defaultValue    = "";
-    boolean           returnListAsInt = false;
-    ArrayList<String> possibleValues  = new ArrayList<String>();
-
-    public String getKey() {
-      return key;
-    }
-
-    public void setKey(String key) {
-      this.key = key;
-    }
-
-    /**
-     * gets the configured value, or the index of the value
-     * 
-     * @return
-     */
-    public String getValue() {
-      if (this.returnListAsInt) {
-        if (!possibleValues.contains(this.value)) {
-          LOGGER.warn("Could not get INT value for key '" + this.key + "' - not in range!");
-          return "";
-        }
-        else {
-          return String.valueOf(possibleValues.indexOf(value));
-        }
-      }
-      return value;
-    }
-
-    public void setValue(String value) {
-      this.value = value;
-    }
-
-    public String getDefaultValue() {
-      return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-      this.defaultValue = defaultValue;
-    }
-
-    public boolean isReturnListAsInt() {
-      return returnListAsInt;
-    }
-
-    public void setReturnListAsInt(boolean returnListAsInt) {
-      this.returnListAsInt = returnListAsInt;
-    }
-
-    public ArrayList<String> getPossibleValues() {
-      return possibleValues;
-    }
-
-    public void setPossibleValues(ArrayList<String> possibleValues) {
-      this.possibleValues = possibleValues;
-    }
-
-    public void addPossibleValues(String possibleValue) {
-      this.possibleValues.add(possibleValue);
-    }
-
-    @Override
-    public String toString() {
-      return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
-
-  }
-
 }

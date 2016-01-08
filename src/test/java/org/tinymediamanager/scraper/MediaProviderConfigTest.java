@@ -23,90 +23,92 @@ public class MediaProviderConfigTest {
     MediaProviderInfo mpi = new MediaProviderInfo("config", "name", "description");
 
     // define defaults
-    mpi.settings.addBoolean("filterUnwantedCategories", false);
-    mpi.settings.addBoolean("useTmdb", false);
-    mpi.settings.addBoolean("scrapeCollectionInfo", true);
-    mpi.settings.addBoolean("someBool", true);
-    mpi.settings.addText("someInput", "none");
-    mpi.settings.addSelect("language", new String[] { "aa", "bb", "cc", "dd", "ee" }, "dd");
-    mpi.settings.addSelectIndex("languageInt",
+    mpi.getConfig().addBoolean("filterUnwantedCategories", false);
+    mpi.getConfig().addBoolean("useTmdb", false);
+    mpi.getConfig().addBoolean("scrapeCollectionInfo", true);
+    mpi.getConfig().addBoolean("someBool", true);
+    mpi.getConfig().addText("someInput", "none");
+    mpi.getConfig().addSelect("language", new String[] { "aa", "bb", "cc", "dd", "ee" }, "dd");
+    mpi.getConfig().addSelectIndex("languageInt",
         "bg|cs|da|de|el|en|es|fi|fr|he|hr|hu|it|ja|ko|nb|nl|no|pl|pt|ro|ru|sk|sl|sr|sv|th|tr|uk|zh".split("\\|"), "en");
+    mpi.getConfig().addText("encrypted", "This is some encrypted text", true);
 
     // check default settings
-    assertEqual(false, mpi.settings.getValueAsBool("filterUnwantedCategories"));
-    assertEqual(false, mpi.settings.getValueAsBool("useTmdb"));
-    assertEqual(true, mpi.settings.getValueAsBool("scrapeCollectionInfo"));
-    assertEqual("dd", mpi.settings.getValue("language"));
-    assertEqual("5", mpi.settings.getValue("languageInt"));
+    assertEqual(false, mpi.getConfig().getValueAsBool("filterUnwantedCategories"));
+    assertEqual(false, mpi.getConfig().getValueAsBool("useTmdb"));
+    assertEqual(true, mpi.getConfig().getValueAsBool("scrapeCollectionInfo"));
+    assertEqual("dd", mpi.getConfig().getValue("language"));
+    assertEqual("5", mpi.getConfig().getValue("languageInt"));
 
     // load actual values
-    mpi.settings.loadFromDir("target");
+    mpi.getConfig().loadFromDir("target");
 
     // tests
-    mpi.settings.setValue("someBool", false);
-    mpi.settings.setValue("language", "bb");
-    assertEqual("bb", mpi.settings.getValue("language"));
-    mpi.settings.setValue("language", "ff");
-    assertEqual("bb", mpi.settings.getValue("language")); // value not in rage, should stay at last known
+    mpi.getConfig().setValue("someBool", false);
+    mpi.getConfig().setValue("language", "bb");
+    assertEqual("bb", mpi.getConfig().getValue("language"));
+    mpi.getConfig().setValue("language", "ff");
+    assertEqual("bb", mpi.getConfig().getValue("language")); // value not in rage, should stay at last known
 
-    mpi.settings.setValue("languageInt", "de"); // set correct as string
-    assertEqual("3", mpi.settings.getValue("languageInt")); // will return a int (string) index
-    mpi.settings.setValue("languageInt", "unknown"); // not possible
-    assertEqual("3", mpi.settings.getValue("languageInt")); // value not in rage, should stay at last known
+    mpi.getConfig().setValue("languageInt", "de"); // set correct as string
+    assertEqual("3", mpi.getConfig().getValue("languageInt")); // will return a int (string) index
+    mpi.getConfig().setValue("languageInt", "unknown"); // not possible
+    assertEqual("3", mpi.getConfig().getValue("languageInt")); // value not in rage, should stay at last known
 
-    assertEqual(null, mpi.settings.getValueAsBool("languageInt")); // not a bool value
-    assertEqual(true, mpi.settings.getValueAsBool("useTmdb"));
+    assertEqual(null, mpi.getConfig().getValueAsBool("languageInt")); // not a bool value
+    assertEqual(true, mpi.getConfig().getValueAsBool("useTmdb"));
+    assertEqual("This is some encrypted text", mpi.getConfig().getValue("encrypted"));
 
     System.out.println("--- current settings ---");
-    for (String entry : mpi.settings.getAllEntries()) {
-      System.out.println(entry + " = " + mpi.settings.getValue(entry));
+    for (String entry : mpi.getConfig().getAllEntries()) {
+      System.out.println(entry + " = " + mpi.getConfig().getValue(entry));
     }
-    System.out.println(mpi.settings);
-    mpi.settings.saveToDir("target");
+    System.out.println(mpi.getConfig());
+    mpi.getConfig().saveToDir("target");
   }
 
   @Test
   public void invalid() {
     MediaProviderInfo mpi = new MediaProviderInfo("save", "name", "description");
-    mpi.settings.addBoolean("bool1", false);
-    mpi.settings.addText("someInput", "none");
-    mpi.settings.addSelect("language", new String[] { "aa", "bb", "cc", "dd", "ee" }, "dd");
-    mpi.settings.addSelectIndex("languageInt", "bg|cs|da|de|el|en|es".split("\\|"), "en");
+    mpi.getConfig().addBoolean("bool1", false);
+    mpi.getConfig().addText("someInput", "none");
+    mpi.getConfig().addSelect("language", new String[] { "aa", "bb", "cc", "dd", "ee" }, "dd");
+    mpi.getConfig().addSelectIndex("languageInt", "bg|cs|da|de|el|en|es".split("\\|"), "en");
 
-    mpi.settings.addSelect("invalid", new String[] { "aa", "bb", "cc", "dd", "ee" }, "invalidEntry");
-    mpi.settings.addSelectIndex("invalidInt", "bg|cs|da|de|el|en|es".split("\\|"), "invalidEntry");
-    assertEqual("", mpi.settings.getValue("invalid"));
-    assertEqual(null, mpi.settings.getValueAsBool("invalid"));
-    assertEqual("", mpi.settings.getValue("invalidInt"));
+    mpi.getConfig().addSelect("invalid", new String[] { "aa", "bb", "cc", "dd", "ee" }, "invalidEntry");
+    mpi.getConfig().addSelectIndex("invalidInt", "bg|cs|da|de|el|en|es".split("\\|"), "invalidEntry");
+    assertEqual("", mpi.getConfig().getValue("invalid"));
+    assertEqual(null, mpi.getConfig().getValueAsBool("invalid"));
+    assertEqual("", mpi.getConfig().getValue("invalidInt"));
   }
 
   @Test
   public void emptySettingsLoadSave() {
     MediaProviderInfo mpi = new MediaProviderInfo("asdfasdf", "name", "description");
-    mpi.settings.load();
-    mpi.settings.save();
+    mpi.getConfig().load();
+    mpi.getConfig().save();
   }
 
   @Test
   public void unknownConfigLoadSave() {
     MediaProviderInfo mpi = new MediaProviderInfo("asdfasdf", "name", "description");
-    mpi.settings.addText("language", "de");
-    mpi.settings.load();
-    mpi.settings.save();
+    mpi.getConfig().addText("language", "de");
+    mpi.getConfig().load();
+    mpi.getConfig().save();
   }
 
   @Test
   public void getUnknownValue() {
     MediaProviderInfo mpi = new MediaProviderInfo("config", "name", "description");
-    mpi.settings.loadFromDir("target");
-    assertEqual("", mpi.settings.getValue("asdfasdfasdfasdf"));
-    assertEqual(null, mpi.settings.getValueAsBool("sdfgsdfgsdfg"));
+    mpi.getConfig().loadFromDir("target");
+    assertEqual("", mpi.getConfig().getValue("asdfasdfasdfasdf"));
+    assertEqual(null, mpi.getConfig().getValueAsBool("sdfgsdfgsdfg"));
   }
 
   @Test
   public void setNotAvailableConfig() {
     MediaProviderInfo mpi = new MediaProviderInfo("asdfasdf", "name", "description");
-    mpi.settings.setValue("language", "de");
+    mpi.getConfig().setValue("language", "de");
   }
 
   // own method to get some logging ;)

@@ -20,6 +20,7 @@ import java.util.jar.Attributes;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.util.JarUtils;
 
 /**
@@ -29,14 +30,14 @@ import org.tinymediamanager.scraper.util.JarUtils;
  * @since 1.0
  */
 public class MediaProviderInfo {
-  private static final URL   EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
+  private static final URL    EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
 
-  private String             id;
-  private String             name;
-  private String             description;
-  private String             version;
-  private URL                providerLogo;
-  public MediaProviderConfig settings   = null;
+  private String              id;
+  private String              name;
+  private String              description;
+  private String              version;
+  private URL                 providerLogo;
+  private MediaProviderConfig config;
 
   /**
    * Instantiates a new provider info.
@@ -52,7 +53,7 @@ public class MediaProviderInfo {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.settings = new MediaProviderConfig(this);
+    this.config = new MediaProviderConfig(this);
   }
 
   /**
@@ -72,7 +73,7 @@ public class MediaProviderInfo {
     this.name = name;
     this.description = description;
     this.providerLogo = providerLogo;
-    this.settings = new MediaProviderConfig(this);
+    this.config = new MediaProviderConfig(this);
   }
 
   public String getId() {
@@ -141,5 +142,14 @@ public class MediaProviderInfo {
    */
   public void setVersion(Class<?> clazz) {
     this.version = JarUtils.getManifestEntry(clazz, Attributes.Name.IMPLEMENTATION_VERSION.toString());
+  }
+
+  /**
+   * get the configuration for this scraper
+   * 
+   * @return the configuration for this scraper
+   */
+  public MediaProviderConfig getConfig() {
+    return config;
   }
 }
