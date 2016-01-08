@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
@@ -70,44 +70,4 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
     }
     return metadataProviders;
   }
-
-  // public MediaMetadata getMetadataForIMDBId(String imdbid) {
-  // if (providerInfo.getId().contains("imdb")) {
-  // MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
-  // sr.setIMDBId(imdbid);
-  // sr.setId(imdbid);
-  // sr.setUrl(createDetailUrl(imdbid));
-  // try {
-  // return getMetaData(sr);
-  // }
-  // catch (Exception e) {
-  // LOGGER.warn("Failed to search by IMDB URL: " + sr.getUrl(), e);
-  // }
-  // }
-  // return null;
-  // }
-  //
-  // /**
-  // * Given a string like, "Rated PG-13 for..." it tries to return PG-13, or
-  // the entire string, if cannot find it.
-  // *
-  // * @param imdbString
-  // * @return
-  // */
-  // public static String parseMPAARating(String imdbString) {
-  // if (imdbString != null) {
-  // Matcher m = mpaaRatingParser.matcher(imdbString);
-  // if (m.find()) {
-  // return m.group(1);
-  // }
-  // else {
-  // return imdbString;
-  // }
-  // }
-  // return null;
-  // }
-  //
-  // public static String createDetailUrl(String imdbid) {
-  // return String.format(IMDB_TITLE_URL, IMDB_DOMAIN, imdbid);
-  // }
 }

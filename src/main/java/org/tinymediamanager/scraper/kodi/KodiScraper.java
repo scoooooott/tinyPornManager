@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.kodi;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,19 +32,20 @@ import org.tinymediamanager.scraper.MediaType;
 public class KodiScraper {
   private Map<String, ScraperFunction> functions = new TreeMap<String, ScraperFunction>();
 
-  String    id;
-  String    version;
-  String    name;
-  String    summary;
-  String    description;
-  URL       logoUrl;
-  MediaType type;
-  String    thumb;
-  String    language;
-  String    provider;
-  File      addonFolder;
-  String    scraperXml;
-  String    settingsPath;
+  String                               id;
+  String                               version;
+  String                               name;
+  String                               summary;
+  String                               description;
+  URL                                  logoUrl;
+  MediaType                            type;
+  String                               thumb;
+  String                               language;
+  String                               provider;
+  File                                 addonFolder;
+  String                               scraperXml;
+  String                               settingsPath;
+  Map<String, String>                  options   = new HashMap<String, String>();         // actual configuration
 
   /**
    * instantiates a new scraper and parse info from addon.xml
@@ -91,18 +93,18 @@ public class KodiScraper {
           else if (point.equals("xbmc.metadata.scraper.tvshows")) {
             type = MediaType.TV_SHOW;
           }
-//          else if (point.equals("xbmc.metadata.scraper.albums")) {
-//            type = MediaType.ALBUM;
-//          }
-//          else if (point.equals("xbmc.metadata.scraper.artists")) {
-//            type = MediaType.ARTIST;
-//          }
-//          else if (point.equals("xbmc.metadata.scraper.musicvideos")) {
-//            type = MediaType.MUSICVIDEO;
-//          }
-//          else if (point.equals("xbmc.metadata.scraper.library")) {
-//            type = MediaType.LIBRARY;
-//          }
+          // else if (point.equals("xbmc.metadata.scraper.albums")) {
+          // type = MediaType.ALBUM;
+          // }
+          // else if (point.equals("xbmc.metadata.scraper.artists")) {
+          // type = MediaType.ARTIST;
+          // }
+          // else if (point.equals("xbmc.metadata.scraper.musicvideos")) {
+          // type = MediaType.MUSICVIDEO;
+          // }
+          // else if (point.equals("xbmc.metadata.scraper.library")) {
+          // type = MediaType.LIBRARY;
+          // }
         }
       }
 

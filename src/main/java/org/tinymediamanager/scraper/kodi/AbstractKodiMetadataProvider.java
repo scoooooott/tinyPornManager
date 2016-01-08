@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.kodi;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,12 +52,12 @@ import org.w3c.dom.NodeList;
  * @author Manuel Laggner
  */
 public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
+  private static final Logger          LOGGER = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
 
   private final DocumentBuilderFactory factory;
 
-  protected MediaProviderInfo providerInfo;
-  public KodiScraper          scraper;
+  protected MediaProviderInfo          providerInfo;
+  public KodiScraper                   scraper;
 
   public AbstractKodiMetadataProvider(KodiScraper scraper) {
     KodiScraperParser parser = new KodiScraperParser();
@@ -68,10 +69,79 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
       throw new RuntimeException("Failed to Load Kodi Scraper: " + scraper, e);
     }
     this.scraper = scraper;
-    this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name + " - " + scraper.version, scraper.description,
+    this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name, scraper.description,
         scraper.logoUrl == null ? AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png") : scraper.logoUrl);
+    this.providerInfo.setVersion(scraper.version); // deprecated method solely for Kodi, all fine :)
+
+    // set settings into KodiScraper, since this is always sent around...
+    parseSettings();
 
     factory = DocumentBuilderFactory.newInstance();
+  }
+
+  // load actual settings on every access to main function - it might have changed?
+  private void updateScraperOptions() {
+    this.providerInfo.getConfig().load();
+    this.scraper.options = this.providerInfo.getConfig().getConfigKeyValuePairs();
+  }
+
+  private void parseSettings() {
+    try {
+      // http://kodi.wiki/view/Settings.xml
+
+      File scraperSettings = new File(scraper.getSettingsPath());
+      if (scraperSettings != null && scraperSettings.exists()) {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder parser;
+        parser = factory.newDocumentBuilder();
+        // ByteArrayInputStream xmlStream = new
+        // ByteArrayInputStream(xmlString.getBytes());
+
+        Document d = parser.parse(scraperSettings);
+        NodeList nl = d.getElementsByTagName("setting");
+        for (int i = 0; i < nl.getLength(); i++) {
+          Element e = (Element) nl.item(i);
+
+          String id = e.getAttribute("id");
+          if (StringUtils.isEmpty(id))
+            continue;
+          String type = e.getAttribute("type");
+          String defaultValue = e.getAttribute("default");
+          String possibleValues[] = e.getAttribute("values").split("\\|");
+
+          switch (type) {
+            case "bool":
+              if (defaultValue.equalsIgnoreCase("true") || defaultValue.equalsIgnoreCase("false")) {
+                this.providerInfo.getConfig().addBoolean(id, Boolean.valueOf(defaultValue));
+              }
+              else {
+                LOGGER.warn("This is not a boolean '" + id + "=" + defaultValue + "' - ignoring");
+              }
+              break;
+            case "select":
+            case "labelenum":
+              this.providerInfo.getConfig().addSelect(id, possibleValues, defaultValue);
+              break;
+            case "enum":
+              this.providerInfo.getConfig().addSelectIndex(id, possibleValues, defaultValue);
+              break;
+            case "text":
+              this.providerInfo.getConfig().addText(id, defaultValue);
+              break;
+
+            default:
+              break;
+          }
+
+          updateScraperOptions(); // load known values from file and populate to KodiScraper
+        }
+
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Failed to create settings!", e);
+    }
+
   }
 
   @Override
@@ -93,6 +163,7 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     String title = args[0];
     String year = options.get(MediaSearchOptions.SearchParam.YEAR);
 
+    updateScraperOptions(); // load settings!
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     KodiUrl url = processor.getSearchUrl(title, year);
     String xmlString = processor.getSearchResults(url);
@@ -325,8 +396,7 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
   }
 
   /**
-   * first search the tag in any <details> (from a scraperfunction), then in
-   * base
+   * first search the tag in any <details> (from a scraperfunction), then in base
    * 
    * @param tag
    *          the tag to search for

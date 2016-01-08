@@ -15,22 +15,14 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * This class emulates the Kodi addon processing
@@ -59,8 +51,7 @@ class KodiScraperProcessor {
       throw new RuntimeException("Scraper cannot be null!");
 
     this.scraper = scraper;
-
-    mergeOptions(this.options);
+    this.options = scraper.options;
 
     LOGGER.debug("KodiScraperProcessor created using Scraper: " + scraper + "; Complete Logging: " + !truncateLogging);
 
@@ -78,46 +69,6 @@ class KodiScraperProcessor {
     }
     else {
       clearBuffers();
-    }
-  }
-
-  private void mergeOptions(Map<String, String> dest) {
-    try {
-      // if (!containsFunction(FUNCTION_SETTINGS)) {
-      // return;
-      // } else {
-      // String xmlString = executeFunction(FUNCTION_SETTINGS, null);
-      File scraperSettings = new File(scraper.getSettingsPath());
-      if (scraperSettings != null && scraperSettings.exists()) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder parser = factory.newDocumentBuilder();
-        // ByteArrayInputStream xmlStream = new
-        // ByteArrayInputStream(xmlString.getBytes());
-
-        Document d = parser.parse(scraperSettings);
-
-        NodeList nl = d.getElementsByTagName("setting");
-        for (int i = 0; i < nl.getLength(); i++) {
-          Element e = (Element) nl.item(i);
-          String id = e.getAttribute("id");
-          if (StringUtils.isEmpty(id))
-            continue;
-
-          if (dest.get(id) == null) {
-            String defValue = e.getAttribute("default");
-            if (StringUtils.isEmpty(defValue))
-              continue;
-            LOGGER.debug("Default Option: " + scraper.id + "; " + id + "; " + defValue);
-            // dest.put(id, cfg.getScraperProperty(scraper.getId(), id,
-            // defValue));
-            dest.put(id, defValue);
-          }
-        }
-        // }
-      }
-    }
-    catch (Exception e) {
-      LOGGER.error("Failed to merge options!", e);
     }
   }
 

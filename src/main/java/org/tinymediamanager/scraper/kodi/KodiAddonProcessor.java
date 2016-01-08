@@ -30,15 +30,15 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner, Myron Boyle
  */
 class KodiAddonProcessor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KodiAddonProcessor.class);
+  private static final Logger  LOGGER                       = LoggerFactory.getLogger(KodiAddonProcessor.class);
 
-  public static final String  FUNCTION_SETTINGS            = "GetSettings";
-  public static final String  FUNCTION_NFO_URL             = "NfoUrl";
-  public static final String  FUNCTION_CREATE_SEARCH_URL   = "CreateSearchUrl";
-  public static final String  FUNCTION_GET_SEARCH_RESULTS  = "GetSearchResults";
-  public static final String  FUNCTION_GET_DETAILS         = "GetDetails";
-  private static final String FUNCTION_GET_EPISODE_LIST    = "GetEpisodeList";
-  private static final String FUNCTION_GET_EPISODE_DETAILS = "GetEpisodeDetails";
+  public static final String   FUNCTION_SETTINGS            = "GetSettings";
+  public static final String   FUNCTION_NFO_URL             = "NfoUrl";
+  public static final String   FUNCTION_CREATE_SEARCH_URL   = "CreateSearchUrl";
+  public static final String   FUNCTION_GET_SEARCH_RESULTS  = "GetSearchResults";
+  public static final String   FUNCTION_GET_DETAILS         = "GetDetails";
+  private static final String  FUNCTION_GET_EPISODE_LIST    = "GetEpisodeList";
+  private static final String  FUNCTION_GET_EPISODE_DETAILS = "GetEpisodeDetails";
 
   private KodiScraperProcessor scraperProcessor;
 
@@ -108,10 +108,9 @@ class KodiAddonProcessor {
   public String getSearchResults(KodiUrl url) throws Exception {
     String contents = url.getTextContent();
     // as per Kodi code
-    // http://xbmc.svn.sourceforge.net/viewvc/xbmc/trunk/XBMC/tools/Scrap/Scraper.cpp?revision=7949&view=markup
+    // https://github.com/xbmc/xbmc/blob/master/xbmc/addons/Scraper.cpp
     // $$1 is content, $$2 is the url
-    return scraperProcessor.executeFunction(FUNCTION_GET_SEARCH_RESULTS,
-        new String[] { "", contents, url.toExternalForm() });
+    return scraperProcessor.executeFunction(FUNCTION_GET_SEARCH_RESULTS, new String[] { "", contents, url.toExternalForm() });
   }
 
   /**
@@ -148,8 +147,7 @@ class KodiAddonProcessor {
     }
 
     LOGGER.debug("getDetails() called with id: " + movieId + " and url: " + url.toExternalForm());
-    return scraperProcessor.executeFunction(FUNCTION_GET_DETAILS,
-        new String[] { "", contents, movieId, url.toExternalForm() });
+    return scraperProcessor.executeFunction(FUNCTION_GET_DETAILS, new String[] { "", contents, movieId, url.toExternalForm() });
   }
 
   private String parseIdFromUrl(String url) {
@@ -197,8 +195,7 @@ class KodiAddonProcessor {
 
   public String getEpisodeList(KodiUrl url) throws Exception {
     String contents = url.getTextContent();
-    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_LIST,
-        new String[] { "", contents, url.toExternalForm() });
+    return scraperProcessor.executeFunction(FUNCTION_GET_EPISODE_LIST, new String[] { "", contents, url.toExternalForm() });
   }
 
   public String getEpisodeDetails(KodiUrl url, String id) throws Exception {
