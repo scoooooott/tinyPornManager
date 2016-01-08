@@ -194,16 +194,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       this.type = type;
     }
-    this.stacking = Utils.getStackingNumber(f.getName());
-    if (this.stacking == 0) {
-      // try to parse from parent directory
-      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
-    }
-    this.stackingMarker = Utils.getStackingMarker(f.getName());
-    if (this.stackingMarker.isEmpty()) {
-      // try to parse from parent directory
-      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
-    }
 
     // set containerformat for non MI files
     if (!isValidMediainfoFormat() && StringUtils.isBlank(getContainerFormat())) {
@@ -603,6 +593,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public void removeStackingInformation() {
     setStacking(0);
     setStackingMarker("");
+  }
+
+  /**
+   * detect stacking information for this media file
+   */
+  public void detectStackingInformation() {
+    this.stacking = Utils.getStackingNumber(file.getName());
+    if (this.stacking == 0) {
+      // try to parse from parent directory
+      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
+    }
+    this.stackingMarker = Utils.getStackingMarker(file.getName());
+    if (this.stackingMarker.isEmpty()) {
+      // try to parse from parent directory
+      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
+    }
   }
 
   public List<MediaFileSubtitle> getSubtitles() {
