@@ -123,7 +123,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
         case BOOL:
           // display as checkbox
           JCheckBox checkbox = new JCheckBox();
-          checkbox.setSelected(config.getValueAsBool(entry.getKey()));
+          checkbox.setSelected(entry.getValue().getValueAsBool());
           checkbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +137,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
         case SELECT_INDEX:
           // display as combobox
           JComboBox<String> combobox = new JComboBox<>(entry.getValue().getPossibleValues().toArray(new String[0]));
-          combobox.setSelectedItem(entry.getValue().getValue());
+          combobox.setSelectedItem(entry.getValue().getValueAsString());
           combobox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -145,8 +145,8 @@ public class MediaScraperConfigurationPanel extends JPanel {
             }
           });
           comp = combobox;
-
           break;
+
         default:
           // display as text
           JTextField tf = new JTextField(config.getValue(entry.getKey()));
