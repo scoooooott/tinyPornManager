@@ -61,7 +61,6 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
@@ -297,8 +296,8 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
         if (index > -1) {
           panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
           }
           panelScraperOptions.revalidate();
         }
@@ -328,9 +327,8 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         int index = tableArtworkScraper.convertRowIndexToModel(tableArtworkScraper.getSelectedRow());
         if (index > -1) {
           panelArtworkScraperOptions.removeAll();
-          if (artworkScrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelArtworkScraperOptions
-                .add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) artworkScrapers.get(index).getMediaProvider()));
+          if (artworkScrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelArtworkScraperOptions.add(new MediaScraperConfigurationPanel(artworkScrapers.get(index).getMediaProvider()));
           }
           panelArtworkScraperOptions.revalidate();
         }

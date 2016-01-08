@@ -63,7 +63,6 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -301,8 +300,8 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
         if (index > -1) {
           panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
           }
           panelScraperOptions.revalidate();
         }

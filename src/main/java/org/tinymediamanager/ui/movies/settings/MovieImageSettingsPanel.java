@@ -64,11 +64,10 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -423,8 +422,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
         if (index > -1) {
           panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
           }
           panelScraperOptions.revalidate();
         }

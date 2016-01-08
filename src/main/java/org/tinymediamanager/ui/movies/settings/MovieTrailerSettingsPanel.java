@@ -57,9 +57,8 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -207,8 +206,8 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
         int index = tableTrailerScraper.convertRowIndexToModel(tableTrailerScraper.getSelectedRow());
         if (index > -1) {
           panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
           }
           panelScraperOptions.revalidate();
         }
