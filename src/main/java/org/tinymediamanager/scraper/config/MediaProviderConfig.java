@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -51,6 +50,10 @@ public class MediaProviderConfig {
     this.id = mpi.getId();
   }
 
+  /**
+   * loads config from settings file<br>
+   * Should be called right after defining the configuration objects!
+   */
   public void load() {
     loadFromDir(CONFIG_FOLDER);
   }
@@ -118,29 +121,48 @@ public class MediaProviderConfig {
     return !settings.isEmpty();
   }
 
-  public Set<String> getAllEntries() {
-    return settings.keySet();
-  }
-
   public Map<String, MediaProviderConfigObject> getConfigObjects() {
     return settings;
   }
 
   /**
-   * gets the config value as string<br>
+   * returns a config object (or an empty one if not found)
+   * 
+   * @param key
+   * @return
+   */
+  public MediaProviderConfigObject getConfigObject(String key) {
+    MediaProviderConfigObject co = settings.get(key);
+    if (co == null) {
+      LOGGER.warn("Could not get confiuguration object for key '" + key + "' - key not defined!");
+      return new MediaProviderConfigObject(); // FIXME: better NULL than empty?
+    }
+    return co;
+  }
+
+  /**
+   * gets the config value as string (or the default)<br>
    * You might want to parse it to boolean if it is true|false<br>
-   * You might get a number if it was setup to return the index
+   * You might get a number if it was setup to return the index<br>
+   * might return an empty string!
    * 
    * @param key
    * @return
    */
   public String getValue(String key) {
-    MediaProviderConfigObject co = settings.get(key);
-    if (co == null) {
-      LOGGER.warn("Could not get value for key '" + key + "' - key not defined!");
-      return "";
-    }
-    return co.getValue();
+    return getConfigObject(key).getValue();
+  }
+
+  /**
+   * gets the config value as index<br>
+   * works only on select boxes<br>
+   * might return NULL if not found/parseable
+   * 
+   * @param key
+   * @return
+   */
+  public Integer getValueIndex(String key) {
+    return getConfigObject(key).getValueIndex();
   }
 
   /**
@@ -151,21 +173,12 @@ public class MediaProviderConfig {
    * @return true|false or NULL
    */
   public Boolean getValueAsBool(String key) {
-    Boolean bool = null;
-    String val = getValue(key);
-    if (val.equalsIgnoreCase("true") || val.equalsIgnoreCase("false")) { // always false when unparseable :/
-      bool = Boolean.valueOf(val);
-    }
-    else {
-      LOGGER.warn("This is not a Boolean '" + key + "=" + val + "' - returning NULL");
-    }
-    return bool;
+    return getConfigObject(key).getValueAsBool();
   }
 
   public void setValue(String key, String value) {
-    MediaProviderConfigObject co = settings.get(key);
-    if (co == null) {
-      LOGGER.warn("Could not set '" + key + "=" + value + "' - key not defined!");
+    MediaProviderConfigObject co = getConfigObject(key);
+    if (co.isEmpty()) {
       return;
     }
     if (co.getPossibleValues().size() > 0 && !co.getPossibleValues().contains(value)) {
@@ -177,20 +190,19 @@ public class MediaProviderConfig {
   }
 
   public void setValue(String key, boolean value) {
-    MediaProviderConfigObject co = settings.get(key);
-    if (co == null) {
-      LOGGER.warn("Could not set '" + key + "=" + value + "' - key not defined!");
+    MediaProviderConfigObject co = getConfigObject(key);
+    if (co.isEmpty()) {
       return;
     }
-    co.setValue(String.valueOf(value));
+    co.setValue(value);
   }
 
   public void addBoolean(String key, boolean defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
-    co.setKey(key);
-    co.setValue(String.valueOf(defaultValue));
-    co.setDefaultValue(String.valueOf(defaultValue));
     co.setType(MediaProviderConfigObject.ConfigType.BOOL);
+    co.setKey(key);
+    co.setDefaultValue(String.valueOf(defaultValue));
+    co.setValue(String.valueOf(defaultValue));
     settings.put(key, co);
   }
 
@@ -200,46 +212,36 @@ public class MediaProviderConfig {
 
   public void addText(String key, String defaultValue, boolean encrypt) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
-    co.setKey(key);
-    co.setValue(defaultValue);
-    co.setDefaultValue(defaultValue);
     co.setType(MediaProviderConfigObject.ConfigType.TEXT);
-    co.setEncrypt(true);
+    co.setKey(key);
+    co.setDefaultValue(defaultValue);
+    co.setValue(defaultValue);
+    co.setEncrypt(encrypt);
     settings.put(key, co);
   }
 
   public void addSelect(String key, String[] possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
-    co.setKey(key);
     co.setType(MediaProviderConfigObject.ConfigType.SELECT);
+    co.setKey(key);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
     }
-    if (!co.possibleValues.contains(defaultValue)) {
-      LOGGER.warn("Will not set defaultValue '" + key + "=" + defaultValue + "' - since it is not in the list of possible values!");
-    }
-    else {
-      co.setDefaultValue(defaultValue);
-      co.setValue(defaultValue);
-    }
+    co.setDefaultValue(defaultValue);
+    co.setValue(defaultValue);
     settings.put(key, co);
   }
 
   public void addSelectIndex(String key, String[] possibleValues, String defaultValue) {
     MediaProviderConfigObject co = new MediaProviderConfigObject();
+    co.setType(MediaProviderConfigObject.ConfigType.SELECT_INDEX);
     co.setKey(key);
     co.setReturnListAsInt(true);
-    co.setType(MediaProviderConfigObject.ConfigType.SELECT_INDEX);
     for (String s : possibleValues) {
       co.addPossibleValues(s);
     }
-    if (!co.possibleValues.contains(defaultValue)) {
-      LOGGER.warn("Will not set defaultValue '" + key + "=" + defaultValue + "' - since it is not in the list of possible values!");
-    }
-    else {
-      co.setDefaultValue(defaultValue);
-      co.setValue(defaultValue);
-    }
+    co.setDefaultValue(defaultValue);
+    co.setValue(defaultValue);
     settings.put(key, co);
   }
 

@@ -50,26 +50,93 @@ public class MediaProviderConfigObject {
     this.key = key;
   }
 
+  public boolean isEmpty() {
+    return key.isEmpty();
+  }
+
   /**
-   * gets the configured value, or the index of the value
+   * gets the configured value, or the default one
    * 
    * @return
    */
   public String getValue() {
-    if (this.returnListAsInt) {
+    String ret = "";
+    switch (type) {
+      case SELECT:
+        ret = getValueAsString();
+        break;
+      case SELECT_INDEX:
+        Integer i = getValueIndex();
+        ret = (i == null || i < 0) ? "" : String.valueOf(i);
+        break;
+      case BOOL:
+        return String.valueOf(getValueAsBool());
+      case TEXT:
+      default:
+        return this.value;
+    }
+    return ret;
+  }
+
+  public String getValueAsString() {
+    if (type == ConfigType.SELECT || type == ConfigType.SELECT_INDEX) {
       if (!possibleValues.contains(this.value)) {
-        LOGGER.warn("Could not get INT value for key '" + this.key + "' - not in range!");
-        return "";
-      }
-      else {
-        return String.valueOf(possibleValues.indexOf(value));
+        LOGGER.warn("Could not get value for key '" + this.key + "' - not in range; returning default " + defaultValue);
+        return this.defaultValue;
       }
     }
-    return value;
+    return this.value;
+  }
+
+  public Boolean getValueAsBool() {
+    Boolean bool = null;
+    if (type != ConfigType.BOOL) {
+      LOGGER.warn("This is not a boolean '" + key + "=" + value + "' - returning NULL ");
+      return null;
+    }
+    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) { // always false when unparseable :/
+      bool = Boolean.valueOf(value);
+    }
+    else {
+      LOGGER.warn("This is not a Boolean '" + key + "=" + value + "' - returning default " + defaultValue);
+      bool = Boolean.valueOf(defaultValue);
+    }
+    return bool;
+  }
+
+  public Integer getValueIndex() {
+    Integer ret = null;
+    if (type != ConfigType.SELECT && type != ConfigType.SELECT_INDEX) {
+      LOGGER.warn("This is not a selectbox '" + key + "=" + value + "' - returning NULL ");
+      return null;
+    }
+    ret = possibleValues.indexOf(value);
+    if (ret == -1) {
+      ret = possibleValues.indexOf(defaultValue);
+      if (ret == -1) {
+        ret = null;
+      }
+      LOGGER.warn("Could not get index for '" + key + "=" + value + "' - not in defined range! returning default " + ret);
+    }
+    return ret;
   }
 
   public void setValue(String value) {
+    if (possibleValues.size() > 0 && !possibleValues.contains(value)) {
+      // possible values set, but ours isn't in? just return...
+      LOGGER.warn("Could not set '" + key + "=" + value + "' - not in defined range!");
+      return;
+    }
     this.value = value;
+  }
+
+  public void setValue(boolean value) {
+    if (type != ConfigType.BOOL) {
+      LOGGER.warn("This is not a boolean configuration object - seeting keep current value");
+    }
+    else {
+      this.value = String.valueOf(value);
+    }
   }
 
   public String getDefaultValue() {
@@ -77,7 +144,12 @@ public class MediaProviderConfigObject {
   }
 
   public void setDefaultValue(String defaultValue) {
-    this.defaultValue = defaultValue;
+    if (!possibleValues.contains(defaultValue)) {
+      LOGGER.warn("Will not set defaultValue '" + key + "=" + defaultValue + "' - since it is not in the list of possible values!");
+    }
+    else {
+      this.defaultValue = defaultValue;
+    }
   }
 
   public boolean isReturnListAsInt() {

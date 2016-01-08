@@ -52,6 +52,8 @@ public class MediaProviderConfigTest {
 
     mpi.getConfig().setValue("languageInt", "de"); // set correct as string
     assertEqual("3", mpi.getConfig().getValue("languageInt")); // will return a int (string) index
+    assertEqual(3, mpi.getConfig().getValueIndex("languageInt"));
+
     mpi.getConfig().setValue("languageInt", "unknown"); // not possible
     assertEqual("3", mpi.getConfig().getValue("languageInt")); // value not in rage, should stay at last known
 
@@ -60,9 +62,6 @@ public class MediaProviderConfigTest {
     assertEqual("This is some encrypted text", mpi.getConfig().getValue("encrypted"));
 
     System.out.println("--- current settings ---");
-    for (String entry : mpi.getConfig().getAllEntries()) {
-      System.out.println(entry + " = " + mpi.getConfig().getValue(entry));
-    }
     System.out.println(mpi.getConfig());
     mpi.getConfig().saveToDir("target");
   }
@@ -77,6 +76,8 @@ public class MediaProviderConfigTest {
 
     mpi.getConfig().addSelect("invalid", new String[] { "aa", "bb", "cc", "dd", "ee" }, "invalidEntry");
     mpi.getConfig().addSelectIndex("invalidInt", "bg|cs|da|de|el|en|es".split("\\|"), "invalidEntry");
+
+    mpi.getConfig().setValue("asdfasdfasdfasdf", true);
     assertEqual("", mpi.getConfig().getValue("invalid"));
     assertEqual(null, mpi.getConfig().getValueAsBool("invalid"));
     assertEqual("", mpi.getConfig().getValue("invalidInt"));
