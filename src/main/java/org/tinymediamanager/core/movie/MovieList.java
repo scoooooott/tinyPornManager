@@ -551,7 +551,7 @@ public class MovieList extends AbstractModelObject {
         LOGGER.debug("no result yet - trying alternate scrapers");
 
         for (MediaScraper ms : getAvailableMediaScrapers()) {
-          if (provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
+          if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
             continue;
           }
           sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
