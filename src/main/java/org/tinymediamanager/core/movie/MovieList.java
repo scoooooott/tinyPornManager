@@ -548,13 +548,19 @@ public class MovieList extends AbstractModelObject {
       sr = provider.search(options);
       // if result is empty, try all scrapers
       if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
-        LOGGER.debug("no result yet - trying alternate scrapers");
-
         for (MediaScraper ms : getAvailableMediaScrapers()) {
           if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
             continue;
           }
-          sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
+          LOGGER.info("no result yet - trying alternate scraper: " + ms.getName());
+          try {
+            sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
+          }
+          catch (Exception e) {
+            LOGGER.error("searchMovieFallback", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+          }
           if (!sr.isEmpty()) {
             break;
           }
