@@ -549,7 +549,8 @@ public class MovieList extends AbstractModelObject {
       // if result is empty, try all scrapers
       if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
         for (MediaScraper ms : getAvailableMediaScrapers()) {
-          if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
+          if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())
+              || ms.getMediaProvider().getProviderInfo().getName().startsWith("Kodi")) {
             continue;
           }
           LOGGER.info("no result yet - trying alternate scraper: " + ms.getName());
