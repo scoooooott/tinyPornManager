@@ -344,13 +344,16 @@ public class MovieRenamer {
         if (testRenameOk) {
           break; // ok it worked, step out
         }
-        if (!f.exists()) {
-          LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
-          // delete from MF or ignore for later cleanup (but better now!)
-          movie.removeFromMediaFiles(vid);
-          testRenameOk = true; // we "tested" this ok
-          break;
-        }
+        // we had the case, that the renaemoTo didn't work,
+        // and even the exists did not work!
+        // so we skip this additional check, which results in not removing the movie file
+        // if (!f.exists()) {
+        // LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
+        // // delete from MF or ignore for later cleanup (but better now!)
+        // movie.removeFromMediaFiles(vid);
+        // testRenameOk = true; // we "tested" this ok
+        // break;
+        // }
         try {
           LOGGER.debug("rename did not work - sleep a while and try again...");
           Thread.sleep(1000);
