@@ -18,12 +18,6 @@ package org.tinymediamanager.scraper.tmdb;
 import java.util.Collections;
 import java.util.List;
 
-import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -34,8 +28,14 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.ApiKey;
 
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.Configuration;
@@ -51,8 +51,8 @@ import retrofit.client.OkClient;
  * @author Manuel Laggner
  */
 @PluginImplementation
-public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider,
-    IMovieArtworkProvider, ITvShowArtworkProvider, IMovieTrailerProvider {
+public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
+    ITvShowArtworkProvider, IMovieTrailerProvider {
   static Tmdb              api;
   static MediaProviderInfo providerInfo = createMediaProviderInfo();
   static Configuration     configuration;
@@ -64,7 +64,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     MediaProviderInfo providerInfo = new MediaProviderInfo("tmdb", "themoviedb.org",
         "<html><h3>The Movie Database (TMDb)</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
         TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
-
+    providerInfo.setVersion(TmdbMetadataProvider.class);
     return providerInfo;
   }
 
