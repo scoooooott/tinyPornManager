@@ -50,9 +50,11 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    return new MediaProviderInfo("hd-trailers", "hd-trailers.net",
+    MediaProviderInfo pi = new MediaProviderInfo("hd-trailers", "hd-trailers.net",
         "<html><h3>hd-trailers.net</h3>Scraper for hd-trailers.net which is able to scrape trailers</html>",
         HDTrailersNetTrailerProvider.class.getResource("/hd-trailers_net.png"));
+    pi.setVersion(HDTrailersNetTrailerProvider.class);
+    return pi;
   }
 
   @Override
