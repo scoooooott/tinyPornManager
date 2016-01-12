@@ -15,7 +15,19 @@
  */
 package org.tinymediamanager.scraper.anidb;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,18 +56,7 @@ import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB)
@@ -64,17 +65,18 @@ import java.util.regex.Pattern;
  */
 @PluginImplementation
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
-  private static final Logger           LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
-  private static final String           IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
-  private static MediaProviderInfo      providerInfo      = createMediaProviderInfo();
+  private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
+  private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
+  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<Long>(30);
+  private static MediaProviderInfo         providerInfo      = createMediaProviderInfo();
 
-  private HashMap<String, List<AniDBShow>> showsForLookup = new HashMap<String, List<AniDBShow>>();
+  private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<String, List<AniDBShow>>();
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("anidb", "aniDB",
         "<html><h3>aniDB</h3><br />AniDB stands for Anime DataBase. AniDB is a non-profit anime database that is open freely to the public.</html>",
         AniDBMetadataProvider.class.getResource("/anidb_net.png"));
+    providerInfo.setVersion(AniDBMetadataProvider.class);
     return providerInfo;
   }
 
