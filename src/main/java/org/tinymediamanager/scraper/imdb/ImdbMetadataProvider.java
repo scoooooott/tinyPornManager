@@ -71,9 +71,11 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    return new MediaProviderInfo("imdb", "IMDb.com",
+    MediaProviderInfo mpi = new MediaProviderInfo("imdb", "IMDb.com",
         "<html><h3>Internet Movie Database (IMDB)</h3><br />The most used database for movies all over the world.<br />Does not contain plot/title/tagline in every language. You may choose to download these texts from TMDB<br /><br />Available languages: multiple</html>",
         ImdbMetadataProvider.class.getResource("/imdb_com.png"));
+    mpi.setVersion(ImdbMetadataProvider.class);
+    return mpi;
   }
 
   @Override
