@@ -126,6 +126,19 @@ public class MediaProviderConfig {
   }
 
   /**
+   * convenient method, to return a key=value map of all config entries
+   * 
+   * @return
+   */
+  public Map<String, String> getConfigKeyValuePairs() {
+    Map<String, String> result = new HashMap<String, String>();
+    for (Map.Entry<String, MediaProviderConfigObject> entry : this.settings.entrySet()) {
+      result.put(entry.getKey(), entry.getValue().getValue());
+    }
+    return result;
+  }
+
+  /**
    * returns a config object (or an empty one if not found)
    * 
    * @param key
