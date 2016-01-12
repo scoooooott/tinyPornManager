@@ -48,13 +48,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
   private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  private FanartTv api = null;
+  private FanartTv                 api          = null;
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("fanarttv", "fanart.tv",
         "<html><h3>Fanart.tv</h3><br />Fanart.tv provides a huge library of artwork for movies, TV shows and music.<br />Does not provide movie poster</html>",
         FanartTvMetadataProvider.class.getResource("/fanart_tv.png"));
-
+    providerInfo.setVersion(FanartTvMetadataProvider.class);
     return providerInfo;
   }
 
@@ -338,9 +338,9 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       this.sizeOrder = sizeOrder;
     }
 
-    int width;
-    int height;
+    int              width;
+    int              height;
     MediaArtworkType type;
-    int sizeOrder;
+    int              sizeOrder;
   }
 }
