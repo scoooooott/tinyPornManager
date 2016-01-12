@@ -1,10 +1,22 @@
 Version 2.7.2
 =======================
-LINUX: We've removed the shipped mediainfo library due to massive  between
+LINUX: We've removed the shipped mediainfo library due to massive problems between
        different distributions. Please install the libmediainfo directly from
        your package manager or from https://mediaarea.net/
        
++ Kodi scrapers are now configureable :)
++ added web-dl to media sources
++ add writing of imdb id in TV show NFO
+x some performacne fixes on updateing datasource
 x loading of mediainfo in linux
+x fix movie renamer when having access problems
+x fix IMDB title fallback to TMDB
+x TvShow episode parser: fix common word replacement
+x rework scraper fallback logic, do not stop on plugin errors
+x fix the "new" marker never being cleared in special cases
+x NTFS: renaming to same name but other cASE now works
+x Movie actors: replace invalid filesystem characters when saving thumb
+
 
 Version 2.7.1
 =======================
@@ -14,6 +26,7 @@ x fix poster & fanart sizes
 x fix parsing of the year in the movie editor
 x fix filter in the episode chooser
 x rework "extras" detection 
+
 
 Version 2.7
 =======================
