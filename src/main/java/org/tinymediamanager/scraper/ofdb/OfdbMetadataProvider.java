@@ -71,7 +71,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     MediaProviderInfo providerInfo = new MediaProviderInfo("ofdb", "Online Filmdatenbank (OFDb.de)",
         "<html><h3>Online Filmdatenbank (OFDb)</h3><br />A german movie database driven by the community.<br /><br />Available languages: DE</html>",
         OfdbMetadataProvider.class.getResource("/ofdb_de.png"));
-
+    providerInfo.setVersion(OfdbMetadataProvider.class);
     return providerInfo;
   }
 
