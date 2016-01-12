@@ -15,11 +15,13 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -29,14 +31,14 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import retrofit.RetrofitError;
 
 /**
  * The Class MoviemeterMetadataProvider. A meta data provider for the site moviemeter.nl
@@ -65,6 +67,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     if (api == null) {
       try {
         api = new MovieMeter(ApiKey.decryptApikey("GK5bRYdcKs3WZzOCa1fOQfIeAJVsBP7buUYjc0q4x2/jX66BlSUDKDAcgN/L0JnM"));
+        // api.setIsDebug(true);
       }
       catch (Exception e) {
         LOGGER.error("MoviemeterMetadataProvider", e);
@@ -122,11 +125,21 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     synchronized (api) {
       if (mmId != 0) {
         LOGGER.debug("MovieMeter: getMetadata(mmId): " + mmId);
-        fd = api.getFilmService().getMovieInfo(mmId);
+        try {
+          fd = api.getFilmService().getMovieInfo(mmId);
+        }
+        catch (RetrofitError e) {
+          LOGGER.warn("Error getting movie via MovieMeter id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        }
       }
       else if (StringUtils.isNotBlank(imdbId)) {
         LOGGER.debug("MovieMeter: filmSearchImdb(imdbId): " + imdbId);
-        fd = api.getFilmService().getMovieInfoByImdbId(imdbId);
+        try {
+          fd = api.getFilmService().getMovieInfoByImdbId(imdbId);
+        }
+        catch (RetrofitError e) {
+          LOGGER.warn("Error getting movie via IMDB id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        }
       }
     }
 
@@ -223,14 +236,24 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     synchronized (api) {
       // 1. "search" with IMDBid (get details, well)
       if (StringUtils.isNotEmpty(imdb)) {
-        fd = api.getFilmService().getMovieInfoByImdbId(imdb);
-        LOGGER.debug("found result with IMDB id");
+        try {
+          fd = api.getFilmService().getMovieInfoByImdbId(imdb);
+          LOGGER.debug("found result with IMDB id");
+        }
+        catch (RetrofitError e) {
+          LOGGER.warn("Error searching by IMDB id: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        }
       }
 
       // 2. try with searchString
       if (fd == null) {
-        moviesFound.addAll(api.getSearchService().searchFilm(searchString));
-        LOGGER.debug("found " + moviesFound.size() + " results");
+        try {
+          moviesFound.addAll(api.getSearchService().searchFilm(searchString));
+          LOGGER.debug("found " + moviesFound.size() + " results");
+        }
+        catch (RetrofitError e) {
+          LOGGER.warn("Error searching: " + e.getBodyAs(MovieMeter.ErrorResponse.class));
+        }
       }
     }
 

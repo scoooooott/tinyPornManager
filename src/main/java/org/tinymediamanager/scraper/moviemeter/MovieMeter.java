@@ -15,23 +15,26 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+import org.tinymediamanager.scraper.moviemeter.services.FilmService;
+import org.tinymediamanager.scraper.moviemeter.services.SearchService;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.bind.DateTypeAdapter;
-import org.tinymediamanager.scraper.moviemeter.services.FilmService;
-import org.tinymediamanager.scraper.moviemeter.services.SearchService;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
+
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
-
-import java.lang.reflect.Type;
-import java.util.Date;
 
 class MovieMeter {
   // the base API url
@@ -45,6 +48,16 @@ class MovieMeter {
 
   public MovieMeter(String apiKey) {
     this.apiKey = apiKey;
+  }
+
+  static class ErrorResponse {
+    @SerializedName("message")
+    String msg;
+
+    @Override
+    public String toString() {
+      return msg;
+    }
   }
 
   /**
