@@ -79,11 +79,9 @@ public class MediaProviderConfigObject {
   }
 
   public String getValueAsString() {
-    if (type == ConfigType.SELECT || type == ConfigType.SELECT_INDEX) {
-      if (!possibleValues.contains(this.value)) {
-        LOGGER.warn("Could not get value for key '" + this.key + "' - not in range; returning default " + defaultValue);
-        return this.defaultValue;
-      }
+    if (type == ConfigType.SELECT && !possibleValues.contains(this.value)) {
+      LOGGER.warn("Could not get value for key '" + this.key + "' - not in range; returning default " + defaultValue);
+      return this.defaultValue;
     }
     return this.value;
   }
@@ -105,6 +103,7 @@ public class MediaProviderConfigObject {
   }
 
   public Integer getValueIndex() {
+    // FIXME: Index is just stored in value? return 1:1 ?!? no example found yet...
     Integer ret = null;
     if (type != ConfigType.SELECT && type != ConfigType.SELECT_INDEX) {
       LOGGER.warn("This is not a selectbox '" + key + "=" + value + "' - returning NULL ");
@@ -122,7 +121,7 @@ public class MediaProviderConfigObject {
   }
 
   public void setValue(String value) {
-    if (possibleValues.size() > 0 && !possibleValues.contains(value)) {
+    if (type == ConfigType.SELECT && !possibleValues.contains(value)) {
       // possible values set, but ours isn't in? just return...
       LOGGER.warn("Could not set '" + key + "=" + value + "' - not in defined range!");
       return;
@@ -144,7 +143,7 @@ public class MediaProviderConfigObject {
   }
 
   public void setDefaultValue(String defaultValue) {
-    if (!possibleValues.contains(defaultValue)) {
+    if (type == ConfigType.SELECT && !possibleValues.contains(defaultValue)) {
       LOGGER.warn("Will not set defaultValue '" + key + "=" + defaultValue + "' - since it is not in the list of possible values!");
     }
     else {
