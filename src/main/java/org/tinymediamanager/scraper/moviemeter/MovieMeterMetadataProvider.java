@@ -59,7 +59,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     MediaProviderInfo providerInfo = new MediaProviderInfo("moviemeter", "moviemeter.nl",
         "<html><h3>Moviemeter.nl</h3><br />A dutch movie database.<br /><br />Available languages: NL</html>",
         MovieMeterMetadataProvider.class.getResource("/moviemeter_nl.png"));
-
+    providerInfo.setVersion(MovieMeterMetadataProvider.class);
     return providerInfo;
   }
 
