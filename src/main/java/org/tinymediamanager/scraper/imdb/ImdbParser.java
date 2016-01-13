@@ -554,7 +554,14 @@ public abstract class ImdbParser {
                 Date parsedDate = sdf.parse(matcher.group(1));
                 md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
               }
-              catch (ParseException ignored) {
+              catch (ParseException otherformat) {
+                try {
+                  SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
+                  Date parsedDate = sdf.parse(matcher.group(1));
+                  md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+                }
+                catch (ParseException ignored) {
+                }
               }
             }
           }
