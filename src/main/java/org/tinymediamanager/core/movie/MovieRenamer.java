@@ -1035,6 +1035,11 @@ public class MovieRenamer {
           ret = movie.getMediaSource().toString();
         }
         break;
+      case "$#":
+        if (movie.getRating() > 0) {
+          ret = String.valueOf(movie.getRating());
+        }
+        break;
       default:
         break;
     }
@@ -1058,7 +1063,7 @@ public class MovieRenamer {
     String newDestination = template;
 
     // replace all $x parameters
-    Pattern p = Pattern.compile("(\\$\\w)");
+    Pattern p = Pattern.compile("(\\$[\\w#])"); // # is for rating
     Matcher m = p.matcher(template);
     while (m.find()) {
       String value = getTokenValue(movie, m.group(1));
