@@ -1340,6 +1340,13 @@ public class TvShow extends MediaEntity {
    *          the media file
    */
   public void setSeasonPoster(int season, MediaFile mf) {
+    // check if that MF is already in our show
+    MediaFile oldMf = seasonPosters.get(season);
+    if (oldMf != null && oldMf.equals(mf)) {
+      // it is there - do not add it again
+      return;
+    }
+
     mf.gatherMediaInformation();
     addToMediaFiles(mf);
 
