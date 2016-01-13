@@ -267,7 +267,7 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
     }
 
     public String getScraperName() {
-      return scraper.getName();
+      return scraper.getName() + " - " + scraper.getVersion();
     }
 
     public String getScraperDescription() {
