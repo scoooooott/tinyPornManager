@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.settings;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -44,6 +45,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -176,6 +178,11 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
+    // add a CSS rule to force body tags to use the default label font
+    // instead of the value in javax.swing.text.html.default.csss
+    Font font = UIManager.getFont("Label.font");
+    String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
     panelScraperDetails.add(tpScraperDescription, "2, 2, fill, top");
 
     panelScraperOptions = new JPanel();
