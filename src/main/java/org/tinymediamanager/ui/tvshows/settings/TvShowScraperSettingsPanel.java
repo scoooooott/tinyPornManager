@@ -168,17 +168,19 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
     panelScraperDetails = new JPanel();
     panelTvShowScrapers.add(panelScraperDetails, "5, 2, fill, fill");
-    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelScraperDetails.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
-    panelScraperDetails.add(tpScraperDescription, "2, 2, fill, fill");
+    panelScraperDetails.add(tpScraperDescription, "2, 2, fill, top");
 
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "2, 4, fill, fill");
+    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, top");
 
     JSeparator separator = new JSeparator();
     panelTvShowScrapers.add(separator, "1, 4, 5, 1");

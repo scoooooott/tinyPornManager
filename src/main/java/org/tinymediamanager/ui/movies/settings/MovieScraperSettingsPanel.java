@@ -184,7 +184,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, bottom");
+    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, top");
 
     JSeparator separator = new JSeparator();
     panelMovieScrapers.add(separator, "2, 4, 5, 1");
