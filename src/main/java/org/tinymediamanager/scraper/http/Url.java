@@ -33,13 +33,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.util.Pair;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import org.tinymediamanager.scraper.util.Pair;
-import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream
@@ -48,20 +48,20 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Url {
-  private static final Logger   LOGGER = LoggerFactory.getLogger(Url.class);
-  protected static OkHttpClient client;
+  private static final Logger          LOGGER                = LoggerFactory.getLogger(Url.class);
+  protected static OkHttpClient        client;
 
-  protected static final String USER_AGENT            = "User-Agent";
-  protected int                 responseCode          = 0;
-  protected String              responseMessage       = "";
-  protected Charset             responseCharset       = null;
-  protected String              responseContentType   = "";
-  protected long                responseContentLength = -1;
+  protected static final String        USER_AGENT            = "User-Agent";
+  protected int                        responseCode          = 0;
+  protected String                     responseMessage       = "";
+  protected Charset                    responseCharset       = null;
+  protected String                     responseContentType   = "";
+  protected long                       responseContentLength = -1;
 
-  protected String                     url             = null;
-  protected Headers                    headersResponse = null;
-  protected List<Pair<String, String>> headersRequest  = new ArrayList<>();
-  protected URI                        uri             = null;
+  protected String                     url                   = null;
+  protected Headers                    headersResponse       = null;
+  protected List<Pair<String, String>> headersRequest        = new ArrayList<>();
+  protected URI                        uri                   = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -247,8 +247,10 @@ public class Url {
       headersResponse = response.headers();
       responseCode = response.code();
       responseMessage = response.message();
-      responseCharset = response.body().contentType().charset();
-      responseContentType = response.body().contentType().toString();
+      if (response.body().contentType() != null) { // could be null, see AnimeDB
+        responseCharset = response.body().contentType().charset();
+        responseContentType = response.body().contentType().toString();
+      }
       is = response.body().byteStream();
 
     }
