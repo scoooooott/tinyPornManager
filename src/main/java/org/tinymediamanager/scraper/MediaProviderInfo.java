@@ -30,12 +30,12 @@ import org.tinymediamanager.scraper.util.JarUtils;
  * @since 1.0
  */
 public class MediaProviderInfo {
-  private static final URL    EMPTY_LOGO = MediaProviderInfo.class.getResource("emtpyLogo.png");
+  private static final URL    EMPTY_LOGO  = MediaProviderInfo.class.getResource("emtpyLogo.png");
 
   private String              id;
-  private String              name;
-  private String              description;
-  private String              version;
+  private String              name        = "";
+  private String              description = "";
+  private String              version     = "";
   private URL                 providerLogo;
   private MediaProviderConfig config;
 
