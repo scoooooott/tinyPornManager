@@ -38,29 +38,26 @@ import org.tinymediamanager.scraper.util.PluginManager;
  * @author Manuel Laggner
  */
 public class MediaScraper {
-  private String         id;
-  private String         version;
-  private String         name;
-  private String         summary;
+  private String         id      = "";
+  private String         version = "";
+  private String         name    = "";
+  private String         summary = "";
   private String         description;
   private URL            logoUrl;
   private ScraperType    type;
   private IMediaProvider mediaProvider;
   private boolean        enabled = true;
 
-  public MediaScraper(ScraperType type, IMediaProvider mediaProvider, String id, String name) {
+  public MediaScraper(ScraperType type, IMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;
     this.type = type;
-    this.id = id;
-    this.name = name;
-    if (mediaProvider != null) {
-      this.description = this.summary = mediaProvider.getProviderInfo().getDescription();
-      this.logoUrl = mediaProvider.getProviderInfo().getProviderLogo();
-    }
-    else {
-      this.description = "";
-      this.summary = "";
-    }
+    MediaProviderInfo mpi = mediaProvider.getProviderInfo();
+    this.id = mpi.getId();
+    this.name = mpi.getName();
+    this.version = mpi.getVersion();
+    this.description = mpi.getDescription();
+    this.summary = mpi.getDescription();
+    this.logoUrl = mpi.getProviderLogo();
   }
 
   @Override
@@ -163,8 +160,7 @@ public class MediaScraper {
     }
 
     for (IMediaProvider p : plugins) {
-      MediaProviderInfo pi = p.getProviderInfo();
-      MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+      MediaScraper ms = new MediaScraper(type, p);
       scraper.add(ms);
     }
 
@@ -172,8 +168,7 @@ public class MediaScraper {
     for (IKodiMetadataProvider kodi : PluginManager.getInstance().getPluginsForInterface(IKodiMetadataProvider.class)) {
       try {
         for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
-          MediaProviderInfo pi = p.getProviderInfo();
-          MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+          MediaScraper ms = new MediaScraper(type, p);
           if (!Globals.isDonator()) {
             ms.enabled = false;
           }
