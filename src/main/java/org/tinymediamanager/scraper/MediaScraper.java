@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
@@ -30,6 +31,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Class representing a MediaScraper; (type, info, description...)<br>
@@ -38,15 +40,16 @@ import org.tinymediamanager.scraper.util.PluginManager;
  * @author Manuel Laggner
  */
 public class MediaScraper {
-  private String         id      = "";
-  private String         version = "";
-  private String         name    = "";
-  private String         summary = "";
-  private String         description;
-  private URL            logoUrl;
-  private ScraperType    type;
-  private IMediaProvider mediaProvider;
-  private boolean        enabled = true;
+  private static final ResourceBundle BUNDLE  = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private String                      id      = "";
+  private String                      version = "";
+  private String                      name    = "";
+  private String                      summary = "";
+  private String                      description;
+  private URL                         logoUrl;
+  private ScraperType                 type;
+  private IMediaProvider              mediaProvider;
+  private boolean                     enabled = true;
 
   public MediaScraper(ScraperType type, IMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;
@@ -171,6 +174,7 @@ public class MediaScraper {
           MediaScraper ms = new MediaScraper(type, p);
           if (!Globals.isDonator()) {
             ms.enabled = false;
+            ms.description = "<font color=\"red\">" + BUNDLE.getString("tmm.donatorfunction.hint") + "</font><br><br>" + ms.description; //$NON-NLS-1$
           }
           scraper.add(ms);
         }
