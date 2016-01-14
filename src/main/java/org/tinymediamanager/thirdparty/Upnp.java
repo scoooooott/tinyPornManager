@@ -50,6 +50,7 @@ public class Upnp {
    */
   public List<UpnpDevice> getUpnpDevices() throws IOException {
     List<UpnpDevice> upnpDevices = new ArrayList<UpnpDevice>();
+    MulticastSocket socket = null;
     try {
       InetAddress multicastAddress = InetAddress.getByName("239.255.255.250");
       // InetSocketAddress multicastAddress = new InetSocketAddress("239.255.255.250", 1900);
@@ -57,7 +58,7 @@ public class Upnp {
 
       // multicast address for SSDP
       final int port = 1900; // standard port for SSDP
-      MulticastSocket socket = new MulticastSocket();
+      socket = new MulticastSocket();
       socket.setReuseAddress(true);
       socket.setTimeToLive(2);
       socket.setSoTimeout(3000);
@@ -93,6 +94,9 @@ public class Upnp {
     }
     catch (SocketTimeoutException e) {
       System.out.println("Timeout");
+      if (!socket.isClosed()) {
+        socket.close();
+      }
     }
     return upnpDevices;
   }
