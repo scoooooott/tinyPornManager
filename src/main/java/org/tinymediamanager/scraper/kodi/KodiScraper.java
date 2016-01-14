@@ -55,7 +55,6 @@ public class KodiScraper implements IMediaProvider {
    * @param scraperFolder
    */
   public KodiScraper(File scraperFolder) {
-    System.out.println("********* new kodi scraper constructor");
     try {
       File info = new File(scraperFolder, "addon.xml");
       Document doc = Jsoup.parse(info, "UTF-8", "");
