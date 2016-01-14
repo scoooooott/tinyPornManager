@@ -91,7 +91,7 @@ class TmdbTvShowMetadataProvider {
     TvResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().tv(searchString, 1, language, 0, "phrase");
+      resultsPage = api.searchService().tv(searchString, 1, language, null, "phrase");
     }
 
     if (resultsPage == null || resultsPage.results == null) {
