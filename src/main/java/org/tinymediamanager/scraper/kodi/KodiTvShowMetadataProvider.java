@@ -26,6 +26,8 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.w3c.dom.Document;
@@ -156,5 +158,10 @@ public class KodiTvShowMetadataProvider extends AbstractKodiMetadataProvider imp
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
     throw new NotImplementedException("not yet implemented");
+  }
+
+  @Override
+  public List<IMediaProvider> getPluginsForType(MediaType type) {
+    return getPluginsForType(type);
   }
 }

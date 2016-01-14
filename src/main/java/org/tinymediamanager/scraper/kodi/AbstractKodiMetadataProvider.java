@@ -16,7 +16,6 @@
 package org.tinymediamanager.scraper.kodi;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,7 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.w3c.dom.Document;
@@ -51,12 +50,11 @@ import org.w3c.dom.NodeList;
  * 
  * @author Manuel Laggner
  */
-public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
+public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvider {
   private static final Logger          LOGGER = LoggerFactory.getLogger(AbstractKodiMetadataProvider.class);
 
   private final DocumentBuilderFactory factory;
 
-  protected MediaProviderInfo          providerInfo;
   public KodiScraper                   scraper;
 
   public AbstractKodiMetadataProvider(KodiScraper scraper) {
@@ -69,84 +67,12 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
       throw new RuntimeException("Failed to Load Kodi Scraper: " + scraper, e);
     }
     this.scraper = scraper;
-    this.providerInfo = new MediaProviderInfo(scraper.id, "Kodi: " + scraper.name, scraper.description,
-        scraper.logoUrl == null ? AbstractKodiMetadataProvider.class.getResource("/kodi_tv_png") : scraper.logoUrl);
-    this.providerInfo.setVersion(scraper.version); // deprecated method solely for Kodi, all fine :)
-
-    // set settings into KodiScraper, since this is always sent around...
-    parseSettings();
-
     factory = DocumentBuilderFactory.newInstance();
-  }
-
-  // load actual settings on every access to main function - it might have changed?
-  private void updateScraperOptions() {
-    this.providerInfo.getConfig().load();
-    this.scraper.options = this.providerInfo.getConfig().getConfigKeyValuePairs();
-  }
-
-  private void parseSettings() {
-    try {
-      // http://kodi.wiki/view/Settings.xml
-
-      File scraperSettings = new File(scraper.getSettingsPath());
-      if (scraperSettings != null && scraperSettings.exists()) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder parser;
-        parser = factory.newDocumentBuilder();
-        // ByteArrayInputStream xmlStream = new
-        // ByteArrayInputStream(xmlString.getBytes());
-
-        Document d = parser.parse(scraperSettings);
-        NodeList nl = d.getElementsByTagName("setting");
-        for (int i = 0; i < nl.getLength(); i++) {
-          Element e = (Element) nl.item(i);
-
-          String id = e.getAttribute("id");
-          if (StringUtils.isEmpty(id))
-            continue;
-          String type = e.getAttribute("type");
-          String defaultValue = e.getAttribute("default");
-          String possibleValues[] = e.getAttribute("values").split("\\|");
-
-          switch (type) {
-            case "bool":
-              if (defaultValue.equalsIgnoreCase("true") || defaultValue.equalsIgnoreCase("false")) {
-                this.providerInfo.getConfig().addBoolean(id, Boolean.valueOf(defaultValue));
-              }
-              else {
-                LOGGER.warn("This is not a boolean '" + id + "=" + defaultValue + "' - ignoring");
-              }
-              break;
-            case "select":
-            case "labelenum":
-              this.providerInfo.getConfig().addSelect(id, possibleValues, defaultValue);
-              break;
-            case "enum":
-              this.providerInfo.getConfig().addSelectIndex(id, possibleValues, defaultValue);
-              break;
-            case "text":
-              this.providerInfo.getConfig().addText(id, defaultValue);
-              break;
-
-            default:
-              break;
-          }
-
-          updateScraperOptions(); // load known values from file and populate to KodiScraper
-        }
-
-      }
-    }
-    catch (Exception e) {
-      LOGGER.error("Failed to create settings!", e);
-    }
-
   }
 
   @Override
   public MediaProviderInfo getProviderInfo() {
-    return providerInfo;
+    return scraper.getProviderInfo();
   }
 
   protected List<MediaSearchResult> _search(MediaSearchOptions options) throws Exception {
@@ -163,7 +89,6 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
     String title = args[0];
     String year = options.get(MediaSearchOptions.SearchParam.YEAR);
 
-    updateScraperOptions(); // load settings!
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     KodiUrl url = processor.getSearchUrl(title, year);
     String xmlString = processor.getSearchResults(url);
@@ -185,11 +110,11 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
         NodeList urlList = el.getElementsByTagName("url");
         KodiUrl u = new KodiUrl((Element) urlList.item(0));
 
-        MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+        MediaSearchResult sr = new MediaSearchResult(scraper.getProviderInfo().getId());
         String id = DOMUtils.getElementValue(el, "id");
         sr.setId(id);
         sr.setUrl(u.toExternalForm());
-        sr.setProviderId(providerInfo.getId());
+        sr.setProviderId(scraper.getProviderInfo().getId());
 
         if (u.toExternalForm().indexOf("imdb") != -1) {
           sr.setIMDBId(id);
@@ -215,7 +140,7 @@ public abstract class AbstractKodiMetadataProvider implements IMediaProvider {
   }
 
   protected MediaMetadata _getMetadata(MediaScrapeOptions options) throws Exception {
-    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+    MediaMetadata md = new MediaMetadata(scraper.getProviderInfo().getId());
     MediaSearchResult result = options.getResult();
 
     if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {

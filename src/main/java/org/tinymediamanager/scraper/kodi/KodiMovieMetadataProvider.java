@@ -20,11 +20,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.w3c.dom.Document;
 
 /**
@@ -42,7 +44,7 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("Kodi: getMetadata(): " + options);
-    if (options.getResult() == null || !providerInfo.getId().equals(options.getResult().getProviderId())) {
+    if (options.getResult() == null || !scraper.getProviderInfo().getId().equals(options.getResult().getProviderId())) {
       throw new Exception("scraping with Kodi scrapers only with a prior result possible");
     }
     return _getMetadata(options);
@@ -66,5 +68,10 @@ public class KodiMovieMetadataProvider extends AbstractKodiMetadataProvider impl
 
     Document xml = parseXmlString(xmlDetails);
     addMetadata(md, xml.getDocumentElement());
+  }
+
+  @Override
+  public List<IMediaProvider> getPluginsForType(MediaType type) {
+    return getPluginsForType(type);
   }
 }
