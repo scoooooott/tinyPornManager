@@ -15,12 +15,9 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +36,6 @@ class KodiScraperProcessor {
   // 20 buffers in total; buffer 0 is always blank
   private String              buffers[]         = new String[21];
 
-  // options that match those in the <Settings> elements.
-  Map<String, String>         options           = new HashMap<String, String>();
-
   private static final int    PATTERN_OPTIONS   = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL;
 
   // private XbmcScraperConfiguration cfg = new XbmcScraperConfiguration();
@@ -51,16 +45,14 @@ class KodiScraperProcessor {
       throw new RuntimeException("Scraper cannot be null!");
 
     this.scraper = scraper;
-    this.options = scraper.options;
 
     LOGGER.debug("KodiScraperProcessor created using Scraper: " + scraper + "; Complete Logging: " + !truncateLogging);
 
     clearBuffers();
   }
 
-  private KodiScraperProcessor(KodiScraper scraper, Map<String, String> options, String[] buffers) {
+  private KodiScraperProcessor(KodiScraper scraper, String[] buffers) {
     this.scraper = scraper;
-    this.options = options;
     if (buffers != null) {
       for (int i = 0; i < buffers.length; i++) {
         this.buffers[i] = buffers[i];
@@ -82,10 +74,10 @@ class KodiScraperProcessor {
       // Replacing our options in RegExps
       RegExp[] res = func.getRegExps();
       for (RegExp r : res) {
-        for (String key : options.keySet()) {
+        for (String key : scraper.getProviderInfo().getConfig().getConfigKeyValuePairs().keySet()) {
           String rep = "$INFO[" + key + "]";
           if (r.getInput().contains(rep) || r.getOutput().contains(rep)) {
-            String opt = options.get(key);
+            String opt = scraper.getProviderInfo().getConfig().getValue(key);
             LOGGER.debug("Replacing Option " + rep + " with " + opt);
             r.setInput(r.getInput().replace(rep, opt));
             r.setOutput(r.getOutput().replace(rep, opt));
@@ -104,7 +96,7 @@ class KodiScraperProcessor {
       return getBuffer(func.getDest());
     }
     else {
-      LOGGER.debug("** Could not locate Function: " + function + " in the scraper " + scraper.id);
+      LOGGER.debug("** Could not locate Function: " + function + " in the scraper " + scraper.getProviderInfo().getId());
       return "";
     }
   }
@@ -124,7 +116,9 @@ class KodiScraperProcessor {
       boolean not = cond.startsWith("!");
       if (not)
         cond = cond.substring(1);
-      Boolean b = BooleanUtils.toBooleanObject(options.get(cond));
+      // Boolean b = BooleanUtils.toBooleanObject(options.get(cond));
+      Boolean b = scraper.getProviderInfo().getConfig().getValueAsBool(cond);
+
       LOGGER.debug("Processing Conditional: " + regex.getConditional() + "; " + b);
       boolean b2 = (b == null || b.booleanValue() == true);
       if (!(b2 || (not && !b2))) {
@@ -277,7 +271,7 @@ class KodiScraperProcessor {
     while (m.find()) {
       sb.append(output.substring(lastStart, m.start()));
       lastStart = m.end();
-      sb.append(options.get(m.group(1)));
+      sb.append(scraper.getProviderInfo().getConfig().getValue(m.group(1)));
     }
 
     sb.append(output.substring(lastStart));
@@ -440,6 +434,6 @@ class KodiScraperProcessor {
    * 
    */
   public KodiScraperProcessor newSubProcessor(boolean clearBuffers) {
-    return new KodiScraperProcessor(scraper, options, (clearBuffers) ? null : buffers);
+    return new KodiScraperProcessor(scraper, (clearBuffers) ? null : buffers);
   }
 }

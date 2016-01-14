@@ -130,24 +130,25 @@ class KodiUtil {
 
     for (File f : foundAddonFiles) {
       KodiScraper x = new KodiScraper(f.getParentFile()); // parent = folder
-      if (StringUtils.isBlank(x.id)) {
+      if (StringUtils.isBlank(x.getProviderInfo().getId())) {
         continue;
       }
-      if ("metadata.local".equals(x.id)) {
+      if ("metadata.local".equals(x.getProviderInfo().getId())) {
         continue; // local Kodi scraper
       }
 
-      if (!tmp.containsKey(x.id)) {
-        tmp.put(x.id, x);
+      if (!tmp.containsKey(x.getProviderInfo().getId())) {
+        tmp.put(x.getProviderInfo().getId(), x);
       }
       else {
         // ok, scraper ID already added, now check for higher version.
-        KodiScraper old = tmp.get(x.id);
-        if (StrgUtils.compareVersion(x.version, old.version) > 0) {
+        KodiScraper old = tmp.get(x.getProviderInfo().getId());
+        if (StrgUtils.compareVersion(x.getProviderInfo().getVersion(), old.getProviderInfo().getVersion()) > 0) {
           // ok, new scraper has a higher version, replace this...
-          LOGGER.debug("replacing " + x.id + " v" + old.version + " with v" + x.version);
-          tmp.remove(x.id);
-          tmp.put(x.id, x);
+          LOGGER.debug(
+              "replacing " + x.getProviderInfo().getId() + " v" + old.getProviderInfo().getVersion() + " with v" + x.getProviderInfo().getVersion());
+          tmp.remove(x.getProviderInfo().getId());
+          tmp.put(x.getProviderInfo().getId(), x);
         }
         else {
           LOGGER.debug("not adding " + x.addonFolder.getAbsolutePath() + " - ID already imported, or version lower");
@@ -207,7 +208,7 @@ class KodiUtil {
 
     List<AbstractKodiMetadataProvider> metadataProviders = new ArrayList<>();
     for (KodiScraper scraper : scrapers) {
-      if(scraper.type == null){
+      if (scraper.type == null) {
         continue;
       }
       try {
@@ -225,7 +226,7 @@ class KodiUtil {
         }
       }
       catch (Exception e) {
-        LOGGER.error("could not load scraper " + scraper.id, e);
+        LOGGER.error("could not load scraper " + scraper.getProviderInfo().getId(), e);
       }
     }
     return metadataProviders;

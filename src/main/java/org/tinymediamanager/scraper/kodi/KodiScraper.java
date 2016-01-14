@@ -17,35 +17,37 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
-public class KodiScraper {
+public class KodiScraper implements IMediaProvider {
+  private static final Logger          LOGGER    = LoggerFactory.getLogger(KodiScraper.class);
   private Map<String, ScraperFunction> functions = new TreeMap<String, ScraperFunction>();
 
-  String                               id;
-  String                               version;
-  String                               name;
-  String                               summary;
-  String                               description;
-  URL                                  logoUrl;
   MediaType                            type;
-  String                               thumb;
   String                               language;
   String                               provider;
   File                                 addonFolder;
   String                               scraperXml;
   String                               settingsPath;
-  Map<String, String>                  options   = new HashMap<String, String>();         // actual configuration
+  MediaProviderInfo                    providerInfo;
+
+  @Override
+  public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
+  }
 
   /**
    * instantiates a new scraper and parse info from addon.xml
@@ -53,6 +55,7 @@ public class KodiScraper {
    * @param scraperFolder
    */
   public KodiScraper(File scraperFolder) {
+    System.out.println("********* new kodi scraper constructor");
     try {
       File info = new File(scraperFolder, "addon.xml");
       Document doc = Jsoup.parse(info, "UTF-8", "");
@@ -60,10 +63,22 @@ public class KodiScraper {
       Elements addon = doc.getElementsByTag("addon");
 
       addonFolder = scraperFolder;
-      id = addon.attr("id");
-      name = addon.attr("name");
-      version = addon.attr("version");
+      String id = addon.attr("id");
+      String name = addon.attr("name");
+      String version = addon.attr("version");
+      String summary = "";
+      String description = "";
       provider = addon.attr("provider-name");
+
+      // TODO: parse additional info and add to description
+      // <disclaimer lang="en_gb"></disclaimer>
+      // <language></language>
+      // <platform>all</platform>
+      // <license></license>
+      // <forum></forum>
+      // <website></website>
+      // <email></email>
+      // <source></source>
 
       for (Element el : doc.getElementsByAttribute("point")) {
         String point = el.attr("point");
@@ -75,9 +90,9 @@ public class KodiScraper {
           }
           for (Element d : desc) {
             if (d.nodeName().equals("summary")) {
-              this.setThumb(d.text());
+              summary = d.text();
             }
-            else {
+            else if (d.nodeName().equals("description")) {
               description = d.text();
             }
           }
@@ -107,15 +122,53 @@ public class KodiScraper {
           // }
         }
       }
+      providerInfo = new MediaProviderInfo(id, "Kodi: " + name, "<h3>" + summary + "</h3><br>" + description);
+      providerInfo.setVersion(version); // deprecated solely for Kodi, so ok
 
-      File settings = new File(scraperFolder, "resources/settings.xml");
-      if (settings.exists()) {
-        settingsPath = settings.getAbsolutePath();
-      }
+      // parse settings
+      File settingsFile = new File(scraperFolder, "resources/settings.xml");
+      if (settingsFile.exists()) {
+        settingsPath = settingsFile.getAbsolutePath();
+        Document set = Jsoup.parse(settingsFile, "UTF-8", "");
+        Elements settings = set.getElementsByTag("setting");
+        for (Element el : settings) {
+          String setid = el.attr("id");
+          if (StringUtils.isEmpty(setid))
+            continue;
+          String type = el.attr("type");
+          String defaultValue = el.attr("default");
+          String possibleValues[] = el.attr("values").split("\\|");
+
+          switch (type) {
+            case "bool":
+              if (defaultValue.equalsIgnoreCase("true") || defaultValue.equalsIgnoreCase("false")) {
+                this.providerInfo.getConfig().addBoolean(setid, Boolean.valueOf(defaultValue));
+              }
+              else {
+                LOGGER.warn("This is not a boolean '" + setid + "=" + defaultValue + "' - ignoring");
+              }
+              break;
+            case "select":
+            case "labelenum":
+              this.providerInfo.getConfig().addSelect(setid, possibleValues, defaultValue);
+              break;
+            case "enum":
+              this.providerInfo.getConfig().addSelectIndex(setid, possibleValues, defaultValue);
+              break;
+            case "text":
+              this.providerInfo.getConfig().addText(setid, defaultValue);
+              break;
+
+            default:
+              break;
+          }
+        }
+        this.providerInfo.getConfig().load(); // load actual values
+      } // end parse settings
 
       File logo = new File(scraperFolder, "icon.png");
       if (logo.exists()) {
-        logoUrl = logo.toURI().toURL();
+        providerInfo.setProviderLogo(logo.toURI().toURL());
       }
     }
     catch (IOException e) {
@@ -146,14 +199,6 @@ public class KodiScraper {
 
   public ScraperFunction[] getFunctions() {
     return functions.values().toArray(new ScraperFunction[functions.size()]);
-  }
-
-  public String getThumb() {
-    return thumb;
-  }
-
-  public void setThumb(String thumb) {
-    this.thumb = thumb;
   }
 
   public boolean containsFunction(String functionName) {
@@ -196,7 +241,7 @@ public class KodiScraper {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((providerInfo.getId() == null) ? 0 : providerInfo.getId().hashCode());
     return result;
   }
 
@@ -209,11 +254,11 @@ public class KodiScraper {
     if (getClass() != obj.getClass())
       return false;
     KodiScraper other = (KodiScraper) obj;
-    if (id == null) {
-      if (other.id != null)
+    if (providerInfo.getId() == null) {
+      if (other.providerInfo.getId() != null)
         return false;
     }
-    else if (!id.equals(other.id))
+    else if (!providerInfo.getId().equals(other.providerInfo.getId()))
       return false;
     return true;
   }
