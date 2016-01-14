@@ -4,18 +4,21 @@ LINUX: We've removed the shipped mediainfo library due to massive problems betwe
        different distributions. Please install the libmediainfo directly from
        your package manager or from https://mediaarea.net/
        
-+ Kodi scrapers are now configureable :)
++ Kodi scrapers are now configurable :)
 + added web-dl to media sources
 + add writing of imdb id in TV show NFO
-x some performacne fixes on updateing datasource
-x loading of mediainfo in linux
++ added $# rating movie renamer option
++ pimp scraper UI; add version s to all plugins
+x some performance fixes on updating datasources
+x remove bundled mediainfo for Linux (using system default)
 x fix movie renamer when having access problems
 x fix IMDB title fallback to TMDB
 x TvShow episode parser: fix common word replacement
 x rework scraper fallback logic, do not stop on plugin errors
 x fix the "new" marker never being cleared in special cases
 x NTFS: renaming to same name but other cASE now works
-x Movie actors: replace invalid filesystem characters when saving thumb
+x Movie actors: replace invalid file system characters when saving thumb
+x MacOS: save database on terminating with command-q
 
 
 Version 2.7.1
