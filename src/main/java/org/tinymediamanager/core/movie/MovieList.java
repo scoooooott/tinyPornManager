@@ -545,6 +545,10 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
+      LOGGER.info("=====================================================");
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId());
+      LOGGER.info(options.toString());
+      LOGGER.info("=====================================================");
       sr = provider.search(options);
       // if result is empty, try all scrapers
       if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
@@ -555,6 +559,10 @@ public class MovieList extends AbstractModelObject {
           }
           LOGGER.info("no result yet - trying alternate scraper: " + ms.getName());
           try {
+            LOGGER.info("=====================================================");
+            LOGGER.info("Searching with alternate scraper: " + ms.getMediaProvider().getProviderInfo().getId());
+            LOGGER.info(options.toString());
+            LOGGER.info("=====================================================");
             sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
           }
           catch (Exception e) {

@@ -168,6 +168,10 @@ public class TvShowScrapeTask extends TmmThreadPool {
                 || scraperMetadataConfig.isAired() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
                 || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                 || scraperMetadataConfig.isYear()) {
+              LOGGER.info("=====================================================");
+              LOGGER.info("Scraper metadata with scraper: " + mediaMetadataScraper.getMediaProvider().getProviderInfo().getId());
+              LOGGER.info(options.toString());
+              LOGGER.info("=====================================================");
               md = ((ITvShowMetadataProvider) mediaMetadataScraper.getMediaProvider()).getMetadata(options);
               tvShow.setMetadata(md, scraperMetadataConfig);
             }
