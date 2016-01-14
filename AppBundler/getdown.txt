@@ -91,4 +91,5 @@ jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatcher
 jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
 jvmarg = [mac os x] -Xdock:name=tinyMediaManager
+jvmarg = [mac os x] -Dapple.eawt.quitStrategy=CLOSE_ALL_WINDOWS
 jvmarg = -Djna.nosys=true
