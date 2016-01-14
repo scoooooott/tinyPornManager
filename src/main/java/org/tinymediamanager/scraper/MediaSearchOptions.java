@@ -18,6 +18,9 @@ package org.tinymediamanager.scraper;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * The Class SearchQuery. Pass arguments to the scraper searches
  * 
@@ -59,10 +62,6 @@ public class MediaSearchOptions {
 
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer("SearchQuery; Type: ").append(type.name()).append("; ");
-    for (SearchParam k : options.keySet()) {
-      sb.append(k.name()).append(":").append(options.get(k)).append(";");
-    }
-    return sb.toString();
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }
