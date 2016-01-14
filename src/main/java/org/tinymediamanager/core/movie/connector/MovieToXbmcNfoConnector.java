@@ -284,13 +284,7 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.ids.putAll(movie.getIds());
 
-    // only write first studio
-    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
-      String[] studio = movie.getProductionCompany().split(", ");
-      if (studio.length > 0) {
-        xbmc.studio = studio[0];
-      }
-    }
+    xbmc.studio = movie.getProductionCompany();
 
     xbmc.country = movie.getCountry();
     xbmc.watched = movie.isWatched();
