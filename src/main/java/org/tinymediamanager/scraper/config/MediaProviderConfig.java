@@ -194,11 +194,6 @@ public class MediaProviderConfig {
     if (co.isEmpty()) {
       return;
     }
-    if (co.getPossibleValues().size() > 0 && !co.getPossibleValues().contains(value)) {
-      // possible values set, but ours isn't in? just return...
-      LOGGER.warn("Could not set '" + key + "=" + value + "' - not in defined range!");
-      return;
-    }
     co.setValue(value);
   }
 
