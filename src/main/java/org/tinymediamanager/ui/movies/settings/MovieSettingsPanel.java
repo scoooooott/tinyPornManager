@@ -21,7 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -234,9 +235,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.getMovieSettings().addMovieDataSources(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          settings.getMovieSettings().addMovieDataSources(file.toAbsolutePath().toString());
         }
       }
     });
@@ -283,9 +284,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAddIgnore.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.getMovieSettings().addMovieSkipFolder(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          settings.getMovieSettings().addMovieSkipFolder(file.toAbsolutePath().toString());
         }
       }
     });

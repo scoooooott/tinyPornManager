@@ -16,6 +16,8 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -82,7 +84,7 @@ public class TvShowModuleManager implements ITmmModule {
   @Override
   public void startUp() throws Exception {
     // do a DB backup, and keep last 15 copies
-    File db = new File(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB);
+    Path db = Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB);
     Utils.createBackupFile(db);
     Utils.deleteOldBackupFile(db, 15);
 
@@ -128,8 +130,8 @@ public class TvShowModuleManager implements ITmmModule {
 
     if (Globals.settings.isDeleteTrashOnExit()) {
       for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
-        File file = new File(ds, Constants.BACKUP_FOLDER);
-        FileUtils.deleteQuietly(file);
+        Path file = Paths.get(ds, Constants.BACKUP_FOLDER);
+        Utils.deleteDirectoryRecursive(file);
       }
     }
   }

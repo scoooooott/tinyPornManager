@@ -19,7 +19,8 @@ import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -119,9 +120,9 @@ class MovieSourcePanel extends JPanel {
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          MovieModuleManager.MOVIE_SETTINGS.addMovieDataSources(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          MovieModuleManager.MOVIE_SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
         }
       }
     });

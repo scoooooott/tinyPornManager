@@ -590,6 +590,7 @@ public class MovieRenamer {
     }
     else {
       // keep same dir
+      // Path relativize(Path other)
       newPathname = Utils.relPath(movie.getDataSource(), movie.getPath());
     }
     String newMovieDir = movie.getDataSource() + File.separatorChar + newPathname + File.separatorChar;

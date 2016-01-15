@@ -1,8 +1,12 @@
 package org.tinymediamanager.core;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,27 +37,26 @@ public abstract class MediaEntityExporter {
   protected String              fileExtension;
   protected String              listTemplate       = "";
   protected String              detailTemplate     = "";
-  protected File                templateDir;
+  protected Path                templateDir;
 
   public enum TemplateType {
     MOVIE, TV_SHOW
   }
 
-  protected MediaEntityExporter(String pathToTemplate, TemplateType type) throws Exception {
+  protected MediaEntityExporter(Path templatePath, TemplateType type) throws Exception {
     // check if template exists and is valid
-    templateDir = new File(pathToTemplate);
-    if (!templateDir.exists() || !templateDir.isDirectory()) {
+    if (Files.isDirectory(templatePath)) {
       throw new Exception("illegal template");
     }
 
-    File configFile = new File(pathToTemplate, "template.conf");
-    if (!configFile.exists() || !configFile.isFile()) {
+    Path configFile = templatePath.resolve("template.conf");
+    if (Files.exists(configFile)) {
       throw new Exception("illegal template");
     }
 
     // load settings from template
     properties = new Properties();
-    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(configFile));
+    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(configFile.toFile()));
     properties.load(stream);
     stream.close();
 
@@ -87,13 +89,13 @@ public abstract class MediaEntityExporter {
     }
 
     // load list template from File
-    listTemplate = FileUtils.readFileToString(new File(pathToTemplate, listTemplateFile), "UTF-8");
+    listTemplate = Utils.readFileToString(templatePath.resolve(listTemplateFile));
     if (StringUtils.isNotBlank(detailTemplateFile)) {
-      detailTemplate = FileUtils.readFileToString(new File(pathToTemplate, detailTemplateFile), "UTF-8");
+      detailTemplate = Utils.readFileToString(templatePath.resolve(detailTemplateFile));
     }
   }
 
-  abstract public <T extends MediaEntity> void export(List<T> entitiesToExport, String pathToExport) throws Exception;
+  abstract public <T extends MediaEntity> void export(List<T> entitiesToExport, Path pathToExport) throws Exception;
 
   /**
    * Find templates for the given type.
@@ -106,62 +108,60 @@ public abstract class MediaEntityExporter {
     List<ExportTemplate> templatesFound = new ArrayList<ExportTemplate>();
 
     // search in template folder for templates
-    File root = new File(TEMPLATE_DIRECTORY);
-    if (!root.exists() || !root.isDirectory()) {
+    Path root = Paths.get(TEMPLATE_DIRECTORY);
+    if (!Files.isDirectory(root)) {
       return templatesFound;
     }
 
     // search ever subdir
-    File[] templateDirs = root.listFiles();
-    if (templateDirs == null) {
-      return templatesFound;
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(root)) {
+      for (Path path : directoryStream) {
+        if (Files.isDirectory(path)) {
+
+          // get type of template
+          Path config = path.resolve("template.conf");
+          if (Files.notExists(config)) {
+            continue;
+          }
+
+          // load settings from template
+          Properties properties = new Properties();
+          try {
+            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(config.toFile()));
+            properties.load(stream);
+            stream.close();
+          }
+          catch (Exception e) {
+            LOGGER.warn("error in config: " + path + " | " + e.getMessage());
+            continue;
+          }
+
+          // get template type
+          String typeInConfig = properties.getProperty("type");
+          if (StringUtils.isBlank(typeInConfig)) {
+            continue;
+          }
+
+          if (typeInConfig.equalsIgnoreCase(type.name())) {
+            ExportTemplate template = new ExportTemplate();
+            template.setName(properties.getProperty("name"));
+            template.setType(type);
+            template.setPath(path.toAbsolutePath().toString());
+            template.setUrl(properties.getProperty("url"));
+            template.setDescription(properties.getProperty("description"));
+            if (StringUtils.isNotBlank(properties.getProperty("detail"))) {
+              template.setDetail(true);
+            }
+            else {
+              template.setDetail(false);
+            }
+
+            templatesFound.add(template);
+          }
+        }
+      }
     }
-
-    for (File dir : templateDirs) {
-      if (!dir.isDirectory()) {
-        continue;
-      }
-
-      // get type of template
-      File config = new File(dir, "template.conf");
-      if (!config.exists()) {
-        continue;
-      }
-
-      // load settings from template
-      Properties properties = new Properties();
-      try {
-        BufferedInputStream stream = new BufferedInputStream(new FileInputStream(config));
-        properties.load(stream);
-        stream.close();
-      }
-      catch (Exception e) {
-        LOGGER.warn("error in config: " + dir.getAbsolutePath() + " | " + e.getMessage());
-        continue;
-      }
-
-      // get template type
-      String typeInConfig = properties.getProperty("type");
-      if (StringUtils.isBlank(typeInConfig)) {
-        continue;
-      }
-
-      if (typeInConfig.equalsIgnoreCase(type.name())) {
-        ExportTemplate template = new ExportTemplate();
-        template.setName(properties.getProperty("name"));
-        template.setType(type);
-        template.setPath(dir.getAbsolutePath());
-        template.setUrl(properties.getProperty("url"));
-        template.setDescription(properties.getProperty("description"));
-        if (StringUtils.isNotBlank(properties.getProperty("detail"))) {
-          template.setDetail(true);
-        }
-        else {
-          template.setDetail(false);
-        }
-
-        templatesFound.add(template);
-      }
+    catch (IOException ex) {
     }
 
     return templatesFound;

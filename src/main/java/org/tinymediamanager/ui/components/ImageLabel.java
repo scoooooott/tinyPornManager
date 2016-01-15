@@ -30,7 +30,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -406,18 +408,18 @@ public class ImageLabel extends JLabel {
 
     @Override
     protected BufferedImage doInBackground() throws Exception {
-      File file = null;
+      Path file = null;
       if (useCache) {
-        file = ImageCache.getCachedFile(imagePath);
+        file = ImageCache.getCachedFile(Paths.get(imagePath));
       }
       else {
-        file = new File(imagePath);
+        file = Paths.get(imagePath);
       }
 
-      if (file != null && file.exists()) {
+      if (file != null && Files.exists(file)) {
         try {
-          return Scalr.resize(com.bric.image.ImageLoader.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
-              Scalr.OP_ANTIALIAS);
+          return Scalr.resize(com.bric.image.ImageLoader.createImage(file.toFile()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width,
+              newSize.height, Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
           return null;

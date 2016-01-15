@@ -28,8 +28,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -171,10 +173,10 @@ public class MainWindow extends JFrame {
     tmmFolder.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File path = new File(System.getProperty("user.dir"));
+        Path path = Paths.get(System.getProperty("user.dir"));
         try {
           // check whether this location exists
-          if (path.exists()) {
+          if (Files.exists(path)) {
             TmmUIHelper.openFile(path);
           }
         }

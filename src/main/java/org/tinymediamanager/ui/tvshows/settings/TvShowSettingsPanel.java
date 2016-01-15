@@ -19,7 +19,8 @@ import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -127,9 +128,9 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAdd.setMargin(new Insets(2, 2, 2, 2));
       btnAdd.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
-          File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
-          if (file != null && file.exists() && file.isDirectory()) {
-            settings.getTvShowSettings().addTvShowDataSources(file.getAbsolutePath());
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+          if (file != null && Files.isDirectory(file)) {
+            settings.getTvShowSettings().addTvShowDataSources(file.toAbsolutePath().toString());
           }
         }
       });
@@ -176,9 +177,9 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAddSkipFolder.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
-          if (file != null && file.exists() && file.isDirectory()) {
-            settings.getTvShowSettings().addTvShowSkipFolder(file.getAbsolutePath());
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+          if (file != null && Files.isDirectory(file)) {
+            settings.getTvShowSettings().addTvShowSkipFolder(file.toAbsolutePath().toString());
           }
         }
       });

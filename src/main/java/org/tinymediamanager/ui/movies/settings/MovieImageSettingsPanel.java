@@ -25,7 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -346,9 +347,9 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelExtraArtwork.add(btnSelectFolder, "10, 24");
     btnSelectFolder.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          tfMovieSetArtworkFolder.setText(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
         }
       }
     });

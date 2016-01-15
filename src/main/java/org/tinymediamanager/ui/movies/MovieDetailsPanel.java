@@ -17,7 +17,9 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -177,7 +179,7 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
         try {
-          TmmUIHelper.openFile(mf.getFile());
+          TmmUIHelper.openFile(mf.getFileAsPath());
         }
         catch (Exception e) {
           MessageManager.instance
@@ -297,10 +299,10 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
           // get the location from the label
-          File path = new File(lblMoviePath.getNormalText());
+          Path path = Paths.get(lblMoviePath.getNormalText());
           try {
             // check whether this location exists
-            if (path.exists()) {
+            if (Files.exists(path)) {
               TmmUIHelper.openFile(path);
             }
           }

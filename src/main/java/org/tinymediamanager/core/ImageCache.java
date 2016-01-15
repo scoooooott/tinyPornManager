@@ -22,10 +22,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +41,6 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ import org.tinymediamanager.scraper.http.Url;
  */
 public class ImageCache {
   private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
-  public static final String  CACHE_DIR = "cache/image";
+  private static final Path   CACHE_DIR = Paths.get("cache/image");
 
   public enum CacheType {
     FAST, SMOOTH
@@ -67,12 +67,16 @@ public class ImageCache {
    * 
    * @return the cache dir
    */
-  public static File getCacheDir() {
-    File imageCacheDir = new File(CACHE_DIR);
-    if (!imageCacheDir.exists()) {
-      imageCacheDir.mkdirs();
+  public static Path getCacheDir() {
+    if (Files.notExists(CACHE_DIR)) {
+      try {
+        Files.createDirectories(CACHE_DIR);
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not create cache dir " + CACHE_DIR + " - " + e.getMessage());
+      }
     }
-    return imageCacheDir;
+    return CACHE_DIR;
   }
 
   /**
@@ -82,13 +86,15 @@ public class ImageCache {
    *          the url
    * @return the cached file name
    */
-  public static String getCachedFileName(String path) {
+  public static String getCachedFileName(Path path) {
     try {
-      if (path == null)
+      if (path == null) {
         return null;
+      }
+      String abs = path.toAbsolutePath().toString();
       // now uses a simple md5 hash, which should have a fairly low collision
       // rate, especially for our limited use
-      byte[] key = DigestUtils.md5(path);
+      byte[] key = DigestUtils.md5(abs);
       return new String(Hex.encodeHex(key));
     }
     catch (Exception e) {
@@ -173,16 +179,16 @@ public class ImageCache {
    * @return the file the cached file
    * @throws Exception
    */
-  public static File cacheImage(MediaFile mf) throws Exception {
-    File originalFile = mf.getFile();
-    String cacheFilename = ImageCache.getCachedFileName(originalFile.getPath());
-    File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
-    if (!cachedFile.exists()) {
+  public static Path cacheImage(MediaFile mf) throws Exception {
+    Path originalFile = mf.getFileAsPath();
+    String cacheFilename = ImageCache.getCachedFileName(originalFile);
+    Path cachedFile = ImageCache.getCacheDir().resolve(cacheFilename + ".jpg");
+    if (Files.notExists(cachedFile)) {
       // check if the original file exists && size > 0
-      if (!originalFile.exists()) {
-        throw new FileNotFoundException("unable to cache file: " + originalFile.getName() + "; file does not exist");
+      if (Files.notExists(originalFile)) {
+        throw new FileNotFoundException("unable to cache file: " + originalFile + "; file does not exist");
       }
-      if (FileUtils.sizeOf(originalFile) == 0) {
+      if (Files.size(originalFile) == 0) {
         throw new EmptyFileException(originalFile);
       }
 
@@ -190,7 +196,7 @@ public class ImageCache {
       // rescale & cache
       BufferedImage originalImage = null;
       try {
-        originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+        originalImage = com.bric.image.ImageLoader.createImage(originalFile.toFile());
       }
       catch (Exception e) {
         throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
@@ -268,7 +274,7 @@ public class ImageCache {
         scaledImage = rgb;
       }
 
-      FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+      FileImageOutputStream output = new FileImageOutputStream(cachedFile.toFile());
       imgWrtr.setOutput(output);
       IIOImage image = new IIOImage(scaledImage, null, null);
       imgWrtr.write(null, image, imgWrtrPrm);
@@ -278,8 +284,8 @@ public class ImageCache {
       scaledImage = null;
     }
 
-    if (!cachedFile.exists()) {
-      throw new Exception("unable to cache file: " + originalFile.getName());
+    if (Files.notExists(cachedFile)) {
+      throw new Exception("unable to cache file: " + originalFile);
     }
 
     return cachedFile;
@@ -303,9 +309,9 @@ public class ImageCache {
    * @param path
    *          the path
    */
-  public static void invalidateCachedImage(String path) {
-    File cachedFile = new File(ImageCache.getCacheDir(), ImageCache.getCachedFileName(path) + ".jpg");
-    if (cachedFile.exists()) {
+  public static void invalidateCachedImage(Path path) {
+    Path cachedFile = ImageCache.getCacheDir().resolve(ImageCache.getCachedFileName(path) + ".jpg");
+    if (Files.exists(cachedFile)) {
       Utils.deleteFileSafely(cachedFile);
     }
   }
@@ -317,23 +323,22 @@ public class ImageCache {
    *          the path
    * @return the cached file
    */
-  public static File getCachedFile(String path) {
-    if (StringUtils.isEmpty(path)) {
+  public static Path getCachedFile(Path path) {
+    if (path == null) {
       return null;
     }
-
     // is the image cache activated?
     if (!Globals.settings.isImageCache()) {
-      return new File(path);
+      return path;
     }
 
-    // is the path in the cache dir?
-    if (path.startsWith(ImageCache.CACHE_DIR)) {
-      return new File(path);
+    // is the path already inside the cache dir? serve direct
+    if (path.toAbsolutePath().startsWith(ImageCache.CACHE_DIR.toAbsolutePath())) {
+      return path;
     }
 
     try {
-      MediaFile mf = new MediaFile(new File(path));
+      MediaFile mf = new MediaFile(path);
       return ImageCache.cacheImage(mf);
     }
     catch (EmptyFileException e) {
@@ -347,7 +352,7 @@ public class ImageCache {
     }
 
     // fallback
-    return new File(path);
+    return path;
   }
 
   /**
@@ -357,13 +362,13 @@ public class ImageCache {
    *          the path to the original image
    * @return true/false
    */
-  public static boolean isImageCached(String path) {
+  public static boolean isImageCached(Path path) {
     if (!Globals.settings.isImageCache()) {
       return false;
     }
 
-    File cachedFile = new File(CACHE_DIR, ImageCache.getCachedFileName(path) + ".jpg");
-    if (cachedFile.exists()) {
+    Path cachedFile = CACHE_DIR.resolve(ImageCache.getCachedFileName(path) + ".jpg");
+    if (Files.exists(cachedFile)) {
       return true;
     }
 
@@ -380,8 +385,8 @@ public class ImageCache {
     List<MediaFile> mediaFiles = new ArrayList<MediaFile>(entity.getMediaFiles());
     for (MediaFile mediaFile : mediaFiles) {
       if (mediaFile.isGraphic()) {
-        File file = ImageCache.getCachedFile(mediaFile.getFile().getPath());
-        if (file.exists()) {
+        Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());
+        if (Files.exists(file)) {
           Utils.deleteFileSafely(file);
         }
       }

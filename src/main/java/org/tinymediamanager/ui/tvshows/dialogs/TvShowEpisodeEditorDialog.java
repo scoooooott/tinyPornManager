@@ -24,7 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -288,9 +289,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       lblThumb.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-          if (file != null && file.exists() && file.isFile()) {
-            String fileName = file.getPath();
+          Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
+          if (file != null && Files.isRegularFile(file)) {
+            String fileName = file.toAbsolutePath().toString();
             lblThumb.setImageUrl("file:/" + fileName);
           }
         }
@@ -434,7 +435,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     // fill data
     {
       MediaFile mediaFile = episodeToEdit.getMediaFiles().get(0);
-      lblFilename.setText(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+      lblFilename.setText(mediaFile.getFileAsPath().toString());
       tfTitle.setText(episodeToEdit.getTitle());
 
       spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getAiredSeason(), -1, Integer.MAX_VALUE, 1));

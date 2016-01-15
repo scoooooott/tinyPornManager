@@ -16,8 +16,8 @@
 package org.tinymediamanager.thirdparty;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -68,7 +68,7 @@ public class MediaInfo implements Closeable {
    *          the file
    * @return true, if successful
    */
-  public boolean open(File file) throws MediaInfoException {
+  public boolean open(Path file) throws MediaInfoException {
     // create handle
     try {
       if (handle == null) {
@@ -80,7 +80,7 @@ public class MediaInfo implements Closeable {
     }
 
     if (file != null && isLoaded()) {
-      return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
+      return MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.toAbsolutePath().toString())) > 0;
     }
     else {
       return false;
@@ -567,7 +567,7 @@ public class MediaInfo implements Closeable {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static Map<StreamKind, List<Map<String, String>>> snapshot(File file) throws IOException {
+  public static Map<StreamKind, List<Map<String, String>>> snapshot(Path file) throws IOException {
     MediaInfo mi = new MediaInfo();
     try {
       if (mi.open(file)) {

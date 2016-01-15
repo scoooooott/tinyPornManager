@@ -15,14 +15,17 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +49,7 @@ import com.floreysoft.jmte.RenderFormatInfo;
 public class TvShowExporter extends MediaEntityExporter {
   private final static Logger LOGGER = LoggerFactory.getLogger(TvShowExporter.class);
 
-  public TvShowExporter(String pathToTemplate) throws Exception {
+  public TvShowExporter(Path pathToTemplate) throws Exception {
     super(pathToTemplate, TemplateType.TV_SHOW);
   }
 
@@ -61,7 +64,7 @@ public class TvShowExporter extends MediaEntityExporter {
    *           the exception
    */
   @Override
-  public <T extends MediaEntity> void export(List<T> tvShowsToExport, String pathToExport) throws Exception {
+  public <T extends MediaEntity> void export(List<T> tvShowsToExport, Path exportDir) throws Exception {
     LOGGER.info("preparing tv show export; using " + properties.getProperty("name"));
 
     // register own renderers
@@ -69,23 +72,25 @@ public class TvShowExporter extends MediaEntityExporter {
     engine.registerNamedRenderer(new TvShowFilenameRenderer());
 
     // prepare export destination
-    File exportDir = new File(pathToExport);
-    if (!exportDir.exists()) {
-      if (!exportDir.mkdirs()) {
+    if (Files.notExists(exportDir)) {
+      try {
+        Files.createDirectories(exportDir);
+      }
+      catch (Exception e) {
         throw new Exception("error creating export directory");
       }
     }
 
     // prepare listfile
-    File listExportFile = null;
+    Path listExportFile = null;
     if (fileExtension.equalsIgnoreCase("html")) {
-      listExportFile = new File(exportDir, "index.html");
+      listExportFile = exportDir.resolve("index.html");
     }
     if (fileExtension.equalsIgnoreCase("xml")) {
-      listExportFile = new File(exportDir, "tvshows.xml");
+      listExportFile = exportDir.resolve("tvshows.xml");
     }
     if (fileExtension.equalsIgnoreCase("csv")) {
-      listExportFile = new File(exportDir, "tvshows.csv");
+      listExportFile = exportDir.resolve("tvshows.csv");
     }
     if (listExportFile == null) {
       throw new Exception("error creating tv show list file");
@@ -95,7 +100,7 @@ public class TvShowExporter extends MediaEntityExporter {
     String episodeTemplateFile = properties.getProperty("episode");
     String episodeTemplate = "";
     if (StringUtils.isNotBlank(episodeTemplateFile)) {
-      episodeTemplate = FileUtils.readFileToString(new File(templateDir, episodeTemplateFile), "UTF-8");
+      episodeTemplate = Utils.readFileToString(templateDir.resolve(episodeTemplateFile));
     }
 
     // create the list
@@ -105,41 +110,41 @@ public class TvShowExporter extends MediaEntityExporter {
     Map<String, Object> root = new HashMap<String, Object>();
     root.put("tvShows", new ArrayList<T>(tvShowsToExport));
     String output = engine.transform(listTemplate, root);
-    FileUtils.writeStringToFile(listExportFile, output, "UTF-8");
-    LOGGER.info("movie list generated: " + listExportFile.getAbsolutePath());
+    Utils.writeStringToFile(listExportFile, output);
+    LOGGER.info("movie list generated: " + listExportFile);
 
     if (StringUtils.isNotBlank(detailTemplate)) {
       for (MediaEntity me : tvShowsToExport) {
         TvShow show = (TvShow) me;
         // create a TV show dir
-        File showDir = new File(pathToExport, TvShowRenamer.createDestination("$N ($Y)", show, new ArrayList<TvShowEpisode>()));
-        if (showDir.exists()) {
-          FileUtils.deleteQuietly(showDir);
+        Path showDir = exportDir.resolve(TvShowRenamer.createDestination("$N ($Y)", show, new ArrayList<TvShowEpisode>()));
+        if (Files.isDirectory(showDir)) {
+          Utils.deleteDirectoryRecursive(showDir);
         }
-        showDir.mkdirs();
+        Files.createDirectory(showDir);
 
-        File detailsExportFile = new File(showDir, "tvshow." + fileExtension);
+        Path detailsExportFile = showDir.resolve("tvshow." + fileExtension);
         root = new HashMap<String, Object>();
         root.put("tvShow", show);
 
         output = engine.transform(detailTemplate, root);
-        FileUtils.writeStringToFile(detailsExportFile, output, "UTF-8");
+        Utils.writeStringToFile(detailsExportFile, output);
 
         if (StringUtils.isNotBlank(episodeTemplate)) {
           for (TvShowEpisode episode : show.getEpisodes()) {
             List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
             if (!mfs.isEmpty()) {
-              File seasonDir = new File(showDir, TvShowRenamer.generateSeasonDir("", episode));
-              if (!showDir.exists()) {
-                seasonDir.mkdirs();
+              Path seasonDir = showDir.resolve(TvShowRenamer.generateSeasonDir("", episode));
+              if (!Files.isDirectory(seasonDir)) {
+                Files.createDirectory(seasonDir);
               }
 
               String episodeFileName = FilenameUtils.getBaseName(TvShowRenamer.generateFilename(show, mfs.get(0))) + "." + fileExtension;
-              File episodeExportFile = new File(seasonDir, episodeFileName);
+              Path episodeExportFile = seasonDir.resolve(episodeFileName);
               root = new HashMap<String, Object>();
               root.put("episode", episode);
               output = engine.transform(episodeTemplate, root);
-              FileUtils.writeStringToFile(episodeExportFile, output, "UTF-8");
+              Utils.writeStringToFile(episodeExportFile, output);
             }
           }
         }
@@ -147,22 +152,20 @@ public class TvShowExporter extends MediaEntityExporter {
     }
 
     // copy all non .jtme/template.conf files to destination dir
-    File[] templateContent = templateDir.listFiles();
-    if (templateContent != null) {
-      for (File fileInTemplateDir : templateContent) {
-        if (fileInTemplateDir.getName().endsWith(".jmte")) {
-          continue;
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
+      for (Path path : directoryStream) {
+        if (Files.isRegularFile(path)) {
+          if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
+            continue;
+          }
+          Files.copy(path, exportDir, StandardCopyOption.REPLACE_EXISTING);
         }
-        if (fileInTemplateDir.getName().endsWith("template.conf")) {
-          continue;
-        }
-        if (fileInTemplateDir.isFile()) {
-          FileUtils.copyFileToDirectory(fileInTemplateDir, exportDir);
-        }
-        if (fileInTemplateDir.isDirectory()) {
-          FileUtils.copyDirectoryToDirectory(fileInTemplateDir, exportDir);
+        else if (Files.isDirectory(path)) {
+          Utils.copyDirectoryRecursive(path, exportDir);
         }
       }
+    }
+    catch (IOException ex) {
     }
   }
 

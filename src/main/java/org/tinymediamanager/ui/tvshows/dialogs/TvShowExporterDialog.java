@@ -17,7 +17,7 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -145,9 +145,9 @@ public class TvShowExporterDialog extends TmmDialog {
     panel.add(btnSetDestination, "3, 1");
     btnSetDestination.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory")); //$NON-NLS-1$
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory")); //$NON-NLS-1$
         if (file != null) {
-          tfExportDir.setText(file.getAbsolutePath());
+          tfExportDir.setText(file.toAbsolutePath().toString());
         }
       }
     });

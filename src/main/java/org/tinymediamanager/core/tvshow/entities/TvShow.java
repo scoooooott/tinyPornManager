@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1470,6 +1471,6 @@ public class TvShow extends MediaEntity {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+    return Utils.deleteDirectorySafely(Paths.get(getPath()), getDataSource());
   }
 }
