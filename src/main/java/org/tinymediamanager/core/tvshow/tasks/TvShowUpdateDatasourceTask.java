@@ -143,6 +143,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           episode.setNewlyAdded(false);
+          episode.saveToDb();
         }
         tvShow.setNewlyAdded(false);
       }
@@ -659,14 +660,15 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     Arrays.sort(content);
     for (File file : content) {
+      MediaFile mf = new MediaFile(file);
       // flat DVD structure
-      if (file.isFile() && (file.getName().toUpperCase().startsWith("VIDEO_TS") || file.getName().toUpperCase().startsWith("VTS_"))) {
+      if (mf.isDiscFile()) {
         findTvEpisodesAsDisc(tvShow, file.getParentFile());
+        break; // step out file loop
       }
       // single files
       else if (file.isFile()) {
         if (!file.getName().startsWith(skipFilesStartingWith)) {
-          MediaFile mf = new MediaFile(file);
           // check filetype - we only proceed here if it's a video file
           if (!mf.getType().equals(MediaFileType.VIDEO)) {
             continue;
@@ -830,11 +832,22 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
     }
 
+    // do not parse parent dir, if file in TvShow root!
+    boolean isRoot = false;
+    if (firstVideoFile.getParentFile().equals(new File(tvShow.getPath()))) {
+      isRoot = true;
+    }
+
     List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, firstVideoFile);
     if (episodes.size() == 0) {
       String relativePath = new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath();
-      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(firstVideoFile.getParentFile().getPath(),
-          tvShow.getTitle());
+      EpisodeMatchingResult result = null;
+      if (isRoot) {
+        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(firstVideoFile.getPath(), tvShow.getTitle());
+      }
+      else {
+        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(firstVideoFile.getParentFile().getPath(), tvShow.getTitle());
+      }
       // EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
       if (result.season == -1) {
@@ -845,13 +858,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
       if (result.episodes.size() == 0) {
         // try to parse out episodes/season from parent directory
-        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
+        if (isRoot) {
+          result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir, tvShow.getPath());
+        }
+        else {
+          result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
+        }
       }
 
       List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(firstVideoFile);
 
-      // FIXME: Episode root is outside of disc folders ?!
-      while (dir.getPath().toUpperCase().contains("BDMV") || dir.getPath().toUpperCase().contains("VIDEO_TS")) {
+      // only walk up, to tvShow root!
+      while (!isRoot && dir.getPath().toUpperCase().contains("BDMV") || dir.getPath().toUpperCase().contains("VIDEO_TS")) {
         dir = dir.getParentFile();
       }
 

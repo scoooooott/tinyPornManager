@@ -557,17 +557,17 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           LOGGER.debug("| found NFO '" + nfo.getFile() + "' - try to parse");
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(mf.getFile());
+              movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
               if (movie == null) {
                 // try the other
-                movie = MovieToMpNfoConnector.getData(mf.getFile());
+                movie = MovieToMpNfoConnector.getData(nfo.getFile());
               }
               break;
             case MP:
-              movie = MovieToMpNfoConnector.getData(mf.getFile());
+              movie = MovieToMpNfoConnector.getData(nfo.getFile());
               if (movie == null) {
                 // try the other
-                movie = MovieToXbmcNfoConnector.getData(mf.getFile());
+                movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
               }
               break;
           }
@@ -781,23 +781,19 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // have a look if that movie has just been added -> so we don't need any cleanup
         if (!movie.isNewlyAdded()) {
           // check and delete all not found MediaFiles
-          boolean dirty = false;
           List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
           for (MediaFile mf : mediaFiles) {
             if (!filesFound.contains(Paths.get(mf.getFile().getAbsolutePath()))) {
               if (!mf.exists()) {
                 LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
                 movie.removeFromMediaFiles(mf);
-                dirty = true;
               }
               else {
                 LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
               }
             }
           }
-          if (dirty) {
-            movie.saveToDb();
-          }
+          movie.saveToDb();
         }
       }
     }

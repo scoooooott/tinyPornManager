@@ -1889,11 +1889,14 @@ public class Movie extends MediaEntity {
     if (mfs.size() > 1) {
       // ok, more video files means stacking
       this.setStacked(true);
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
+        mf.detectStackingInformation();
+      }
     }
     else {
       // only ONE video? remove any stacking markers from MFs
       this.setStacked(false);
-      for (MediaFile mf : mfs) {
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
         mf.removeStackingInformation();
       }
     }

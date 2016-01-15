@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies.settings;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +65,6 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -181,11 +182,16 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     tpScraperDescription = new JTextPane();
     tpScraperDescription.setOpaque(false);
     tpScraperDescription.setEditorKit(new HTMLEditorKit());
+    // add a CSS rule to force body tags to use the default label font
+    // instead of the value in javax.swing.text.html.default.csss
+    Font font = UIManager.getFont("Label.font");
+    String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
     panelScraperDetails.add(tpScraperDescription, "2, 2, default, top");
 
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, bottom");
+    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, top");
 
     JSeparator separator = new JSeparator();
     panelMovieScrapers.add(separator, "2, 4, 5, 1");
@@ -301,8 +307,8 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
         if (index > -1) {
           panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider() instanceof IConfigureableMediaProvider) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel((IConfigureableMediaProvider) scrapers.get(index).getMediaProvider()));
+          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
           }
           panelScraperOptions.revalidate();
         }
@@ -339,7 +345,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     }
 
     public String getScraperName() {
-      return scraper.getName();
+      return scraper.getName() + " - " + scraper.getVersion();
     }
 
     public String getScraperDescription() {

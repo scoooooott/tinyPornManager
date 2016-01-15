@@ -446,6 +446,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             // scrape episodes in a task
             if (!episodesToScrape.isEmpty()) {
               TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodesToScrape, mediaScraper);
+              task.setLanguage(model.getLanguage());
               TmmTaskManager.getInstance().addUnnamedTask(task);
             }
           }

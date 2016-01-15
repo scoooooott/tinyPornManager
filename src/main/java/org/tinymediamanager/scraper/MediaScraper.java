@@ -18,10 +18,10 @@ package org.tinymediamanager.scraper;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
@@ -30,6 +30,8 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.PluginManager;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Class representing a MediaScraper; (type, info, description...)<br>
@@ -38,29 +40,27 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
  * @author Manuel Laggner
  */
 public class MediaScraper {
-  private String         id;
-  private String         version;
-  private String         name;
-  private String         summary;
-  private String         description;
-  private URL            logoUrl;
-  private ScraperType    type;
-  private IMediaProvider mediaProvider;
-  private boolean        enabled = true;
+  private static final ResourceBundle BUNDLE  = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private String                      id      = "";
+  private String                      version = "";
+  private String                      name    = "";
+  private String                      summary = "";
+  private String                      description;
+  private URL                         logoUrl;
+  private ScraperType                 type;
+  private IMediaProvider              mediaProvider;
+  private boolean                     enabled = true;
 
-  public MediaScraper(ScraperType type, IMediaProvider mediaProvider, String id, String name) {
+  public MediaScraper(ScraperType type, IMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;
     this.type = type;
-    this.id = id;
-    this.name = name;
-    if (mediaProvider != null) {
-      this.description = this.summary = mediaProvider.getProviderInfo().getDescription();
-      this.logoUrl = mediaProvider.getProviderInfo().getProviderLogo();
-    }
-    else {
-      this.description = "";
-      this.summary = "";
-    }
+    MediaProviderInfo mpi = mediaProvider.getProviderInfo();
+    this.id = mpi.getId();
+    this.name = mpi.getName();
+    this.version = mpi.getVersion();
+    this.description = mpi.getDescription();
+    this.summary = mpi.getDescription();
+    this.logoUrl = mpi.getProviderLogo();
   }
 
   @Override
@@ -163,8 +163,7 @@ public class MediaScraper {
     }
 
     for (IMediaProvider p : plugins) {
-      MediaProviderInfo pi = p.getProviderInfo();
-      MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+      MediaScraper ms = new MediaScraper(type, p);
       scraper.add(ms);
     }
 
@@ -172,10 +171,10 @@ public class MediaScraper {
     for (IKodiMetadataProvider kodi : PluginManager.getInstance().getPluginsForInterface(IKodiMetadataProvider.class)) {
       try {
         for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
-          MediaProviderInfo pi = p.getProviderInfo();
-          MediaScraper ms = new MediaScraper(type, p, pi.getId(), pi.getName());
+          MediaScraper ms = new MediaScraper(type, p);
           if (!Globals.isDonator()) {
             ms.enabled = false;
+            ms.description = "<font color=\"red\">" + BUNDLE.getString("tmm.donatorfunction.hint") + "</font><br><br>" + ms.description; //$NON-NLS-1$
           }
           scraper.add(ms);
         }

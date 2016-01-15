@@ -40,6 +40,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -343,13 +344,16 @@ public class MovieRenamer {
         if (testRenameOk) {
           break; // ok it worked, step out
         }
-        if (!f.exists()) {
-          LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
-          // delete from MF or ignore for later cleanup (but better now!)
-          movie.removeFromMediaFiles(vid);
-          testRenameOk = true; // we "tested" this ok
-          break;
-        }
+        // we had the case, that the renaemoTo didn't work,
+        // and even the exists did not work!
+        // so we skip this additional check, which results in not removing the movie file
+        // if (!f.exists()) {
+        // LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
+        // // delete from MF or ignore for later cleanup (but better now!)
+        // movie.removeFromMediaFiles(vid);
+        // testRenameOk = true; // we "tested" this ok
+        // break;
+        // }
         try {
           LOGGER.debug("rename did not work - sleep a while and try again...");
           Thread.sleep(1000);
@@ -371,7 +375,7 @@ public class MovieRenamer {
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.trace("Rename 1:1 " + vid.getType() + " " + vid.getFile().getAbsolutePath());
       MediaFile newMF = generateFilename(movie, vid, newVideoBasename).get(0); // there can be only one
-      boolean ok = movieFile(vid.getFile(), newMF.getFile());
+      boolean ok = moveFile(vid.getFile(), newMF.getFile());
       if (ok) {
         vid.setFile(newMF.getFile()); // update
       }
@@ -492,6 +496,14 @@ public class MovieRenamer {
     movie.removeAllMediaFiles();
     movie.addToMediaFiles(needed);
     movie.setPath(newPathname);
+
+    // update .actors
+    for (MovieActor actor : movie.getActors()) {
+      if (StringUtils.isNotBlank(actor.getThumbPath())) {
+        actor.updateThumbRoot(newPathname);
+      }
+    }
+
     movie.saveToDb();
 
     // cleanup & rename subtitle files
@@ -1023,6 +1035,11 @@ public class MovieRenamer {
           ret = movie.getMediaSource().toString();
         }
         break;
+      case "$#":
+        if (movie.getRating() > 0) {
+          ret = String.valueOf(movie.getRating());
+        }
+        break;
       default:
         break;
     }
@@ -1046,7 +1063,7 @@ public class MovieRenamer {
     String newDestination = template;
 
     // replace all $x parameters
-    Pattern p = Pattern.compile("(\\$\\w)");
+    Pattern p = Pattern.compile("(\\$[\\w#])"); // # is for rating
     Matcher m = p.matcher(template);
     while (m.find()) {
       String value = getTokenValue(movie, m.group(1));
@@ -1133,7 +1150,7 @@ public class MovieRenamer {
    *          the new filename
    * @return true, when we moved file
    */
-  private static boolean movieFile(File oldFilename, File newFilename) {
+  private static boolean moveFile(File oldFilename, File newFilename) {
     try {
       boolean ok = Utils.moveFileSafe(oldFilename, newFilename);
       if (ok) {
@@ -1162,8 +1179,13 @@ public class MovieRenamer {
    * @return true, when we copied file OR DEST IS EXISTING
    */
   private static boolean copyFile(File oldFilename, File newFilename) {
-    if (!oldFilename.equals(newFilename)) {
+    if (!oldFilename.getAbsolutePath().equals(newFilename.getAbsolutePath())) {
       LOGGER.info("copy file " + oldFilename + " to " + newFilename);
+      if (oldFilename.equals(newFilename)) {
+        // windows: name differs, but File() is the same!!!
+        // use move in this case, which handles this
+        return moveFile(oldFilename, newFilename);
+      }
       try {
         FileUtils.copyFile(oldFilename, newFilename, true);
         return true;

@@ -154,6 +154,10 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setResult(result);
       options.setLanguage(language);
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      LOGGER.info("=====================================================");
+      LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId());
+      LOGGER.info(options.toString());
+      LOGGER.info("=====================================================");
       metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));

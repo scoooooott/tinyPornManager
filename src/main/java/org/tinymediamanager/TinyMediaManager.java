@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
@@ -50,12 +52,12 @@ import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.License;
-import org.tinymediamanager.core.PluginManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -135,8 +137,17 @@ public class TinyMediaManager {
       }
     }
 
+    if (Globals.isDebug()) {
+      ClassLoader cl = ClassLoader.getSystemClassLoader();
+      URL[] urls = ((URLClassLoader) cl).getURLs();
+      LOGGER.info("=== DEBUG CLASS LOADING =============================");
+      for (URL url : urls) {
+        LOGGER.info(url.getFile());
+      }
+    }
+
     LOGGER.info("=====================================================");
-    LOGGER.info("=== tinyMediaManager (c) 2012-2015 Manuel Laggner ===");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2016 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
 
@@ -231,12 +242,13 @@ public class TinyMediaManager {
           }
           LOGGER.info("starting tinyMediaManager");
 
-          // convert old database
-          // UpgradeTasks.convertDatabase(); // we need to check the exceptions before we can activate this
-
           // upgrade check
           String oldVersion = Globals.settings.getVersion();
           if (newVersion) {
+            if (g2 != null) {
+              updateProgress(g2, "upgrading to new version", 10);
+              splash.update();
+            }
             UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
             Globals.settings.setCurrentVersion();
             Globals.settings.saveSettings();
@@ -278,11 +290,14 @@ public class TinyMediaManager {
           }
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
+          if (ReleaseInfo.isSvnBuild()) {
+            PluginManager.loadClasspathPlugins();
+          }
 
           // do upgrade tasks after database loading
           if (newVersion) {
             if (g2 != null) {
-              updateProgress(g2, "upgrading database to new version", 60);
+              updateProgress(g2, "upgrading database to new version", 70);
               splash.update();
             }
             UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);

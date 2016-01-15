@@ -31,6 +31,9 @@ public class MovieMediaSourceTest {
     Assert.assertEquals(MovieMediaSource.TV, MovieMediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.TVRIP"));
     Assert.assertEquals(MovieMediaSource.TV, MovieMediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.HDTVRIP.x264"));
 
+    // web-dl
+    Assert.assertEquals(MovieMediaSource.WEB_DL, MovieMediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.web-dl"));
+    Assert.assertEquals(MovieMediaSource.WEB_DL, MovieMediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.webdl"));
   }
 
 }

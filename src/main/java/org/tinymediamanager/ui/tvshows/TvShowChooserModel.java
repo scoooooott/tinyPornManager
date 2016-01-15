@@ -153,6 +153,10 @@ public class TvShowChooserModel extends AbstractModelObject {
       options.setResult(result);
       options.setLanguage(language);
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      LOGGER.info("=====================================================");
+      LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+      LOGGER.info(options.toString());
+      LOGGER.info("=====================================================");
       metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
@@ -230,5 +234,9 @@ public class TvShowChooserModel extends AbstractModelObject {
 
   public String getTagline() {
     return tagline;
+  }
+
+  public MediaLanguages getLanguage() {
+    return language;
   }
 }

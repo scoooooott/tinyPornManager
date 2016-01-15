@@ -27,8 +27,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
@@ -40,55 +38,13 @@ import com.sun.jna.WString;
  */
 public class MediaInfo implements Closeable {
 
-  private static final Logger LOGGER      = LoggerFactory.getLogger(MediaInfo.class);
-  static String               LibraryPath = "mediainfo";
-
-  static {
-    try {
-      // libmediainfo for linux depends on libzen
-      if (Platform.isLinux()) {
-        // We need to load dependencies first, because we know where our native
-        // libs are (e.g. Java Web Start Cache).
-        // If we do not, the system will look for dependencies, but only in the
-        // library path.
-        // NativeLibrary.getInstance("zen");
-        final ClassLoader loader = MediaInfo.class.getClassLoader();
-        final String LocalPath;
-        if (loader != null) {
-          LocalPath = loader.getResource(MediaInfo.class.getName().replace('.', '/') + ".class").getPath().replace("MediaInfo.class", "");
-          try {
-            NativeLibrary.getInstance(LocalPath + "libzen.so.0"); // Local path
-          }
-          catch (LinkageError e) {
-            NativeLibrary.getInstance("zen"); // Default path
-          }
-        }
-        else {
-          LocalPath = "";
-          NativeLibrary.getInstance("zen"); // Default path
-          NativeLibrary.getInstance("mediainfo"); // Default path
-        }
-        if (LocalPath.length() > 0) {
-          try {
-            NativeLibrary.getInstance(LocalPath + "libmediainfo.so.0"); // Local path
-            LibraryPath = LocalPath + "libmediainfo.so.0";
-          }
-          catch (LinkageError e) {
-            NativeLibrary.getInstance("mediainfo"); // Default path
-          }
-        }
-      }
-    }
-    catch (Throwable e) {
-      LOGGER.error("Failed to preload libzen");
-    }
-  }
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfo.class);
 
   /**
    * the internal pointer handle of mediainfo<br>
    * .
    */
-  private Pointer handle;
+  private Pointer             handle;
 
   /**
    * checks if the internal handle is null.

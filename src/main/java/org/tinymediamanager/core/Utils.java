@@ -623,54 +623,59 @@ public class Utils {
     if (destDir == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    LOGGER.debug("try to move folder " + srcDir.getPath() + " to " + destDir.getPath());
-    if (!srcDir.exists()) {
-      throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
-    }
-    if (!srcDir.isDirectory()) {
-      throw new IOException("Source '" + srcDir + "' is not a directory");
-    }
-    if (destDir.exists() && !srcDir.equals(destDir)) { // extra check for windows, where the File.equals is case insensitive
-      throw new FileExistsException("Destination '" + destDir + "' already exists");
-    }
-    if (!destDir.getParentFile().exists()) {
-      // create parent folder structure, else renameTo does not work
-      boolean ok = destDir.getParentFile().mkdirs();
-      if (!ok) {
-        LOGGER.error("could not create directory structure " + destDir.getParentFile());
+    if (!srcDir.getAbsolutePath().equals(destDir.getAbsolutePath())) {
+      LOGGER.debug("try to move folder " + srcDir.getPath() + " to " + destDir.getPath());
+      if (!srcDir.exists()) {
+        throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
       }
-    }
+      if (!srcDir.isDirectory()) {
+        throw new IOException("Source '" + srcDir + "' is not a directory");
+      }
+      if (destDir.exists() && !srcDir.equals(destDir)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the Dir is the same, but the absolute name does not match
+        throw new FileExistsException("Destination '" + destDir + "' already exists");
+      }
+      if (!destDir.getParentFile().exists()) {
+        // create parent folder structure, else renameTo does not work
+        boolean ok = destDir.getParentFile().mkdirs();
+        if (!ok) {
+          LOGGER.error("could not create directory structure " + destDir.getParentFile());
+        }
+      }
 
-    // rename folder; try 5 times and wait a sec
-    boolean rename = false;
-    for (int i = 0; i < 5; i++) {
-      rename = srcDir.renameTo(destDir);
-      if (rename) {
-        break; // ok it worked, step out
+      // rename folder; try 5 times and wait a sec
+      boolean rename = false;
+      for (int i = 0; i < 5; i++) {
+        rename = srcDir.renameTo(destDir);
+        if (rename) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
       }
-      try {
-        LOGGER.debug("rename did not work - sleep a while and try again...");
-        Thread.sleep(1000);
-      }
-      catch (InterruptedException e) {
-        LOGGER.warn("I'm so excited - could not sleep");
-      }
-    }
 
-    // ok, we tried it 5 times - it still seems to be locked somehow. Continue
-    // with copying as fallback
-    // NOOO - we don't like to have some files copied and some not.
+      // ok, we tried it 5 times - it still seems to be locked somehow. Continue
+      // with copying as fallback
+      // NOOO - we don't like to have some files copied and some not.
 
-    if (!rename) {
-      LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
-      LOGGER.error("Movie renaming aborted.");
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
-      return false;
+      if (!rename) {
+        LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
+        LOGGER.error("Movie renaming aborted.");
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
+        return false;
+      }
+      else {
+        LOGGER.info("Successfully moved folder " + srcDir.getPath() + " to " + destDir.getPath());
+        return true;
+      }
     }
-    else {
-      LOGGER.info("Successfully moved folder " + srcDir.getPath() + " to " + destDir.getPath());
-      return true;
-    }
+    return true; // dir are equal
   }
 
   /**
@@ -709,7 +714,9 @@ public class Utils {
       if (srcFile.isDirectory()) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (destFile.exists() && !srcFile.equals(destFile)) { // extra check for windows, where the File.equals is case insensitive
+      if (destFile.exists() && !srcFile.equals(destFile)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the File is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destFile + "' already exists");
       }
       if (destFile.isDirectory()) {

@@ -445,6 +445,10 @@ public class TvShowList extends AbstractModelObject {
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
       options.set(SearchParam.LANGUAGE, language.name());
       options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
+      LOGGER.info("=====================================================");
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId());
+      LOGGER.info(options.toString());
+      LOGGER.info("=====================================================");
       searchResult = provider.search(options);
 
       // if result is empty, try all scrapers

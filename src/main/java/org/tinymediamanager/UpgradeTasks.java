@@ -24,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -45,17 +48,36 @@ public class UpgradeTasks {
     // ****************************************************
     // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
     // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
+    // SVN BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
     // upgrade to v2.7 (OR DO THIS IF WE ARE INSIDE IDE)
-    if (StrgUtils.compareVersion(v, "2.7") < 0 || ReleaseInfo.isSvnBuild()) {
-
+    if (StrgUtils.compareVersion(v, "2.7") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.7");
       // migrate to config dir
       moveToConfigFolder(new File("movies.db"));
       moveToConfigFolder(new File("tvshows.db"));
       moveToConfigFolder(new File("scraper_imdb.conf"));
       moveToConfigFolder(new File("tmm_ui.prop"));
 
+      // cleaup of native folder
+      cleanupNativeFolder();
+    }
+
+    // upgrade to v2.7.2
+    if (StrgUtils.compareVersion(v, "2.7.2") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.7.2");
+      // delete all linux-* files in native
+      if (Platform.isLinux()) {
+        File[] subdirs = new File("native").listFiles();
+        if (subdirs != null) {
+          for (File subdir : subdirs) {
+            if (subdir.isDirectory() && subdir.getName().startsWith("linux")) {
+              FileUtils.deleteQuietly(subdir);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -79,7 +101,7 @@ public class UpgradeTasks {
    *          our current version
    */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
-    // MovieList movieList = MovieList.getInstance();
+    MovieList movieList = MovieList.getInstance();
     // TvShowList tvShowList = TvShowList.getInstance();
     String v = "" + oldVersion;
 
@@ -90,19 +112,18 @@ public class UpgradeTasks {
     // ****************************************************
     // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
     // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
+    // SVN BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
     // upgrade to v2.7
-    if (StrgUtils.compareVersion(v, "2.7") < 0 || ReleaseInfo.isSvnBuild()) {
+    if (StrgUtils.compareVersion(v, "2.7") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.7");
       // delete tmm.odb; objectdb.conf; log dir
       FileUtils.deleteQuietly(new File("tmm.odb"));
       FileUtils.deleteQuietly(new File("tmm.odb$"));
       FileUtils.deleteQuietly(new File("objectdb.conf"));
       FileUtils.deleteQuietly(new File("log"));
       Globals.settings.removeSubtitleFileType(".idx"); // aww, we never removed...
-
-      // cleaup of native folder
-      cleanupNativeFolder();
 
       // We do not migrate settings!
       // We cannot determine, if a user has unset a value, or the default changed!
@@ -118,6 +139,27 @@ public class UpgradeTasks {
         Globals.settings.writeDefaultSettings(); // activate default plugins
       }
     }
+
+    // upgrade to v2.7.2
+    if (StrgUtils.compareVersion(v, "2.7.2") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.7.2");
+      // we forgot to update the actor thumbs in DB
+      for (Movie movie : movieList.getMovies()) {
+        boolean dirty = false;
+        for (MovieActor actor : movie.getActors()) {
+          if (StringUtils.isNotBlank(actor.getThumbPath())) {
+            if (actor.updateThumbRoot(movie.getPath())) {
+              // true when changed
+              dirty = true;
+            }
+          }
+        }
+        if (dirty) {
+          movie.saveToDb();
+        }
+      }
+    }
+
   }
 
   /**

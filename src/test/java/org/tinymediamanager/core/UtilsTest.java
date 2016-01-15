@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class UtilsTest {
 
@@ -23,6 +24,15 @@ public class UtilsTest {
       System.err.println(expected + " - FAILED: " + e.getMessage());
       throw e;
     }
+  }
+
+  @Test
+  public void compareVersions() {
+    assertEqual(true, StrgUtils.compareVersion("SVN", "SVN") < 0); // SVN always "lower"
+    assertEqual(true, StrgUtils.compareVersion("SVN", "2.7.2") < 0); // SVN always "lower"
+    assertEqual(true, StrgUtils.compareVersion("2.7.2-SNAPSHOT", "2.7.2") < 0);
+    assertEqual(true, StrgUtils.compareVersion("2.7.2", "2.7.2") == 0);
+    assertEqual(true, StrgUtils.compareVersion("2.7.3-SNMAPSHOT", "2.7.2") > 0);
   }
 
   @Test

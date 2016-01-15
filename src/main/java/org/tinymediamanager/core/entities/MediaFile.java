@@ -194,20 +194,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       this.type = type;
     }
-    this.stacking = Utils.getStackingNumber(f.getName());
-    if (this.stacking == 0) {
-      // try to parse from parent directory
-      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
-    }
-    this.stackingMarker = Utils.getStackingMarker(f.getName());
-    if (this.stackingMarker.isEmpty()) {
-      // try to parse from parent directory
-      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
-    }
-
-    if (this.type == MediaFileType.SUBTITLE) {
-      gatherSubtitleInformation();
-    }
 
     // set containerformat for non MI files
     if (!isValidMediainfoFormat() && StringUtils.isBlank(getContainerFormat())) {
@@ -222,19 +208,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       sub.setForced(true);
       shortname = shortname.replaceAll("\\p{Punct}*forced", "");
     }
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-    for (String s : langArray) {
-      try {
-        if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-          LOGGER.debug("found language '" + s + "' in subtitle '" + this.getFilename());
-          sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-          break;
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
-      }
-    }
+    sub.setLanguage(parseLanguageFromString(shortname));
+
     if (sub.getLanguage().isEmpty() && this.filename.endsWith(".sub")) {
       // not found in name, try to parse from idx
       BufferedReader br;
@@ -618,6 +593,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public void removeStackingInformation() {
     setStacking(0);
     setStackingMarker("");
+  }
+
+  /**
+   * detect stacking information for this media file
+   */
+  public void detectStackingInformation() {
+    this.stacking = Utils.getStackingNumber(file.getName());
+    if (this.stacking == 0) {
+      // try to parse from parent directory
+      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
+    }
+    this.stackingMarker = Utils.getStackingMarker(file.getName());
+    if (this.stackingMarker.isEmpty()) {
+      // try to parse from parent directory
+      this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
+    }
   }
 
   public List<MediaFileSubtitle> getSubtitles() {
@@ -1300,19 +1291,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             if (!isDiscFile()) { // video_ts parsed 'ts' as Tsonga
               // try to parse from filename
               String shortname = getBasename().toLowerCase();
-              Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-              for (String s : langArray) {
-                try {
-                  if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-                    LOGGER.debug("found language '" + s + "' in filename '" + this.getFilename());
-                    stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-                    break;
-                  }
-                }
-                catch (Exception e) {
-                  LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
-                }
-              }
+              stream.setLanguage(parseLanguageFromString(shortname));
             }
           }
           else {
@@ -1403,19 +1382,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (language.isEmpty()) {
           // try to parse from filename
           String shortname = getBasename().toLowerCase();
-          Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-          for (String s : langArray) {
-            try {
-              if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-                LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
-                stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(s));
-                break;
-              }
-            }
-            catch (Exception e) {
-              LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
-            }
-          }
+          stream.setLanguage(parseLanguageFromString(shortname));
         }
         else {
           stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
@@ -1538,6 +1505,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // close mediainfo lib
     closeMediaInfo();
     LOGGER.trace("closed MI");
+  }
+
+  private String parseLanguageFromString(String shortname) {
+    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    for (String s : langArray) {
+      try {
+        if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
+          LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
+          return Utils.getIso3LanguageFromLocalizedString(s);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("Error parsing subtitle language from locale keyset: " + s, e);
+      }
+    }
+    return "";
   }
 
   /**

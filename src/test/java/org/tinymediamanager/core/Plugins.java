@@ -1,11 +1,15 @@
 package org.tinymediamanager.core;
 
 import org.junit.Test;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.util.PluginManager;
 
 public class Plugins {
 
@@ -41,6 +45,19 @@ public class Plugins {
     System.out.println("classes implementing TV show artwork scraping:");
     for (ITvShowArtworkProvider p : pm.getPluginsForInterface(ITvShowArtworkProvider.class)) {
       System.out.println("  " + p.getProviderInfo());
+    }
+
+    System.out.println("------------------");
+    for (IKodiMetadataProvider kodi : pm.getPluginsForInterface(IKodiMetadataProvider.class)) {
+      System.out.println("  " + kodi.getProviderInfo());
+
+      for (MediaType mt : MediaType.values()) {
+        System.out.println("Kodi scraper implementing type " + mt);
+        for (IMediaProvider p : kodi.getPluginsForType(mt)) {
+          System.out.println("  " + p.getProviderInfo());
+        }
+      }
+
     }
   }
 }

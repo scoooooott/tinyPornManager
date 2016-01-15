@@ -545,16 +545,31 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
+      LOGGER.info("=====================================================");
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId());
+      LOGGER.info(options.toString());
+      LOGGER.info("=====================================================");
       sr = provider.search(options);
       // if result is empty, try all scrapers
       if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
-        LOGGER.debug("no result yet - trying alternate scrapers");
-
         for (MediaScraper ms : getAvailableMediaScrapers()) {
-          if (provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())) {
+          if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())
+              || ms.getMediaProvider().getProviderInfo().getName().startsWith("Kodi")) {
             continue;
           }
-          sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
+          LOGGER.info("no result yet - trying alternate scraper: " + ms.getName());
+          try {
+            LOGGER.info("=====================================================");
+            LOGGER.info("Searching with alternate scraper: " + ms.getMediaProvider().getProviderInfo().getId());
+            LOGGER.info(options.toString());
+            LOGGER.info("=====================================================");
+            sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);
+          }
+          catch (Exception e) {
+            LOGGER.error("searchMovieFallback", e);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":", e.getLocalizedMessage() }));
+          }
           if (!sr.isEmpty()) {
             break;
           }

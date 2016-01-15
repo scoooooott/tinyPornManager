@@ -2,10 +2,6 @@ package org.tinymediamanager.thirdparty;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,69 +18,52 @@ public class MediaInfoUtils {
    */
   public static void loadMediaInfo() {
     try {
+      String miv = "";
 
-      String nativepath = "native/";
+      // dropped linux shipment
+      if (!Platform.isLinux()) {
+        String nativepath = "native/";
 
-      // windows
-      if (Platform.isWindows()) {
-        nativepath += "windows";
-      }
-      // linux
-      else if (Platform.isLinux()) {
-        nativepath += "linux";
-      }
-      // osx
-      else if (Platform.isMac()) {
-        nativepath += "mac";
-      }
+        // windows
+        if (Platform.isWindows()) {
+          nativepath += "windows";
+        }
+        // linux
+        else if (Platform.isLinux()) {
+          nativepath += "linux";
+        }
+        // osx
+        else if (Platform.isMac()) {
+          nativepath += "mac";
+        }
 
-      // https://en.wikipedia.org/wiki/X86-64
-      if (Platform.is64Bit()) {
-        nativepath += "-x64";
-      }
-      else {
-        nativepath += "-x86";
-      }
+        // https://en.wikipedia.org/wiki/X86-64
+        if (Platform.is64Bit()) {
+          nativepath += "-x64";
+        }
+        else {
+          nativepath += "-x86";
+        }
 
-      // on linux try to set the executable bit for the native libs
-      if (Platform.isLinux()) {
-        File[] nativeFiles = new File(nativepath).listFiles();
-        if (nativeFiles != null) {
-          // using PosixFilePermission to set file permissions 755
-          Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-          // add owners permission
-          perms.add(PosixFilePermission.OWNER_READ);
-          perms.add(PosixFilePermission.OWNER_WRITE);
-          perms.add(PosixFilePermission.OWNER_EXECUTE);
-          // add group permissions
-          perms.add(PosixFilePermission.GROUP_READ);
-          perms.add(PosixFilePermission.GROUP_EXECUTE);
-          // add others permissions
-          perms.add(PosixFilePermission.OTHERS_READ);
-          perms.add(PosixFilePermission.OTHERS_EXECUTE);
+        // need that, since we cannot try and reload/unload a Class
+        // MI does not load over UNC, so copy to temp
+        if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
+          LOGGER.debug("We're on a network UNC path!");
+          File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
+          File nativeDir = new File(tmpDir, nativepath);
+          FileUtils.copyDirectory(new File(nativepath), nativeDir);
 
-          for (File file : nativeFiles) {
-            Files.setPosixFilePermissions(file.toPath(), perms);
-          }
+          System.setProperty("jna.library.path", nativeDir.getAbsolutePath());
+          LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.getAbsolutePath());
+          miv = MediaInfo.version(); // load class
+        }
+        else {
+          System.setProperty("jna.library.path", nativepath);
+          LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
+          miv = MediaInfo.version(); // load class
         }
       }
-
-      String miv = "";
-      // need that, since we cannot try and reload/unload a Class
-      // MI does not load over UNC, so copy to temp
-      if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
-        LOGGER.debug("We're on a network UNC path!");
-        File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
-        File nativeDir = new File(tmpDir, nativepath);
-        FileUtils.copyDirectory(new File(nativepath), nativeDir);
-
-        System.setProperty("jna.library.path", nativeDir.getAbsolutePath());
-        LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.getAbsolutePath());
-        miv = MediaInfo.version(); // load class
-      }
       else {
-        System.setProperty("jna.library.path", nativepath);
-        LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
         miv = MediaInfo.version(); // load class
       }
 
@@ -99,7 +78,11 @@ public class MediaInfoUtils {
       }
 
     }
-    catch (IOException e) {
+    catch (
+
+    IOException e)
+
+    {
       LOGGER.error("Could not load mediainfo", e);
     }
   }

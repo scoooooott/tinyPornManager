@@ -64,14 +64,15 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "genres", "tags", "premiered", "status",
-    "studio", "thumb", "actors", "unsupportedElements" })
+@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "imdbid", "genres", "tags", "premiered",
+    "status", "studio", "thumb", "actors", "unsupportedElements" })
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
   private static JAXBContext  context   = initContext();
 
   private String              id        = "";
+  private String              imdbid    = "";
   private String              title     = "";
   private String              sorttitle = "";
   private float               rating    = 0;
@@ -166,6 +167,7 @@ public class TvShowToXbmcNfoConnector {
       xbmc.episodeguide.url.url = "http://www.thetvdb.com/api/1D62F2F90030C444/series/" + tvdbid + "/all/"
           + Globals.settings.getTvShowSettings().getScraperLanguage().name() + ".xml";
     }
+    xbmc.setImdbid(tvShow.getIdAsString(Constants.IMDB));
     xbmc.setTitle(tvShow.getTitle());
     xbmc.setSorttitle(tvShow.getSortTitle());
     xbmc.setRating(tvShow.getRating());
@@ -242,6 +244,9 @@ public class TvShowToXbmcNfoConnector {
       tvShow = new TvShow();
       if (StringUtils.isNotBlank(xbmc.getId())) {
         tvShow.setTvdbId(xbmc.getId());
+      }
+      if (StringUtils.isNotBlank(xbmc.getImdbid())) {
+        tvShow.setImdbId(xbmc.getImdbid());
       }
       tvShow.setTitle(xbmc.getTitle());
       tvShow.setSortTitle(xbmc.getSorttitle());
@@ -393,6 +398,15 @@ public class TvShowToXbmcNfoConnector {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  @XmlElement(name = "imdbid")
+  public String getImdbid() {
+    return imdbid;
+  }
+
+  public void setImdbid(String imdbid) {
+    this.imdbid = imdbid;
   }
 
   @XmlElement(name = "mpaa")

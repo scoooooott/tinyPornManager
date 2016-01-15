@@ -98,8 +98,9 @@ public class SmallSpinnerUI extends BaseSpinnerUI {
   // -----------------------------------------------------------------------------------------
   public static class SpinButton extends NoFocusButton {
 
-    private static final Dimension minSize   = new Dimension(12, 8);
-    private int                    direction = SwingConstants.NORTH;
+    private static final long      serialVersionUID = 1L;
+    private static final Dimension minSize          = new Dimension(12, 8);
+    private int                    direction        = SwingConstants.NORTH;
 
     public SpinButton(int aDirection) {
       super();

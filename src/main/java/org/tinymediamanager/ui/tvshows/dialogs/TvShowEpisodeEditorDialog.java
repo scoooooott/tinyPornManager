@@ -605,6 +605,10 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       options.setId(MediaMetadata.SEASON_NR_DVD, spDvdSeason.getValue().toString());
       options.setId(MediaMetadata.EPISODE_NR_DVD, spDvdEpisode.getValue().toString());
       try {
+        LOGGER.info("=====================================================");
+        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+        LOGGER.info(options.toString());
+        LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
 
         // if nothing has been found -> open the search box

@@ -17,18 +17,18 @@ package org.tinymediamanager.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,7 +39,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.scraper.config.IConfigureableMediaProvider;
+import org.tinymediamanager.scraper.config.MediaProviderConfig;
+import org.tinymediamanager.scraper.config.MediaProviderConfigObject;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -55,12 +57,12 @@ public class MediaScraperConfigurationPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private IConfigureableMediaProvider mediaProvider;
+  private IMediaProvider              mediaProvider;
   private boolean                     dirty            = false;
 
   private JPanel                      configPanel;
 
-  public MediaScraperConfigurationPanel(IConfigureableMediaProvider mediaProvider) {
+  public MediaScraperConfigurationPanel(IMediaProvider mediaProvider) {
     this.mediaProvider = mediaProvider;
 
     setLayout(new BorderLayout());
@@ -72,7 +74,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
     panelHead.add(lblScraperOptions);
 
     configPanel = createConfigPanel();
-    add(configPanel, BorderLayout.CENTER);
+    add(configPanel, BorderLayout.NORTH);
 
     // add a listener to determine when to save the settings
     addAncestorListener(new AncestorListener() {
@@ -107,7 +109,8 @@ public class MediaScraperConfigurationPanel extends JPanel {
     constraints.gridy = 0;
 
     // build up the panel for being displayed in the popup
-    for (Entry<String, Object> entry : mediaProvider.getProviderSettings().entrySet()) {
+    MediaProviderConfig config = mediaProvider.getProviderInfo().getConfig();
+    for (Entry<String, MediaProviderConfigObject> entry : config.getConfigObjects().entrySet()) {
       constraints.anchor = GridBagConstraints.LINE_START;
       constraints.ipadx = 20;
 
@@ -117,37 +120,58 @@ public class MediaScraperConfigurationPanel extends JPanel {
       panel.add(label, constraints);
 
       JComponent comp;
-      if (entry.getValue() instanceof Boolean) {
-        JCheckBox checkbox = new JCheckBox();
-        checkbox.setSelected((Boolean) entry.getValue());
-        checkbox.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            dirty = true;
-          }
-        });
-        comp = checkbox;
-      }
-      else {
-        JTextField tf = new JTextField(String.valueOf(entry.getValue()));
-        tf.getDocument().addDocumentListener(new DocumentListener() {
-          @Override
-          public void removeUpdate(DocumentEvent e) {
-            dirty = true;
-          }
+      switch (entry.getValue().getType()) {
+        case BOOL:
+          // display as checkbox
+          JCheckBox checkbox = new JCheckBox();
+          checkbox.setSelected(entry.getValue().getValueAsBool());
+          checkbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              dirty = true;
+            }
+          });
+          comp = checkbox;
+          break;
 
-          @Override
-          public void insertUpdate(DocumentEvent e) {
-            dirty = true;
-          }
+        case SELECT:
+        case SELECT_INDEX:
+          // display as combobox
+          JComboBox<String> combobox = new JComboBox<>(entry.getValue().getPossibleValues().toArray(new String[0]));
+          combobox.setSelectedItem(entry.getValue().getValueAsString());
+          combobox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              dirty = true;
+            }
+          });
+          comp = combobox;
+          break;
 
-          @Override
-          public void changedUpdate(DocumentEvent e) {
-            dirty = true;
-          }
-        });
-        comp = tf;
+        default:
+          // display as text
+          JTextField tf = new JTextField(config.getValue(entry.getKey()));
+          tf.setPreferredSize(new Dimension(100, 24));
+          tf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+              dirty = true;
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+              dirty = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+              dirty = true;
+            }
+          });
+          comp = tf;
+          break;
       }
+
       comp.putClientProperty(entry.getKey(), entry.getKey());
       constraints.ipadx = 0;
       constraints.gridx = 1;
@@ -171,10 +195,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
   }
 
   private void saveSettings() {
-    Map<String, Object> newConfig = new HashMap<>();
-    Map<String, Object> config = mediaProvider.getProviderSettings();
+    Map<String, MediaProviderConfigObject> config = mediaProvider.getProviderInfo().getConfig().getConfigObjects();
     // transfer the items from the components to the config
-    for (Entry<String, Object> entry : config.entrySet()) {
+    for (Entry<String, MediaProviderConfigObject> entry : config.entrySet()) {
       for (Component comp : configPanel.getComponents()) {
         // get the right component for this setting
         if (!(comp instanceof JComponent)) {
@@ -189,13 +212,13 @@ public class MediaScraperConfigurationPanel extends JPanel {
         // parse the value and write it back to the new config
         try {
           if (comp instanceof JCheckBox) {
-            newConfig.put(entry.getKey(), ((JCheckBox) comp).isSelected());
+            mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), ((JCheckBox) comp).isSelected());
+          }
+          else if (comp instanceof JComboBox) {
+            mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), ((JComboBox) comp).getSelectedItem().toString());
           }
           else {
-            Method method = param.getClass().getMethod("valueOf", String.class);
-            if (method != null) {
-              newConfig.put(entry.getKey(), method.invoke(null, ((JTextField) comp).getText()));
-            }
+            mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), ((JTextField) comp).getText());
           }
         }
         catch (Exception ignored) {
@@ -203,6 +226,6 @@ public class MediaScraperConfigurationPanel extends JPanel {
       }
     }
 
-    mediaProvider.setProviderSettings(newConfig);
+    mediaProvider.getProviderInfo().getConfig().save();
   }
 }

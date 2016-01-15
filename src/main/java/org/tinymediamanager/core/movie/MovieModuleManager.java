@@ -86,7 +86,13 @@ public class MovieModuleManager implements ITmmModule {
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + MOVIE_DB).compressHigh().open();
+    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + MOVIE_DB).compressHigh()
+        .backgroundExceptionHandler(new Thread.UncaughtExceptionHandler() {
+          @Override
+          public void uncaughtException(Thread t, Throwable e) {
+            LOGGER.error("Error in the background thread of the persistent cache", e);
+          }
+        }).autoCommitBufferSize(4096).open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);

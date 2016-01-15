@@ -30,6 +30,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -43,12 +44,13 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask implements Runnable {
-  private static final Logger       LOGGER = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+  private static final Logger       LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
   private final List<TvShowEpisode> episodes;
   private final MediaScraper        mediaScraper;
 
   private boolean                   scrapeThumb;
+  private MediaLanguages            language = Globals.settings.getTvShowSettings().getScraperLanguage();
 
   /**
    * Instantiates a new tv show episode scrape task.
@@ -90,7 +92,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setLanguage(language);
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
@@ -113,6 +115,10 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       try {
+        LOGGER.info("=====================================================");
+        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+        LOGGER.info(options.toString());
+        LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
         if (StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           episode.setMetadata(metadata);
@@ -133,4 +139,11 @@ public class TvShowEpisodeScrapeTask implements Runnable {
     }
   }
 
+  public MediaLanguages getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(MediaLanguages language) {
+    this.language = language;
+  }
 }
