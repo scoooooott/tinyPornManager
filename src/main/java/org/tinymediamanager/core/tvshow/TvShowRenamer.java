@@ -16,6 +16,8 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -77,11 +79,11 @@ public class TvShowRenamer {
 
     if (!newPathname.isEmpty()) {
       // newPathname = show.getDataSource() + File.separator + newPathname;
-      File srcDir = new File(oldPathname);
-      File destDir = new File(newPathname);
+      Path srcDir = Paths.get(oldPathname);
+      Path destDir = Paths.get(newPathname);
       // move directory if needed
       // if (!srcDir.equals(destDir)) {
-      if (!srcDir.getAbsolutePath().equals(destDir.getAbsolutePath())) {
+      if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
@@ -97,8 +99,8 @@ public class TvShowRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error moving folder: ", e.getMessage());
-          MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, srcDir, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
         }
       }
     }
@@ -155,7 +157,7 @@ public class TvShowRenamer {
       // when moving video file, all NFOs get deleted and a new gets created.
       // so this OLD NFO is not found anylonger - just delete it
       if (mf.getType() == MediaFileType.NFO) {
-        Utils.deleteFileSafely(mf.getFile());
+        Utils.deleteFileSafely(mf.getFileAsPath());
         return;
       }
 
@@ -227,8 +229,8 @@ public class TvShowRenamer {
 
       String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
       if (newFoldername != null && !newFoldername.isEmpty()) {
-        File newEpFolder = new File(seasonDir, newFoldername);
-        File newDisc = new File(newEpFolder, disc.getName()); // old disc name
+        Path newEpFolder = Paths.get(seasonDir, newFoldername);
+        Path newDisc = Paths.get(newEpFolder, disc.getName()); // old disc name
 
         try {
           // if (!epFolder.equals(newEpFolder)) {

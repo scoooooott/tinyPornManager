@@ -152,6 +152,22 @@ public class Utils {
   }
 
   /**
+   * gets the filename part, and returns last extension
+   * 
+   * @param path
+   * @return
+   */
+  public static String getExtension(Path path) {
+    String ext = "";
+    String fn = path.getFileName().toString();
+    int i = fn.lastIndexOf('.');
+    if (i > 0) {
+      ext = fn.substring(i + 1);
+    }
+    return ext;
+  }
+
+  /**
    * uses our localized language mapping table, to get the iso3 code
    * 
    * @param text

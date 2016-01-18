@@ -466,8 +466,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @Deprecated
   public File getFile() {
     if (file == null) {
-      File f = new File(this.path, this.filename);
-      file = f.toPath().toAbsolutePath();
+      file = getFileAsPath();
     }
     return file.toFile();
   }
@@ -480,16 +479,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return file;
   }
 
-  @Deprecated
-  public void setFile(File file) {
-    setFilename(file.getName());
-    setPath(file.getParent());
-    this.file = file.toPath().toAbsolutePath();
-  }
-
   public void setFile(Path file) {
     setFilename(file.getFileName().toString());
-    setPath(file.getParent().toString());
+    setPath(file.toAbsolutePath().getParent().toString());
     this.file = file;
   }
 
@@ -741,15 +733,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
       try {
         if (!mediaInfo.open(this.getFileAsPath())) {
-          LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
+          LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
         }
       }
       catch (Exception e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
       catch (Error e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
 
       miSnapshot = mediaInfo.snapshot();

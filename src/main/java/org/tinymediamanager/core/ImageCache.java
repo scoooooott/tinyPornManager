@@ -80,21 +80,20 @@ public class ImageCache {
   }
 
   /**
-   * Gets the file name of the cached file.
+   * Gets the file name (MD5 hash) of the cached file.
    * 
    * @param path
    *          the url
    * @return the cached file name
    */
-  public static String getCachedFileName(Path path) {
+  private static String getMD5(String path) {
     try {
       if (path == null) {
         return null;
       }
-      String abs = path.toAbsolutePath().toString();
       // now uses a simple md5 hash, which should have a fairly low collision
       // rate, especially for our limited use
-      byte[] key = DigestUtils.md5(abs);
+      byte[] key = DigestUtils.md5(path);
       return new String(Hex.encodeHex(key));
     }
     catch (Exception e) {
@@ -181,8 +180,7 @@ public class ImageCache {
    */
   public static Path cacheImage(MediaFile mf) throws Exception {
     Path originalFile = mf.getFileAsPath();
-    String cacheFilename = ImageCache.getCachedFileName(originalFile);
-    Path cachedFile = ImageCache.getCacheDir().resolve(cacheFilename + ".jpg");
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString() + "." + Utils.getExtension(originalFile)));
     if (Files.notExists(cachedFile)) {
       // check if the original file exists && size > 0
       if (Files.notExists(originalFile)) {
@@ -310,7 +308,7 @@ public class ImageCache {
    *          the path
    */
   public static void invalidateCachedImage(Path path) {
-    Path cachedFile = ImageCache.getCacheDir().resolve(ImageCache.getCachedFileName(path) + ".jpg");
+    Path cachedFile = getCacheDir().resolve(ImageCache.getMD5(path.toAbsolutePath().toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
       Utils.deleteFileSafely(cachedFile);
     }
@@ -333,7 +331,7 @@ public class ImageCache {
     }
 
     // is the path already inside the cache dir? serve direct
-    if (path.toAbsolutePath().startsWith(ImageCache.CACHE_DIR.toAbsolutePath())) {
+    if (path.toAbsolutePath().startsWith(CACHE_DIR.toAbsolutePath())) {
       return path;
     }
 
@@ -367,7 +365,7 @@ public class ImageCache {
       return false;
     }
 
-    Path cachedFile = CACHE_DIR.resolve(ImageCache.getCachedFileName(path) + ".jpg");
+    Path cachedFile = CACHE_DIR.resolve(ImageCache.getMD5(path.toString()) + "." + Utils.getExtension(path));
     if (Files.exists(cachedFile)) {
       return true;
     }

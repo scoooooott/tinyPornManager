@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -172,8 +173,8 @@ public class TvShowExporterDialog extends TmmDialog {
         ExportTemplate selectedTemplate = templatesFound.get(index);
         if (selectedTemplate != null) {
           try {
-            TvShowExporter exporter = new TvShowExporter(selectedTemplate.getPath());
-            exporter.export(tvShows, tfExportDir.getText());
+            TvShowExporter exporter = new TvShowExporter(Paths.get(selectedTemplate.getPath()));
+            exporter.export(tvShows, Paths.get(tfExportDir.getText()));
           }
           catch (Exception e) {
             LOGGER.error("Error exporting tv shows: " + e.getMessage());

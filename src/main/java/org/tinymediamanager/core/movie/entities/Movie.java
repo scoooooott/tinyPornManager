@@ -19,6 +19,9 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -485,6 +488,18 @@ public class Movie extends MediaEntity {
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
+        for (Path path : directoryStream) {
+          if (Files.isRegularFile(path)) {
+            if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
+              continue;
+            }
+          }
+        }
+      }
+      catch (IOException ex) {
+      }
+
       File[] actorImages = new File(getPath(), MovieActor.ACTOR_DIR).listFiles();
       if (actorImages != null && actorImages.length > 0) {
         // search all local actor images

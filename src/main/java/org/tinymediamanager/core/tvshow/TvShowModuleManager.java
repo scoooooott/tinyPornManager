@@ -15,13 +15,11 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
@@ -89,7 +87,7 @@ public class TvShowModuleManager implements ITmmModule {
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + TV_SHOW_DB).compressHigh()
+    mvStore = new MVStore.Builder().fileName(Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB).toString()).compressHigh()
         .backgroundExceptionHandler(new Thread.UncaughtExceptionHandler() {
           @Override
           public void uncaughtException(Thread t, Throwable e) {
@@ -191,6 +189,6 @@ public class TvShowModuleManager implements ITmmModule {
 
   @Override
   public void initializeDatabase() throws Exception {
-    FileUtils.deleteQuietly(new File(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB));
+    Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB));
   }
 }
