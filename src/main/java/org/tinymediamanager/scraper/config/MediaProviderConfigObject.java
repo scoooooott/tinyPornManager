@@ -39,6 +39,7 @@ public class MediaProviderConfigObject {
   String                      defaultValue    = "";
   boolean                     returnListAsInt = false;
   boolean                     encrypt         = false;
+  boolean                     visible         = true;
   ConfigType                  type            = ConfigType.TEXT;
   ArrayList<String>           possibleValues  = new ArrayList<String>();
 
@@ -190,5 +191,23 @@ public class MediaProviderConfigObject {
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  /**
+   * option can be "hidden" in GUI, but be still an option!
+   * 
+   * @return
+   */
+  public boolean isVisible() {
+    return visible;
+  }
+
+  /**
+   * option can be "hidden" in GUI, but be still an option!
+   * 
+   * @param visible
+   */
+  public void setVisible(boolean visible) {
+    this.visible = visible;
   }
 }
