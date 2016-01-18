@@ -159,7 +159,7 @@ public class KodiScraper implements IMediaProvider {
             case "enum":
               this.providerInfo.getConfig().addSelectIndex(setid, possibleValues, defaultValue);
               break;
-            case "action":
+            // case "action":
             case "text":
               this.providerInfo.getConfig().addText(setid, defaultValue, encrypt);
               break;
