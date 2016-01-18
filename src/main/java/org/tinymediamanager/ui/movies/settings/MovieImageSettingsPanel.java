@@ -44,6 +44,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -135,6 +136,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JPanel                      panelFileNaming;
+  private JScrollPane                 scrollPaneScraperDetails;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -171,6 +173,31 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
+    scrollPaneScraperDetails = new JScrollPane();
+    scrollPaneScraperDetails.setBorder(null);
+    scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    panelMovieImages.add(scrollPaneScraperDetails, "6, 1, 1, 7, fill, fill");
+
+    panelScraperDetails = new ScrollablePanel();
+    scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+    {
+      // add a CSS rule to force body tags to use the default label font
+      // instead of the value in javax.swing.text.html.default.csss
+      Font font = UIManager.getFont("Label.font");
+      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+      tpScraperDescription = new JTextPane();
+      tpScraperDescription.setOpaque(false);
+      tpScraperDescription.setEditorKit(new HTMLEditorKit());
+      ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
+      panelScraperDetails.add(tpScraperDescription, "1, 1, fill, top");
+    }
+    panelScraperOptions = new JPanel();
+    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+    panelScraperDetails.add(panelScraperOptions, "1, 3, fill, top");
+
     scrollPaneScraper = new JScrollPane();
     panelMovieImages.add(scrollPaneScraper, "2, 2, 3, 1, fill, fill");
 
@@ -178,29 +205,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 
-    panelScraperDetails = new JPanel();
-    panelMovieImages.add(panelScraperDetails, "6, 2, fill, fill");
-    panelScraperDetails.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    tpScraperDescription = new JTextPane();
-    tpScraperDescription.setOpaque(false);
-    tpScraperDescription.setEditorKit(new HTMLEditorKit());
-    // add a CSS rule to force body tags to use the default label font
-    // instead of the value in javax.swing.text.html.default.csss
-    Font font = UIManager.getFont("Label.font");
-    String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
-    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
-    panelScraperDetails.add(tpScraperDescription, "2, 2, fill, top");
-
-    panelScraperOptions = new JPanel();
-    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, top");
-
     JSeparator separator = new JSeparator();
-    panelMovieImages.add(separator, "2, 3, 5, 1");
+    panelMovieImages.add(separator, "2, 3, 3, 1");
 
     JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size"));
     panelMovieImages.add(lblImageTmdbPosterSize, "2, 5");
