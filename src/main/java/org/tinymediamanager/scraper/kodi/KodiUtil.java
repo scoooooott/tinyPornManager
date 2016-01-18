@@ -70,7 +70,7 @@ class KodiUtil {
    * 
    * @return File or NULL
    */
-  private static File detectKodiUserdataFolder() {
+  public static File detectKodiUserFolder() {
     // http://wiki.xbmc.org/?title=Userdata
     String[] appFolder = { "Kodi", ".kodi", "kodi", "XMBC", ".xbmc", "xbmc" };
     String[] userFolder = { System.getenv("APPDATA"), System.getProperty("user.home"),
@@ -117,7 +117,7 @@ class KodiUtil {
     }
 
     // detect addons from Kodi user data folder
-    addons = new File(detectKodiUserdataFolder(), "addons");
+    addons = new File(detectKodiUserFolder(), "addons");
     if (addons != null && addons.exists()) {
       foundAddonFiles.addAll(FileUtils.listFiles(addons, fileFilter, dirFilter));
     }

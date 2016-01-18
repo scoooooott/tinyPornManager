@@ -41,7 +41,6 @@ public class KodiScraper implements IMediaProvider {
   String                               provider;
   File                                 addonFolder;
   String                               scraperXml;
-  String                               settingsPath;
   MediaProviderInfo                    providerInfo;
 
   @Override
@@ -124,10 +123,9 @@ public class KodiScraper implements IMediaProvider {
       providerInfo = new MediaProviderInfo(id, "Kodi: " + name, "<h3>" + summary + "</h3><br>" + description);
       providerInfo.setVersion(version); // deprecated solely for Kodi, so ok
 
-      // parse settings
+      // parse default settings and build TMM config
       File settingsFile = new File(scraperFolder, "resources/settings.xml");
       if (settingsFile.exists()) {
-        settingsPath = settingsFile.getAbsolutePath();
         Document set = Jsoup.parse(settingsFile, "UTF-8", "");
         Elements settings = set.getElementsByTag("setting");
         for (Element el : settings) {
@@ -168,8 +166,22 @@ public class KodiScraper implements IMediaProvider {
               break;
           }
         }
-        this.providerInfo.getConfig().load(); // load actual values
       } // end parse settings
+
+      // parse Kodi saved setting values and umdate TMM config
+      File savedSettings = new File(KodiUtil.detectKodiUserFolder(), "userdata/addon_data/" + providerInfo.getId() + "/settings.xml");
+      if (savedSettings.exists()) {
+        Document set = Jsoup.parse(savedSettings, "UTF-8", "");
+        Elements settings = set.getElementsByTag("setting");
+        for (Element el : settings) {
+          String setid = el.attr("id");
+          String value = el.attr("value");
+          providerInfo.getConfig().setValue(setid, value);
+        }
+      }
+
+      // load TMM config values
+      this.providerInfo.getConfig().load();
 
       File logo = new File(scraperFolder, "icon.png");
       if (logo.exists()) {
@@ -179,14 +191,6 @@ public class KodiScraper implements IMediaProvider {
     catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  public String getSettingsPath() {
-    return settingsPath;
-  }
-
-  public void setSettingsPath(String settingsPath) {
-    this.settingsPath = settingsPath;
   }
 
   /**
