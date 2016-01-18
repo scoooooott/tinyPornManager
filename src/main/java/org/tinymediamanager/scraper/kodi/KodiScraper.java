@@ -134,12 +134,14 @@ public class KodiScraper implements IMediaProvider {
             continue;
           String type = el.attr("type");
           String defaultValue = el.attr("default");
+          String possibleValues[] = el.attr("values").split("\\|");
+
+          // hidden|urlencoded
           boolean encrypt = false;
           String option = el.attr("option");
-          if (option.equalsIgnoreCase("hidden")) {
+          if (option.toLowerCase().contains("hidden")) {
             encrypt = true;
           }
-          String possibleValues[] = el.attr("values").split("\\|");
 
           switch (type) {
             case "bool":
