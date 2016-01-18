@@ -136,6 +136,11 @@ public class KodiScraper implements IMediaProvider {
             continue;
           String type = el.attr("type");
           String defaultValue = el.attr("default");
+          boolean encrypt = false;
+          String option = el.attr("option");
+          if (option.equalsIgnoreCase("true")) {
+            encrypt = true;
+          }
           String possibleValues[] = el.attr("values").split("\\|");
 
           switch (type) {
@@ -154,8 +159,9 @@ public class KodiScraper implements IMediaProvider {
             case "enum":
               this.providerInfo.getConfig().addSelectIndex(setid, possibleValues, defaultValue);
               break;
+            case "action":
             case "text":
-              this.providerInfo.getConfig().addText(setid, defaultValue);
+              this.providerInfo.getConfig().addText(setid, defaultValue, encrypt);
               break;
 
             default:
