@@ -136,6 +136,13 @@ public class KodiScraper implements IMediaProvider {
           String defaultValue = el.attr("default");
           String possibleValues[] = el.attr("values").split("\\|");
 
+          // visible
+          boolean visible = true;
+          String vis = el.attr("visible");
+          if (vis.equalsIgnoreCase("false")) {
+            visible = false;
+          }
+
           // hidden|urlencoded
           boolean encrypt = false;
           String option = el.attr("option");
@@ -166,6 +173,10 @@ public class KodiScraper implements IMediaProvider {
 
             default:
               break;
+          }
+
+          if (!visible) {
+            this.providerInfo.getConfig().getConfigObject(setid).setVisible(visible);
           }
         }
       } // end parse settings
