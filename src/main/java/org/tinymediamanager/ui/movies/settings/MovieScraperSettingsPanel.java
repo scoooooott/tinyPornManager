@@ -37,6 +37,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -113,6 +114,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JTextPane                   tpScraperDescription;
   private JScrollPane                 scrollPaneScraper;
   private JTable                      tableScraper;
+  private JScrollPane                 scrollPane;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -172,29 +174,34 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 
-    panelScraperDetails = new JPanel();
-    panelMovieScrapers.add(panelScraperDetails, "6, 2, fill, fill");
-    panelScraperDetails.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+    scrollPane = new JScrollPane();
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.setBorder(null);
+    panelMovieScrapers.add(scrollPane, "6, 1, 1, 7, fill, fill");
 
-    tpScraperDescription = new JTextPane();
-    tpScraperDescription.setOpaque(false);
-    tpScraperDescription.setEditorKit(new HTMLEditorKit());
-    // add a CSS rule to force body tags to use the default label font
-    // instead of the value in javax.swing.text.html.default.csss
-    Font font = UIManager.getFont("Label.font");
-    String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
-    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
-    panelScraperDetails.add(tpScraperDescription, "2, 2, default, top");
+    panelScraperDetails = new ScrollablePanel();
+    scrollPane.setViewportView(panelScraperDetails);
+    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+    {
+      // add a CSS rule to force body tags to use the default label font
+      // instead of the value in javax.swing.text.html.default.csss
+      Font font = UIManager.getFont("Label.font");
+      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+
+      tpScraperDescription = new JTextPane();
+      tpScraperDescription.setOpaque(false);
+      tpScraperDescription.setEditorKit(new HTMLEditorKit());
+      ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
+      panelScraperDetails.add(tpScraperDescription, "1, 1, default, top");
+    }
 
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "4, 2, fill, top");
+    panelScraperDetails.add(panelScraperOptions, "1, 3, fill, top");
 
     JSeparator separator = new JSeparator();
-    panelMovieScrapers.add(separator, "2, 4, 5, 1");
+    panelMovieScrapers.add(separator, "2, 4, 3, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "2, 5, right, default");
