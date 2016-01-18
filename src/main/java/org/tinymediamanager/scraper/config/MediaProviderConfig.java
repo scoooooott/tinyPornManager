@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -43,7 +44,7 @@ public class MediaProviderConfig {
 
   private static final AesUtil                       AES_UTIL      = new AesUtil(128, 100);
 
-  private HashMap<String, MediaProviderConfigObject> settings      = new HashMap<>();
+  private TreeMap<String, MediaProviderConfigObject> settings      = new TreeMap<>();
   private String                                     id            = "";
 
   public MediaProviderConfig(MediaProviderInfo mpi) {
