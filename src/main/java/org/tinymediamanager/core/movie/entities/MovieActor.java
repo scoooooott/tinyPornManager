@@ -67,6 +67,15 @@ public class MovieActor extends AbstractModelObject {
     return name;
   }
 
+  /**
+   * Gets the actor name in a storageable format (without special characters)
+   * 
+   * @return
+   */
+  public String getNameForStorage() {
+    return name.replace(" ", "_").replaceAll("([\"\\\\:<>|/?*])", "");
+  }
+
   public String getCharacter() {
     return character;
   }
