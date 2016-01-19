@@ -35,6 +35,7 @@ public class MediaProviderConfigObject {
   private static final Logger LOGGER          = LoggerFactory.getLogger(MediaProviderConfigObject.class);
 
   String                      key             = "";
+  String                      keyDescription  = "";
   String                      value           = "";
   String                      defaultValue    = "";
   boolean                     returnListAsInt = false;
@@ -49,6 +50,25 @@ public class MediaProviderConfigObject {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  /**
+   * short description for key, to display in GUI<br>
+   * if empty, we are returning the key (as before)
+   * 
+   * @param keyDescription
+   */
+  public String getKeyDescription() {
+    return keyDescription.isEmpty() ? key : keyDescription;
+  }
+
+  /**
+   * short description for key, to display in GUI<br>
+   * 
+   * @param keyDescription
+   */
+  public void setKeyDescription(String keyDescription) {
+    this.keyDescription = keyDescription;
   }
 
   public boolean isEmpty() {
