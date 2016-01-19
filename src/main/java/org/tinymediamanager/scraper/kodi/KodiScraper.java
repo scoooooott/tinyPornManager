@@ -17,10 +17,14 @@ package org.tinymediamanager.scraper.kodi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -55,6 +59,10 @@ public class KodiScraper implements IMediaProvider {
    */
   public KodiScraper(File scraperFolder) {
     try {
+
+      // =====================================================
+      // parse addon.xml
+      // =====================================================
       File info = new File(scraperFolder, "addon.xml");
       Document doc = Jsoup.parse(info, "UTF-8", "");
 
@@ -123,7 +131,42 @@ public class KodiScraper implements IMediaProvider {
       providerInfo = new MediaProviderInfo(id, "Kodi: " + name, "<h3>" + summary + "</h3><br>" + description);
       providerInfo.setVersion(version); // deprecated solely for Kodi, so ok
 
+      // =====================================================
+      // parse language files, if found
+      // =====================================================
+      HashMap<String, String> labelmap = new HashMap<String, String>();
+
+      String lang = Locale.getDefault().getDisplayLanguage(Locale.ENGLISH);
+      File langFolder = new File(scraperFolder, "resources/language/" + lang);
+      if (!langFolder.exists()) {
+        langFolder = new File(scraperFolder, "resources/language/English");
+      }
+
+      File langFile = new File(langFolder, "strings.xml");
+      if (langFile.exists()) {
+        // parse XML
+        Document set = Jsoup.parse(langFile, "UTF-8", "");
+        Elements strings = set.getElementsByTag("string");
+        for (Element el : strings) {
+          labelmap.put(el.id(), el.text());
+        }
+      }
+      else {
+        langFile = new File(langFolder, "strings.po");
+        if (langFile.exists()) {
+          // parse PO
+          String labels = FileUtils.readFileToString(langFile);
+          Pattern p = Pattern.compile("msgctxt \"#(.*?)\"\nmsgid \"(.*?)\"\nmsgstr \"(.*?)\"");
+          Matcher m = p.matcher(labels);
+          while (m.find()) {
+            labelmap.put(m.group(1), m.group(3));
+          }
+        }
+      }
+
+      // =====================================================
       // parse default settings and build TMM config
+      // =====================================================
       File settingsFile = new File(scraperFolder, "resources/settings.xml");
       if (settingsFile.exists()) {
         Document set = Jsoup.parse(settingsFile, "UTF-8", "");
@@ -135,6 +178,28 @@ public class KodiScraper implements IMediaProvider {
           String type = el.attr("type");
           String defaultValue = el.attr("default");
           String possibleValues[] = el.attr("values").split("\\|");
+          if (possibleValues.length == 0) {
+            possibleValues = el.attr("lvalues").split("\\|"); // parse label values
+          }
+          // if it is a labelcode, replace with value
+          for (int index = 0; index < possibleValues.length; index++) {
+            String code = possibleValues[index];
+            if (code.startsWith("3") && code.length() == 5) {
+              String labelName = labelmap.get(code);
+              if (labelName != null) {
+                labelName = labelName.replaceAll("\\[COLOR=(.*?)\\]", "").replaceAll("\\[/COLOR\\]", "");
+                possibleValues[index] = labelName;
+              }
+            }
+          }
+
+          String label = el.attr("label");
+          String labelName = labelmap.get(label);
+          if (labelName != null) {
+            // labelName = "<html>" + labelName.replaceAll("\\[COLOR=(.*?)\\]", "<font color=$1>").replaceAll("\\[/COLOR\\]", "</font>") + "</html>";
+            // nah, no html, look weird
+            labelName = labelName.replaceAll("\\[COLOR=(.*?)\\]", "").replaceAll("\\[/COLOR\\]", "");
+          }
 
           // visible
           boolean visible = true;
@@ -178,10 +243,15 @@ public class KodiScraper implements IMediaProvider {
           if (!visible) {
             this.providerInfo.getConfig().getConfigObject(setid).setVisible(visible);
           }
+          if (labelName != null) {
+            this.providerInfo.getConfig().getConfigObject(setid).setKeyDescription(labelName);
+          }
         }
       } // end parse settings
 
+      // =====================================================
       // parse Kodi saved setting values and umdate TMM config
+      // =====================================================
       File savedSettings = new File(KodiUtil.detectKodiUserFolder(), "userdata/addon_data/" + providerInfo.getId() + "/settings.xml");
       if (savedSettings.exists()) {
         Document set = Jsoup.parse(savedSettings, "UTF-8", "");
@@ -193,7 +263,9 @@ public class KodiScraper implements IMediaProvider {
         }
       }
 
+      // =====================================================
       // load TMM config values
+      // =====================================================
       this.providerInfo.getConfig().load();
 
       File logo = new File(scraperFolder, "icon.png");
