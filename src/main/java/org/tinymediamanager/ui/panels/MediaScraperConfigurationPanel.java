@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -43,6 +45,7 @@ import org.tinymediamanager.scraper.config.MediaProviderConfig;
 import org.tinymediamanager.scraper.config.MediaProviderConfigObject;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -71,10 +74,11 @@ public class MediaScraperConfigurationPanel extends JPanel {
     add(panelHead, BorderLayout.NORTH);
 
     JLabel lblScraperOptions = new JLabel(BUNDLE.getString("Settings.scraper.options")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblScraperOptions, 1.2f, Font.BOLD);
     panelHead.add(lblScraperOptions);
 
     configPanel = createConfigPanel();
-    add(configPanel, BorderLayout.NORTH);
+    add(configPanel, BorderLayout.CENTER);
 
     // add a listener to determine when to save the settings
     addAncestorListener(new AncestorListener() {
@@ -111,11 +115,15 @@ public class MediaScraperConfigurationPanel extends JPanel {
     // build up the panel for being displayed in the popup
     MediaProviderConfig config = mediaProvider.getProviderInfo().getConfig();
     for (Entry<String, MediaProviderConfigObject> entry : config.getConfigObjects().entrySet()) {
+      if (!entry.getValue().isVisible()) {
+        continue;
+      }
+
       constraints.anchor = GridBagConstraints.LINE_START;
       constraints.ipadx = 20;
 
       // label
-      JLabel label = new JLabel(entry.getKey());
+      JLabel label = new JLabel(entry.getValue().getKeyDescription());
       constraints.gridx = 0;
       panel.add(label, constraints);
 
@@ -150,7 +158,14 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
         default:
           // display as text
-          JTextField tf = new JTextField(config.getValue(entry.getKey()));
+          JTextField tf;
+          if (entry.getValue().isEncrypt()) {
+            tf = new JPasswordField(config.getValue(entry.getKey()));
+          }
+          else {
+            tf = new JTextField(config.getValue(entry.getKey()));
+          }
+
           tf.setPreferredSize(new Dimension(100, 24));
           tf.getDocument().addDocumentListener(new DocumentListener() {
             @Override

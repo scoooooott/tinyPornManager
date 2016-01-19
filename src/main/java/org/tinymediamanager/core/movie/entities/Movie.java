@@ -493,7 +493,7 @@ public class Movie extends MediaEntity {
             continue;
           }
 
-          String actorName = actor.getName().replace(" ", "_");
+          String actorName = actor.getNameForStorage();
 
           Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(actorName) + "\\.(tbn|jpg|png)");
           for (File file : actorImages) {
@@ -1093,7 +1093,7 @@ public class Movie extends MediaEntity {
           try {
             // build expected filename
             File actorName = new File(getPath() + File.separator + MovieActor.ACTOR_DIR,
-                actor.getName().replace(" ", "_") + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+                actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
             File oldFile = new File(actor.getThumbPath());
             Utils.moveFileSafe(oldFile, actorName);
           }

@@ -16,9 +16,11 @@ x fix IMDB title fallback to TMDB
 x TvShow episode parser: fix common word replacement
 x rework scraper fallback logic, do not stop on plugin errors
 x fix the "new" marker never being cleared in special cases
+x MediaPortal NFO: parse multiple genres styles
 x NTFS: renaming to same name but other cASE now works
 x Movie actors: replace invalid file system characters when saving thumb
 x MacOS: save database on terminating with command-q
+x fixed error in movie set editor when no movies are assigned to the set
 
 
 Version 2.7.1

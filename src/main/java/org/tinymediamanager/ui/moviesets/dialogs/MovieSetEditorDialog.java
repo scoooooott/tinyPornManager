@@ -392,6 +392,10 @@ public class MovieSetEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+      if (moviesInSet.isEmpty()) {
+        return;
+      }
+
       int row = tableMovies.getSelectedRow();
       if (row > -1) {
         Movie movie = moviesInSet.get(row);
@@ -411,6 +415,10 @@ public class MovieSetEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+      if (moviesInSet.isEmpty()) {
+        return;
+      }
+
       int row = tableMovies.getSelectedRow();
       if (row > 0) {
         Collections.rotate(moviesInSet.subList(row - 1, row + 1), 1);
