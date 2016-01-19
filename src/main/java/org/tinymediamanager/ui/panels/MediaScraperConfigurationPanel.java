@@ -123,7 +123,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
       constraints.ipadx = 20;
 
       // label
-      JLabel label = new JLabel(entry.getKey());
+      JLabel label = new JLabel(entry.getValue().getKeyDescription());
       constraints.gridx = 0;
       panel.add(label, constraints);
 
