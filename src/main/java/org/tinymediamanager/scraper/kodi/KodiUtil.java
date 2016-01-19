@@ -129,35 +129,30 @@ class KodiUtil {
     }
 
     for (File f : foundAddonFiles) {
-      try {
-        KodiScraper x = new KodiScraper(f.getParentFile()); // parent = folder
-        if (StringUtils.isBlank(x.getProviderInfo().getId())) {
-          continue;
-        }
-        if ("metadata.local".equals(x.getProviderInfo().getId())) {
-          continue; // local Kodi scraper
-        }
+      KodiScraper x = new KodiScraper(f.getParentFile()); // parent = folder
+      if (StringUtils.isBlank(x.getProviderInfo().getId())) {
+        continue;
+      }
+      if ("metadata.local".equals(x.getProviderInfo().getId())) {
+        continue; // local Kodi scraper
+      }
 
-        if (!tmp.containsKey(x.getProviderInfo().getId())) {
+      if (!tmp.containsKey(x.getProviderInfo().getId())) {
+        tmp.put(x.getProviderInfo().getId(), x);
+      }
+      else {
+        // ok, scraper ID already added, now check for higher version.
+        KodiScraper old = tmp.get(x.getProviderInfo().getId());
+        if (StrgUtils.compareVersion(x.getProviderInfo().getVersion(), old.getProviderInfo().getVersion()) > 0) {
+          // ok, new scraper has a higher version, replace this...
+          LOGGER.debug(
+              "replacing " + x.getProviderInfo().getId() + " v" + old.getProviderInfo().getVersion() + " with v" + x.getProviderInfo().getVersion());
+          tmp.remove(x.getProviderInfo().getId());
           tmp.put(x.getProviderInfo().getId(), x);
         }
         else {
-          // ok, scraper ID already added, now check for higher version.
-          KodiScraper old = tmp.get(x.getProviderInfo().getId());
-          if (StrgUtils.compareVersion(x.getProviderInfo().getVersion(), old.getProviderInfo().getVersion()) > 0) {
-            // ok, new scraper has a higher version, replace this...
-            LOGGER.debug("replacing " + x.getProviderInfo().getId() + " v" + old.getProviderInfo().getVersion() + " with v"
-                + x.getProviderInfo().getVersion());
-            tmp.remove(x.getProviderInfo().getId());
-            tmp.put(x.getProviderInfo().getId(), x);
-          }
-          else {
-            LOGGER.debug("not adding " + x.addonFolder.getAbsolutePath() + " - ID already imported, or version lower");
-          }
+          LOGGER.debug("not adding " + x.addonFolder.getAbsolutePath() + " - ID already imported, or version lower");
         }
-      }
-      catch (Exception e) {
-        // TODO: handle exception
       }
     }
 
