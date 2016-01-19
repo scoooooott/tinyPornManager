@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
-import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -155,16 +154,12 @@ public class TmmTaskManager implements TmmTaskListener {
     if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
       unnamedTaskExecutor = createUnnamedTaskExecutor();
     }
-    TmmTask t;
 
     if (task instanceof TmmTask) {
-      t = (TmmTask) task;
+      TmmTask t = (TmmTask) task;
+      t.addListener(this);
+      t.setState(TaskState.QUEUED);
     }
-    else {
-      t = new UnnamedTask("", task, TaskType.BACKGROUND_TASK);
-    }
-    t.addListener(this);
-    t.setState(TaskState.QUEUED);
 
     unnamedTaskExecutor.execute(task);
   }

@@ -18,37 +18,50 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class ImageCacheTask. Cache a bunch of images in a separate task
  * 
  * @author Manuel Laggner
  */
-public class ImageCacheTask implements Runnable {
-  private static final Logger LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
+public class ImageCacheTask extends TmmTask {
+  private static final Logger         LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<File>          filesToCache = new ArrayList<File>();
+  private List<File>                  filesToCache = new ArrayList<File>();
 
   public ImageCacheTask(String pathToFile) {
+    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
     filesToCache.add(new File(pathToFile));
   }
 
   public ImageCacheTask(File file) {
+    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
     filesToCache.add(file);
   }
 
   public ImageCacheTask(List<File> files) {
+    super(BUNDLE.getString("tmm.rebuildimagecache"), files.size(), TaskType.BACKGROUND_TASK);
     filesToCache.addAll(files);
   }
 
   @Override
-  public void run() {
+  protected void doInBackground() {
+    int i = 0;
     for (File fileToCache : filesToCache) {
       try {
+        if (cancel) {
+          return;
+        }
+
+        publishState(++i);
         ImageCache.cacheImage(new MediaFile(fileToCache));
       }
       catch (EmptyFileException e) {
