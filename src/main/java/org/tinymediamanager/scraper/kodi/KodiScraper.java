@@ -237,7 +237,7 @@ public class KodiScraper implements IMediaProvider {
               break;
 
             default:
-              break;
+              continue; // not a know type, restart
           }
 
           if (!visible) {
@@ -259,7 +259,9 @@ public class KodiScraper implements IMediaProvider {
         for (Element el : settings) {
           String setid = el.attr("id");
           String value = el.attr("value");
-          providerInfo.getConfig().setValue(setid, value);
+          if (providerInfo.getConfig().getConfigKeyValuePairs().keySet().contains(setid)) {
+            providerInfo.getConfig().setValue(setid, value);
+          }
         }
       }
 
