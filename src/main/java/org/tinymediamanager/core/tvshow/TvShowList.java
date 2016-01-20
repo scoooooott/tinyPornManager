@@ -36,6 +36,9 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -286,6 +289,9 @@ public class TvShowList extends AbstractModelObject {
   }
 
   void initDataAfterLoading() {
+    // check for corrupted media entities
+    checkAndCleanupMediaFiles();
+
     // init everything after loading
     for (TvShow tvShow : tvShowList) {
       tvShow.initializeAfterLoading();
@@ -701,6 +707,42 @@ public class TvShowList extends AbstractModelObject {
       }
     }
     return newEp;
+  }
+
+  /**
+   * check if there are movies without (at least) one VIDEO mf
+   */
+  private void checkAndCleanupMediaFiles() {
+    boolean problemsDetected = false;
+    for (TvShow tvShow : tvShowList) {
+      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+        List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+        if (mfs.isEmpty()) {
+          tvShow.removeEpisode(episode);
+          problemsDetected = true;
+        }
+      }
+    }
+
+    if (problemsDetected) {
+      LOGGER.warn("episodes without VIDEOs detected");
+
+      // and push a message
+      // also delay it so that the UI has time to start up
+      Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.sleep(15000);
+          }
+          catch (Exception ignored) {
+          }
+          Message message = new Message(MessageLevel.SEVERE, "tmm.tvshows", "message.database.corrupteddata");
+          MessageManager.instance.pushMessage(message);
+        }
+      });
+      thread.start();
+    }
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {
