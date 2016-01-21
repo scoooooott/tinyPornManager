@@ -4,7 +4,8 @@ LINUX: We've removed the shipped mediainfo library due to massive problems betwe
        different distributions. Please install the libmediainfo directly from
        your package manager or from https://mediaarea.net/
        
-+ Kodi scrapers are now configurable :)
++ Kodi scrapers are now configurable
++ Movie renamer preview: dropped donator-only status, now FREE FOR ALL
 + added web-dl to media sources
 + add writing of imdb id in TV show NFO
 + added $# rating movie renamer option
