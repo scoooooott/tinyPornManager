@@ -180,7 +180,7 @@ public class ImageCache {
    */
   public static Path cacheImage(MediaFile mf) throws Exception {
     Path originalFile = mf.getFileAsPath();
-    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString() + "." + Utils.getExtension(originalFile)));
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
     if (Files.notExists(cachedFile)) {
       // check if the original file exists && size > 0
       if (Files.notExists(originalFile)) {
