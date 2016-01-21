@@ -17,7 +17,6 @@ package org.tinymediamanager.core.movie.tasks;
 
 import static java.nio.file.FileVisitResult.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitOption;
@@ -40,7 +39,6 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -187,7 +185,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         cleanup(ds);
 
         // mediainfo
-        // gatherMediainfo(ds);
+        gatherMediainfo(ds);
 
         waitForCompletionOrCancel();
         if (cancel) {
@@ -346,7 +344,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     // convert to MFs (we need it anyways at the end)
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     for (Path file : allFiles) {
-      mfs.add(new MediaFile(file.toFile()));
+      mfs.add(new MediaFile(file));
     }
     allFiles.clear();
 
@@ -364,21 +362,21 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
         if (mf.getType().equals(MediaFileType.NFO)) {
           // PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.[nN][fF][oO]");
-          LOGGER.info("| parsing NFO " + mf.getFile());
+          LOGGER.info("| parsing NFO " + mf.getFileAsPath());
           Movie nfo = null;
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              nfo = MovieToXbmcNfoConnector.getData(mf.getFile());
+              nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
               if (nfo == null) {
                 // try the other
-                nfo = MovieToMpNfoConnector.getData(mf.getFile());
+                nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
               }
               break;
             case MP:
-              nfo = MovieToMpNfoConnector.getData(mf.getFile());
+              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
               if (nfo == null) {
                 // try the other
-                nfo = MovieToXbmcNfoConnector.getData(mf.getFile());
+                nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
               }
               break;
           }
@@ -388,7 +386,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           // was NFO, but parsing exception. try to find at least imdb id within
           if (movie.getImdbId().isEmpty()) {
             try {
-              String imdb = FileUtils.readFileToString(mf.getFile());
+              String imdb = Utils.readFileToString(mf.getFileAsPath());
               imdb = ParserUtils.detectImdbId(imdb);
               if (!imdb.isEmpty()) {
                 LOGGER.debug("| Found IMDB id: " + imdb);
@@ -403,7 +401,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         } // end NFO
         else if (mf.getType().equals(MediaFileType.TEXT)) {
           try {
-            String txtFile = FileUtils.readFileToString(mf.getFile());
+            String txtFile = Utils.readFileToString(mf.getFileAsPath());
 
             String bdinfo = StrgUtils.substr(txtFile, ".*Disc Title:\\s+(.*?)[\\n\\r]");
             if (!bdinfo.isEmpty()) {
@@ -510,7 +508,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     // convert to MFs
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     for (Path file : allFiles) {
-      mfs.add(new MediaFile(file.toFile()));
+      mfs.add(new MediaFile(file));
     }
     // allFiles.clear(); // might come handy
 
@@ -518,7 +516,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     Collections.sort(mfs, new Comparator<MediaFile>() {
       @Override
       public int compare(MediaFile file1, MediaFile file2) {
-        return file2.getFile().getName().toString().length() - file1.getFile().getName().toString().length();
+        return file2.getFileAsPath().getFileName().toString().length() - file1.getFileAsPath().getFileName().toString().length();
       }
     });
 
@@ -550,24 +548,24 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (movie == null) {
         // 2) create if not found
         // check for NFO
-        Path nfoFile = Paths.get(movieDir + File.separator + basename + ".nfo");
+        Path nfoFile = movieDir.resolve(basename + ".nfo");
         if (allFiles.contains(nfoFile)) {
-          MediaFile nfo = new MediaFile(nfoFile.toFile(), MediaFileType.NFO);
+          MediaFile nfo = new MediaFile(nfoFile, MediaFileType.NFO);
           // from NFO?
-          LOGGER.debug("| found NFO '" + nfo.getFile() + "' - try to parse");
+          LOGGER.debug("| found NFO '" + nfo + "' - try to parse");
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
+              movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               if (movie == null) {
                 // try the other
-                movie = MovieToMpNfoConnector.getData(nfo.getFile());
+                movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               }
               break;
             case MP:
-              movie = MovieToMpNfoConnector.getData(nfo.getFile());
+              movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               if (movie == null) {
                 // try the other
-                movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
+                movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               }
               break;
           }
@@ -602,10 +600,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
 
       if (!Utils.isValidImdbId(movie.getImdbId())) {
-        movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
+        movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
       }
       if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
-        movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+        movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFileAsPath().toString()));
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
@@ -618,7 +616,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       for (int i = allFiles.size() - 1; i >= 0; i--) {
         Path fileInDir = allFiles.get(i);
         if (fileInDir.getFileName().toString().startsWith(basename)) { // need toString b/c of possible spcaes!!
-          MediaFile mediaFile = new MediaFile(fileInDir.toFile());
+          MediaFile mediaFile = new MediaFile(fileInDir);
           if (!existingMediaFiles.contains(mediaFile)) {
             foundMediaFiles.add(mediaFile);
           }
@@ -659,7 +657,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
 
         if (!Utils.isValidImdbId(movie.getImdbId())) {
-          movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
+          movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
         }
 
         LOGGER.debug("| parsing " + mf.getType().name() + " " + mf.getFilename());
@@ -668,7 +666,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             movie.setDateAddedFromMediaFile(mf);
             if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
-              movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+              movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFileAsPath().toString()));
             }
             break;
 
@@ -679,7 +677,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             mt.setProvider("downloaded");
             mt.setQuality(mf.getVideoFormat());
             mt.setInNfo(false);
-            mt.setUrl(mf.getFile().toURI().toString());
+            mt.setUrl(mf.getFileAsPath().toUri().toString());
             movie.addTrailer(mt);
             movie.addToMediaFiles(mf);
             break;
@@ -736,7 +734,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // debug
         if (mf.getType() != MediaFileType.GRAPHIC && mf.getType() != MediaFileType.UNKNOWN && mf.getType() != MediaFileType.NFO
             && !movie.getMediaFiles().contains(mf)) {
-          LOGGER.error("| Movie not added mf: " + mf.getFile().getPath());
+          LOGGER.error("| Movie not added mf: " + mf.getFileAsPath());
         }
 
       } // end new MF found
@@ -762,19 +760,19 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       Movie movie = movieList.getMovies().get(i);
 
       // check only movies matching datasource
-      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+      if (!Paths.get(datasource).equals(Paths.get(movie.getDataSource()))) {
         continue;
       }
 
-      Path movieDir = Paths.get(movie.getPath());
+      Path movieDir = movie.getPathNIO();
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
-        if (!Files.exists(movieDir)) {
+        if (Files.notExists(movieDir)) {
           LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
           moviesToRemove.add(movie);
         }
         else {
-          LOGGER.warn("dir " + movie.getPath() + " not in hashset, but on hdd!");
+          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
         }
       }
       else {
@@ -783,13 +781,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           // check and delete all not found MediaFiles
           List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
           for (MediaFile mf : mediaFiles) {
-            if (!filesFound.contains(Paths.get(mf.getFile().getAbsolutePath()))) {
+            if (!filesFound.contains(mf.getFileAsPath())) {
               if (!mf.exists()) {
-                LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+                LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
                 movie.removeFromMediaFiles(mf);
               }
               else {
-                LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+                LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
               }
             }
           }
@@ -818,7 +816,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       Movie movie = movieList.getMovies().get(i);
 
       // check only movies matching datasource
-      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+      if (!Paths.get(datasource).equals(Paths.get(movie.getDataSource()))) {
         continue;
       }
 

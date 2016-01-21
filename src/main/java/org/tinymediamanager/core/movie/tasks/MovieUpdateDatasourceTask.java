@@ -274,10 +274,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.debug("found NFO '" + nfo.getFile() + "' - try to parse");
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
+              movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               break;
             case MP:
-              movie = MovieToMpNfoConnector.getData(nfo.getFile());
+              movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               break;
           }
           if (movie != null) {
@@ -437,11 +437,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               Movie nfo = null;
               switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
                 case XBMC:
-                  nfo = MovieToXbmcNfoConnector.getData(mf.getFile());
+                  nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
                   break;
 
                 case MP:
-                  nfo = MovieToMpNfoConnector.getData(mf.getFile());
+                  nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
                   break;
               }
               if (nfo != null) {

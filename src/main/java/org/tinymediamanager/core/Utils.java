@@ -781,6 +781,67 @@ public class Utils {
     return true; // files are equal
   }
 
+  public static boolean copyFileSafe(final Path srcFile, final Path destFile) throws IOException {
+    if (srcFile == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destFile == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    // if (!srcFile.equals(destFile)) {
+    if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
+      LOGGER.debug("try to copy file " + srcFile + " to " + destFile);
+      if (Files.notExists(srcFile)) {
+        throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+      }
+      if (Files.isDirectory(srcFile)) {
+        throw new IOException("Source '" + srcFile + "' is a directory");
+      }
+      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the File is the same, but the absolute name does not match
+        throw new FileExistsException("Destination '" + destFile + "' already exists");
+      }
+      if (Files.isDirectory(destFile)) {
+        throw new IOException("Destination '" + destFile + "' is a directory");
+      }
+
+      // rename folder; try 5 times and wait a sec
+      boolean rename = false;
+      for (int i = 0; i < 5; i++) {
+        try {
+          // replace existing for changing cASE
+          Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+          rename = true;// no exception
+        }
+        catch (IOException e) {
+        }
+
+        if (rename) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
+      }
+
+      if (!rename) {
+        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename"));
+        return false;
+      }
+      else {
+        LOGGER.info("Successfully moved file from " + srcFile + " to " + destFile);
+        return true;
+      }
+    }
+    return true; // files are equal
+  }
+
   /**
    * <b>PHYSICALLY</b> deletes a file by moving it to datasource backup folder<br>
    * DS\.backup\&lt;filename&gt;<br>
