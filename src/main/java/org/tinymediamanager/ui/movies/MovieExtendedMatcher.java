@@ -48,12 +48,12 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
    * @param searchOptions
    *          the search options
    */
-  public MovieExtendedMatcher(Map<MovieSearchOptions, Object> searchOptions) {
+  public MovieExtendedMatcher(final Map<MovieSearchOptions, Object> searchOptions) {
     this.searchOptions = searchOptions;
   }
 
   @Override
-  public boolean matches(Movie movie) {
+  public boolean matches(final Movie movie) {
     // not null
     if (movie == null) {
       return false;
@@ -201,26 +201,33 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
       }
     }
 
+    // check against 3D
+    if (searchOptions.containsKey(MovieSearchOptions.VIDEO_3D)) {
+      if (!movie.isVideoIn3D()) {
+        return false;
+      }
+    }
+
     return true;
   }
 
-  private boolean isVideoHD(String videoFormat) {
-    if (videoFormat == MediaFile.VIDEO_FORMAT_720P) {
+  private boolean isVideoHD(final String videoFormat) {
+    if (MediaFile.VIDEO_FORMAT_720P.equals(videoFormat)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_1080P) {
+    if (MediaFile.VIDEO_FORMAT_1080P.equals(videoFormat)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_4K) {
+    if (MediaFile.VIDEO_FORMAT_4K.equals(videoFormat)) {
       return true;
     }
-    if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
+    if (MediaFile.VIDEO_FORMAT_8K.equals(videoFormat)) {
       return true;
     }
     return false;
   }
 
-  private boolean containsAudioCodec(Movie movie, String codec) {
+  private boolean containsAudioCodec(final Movie movie, final String codec) {
     List<MediaFile> videoFiles = movie.getMediaFiles(MediaFileType.VIDEO);
 
     if (videoFiles.size() == 0) {
@@ -237,7 +244,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     return false;
   }
 
-  private boolean containsTag(Movie movie, String tag) {
+  private boolean containsTag(final Movie movie, final String tag) {
     for (String tagInMovie : movie.getTags()) {
       if (tagInMovie.equals(tag)) {
         return true;
@@ -247,7 +254,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     return false;
   }
 
-  private boolean containsCast(Movie movie, String name) {
+  private boolean containsCast(final Movie movie, final String name) {
     if (StringUtils.isNotEmpty(name)) {
       Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(name));
       java.util.regex.Matcher matcher = null;

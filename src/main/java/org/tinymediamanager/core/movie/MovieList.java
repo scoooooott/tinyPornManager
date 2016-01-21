@@ -339,6 +339,9 @@ public class MovieList extends AbstractModelObject {
   }
 
   void initDataAfterLoading() {
+    // remove invalid movies which have no VIDEO files
+    checkAndCleanupMediaFiles();
+
     // 3. initialize movies/movie sets (e.g. link with each others)
     for (Movie movie : movieList) {
       movie.initializeAfterLoading();
@@ -497,7 +500,7 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    * @param mediaScraper
    *          the media scraper
-   * @param language
+   * @param langu
    *          the language to search with
    * @return the list
    */
@@ -727,9 +730,10 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateTags(Movie movie) {
+    List<String> availableTags = new ArrayList<>(tagsObservable);
     for (String tagInMovie : new ArrayList<>(movie.getTags())) {
       boolean tagFound = false;
-      for (String tag : tagsObservable) {
+      for (String tag : availableTags) {
         if (tagInMovie.equals(tag)) {
           tagFound = true;
           break;
@@ -749,11 +753,12 @@ public class MovieList extends AbstractModelObject {
    */
   private void updateMediaInformationLists(Movie movie) {
     // video codec
+    List<String> availableCodecs = new ArrayList<>(videoCodecsObservable);
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       String codec = mf.getVideoCodec();
       boolean codecFound = false;
 
-      for (String mfCodec : videoCodecsObservable) {
+      for (String mfCodec : availableCodecs) {
         if (mfCodec.equals(codec)) {
           codecFound = true;
           break;
@@ -766,11 +771,12 @@ public class MovieList extends AbstractModelObject {
     }
 
     // audio codec
+    availableCodecs = new ArrayList<>(audioCodecsObservable);
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String codec = audio.getCodec();
         boolean codecFound = false;
-        for (String mfCodec : audioCodecsObservable) {
+        for (String mfCodec : availableCodecs) {
           if (mfCodec.equals(codec)) {
             codecFound = true;
             break;
@@ -1021,6 +1027,41 @@ public class MovieList extends AbstractModelObject {
       movieSet.sortMovies();
     }
     firePropertyChange("sortedMovieSets", null, movieSetList);
+  }
+
+  /**
+   * check if there are movies without (at least) one VIDEO mf
+   */
+  private void checkAndCleanupMediaFiles() {
+    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    for (Movie movie : movieList) {
+      List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
+      if (mfs.isEmpty()) {
+        // mark movie for removal
+        moviesToRemove.add(movie);
+      }
+    }
+
+    if (!moviesToRemove.isEmpty()) {
+      removeMovies(moviesToRemove);
+      LOGGER.warn("movies without VIDEOs detected");
+
+      // and push a message
+      // also delay it so that the UI has time to start up
+      Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.sleep(15000);
+          }
+          catch (Exception ignored) {
+          }
+          Message message = new Message(MessageLevel.SEVERE, "tmm.movies", "message.database.corrupteddata");
+          MessageManager.instance.pushMessage(message);
+        }
+      });
+      thread.start();
+    }
   }
 
   /**

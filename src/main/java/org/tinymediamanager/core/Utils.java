@@ -516,7 +516,7 @@ public class Utils {
               ga += "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height; 
             }
             // @formatter:on
-            Url url = new Url("http://www.google-analytics.com/collect?" + ga);
+            Url url = new Url("https://ssl.google-analytics.com/collect?" + ga);
 
             InputStream in = url.getInputStream();
             if (in != null) {

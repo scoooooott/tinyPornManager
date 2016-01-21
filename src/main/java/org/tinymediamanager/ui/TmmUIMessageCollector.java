@@ -15,11 +15,16 @@
  */
 package org.tinymediamanager.ui;
 
+import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.IMessageListener;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.Utils;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -31,6 +36,8 @@ import ca.odell.glazedlists.GlazedLists;
  * @author Manuel Laggner
  */
 public class TmmUIMessageCollector extends AbstractModelObject implements IMessageListener {
+  /** @wbp.nls.resourceBundle messages */
+  private static final ResourceBundle       BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   public static final TmmUIMessageCollector instance    = new TmmUIMessageCollector();
 
   private final EventList<Message>          messages;
@@ -42,15 +49,43 @@ public class TmmUIMessageCollector extends AbstractModelObject implements IMessa
 
   @Override
   public void pushMessage(final Message message) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        messages.add(message);
-        int oldValue = newMessages;
-        newMessages++;
-        firePropertyChange("messages", oldValue, newMessages);
-      }
-    });
+    // display severe messages in a popup directly!
+    if (message.getMessageLevel() == MessageLevel.SEVERE) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          String sender = "";
+          try {
+            sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
+          }
+          catch (Exception e) {
+            sender = String.valueOf(message.getMessageSender());
+          }
+
+          String text = "";
+          try {
+            text = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageId()), message.getIdParams());
+          }
+          catch (Exception e) {
+            text = String.valueOf(message.getMessageId());
+          }
+
+          JOptionPane.showMessageDialog(null, text, sender, JOptionPane.ERROR_MESSAGE);
+        }
+      });
+    }
+    else {
+      // otherwise push it to the list
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          messages.add(message);
+          int oldValue = newMessages;
+          newMessages++;
+          firePropertyChange("messages", oldValue, newMessages);
+        }
+      });
+    }
   }
 
   /**

@@ -36,6 +36,9 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -286,6 +289,9 @@ public class TvShowList extends AbstractModelObject {
   }
 
   void initDataAfterLoading() {
+    // check for corrupted media entities
+    checkAndCleanupMediaFiles();
+
     // init everything after loading
     for (TvShow tvShow : tvShowList) {
       tvShow.initializeAfterLoading();
@@ -475,9 +481,11 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateTvShowTags(TvShow tvShow) {
+    List<String> availableTags = new ArrayList<>(tvShowTagsObservable);
+
     for (String tagInTvShow : new ArrayList<>(tvShow.getTags())) {
       boolean tagFound = false;
-      for (String tag : tvShowTagsObservable) {
+      for (String tag : availableTags) {
         if (tagInTvShow.equals(tag)) {
           tagFound = true;
           break;
@@ -490,13 +498,17 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void addTvShowTag(String newTag) {
-    for (String tag : tvShowTagsObservable) {
-      if (tag.equals(newTag)) {
-        return;
-      }
+    if (StringUtils.isBlank(newTag)) {
+      return;
     }
 
-    tvShowTagsObservable.add(newTag);
+    synchronized (tvShowTagsObservable) {
+      if (tvShowTagsObservable.contains(newTag)) {
+        return;
+      }
+      tvShowTagsObservable.add(newTag);
+    }
+
     firePropertyChange("tag", null, tvShowTagsObservable);
   }
 
@@ -505,9 +517,10 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void updateEpisodeTags(TvShowEpisode episode) {
+    List<String> availableTags = new ArrayList<>(episodeTagsObservable);
     for (String tagEpisode : new ArrayList<>(episode.getTags())) {
       boolean tagFound = false;
-      for (String tag : episodeTagsObservable) {
+      for (String tag : availableTags) {
         if (tagEpisode.equals(tag)) {
           tagFound = true;
           break;
@@ -520,13 +533,17 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void addEpisodeTag(String newTag) {
-    for (String tag : episodeTagsObservable) {
-      if (tag.equals(newTag)) {
-        return;
-      }
+    if (StringUtils.isBlank(newTag)) {
+      return;
     }
 
-    episodeTagsObservable.add(newTag);
+    synchronized (episodeTagsObservable) {
+      if (episodeTagsObservable.contains(newTag)) {
+        return;
+      }
+      episodeTagsObservable.add(newTag);
+    }
+
     firePropertyChange("tag", null, episodeTagsObservable);
   }
 
@@ -536,11 +553,12 @@ public class TvShowList extends AbstractModelObject {
 
   private void updateMediaInformationLists(TvShowEpisode episode) {
     // video codec
+    List<String> availableCodecs = new ArrayList<>(videoCodecsObservable);
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
       String codec = mf.getVideoCodec();
       boolean codecFound = false;
 
-      for (String mfCodec : videoCodecsObservable) {
+      for (String mfCodec : availableCodecs) {
         if (mfCodec.equals(codec)) {
           codecFound = true;
           break;
@@ -553,11 +571,12 @@ public class TvShowList extends AbstractModelObject {
     }
 
     // audio codec
+    availableCodecs = new ArrayList<>(audioCodecsObservable);
     for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String codec = audio.getCodec();
         boolean codecFound = false;
-        for (String mfCodec : audioCodecsObservable) {
+        for (String mfCodec : availableCodecs) {
           if (mfCodec.equals(codec)) {
             codecFound = true;
             break;
@@ -576,13 +595,13 @@ public class TvShowList extends AbstractModelObject {
       return;
     }
 
-    for (String codec : videoCodecsObservable) {
-      if (codec.equals(newCodec)) {
+    synchronized (videoCodecsObservable) {
+      if (videoCodecsObservable.contains(newCodec)) {
         return;
       }
+      videoCodecsObservable.add(newCodec);
     }
 
-    videoCodecsObservable.add(newCodec);
     firePropertyChange("videoCodec", null, videoCodecsObservable);
   }
 
@@ -591,13 +610,13 @@ public class TvShowList extends AbstractModelObject {
       return;
     }
 
-    for (String codec : audioCodecsObservable) {
-      if (codec.equals(newCodec)) {
+    synchronized (audioCodecsObservable) {
+      if (audioCodecsObservable.contains(newCodec)) {
         return;
       }
+      audioCodecsObservable.add(newCodec);
     }
 
-    audioCodecsObservable.add(newCodec);
     firePropertyChange("audioCodec", null, audioCodecsObservable);
   }
 
@@ -701,6 +720,42 @@ public class TvShowList extends AbstractModelObject {
       }
     }
     return newEp;
+  }
+
+  /**
+   * check if there are movies without (at least) one VIDEO mf
+   */
+  private void checkAndCleanupMediaFiles() {
+    boolean problemsDetected = false;
+    for (TvShow tvShow : tvShowList) {
+      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+        List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+        if (mfs.isEmpty()) {
+          tvShow.removeEpisode(episode);
+          problemsDetected = true;
+        }
+      }
+    }
+
+    if (problemsDetected) {
+      LOGGER.warn("episodes without VIDEOs detected");
+
+      // and push a message
+      // also delay it so that the UI has time to start up
+      Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.sleep(15000);
+          }
+          catch (Exception ignored) {
+          }
+          Message message = new Message(MessageLevel.SEVERE, "tmm.tvshows", "message.database.corrupteddata");
+          MessageManager.instance.pushMessage(message);
+        }
+      });
+      thread.start();
+    }
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {

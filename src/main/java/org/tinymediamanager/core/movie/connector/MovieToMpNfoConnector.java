@@ -82,8 +82,8 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "imdb", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers", "watched", "playcount",
-    "source" })
+    "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors", "producers",
+    "watched", "playcount", "source" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -113,6 +113,8 @@ public class MovieToMpNfoConnector {
   @XmlElementWrapper
   @XmlElement(name = "genre")
   public List<String>         genres;
+  @XmlElement(name = "genre")
+  public List<String>         genresNoWrap;                                                        // genre, but not wrapped with a <genres> tag
   public String               studio        = "";
   public String               country       = "";
   public String               premiered     = "";
@@ -450,6 +452,15 @@ public class MovieToMpNfoConnector {
       }
 
       for (String genre : mp.genres) {
+        String[] genres = genre.split("/");
+        for (String g : genres) {
+          MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+          if (genreFound != null) {
+            movie.addGenre(genreFound);
+          }
+        }
+      }
+      for (String genre : mp.genresNoWrap) {
         String[] genres = genre.split("/");
         for (String g : genres) {
           MediaGenres genreFound = MediaGenres.getGenre(g.trim());

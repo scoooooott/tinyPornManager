@@ -115,11 +115,15 @@ public class MediaScraperConfigurationPanel extends JPanel {
     // build up the panel for being displayed in the popup
     MediaProviderConfig config = mediaProvider.getProviderInfo().getConfig();
     for (Entry<String, MediaProviderConfigObject> entry : config.getConfigObjects().entrySet()) {
+      if (!entry.getValue().isVisible()) {
+        continue;
+      }
+
       constraints.anchor = GridBagConstraints.LINE_START;
       constraints.ipadx = 20;
 
       // label
-      JLabel label = new JLabel(entry.getKey());
+      JLabel label = new JLabel(entry.getValue().getKeyDescription());
       constraints.gridx = 0;
       panel.add(label, constraints);
 
