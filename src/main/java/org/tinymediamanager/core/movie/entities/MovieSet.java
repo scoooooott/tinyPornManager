@@ -17,9 +17,9 @@ package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,9 +146,9 @@ public class MovieSet extends MediaEntity {
     if (StringUtils.isBlank(artworkFilename)) {
       final String artworkUrl = getArtworkUrl(type);
       if (StringUtils.isNotBlank(artworkUrl)) {
-        Path artworkFile = ImageCache.getCacheDir().resolve(ImageCache.getCachedFileName(artworkUrl));
-        if (artworkFile.exists()) {
-          artworkFilename = artworkFile.getPath();
+        Path artworkFile = ImageCache.getCacheDir().resolve(ImageCache.getMD5(artworkUrl));
+        if (Files.exists(artworkFile)) {
+          artworkFilename = artworkFile.toAbsolutePath().toString();
         }
       }
     }
@@ -331,16 +331,16 @@ public class MovieSet extends MediaEntity {
     return false;
   }
 
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER))) {
-      filesToCache.add(new File(getArtworkFilename(MediaFileType.POSTER)));
+      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.POSTER)));
     }
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))) {
-      filesToCache.add(new File(getArtworkFilename(MediaFileType.FANART)));
+      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.FANART)));
     }
 
     return filesToCache;

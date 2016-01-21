@@ -86,7 +86,7 @@ public class ImageCache {
    *          the url
    * @return the cached file name
    */
-  private static String getMD5(String path) {
+  public static String getMD5(String path) {
     try {
       if (path == null) {
         return null;

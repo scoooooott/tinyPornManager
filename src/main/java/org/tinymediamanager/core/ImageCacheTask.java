@@ -16,6 +16,8 @@
 package org.tinymediamanager.core;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -35,19 +37,25 @@ public class ImageCacheTask extends TmmTask {
   private static final Logger         LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
   private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<File>                  filesToCache = new ArrayList<File>();
+  private List<Path>                  filesToCache = new ArrayList<Path>();
 
   public ImageCacheTask(String pathToFile) {
     super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
-    filesToCache.add(new File(pathToFile));
+    filesToCache.add(Paths.get(pathToFile));
   }
 
+  @Deprecated
   public ImageCacheTask(File file) {
+    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
+    filesToCache.add(file.toPath());
+  }
+
+  public ImageCacheTask(Path file) {
     super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
     filesToCache.add(file);
   }
 
-  public ImageCacheTask(List<File> files) {
+  public ImageCacheTask(List<Path> files) {
     super(BUNDLE.getString("tmm.rebuildimagecache"), files.size(), TaskType.BACKGROUND_TASK);
     filesToCache.addAll(files);
   }
@@ -55,7 +63,7 @@ public class ImageCacheTask extends TmmTask {
   @Override
   protected void doInBackground() {
     int i = 0;
-    for (File fileToCache : filesToCache) {
+    for (Path fileToCache : filesToCache) {
       try {
         if (cancel) {
           return;
@@ -65,10 +73,10 @@ public class ImageCacheTask extends TmmTask {
         ImageCache.cacheImage(new MediaFile(fileToCache));
       }
       catch (EmptyFileException e) {
-        LOGGER.warn("failed to cache file (file is empty): " + fileToCache.getPath());
+        LOGGER.warn("failed to cache file (file is empty): " + fileToCache);
       }
       catch (Exception e) {
-        LOGGER.warn("failed to cache file: " + fileToCache.getPath());
+        LOGGER.warn("failed to cache file: " + fileToCache);
       }
     }
   }

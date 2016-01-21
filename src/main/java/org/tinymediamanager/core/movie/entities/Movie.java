@@ -17,11 +17,11 @@ package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -483,7 +481,7 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Find actor images.
+   * Searches for actor images, and matches them to our "actors", updating the thumb url
    */
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
@@ -491,33 +489,21 @@ public class Movie extends MediaEntity {
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
         for (Path path : directoryStream) {
           if (Files.isRegularFile(path)) {
-            if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
-              continue;
+
+            for (MovieActor actor : getActors()) {
+              if (StringUtils.isBlank(actor.getThumbPath())) {
+                // yay, actor with empty image
+                String name = actor.getNameForStorage();
+                if (name.equals(path.getFileName().toString())) {
+                  actor.setThumbPath(path.toAbsolutePath().toString());
+                }
+              }
             }
+
           }
         }
       }
       catch (IOException ex) {
-      }
-
-      File[] actorImages = new File(getPath(), MovieActor.ACTOR_DIR).listFiles();
-      if (actorImages != null && actorImages.length > 0) {
-        // search all local actor images
-        for (MovieActor actor : getActors()) {
-          if (StringUtils.isNotBlank(actor.getThumbPath())) {
-            continue;
-          }
-
-          String actorName = actor.getNameForStorage();
-
-          Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(actorName) + "\\.(tbn|jpg|png)");
-          for (File file : actorImages) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.matches()) {
-              actor.setThumbPath(file.getAbsolutePath());
-            }
-          }
-        }
       }
     }
   }
@@ -1103,13 +1089,14 @@ public class Movie extends MediaEntity {
 
     // third - rename thumbs if needed
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+      Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+
       for (MovieActor actor : actors) {
         if (StringUtils.isNotBlank(actor.getThumbPath())) {
           try {
             // build expected filename
-            File actorName = new File(getPath() + File.separator + MovieActor.ACTOR_DIR,
-                actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-            File oldFile = new File(actor.getThumbPath());
+            Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+            Path oldFile = Paths.get(actor.getThumbPath());
             Utils.moveFileSafe(oldFile, actorName);
           }
           catch (IOException e) {
@@ -1205,13 +1192,13 @@ public class Movie extends MediaEntity {
         if (isDisc()) {
           // if filename is activated, we generate them accordingly MF(1)
           // but if disc, fixtate this
-          if (new File(path, "VIDEO_TS.ifo").exists() || new File(path, "VIDEO_TS").exists()) {
+          if (Files.exists(getPathNIO().resolve("VIDEO_TS.ifo")) || Files.exists(getPathNIO().resolve("VIDEO_TS"))) {
             filename = "VIDEO_TS.nfo";
           }
-          else if (new File(path, "index.bdmv").exists()) {
+          else if (Files.exists(getPathNIO().resolve("index.bdmv"))) {
             filename = "index.nfo";
           }
-          else if (new File(path, "BDMV").exists()) {
+          else if (Files.exists(getPathNIO().resolve("BDMV"))) {
             filename = "BDMV.nfo";
           }
         }
@@ -1225,13 +1212,13 @@ public class Movie extends MediaEntity {
         break;
       case DISC_NFO:
         if (isDisc()) {
-          File dir = new File(path, "VIDEO_TS");
-          if (dir.exists() && dir.isDirectory()) {
-            filename = "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
+          Path dir = getPathNIO().resolve("VIDEO_TS");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("VIDEO_TS.nfo").toString();
           }
-          dir = new File(path, "BDMV");
-          if (dir.exists() && dir.isDirectory()) {
-            filename = "BDMV" + File.separator + "index.nfo";
+          dir = getPathNIO().resolve("BDMV");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("index.nfo").toString();
           }
         }
         break;
@@ -1655,12 +1642,12 @@ public class Movie extends MediaEntity {
   /**
    * Gets the images to cache.
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
     for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 
@@ -1933,7 +1920,7 @@ public class Movie extends MediaEntity {
       return ok;
     }
     else {
-      return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+      return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
     }
   }
 }

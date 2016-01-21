@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow.tasks;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -172,7 +173,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * update one or more datasources
    */
   private void updateDatasource() {
-    List<File> imageFiles = new ArrayList<File>();
+    List<Path> imageFiles = new ArrayList<Path>();
 
     for (String path : dataSources) {
       File[] dirs = new File(path).listFiles();
@@ -282,13 +283,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
           for (MediaFile mf : new ArrayList<MediaFile>(tvShow.getMediaFiles())) {
             if (mf.isGraphic()) {
-              imageFiles.add(mf.getFile());
+              imageFiles.add(mf.getFileAsPath());
             }
           }
           for (TvShowEpisode episode : tvShow.getEpisodes()) {
             for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
               if (mf.isGraphic()) {
-                imageFiles.add(mf.getFile());
+                imageFiles.add(mf.getFileAsPath());
               }
             }
           }
@@ -386,7 +387,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     // build up the image cache
     if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
-      List<File> imageFiles = new ArrayList<File>();
+      List<Path> imageFiles = new ArrayList<Path>();
       for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
         if (cancel) {
           break;
@@ -400,13 +401,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         for (MediaFile mf : new ArrayList<MediaFile>(tvShow.getMediaFiles())) {
           if (mf.isGraphic()) {
-            imageFiles.add(mf.getFile());
+            imageFiles.add(mf.getFileAsPath());
           }
         }
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
             if (mf.isGraphic()) {
-              imageFiles.add(mf.getFile());
+              imageFiles.add(mf.getFileAsPath());
             }
           }
         }

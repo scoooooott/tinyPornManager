@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -173,8 +174,8 @@ public class MovieExporterDialog extends TmmDialog {
         ExportTemplate selectedTemplate = templatesFound.get(index);
         if (selectedTemplate != null) {
           try {
-            MovieExporter exporter = new MovieExporter(selectedTemplate.getPath());
-            exporter.export(movies, tfExportDir.getText());
+            MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
+            exporter.export(movies, Paths.get(tfExportDir.getText()));
           }
           catch (Exception e) {
             LOGGER.error("Error exporting movies: " + e.getMessage());

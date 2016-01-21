@@ -126,7 +126,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      List<File> imageFiles = new ArrayList<File>();
+      List<Path> imageFiles = new ArrayList<Path>();
 
       // cleanup newlyadded for a new UDS run
       for (Movie movie : movieList.getMovies()) {

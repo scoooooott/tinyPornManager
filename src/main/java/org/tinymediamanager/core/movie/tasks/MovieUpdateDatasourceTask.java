@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie.tasks;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -108,7 +109,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      List<File> imageFiles = new ArrayList<File>();
+      List<Path> imageFiles = new ArrayList<Path>();
 
       // cleanup newlyadded for a new UDS run
       for (Movie movie : movieList.getMovies()) {

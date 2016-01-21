@@ -1,6 +1,7 @@
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,25 +36,25 @@ public class MovieMediaFileTest {
   public void testUpdateMediaFilePath() {
     Movie movie = new Movie();
     movie.setPath("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1");
-    File mediaFile = new File("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1\\asdf\\jklö\\VIDEO_TS\\VIDEO_TS.IFO");
+    Path mediaFile = Paths.get("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1\\asdf\\jklö\\VIDEO_TS\\VIDEO_TS.IFO");
     MediaFile mf = new MediaFile(mediaFile);
     movie.addToMediaFiles(mf);
 
-    System.out.println("Movie Path: " + movie.getPath());
-    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFile().getAbsolutePath());
+    System.out.println("Movie Path: " + movie.getPathNIO());
+    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFileAsPath());
 
-    File oldPath = new File(movie.getPath());
-    File newPath = new File("C:\\private\\Test_Filme\\Alien 1");
+    Path oldPath = movie.getPathNIO();
+    Path newPath = Paths.get("C:\\private\\Test_Filme\\Alien 1");
     movie.updateMediaFilePath(oldPath, newPath);
-    movie.setPath(newPath.getPath());
+    movie.setPath(newPath.toAbsolutePath().toString());
 
-    System.out.println("Movie Path: " + movie.getPath());
-    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFile().getAbsolutePath());
+    System.out.println("Movie Path: " + movie.getPathNIO());
+    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFileAsPath());
   }
 
   @Test
   public void filenameWithoutStacking() {
-    MediaFile mf = new MediaFile(new File(".", "hp7 - part 1"));
+    MediaFile mf = new MediaFile(Paths.get(".", "hp7 - part 1"));
     System.out.println(mf.getFilenameWithoutStacking()); // not stacked
     mf.setStacking(1);
     mf.setStackingMarker("part 1");
@@ -97,7 +98,7 @@ public class MovieMediaFileTest {
     if (filename.isEmpty()) {
       return;
     }
-    File f = new File(".", filename + ".avi");
+    Path f = Paths.get(".", filename + ".avi");
     System.out.print("testing " + f + " for ");
     MediaFile mf = new MediaFile(f);
     assertEqual(mft, mf.getType());

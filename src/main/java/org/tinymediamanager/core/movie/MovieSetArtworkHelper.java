@@ -16,7 +16,6 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,7 +219,12 @@ public class MovieSetArtworkHelper {
 
       // check if folder exists
       if (Files.notExists(artworkFolder)) {
-        Files.createDirectories(artworkFolder);
+        try {
+          Files.createDirectories(artworkFolder);
+        }
+        catch (IOException e) {
+          LOGGER.warn("could not create directory: " + artworkFolder, e);
+        }
       }
 
       // write files
@@ -246,7 +250,7 @@ public class MovieSetArtworkHelper {
       for (Movie movie : movies) {
         try {
           if (!movie.isMultiMovieDir()) {
-            writeImage(bytes, movie.getPath() + File.separator + filename);
+            writeImage(bytes, movie.getPathNIO().resolve(filename));
           }
         }
         catch (Exception e) {
@@ -256,10 +260,10 @@ public class MovieSetArtworkHelper {
     }
 
     private void writeImageToCacheFolder(byte[] bytes) {
-      String filename = ImageCache.getCachedFileName(urlToArtwork);
+      String filename = ImageCache.getMD5(urlToArtwork);
 
       try {
-        writeImage(bytes, ImageCache.getCacheDir() + File.separator + filename + ".jpg");
+        writeImage(bytes, ImageCache.getCacheDir().resolve(filename + ".jpg"));
       }
       catch (Exception e) {
         LOGGER.warn("error in image fetcher", e);
