@@ -730,9 +730,10 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   private void updateTags(Movie movie) {
+    List<String> availableTags = new ArrayList<>(tagsObservable);
     for (String tagInMovie : new ArrayList<>(movie.getTags())) {
       boolean tagFound = false;
-      for (String tag : tagsObservable) {
+      for (String tag : availableTags) {
         if (tagInMovie.equals(tag)) {
           tagFound = true;
           break;
@@ -752,11 +753,12 @@ public class MovieList extends AbstractModelObject {
    */
   private void updateMediaInformationLists(Movie movie) {
     // video codec
+    List<String> availableCodecs = new ArrayList<>(videoCodecsObservable);
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       String codec = mf.getVideoCodec();
       boolean codecFound = false;
 
-      for (String mfCodec : videoCodecsObservable) {
+      for (String mfCodec : availableCodecs) {
         if (mfCodec.equals(codec)) {
           codecFound = true;
           break;
@@ -769,11 +771,12 @@ public class MovieList extends AbstractModelObject {
     }
 
     // audio codec
+    availableCodecs = new ArrayList<>(audioCodecsObservable);
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       for (MediaFileAudioStream audio : mf.getAudioStreams()) {
         String codec = audio.getCodec();
         boolean codecFound = false;
-        for (String mfCodec : audioCodecsObservable) {
+        for (String mfCodec : availableCodecs) {
           if (mfCodec.equals(codec)) {
             codecFound = true;
             break;
