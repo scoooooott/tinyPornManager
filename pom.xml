@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-kodi</artifactId>
-			<version>1.1</version>
+			<version>1.1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
