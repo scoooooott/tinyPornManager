@@ -180,17 +180,15 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200dlu:grow"), },
         new RowSpec[] { RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-    {
-      // add a CSS rule to force body tags to use the default label font
-      // instead of the value in javax.swing.text.html.default.csss
-      Font font = UIManager.getFont("Label.font");
-      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
-      tpScraperDescription = new JTextPane();
-      tpScraperDescription.setOpaque(false);
-      tpScraperDescription.setEditorKit(new HTMLEditorKit());
-      ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
-      panelScraperDetails.add(tpScraperDescription, "1, 1, fill, top");
-    }
+    // add a CSS rule to force body tags to use the default label font
+    // instead of the value in javax.swing.text.html.default.csss
+    Font font = UIManager.getFont("Label.font");
+    String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+    tpScraperDescription = new JTextPane();
+    tpScraperDescription.setOpaque(false);
+    tpScraperDescription.setEditorKit(new HTMLEditorKit());
+    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
+    panelScraperDetails.add(tpScraperDescription, "1, 1, fill, top");
     panelScraperOptions = new JPanel();
     panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
     panelScraperDetails.add(panelScraperOptions, "1, 3, fill, top");
@@ -236,6 +234,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
     tpArtworkScraperDescription = new JTextPane();
     tpArtworkScraperDescription.setEditorKit(new HTMLEditorKit());
+    ((HTMLDocument) tpArtworkScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
     tpArtworkScraperDescription.setOpaque(false);
     panelArtworkScraperDetails.add(tpArtworkScraperDescription, "2, 2, fill, fill");
 
@@ -413,7 +412,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     }
 
     public String getScraperName() {
-      return scraper.getName();
+      return scraper.getName() + " - " + scraper.getVersion();
     }
 
     public String getScraperDescription() {
