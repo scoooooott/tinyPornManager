@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>api-scraper</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 
 	<name>tinyMediaManager scraper API</name>
 	<description>API for tinyMediaManager scrapers</description>
@@ -19,7 +19,7 @@
 		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
 		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>api-scraper-1.2</tag>
   </scm>
 
 	<dependencies>
