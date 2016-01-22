@@ -159,7 +159,10 @@ public class KodiScraper implements IMediaProvider {
           Pattern p = Pattern.compile("msgctxt \"#(.*?)\"\nmsgid \"(.*?)\"\nmsgstr \"(.*?)\"");
           Matcher m = p.matcher(labels);
           while (m.find()) {
-            labelmap.put(m.group(1), m.group(3));
+            // msgctxt "#30030"
+            // msgid "Certification prefix"
+            // msgstr ""
+            labelmap.put(m.group(1), m.group(3).isEmpty() ? m.group(2) : m.group(3));
           }
         }
       }
@@ -178,7 +181,7 @@ public class KodiScraper implements IMediaProvider {
           String type = el.attr("type");
           String defaultValue = el.attr("default");
           String possibleValues[] = el.attr("values").split("\\|");
-          if (possibleValues.length == 0) {
+          if (possibleValues.length == 1 && possibleValues[0].isEmpty()) {
             possibleValues = el.attr("lvalues").split("\\|"); // parse label values
           }
           // if it is a labelcode, replace with value
@@ -250,7 +253,7 @@ public class KodiScraper implements IMediaProvider {
       } // end parse settings
 
       // =====================================================
-      // parse Kodi saved setting values and umdate TMM config
+      // parse Kodi saved setting values and update TMM config
       // =====================================================
       File savedSettings = new File(KodiUtil.detectKodiUserFolder(), "userdata/addon_data/" + providerInfo.getId() + "/settings.xml");
       if (savedSettings.exists()) {
