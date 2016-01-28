@@ -25,14 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.trakttv.TraktTv;
@@ -41,7 +36,6 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -60,13 +54,10 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
-  private final JPanel                panelFanartTv    = new JPanel();
-  private JTextField                  tfFanartClientKey;
 
   public ExternalServicesSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
     {
       JPanel panelTrakttv = new JPanel();
       panelTrakttv.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.trakttv"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -87,36 +78,14 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       JButton btnTestTraktConnection = new JButton(BUNDLE.getString("Settings.trakt.testconnection")); //$NON-NLS-1$
       panelTrakttv.add(btnTestTraktConnection, "4, 4");
 
-      panelFanartTv.setBorder(new TitledBorder(null, "Fanart.tv", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-      add(panelFanartTv, "2, 5, fill, fill");
-      panelFanartTv.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-              FormFactory.DEFAULT_ROWSPEC, }));
-      {
-        JLabel lblClientKey = new JLabel("client key");
-        panelFanartTv.add(lblClientKey, "2, 2");
-      }
-      {
-        tfFanartClientKey = new JTextField();
-        panelFanartTv.add(tfFanartClientKey, "5, 2, fill, default");
-        tfFanartClientKey.setColumns(10);
-      }
-
       if (!Globals.isDonator()) {
         btnGetTraktPin.setEnabled(false);
         btnTestTraktConnection.setEnabled(false);
 
-        tfFanartClientKey.setEnabled(false);
         String msg = "<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"; //$NON-NLS-1$
         JLabel lblTraktDonator = new JLabel(msg);
         lblTraktDonator.setForeground(Color.RED);
         panelTrakttv.add(lblTraktDonator, "2, 8, 3, 1, default, default");
-
-        JLabel lblFanartTvDonator = new JLabel(msg);
-        lblFanartTvDonator.setForeground(Color.RED);
-        panelFanartTv.add(lblFanartTvDonator, "2, 4, 4, 1, default, default");
       }
       else {
         if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
@@ -186,10 +155,5 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("fanartClientKey");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, tfFanartClientKey, jTextFieldBeanProperty_2);
-    autoBinding_3.bind();
   }
 }

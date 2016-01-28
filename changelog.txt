@@ -1,5 +1,6 @@
 Version 2.7.3
 =======================
++/x moved fanart.tv client key to the scraper settings (and released it for everyone)
 x fixed searching for movie set artwork in movie folders
 x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
