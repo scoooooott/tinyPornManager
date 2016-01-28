@@ -15,6 +15,14 @@
  */
 package org.tinymediamanager.scraper.fanarttv;
 
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.scraper.fanarttv.services.MovieService;
+import org.tinymediamanager.scraper.fanarttv.services.TvShowService;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -22,17 +30,11 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.scraper.fanarttv.services.MovieService;
-import org.tinymediamanager.scraper.fanarttv.services.TvShowService;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
+
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
-
-import java.lang.reflect.Type;
-import java.util.Date;
 
 /**
  * The class FanartTv is the abstraction of the Fanart.tv API
@@ -61,15 +63,12 @@ public class FanartTv {
   }
 
   /**
-   * Creates a new instace of the API with the API key and an individual client key
+   * set the fanart.tv client key
    * 
-   * @param apiKey
-   *          the API key
    * @param clientKey
    *          the client key
    */
-  public FanartTv(String apiKey, String clientKey) {
-    this.apiKey = apiKey;
+  public void setClientKey(String clientKey) {
     this.clientKey = clientKey;
   }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -68,17 +69,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         throw e;
       }
     }
-  }
 
-  public FanartTvMetadataProvider(String clientKey) throws Exception {
-    if (api == null) {
-      try {
-        api = new FanartTv(ApiKey.decryptApikey("2gkQtSYPIxfyThxPXveHiCGXEcqJJwClUDrB5JV60OnQeQ85Ft65kFIk1SBKoge3"), clientKey);
-      }
-      catch (Exception e) {
-        LOGGER.error("FanartTvMetadataProvider", e);
-        throw e;
-      }
+    // configure/load settings
+    providerInfo.getConfig().addText("clientKey", "", true);
+    providerInfo.getConfig().load();
+
+    if (StringUtils.isNotBlank(providerInfo.getConfig().getValue("clientKey"))) {
+      api.setClientKey(providerInfo.getConfig().getValue("clientKey"));
     }
   }
 

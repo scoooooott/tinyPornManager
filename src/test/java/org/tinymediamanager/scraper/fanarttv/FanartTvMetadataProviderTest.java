@@ -36,7 +36,7 @@ public class FanartTvMetadataProviderTest {
      * Test movie artwork
      */
     try {
-      artworkProvider = new FanartTvMetadataProvider("");
+      artworkProvider = new FanartTvMetadataProvider();
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setTmdbId(19995);
