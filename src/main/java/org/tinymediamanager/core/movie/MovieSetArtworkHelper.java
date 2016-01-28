@@ -15,6 +15,15 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,15 +36,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.http.Url;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The class MovieSetArtworkHelper. A helper class for managing movie set artwork
@@ -50,22 +50,65 @@ public class MovieSetArtworkHelper {
   private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
+   * Update the artwork for a given movie set. This should be triggered after every movie set change like creating, adding movies, removing movies
+   * 
+   * @param movieSet
+   *          the movie set to update the artwork for
+   */
+  public static void updateArtwork(MovieSet movieSet) {
+    // find artwork in the artwork dir
+    findArtworkInArtworkFolder(movieSet);
+
+    // find artwork in the movie dirs
+    for (Movie movie : new ArrayList<>(movieSet.getMovies())) {
+      findArtworkInMovieFolder(movieSet, movie);
+    }
+  }
+
+  /**
    * find and assign movie set artwork in the artwork folder
    * 
    * @param movieSet
    *          the movie set to search artwork for
    */
-  public static void findArtworkInArtworkFolder(MovieSet movieSet) {
+  private static void findArtworkInArtworkFolder(MovieSet movieSet) {
     String artworkFolder = MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder();
     if (!MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder() || StringUtils.isBlank(artworkFolder)) {
       return;
     }
 
-    // performance trick: look if the desired file is in the image cache
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
         File artworkFile = new File(artworkFolder, artworkFileName);
+        if (artworkFile.exists()) {
+          // add this artwork to the media files
+          MediaFile mediaFile = new MediaFile(artworkFile, type);
+          mediaFile.gatherMediaInformation();
+          movieSet.addToMediaFiles(mediaFile);
+        }
+      }
+    }
+  }
+
+  /**
+   * find and assign movie set artwork in the movie folder
+   * 
+   * @param movieSet
+   *          the movie set to set the artwork for
+   * @param movie
+   *          the movie to look for the movie set artwork
+   */
+  private static void findArtworkInMovieFolder(MovieSet movieSet, Movie movie) {
+    for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
+      // only if there is not yet any artwork assigned
+      if (!movieSet.getMediaFiles(type).isEmpty()) {
+        continue;
+      }
+
+      for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+        String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
+        File artworkFile = new File(movie.getPath(), artworkFileName);
         if (artworkFile.exists()) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
