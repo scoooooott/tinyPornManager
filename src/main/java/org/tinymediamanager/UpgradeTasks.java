@@ -163,7 +163,7 @@ public class UpgradeTasks {
     }
 
     // upgrade to v2.7.3
-    if (StrgUtils.compareVersion(v, "2.7.2") < 0) {
+    if (StrgUtils.compareVersion(v, "2.7.3") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 2.7.3");
       // get movie set artwork
       for (MovieSet movieSet : movieList.getMovieSetList()) {
@@ -171,7 +171,6 @@ public class UpgradeTasks {
         movieSet.saveToDb();
       }
     }
-
   }
 
   /**
