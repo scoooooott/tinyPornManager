@@ -42,6 +42,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -83,7 +84,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner / Myron Boyle
  */
-public class Movie extends MediaEntity {
+public class Movie extends MediaEntity implements IMediaInformation {
   @XmlTransient
   private static final Logger                   LOGGER                     = LoggerFactory.getLogger(Movie.class);
   private static final Comparator<MediaFile>    MEDIA_FILE_COMPARATOR      = new MovieMediaFileComparator();
@@ -1553,32 +1554,6 @@ public class Movie extends MediaEntity {
     this.isDisc = isDisc;
   }
 
-  /**
-   * Gets the media info video format (i.e. 720p).
-   */
-  public String getMediaInfoVideoFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoFormat();
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets the media info video codec (i.e. divx)
-   */
-  public String getMediaInfoVideoCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoCodec();
-    }
-
-    return "";
-  }
-
   public int getMediaInfoVideoBitrate() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (videos.size() > 0) {
@@ -1920,5 +1895,65 @@ public class Movie extends MediaEntity {
     else {
       return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
     }
+  }
+
+  @Override
+  public String getMediaInfoVideoFormat() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getVideoFormat();
+    }
+
+    return "";
+  }
+
+  @Override
+  public String getMediaInfoVideoCodec() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getVideoCodec();
+    }
+
+    return "";
+  }
+
+  @Override
+  public float getMediaInfoAspectRatio() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getAspectRatio();
+    }
+
+    return 0;
+  }
+
+  @Override
+  public String getMediaInfoAudioCodec() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getAudioCodec();
+    }
+
+    return "";
+  }
+
+  @Override
+  public int getMediaInfoAudioChannels() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      try {
+        String channels = mediaFile.getAudioChannels().replace("ch", "");
+        return Integer.parseInt(channels);
+      }
+      catch (NumberFormatException ignored) {
+      }
+    }
+
+    return 0;
   }
 }

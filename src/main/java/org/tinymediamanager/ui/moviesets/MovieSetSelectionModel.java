@@ -44,9 +44,8 @@ public class MovieSetSelectionModel extends AbstractModelObject {
   /**
    * Instantiates a new movie selection model. Usage in MovieSetPanel
    */
-  public MovieSetSelectionModel(JTree tree) {
+  public MovieSetSelectionModel() {
     selectedMovieSet = initalMovieSet;
-    this.tree = tree;
 
     propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -54,6 +53,10 @@ public class MovieSetSelectionModel extends AbstractModelObject {
         firePropertyChange(evt);
       }
     };
+  }
+
+  public void setTree(JTree tree) {
+    this.tree = tree;
   }
 
   /**

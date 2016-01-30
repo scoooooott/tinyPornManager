@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Component;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -31,8 +32,24 @@ import org.tinymediamanager.core.movie.entities.Movie;
  * 
  * @author Manuel Laggner
  */
-public class BorderCellRenderer extends DefaultTableCellRenderer {
+public class BorderTableCellRenderer extends DefaultTableCellRenderer {
   private static final long serialVersionUID = -6545791732880295743L;
+  private Border            border;
+
+  /**
+   * create the CellRenderer with the default inset (2 px left)
+   */
+  public BorderTableCellRenderer() {
+    border = BorderFactory.createEmptyBorder(0, 2, 0, 0);
+  }
+
+  public BorderTableCellRenderer(int top, int left, int bottom, int right) {
+    border = BorderFactory.createEmptyBorder(top, left, bottom, right);
+  }
+
+  public BorderTableCellRenderer(Insets insets) {
+    border = BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right);
+  }
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -49,8 +66,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
     // left margin
     Component comp = super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
     Border defaultBorder = ((JComponent) comp).getBorder();
-    defaultBorder = BorderFactory.createEmptyBorder(0, 2, 0, 0);
-    this.setBorder(defaultBorder);
+    this.setBorder(BorderFactory.createCompoundBorder(defaultBorder, border));
 
     if (value instanceof Movie) {
       Movie movie = (Movie) value;

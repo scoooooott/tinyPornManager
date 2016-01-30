@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
@@ -32,7 +33,10 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmTree.BottomBorderBorder;
+import org.tinymediamanager.ui.components.TmmTree.VerticalBorderPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -46,42 +50,63 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetTreeCellRenderer implements TreeCellRenderer {
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Color          EVEN_ROW_COLOR     = new Color(241, 245, 250);
 
-  private JPanel                      movieSetPanel      = new JPanel();
-  private JPanel                      moviePanel         = new JPanel();
+  private JPanel                      movieSetPanel      = new VerticalBorderPanel(new int[] { 0, 1, 2 });
   private JLabel                      movieSetTitle      = new JLabel();
-  private JLabel                      movieTitle         = new JLabel();
-  private JLabel                      movieSetInfo       = new JLabel();
+  private JLabel                      movieSetMovies     = new JLabel();
+  private JLabel                      movieSetNfoLabel   = new JLabel();
   private JLabel                      movieSetImageLabel = new JLabel();
+
+  private JPanel                      moviePanel         = new VerticalBorderPanel(new int[] { 0, 1, 2 });
+  private JLabel                      movieTitle         = new JLabel();
   private JLabel                      movieNfoLabel      = new JLabel();
   private JLabel                      movieImageLabel    = new JLabel();
 
   private DefaultTreeCellRenderer     defaultRenderer    = new DefaultTreeCellRenderer();
+  private final Color                 defaultColor       = defaultRenderer.getTextSelectionColor();
 
   public MovieSetTreeCellRenderer() {
-    movieSetPanel.setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("center:20px"),
-            ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    int movieColumnWidth = TmmUIHelper.getColumnWidthForIcon(IconManager.MOVIE);
+    int nfoColumnWidth = TmmUIHelper.getColumnWidthForIcon(IconManager.NFO);
+    int imageColumnWidth = TmmUIHelper.getColumnWidthForIcon(IconManager.IMAGES);
+
+    movieSetPanel
+        .setLayout(
+            new FormLayout(
+                new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    ColumnSpec.decode("center:" + movieColumnWidth + "px"), ColumnSpec.decode("center:" + nfoColumnWidth + "px"),
+                    ColumnSpec.decode("center:" + imageColumnWidth + "px"), ColumnSpec.decode("1px") },
+                new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
 
     TmmFontHelper.changeFont(movieSetTitle, Font.BOLD);
     movieSetTitle.setHorizontalAlignment(JLabel.LEFT);
     movieSetTitle.setMinimumSize(new Dimension(0, 0));
+    movieSetTitle.setBorder(new EmptyBorder(5, 0, 5, 0));
+    movieSetTitle.setForeground(defaultColor);
     movieSetPanel.add(movieSetTitle, "1, 1");
+    movieSetPanel.setBorder(new BottomBorderBorder());
 
-    movieSetPanel.add(movieSetImageLabel, "4, 1, 1, 2");
+    movieSetPanel.add(movieSetMovies, "3, 1");
+    TmmFontHelper.changeFont(movieSetMovies, 0.916);
+    movieSetMovies.setForeground(defaultColor);
 
-    TmmFontHelper.changeFont(movieSetInfo, 0.816);
-    movieSetInfo.setHorizontalAlignment(JLabel.LEFT);
-    movieSetInfo.setMinimumSize(new Dimension(0, 0));
-    movieSetPanel.add(movieSetInfo, "1, 2");
+    movieSetPanel.add(movieSetNfoLabel, "4, 1");
+    movieSetPanel.add(movieSetImageLabel, "5, 1");
 
-    moviePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+    moviePanel
+        .setLayout(
+            new FormLayout(
+                new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    ColumnSpec.decode("center:" + movieColumnWidth + "px"), ColumnSpec.decode("center:" + nfoColumnWidth + "px"),
+                    ColumnSpec.decode("center:" + imageColumnWidth + "px"), ColumnSpec.decode("1px") },
+                new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+
     movieTitle.setMinimumSize(new Dimension(0, 0));
+    movieTitle.setBorder(new EmptyBorder(5, 0, 5, 0));
+    moviePanel.setBorder(new BottomBorderBorder());
     moviePanel.add(movieTitle, "1, 1");
-    moviePanel.add(movieNfoLabel, "3, 1");
-    moviePanel.add(movieImageLabel, "4, 1");
+    moviePanel.add(movieNfoLabel, "4, 1");
+    moviePanel.add(movieImageLabel, "5, 1");
   }
 
   @Override
@@ -101,8 +126,9 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
         else {
           movieSetTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
         }
-        movieSetInfo.setText(movieSet.getMovies().size() + " Movies");
-        movieSetImageLabel.setIcon(movieSet.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
+        movieSetMovies.setText("" + movieSet.getMovies().size());
+        movieSetNfoLabel.setIcon(movieSet.getHasMetadata() ? IconManager.DOT_AVAILABLE : IconManager.DOT_UNAVAILABLE);
+        movieSetImageLabel.setIcon(movieSet.getHasImages() ? IconManager.DOT_AVAILABLE : IconManager.DOT_UNAVAILABLE);
 
         movieSetPanel.setEnabled(tree.isEnabled());
         movieSetPanel.invalidate();
@@ -122,8 +148,8 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
         else {
           movieTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
         }
-        movieNfoLabel.setIcon(movie.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
-        movieImageLabel.setIcon(movie.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
+        movieNfoLabel.setIcon(movie.getHasNfoFile() ? IconManager.DOT_AVAILABLE : IconManager.DOT_UNAVAILABLE);
+        movieImageLabel.setIcon(movie.getHasImages() ? IconManager.DOT_AVAILABLE : IconManager.DOT_UNAVAILABLE);
 
         moviePanel.setEnabled(tree.isEnabled());
         moviePanel.invalidate();
@@ -138,10 +164,6 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
     // paint background
     if (selected) {
       returnValue.setBackground(defaultRenderer.getBackgroundSelectionColor());
-    }
-    else {
-      returnValue.setBackground(row % 2 == 0 ? EVEN_ROW_COLOR : Color.WHITE);
-      // rendererPanel.setBackground(defaultRenderer.getBackgroundNonSelectionColor());
     }
 
     return returnValue;

@@ -52,7 +52,11 @@ import com.jgoodies.forms.layout.RowSpec;
 public class ImagePanel extends JPanel implements HierarchyListener {
   private static final long   serialVersionUID = -5344085698387374260L;
   private static final Logger LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
+
+  protected int               maxWidth         = 300;
+  protected int               maxHeight        = 100;
   private List<MediaFile>     mediaFiles       = null;
+
   private ImageLoader         activeWorker     = null;
 
   /**
@@ -64,7 +68,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), }, new RowSpec[] { RowSpec.decode("100px:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("50dlu:grow"), }, new RowSpec[] { RowSpec.decode("60dlu:grow"), }));
 
     scrollPane = new JScrollPane();
     add(scrollPane, "1, 1, fill, fill");
@@ -89,6 +93,22 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     // fetch image in separate worker -> performance
     activeWorker = new ImageLoader(mediaFiles);
     activeWorker.execute();
+  }
+
+  public int getMaxWidth() {
+    return maxWidth;
+  }
+
+  public int getMaxHeight() {
+    return maxHeight;
+  }
+
+  public void setMaxWidth(int maxWidth) {
+    this.maxWidth = maxWidth;
+  }
+
+  public void setMaxHeight(int maxHeight) {
+    this.maxHeight = maxHeight;
   }
 
   @Override
@@ -132,7 +152,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             File file = ImageCache.getCachedFile(mediaFile.getFile().getAbsolutePath());
             LOGGER.debug("loading " + file);
             BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
-            Point size = ImageCache.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
+            Point size = ImageCache.calculateSize(maxWidth, maxHeight, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
             // BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
             BufferedImage img = Scalr.resize(bufferedImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
             bufferedImage = null;

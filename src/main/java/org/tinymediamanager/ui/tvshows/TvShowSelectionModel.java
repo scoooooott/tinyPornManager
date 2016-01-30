@@ -45,9 +45,8 @@ public class TvShowSelectionModel extends AbstractModelObject {
   /**
    * Instantiates a new tv show selection model. Usage in TvShowPanel
    */
-  public TvShowSelectionModel(JTree tree) {
+  public TvShowSelectionModel() {
     selectedTvShow = initalTvShow;
-    this.tree = tree;
 
     propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -55,6 +54,10 @@ public class TvShowSelectionModel extends AbstractModelObject {
         firePropertyChange(evt);
       }
     };
+  }
+
+  public void setTree(JTree tree) {
+    this.tree = tree;
   }
 
   /**

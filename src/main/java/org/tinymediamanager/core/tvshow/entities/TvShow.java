@@ -42,6 +42,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -67,7 +68,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class TvShow extends MediaEntity {
+public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShow.class);
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
   private static TvShowArtworkHelper         artworkHelper         = new TvShowArtworkHelper();
@@ -1129,6 +1130,7 @@ public class TvShow extends MediaEntity {
    * 
    * @return the certifications
    */
+  @Override
   public Certification getCertification() {
     return certification;
   }
@@ -1471,5 +1473,35 @@ public class TvShow extends MediaEntity {
    */
   public boolean deleteFilesSafely() {
     return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+  }
+
+  @Override
+  public String getMediaInfoVideoFormat() {
+    return null;
+  }
+
+  @Override
+  public float getMediaInfoAspectRatio() {
+    return 0;
+  }
+
+  @Override
+  public String getMediaInfoVideoCodec() {
+    return null;
+  }
+
+  @Override
+  public boolean isVideoIn3D() {
+    return false;
+  }
+
+  @Override
+  public String getMediaInfoAudioCodec() {
+    return null;
+  }
+
+  @Override
+  public int getMediaInfoAudioChannels() {
+    return 0;
   }
 }

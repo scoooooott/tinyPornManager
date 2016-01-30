@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -45,6 +46,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
@@ -59,7 +61,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
+public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode>, IMediaInformation {
   private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShowEpisode.class);
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
 
@@ -692,36 +694,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Gets the media info video format (i.e. 720p).
-   * 
-   * @return the media info video format
-   */
-  public String getMediaInfoVideoFormat() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoFormat();
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets the media info video codec (i.e. divx)
-   * 
-   * @return the media info video codec
-   */
-  public String getMediaInfoVideoCodec() {
-    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
-      MediaFile mediaFile = videos.get(0);
-      return mediaFile.getVideoCodec();
-    }
-
-    return "";
-  }
-
-  /**
    * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
    * 
    * @return the media info audio codec
@@ -1078,5 +1050,82 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return result;
+  }
+
+  @Override
+  public Certification getCertification() {
+    return getTvShow().getCertification();
+  }
+
+  @Override
+  public String getMediaInfoVideoFormat() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getVideoFormat();
+    }
+
+    return "";
+  }
+
+  @Override
+  public String getMediaInfoVideoCodec() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getVideoCodec();
+    }
+
+    return "";
+  }
+
+  @Override
+  public float getMediaInfoAspectRatio() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getAspectRatio();
+    }
+
+    return 0;
+  }
+
+  @Override
+  public String getMediaInfoAudioCodec() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getAudioCodec();
+    }
+
+    return "";
+  }
+
+  @Override
+  public int getMediaInfoAudioChannels() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      try {
+        String channels = mediaFile.getAudioChannels().replace("ch", "");
+        return Integer.parseInt(channels);
+      }
+      catch (NumberFormatException ignored) {
+      }
+    }
+
+    return 0;
+  }
+
+  @Override
+  public boolean isVideoIn3D() {
+    String video3DFormat = "";
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      video3DFormat = mediaFile.getVideo3DFormat();
+    }
+
+    return StringUtils.isNotBlank(video3DFormat);
   }
 }

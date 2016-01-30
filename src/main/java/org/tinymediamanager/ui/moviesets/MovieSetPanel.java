@@ -155,7 +155,8 @@ public class MovieSetPanel extends JPanel {
         super.paintComponent(g);
       }
     };
-    movieSetSelectionModel = new MovieSetSelectionModel(tree);
+    movieSetSelectionModel = new MovieSetSelectionModel();
+    movieSetSelectionModel.setTree(tree);
 
     TreeUI ui = new TreeUI() {
       @Override

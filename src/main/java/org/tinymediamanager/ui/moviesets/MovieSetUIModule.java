@@ -15,29 +15,68 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.awt.CardLayout;
+import java.util.ResourceBundle;
+
 import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.ITmmUIModule;
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
+import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
+import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
+import org.tinymediamanager.ui.movies.panels.MovieMediaInformationPanel;
+import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
+import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
 
 public class MovieSetUIModule implements ITmmUIModule {
-  private final static String          ID       = "movieSets";
-  private static MovieSetUIModule      instance = null;
+  private final static ResourceBundle  BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static String          ID                   = "movieSets";
+
+  private static MovieSetUIModule      instance             = null;
 
   private final MovieSetSelectionModel selectionModel;
+  private final MovieSelectionModel    movieSelectionModel;
+
+  private final MovieSetTreePanel      listPanel;
+  private final JPanel                 detailPanel;
+  private final JTabbedPane            movieSetDetailPanel;
+  private final JTabbedPane            movieDetailPanel;
+
+  private final Action                 actionSearchMovieSet = new MovieSetSearchAction(false);
+  private final Action                 actionEditMovieSet   = new MovieSetEditAction(false);
 
   private MovieSetUIModule() {
-    // this will be used in v3
-    // listPanel = new MoviePanel();
-    // selectionModel = listPanel.movieSelectionModel;
-    // detailPanel = new MovieInformationPanel(selectionModel);
+    selectionModel = new MovieSetSelectionModel();
+    movieSelectionModel = new MovieSelectionModel();
 
-    // createActions();
-    // createPopupMenu();
+    listPanel = new MovieSetTreePanel(selectionModel);
 
-    selectionModel = MainWindow.getActiveInstance().getMovieSetPanel().movieSetSelectionModel;
+    detailPanel = new JPanel();
+    detailPanel.setLayout(new CardLayout());
+
+    // panel for movie sets
+    movieSetDetailPanel = new MainTabbedPane();
+    movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));//$NON-NLS-1$
+    detailPanel.add(movieSetDetailPanel, "movieSet");
+
+    // panel for movies
+    movieDetailPanel = new MainTabbedPane();
+    movieDetailPanel.addTab("Details", new MovieInformationPanel(movieSelectionModel));
+    movieDetailPanel.addTab("Cast", new MovieCastPanel(movieSelectionModel));
+    movieDetailPanel.addTab("Media files", new MovieMediaInformationPanel(movieSelectionModel));
+    movieDetailPanel.addTab("Artwork", new MovieArtworkPanel(movieSelectionModel));
+    movieDetailPanel.addTab("Trailer", new MovieTrailerPanel(movieSelectionModel));
+    detailPanel.add(movieDetailPanel, "movie");
   }
 
   public static MovieSetUIModule getInstance() {
@@ -54,38 +93,32 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   @Override
   public JPanel getTabPanel() {
-    // TODO Auto-generated method stub
-    return null;
+    return listPanel;
   }
 
   @Override
   public String getTabTitle() {
-    // TODO Auto-generated method stub
-    return null;
+    return BUNDLE.getString("tmm.moviesets"); //$NON-NLS-1$
   }
 
   @Override
   public JPanel getDetailPanel() {
-    // TODO Auto-generated method stub
-    return null;
+    return detailPanel;
   }
 
   @Override
   public Action getSearchAction() {
-    // TODO Auto-generated method stub
-    return null;
+    return actionSearchMovieSet;
   }
 
   @Override
   public JPopupMenu getSearchMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public Action getEditAction() {
-    // TODO Auto-generated method stub
-    return null;
+    return actionEditMovieSet;
   }
 
   @Override
@@ -96,25 +129,21 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   @Override
   public Action getUpdateAction() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public JPopupMenu getUpdateMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public Action getExportAction() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public JPopupMenu getExportMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -125,5 +154,17 @@ public class MovieSetUIModule implements ITmmUIModule {
   @Override
   public JPanel getSettingsPanel() {
     return null;
+  }
+
+  public void setSelectedMovieSet(MovieSet movieSet) {
+    selectionModel.setSelectedMovieSet(movieSet);
+    CardLayout cl = (CardLayout) (detailPanel.getLayout());
+    cl.show(detailPanel, "movieSet");
+  }
+
+  public void setSelectedMovie(Movie movie) {
+    movieSelectionModel.setSelectedMovie(movie);
+    CardLayout cl = (CardLayout) (detailPanel.getLayout());
+    cl.show(detailPanel, "movie");
   }
 }

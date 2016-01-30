@@ -344,6 +344,13 @@ public class MovieSet extends MediaEntity {
     return false;
   }
 
+  public Boolean getHasMetadata() {
+    if (StringUtils.isNotBlank(plot) && StringUtils.isNotBlank(title)) {
+      return true;
+    }
+    return false;
+  }
+
   public List<File> getImagesToCache() {
     // get files to cache
     List<File> filesToCache = new ArrayList<File>();

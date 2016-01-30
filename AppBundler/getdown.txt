@@ -93,3 +93,5 @@ jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
 jvmarg = [mac os x] -Xdock:name=tinyMediaManager
 jvmarg = [mac os x] -Dapple.eawt.quitStrategy=CLOSE_ALL_WINDOWS
 jvmarg = -Djna.nosys=true
+jvmarg = [linux] -Dawt.useSystemAAFontSettings=on 
+jvmarg = [linux] -Dswing.aatext=true

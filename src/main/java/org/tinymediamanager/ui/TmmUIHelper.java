@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.apache.commons.io.FilenameUtils;
@@ -168,5 +169,19 @@ public class TmmUIHelper {
     else {
       throw new UnsupportedOperationException();
     }
+  }
+
+  /**
+   * get the column width for a column containing the given icon (icon width + 10%)
+   * 
+   * @param icon
+   *          the given icon
+   * @return the desired column width
+   */
+  public static int getColumnWidthForIcon(ImageIcon icon) {
+    if (icon == null) {
+      return 0;
+    }
+    return (int) (icon.getIconWidth() * 1.1);
   }
 }

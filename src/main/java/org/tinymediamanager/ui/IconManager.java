@@ -15,17 +15,24 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 public class IconManager {
   private final static Map<URI, ImageIcon> ICON_CACHE        = new HashMap<>();
   public final static ImageIcon            EMPTY_IMAGE       = new ImageIcon(IconManager.class.getResource("images/empty.png"));
 
+  // packaged icons
   public final static ImageIcon            APPLY             = loadImage("apply.png");
   public final static ImageIcon            ARROW_UP          = loadImage("arrow-up.png");
   public final static ImageIcon            ARROW_DOWN        = loadImage("arrow-down.png");
@@ -37,6 +44,8 @@ public class IconManager {
   public final static ImageIcon            COPY              = loadImage("copy.png");
   public final static ImageIcon            CROSS             = loadImage("cross.png");
   public final static ImageIcon            DELETE            = loadImage("delete.png");
+  public final static ImageIcon            DOT_AVAILABLE     = loadImage("dot_available.png");
+  public final static ImageIcon            DOT_UNAVAILABLE   = loadImage("dot_unavailable.png");
   public final static ImageIcon            DOWNLOAD          = loadImage("download.png");
   public final static ImageIcon            DOWNLOAD_DISABLED = loadImage("download-disabled.png");
   public final static ImageIcon            EDIT              = loadImage("edit.png");
@@ -66,6 +75,16 @@ public class IconManager {
   public final static ImageIcon            SYNC              = loadImage("sync.png");
   public final static ImageIcon            UNCHECK_ALL       = loadImage("uncheck-all.png");
   public final static ImageIcon            UNWATCHED         = loadImage("unwatched.png");
+
+  // Material icons
+  public final static ImageIcon            DATE_ADDED        = createMaterialFontIcon('\uE02E', 24);
+  public final static ImageIcon            IMAGES            = createMaterialFontIcon('\uE410', 24);
+  public final static ImageIcon            MOVIE             = createMaterialFontIcon('\uE54D', 24);
+  public final static ImageIcon            NFO               = createMaterialFontIcon('\uE873', 24);
+  public final static ImageIcon            RATING            = createMaterialFontIcon('\uE838', 24);
+  public final static ImageIcon            SUBTITLES         = createMaterialFontIcon('\uE24C', 24);
+  public final static ImageIcon            TRAILER           = createMaterialFontIcon('\uE02C', 24);
+  public final static ImageIcon            WATCHED           = createMaterialFontIcon('\uE037', 24);
 
   private static ImageIcon loadImage(String name) {
     URL file = IconManager.class.getResource("/images/ui/" + name);
@@ -118,5 +137,49 @@ public class IconManager {
     }
 
     return icon;
+  }
+
+  /**
+   * create a image off the material icon font
+   * 
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
+   * @return
+   */
+  private static ImageIcon createMaterialFontIcon(char iconId, int size) {
+    try {
+      Font materialFont = new Font("Material Icons", Font.PLAIN, size);
+
+      // calculate icon size
+      BufferedImage tmp = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
+      g2.setFont(materialFont);
+      int iconWidth = g2.getFontMetrics().charWidth(iconId);
+      int iconHeight = g2.getFontMetrics().getHeight();
+      int iconOffset = g2.getFontMetrics().getDescent();
+      g2.dispose();
+
+      // and draw it
+      BufferedImage buffer = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
+      g2 = (Graphics2D) buffer.getGraphics();
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+      g2.setFont(materialFont);
+      g2.setColor(UIManager.getColor("Label.foreground"));
+
+      int sy = size - iconOffset;
+      g2.drawString(String.valueOf(iconId), 0, sy);
+      g2.dispose();
+
+      g2.drawImage(buffer, 0, 0, null);
+      g2.dispose();
+      return new ImageIcon(buffer);
+    }
+    catch (Exception ignored) {
+    }
+
+    return EMPTY_IMAGE;
   }
 }

@@ -319,7 +319,8 @@ public class TvShowPanel extends JPanel {
         super.paintComponent(g);
       }
     };
-    tvShowSelectionModel = new TvShowSelectionModel(tree);
+    tvShowSelectionModel = new TvShowSelectionModel();
+    tvShowSelectionModel.setTree(tree);
 
     TreeUI ui = new TreeUI() {
       @Override

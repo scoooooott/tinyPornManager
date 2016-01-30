@@ -18,6 +18,7 @@ package org.tinymediamanager.ui;
 import java.awt.Component;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -29,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author Manuel Laggner
  */
-public class IconRenderer extends DefaultTableCellRenderer {
+public class IconTableCellRenderer extends DefaultTableCellRenderer {
   private static final long serialVersionUID = 400599451709865596L;
 
   private String            tooltip;
@@ -40,12 +41,15 @@ public class IconRenderer extends DefaultTableCellRenderer {
    * @param tooltip
    *          the tooltip
    */
-  public IconRenderer(String tooltip) {
+  public IconTableCellRenderer(String tooltip) {
     this.tooltip = tooltip;
   }
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    Component comp = super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+    this.setBorder(((JComponent) comp).getBorder());
+
     if (value instanceof ImageIcon) {
       setIcon((ImageIcon) value);
     }

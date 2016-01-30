@@ -41,16 +41,16 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.TmmTable;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import org.tinymediamanager.ui.components.ZebraJTable;
 
 /**
  * The Class MediaFilesPanel.
@@ -73,14 +73,14 @@ public class MediaFilesPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("default:grow"), }));
 
     mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
-    tableFiles = new ZebraJTable(mediaFileTableModel);
+    tableFiles = new TmmTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
     LinkListener linkListener = new LinkListener();
     tableFiles.addMouseListener(linkListener);
     tableFiles.addMouseMotionListener(linkListener);
 
-    scrollPaneFiles = ZebraJTable.createStripedJScrollPane(tableFiles);
+    scrollPaneFiles = TmmTable.createJScrollPane(tableFiles);
     add(scrollPaneFiles, "1, 1, fill, fill");
 
     scrollPaneFiles.setViewportView(tableFiles);

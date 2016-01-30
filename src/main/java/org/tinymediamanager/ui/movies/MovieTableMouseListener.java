@@ -18,7 +18,7 @@ public class MovieTableMouseListener extends MouseAdapter {
   private JPopupMenu popup;
   private JTable     table;
 
-  MovieTableMouseListener(JPopupMenu popupMenu, JTable table) {
+  public MovieTableMouseListener(JPopupMenu popupMenu, JTable table) {
     this.popup = popupMenu;
     this.table = table;
   }
