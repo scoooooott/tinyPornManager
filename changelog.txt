@@ -1,10 +1,20 @@
+Version 2.7.3
+=======================
++/x moved fanart.tv client key to the scraper settings (and released it for everyone)
+x fixed searching for movie set artwork in movie folders
+x only write guests into episode NFO
+x fixed error in movie set editor when no movie was selected
+x remember last opened directory in the new chooser
+
+
 Version 2.7.2
 =======================
 LINUX: We've removed the shipped mediainfo library due to massive problems between
        different distributions. Please install the libmediainfo directly from
        your package manager or from https://mediaarea.net/
        
-+ Kodi scrapers are now configurable :)
++ Kodi scrapers are now configurable
++ Movie renamer preview: dropped donator-only status, now FREE FOR ALL
 + added web-dl to media sources
 + add writing of imdb id in TV show NFO
 + added $# rating movie renamer option
@@ -21,6 +31,7 @@ x NTFS: renaming to same name but other cASE now works
 x Movie actors: replace invalid file system characters when saving thumb
 x MacOS: save database on terminating with command-q
 x fixed error in movie set editor when no movies are assigned to the set
+x fixed error in movie editor where sorttitle has been lost
 
 
 Version 2.7.1

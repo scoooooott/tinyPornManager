@@ -350,6 +350,16 @@ public class NativeFileChooser extends JFileChooser {
   // }
   // }
 
+  @Override
+  public void setCurrentDirectory(File dir) {
+    if (fileChooser != null) {
+      fileChooser.setInitialDirectory(dir);
+    }
+    if (directoryChooser != null) {
+      directoryChooser.setInitialDirectory(dir);
+    }
+  };
+
   private void initFxFileChooser(File currentFile) {
     if (JAVAFX_AVAILABLE) {
       try {

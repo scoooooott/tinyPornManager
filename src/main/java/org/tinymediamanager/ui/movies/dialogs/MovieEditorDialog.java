@@ -493,7 +493,6 @@ public class MovieEditorDialog extends TmmDialog {
       scrollPaneProduction.setViewportView(tfProductionCompanies);
     }
 
-    tfSorttitle.setText(movieToEdit.getSortTitle());
     tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
     details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details2Panel.setLayout(new FormLayout(
@@ -827,25 +826,25 @@ public class MovieEditorDialog extends TmmDialog {
     initDataBindings();
 
     {
-      tfTitle.setText(movie.getTitle());
-      tfOriginalTitle.setText(movie.getOriginalTitle());
-      tfSorttitle.setText(movie.getSortTitle());
-      tpTagline.setText(movie.getTagline());
-      tpPlot.setText(movie.getPlot());
+      tfTitle.setText(movieToEdit.getTitle());
+      tfOriginalTitle.setText(movieToEdit.getOriginalTitle());
+      tfSorttitle.setText(movieToEdit.getSortTitle());
+      tpTagline.setText(movieToEdit.getTagline());
+      tpPlot.setText(movieToEdit.getPlot());
       tpPlot.setCaretPosition(0);
-      tfDirector.setText(movie.getDirector());
-      tfWriter.setText(movie.getWriter());
-      lblPoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
-      tfProductionCompanies.setText(movie.getProductionCompany());
-      spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
+      tfDirector.setText(movieToEdit.getDirector());
+      tfWriter.setText(movieToEdit.getWriter());
+      lblPoster.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.POSTER));
+      tfProductionCompanies.setText(movieToEdit.getProductionCompany());
+      spRuntime.setValue(Integer.valueOf(movieToEdit.getRuntime()));
 
-      tfSpokenLanguages.setText(movie.getSpokenLanguages());
-      tfCountry.setText(movie.getCountry());
+      tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
+      tfCountry.setText(movieToEdit.getCountry());
 
       {
         int year = 0;
         try {
-          year = Integer.parseInt(movie.getYear());
+          year = Integer.parseInt(movieToEdit.getYear());
         }
         catch (Exception ignored) {
         }
@@ -858,22 +857,22 @@ public class MovieEditorDialog extends TmmDialog {
       for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
-      cbCertification.setSelectedItem(movie.getCertification());
+      cbCertification.setSelectedItem(movieToEdit.getCertification());
 
-      lblMoviePath.setText(movie.getPath());
-      lblLogo.setImagePath(movie.getArtworkFilename(MediaFileType.LOGO));
-      lblClearart.setImagePath(movie.getArtworkFilename(MediaFileType.CLEARART));
-      lblThumb.setImagePath(movie.getArtworkFilename(MediaFileType.THUMB));
-      lblDisc.setImagePath(movie.getArtworkFilename(MediaFileType.DISCART));
-      lblBanner.setImagePath(movie.getArtworkFilename(MediaFileType.BANNER));
-      if (movie.getReleaseDate() != null) {
-        spReleaseDate.setValue(movie.getReleaseDate());
+      lblMoviePath.setText(movieToEdit.getPath());
+      lblLogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.LOGO));
+      lblClearart.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.CLEARART));
+      lblThumb.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.THUMB));
+      lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISCART));
+      lblBanner.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.BANNER));
+      if (movieToEdit.getReleaseDate() != null) {
+        spReleaseDate.setValue(movieToEdit.getReleaseDate());
       }
       else {
         spReleaseDate.setValue(INITIAL_DATE);
       }
 
-      for (MovieActor origCast : movie.getActors()) {
+      for (MovieActor origCast : movieToEdit.getActors()) {
         MovieActor actor = new MovieActor();
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
@@ -882,7 +881,7 @@ public class MovieEditorDialog extends TmmDialog {
         cast.add(actor);
       }
 
-      for (MovieProducer origProducer : movie.getProducers()) {
+      for (MovieProducer origProducer : movieToEdit.getProducers()) {
         MovieProducer producer = new MovieProducer();
         producer.setName(origProducer.getName());
         producer.setRole(origProducer.getRole());
@@ -891,11 +890,11 @@ public class MovieEditorDialog extends TmmDialog {
         producers.add(producer);
       }
 
-      for (MediaGenres genre : movie.getGenres()) {
+      for (MediaGenres genre : movieToEdit.getGenres()) {
         genres.add(genre);
       }
 
-      for (MovieTrailer trailer : movie.getTrailer()) {
+      for (MovieTrailer trailer : movieToEdit.getTrailer()) {
         trailers.add(trailer);
       }
 
@@ -915,6 +914,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
       cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       toggleSorttitle();
+      tfSorttitle.setText(movieToEdit.getSortTitle());
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$

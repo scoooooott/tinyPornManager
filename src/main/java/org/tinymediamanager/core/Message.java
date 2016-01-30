@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class Message {
   public enum MessageLevel {
-    DEBUG, INFO, WARN, ERROR
+    DEBUG, INFO, WARN, ERROR, SEVERE
   }
 
   private MessageLevel messageLevel;

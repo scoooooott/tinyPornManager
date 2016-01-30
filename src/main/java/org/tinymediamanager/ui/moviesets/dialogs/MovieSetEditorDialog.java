@@ -438,7 +438,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
-      if (row < moviesInSet.size() - 1) {
+      if (row > -1 && row < moviesInSet.size() - 1) {
         Collections.rotate(moviesInSet.subList(row, row + 2), -1);
         tableMovies.getSelectionModel().setSelectionInterval(row + 1, row + 1);
       }
