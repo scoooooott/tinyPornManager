@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
+package org.tinymediamanager.ui.panels;
 
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
@@ -48,6 +48,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -59,6 +60,7 @@ import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -73,48 +75,10 @@ import com.jtattoo.plaf.BaseRootPaneUI;
  * @author Manuel Laggner
  */
 public class ToolbarPanel extends JPanel {
-  private static final long           serialVersionUID    = 7969400170662870244L;
-  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());
-  private final static Logger         LOGGER              = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+  private static final long           serialVersionUID = 7969400170662870244L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
 
-  private static final ImageIcon      SCRAPE_ICON         = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_search.png"));
-  private static final ImageIcon      SCRAPE_ICON_HOVER   = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_search_hover.png"));
-  private static final ImageIcon      EDIT_ICON           = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_edit.png"));
-  private static final ImageIcon      EDIT_ICON_HOVER     = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_edit_hover.png"));
-  private static final ImageIcon      REFRESH_ICON        = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_refresh.png"));
-  private static final ImageIcon      REFRESH_ICON_HOVER  = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_refresh_hover.png"));
-
-  private static final ImageIcon      DOWNLOAD_ICON       = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_download.png"));
-  private static final ImageIcon      DOWNLOAD_ICON_HOVER = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_download_hover.png"));
-
-  private static final ImageIcon      EXPORT_ICON         = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_export.png"));
-  private static final ImageIcon      EXPORT_ICON_HOVER   = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_export_hover.png"));
-  private static final ImageIcon      TOOLS_ICON          = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_tools.png"));
-  private static final ImageIcon      TOOLS_ICON_HOVER    = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_tools_hover.png"));
-  private static final ImageIcon      SETTINGS_ICON       = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_settings.png"));
-  private static final ImageIcon      SETTINGS_ICON_HOVER = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_settings_hover.png"));
-  private static final ImageIcon      ABOUT_ICON          = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_about.png"));
-  private static final ImageIcon      ABOUT_ICON_HOVER    = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_about_hover.png"));
-  private static final ImageIcon      DONATE_ICON         = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_donate.png"));
-  private static final ImageIcon      DONATE_ICON_HOVER   = new ImageIcon(
-      ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/icn_donate_hover.png"));
   private JButton                     btnSearch;
   private JButton                     btnEdit;
   private JButton                     btnUpdate;
@@ -139,22 +103,21 @@ public class ToolbarPanel extends JPanel {
   private Action                      editAction;
   private Action                      updateAction;
   private Action                      exportAction;
-  private Action                      settingsAction      = new SettingsAction();
-  private Action                      aboutAction         = new AboutAction();
-  private Action                      donateAction        = new DonateAction();
+  private Action                      settingsAction   = new SettingsAction();
+  private Action                      aboutAction      = new AboutAction();
+  private Action                      donateAction     = new DonateAction();
 
   private JPopupMenu                  updatePopupMenu;
   private JPopupMenu                  searchPopupMenu;
   private JPopupMenu                  editPopupMenu;
-  private JPopupMenu                  toolsPopupMenu      = buildToolsMenu();
+  private JPopupMenu                  toolsPopupMenu   = buildToolsMenu();
 
-  private int                         arrowSize           = 10;
-  private Color                       arrowColor          = Color.GRAY;
-  private Color                       arrowColorHover     = Color.WHITE;
+  private int                         arrowSize        = 10;
+  private Color                       arrowColor       = Color.GRAY;
+  private Color                       arrowColorHover  = Color.WHITE;
   private ImageIcon                   menuImage;
   private ImageIcon                   menuImageHover;
 
-  private JPanel                      panelWest;
   private JPanel                      panelCenter;
   private JPanel                      panelEast;
 
@@ -174,34 +137,33 @@ public class ToolbarPanel extends JPanel {
             ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), },
         new RowSpec[] { RowSpec.decode("fill:default"), FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    panelCenter.add(new JLabel(new ImageIcon(ToolbarPanel.class.getResource("/org/tinymediamanager/ui/images/logo_toolbar.png"))),
-        "2, 1, 1, 3, center, center");
+    panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "2, 1, 1, 3, center, center");
 
-    btnUpdate = createButton("", REFRESH_ICON, REFRESH_ICON_HOVER);
+    btnUpdate = createButton("", IconManager.TOOLBAR_REFRESH, IconManager.TOOLBAR_REFRESH_HOVER);
     panelCenter.add(btnUpdate, "4, 1, center, center");
 
-    btnSearch = createButton("", SCRAPE_ICON, SCRAPE_ICON_HOVER);
+    btnSearch = createButton("", IconManager.TOOLBAR_SEARCH, IconManager.TOOLBAR_SEARCH_HOVER);
     panelCenter.add(btnSearch, "6, 1, center, center");
 
-    btnEdit = createButton("", EDIT_ICON, EDIT_ICON_HOVER);
+    btnEdit = createButton("", IconManager.TOOLBAR_EDIT, IconManager.TOOLBAR_EDIT_HOVER);
     panelCenter.add(btnEdit, "8, 1, center, center");
 
-    btnExport = createButton("", EXPORT_ICON, EXPORT_ICON_HOVER);
+    btnExport = createButton("", IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
     panelCenter.add(btnExport, "12, 1, center, bottom");
 
-    btnTools = createButton("", TOOLS_ICON, TOOLS_ICON_HOVER);
+    btnTools = createButton("", IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER);
     panelCenter.add(btnTools, "14, 1, center, bottom");
 
-    btnSettings = createButton("", SETTINGS_ICON, SETTINGS_ICON_HOVER);
+    btnSettings = createButton("", IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
     panelCenter.add(btnSettings, "16, 1, center, bottom");
 
-    btnDownload = createButton("", DOWNLOAD_ICON, DOWNLOAD_ICON_HOVER);
+    btnDownload = createButton("", IconManager.TOOLBAR_DOWNLOAD, IconManager.TOOLBAR_DOWNLOAD_HOVER);
     panelCenter.add(btnDownload, "18, 1, center, bottom");
 
-    btnAbout = createButton("", ABOUT_ICON, ABOUT_ICON_HOVER);
+    btnAbout = createButton("", IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER);
     panelCenter.add(btnAbout, "20, 1, center, bottom");
 
-    btnDonate = createButton("", DONATE_ICON, DONATE_ICON_HOVER);
+    btnDonate = createButton("", IconManager.TOOLBAR_DONATE, IconManager.TOOLBAR_DONATE_HOVER);
     panelCenter.add(btnDonate, "22, 1, center, bottom");
 
     lblUpdate = createMenu("Refresh source");

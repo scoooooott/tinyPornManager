@@ -337,13 +337,13 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           buttonPane.add(okButton);
           okButton.setActionCommand("OK");
-          okButton.setIcon(IconManager.APPLY);
+          okButton.setIcon(IconManager.APPLY_INV);
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
-          cancelButton.setIcon(IconManager.CANCEL);
+          cancelButton.setIcon(IconManager.CANCEL_INV);
           cancelButton.addActionListener(this);
 
           if (inQueue) {

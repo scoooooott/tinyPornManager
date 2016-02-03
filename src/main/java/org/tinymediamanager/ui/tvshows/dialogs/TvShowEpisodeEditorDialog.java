@@ -336,25 +336,25 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       JButton btnAddActor = new JButton("");
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
-      btnAddActor.setIcon(IconManager.LIST_ADD);
+      btnAddActor.setIcon(IconManager.ADD_INV);
       detailsPanel.add(btnAddActor, "2, 24, right, top");
 
       JButton btnAddTag = new JButton("");
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(IconManager.LIST_ADD);
+      btnAddTag.setIcon(IconManager.ADD_INV);
       detailsPanel.add(btnAddTag, "20, 24, right, top");
 
       JButton btnRemoveActor = new JButton("");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
-      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveActor.setIcon(IconManager.REMOVE_INV);
       detailsPanel.add(btnRemoveActor, "2, 26, right, top");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveTag.setIcon(IconManager.REMOVE_INV);
       detailsPanel.add(btnRemoveTag, "20, 26, right, top");
 
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
@@ -406,14 +406,14 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         buttonPane.setLayout(layout);
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
-        okButton.setIcon(IconManager.APPLY);
+        okButton.setIcon(IconManager.APPLY_INV);
         buttonPane.add(okButton);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
-        cancelButton.setIcon(IconManager.CANCEL);
+        cancelButton.setIcon(IconManager.CANCEL_INV);
         buttonPane.add(cancelButton);
         cancelButton.setActionCommand("Cancel");
         cancelButton.addActionListener(this);

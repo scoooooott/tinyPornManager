@@ -355,13 +355,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
           okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          okButton.setIcon(IconManager.APPLY);
+          okButton.setIcon(IconManager.APPLY_INV);
           buttonPane.add(okButton);
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          cancelButton.setIcon(IconManager.CANCEL);
+          cancelButton.setIcon(IconManager.CANCEL_INV);
           buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
           cancelButton.addActionListener(this);

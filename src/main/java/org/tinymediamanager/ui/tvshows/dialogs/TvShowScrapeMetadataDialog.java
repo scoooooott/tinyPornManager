@@ -137,7 +137,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
-    btnStart.setIcon(IconManager.APPLY);
+    btnStart.setIcon(IconManager.APPLY_INV);
     btnStart.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -148,7 +148,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     panelButtons.add(btnStart);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL);
+    btnCancel.setIcon(IconManager.CANCEL_INV);
     btnCancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

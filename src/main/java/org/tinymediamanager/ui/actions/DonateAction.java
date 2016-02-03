@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -42,7 +41,6 @@ public class DonateAction extends AbstractAction {
 
   public DonateAction() {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/btn_donate_SM.gif")));
   }
 
   @Override

@@ -228,7 +228,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
         new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-    JButton btnAdd = new JButton(IconManager.LIST_ADD);
+    JButton btnAdd = new JButton(IconManager.ADD_INV);
     btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(new ActionListener() {
@@ -243,7 +243,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     panelMovieSourcesButtons.add(btnAdd, "1, 1, fill, top");
 
-    JButton btnRemove = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemove = new JButton(IconManager.REMOVE_INV);
     btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemove.setMargin(new Insets(2, 2, 2, 2));
     btnRemove.addActionListener(new ActionListener() {
@@ -277,7 +277,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelIgnoreButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
         new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-    JButton btnAddIgnore = new JButton(IconManager.LIST_ADD);
+    JButton btnAddIgnore = new JButton(IconManager.ADD_INV);
     btnAddIgnore.setToolTipText(BUNDLE.getString("Settings.addignore")); //$NON-NLS-1$
     btnAddIgnore.setMargin(new Insets(2, 2, 2, 2));
     btnAddIgnore.addActionListener(new ActionListener() {
@@ -291,7 +291,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     });
     panelIgnoreButtons.add(btnAddIgnore, "1, 1");
 
-    JButton btnRemoveIgnore = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveIgnore = new JButton(IconManager.REMOVE_INV);
     btnRemoveIgnore.setToolTipText(BUNDLE.getString("Settings.removeignore")); //$NON-NLS-1$
     btnRemoveIgnore.setMargin(new Insets(2, 2, 2, 2));
     btnRemoveIgnore.addActionListener(new ActionListener() {
@@ -390,7 +390,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     listBadWords = new JList<>();
     scpBadWords.setViewportView(listBadWords);
 
-    JButton btnRemoveBadWord = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveBadWord = new JButton(IconManager.REMOVE_INV);
     btnRemoveBadWord.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveBadWord.setMargin(new Insets(2, 2, 2, 2));
     btnRemoveBadWord.addActionListener(new ActionListener() {
@@ -409,7 +409,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     tfAddBadword.setColumns(10);
     panelBadWords.add(tfAddBadword, "2, 6, fill, default");
 
-    JButton btnAddBadWord = new JButton(IconManager.LIST_ADD);
+    JButton btnAddBadWord = new JButton(IconManager.ADD_INV);
     btnAddBadWord.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddBadWord.setMargin(new Insets(2, 2, 2, 2));
     btnAddBadWord.addActionListener(new ActionListener() {

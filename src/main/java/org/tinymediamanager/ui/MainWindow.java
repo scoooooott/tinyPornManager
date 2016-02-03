@@ -78,15 +78,15 @@ import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
-import org.tinymediamanager.ui.components.ToolbarPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.UpdateDialog;
-import org.tinymediamanager.ui.images.Logo;
+import org.tinymediamanager.ui.images.LogoCircle;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
+import org.tinymediamanager.ui.panels.ToolbarPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
@@ -238,11 +238,11 @@ public class MainWindow extends JFrame {
   private static List<Image> createLogos() {
     List<Image> logos = new ArrayList<>();
 
-    logos.add(new Logo(48).getImage());
-    logos.add(new Logo(64).getImage());
-    logos.add(new Logo(96).getImage());
-    logos.add(new Logo(128).getImage());
-    logos.add(new Logo(256).getImage());
+    logos.add(new LogoCircle(48).getImage());
+    logos.add(new LogoCircle(64).getImage());
+    logos.add(new LogoCircle(96).getImage());
+    logos.add(new LogoCircle(128).getImage());
+    logos.add(new LogoCircle(256).getImage());
 
     return logos;
   }

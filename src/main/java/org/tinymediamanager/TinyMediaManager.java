@@ -66,6 +66,7 @@ import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
+import org.tinymediamanager.ui.plaf.TmmTheme;
 import org.tinymediamanager.ui.plaf.light.TmmLightLookAndFeel;
 import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
@@ -225,8 +226,11 @@ public class TinyMediaManager {
           if (splash != null) {
             g2 = splash.createGraphics();
             if (g2 != null) {
-              Font font = new Font("Dialog", Font.PLAIN, 14);
+              Font font = getFont();
               g2.setFont(font);
+              g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+              g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+              g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
             }
             else {
               LOGGER.debug("got no graphics from splash");
@@ -395,22 +399,49 @@ public class TinyMediaManager {
        *          the text
        */
       private void updateProgress(Graphics2D g2, String text, int progress) {
-        Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         g2.setComposite(AlphaComposite.Clear);
-        g2.fillRect(20, 200, 480, 305);
+        g2.fillRect(50, 350, 230, 100);
         g2.setPaintMode();
 
-        g2.setColor(new Color(51, 153, 255));
-        g2.fillRect(22, 272, 452 * progress / 100, 21);
-
-        g2.setColor(Color.black);
-        g2.drawString(text + "...", 23, 310);
+        // paint text
+        g2.setColor(new Color(134, 134, 134));
+        g2.drawString(text + "...", 51, 390);
         int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
-        g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
+        g2.drawString(ReleaseInfo.getRealVersion(), 277 - l, 443);
+
+        // paint progess bar
+        g2.setColor(new Color(20, 20, 20));
+        g2.fillRoundRect(51, 400, 227, 6, 6, 6);
+
+        g2.setColor(new Color(134, 134, 134));
+        g2.fillRoundRect(51, 400, 227 * progress / 100, 6, 6, 6);
         LOGGER.debug("Startup (" + progress + "%) " + text);
+
+        // Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+        // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        // g2.setComposite(AlphaComposite.Clear);
+        // g2.fillRect(20, 200, 480, 305);
+        // g2.setPaintMode();
+        //
+        // g2.setColor(new Color(51, 153, 255));
+        // g2.fillRect(22, 272, 452 * progress / 100, 21);
+        //
+        // g2.setColor(Color.black);
+        // g2.drawString(text + "...", 23, 310);
+        // int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
+        // g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
+        // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
+        // LOGGER.debug("Startup (" + progress + "%) " + text);
+      }
+
+      private Font getFont() {
+        try {
+          return Font.createFont(Font.PLAIN, TmmTheme.class.getResource("DejaVuSans.ttf").openStream()).deriveFont(11f);
+        }
+        catch (Exception e) {
+          return Font.getFont("Dialog").deriveFont(11f);
+        }
       }
 
       /**

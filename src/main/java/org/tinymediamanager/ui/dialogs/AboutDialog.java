@@ -216,8 +216,8 @@ public class AboutDialog extends TmmDialog {
 
     public SwingAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.APPLY);
-      putValue(LARGE_ICON_KEY, IconManager.APPLY);
+      putValue(SMALL_ICON, IconManager.APPLY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
 
     @Override

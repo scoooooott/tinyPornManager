@@ -122,7 +122,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelTvShowSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
           new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-      JButton btnAdd = new JButton(IconManager.LIST_ADD);
+      JButton btnAdd = new JButton(IconManager.ADD_INV);
       btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
       btnAdd.setMargin(new Insets(2, 2, 2, 2));
       btnAdd.addActionListener(new ActionListener() {
@@ -136,7 +136,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
 
       panelTvShowSourcesButtons.add(btnAdd, "1, 1, fill, top");
 
-      JButton btnRemove = new JButton(IconManager.LIST_REMOVE);
+      JButton btnRemove = new JButton(IconManager.REMOVE_INV);
       btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
       btnRemove.setMargin(new Insets(2, 2, 2, 2));
       btnRemove.addActionListener(new ActionListener() {
@@ -170,7 +170,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelSkipFolderButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
           new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-      JButton btnAddSkipFolder = new JButton(IconManager.LIST_ADD);
+      JButton btnAddSkipFolder = new JButton(IconManager.ADD_INV);
       btnAddSkipFolder.setToolTipText(BUNDLE.getString("Settings.addignore")); //$NON-NLS-1$
       btnAddSkipFolder.setMargin(new Insets(2, 2, 2, 2));
       btnAddSkipFolder.addActionListener(new ActionListener() {
@@ -184,7 +184,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       });
       panelSkipFolderButtons.add(btnAddSkipFolder, "1, 1");
 
-      JButton btnRemoveSkipFolder = new JButton(IconManager.LIST_REMOVE);
+      JButton btnRemoveSkipFolder = new JButton(IconManager.REMOVE_INV);
       btnRemoveSkipFolder.setToolTipText(BUNDLE.getString("Settings.removeignore")); //$NON-NLS-1$
       btnRemoveSkipFolder.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveSkipFolder.addActionListener(new ActionListener() {

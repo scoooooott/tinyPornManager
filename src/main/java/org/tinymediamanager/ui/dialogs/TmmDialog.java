@@ -38,7 +38,7 @@ public abstract class TmmDialog extends JDialog {
   private static final long serialVersionUID = 1L;
 
   public TmmDialog(String title, String id) {
-    super();
+    super(MainWindow.getActiveInstance());
     setTitle(title);
     setName(id);
     setIconImages(MainWindow.LOGOS);

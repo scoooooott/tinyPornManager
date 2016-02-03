@@ -105,8 +105,8 @@ public class WolDeviceDialog extends TmmDialog {
 
     public SaveAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.APPLY);
-      putValue(LARGE_ICON_KEY, IconManager.APPLY);
+      putValue(SMALL_ICON, IconManager.APPLY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
 
     @Override
@@ -143,8 +143,8 @@ public class WolDeviceDialog extends TmmDialog {
 
     public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.CANCEL);
-      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
+      putValue(SMALL_ICON, IconManager.CANCEL_INV);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
     }
 
     @Override

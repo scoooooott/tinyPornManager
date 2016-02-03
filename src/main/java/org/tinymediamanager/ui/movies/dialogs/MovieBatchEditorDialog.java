@@ -112,7 +112,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(cbGenres, "4, 2, fill, default");
 
       JButton btnAddGenre = new JButton("");
-      btnAddGenre.setIcon(IconManager.LIST_ADD);
+      btnAddGenre.setIcon(IconManager.ADD_INV);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       btnAddGenre.addActionListener(new ActionListener() {
         @Override
@@ -143,7 +143,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(btnAddGenre, "6, 2");
 
       JButton btnRemoveGenre = new JButton("");
-      btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.addActionListener(new ActionListener() {
         @Override
@@ -167,7 +167,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(cbTags, "4, 4, fill, default");
 
       JButton btnAddTag = new JButton("");
-      btnAddTag.setIcon(IconManager.LIST_ADD);
+      btnAddTag.setIcon(IconManager.ADD_INV);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.addActionListener(new ActionListener() {
         @Override
@@ -188,7 +188,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(btnAddTag, "6, 4");
 
       JButton btnRemoveTag = new JButton("");
-      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveTag.setIcon(IconManager.REMOVE_INV);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.addActionListener(new ActionListener() {
         @Override
@@ -215,7 +215,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnCertification = new JButton("");
       btnCertification.setMargin(new Insets(2, 2, 2, 2));
-      btnCertification.setIcon(IconManager.APPLY);
+      btnCertification.setIcon(IconManager.APPLY_INV);
       btnCertification.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -239,7 +239,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnSetMovieSet = new JButton("");
       btnSetMovieSet.setMargin(new Insets(2, 2, 2, 2));
-      btnSetMovieSet.setIcon(IconManager.APPLY);
+      btnSetMovieSet.setIcon(IconManager.APPLY_INV);
       btnSetMovieSet.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -285,7 +285,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(IconManager.APPLY);
+      btnWatched.setIcon(IconManager.APPLY_INV);
       btnWatched.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -307,7 +307,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnVideo3D = new JButton("");
       btnVideo3D.setMargin(new Insets(2, 2, 2, 2));
-      btnVideo3D.setIcon(IconManager.APPLY);
+      btnVideo3D.setIcon(IconManager.APPLY_INV);
       btnVideo3D.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -329,7 +329,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnMediaSource = new JButton("");
       btnMediaSource.setMargin(new Insets(2, 2, 2, 2));
-      btnMediaSource.setIcon(IconManager.APPLY);
+      btnMediaSource.setIcon(IconManager.APPLY_INV);
       btnMediaSource.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -356,7 +356,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnLanguage = new JButton("");
       btnLanguage.setMargin(new Insets(2, 2, 2, 2));
-      btnLanguage.setIcon(IconManager.APPLY);
+      btnLanguage.setIcon(IconManager.APPLY_INV);
       btnLanguage.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -378,7 +378,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.setIcon(IconManager.APPLY);
+      btnClose.setIcon(IconManager.APPLY_INV);
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {

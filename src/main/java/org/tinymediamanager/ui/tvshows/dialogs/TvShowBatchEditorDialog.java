@@ -118,12 +118,12 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
     JButton btnAddGenre = new JButton("");
     panelTvShows.add(btnAddGenre, "6, 2");
-    btnAddGenre.setIcon(IconManager.LIST_ADD);
+    btnAddGenre.setIcon(IconManager.ADD_INV);
     btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
 
     JButton btnRemoveGenre = new JButton("");
     panelTvShows.add(btnRemoveGenre, "8, 2");
-    btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
+    btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
     btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
 
     JLabel lblTags = new JLabel("Tag");
@@ -135,12 +135,12 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
     JButton btnAddTag = new JButton("");
     panelTvShows.add(btnAddTag, "6, 4");
-    btnAddTag.setIcon(IconManager.LIST_ADD);
+    btnAddTag.setIcon(IconManager.ADD_INV);
     btnAddTag.setMargin(new Insets(2, 2, 2, 2));
 
     JButton btnRemoveTag = new JButton("");
     panelTvShows.add(btnRemoveTag, "8, 4");
-    btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
+    btnRemoveTag.setIcon(IconManager.REMOVE_INV);
     btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
     btnRemoveTag.addActionListener(new ActionListener() {
       @Override
@@ -225,7 +225,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(IconManager.APPLY);
+      btnWatched.setIcon(IconManager.APPLY_INV);
       btnWatched.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -248,7 +248,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       panelTvShowEpisodes.add(spSeason, "4, 4, left, default");
 
       JButton btnSeason = new JButton("");
-      btnSeason.setIcon(IconManager.APPLY);
+      btnSeason.setIcon(IconManager.APPLY_INV);
       btnSeason.setMargin(new Insets(2, 2, 2, 2));
       btnSeason.addActionListener(new ActionListener() {
         @Override
@@ -271,7 +271,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       panelTvShowEpisodes.add(cbDvdOrder, "4, 6");
 
       JButton btnDvdOrder = new JButton("");
-      btnDvdOrder.setIcon(IconManager.APPLY);
+      btnDvdOrder.setIcon(IconManager.APPLY_INV);
       btnDvdOrder.setMargin(new Insets(2, 2, 2, 2));
       btnDvdOrder.addActionListener(new ActionListener() {
         @Override
@@ -295,12 +295,12 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
       JButton btnAddTagEpisode = new JButton("");
       panelTvShowEpisodes.add(btnAddTagEpisode, "6, 8");
-      btnAddTagEpisode.setIcon(IconManager.LIST_ADD);
+      btnAddTagEpisode.setIcon(IconManager.ADD_INV);
       btnAddTagEpisode.setMargin(new Insets(2, 2, 2, 2));
 
       JButton btnRemoveTagEpisode = new JButton("");
       panelTvShowEpisodes.add(btnRemoveTagEpisode, "8, 8");
-      btnRemoveTagEpisode.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveTagEpisode.setIcon(IconManager.REMOVE_INV);
       btnRemoveTagEpisode.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTagEpisode.addActionListener(new ActionListener() {
         @Override
@@ -335,7 +335,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.setIcon(IconManager.APPLY);
+      btnClose.setIcon(IconManager.APPLY_INV);
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {

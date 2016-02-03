@@ -149,6 +149,6 @@ public class EnhancedTextField extends JTextField implements FocusListener {
    * @return the JTextField for searching
    */
   public static EnhancedTextField createSearchTextField() {
-    return new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), null); //$NON-NLS-1$
+    return new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH); //$NON-NLS-1$
   }
 }

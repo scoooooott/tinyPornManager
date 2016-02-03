@@ -185,7 +185,7 @@ public class TvShowExporterDialog extends TmmDialog {
     panelButtons.add(btnExport);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL);
+    btnCancel.setIcon(IconManager.CANCEL_INV);
     btnCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         setVisible(false);

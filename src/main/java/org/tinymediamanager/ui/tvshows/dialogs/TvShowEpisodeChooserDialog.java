@@ -188,14 +188,14 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     buttonPane.setLayout(layout);
     final JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
     okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
-    okButton.setIcon(IconManager.APPLY);
+    okButton.setIcon(IconManager.APPLY_INV);
     buttonPane.add(okButton);
     okButton.setActionCommand("OK");
     okButton.addActionListener(this);
 
     JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
-    cancelButton.setIcon(IconManager.CANCEL);
+    cancelButton.setIcon(IconManager.CANCEL_INV);
     buttonPane.add(cancelButton);
     cancelButton.setActionCommand("Cancel");
     cancelButton.addActionListener(this);

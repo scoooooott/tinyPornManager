@@ -31,7 +31,14 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.settings.SettingsPanel;
+import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.movies.MovieUIModule;
+import org.tinymediamanager.ui.settings.TmmSettingsContainerPanel;
+import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The class SettingsDialog. For displaying all settings in a dialog
@@ -40,9 +47,7 @@ import org.tinymediamanager.ui.settings.SettingsPanel;
  */
 public class SettingsDialog extends TmmDialog {
   private static final long           serialVersionUID = 2435834806519338339L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static JDialog              instance;
 
@@ -62,11 +67,28 @@ public class SettingsDialog extends TmmDialog {
     super(BUNDLE.getString("tmm.settings"), "settings"); //$NON-NLS-1$
 
     Rectangle bounds = MainWindow.getActiveInstance().getBounds();
-    setBounds(bounds.x + (bounds.width / 40), bounds.y + (bounds.height / 20), (int) (bounds.width * 0.95), (int) (bounds.height * 0.90));
+    setBounds(bounds.x + (bounds.width / 40), bounds.y + (bounds.height / 20), 1115, 665);
 
+    JPanel containerPanel = new JPanel();
+    containerPanel.putClientProperty("class", "rootPanel");
+    getContentPane().add(containerPanel, BorderLayout.CENTER);
+    containerPanel
+        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("12dlu"), ColumnSpec.decode("default:grow"), ColumnSpec.decode("12dlu"), },
+            new RowSpec[] { RowSpec.decode("12dlu"), RowSpec.decode("default:grow"), }));
     {
-      JPanel panelSettings = new SettingsPanel();
-      getContentPane().add(panelSettings, BorderLayout.CENTER);
+      // JPanel panelSettings = new SettingsPanel();
+      // getContentPane().add(panelSettings, BorderLayout.CENTER);
+      MainTabbedPane panelSettings = new MainTabbedPane();
+      containerPanel.add(panelSettings, "2, 2, fill, fill");
+
+      // General settings
+      panelSettings.addTab(BUNDLE.getString("Settings.general"), new TmmSettingsContainerPanel()); //$NON-NLS-1$
+
+      // Movie settings
+      panelSettings.addTab(BUNDLE.getString("Settings.movies"), MovieUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
+
+      // TV show settings
+      panelSettings.addTab(BUNDLE.getString("Settings.tvshow"), TvShowUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
     }
     {
       JPanel panelButtons = new JPanel();
@@ -88,8 +110,8 @@ public class SettingsDialog extends TmmDialog {
 
     public CloseAction() {
       putValue(NAME, BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.APPLY);
-      putValue(LARGE_ICON_KEY, IconManager.APPLY);
+      putValue(SMALL_ICON, IconManager.APPLY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
 
     @Override

@@ -154,7 +154,7 @@ public class BugReportDialog extends TmmDialog {
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
     JButton btnSend = new JButton(BUNDLE.getString("BugReport.send")); //$NON-NLS-1$
-    btnSend.setIcon(IconManager.APPLY);
+    btnSend.setIcon(IconManager.APPLY_INV);
     btnSend.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -182,7 +182,7 @@ public class BugReportDialog extends TmmDialog {
     panelButtons.add(btnSend);
 
     JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCacnel.setIcon(IconManager.CANCEL);
+    btnCacnel.setIcon(IconManager.CANCEL_INV);
     btnCacnel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

@@ -98,7 +98,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelVideoFiletypes.add(tfVideoFiletype, "2, 4, fill, default");
     tfVideoFiletype.setColumns(10);
 
-    JButton btnAddVideoFiletype = new JButton(IconManager.LIST_ADD);
+    JButton btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
     btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddVideoFiletype.addActionListener(new ActionListener() {
       @Override
@@ -113,7 +113,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelVideoFiletypes.add(btnAddVideoFiletype, "4, 4");
     add(panelVideoFiletypes, "2, 2, fill, fill");
 
-    JButton btnRemoveVideoFiletype = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
     btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveVideoFiletype.addActionListener(new ActionListener() {
       @Override
@@ -146,7 +146,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelSubtitleFiletypes.add(tfSubtitleFiletype, "2, 4, fill, default");
     tfSubtitleFiletype.setColumns(10);
 
-    JButton btnAddSubtitleFiletype = new JButton(IconManager.LIST_ADD);
+    JButton btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
     btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddSubtitleFiletype.addActionListener(new ActionListener() {
       @Override
@@ -159,7 +159,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     });
     panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
 
-    JButton btnRemoveSubtitleFiletype = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
     btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveSubtitleFiletype.addActionListener(new ActionListener() {
       @Override
@@ -192,7 +192,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelAudioFiletypes.add(tfAudioFiletype, "2, 4, fill, default");
     tfAudioFiletype.setColumns(10);
 
-    JButton btnAddAudioFiletype = new JButton(IconManager.LIST_ADD);
+    JButton btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
     btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddAudioFiletype.addActionListener(new ActionListener() {
       @Override
@@ -205,7 +205,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     });
     panelAudioFiletypes.add(btnAddAudioFiletype, "4, 4");
 
-    JButton btnRemoveAudioFiletype = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
     btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveAudioFiletype.addActionListener(new ActionListener() {
       @Override
@@ -239,7 +239,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelSortOptions.add(tfSortPrefix, "2, 4, fill, default");
     tfSortPrefix.setColumns(10);
 
-    JButton btnAddSortPrefix = new JButton(IconManager.LIST_ADD);
+    JButton btnAddSortPrefix = new JButton(IconManager.ADD_INV);
     btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddSortPrefix.addActionListener(new ActionListener() {
       @Override
@@ -254,7 +254,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     });
     panelSortOptions.add(btnAddSortPrefix, "4, 4");
 
-    JButton btnRemoveSortPrefix = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemoveSortPrefix = new JButton(IconManager.REMOVE_INV);
     btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveSortPrefix.addActionListener(new ActionListener() {
       @Override

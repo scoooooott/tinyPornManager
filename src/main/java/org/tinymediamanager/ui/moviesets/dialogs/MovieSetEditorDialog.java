@@ -386,7 +386,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 8013039811395731218L;
 
     public RemoveMovieAction() {
-      putValue(LARGE_ICON_KEY, IconManager.LIST_REMOVE);
+      putValue(LARGE_ICON_KEY, IconManager.REMOVE_INV);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.remove")); //$NON-NLS-1$
     }
 
@@ -409,7 +409,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -4620223948432713667L;
 
     public MoveUpAction() {
-      putValue(LARGE_ICON_KEY, IconManager.ARROW_UP);
+      putValue(LARGE_ICON_KEY, IconManager.ARROW_UP_INV);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.moveup")); //$NON-NLS-1$
     }
 
@@ -431,7 +431,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 8986131051527422410L;
 
     public MoveDownAction() {
-      putValue(LARGE_ICON_KEY, IconManager.ARROW_DOWN);
+      putValue(LARGE_ICON_KEY, IconManager.ARROW_DOWN_INV);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.movedown")); //$NON-NLS-1$
     }
 
@@ -451,8 +451,8 @@ public class MovieSetEditorDialog extends TmmDialog {
     public OkAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$ );
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.save")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.APPLY);
-      putValue(LARGE_ICON_KEY, IconManager.APPLY);
+      putValue(SMALL_ICON, IconManager.APPLY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
 
     @Override
@@ -535,8 +535,8 @@ public class MovieSetEditorDialog extends TmmDialog {
     public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.CANCEL);
-      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
+      putValue(SMALL_ICON, IconManager.CANCEL_INV);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
     }
 
     @Override

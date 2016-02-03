@@ -42,8 +42,8 @@ public class MovieSetRemoveAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, IconManager.LIST_REMOVE);
-    putValue(SMALL_ICON, IconManager.LIST_REMOVE);
+    putValue(LARGE_ICON_KEY, IconManager.REMOVE);
+    putValue(SMALL_ICON, IconManager.REMOVE);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
   }
 

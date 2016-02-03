@@ -106,7 +106,7 @@ class TvShowSourcePanel extends JPanel {
     panelTvShowSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
         new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-    JButton btnAdd = new JButton(IconManager.LIST_ADD);
+    JButton btnAdd = new JButton(IconManager.ADD_INV);
     btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(new ActionListener() {
@@ -120,7 +120,7 @@ class TvShowSourcePanel extends JPanel {
 
     panelTvShowSourcesButtons.add(btnAdd, "1, 1, fill, top");
 
-    JButton btnRemove = new JButton(IconManager.LIST_REMOVE);
+    JButton btnRemove = new JButton(IconManager.REMOVE_INV);
     btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemove.setMargin(new Insets(2, 2, 2, 2));
     btnRemove.addActionListener(new ActionListener() {

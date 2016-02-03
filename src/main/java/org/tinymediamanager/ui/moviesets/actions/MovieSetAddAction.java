@@ -15,15 +15,17 @@
  */
 package org.tinymediamanager.ui.moviesets.actions;
 
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
+
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
+
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
 
 /**
  * @author Manuel Laggner
@@ -40,8 +42,8 @@ public class MovieSetAddAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, IconManager.LIST_ADD);
-    putValue(SMALL_ICON, IconManager.LIST_ADD);
+    putValue(LARGE_ICON_KEY, IconManager.ADD);
+    putValue(SMALL_ICON, IconManager.ADD);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
   }
 

@@ -259,7 +259,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       }
       {
         JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-        btnClose.setIcon(IconManager.APPLY);
+        btnClose.setIcon(IconManager.APPLY_INV);
         btnClose.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent arg0) {
@@ -425,7 +425,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           }
 
           if (!found) {
-            container.icon = IconManager.LIST_REMOVE;
+            container.icon = IconManager.REMOVE_INV;
           }
           oldMediaFileEventList.add(container);
         }
@@ -445,7 +445,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           }
 
           if (!found) {
-            container.icon = IconManager.LIST_ADD;
+            container.icon = IconManager.ADD_INV;
           }
           newMediaFileEventList.add(container);
         }

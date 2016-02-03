@@ -195,14 +195,14 @@ public class MediaFileEditorPanel extends JPanel {
           btnAddAudioStream = new JButton("");
           btnAddAudioStream.setAction(new AddAudioStreamAction());
           btnAddAudioStream.setMargin(new Insets(2, 2, 2, 2));
-          btnAddAudioStream.setIcon(IconManager.LIST_ADD);
+          btnAddAudioStream.setIcon(IconManager.ADD_INV);
           panelDetails.add(btnAddAudioStream, "2, 12, right, top");
         }
         {
           btnRemoveAudioStream = new JButton("");
           btnRemoveAudioStream.setAction(new RemoveAudioStreamAction());
           btnRemoveAudioStream.setMargin(new Insets(2, 2, 2, 2));
-          btnRemoveAudioStream.setIcon(IconManager.LIST_REMOVE);
+          btnRemoveAudioStream.setIcon(IconManager.REMOVE_INV);
           panelDetails.add(btnRemoveAudioStream, "2, 14, right, top");
         }
         {
@@ -221,14 +221,14 @@ public class MediaFileEditorPanel extends JPanel {
           btnAddSubtitle = new JButton("");
           btnAddSubtitle.setAction(new AddSubtitleAction());
           btnAddSubtitle.setMargin(new Insets(2, 2, 2, 2));
-          btnAddSubtitle.setIcon(IconManager.LIST_ADD);
+          btnAddSubtitle.setIcon(IconManager.ADD_INV);
           panelDetails.add(btnAddSubtitle, "2, 18, right, top");
         }
         {
           btnRemoveSubtitle = new JButton("");
           btnRemoveSubtitle.setAction(new RemoveSubtitleAction());
           btnRemoveSubtitle.setMargin(new Insets(2, 2, 2, 2));
-          btnRemoveSubtitle.setIcon(IconManager.LIST_REMOVE);
+          btnRemoveSubtitle.setIcon(IconManager.REMOVE_INV);
           panelDetails.add(btnRemoveSubtitle, "2, 20, right, top");
         }
       }

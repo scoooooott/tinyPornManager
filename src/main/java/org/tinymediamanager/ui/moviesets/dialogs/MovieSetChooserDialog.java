@@ -253,14 +253,14 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           btnOk.setActionCommand("Save");
           btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          btnOk.setIcon(IconManager.APPLY);
+          btnOk.setIcon(IconManager.APPLY_INV);
           btnOk.addActionListener(this);
           buttonPane.add(btnOk);
 
           JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.setActionCommand("Cancel");
           btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          btnCancel.setIcon(IconManager.CANCEL);
+          btnCancel.setIcon(IconManager.CANCEL_INV);
           btnCancel.addActionListener(this);
           buttonPane.add(btnCancel);
 

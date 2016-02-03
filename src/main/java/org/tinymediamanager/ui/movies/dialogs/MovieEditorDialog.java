@@ -360,14 +360,14 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JButton btnAddId = new JButton("");
       btnAddId.setAction(new AddIdAction());
-      btnAddId.setIcon(IconManager.LIST_ADD);
+      btnAddId.setIcon(IconManager.ADD_INV);
       btnAddId.setMargin(new Insets(2, 2, 2, 2));
       details1Panel.add(btnAddId, "2, 18, right, top");
     }
     {
       JButton btnRemoveId = new JButton("");
       btnRemoveId.setAction(new RemoveIdAction());
-      btnRemoveId.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveId.setIcon(IconManager.REMOVE_INV);
       btnRemoveId.setMargin(new Insets(2, 2, 2, 2));
       details1Panel.add(btnRemoveId, "2, 20, right, top");
     }
@@ -533,56 +533,56 @@ public class MovieEditorDialog extends TmmDialog {
       JButton btnAddActor = new JButton(BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
-      btnAddActor.setIcon(IconManager.LIST_ADD);
+      btnAddActor.setIcon(IconManager.ADD_INV);
       details2Panel.add(btnAddActor, "2, 4, right, top");
     }
     {
       JButton btnAddProducer = new JButton((String) null);
       btnAddProducer.setMargin(new Insets(2, 2, 2, 2));
       btnAddProducer.setAction(new AddProducerAction());
-      btnAddProducer.setIcon(IconManager.LIST_ADD);
+      btnAddProducer.setIcon(IconManager.ADD_INV);
       details2Panel.add(btnAddProducer, "6, 4, right, top");
     }
     {
       JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
-      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveActor.setIcon(IconManager.REMOVE_INV);
       details2Panel.add(btnRemoveActor, "2,6, right, top");
     }
     {
       JButton btnRemoveProducer = new JButton((String) null);
       btnRemoveProducer.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveProducer.setAction(new RemoveProducerAction());
-      btnRemoveProducer.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveProducer.setIcon(IconManager.REMOVE_INV);
       details2Panel.add(btnRemoveProducer, "6, 6, right, top");
     }
     {
       JButton btnMoveActorUp = new JButton((String) null);
       btnMoveActorUp.setMargin(new Insets(2, 2, 2, 2));
       btnMoveActorUp.setAction(new MoveActorUpAction());
-      btnMoveActorUp.setIcon(IconManager.ARROW_UP);
+      btnMoveActorUp.setIcon(IconManager.ARROW_UP_INV);
       details2Panel.add(btnMoveActorUp, "2, 8, right, top");
     }
     {
       JButton btnMoveProducerUp = new JButton((String) null);
       btnMoveProducerUp.setMargin(new Insets(2, 2, 2, 2));
       btnMoveProducerUp.setAction(new MoveProducerUpAction());
-      btnMoveProducerUp.setIcon(IconManager.ARROW_UP);
+      btnMoveProducerUp.setIcon(IconManager.ARROW_UP_INV);
       details2Panel.add(btnMoveProducerUp, "6, 8, right, top");
     }
     {
       JButton btnMoveActorDown = new JButton((String) null);
       btnMoveActorDown.setMargin(new Insets(2, 2, 2, 2));
       btnMoveActorDown.setAction(new MoveActorDownAction());
-      btnMoveActorDown.setIcon(IconManager.ARROW_DOWN);
+      btnMoveActorDown.setIcon(IconManager.ARROW_DOWN_INV);
       details2Panel.add(btnMoveActorDown, "2, 10, right, top");
     }
     {
       JButton btnMoveProducerDown = new JButton((String) null);
       btnMoveProducerDown.setMargin(new Insets(2, 2, 2, 2));
       btnMoveProducerDown.setAction(new MoveProducerDownAction());
-      btnMoveProducerDown.setIcon(IconManager.ARROW_DOWN);
+      btnMoveProducerDown.setIcon(IconManager.ARROW_DOWN_INV);
       details2Panel.add(btnMoveProducerDown, "6, 10, right, top");
     }
     {
@@ -610,14 +610,14 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JButton btnAddGenre = new JButton("");
       btnAddGenre.setAction(new AddGenreAction());
-      btnAddGenre.setIcon(IconManager.LIST_ADD);
+      btnAddGenre.setIcon(IconManager.ADD_INV);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddGenre, "2, 16, right, top");
     }
     {
       JButton btnAddTag = new JButton("");
       btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(IconManager.LIST_ADD);
+      btnAddTag.setIcon(IconManager.ADD_INV);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTag, "6, 16, right, top");
     }
@@ -626,13 +626,13 @@ public class MovieEditorDialog extends TmmDialog {
       JButton btnRemoveGenre = new JButton("");
       btnRemoveGenre.setAction(new RemoveGenreAction());
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
       details2Panel.add(btnRemoveGenre, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveTag.setIcon(IconManager.REMOVE_INV);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTag, "6, 18, right, top");
     }
@@ -659,14 +659,14 @@ public class MovieEditorDialog extends TmmDialog {
     {
       JButton btnAddTrailer = new JButton("");
       btnAddTrailer.setAction(new AddTrailerAction());
-      btnAddTrailer.setIcon(IconManager.LIST_ADD);
+      btnAddTrailer.setIcon(IconManager.ADD_INV);
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTrailer, "2, 24, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
       btnRemoveTrailer.setAction(new RemoveTrailerAction());
-      btnRemoveTrailer.setIcon(IconManager.LIST_REMOVE);
+      btnRemoveTrailer.setIcon(IconManager.REMOVE_INV);
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
     }
@@ -972,8 +972,8 @@ public class MovieEditorDialog extends TmmDialog {
     public ChangeMovieAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.change")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.APPLY);
-      putValue(LARGE_ICON_KEY, IconManager.APPLY);
+      putValue(SMALL_ICON, IconManager.APPLY_INV);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
 
     @Override
@@ -1147,8 +1147,8 @@ public class MovieEditorDialog extends TmmDialog {
     public DiscardAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.CANCEL);
-      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
+      putValue(SMALL_ICON, IconManager.CANCEL_INV);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
     }
 
     @Override
