@@ -531,28 +531,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @param newPath
    *          the new path
    */
-  @Deprecated
-  public void replacePathForRenamedFolder(File oldPath, File newPath) {
-    String p = getPath();
-    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
-    setPath(p);
-  }
-
-  /**
-   * (re)sets the path (when renaming MediaEntity folder).<br>
-   * Exchanges the beginning MF path from oldPath with newPath<br>
-   * <br>
-   * eg: <br>
-   * Params: /movie/alien1/ & /movie/Alien 1/<br>
-   * File: /movie/alien1/asdf/jklo/file.avi -> /movie/Alien 1/asdf/jklo/file.avi<br>
-   * <br>
-   * this id done by a simple string.replace()
-   * 
-   * @param oldPath
-   *          the old path
-   * @param newPath
-   *          the new path
-   */
   public void replacePathForRenamedFolder(Path oldPath, Path newPath) {
     String p = getPath();
     p = p.replace(oldPath.toAbsolutePath().toString(), newPath.toAbsolutePath().toString());

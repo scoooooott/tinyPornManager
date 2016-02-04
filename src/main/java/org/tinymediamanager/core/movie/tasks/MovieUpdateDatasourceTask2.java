@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -126,7 +127,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       stopWatch.start();
       List<Path> imageFiles = new ArrayList<Path>();
 
-      // cleanup newlyadded for a new UDS run
+      // cleanup newly added for a new UDS run
       for (Movie movie : movieList.getMovies()) {
         movie.setNewlyAdded(false);
       }
@@ -135,48 +136,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         initThreadPool(3, "update");
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
         publishState();
+        searchAndParse(Paths.get(ds), Integer.MAX_VALUE);
 
-        // ***************************************************************
-
-        getAllFilesRecursiveAndParse(Paths.get(ds), Integer.MAX_VALUE);
-        // filesFound.addAll(allFiles); // global cache
-
-        // System.out.println("Files found: " + allFiles.size());
-        // System.out.println("took " + stopWatch);
-
-        // ***************************************************************
-
-        // Quick filtering
-        // all VIDEO files (inkl. sample, extras)
-        // but no unneeded MF creation - quite fast
-        // just to get the "interesting" dirs, where we have some files :)
-        // HashSet<Path> movieDirs = new HashSet<Path>();
-        // for (Path path : allFiles) {
-        // if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(path.toString()).toLowerCase())) {
-        // if (!movieDirs.contains(path.getParent())) {
-        // movieDirs.add(path.getParent()); // just the folder
-        // submitTask(new FindMovieTask(path.getParent(), ds));
-        // }
-        // // System.out.println(path.getNameCount() + " - " + path);
-        // }
-        // }
-        // System.out.println();
-        // allFiles.clear(); // not needed anylonger
-
-        // FIXME: what if, if a single movie in a dir, contains 2 level deeper another movie
-        // evaluate every dir, if some others are in a subfolder
-
-        // FIXME: folder stacking? movie/name CD1/VIDEO_TS
-        // FIXME: folder stacking? movie/name CD2/VIDEO_TS
-        // FIXME: folder stacking? movie CD1/VIDEO_TS
-        // FIXME: folder stacking? movie CD2/VIDEO_TS
-
-        // now we have all DIRECTORIES containing movie files - lets parse them
-        // for (Path path : movieDirs) {
-        // submitTask(new FindMovieTask(path, ds));
-        // }
         waitForCompletionOrCancel();
-
         if (cancel) {
           break;
         }
@@ -318,6 +280,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
     }
 
+    if (cancel) {
+      return;
+    }
     // ok, we're ready to parse :)
     if (isMultiMovieDir) {
       createMultiMovieFromDir(dataSource, movieRoot);
@@ -925,14 +890,11 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       return CONTINUE;
     }
 
-    // If there is some error accessing
-    // the file, let the user know.
-    // If you don't override this method
-    // and an error occurs, an IOException
-    // is thrown.
+    // If there is some error accessing the file, let the user know.
+    // If you don't override this method and an error occurs, an IOException is thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      System.err.println(exc);
+      LOGGER.error("" + exc);
       return CONTINUE;
     }
   }
@@ -941,22 +903,22 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   // gets all files recursive,
   // and starts parsing directory immediately
   // **************************************
-  public void getAllFilesRecursiveAndParse(Path folder, int deep) {
-    AllFilesRecursiveWithParse visitor = new AllFilesRecursiveWithParse(folder);
+  public void searchAndParse(Path folder, int deep) {
+    SearchAndParseVisitor visitor = new SearchAndParseVisitor(folder);
     try {
       Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
     }
     catch (IOException e) {
-      // can not happen, since we overrided visitFileFailed, which throws no exception ;)
+      // can not happen, since we override visitFileFailed, which throws no exception ;)
     }
   }
 
-  private class AllFilesRecursiveWithParse extends SimpleFileVisitor<Path> {
-    private String  dataSource = "";
+  private class SearchAndParseVisitor implements FileVisitor<Path> {
     private boolean filesFound = false;
+    private String  datasource;
 
-    public AllFilesRecursiveWithParse(Path dataSource) {
-      this.dataSource = dataSource.toAbsolutePath().toString();
+    protected SearchAndParseVisitor(Path datasource) {
+      this.datasource = datasource.toAbsolutePath().toString();
     }
 
     @Override
@@ -968,8 +930,6 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           this.filesFound = true;
         }
       }
-      // System.out.println("(" + attr.size() + "bytes)");
-      // System.out.println("(" + attr.creationTime() + " date)");
       return CONTINUE;
     }
 
@@ -988,15 +948,20 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
       postDir++;
+      if (cancel) {
+        return TERMINATE;
+      }
       if (this.filesFound == true) {
-        submitTask(new FindMovieTask(dir, dataSource));
+        submitTask(new FindMovieTask(dir, datasource));
       }
       return CONTINUE;
     }
 
+    // If there is some error accessing the file, let the user know.
+    // If you don't override this method and an error occurs, an IOException is thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-      System.err.println(exc);
+      LOGGER.error("" + exc);
       return CONTINUE;
     }
   }

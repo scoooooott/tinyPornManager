@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class TvShowTest {
   @Test
   public void testRenamerParams() throws Exception {
     // setup dummy
-    MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
+    MediaFile dmf = new MediaFile(Paths.get("/path/to", "video.avi"));
 
     TmmModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();

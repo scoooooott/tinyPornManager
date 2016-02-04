@@ -287,7 +287,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : m.getMediaFiles()) {
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -297,7 +297,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : s.getMediaFiles()) { // show MFs
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -305,7 +305,7 @@ public class TinyMediaManagerCMD {
             for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
               if (!mf.exists()) {
                 System.out.println();
-                LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+                LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
                 allOk = false;
               }
             }

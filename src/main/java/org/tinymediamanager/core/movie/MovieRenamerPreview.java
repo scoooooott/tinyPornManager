@@ -16,6 +16,8 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -52,28 +54,28 @@ public class MovieRenamerPreview {
 
     // VIDEO needs to be renamed first, since all others depend on that name!!!
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-      oldFiles.put(mf.getFile().getAbsolutePath(), new MediaFile(mf));
+      oldFiles.put(mf.getFileAsPath().toString(), new MediaFile(mf));
       MediaFile ftr = MovieRenamer.generateFilename(movie, mf, newVideoBasename).get(0); // there can be only one
       newFiles.add(ftr);
     }
 
     // all the other MFs...
     for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
-      oldFiles.put(mf.getFile().getAbsolutePath(), new MediaFile(mf));
+      oldFiles.put(mf.getFileAsPath().toString(), new MediaFile(mf));
       newFiles.addAll(MovieRenamer.generateFilename(movie, mf, newVideoBasename)); // N:M
     }
 
     // movie folder needs a rename?
-    File oldMovieFolder = new File(movie.getPath());
+    Path oldMovieFolder = movie.getPathNIO();
     String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname();
     if (pattern.isEmpty()) {
       // same
-      container.newPath = Utils.relPath(movie.getDataSource(), movie.getPath());
+      container.newPath = Utils.relPath(Paths.get(movie.getDataSource()), movie.getPathNIO());
     }
     else {
       container.newPath = MovieRenamer.createDestinationForFoldername(pattern, movie);
     }
-    File newMovieFolder = new File(movie.getDataSource(), container.newPath);
+    Path newMovieFolder = Paths.get(movie.getDataSource()).resolve(container.newPath);
 
     if (!oldMovieFolder.equals(newMovieFolder)) {
       container.needsRename = true;
@@ -85,7 +87,7 @@ public class MovieRenamerPreview {
 
     // change status of MFs, if they have been added or not
     for (MediaFile mf : newFiles) {
-      if (!oldFiles.containsKey(mf.getFile().getAbsolutePath())) {
+      if (!oldFiles.containsKey(mf.getFileAsPath().toString())) {
         // System.out.println(mf);
         container.needsRename = true;
         break;
