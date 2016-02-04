@@ -67,53 +67,53 @@ import org.tinymediamanager.scraper.util.ParserUtils;
     "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "fileinfo",
     "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
-  private static final Logger LOGGER  = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
-  private static JAXBContext  context = initContext();
+  private static final Logger LOGGER         = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static JAXBContext  context        = initContext();
 
-  private String season         = "";
-  private String episode        = "";
-  private String displayseason  = "";
-  private String displayepisode = "";
-  private String uniqueid       = "";
-  private String title          = "";
-  private String showtitle      = "";
-  private float  rating         = 0;
-  private int    votes          = 0;
-  private String plot           = "";
-  private String studio         = "";
-  private String mpaa           = "";
-  private String aired          = "";
-  private String premiered      = "";
+  private String              season         = "";
+  private String              episode        = "";
+  private String              displayseason  = "";
+  private String              displayepisode = "";
+  private String              uniqueid       = "";
+  private String              title          = "";
+  private String              showtitle      = "";
+  private float               rating         = 0;
+  private int                 votes          = 0;
+  private String              plot           = "";
+  private String              studio         = "";
+  private String              mpaa           = "";
+  private String              aired          = "";
+  private String              premiered      = "";
 
   @XmlElement
-  private int     playcount = 0;
+  private int                 playcount      = 0;
   @XmlElement
-  private boolean watched   = false;
+  private boolean             watched        = false;
 
   @XmlAnyElement(lax = true)
-  private List<Object> actors;
+  private List<Object>        actors;
 
   @XmlElement
-  private Fileinfo fileinfo;
+  private Fileinfo            fileinfo;
 
   @XmlElement(name = "credits")
-  private List<String> credits;
+  private List<String>        credits;
 
   @XmlElement(name = "director")
-  private List<String> director;
+  private List<String>        director;
 
   @XmlElement(name = "tag")
-  private List<String> tags;
+  private List<String>        tags;
 
   @XmlAnyElement(lax = true)
-  private List<Object> unsupportedElements;
+  private List<Object>        unsupportedElements;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  String thumb;
+  String                      thumb;
 
   @XmlElement
-  String lastplayed;
+  String                      lastplayed;
 
   private static JAXBContext initContext() {
     try {
@@ -215,8 +215,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
 
       xbmc.actors.clear();
-      // actors for tv show episode (guests and show sctors)
-      for (TvShowActor actor : episode.getActors()) {
+      // actors for tv show episode (guests)
+      for (TvShowActor actor : episode.getGuests()) {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
       }
 
@@ -229,11 +229,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
       else {
         xbmc.thumb = "";
       }
-
-      // // actors for tv show
-      // for (TvShowActor actor : episode.getTvShow().getActors()) {
-      // xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
-      // }
 
       // support of frodo director tags
       xbmc.director.clear();
@@ -743,10 +738,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
    */
   static class Streamdetails {
     @XmlElement
-    private Video video;
+    private Video          video;
 
     @XmlElement
-    private List<Audio> audio;
+    private List<Audio>    audio;
 
     @XmlElement
     private List<Subtitle> subtitle;
@@ -769,13 +764,13 @@ public class TvShowEpisodeToXbmcNfoConnector {
     private String aspect;
 
     @XmlElement
-    private int width;
+    private int    width;
 
     @XmlElement
-    private int height;
+    private int    height;
 
     @XmlElement
-    private int durationinseconds;
+    private int    durationinseconds;
 
     @XmlElement
     private String stereomode;

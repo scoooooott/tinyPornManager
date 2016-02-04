@@ -52,22 +52,65 @@ public class MovieSetArtworkHelper {
   private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);
 
   /**
+   * Update the artwork for a given movie set. This should be triggered after every movie set change like creating, adding movies, removing movies
+   * 
+   * @param movieSet
+   *          the movie set to update the artwork for
+   */
+  public static void updateArtwork(MovieSet movieSet) {
+    // find artwork in the artwork dir
+    findArtworkInArtworkFolder(movieSet);
+
+    // find artwork in the movie dirs
+    for (Movie movie : new ArrayList<>(movieSet.getMovies())) {
+      findArtworkInMovieFolder(movieSet, movie);
+    }
+  }
+
+  /**
    * find and assign movie set artwork in the artwork folder
    * 
    * @param movieSet
    *          the movie set to search artwork for
    */
-  public static void findArtworkInArtworkFolder(MovieSet movieSet) {
+  private static void findArtworkInArtworkFolder(MovieSet movieSet) {
     String artworkFolder = MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder();
     if (!MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder() || StringUtils.isBlank(artworkFolder)) {
       return;
     }
 
-    // performance trick: look if the desired file is in the image cache
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
+        if (Files.exists(artworkFile)) {
+          // add this artwork to the media files
+          MediaFile mediaFile = new MediaFile(artworkFile, type);
+          mediaFile.gatherMediaInformation();
+          movieSet.addToMediaFiles(mediaFile);
+        }
+      }
+    }
+  }
+
+  /**
+   * find and assign movie set artwork in the movie folder
+   * 
+   * @param movieSet
+   *          the movie set to set the artwork for
+   * @param movie
+   *          the movie to look for the movie set artwork
+   */
+  private static void findArtworkInMovieFolder(MovieSet movieSet, Movie movie) {
+    for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
+      // only if there is not yet any artwork assigned
+      if (!movieSet.getMediaFiles(type).isEmpty()) {
+        continue;
+      }
+
+      for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+        String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
+        Path artworkFile = movie.getPathNIO().resolve(artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
