@@ -15,28 +15,32 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import com.uwetrottmann.trakt.v2.TraktV2;
-import com.uwetrottmann.trakt.v2.entities.SearchResult;
-import com.uwetrottmann.trakt.v2.enums.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.uwetrottmann.trakt.v2.TraktV2;
+import com.uwetrottmann.trakt.v2.entities.SearchResult;
+import com.uwetrottmann.trakt.v2.enums.Type;
 
 /**
  * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
  */
+
 class TraktMovieMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TraktMovieMetadataProvider.class);
 
-  final TraktV2 api;
+  final TraktV2               api;
 
   public TraktMovieMetadataProvider(TraktV2 api) {
     this.api = api;
@@ -85,10 +89,16 @@ class TraktMovieMetadataProvider {
       return results;
     }
 
+    // set SearchResult Data for every Entry of the result
     for (SearchResult result : searchResults) {
       MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId());
 
       mediaSearchResult.setTitle(result.movie.title);
+      mediaSearchResult.setYear((result.movie.year).toString());
+      mediaSearchResult.setId((result.movie.ids.trakt).toString());
+      mediaSearchResult.setIMDBId(result.movie.ids.imdb);
+      mediaSearchResult.setProviderId((result.movie.ids.trakt).toString());
+      mediaSearchResult.setPosterUrl(result.movie.images.poster.full);
 
       mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
 
@@ -96,5 +106,16 @@ class TraktMovieMetadataProvider {
     }
 
     return results;
+  }
+
+  MediaMetadata scrape(MediaScrapeOptions options) throws Exception {
+    List<MediaMetadata> scrapeResults = null;
+
+    if (options.getType() != MediaType.MOVIE)
+      throw new UnsupportedMediaTypeException(options.getType());
+
+    LOGGER.debug("Scraping... Trakt ID" + options.getId("1"));
+
+    return null;
   }
 }

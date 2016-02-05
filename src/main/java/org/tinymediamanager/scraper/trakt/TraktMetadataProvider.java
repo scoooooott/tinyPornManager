@@ -15,11 +15,10 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import com.uwetrottmann.trakt.v2.TraktV2;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -27,18 +26,19 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
-import java.util.List;
+import com.uwetrottmann.trakt.v2.TraktV2;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
-public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
-  private static final Logger            LOGGER       = LoggerFactory.getLogger(TraktMetadataProvider.class);
-  private static final String            CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+public class TraktMetadataProvider implements IMovieMetadataProvider {
+  private static final Logger    LOGGER       = LoggerFactory.getLogger(TraktMetadataProvider.class);
+  private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
-  
-  static final TraktV2                   api          = createTraktApi();
+
+  static final TraktV2           api          = createTraktApi();
 
   public TraktMetadataProvider() {
   }
@@ -54,30 +54,32 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   private static TraktV2 createTraktApi() {
     TraktV2 api = new TraktV2();
     api.setApiKey(CLIENT_ID);
-//    if (LOGGER.isTraceEnabled()) {
-      api.setIsDebug(true);
-//    }
+    // if (LOGGER.isTraceEnabled()) {
+    api.setIsDebug(true);
+    // }
 
     return api;
   }
 
+  // ProviderInfo
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  // Scraping
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    switch (options.getType()) {
+      case MOVIE:
+        return new TraktMovieMetadataProvider(api).scrape(options);
+
+      default:
+        throw new UnsupportedMediaTypeException(options.getType());
+    }
   }
 
+  // Searching
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     switch (options.getMediaType()) {
