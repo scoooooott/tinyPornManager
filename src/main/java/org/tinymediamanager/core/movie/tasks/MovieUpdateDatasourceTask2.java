@@ -128,11 +128,6 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       stopWatch.start();
       List<File> imageFiles = new ArrayList<File>();
 
-      // cleanup newlyadded for a new UDS run
-      for (Movie movie : movieList.getMovies()) {
-        movie.setNewlyAdded(false);
-      }
-
       for (String ds : dataSources) {
         initThreadPool(3, "update");
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");

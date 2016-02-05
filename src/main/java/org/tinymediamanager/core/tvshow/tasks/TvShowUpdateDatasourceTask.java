@@ -139,15 +139,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       stopWatch.start();
       start();
 
-      // cleanup newlyadded for a new UDS run
-      for (TvShow tvShow : tvShowList.getTvShows()) {
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          episode.setNewlyAdded(false);
-          episode.saveToDb();
-        }
-        tvShow.setNewlyAdded(false);
-      }
-
       // here we have 2 ways of updating:
       // - per datasource -> update ds / remove orphaned / update MFs
       // - per TV show -> udpate TV show / update MFs

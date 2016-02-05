@@ -75,14 +75,13 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                     productionCompany = "";
   @JsonProperty
   protected boolean                    scraped           = false;
-  @JsonProperty
-  protected boolean                    newlyAdded        = false;
 
   @JsonProperty
   private List<MediaFile>              mediaFiles        = new ArrayList<MediaFile>();
   @JsonProperty
   protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<MediaFileType, String>();
 
+  protected boolean                    newlyAdded        = false;
   protected boolean                    duplicate         = false;
   protected ReadWriteLock              readWriteLock     = new ReentrantReadWriteLock();
 
