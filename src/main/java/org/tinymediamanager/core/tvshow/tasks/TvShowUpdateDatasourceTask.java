@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow.tasks;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -89,6 +90,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<String>                dataSources;
   private List<File>                  tvShowFolders         = new ArrayList<File>();
   private TvShowList                  tvShowList;
+  private HashSet<File>               filesFound            = new HashSet<File>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -239,6 +241,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           // do a cleanup
           cleanup(tvShow);
         }
+      }
+
+      if (cancel) {
+        break;
       }
 
       // mediainfo
@@ -414,18 +420,30 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       // check and delete all not found MediaFiles
       List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
-        if (!mf.getFile().exists()) {
-          tvShow.removeFromMediaFiles(mf);
-          dirty = true;
+        if (!filesFound.contains(mf.getFile())) {
+          if (!mf.exists()) {
+            LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+            tvShow.removeFromMediaFiles(mf);
+            dirty = true;
+          }
+          else {
+            LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+          }
         }
       }
       List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tvShow.getEpisodes());
       for (TvShowEpisode episode : episodes) {
         mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
-          if (!mf.getFile().exists()) {
-            episode.removeFromMediaFiles(mf);
-            dirty = true;
+          if (!filesFound.contains(mf.getFile())) {
+            if (!mf.exists()) {
+              LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+              episode.removeFromMediaFiles(mf);
+              dirty = true;
+            }
+            else {
+              LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+            }
           }
         }
         // lets have a look if there is at least one video file for this episode
@@ -560,6 +578,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     List<File> completeDirContents = new ArrayList<>(Arrays.asList(contents));
 
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(completeDirContents);
+    }
+
     // search season posters first (-poster pattern would find season posters)
     for (File file : completeDirContents) {
       Matcher matcher = seasonPattern.matcher(file.getName());
@@ -647,6 +670,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     if (content == null) {
       LOGGER.error("Whops. Cannot access directory: " + dir.getName());
       return;
+    }
+
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(Arrays.asList(content));
     }
 
     Arrays.sort(content);
@@ -806,6 +834,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     if (content == null) {
       LOGGER.error("Whops. Cannot access directory: " + dir.getName());
       return;
+    }
+
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(Arrays.asList(content));
     }
 
     for (File file : content) {
@@ -993,6 +1026,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             LOGGER.error("Whops. Cannot access directory: " + file.getName());
           }
           else {
+            // store dir for faster cleanup
+            synchronized (filesFound) {
+              filesFound.addAll(Arrays.asList(subDirContent));
+            }
             for (File subDirFile : subDirContent) {
               if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
                 MediaFile mf = new MediaFile(subDirFile);
