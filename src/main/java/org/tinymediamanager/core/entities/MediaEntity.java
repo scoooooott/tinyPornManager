@@ -281,6 +281,25 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(MEDIA_INFORMATION, false, true);
   }
 
+  /**
+   * Get a map of all primary artworks. If there are multiple media files for one artwork type, only the first is returned in the map
+   * 
+   * @return a map of all found artworks
+   */
+  public Map<MediaFileType, MediaFile> getArtworkMap() {
+    Map<MediaFileType, MediaFile> artworkMap = new HashMap<>();
+    List<MediaFile> mediaFiles = getMediaFiles();
+    for (MediaFile mf : mediaFiles) {
+      if (!mf.isGraphic()) {
+        continue;
+      }
+      if (!artworkMap.containsKey(mf.getType())) {
+        artworkMap.put(mf.getType(), mf);
+      }
+    }
+    return artworkMap;
+  }
+
   public Date getDateAdded() {
     return dateAdded;
   }

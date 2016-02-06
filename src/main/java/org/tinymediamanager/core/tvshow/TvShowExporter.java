@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntityExporter;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -67,6 +69,7 @@ public class TvShowExporter extends MediaEntityExporter {
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new TvShowFilenameRenderer());
+    engine.registerNamedRenderer(new ArtworkCopyRenderer(pathToExport));
 
     // prepare export destination
     File exportDir = new File(pathToExport);
@@ -112,7 +115,7 @@ public class TvShowExporter extends MediaEntityExporter {
       for (MediaEntity me : tvShowsToExport) {
         TvShow show = (TvShow) me;
         // create a TV show dir
-        File showDir = new File(pathToExport, TvShowRenamer.createDestination("$N ($Y)", show, new ArrayList<TvShowEpisode>()));
+        File showDir = new File(pathToExport, getFilename(show));
         if (showDir.exists()) {
           FileUtils.deleteQuietly(showDir);
         }
@@ -128,19 +131,21 @@ public class TvShowExporter extends MediaEntityExporter {
         if (StringUtils.isNotBlank(episodeTemplate)) {
           for (TvShowEpisode episode : show.getEpisodes()) {
             List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
-            if (!mfs.isEmpty()) {
-              File seasonDir = new File(showDir, TvShowRenamer.generateSeasonDir("", episode));
-              if (!showDir.exists()) {
-                seasonDir.mkdirs();
-              }
-
-              String episodeFileName = FilenameUtils.getBaseName(TvShowRenamer.generateFilename(show, mfs.get(0))) + "." + fileExtension;
-              File episodeExportFile = new File(seasonDir, episodeFileName);
-              root = new HashMap<String, Object>();
-              root.put("episode", episode);
-              output = engine.transform(episodeTemplate, root);
-              FileUtils.writeStringToFile(episodeExportFile, output, "UTF-8");
+            if (mfs.isEmpty()) {
+              continue;
             }
+
+            File seasonDir = new File(showDir, TvShowRenamer.generateSeasonDir("", episode));
+            if (!showDir.exists()) {
+              seasonDir.mkdirs();
+            }
+
+            String episodeFileName = getFilename(episode) + "." + fileExtension;
+            File episodeExportFile = new File(seasonDir, episodeFileName);
+            root = new HashMap<String, Object>();
+            root.put("episode", episode);
+            output = engine.transform(episodeTemplate, root);
+            FileUtils.writeStringToFile(episodeExportFile, output, "UTF-8");
           }
         }
       }
@@ -166,10 +171,22 @@ public class TvShowExporter extends MediaEntityExporter {
     }
   }
 
+  private static String getFilename(MediaEntity entity) {
+    if (entity instanceof TvShow) {
+      return TvShowRenamer.createDestination("$N ($Y)", (TvShow) entity, new ArrayList<TvShowEpisode>());
+    }
+    if (entity instanceof TvShowEpisode) {
+      TvShowEpisode episode = (TvShowEpisode) entity;
+      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      return FilenameUtils.getBaseName(TvShowRenamer.generateFilename(episode.getTvShow(), mfs.get(0)));
+    }
+    return "";
+  }
+
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  public static class TvShowFilenameRenderer implements NamedRenderer {
+  private class TvShowFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -192,6 +209,134 @@ public class TvShowExporter extends MediaEntityExporter {
         return TvShowRenamer.generateTvShowDir(show);
       }
       return null;
+    }
+  }
+
+  /**
+   * this renderer is used to copy artwork into the exported template
+   * 
+   * @author Manuel Laggner
+   */
+  private class ArtworkCopyRenderer implements NamedRenderer {
+    private String pathToExport;
+
+    public ArtworkCopyRenderer(String pathToExport) {
+      this.pathToExport = pathToExport;
+    }
+
+    @Override
+    public RenderFormatInfo getFormatInfo() {
+      return null;
+    }
+
+    @Override
+    public String getName() {
+      return "copyArtwork";
+    }
+
+    @Override
+    public Class<?>[] getSupportedClasses() {
+      return new Class[] { TvShow.class, TvShowEpisode.class };
+    }
+
+    @Override
+    public String render(Object o, String pattern, Locale locale) {
+      if (o instanceof TvShow || o instanceof TvShowEpisode) {
+        MediaEntity entity = (MediaEntity) o;
+        Map<String, Object> parameters = parseParameters(pattern);
+
+        MediaFile mf = entity.getArtworkMap().get(parameters.get("type"));
+        if (mf == null || !mf.isGraphic()) {
+          return null;
+        }
+
+        String filename = parameters.get("destination") + File.separator + getFilename(entity) + "-" + mf.getType();
+        try {
+          // we need to rescale the image; scale factor is fixed to
+          if (parameters.get("thumb") == Boolean.TRUE) {
+            filename += ".thumb." + FilenameUtils.getExtension(mf.getFilename());
+            int width = 150;
+            if (parameters.get("width") != null) {
+              width = (int) parameters.get("width");
+            }
+            InputStream is = ImageCache.scaleImage(mf.getFile(), width);
+            FileUtils.copyInputStreamToFile(is, new File(pathToExport, filename));
+          }
+          else {
+            filename += "." + FilenameUtils.getExtension(mf.getFilename());
+            FileUtils.copyFile(mf.getFile(), new File(pathToExport, filename));
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not copy artwork file: " + e.getMessage());
+          return null;
+        }
+
+        return filename;
+      }
+      return null;
+    }
+
+    /**
+     * parse the parameters out of the parameters string
+     * 
+     * @param parameters
+     *          the parameters as string
+     * @return a map containing all parameters
+     */
+    private Map<String, Object> parseParameters(String parameters) {
+      Map<String, Object> parameterMap = new HashMap<>();
+
+      // defaults
+      parameterMap.put("thumb", Boolean.FALSE);
+      parameterMap.put("destination", "images");
+
+      String[] details = parameters.split(",");
+      for (int x = 0; x < details.length; x++) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = details[x].split("=");
+          key = d[0].trim();
+          value = d[1].trim();
+        }
+        catch (Exception e) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase()) {
+          case "type":
+            MediaFileType type = MediaFileType.valueOf(value.toUpperCase());
+            if (type != null) {
+              parameterMap.put(key, type);
+            }
+            break;
+
+          case "destination":
+            parameterMap.put("destination", value);
+            break;
+
+          case "thumb":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          case "width":
+            try {
+              parameterMap.put(key, Integer.parseInt(value));
+            }
+            catch (Exception e) {
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return parameterMap;
     }
   }
 }
