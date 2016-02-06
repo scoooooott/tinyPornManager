@@ -355,8 +355,11 @@ public class NativeFileChooser extends JFileChooser {
     if (fileChooser != null) {
       fileChooser.setInitialDirectory(dir);
     }
-    if (directoryChooser != null) {
+    else if (directoryChooser != null) {
       directoryChooser.setInitialDirectory(dir);
+    }
+    else {
+      super.setCurrentDirectory(dir);
     }
   };
 
@@ -365,7 +368,9 @@ public class NativeFileChooser extends JFileChooser {
       try {
         fileChooser = new JFXFileChooser();
         this.currentFile = currentFile;
-        setSelectedFile(currentFile);
+        if (currentFile != null) {
+          setSelectedFile(currentFile);
+        }
       }
       catch (Exception ignored) {
       }
