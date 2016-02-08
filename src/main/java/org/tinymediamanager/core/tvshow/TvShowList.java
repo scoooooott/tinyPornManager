@@ -452,7 +452,7 @@ public class TvShowList extends AbstractModelObject {
       options.set(SearchParam.LANGUAGE, language.name());
       options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
       LOGGER.info("=====================================================");
-      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId());
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       searchResult = provider.search(options);
