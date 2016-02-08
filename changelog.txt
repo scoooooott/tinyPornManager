@@ -6,6 +6,7 @@ x finally fixed the NEW indicator behavior
   it will now work as in versions before 2.7 (NEW stays for the whole tmm session)
 x improved performance in the update data sources for TV shows
 x fixed searching for movie set artwork in movie folders
+x Kodi scrapers: fix some invalid XML headers
 x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
 x remember last opened directory in the new chooser
