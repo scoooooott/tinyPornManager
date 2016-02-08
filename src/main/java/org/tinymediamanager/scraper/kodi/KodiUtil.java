@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -39,6 +41,44 @@ class KodiUtil {
   // prescan directory for ALL common XMLs
   static final ArrayList<File>                    commonXmls = KodiUtil.getAllCommonXMLs();
   static final List<AbstractKodiMetadataProvider> scrapers   = KodiUtil.getAllScrapers();
+
+  /**
+   * Strips out unknown XML header values which might break validators<br>
+   * like &lt;?xml ... asdf=false ... ?&gt;
+   * 
+   * @param xml
+   * @return
+   */
+  public static String fixXmlHeader(String xml) {
+    String ret = xml;
+    Pattern head = Pattern.compile(".*(<\\?xml(.*?)\\?>).*", Pattern.DOTALL); // just the header line <?xml ... ?>
+    Matcher headm = head.matcher(xml);
+    if (headm.matches()) {
+      String xmlHeaderOrig = headm.group(1);
+      String xmlHeaderNew = headm.group(1);
+      Pattern p = Pattern.compile("(\\w+)=[\"\']?[\\w.-]+[\"\']?"); // key="value" with optional apostrophe
+      Matcher m = p.matcher(xmlHeaderNew);
+      while (m.find()) {
+        String known = m.group(1).toLowerCase();
+        switch (known) {
+          case "version":
+          case "encoding":
+          case "standalone":
+            // valid, do nothing
+            break;
+
+          default:
+            // replace unknown
+            xmlHeaderNew = xmlHeaderNew.replace(m.group(), "");
+            break;
+        }
+      }
+      if (!xmlHeaderNew.equals(xmlHeaderOrig)) {
+        ret = ret.replace(xmlHeaderOrig, xmlHeaderNew);
+      }
+    }
+    return ret.trim();
+  }
 
   /**
    * tries to detect the Kodi installation folder

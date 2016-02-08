@@ -15,12 +15,16 @@
  */
 package org.tinymediamanager.scraper.kodi;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -39,8 +43,11 @@ class KodiScraperParser {
   public KodiScraper parseScraper(KodiScraper scraper, List<File> common) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
-    Document xml = parser.parse(new File(scraper.getFolder(), scraper.getScraperXml()));
 
+    String xmlFile = FileUtils.readFileToString(new File(scraper.getFolder(), scraper.getScraperXml()), "UTF-8");
+    xmlFile = KodiUtil.fixXmlHeader(xmlFile);
+    InputStream stream = new ByteArrayInputStream(xmlFile.getBytes(StandardCharsets.UTF_8));
+    Document xml = parser.parse(stream);
     Element docEl = xml.getDocumentElement();
     NodeList nl = docEl.getChildNodes();
 
