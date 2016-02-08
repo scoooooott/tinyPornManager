@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -19,6 +20,17 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 public class KodiMetadataProviderTest {
   private static final String CRLF = "\n";
+
+  @Test
+  public void xmlHeaders() {
+    Assert.assertFalse(KodiUtil
+        .fixXmlHeader("<?xml version=\"1.0\" test=\"false\" encoding=\"UTF-8\"?>\n<scraper framework=\"1.1\" date=\"2012-01-16\">").contains("test"));
+    Assert.assertFalse(KodiUtil.fixXmlHeader("<?xml version=\'1.0\' encoding=\"UTF-8\" gzip=\"yes\" standalone=\"yes\" ?>").contains("gzip"));
+    Assert.assertFalse(
+        KodiUtil.fixXmlHeader("<?xml version=\"1.0\' encoding=\"UTF-8\" gzip=\"yes\"?><result key=\"true\">key=\"true\"</result>").contains("gzip"));
+    Assert.assertFalse(KodiUtil.fixXmlHeader("<?xml version=\"1.0\' encoding=\"UTF-8\" asdf=yes?>").contains("asdf"));
+    Assert.assertEquals("", KodiUtil.fixXmlHeader(""));
+  }
 
   @Test
   public void loadXbmcScrapers() {

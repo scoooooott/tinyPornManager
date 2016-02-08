@@ -74,6 +74,8 @@ class KodiUtil {
         }
       }
       if (!xmlHeaderNew.equals(xmlHeaderOrig)) {
+        xmlHeaderNew = xmlHeaderNew.replaceAll("  ", " ");
+        LOGGER.warn("Fixing invalid XML header! " + xmlHeaderOrig + " -> " + xmlHeaderNew);
         ret = ret.replace(xmlHeaderOrig, xmlHeaderNew);
       }
     }

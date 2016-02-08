@@ -307,6 +307,7 @@ class KodiScraperProcessor {
     if (text == null) {
       text = "";
     }
+    text = KodiUtil.fixXmlHeader(text); // fix possible XML header errors
 
     LOGGER.debug("Get Int Buffer: " + buffer + "; Text: " + logBuffer(text));
     return text;
@@ -316,6 +317,7 @@ class KodiScraperProcessor {
     if (buffer == null) {
       buffer = "";
     }
+    buffer = KodiUtil.fixXmlHeader(buffer); // fix possible XML header errors
 
     LOGGER.debug(String.format("Get String Buffer: %s", buffer));
     Pattern bufferPattern = Pattern.compile("\\$\\$([0-9]+)");
