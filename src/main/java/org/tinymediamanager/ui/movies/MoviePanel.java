@@ -505,6 +505,7 @@ public class MoviePanel extends JPanel {
     JPopupMenu popupMenu = new JPopupMenu();
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
+    popupMenu.add(actionScrapeUnscraped);
     popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.add(actionAssignMovieSets);
     popupMenu.addSeparator();
