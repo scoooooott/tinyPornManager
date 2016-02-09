@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -563,6 +564,16 @@ public class TvShowRenamer {
         // episode title
         if (episodePart.contains("$T")) {
           episodePart = replaceToken(episodePart, "$T", episode.getTitle());
+        }
+
+        // media source
+        if (episodePart.contains("$S")) {
+          if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+            episodePart = replaceToken(episodePart, "$S", "");
+          }
+          else {
+            episodePart = replaceToken(episodePart, "$S", episode.getMediaSource().toString());
+          }
         }
 
         combinedEpisodeParts += episodePart + " ";

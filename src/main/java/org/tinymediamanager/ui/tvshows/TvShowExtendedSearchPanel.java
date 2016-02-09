@@ -40,6 +40,7 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -53,9 +54,9 @@ import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
 import org.tinymediamanager.ui.panels.RoundedPanel;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.AbstractLookAndFeel;
 
@@ -99,6 +100,9 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JComboBox                    cbVideoFormat;
 
   private final Action                 actionFilter     = new FilterAction();
+  private JCheckBox                    cbFilterMediaSource;
+  private JLabel                       lblMediaSource;
+  private JComboBox                    cbMediaSource;
 
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
@@ -114,14 +118,13 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     });
 
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormFactory.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.UNRELATED_GAP_ROWSPEC, }));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
@@ -256,41 +259,55 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     cbDatasource.setAction(actionFilter);
     add(cbDatasource, "6, 11, fill, default");
 
+    cbFilterMediaSource = new JCheckBox("");
+    cbFilterMediaSource.setAction(actionFilter);
+    cbFilterMediaSource.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterMediaSource, "2, 12");
+
+    lblMediaSource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    setComponentFont(lblMediaSource);
+    add(lblMediaSource, "4, 12, right, default");
+
+    cbMediaSource = new JComboBox<>(MediaSource.values());
+    setComponentFont(cbMediaSource);
+    cbMediaSource.setAction(actionFilter);
+    add(cbMediaSource, "6, 12, fill, default");
+
     cbFilterMissingMetadata = new JCheckBox("");
     cbFilterMissingMetadata.setAction(actionFilter);
     cbFilterMissingMetadata.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingMetadata, "2, 12");
+    add(cbFilterMissingMetadata, "2, 13");
 
     JLabel lblMissingMetadata = new JLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
     setComponentFont(lblMissingMetadata);
-    add(lblMissingMetadata, "4, 12, right, default");
+    add(lblMissingMetadata, "4, 13, right, default");
 
     cbFilterMissingArtwork = new JCheckBox("");
     cbFilterMissingArtwork.setAction(actionFilter);
     cbFilterMissingArtwork.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingArtwork, "2, 13");
+    add(cbFilterMissingArtwork, "2, 14");
 
     JLabel lblMissingArtwork = new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
     setComponentFont(lblMissingArtwork);
-    add(lblMissingArtwork, "4, 13, right, default");
+    add(lblMissingArtwork, "4, 14, right, default");
 
     cbFilterMissingSubtitles = new JCheckBox("");
     cbFilterMissingSubtitles.setAction(actionFilter);
     cbFilterMissingSubtitles.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingSubtitles, "2, 14");
+    add(cbFilterMissingSubtitles, "2, 15");
 
     JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
     setComponentFont(lblMissingSubtitles);
-    add(lblMissingSubtitles, "4, 14, right, default");
+    add(lblMissingSubtitles, "4, 15, right, default");
 
     cbFilterNewEpisodes = new JCheckBox("");
     cbFilterNewEpisodes.setAction(actionFilter);
     cbFilterNewEpisodes.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterNewEpisodes, "2, 15");
+    add(cbFilterNewEpisodes, "2, 16");
 
     JLabel lblNewEpisodes = new JLabel(BUNDLE.getString("movieextendedsearch.newepisodes")); //$NON-NLS-1$
     setComponentFont(lblNewEpisodes);
-    add(lblNewEpisodes, "4, 15, right, default");
+    add(lblNewEpisodes, "4, 16, right, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -393,6 +410,16 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.DATASOURCE);
+      }
+
+      // filter by media source
+      if (cbFilterMediaSource.isSelected()) {
+        MediaSource mediaSource = (MediaSource) cbMediaSource.getSelectedItem();
+        tvShowTreeModel.setFilter(SearchOptions.MEDIA_SOURCE, mediaSource);
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.MEDIA_SOURCE);
+
       }
 
       // filter by cast

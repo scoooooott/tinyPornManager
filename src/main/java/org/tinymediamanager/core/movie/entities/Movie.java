@@ -43,13 +43,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -122,7 +122,7 @@ public class Movie extends MediaEntity {
   @JsonProperty
   private int                                   top250                     = 0;
   @JsonProperty
-  private MovieMediaSource                      mediaSource                = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
+  private MediaSource                           mediaSource                = MediaSource.UNKNOWN;                 // DVD, Bluray, etc
   @JsonProperty
   private boolean                               videoIn3D                  = false;
   @JsonProperty
@@ -1627,12 +1627,12 @@ public class Movie extends MediaEntity {
     firePropertyChange(COUNTRY, oldValue, newValue);
   }
 
-  public MovieMediaSource getMediaSource() {
+  public MediaSource getMediaSource() {
     return mediaSource;
   }
 
-  public void setMediaSource(MovieMediaSource newValue) {
-    MovieMediaSource oldValue = this.mediaSource;
+  public void setMediaSource(MediaSource newValue) {
+    MediaSource oldValue = this.mediaSource;
     this.mediaSource = newValue;
     firePropertyChange(MEDIA_SOURCE, oldValue, newValue);
   }

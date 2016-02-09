@@ -45,10 +45,10 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -383,7 +383,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblMediaSource);
     add(lblMediaSource, "4, 17, right, default");
 
-    cbMediaSource = new SmallComboBox(MovieMediaSource.values());
+    cbMediaSource = new SmallComboBox(MediaSource.values());
     setComponentFont(cbMediaSource);
     cbMediaSource.setAction(actionFilter);
     add(cbMediaSource, "6, 17, fill, default");

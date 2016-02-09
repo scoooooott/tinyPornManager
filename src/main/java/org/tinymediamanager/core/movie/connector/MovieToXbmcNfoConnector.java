@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -66,7 +67,6 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
@@ -379,7 +379,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.sorttitle = movie.getSortTitle();
-    if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+    if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       xbmc.source = movie.getMediaSource().name();
     }
 
@@ -613,7 +613,7 @@ public class MovieToXbmcNfoConnector {
 
       if (StringUtils.isNotBlank(xbmc.source)) {
         try {
-          MovieMediaSource source = MovieMediaSource.valueOf(xbmc.source);
+          MediaSource source = MediaSource.valueOf(xbmc.source);
           if (source != null) {
             movie.setMediaSource(source);
           }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core;
 
 import java.util.regex.Pattern;
 
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * 
  * @author Manuel Laggner
  */
-public enum MovieMediaSource {
+public enum MediaSource {
   //@formatter:off
   // the well known and XBMC/Kodi compatible sources
   TV("TV"), 
@@ -54,7 +54,7 @@ public enum MovieMediaSource {
 
   private String         title;
 
-  private MovieMediaSource(String title) {
+  private MediaSource(String title) {
     this.title = title;
   }
 
@@ -70,41 +70,41 @@ public enum MovieMediaSource {
    *          the filename
    * @return Bluray | HDDVD | TV | DVD | VHS
    */
-  public static MovieMediaSource parseMediaSource(String filename) {
+  public static MediaSource parseMediaSource(String filename) {
     String fn = filename.toLowerCase();
     // http://wiki.xbmc.org/index.php?title=Media_flags#Media_source
 
     if (blurayPattern.matcher(fn).find()) {
-      return MovieMediaSource.BLURAY; // yes!
+      return MediaSource.BLURAY; // yes!
     }
     else if (dvdPattern.matcher(fn).find()) {
-      return MovieMediaSource.DVD;
+      return MediaSource.DVD;
     }
     else if (hddvdPattern.matcher(fn).find()) {
-      return MovieMediaSource.HDDVD;
+      return MediaSource.HDDVD;
     }
     else if (tsPattern.matcher(fn).find()) {
-      return MovieMediaSource.TS;
+      return MediaSource.TS;
     }
     else if (dvdscrPattern.matcher(fn).find()) {
-      return MovieMediaSource.DVDSCR;
+      return MediaSource.DVDSCR;
     }
     else if (tvPattern.matcher(fn).find()) {
-      return MovieMediaSource.TV;
+      return MediaSource.TV;
     }
     else if (camPattern.matcher(fn).find()) {
-      return MovieMediaSource.CAM;
+      return MediaSource.CAM;
     }
     else if (webripPattern.matcher(fn).find()) {
-      return MovieMediaSource.WEBRIP;
+      return MediaSource.WEBRIP;
     }
     else if (webdlPattern.matcher(fn).find()) {
-      return MovieMediaSource.WEB_DL;
+      return MediaSource.WEB_DL;
     }
     else if (vhsPattern.matcher(fn).find()) {
-      return MovieMediaSource.VHS;
+      return MediaSource.VHS;
     }
 
-    return MovieMediaSource.UNKNOWN;
+    return MediaSource.UNKNOWN;
   }
 }
