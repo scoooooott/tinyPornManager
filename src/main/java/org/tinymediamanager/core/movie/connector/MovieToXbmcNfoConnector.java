@@ -29,6 +29,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -124,7 +125,7 @@ public class MovieToXbmcNfoConnector {
   public int                   playcount             = 0;
   @XmlElement(name = "genre")
   public List<String>          genres;
-  public String                studio                = "";
+  public List<String>          studio;
   public List<String>          credits;
   public List<String>          director;
   @XmlElement(name = "tag")
@@ -284,7 +285,9 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.ids.putAll(movie.getIds());
 
-    xbmc.studio = movie.getProductionCompany();
+    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
+      xbmc.studio = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    }
 
     xbmc.country = movie.getCountry();
     xbmc.watched = movie.isWatched();
@@ -592,7 +595,9 @@ public class MovieToXbmcNfoConnector {
       }
       movie.setWriter(writer);
 
-      movie.setProductionCompany(xbmc.studio);
+      movie.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+      movie.setProductionCompany(movie.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
+
       movie.setCountry(xbmc.country);
       if (!StringUtils.isEmpty(xbmc.certification)) {
         movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.certification));
