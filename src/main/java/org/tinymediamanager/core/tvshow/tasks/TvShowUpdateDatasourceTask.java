@@ -168,8 +168,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private void updateDatasource() {
     List<File> imageFiles = new ArrayList<File>();
 
+    // get existing tv show folders
+    List<File> existing = new ArrayList<File>();
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      existing.add(new File(tvShow.getPath()));
+    }
+
     for (String path : dataSources) {
       File[] dirs = new File(path).listFiles();
+      List<File> newShows = new ArrayList<File>();
+      List<File> existingShows = new ArrayList<File>();
+
       // check whether the path is accessible (eg disconnected shares)
       if (dirs == null || dirs.length == 0) {
         // error - continue with next datasource
@@ -201,7 +210,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           File tmmIgnore = new File(subdir, ".tmmignore");
           File tmmIgnore2 = new File(subdir, "tmmignore");
           if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
-            submitTask(new FindTvShowTask(subdir, path));
+            if (existing.contains(subdir)) {
+              existingShows.add(subdir);
+            }
+            else {
+              newShows.add(subdir);
+            }
           }
         }
 
@@ -210,6 +224,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot", new String[] { subdir.getName() }));
         }
+      }
+
+      // parse new directories first
+      for (File subdir : newShows) {
+        submitTask(new FindTvShowTask(subdir, path));
+      }
+      for (File subdir : existingShows) {
+        submitTask(new FindTvShowTask(subdir, path));
       }
 
       waitForCompletionOrCancel();
