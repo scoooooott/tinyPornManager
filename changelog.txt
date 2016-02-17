@@ -3,7 +3,7 @@ Version 2.7.3
 + added image exporting in the export templates (see http://goo.gl/kuSYlH or in the wiki)
 + added media source to the TV show section
 +/x moved fanart.tv client key to the scraper settings (and released it for everyone)
-x improved TV show update; parse new shows first
+x improved data source update; parse new entries first
 x improved TV show renamer for multi episode files
 x finally fixed the NEW indicator behavior
   it will now work as in versions before 2.7 (NEW stays for the whole tmm session)

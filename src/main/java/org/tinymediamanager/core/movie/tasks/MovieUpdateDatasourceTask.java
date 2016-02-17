@@ -104,6 +104,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       return;
     }
 
+    // get existing movie folders
+    List<File> existing = new ArrayList<File>();
+    for (Movie movie : movieList.getMovies()) {
+      existing.add(new File(movie.getPath()));
+    }
+
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
@@ -112,6 +118,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       for (String ds : dataSources) {
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
         publishState();
+
+        // just check main/root datasource folder
+        List<File> newMovieInDsRoot = new ArrayList<File>();
+        List<File> existingMovieInDsRoot = new ArrayList<File>();
 
         if (MovieModuleManager.MOVIE_SETTINGS.isDetectMovieMultiDir()) {
           initThreadPool(1, "update"); // use only one, since the multiDir detection relies on accurate values...
@@ -140,7 +150,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               }
 
               // dig deeper in this dir
-              submitTask(new FindMovieTask(file, ds));
+              if (existing.contains(file)) {
+                existingMovieInDsRoot.add(file);
+              }
+              else {
+                newMovieInDsRoot.add(file);
+              }
             }
             else {
               if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
@@ -155,6 +170,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
           }
         }
+
+        // parse new directories first
+        for (File subdir : newMovieInDsRoot) {
+          submitTask(new FindMovieTask(subdir, ds));
+        }
+        for (File subdir : existingMovieInDsRoot) {
+          submitTask(new FindMovieTask(subdir, ds));
+        }
+
         waitForCompletionOrCancel();
 
         if (parseDsRoot) {
