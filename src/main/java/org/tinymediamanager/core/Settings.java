@@ -94,7 +94,6 @@ public class Settings extends AbstractModelObject {
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
   private final static String         LANGUAGE                    = "language";
   private final static String         WOL_DEVICES                 = "wolDevices";
-  private final static String         SHOW_NOTIFICATIONS          = "showNotifications";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -125,7 +124,6 @@ public class Settings extends AbstractModelObject {
 
   private String                      traktAccessToken            = "";
   private String                      traktRefreshToken           = "";
-  private String                      fanartClientKey             = "";
 
   private String                      xbmcHost                    = "";
   private String                      xbmcUsername                = "";
@@ -1015,16 +1013,6 @@ public class Settings extends AbstractModelObject {
     String oldValue = this.traktRefreshToken;
     this.traktRefreshToken = newValue;
     firePropertyChange("traktRefreshToken", oldValue, newValue);
-  }
-
-  public String getFanartClientKey() {
-    return fanartClientKey;
-  }
-
-  public void setFanartClientKey(String newValue) {
-    String oldValue = this.fanartClientKey;
-    this.fanartClientKey = newValue.trim();
-    firePropertyChange("fanartTv", oldValue, newValue);
   }
 
   public String getXbmcHost() {

@@ -67,8 +67,8 @@ public class MovieSet extends MediaEntity {
     this();
     setTitle(title);
 
-    // search for artwork in the artwork folder
-    MovieSetArtworkHelper.findArtworkInArtworkFolder(this);
+    // search for artwork
+    MovieSetArtworkHelper.updateArtwork(this);
   }
 
   @Override
@@ -167,6 +167,10 @@ public class MovieSet extends MediaEntity {
       }
       movies.add(movie);
       movieIds.add(movie.getDbId());
+
+      // update artwork
+      MovieSetArtworkHelper.updateArtwork(this);
+
       saveToDb();
     }
 
@@ -201,6 +205,9 @@ public class MovieSet extends MediaEntity {
         movies.add(index, movie);
         movieIds.add(index, movie.getDbId());
       }
+
+      // update artwork
+      MovieSetArtworkHelper.updateArtwork(this);
 
       saveToDb();
     }
@@ -240,6 +247,10 @@ public class MovieSet extends MediaEntity {
     synchronized (movies) {
       movies.remove(movie);
       movieIds.remove(movie.getDbId());
+
+      // update artwork
+      MovieSetArtworkHelper.updateArtwork(this);
+
       saveToDb();
     }
 
@@ -292,6 +303,10 @@ public class MovieSet extends MediaEntity {
       }
       movies.clear();
       movieIds.clear();
+
+      // update artwork
+      MovieSetArtworkHelper.updateArtwork(this);
+
       saveToDb();
     }
 

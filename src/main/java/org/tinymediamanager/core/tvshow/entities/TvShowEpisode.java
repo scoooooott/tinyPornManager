@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -94,6 +95,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private boolean                            isDvdOrder            = false;
   @JsonProperty
   private UUID                               tvShowId              = null;
+  @JsonProperty
+  private MediaSource                        mediaSource           = MediaSource.UNKNOWN;                         // DVD, Bluray, etc
 
   @JsonProperty
   private List<TvShowActor>                  actors                = new ArrayList<TvShowActor>(0);
@@ -1061,6 +1064,16 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     boolean oldValue = this.isDvdOrder;
     this.isDvdOrder = newValue;
     firePropertyChange(DVD_ORDER, oldValue, newValue);
+  }
+
+  public MediaSource getMediaSource() {
+    return mediaSource;
+  }
+
+  public void setMediaSource(MediaSource newValue) {
+    MediaSource oldValue = this.mediaSource;
+    this.mediaSource = newValue;
+    firePropertyChange(MEDIA_SOURCE, oldValue, newValue);
   }
 
   /**

@@ -50,7 +50,7 @@ public class TvShowRenamer {
 
   // the regexp to find the episode relevant tokens which have to be repeated on multi ep files
   private static final Pattern        multiEpisodeTokenPattern = Pattern
-      .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D|\\$T)?");
+      .compile("(S|Season|Staffel)?(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D)+?.*(\\$1|\\$2|\\$3|\\$4|\\$E|\\$D)");
 
   /**
    * add leadingZero if only 1 char
@@ -522,8 +522,14 @@ public class TvShowRenamer {
       }
 
       String combinedEpisodeParts = "";
+
+      // for Multi EP files, we split out the season/episode part and the title
+      // repeat the season/episode part for all episodes, followed by the title for all episodes
       for (TvShowEpisode episode : episodes) {
         String episodePart = episodeTokens;
+        if (StringUtils.isNotBlank(combinedEpisodeParts)) {
+          combinedEpisodeParts += "- ";
+        }
 
         // remember first episode for media file tokens
         if (firstEp == null) {
@@ -559,12 +565,6 @@ public class TvShowRenamer {
         if (episodePart.contains("$D")) {
           episodePart = replaceToken(episodePart, "$D", lz(episode.getDvdEpisode()));
         }
-
-        // episode title
-        if (episodePart.contains("$T")) {
-          episodePart = replaceToken(episodePart, "$T", episode.getTitle());
-        }
-
         combinedEpisodeParts += episodePart + " ";
       }
 
@@ -572,6 +572,19 @@ public class TvShowRenamer {
       if (StringUtils.isNotBlank(episodeTokens)) {
         newDestination = newDestination.replace(episodeTokens, combinedEpisodeParts);
       }
+
+      // episode title
+      if (newDestination.contains("$T")) {
+        String titles = "";
+        for (TvShowEpisode episode : episodes) {
+          if (StringUtils.isNotBlank(titles)) {
+            titles += " - ";
+          }
+          titles += episode.getTitle();
+        }
+        newDestination = replaceToken(newDestination, "$T", titles);
+      }
+
     }
     else {
       // we're in either TV show folder or season folder generation;
@@ -642,6 +655,7 @@ public class TvShowRenamer {
 
     // trim out unnecessary whitespaces
     newDestination = newDestination.trim();
+    newDestination = newDestination.replaceAll(" +", " ").trim();
 
     // any whitespace replacements?
     if (SETTINGS.isRenamerSpaceSubstitution()) {

@@ -25,8 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.sun.jna.Platform;
@@ -102,7 +107,8 @@ public class UpgradeTasks {
    */
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
     MovieList movieList = MovieList.getInstance();
-    // TvShowList tvShowList = TvShowList.getInstance();
+    TvShowList tvShowList = TvShowList.getInstance();
+
     String v = "" + oldVersion;
 
     if (StringUtils.isBlank(v)) {
@@ -160,6 +166,27 @@ public class UpgradeTasks {
       }
     }
 
+    // upgrade to v2.7.3
+    if (StrgUtils.compareVersion(v, "2.7.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.7.3");
+      // get movie set artwork
+      for (MovieSet movieSet : movieList.getMovieSetList()) {
+        MovieSetArtworkHelper.updateArtwork(movieSet);
+        movieSet.saveToDb();
+      }
+
+      // reset new indicator
+      for (Movie movie : movieList.getMovies()) {
+        movie.setNewlyAdded(false);
+        movie.saveToDb();
+      }
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          episode.setNewlyAdded(false);
+          episode.saveToDb();
+        }
+      }
+    }
   }
 
   /**

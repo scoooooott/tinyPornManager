@@ -36,8 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -324,7 +324,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
       panelContent.add(lblMediasource, "2, 14, right, default");
 
-      final JComboBox cbMediaSource = new JComboBox(MovieMediaSource.values());
+      final JComboBox cbMediaSource = new JComboBox(MediaSource.values());
       panelContent.add(cbMediaSource, "4, 14, fill, default");
 
       JButton btnMediaSource = new JButton("");
@@ -335,8 +335,8 @@ public class MovieBatchEditorDialog extends TmmDialog {
         public void actionPerformed(ActionEvent e) {
           changed = true;
           Object obj = cbMediaSource.getSelectedItem();
-          if (obj instanceof MovieMediaSource) {
-            MovieMediaSource mediaSource = (MovieMediaSource) obj;
+          if (obj instanceof MediaSource) {
+            MediaSource mediaSource = (MediaSource) obj;
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             for (Movie movie : moviesToEdit) {
               movie.setMediaSource(mediaSource);

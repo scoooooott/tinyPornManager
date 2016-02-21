@@ -42,7 +42,7 @@
 			<version>1.6.12</version>
 		</dependency>
 
-		<!-- our plugins - all provided for dependency resolution-->
+		<!-- our plugins - all provided for dependency resolution -->
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-anidb</artifactId>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-fanarttv</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-kodi</artifactId>
-			<version>1.1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

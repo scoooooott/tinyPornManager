@@ -116,7 +116,8 @@ public class TvShowEpisodeScrapeTask implements Runnable {
 
       try {
         LOGGER.info("=====================================================");
-        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId() + ", "
+            + mediaScraper.getMediaProvider().getProviderInfo().getVersion());
         LOGGER.info(options.toString());
         LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);

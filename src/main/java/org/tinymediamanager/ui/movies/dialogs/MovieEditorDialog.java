@@ -59,9 +59,9 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
@@ -423,10 +423,9 @@ public class MovieEditorDialog extends TmmDialog {
       details1Panel.add(lblSourceT, "8, 26, right, default");
     }
     {
-      cbSource = new JComboBox(MovieMediaSource.values());
+      cbSource = new JComboBox<>(MediaSource.values());
       details1Panel.add(cbSource, "10, 26, 3, 1, fill, default");
     }
-    cbSource.setSelectedItem(movie.getMediaSource());
     {
       JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
       details1Panel.add(lblVideod, "16, 26, right, default");
@@ -837,6 +836,7 @@ public class MovieEditorDialog extends TmmDialog {
       lblPoster.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.POSTER));
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(movieToEdit.getRuntime()));
+      cbSource.setSelectedItem(movie.getMediaSource());
 
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
@@ -993,7 +993,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
-      movieToEdit.setMediaSource((MovieMediaSource) cbSource.getSelectedItem());
+      movieToEdit.setMediaSource((MediaSource) cbSource.getSelectedItem());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
 
       // sync of media ids

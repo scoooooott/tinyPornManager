@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
@@ -187,7 +187,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
 
     // check against movie source
     if (searchOptions.containsKey(MovieSearchOptions.MEDIA_SOURCE)) {
-      MovieMediaSource mediaSource = (MovieMediaSource) searchOptions.get(MovieSearchOptions.MEDIA_SOURCE);
+      MediaSource mediaSource = (MediaSource) searchOptions.get(MovieSearchOptions.MEDIA_SOURCE);
       if (movie.getMediaSource() != mediaSource) {
         return false;
       }
