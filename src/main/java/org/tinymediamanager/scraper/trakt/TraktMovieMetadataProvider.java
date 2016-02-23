@@ -30,7 +30,9 @@ import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import com.uwetrottmann.trakt.v2.TraktV2;
+import com.uwetrottmann.trakt.v2.entities.Movie;
 import com.uwetrottmann.trakt.v2.entities.SearchResult;
+import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.enums.Type;
 
 /**
@@ -109,13 +111,27 @@ class TraktMovieMetadataProvider {
   }
 
   MediaMetadata scrape(MediaScrapeOptions options) throws Exception {
-    List<MediaMetadata> scrapeResults = null;
+
+    Movie result = new Movie();
+    MediaMetadata metadata = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
     if (options.getType() != MediaType.MOVIE)
       throw new UnsupportedMediaTypeException(options.getType());
 
-    LOGGER.debug("Scraping... Trakt ID" + options.getId("1"));
+    LOGGER.debug("Scraping... Trakt ID");
 
-    return null;
+    result = api.movies().summary(options.getId(TraktMetadataProvider.providerInfo.getId()), Extended.FULL);
+
+    metadata.storeMetadata(MediaMetadata.IMDB, result.ids.imdb);
+    metadata.storeMetadata(MediaMetadata.RATING, result.rating);
+    metadata.storeMetadata(MediaMetadata.RUNTIME, result.runtime);
+    metadata.storeMetadata(MediaMetadata.ORIGINAL_TITLE, result.title);
+    metadata.storeMetadata(MediaMetadata.PLOT, result.overview);
+    metadata.storeMetadata(MediaMetadata.VOTE_COUNT, result.votes);
+    metadata.storeMetadata(MediaMetadata.TMDB, result.ids.tmdb);
+    metadata.storeMetadata(MediaMetadata.YEAR, result.year);
+    metadata.storeMetadata(MediaMetadata.TITLE, result.title);
+
+    return metadata;
   }
 }

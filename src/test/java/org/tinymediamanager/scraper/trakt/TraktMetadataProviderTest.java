@@ -1,6 +1,7 @@
 package org.tinymediamanager.scraper.trakt;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -11,6 +12,8 @@ import java.util.logging.LogManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -50,7 +53,6 @@ public class TraktMetadataProviderTest {
 
       // did we get a result?
       assertThat(results).isNotNull().isNotEmpty();
-
       // are there all fields filled in the result?
       MediaSearchResult result = results.get(0);
       assertThat(result.getTitle()).isNotEmpty();
@@ -60,11 +62,27 @@ public class TraktMetadataProviderTest {
       assertThat(result.getIMDBId()).isNotNull();
       assertThat(result.getProviderId()).isNotNull();
       assertThat(result.getPosterUrl()).isNotEmpty();
-
     }
     catch (Exception e) {
       e.printStackTrace();
       fail();
     }
+  }
+
+  @Test
+  public void testMovieScrape() {
+
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+    TraktMetadataProvider mp = new TraktMetadataProvider();
+    options.setId(mp.getProviderInfo().getId(), "521");
+
+    try {
+      MediaMetadata md = mp.getMetadata(options);
+      assertNotNull(md);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+
   }
 }
