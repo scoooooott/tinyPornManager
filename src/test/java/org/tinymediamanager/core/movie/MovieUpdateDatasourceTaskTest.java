@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -22,7 +23,7 @@ import org.tinymediamanager.thirdparty.MediaInfoUtils;
  */
 public class MovieUpdateDatasourceTaskTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 17;
+  private static final int NUMBER_OF_EXPECTED_MOVIES = 26;
 
   public void setUpBeforeClass() throws Exception {
     MediaInfoUtils.loadMediaInfo();
@@ -54,6 +55,7 @@ public class MovieUpdateDatasourceTaskTest {
 
     MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
     task.run();
+    showEntries();
     Assert.assertEquals(NUMBER_OF_EXPECTED_MOVIES, MovieList.getInstance().getMovieCount());
   }
 
@@ -66,6 +68,13 @@ public class MovieUpdateDatasourceTaskTest {
 
     MovieUpdateDatasourceTask2 task = new MovieUpdateDatasourceTask2();
     task.run();
+    showEntries();
     Assert.assertEquals(NUMBER_OF_EXPECTED_MOVIES, MovieList.getInstance().getMovieCount());
+  }
+
+  private void showEntries() {
+    for (Movie m : MovieList.getInstance().getMovies()) {
+      System.out.println(m.getTitle() + " - " + m.getPathNIO());
+    }
   }
 }
