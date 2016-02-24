@@ -274,6 +274,9 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       for (Element element : el) {
         if (element.tagName().equals("tr")) {
           Element tr = element.nextElementSibling();
+          if (tr == null) {
+            continue;
+          }
           for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
             String act = a.toString();
             String aname = "";
