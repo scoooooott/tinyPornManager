@@ -190,6 +190,10 @@ public class ParserUtils {
    */
   public static String removeStopwordsFromTvEpisodeName(String filename) {
     String before = filename;
+
+    // replaces any resolution 1234x1234 (must start with a non-word (else too global)
+    filename = filename.replaceFirst("(?i)\\W\\d{3,4}x\\d{3,4}", " ");
+
     for (String s : stopwords) {
       filename = filename.replaceAll("(?i)\\W" + s + "\\W", " "); // TV stopwords must start AND END with a non-word (else too global)
       if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
