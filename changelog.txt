@@ -13,6 +13,7 @@ x Kodi scrapers: fix some invalid XML headers
 x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
 x remember last opened directory in the new chooser
+x TvShows: fix studio writing
 
 
 Version 2.7.2
