@@ -122,5 +122,8 @@ public class MovieMediaFileTest {
 
     as.setChannels("4 / 5.2 / 8 / 6 / 7.3.1 / 9");
     assertEqual(11, as.getChannelsAsInt());
+
+    as.setChannels("Object Based / 8 channels");
+    assertEqual(8, as.getChannelsAsInt());
   }
 }

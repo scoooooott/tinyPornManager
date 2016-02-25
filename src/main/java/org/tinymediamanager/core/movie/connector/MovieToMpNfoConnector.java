@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -61,7 +62,6 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
@@ -256,7 +256,7 @@ public class MovieToMpNfoConnector {
       mp.mpaa = movie.getCertification().name();
     }
 
-    if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+    if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       mp.source = movie.getMediaSource().name();
     }
 
@@ -416,7 +416,7 @@ public class MovieToMpNfoConnector {
 
       if (StringUtils.isNotBlank(mp.source)) {
         try {
-          MovieMediaSource source = MovieMediaSource.valueOf(mp.source);
+          MediaSource source = MediaSource.valueOf(mp.source);
           if (source != null) {
             movie.setMediaSource(source);
           }

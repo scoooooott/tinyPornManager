@@ -549,7 +549,7 @@ public class MovieList extends AbstractModelObject {
       }
 
       LOGGER.info("=====================================================");
-      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId());
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       sr = provider.search(options);
@@ -563,7 +563,8 @@ public class MovieList extends AbstractModelObject {
           LOGGER.info("no result yet - trying alternate scraper: " + ms.getName());
           try {
             LOGGER.info("=====================================================");
-            LOGGER.info("Searching with alternate scraper: " + ms.getMediaProvider().getProviderInfo().getId());
+            LOGGER.info("Searching with alternate scraper: " + ms.getMediaProvider().getProviderInfo().getId() + ", "
+                + provider.getProviderInfo().getVersion());
             LOGGER.info(options.toString());
             LOGGER.info("=====================================================");
             sr = ((IMovieMetadataProvider) ms.getMediaProvider()).search(options);

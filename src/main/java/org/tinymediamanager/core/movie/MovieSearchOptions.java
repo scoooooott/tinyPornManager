@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
@@ -80,7 +81,7 @@ public enum MovieSearchOptions {
               break;
 
             case "MEDIA_SOURCE":
-              options.put(MovieSearchOptions.valueOf(entry.key), MovieMediaSource.valueOf(entry.value));
+              options.put(MovieSearchOptions.valueOf(entry.key), MediaSource.valueOf(entry.value));
               break;
 
             default:
@@ -112,7 +113,7 @@ public enum MovieSearchOptions {
             break;
 
           case MEDIA_SOURCE:
-            MovieMediaSource source = (MovieMediaSource) entry.getValue();
+            MediaSource source = (MediaSource) entry.getValue();
             output.entries.add(new MovieSearchOptionsEntryType(entry.getKey().name(), source.name()));
             break;
 

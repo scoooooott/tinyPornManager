@@ -50,13 +50,13 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
@@ -650,8 +650,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (!Utils.isValidImdbId(movie.getImdbId())) {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
       }
-      if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
-        movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFileAsPath().toString()));
+      if (movie.getMediaSource() == MediaSource.UNKNOWN) {
+        movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
@@ -699,8 +699,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (!current.contains(mf)) { // a new mediafile was found!
         if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
           movie.setDisc(true);
-          if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
-            movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getPath()));
+          if (movie.getMediaSource() == MediaSource.UNKNOWN) {
+            movie.setMediaSource(MediaSource.parseMediaSource(mf.getPath()));
           }
         }
 
@@ -713,8 +713,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           case VIDEO:
             movie.addToMediaFiles(mf);
             movie.setDateAddedFromMediaFile(mf);
-            if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
-              movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFileAsPath().toString()));
+            if (movie.getMediaSource() == MediaSource.UNKNOWN) {
+              movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
             }
             break;
 

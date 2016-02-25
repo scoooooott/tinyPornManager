@@ -171,6 +171,72 @@ public class ImageCache {
   }
 
   /**
+   * Scale image to fit in the given width.
+   * 
+   * @param file
+   *          the original image file
+   * @param width
+   *          the width
+   * @return the input stream
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
+   */
+  public static InputStream scaleImage(Path file, int width) throws IOException, InterruptedException {
+    BufferedImage originalImage = com.bric.image.ImageLoader.createImage(file.toFile());
+
+    Point size = new Point();
+    size.x = width;
+    size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
+
+    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
+    originalImage = null;
+
+    ImageWriter imgWrtr = null;
+    ImageWriteParam imgWrtrPrm = null;
+
+    // here we have two different ways to create our thumb
+    // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
+    // b) a scaled down png (with transparency) which we can store without any more modifying as png
+    if (hasTransparentPixels(scaledImage)) {
+      // transparent image -> png
+      imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+
+    }
+    else {
+      // non transparent image -> jpg
+      // convert to rgb
+      BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+      ColorConvertOp xformOp = new ColorConvertOp(null);
+      xformOp.filter(scaledImage, rgb);
+      imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+      imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+      imgWrtrPrm.setCompressionQuality(0.80f);
+
+      scaledImage = rgb;
+    }
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageOutputStream output = ImageIO.createImageOutputStream(baos);
+    imgWrtr.setOutput(output);
+    IIOImage outputImage = new IIOImage(scaledImage, null, null);
+    imgWrtr.write(null, outputImage, imgWrtrPrm);
+    imgWrtr.dispose();
+    scaledImage = null;
+
+    byte[] bytes = baos.toByteArray();
+
+    output.flush();
+    output.close();
+    baos.close();
+
+    return new ByteArrayInputStream(bytes);
+  }
+
+  /**
    * Cache image.
    * 
    * @param mf

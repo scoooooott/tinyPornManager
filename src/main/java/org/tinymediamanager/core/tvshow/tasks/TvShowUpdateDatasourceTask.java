@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -34,6 +35,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -90,6 +92,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<String>                dataSources;
   private List<File>                  tvShowFolders         = new ArrayList<File>();
   private TvShowList                  tvShowList;
+  private HashSet<File>               filesFound            = new HashSet<File>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -140,15 +143,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       stopWatch.start();
       start();
 
-      // cleanup newlyadded for a new UDS run
-      for (TvShow tvShow : tvShowList.getTvShows()) {
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          episode.setNewlyAdded(false);
-          episode.saveToDb();
-        }
-        tvShow.setNewlyAdded(false);
-      }
-
       // here we have 2 ways of updating:
       // - per datasource -> update ds / remove orphaned / update MFs
       // - per TV show -> udpate TV show / update MFs
@@ -175,8 +169,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private void updateDatasource() {
     List<Path> imageFiles = new ArrayList<Path>();
 
+    // get existing tv show folders
+    List<File> existing = new ArrayList<File>();
+    for (TvShow tvShow : tvShowList.getTvShows()) {
+      existing.add(new File(tvShow.getPath()));
+    }
+
     for (String path : dataSources) {
       File[] dirs = new File(path).listFiles();
+      List<File> newShows = new ArrayList<File>();
+      List<File> existingShows = new ArrayList<File>();
+
       // check whether the path is accessible (eg disconnected shares)
       if (dirs == null || dirs.length == 0) {
         // error - continue with next datasource
@@ -208,7 +211,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           File tmmIgnore = new File(subdir, ".tmmignore");
           File tmmIgnore2 = new File(subdir, "tmmignore");
           if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
-            submitTask(new FindTvShowTask(subdir, path));
+            if (existing.contains(subdir)) {
+              existingShows.add(subdir);
+            }
+            else {
+              newShows.add(subdir);
+            }
           }
         }
 
@@ -217,6 +225,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           MessageManager.instance.pushMessage(
               new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot", new String[] { subdir.getName() }));
         }
+      }
+
+      // parse new directories first
+      for (File subdir : newShows) {
+        submitTask(new FindTvShowTask(subdir, path));
+      }
+      for (File subdir : existingShows) {
+        submitTask(new FindTvShowTask(subdir, path));
       }
 
       waitForCompletionOrCancel();
@@ -249,6 +265,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           // do a cleanup
           cleanup(tvShow);
         }
+      }
+
+      if (cancel) {
+        break;
       }
 
       // mediainfo
@@ -424,18 +444,30 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       // check and delete all not found MediaFiles
       List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
-        if (!mf.getFile().exists()) {
-          tvShow.removeFromMediaFiles(mf);
-          dirty = true;
+        if (!filesFound.contains(mf.getFile())) {
+          if (!mf.exists()) {
+            LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+            tvShow.removeFromMediaFiles(mf);
+            dirty = true;
+          }
+          else {
+            LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+          }
         }
       }
       List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tvShow.getEpisodes());
       for (TvShowEpisode episode : episodes) {
         mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
-          if (!mf.getFile().exists()) {
-            episode.removeFromMediaFiles(mf);
-            dirty = true;
+          if (!filesFound.contains(mf.getFile())) {
+            if (!mf.exists()) {
+              LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+              episode.removeFromMediaFiles(mf);
+              dirty = true;
+            }
+            else {
+              LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+            }
           }
         }
         // lets have a look if there is at least one video file for this episode
@@ -570,6 +602,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     List<File> completeDirContents = new ArrayList<>(Arrays.asList(contents));
 
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(completeDirContents);
+    }
+
     // search season posters first (-poster pattern would find season posters)
     for (File file : completeDirContents) {
       Matcher matcher = seasonPattern.matcher(file.getName());
@@ -659,6 +696,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       return;
     }
 
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(Arrays.asList(content));
+    }
+
     Arrays.sort(content);
     for (File file : content) {
       MediaFile mf = new MediaFile(file);
@@ -715,6 +757,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 e.setTvShow(tvShow);
                 e.addToMediaFiles(mf);
                 e.setDateAddedFromMediaFile(mf);
+                if (e.getMediaSource() == MediaSource.UNKNOWN) {
+                  e.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+                }
                 findAdditionalEpisodeFiles(e, file, content);
                 e.setNewlyAdded(true);
                 e.saveToDb();
@@ -739,6 +784,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 episode.setTvShow(tvShow);
                 episode.addToMediaFiles(mf);
                 episode.setDateAddedFromMediaFile(mf);
+                if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+                  episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+                }
                 findAdditionalEpisodeFiles(episode, file, content);
                 episode.setNewlyAdded(true);
                 episode.saveToDb();
@@ -758,6 +806,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setFirstAired(result.date);
               episode.addToMediaFiles(mf);
               episode.setDateAddedFromMediaFile(mf);
+              if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+                episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+              }
               findAdditionalEpisodeFiles(episode, file, content);
               episode.setNewlyAdded(true);
               episode.saveToDb();
@@ -816,6 +867,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     if (content == null) {
       LOGGER.error("Whops. Cannot access directory: " + dir.getName());
       return;
+    }
+
+    // store dir for faster cleanup
+    synchronized (filesFound) {
+      filesFound.addAll(Arrays.asList(content));
     }
 
     for (File file : content) {
@@ -902,6 +958,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
           episode.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
+          if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+            episode.setMediaSource(MediaSource.parseMediaSource(firstVideoFile.getAbsolutePath()));
+          }
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
           episode.saveToDb();
           tvShow.addEpisode(episode);
@@ -917,6 +976,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             e.setNewlyAdded(true);
             // e.findImages();
             e.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
+            if (e.getMediaSource() == MediaSource.UNKNOWN) {
+              e.setMediaSource(MediaSource.parseMediaSource(firstVideoFile.getAbsolutePath()));
+            }
             findAdditionalEpisodeFiles(e, firstVideoFile, content);
             e.saveToDb();
             tvShow.addEpisode(e);
@@ -934,6 +996,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
           episode.setDateAddedFromMediaFile(new MediaFile(firstVideoFile));
+          if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+            episode.setMediaSource(MediaSource.parseMediaSource(firstVideoFile.getAbsolutePath()));
+          }
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
           episode.saveToDb();
           tvShow.addEpisode(episode);
@@ -1003,6 +1068,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             LOGGER.error("Whops. Cannot access directory: " + file.getName());
           }
           else {
+            // store dir for faster cleanup
+            synchronized (filesFound) {
+              filesFound.addAll(Arrays.asList(subDirContent));
+            }
             for (File subDirFile : subDirContent) {
               if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
                 MediaFile mf = new MediaFile(subDirFile);

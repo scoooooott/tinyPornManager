@@ -30,6 +30,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -66,7 +68,6 @@ import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
@@ -125,7 +126,7 @@ public class MovieToXbmcNfoConnector {
   public int                   playcount             = 0;
   @XmlElement(name = "genre")
   public List<String>          genres;
-  public String                studio                = "";
+  public List<String>          studio;
   public List<String>          credits;
   public List<String>          director;
   @XmlElement(name = "tag")
@@ -285,7 +286,9 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.ids.putAll(movie.getIds());
 
-    xbmc.studio = movie.getProductionCompany();
+    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
+      xbmc.studio = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    }
 
     xbmc.country = movie.getCountry();
     xbmc.watched = movie.isWatched();
@@ -377,7 +380,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.sorttitle = movie.getSortTitle();
-    if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+    if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       xbmc.source = movie.getMediaSource().name();
     }
 
@@ -593,7 +596,9 @@ public class MovieToXbmcNfoConnector {
       }
       movie.setWriter(writer);
 
-      movie.setProductionCompany(xbmc.studio);
+      movie.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+      movie.setProductionCompany(movie.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
+
       movie.setCountry(xbmc.country);
       if (!StringUtils.isEmpty(xbmc.certification)) {
         movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.certification));
@@ -609,7 +614,7 @@ public class MovieToXbmcNfoConnector {
 
       if (StringUtils.isNotBlank(xbmc.source)) {
         try {
-          MovieMediaSource source = MovieMediaSource.valueOf(xbmc.source);
+          MediaSource source = MediaSource.valueOf(xbmc.source);
           if (source != null) {
             movie.setMediaSource(source);
           }

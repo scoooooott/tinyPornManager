@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -42,8 +43,8 @@ import org.tinymediamanager.scraper.MediaGenres;
 public class TvShowExtendedMatcher {
 
   public enum SearchOptions {
-    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK, MISSING_SUBTITLES,
-    NEW_EPISODES
+    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MEDIA_SOURCE, MISSING_METADATA, MISSING_ARTWORK,
+    MISSING_SUBTITLES, NEW_EPISODES
   }
 
   Map<SearchOptions, Object> searchOptions = Collections.synchronizedMap(new HashMap<SearchOptions, Object>());
@@ -85,6 +86,12 @@ public class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
       if (!filterDatasource(tvShow, (String) searchOptions.get(SearchOptions.DATASOURCE))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
+      if (!filterMediaSource(tvShow, (MediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE))) {
         return false;
       }
     }
@@ -160,6 +167,12 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean tvShowSeasonFilterMatch(TvShowSeason season) {
+    if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
+      if (!filterMediaSource(season, (MediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE))) {
+        return false;
+      }
+    }
+
     if (searchOptions.containsKey(SearchOptions.TEXT)) {
       if (!filterText(season, (String) searchOptions.get(SearchOptions.TEXT))) {
         return false;
@@ -249,6 +262,12 @@ public class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
+      if (!filterMediaSource(episode, (MediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE))) {
+        return false;
+      }
+    }
+
     if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
       if (!filterMissingMetadata(episode)) {
         return false;
@@ -330,6 +349,18 @@ public class TvShowExtendedMatcher {
       return true;
     }
     return false;
+  }
+
+  private boolean filterMediaSource(TvShow tvShow, MediaSource mediaSource) {
+    return matchesMediaSource(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), mediaSource);
+  }
+
+  private boolean filterMediaSource(TvShowSeason season, MediaSource mediaSource) {
+    return matchesMediaSource(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), mediaSource);
+  }
+
+  private boolean filterMediaSource(TvShowEpisode episode, MediaSource mediaSource) {
+    return matchesMediaSource(episode.getTvShow(), Arrays.asList(episode), mediaSource);
   }
 
   private boolean filterCrew(TvShow tvShow, String filterText) {
@@ -664,6 +695,16 @@ public class TvShowExtendedMatcher {
     }
     if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
       return true;
+    }
+    return false;
+  }
+
+  private boolean matchesMediaSource(TvShow tvShow, List<TvShowEpisode> episodes, MediaSource mediaSource) {
+    // search for media source in episodes
+    for (TvShowEpisode episode : episodes) {
+      if (episode.getMediaSource() == mediaSource) {
+        return true;
+      }
     }
     return false;
   }

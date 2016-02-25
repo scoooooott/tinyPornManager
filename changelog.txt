@@ -1,7 +1,15 @@
 Version 2.7.3
 =======================
++ added image exporting in the export templates (see http://goo.gl/kuSYlH or in the wiki)
++ added media source to the TV show section
 +/x moved fanart.tv client key to the scraper settings (and released it for everyone)
+x improved data source update; parse new entries first
+x improved TV show renamer for multi episode files
+x finally fixed the NEW indicator behavior
+  it will now work as in versions before 2.7 (NEW stays for the whole tmm session)
+x improved performance in the update data sources for TV shows
 x fixed searching for movie set artwork in movie folders
+x Kodi scrapers: fix some invalid XML headers
 x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
 x remember last opened directory in the new chooser
