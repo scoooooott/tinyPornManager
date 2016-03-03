@@ -1,6 +1,8 @@
 package org.tinymediamanager.scraper;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public class SearchTitleWithGoogle {
    *          the base hostname like "zelluloid.de"
    * @param mpi
    * @param options
-   * @return
+   * @return MediaSearchResult, but NO id filled. Scraper MUST work with url-only!
    */
   public List<MediaSearchResult> search(String site, MediaProviderInfo mpi, MediaSearchOptions options) {
     LOGGER.debug("SearchTitleWithGoogle() " + options.toString());
@@ -37,6 +39,10 @@ public class SearchTitleWithGoogle {
 
     try {
       if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
+        if (!site.startsWith("http")) {
+          site = "http://" + site;
+        }
+        site = new URL(site).getHost();
         searchTerm = options.get(MediaSearchOptions.SearchParam.QUERY);
         String lang = options.get(MediaSearchOptions.SearchParam.LANGUAGE);
         searchUrl = "https://www.google." + lang + "/search?q=" + URLEncoder.encode("site:" + site + " " + searchTerm, "UTF-8");
@@ -58,22 +64,35 @@ public class SearchTitleWithGoogle {
       InputStream in = url.getInputStream();
       doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();
+      if (doc == null) {
+        return resultList;
+      }
+
+      Elements res = doc.getElementsByClass("r");
+      for (Element el : res) {
+        Element a = el.getElementsByTag("a").first();
+        MediaSearchResult sr = new MediaSearchResult(mpi.getId());
+        String gurl = a.attr("href");
+        if (gurl.contains("url?q=")) {
+          // google manipulated tracking url
+          URL tmp = new URL("http://google.com/" + gurl);
+          String[] params = tmp.getQuery().split("[\\?&]");
+          for (String param : params) {
+            String name = param.split("=")[0];
+            String value = param.split("=")[1];
+            if (name.equals("q")) {
+              gurl = value;
+            }
+          }
+        }
+        sr.setUrl(URLDecoder.decode(gurl, "UTF-8"));
+        // sr.setId(mpi.getId()); // we have no clue about ID!!
+        sr.setTitle(a.text().replaceAll(site, "(Google)"));
+        resultList.add(sr);
+      }
     }
     catch (Exception e) {
       LOGGER.error("failed to search for " + searchTerm + ": " + e.getMessage());
-    }
-    if (doc == null) {
-      return resultList;
-    }
-
-    Elements res = doc.getElementsByClass("r");
-    for (Element el : res) {
-      Element a = el.getElementsByTag("a").first();
-      MediaSearchResult sr = new MediaSearchResult(mpi.getId());
-      sr.setId(mpi.getId());
-      sr.setUrl(a.attr("href"));
-      sr.setTitle(a.text());
-      resultList.add(sr);
     }
 
     return resultList;
