@@ -149,6 +149,10 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       Document doc = Jsoup.parse(in, "UTF-8", "");
       in.close();
 
+      if (doc.getAllElements().size() < 10) {
+        throw new Exception("meh - we did not receive a valid web page");
+      }
+
       // parse details
 
       // IMDB ID "http://www.imdb.com/Title?1194173"
@@ -248,10 +252,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
 
       if (doc != null) {
-        parseCast(doc.getElementsContainingText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingText("Stimme/Sprecher"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingText("Regie"), MediaCastMember.CastType.DIRECTOR, md);
-        parseCast(doc.getElementsContainingText("Drehbuchautor(in)"), MediaCastMember.CastType.WRITER, md);
+        parseCast(doc.getElementsContainingOwnText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Synchronstimme (deutsch)"), MediaCastMember.CastType.ACTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Regie"), MediaCastMember.CastType.DIRECTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Drehbuchautor(in)"), MediaCastMember.CastType.WRITER, md);
+        parseCast(doc.getElementsContainingOwnText("Produzent(in)"), MediaCastMember.CastType.PRODUCER, md);
       }
     }
     catch (Exception e) {
@@ -262,56 +267,55 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     return md;
   }
 
-  /*
-   * parse actors <tr valign="middle"> <td nowrap><a href="view.php?page=person&id=7689"><img
-   * src="thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6" alt= "Jeremy Renner" border="0" width="36"></a>&nbsp;&nbsp;</td> <td nowrap><font
-   * face="Arial,Helvetica,sans-serif" size="2" class="Daten"><a href="view.php?page=person&id=7689"><b>Jeremy Renner</b></a></font></td> <td
-   * nowrap>&nbsp;&nbsp;</td> <td><font face="Arial,Helvetica,sans-serif" size="2" class="Normal">... Aaron Cross</font></td> </tr>
-   */
+  // parse actors
+  // find the header
+  // go up until TR table row
+  // get next TR for casts entries
   private void parseCast(Elements el, MediaCastMember.CastType type, MediaMetadata md) {
     if (el != null && !el.isEmpty()) {
-      el = el.last().parents();
+      Element castEl = null;
       for (Element element : el) {
-        if (element.tagName().equals("tr")) {
-          Element tr = element.nextElementSibling();
-          if (tr == null) {
-            continue;
-          }
-          for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
-            String act = a.toString();
-            String aname = "";
-            if (type == MediaCastMember.CastType.ACTOR) {
-              aname = StrgUtils.substr(act, "<b>(.*?)</b>");
-            }
-            else if (type == MediaCastMember.CastType.DIRECTOR) {
-              aname = StrgUtils.substr(act, "<a.*?>(.*?)</a>");
-            }
-            if (!aname.isEmpty()) {
-              MediaCastMember cm = new MediaCastMember();
-              cm.setName(aname);
-              String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
-              if (!id.isEmpty()) {
-                cm.setId(id);
-                // thumb
-                // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
-                // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
-                try {
-                  String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
-                  if (!imgurl.isEmpty()) {
-                    imgurl = BASE_URL + "/images/person/" + imgurl;
-                  }
-                  cm.setImageUrl(imgurl);
-                }
-                catch (Exception e) {
-                }
+        if (!element.tagName().equals("option")) { // we get more, just do not take the optionbox
+          castEl = element;
+        }
+      }
+      if (castEl == null) {
+        LOGGER.debug("meh, no " + type.name() + " found");
+        return;
+      }
+      // walk up to table TR...
+      while (!((castEl == null) || (castEl.tagName().equalsIgnoreCase("tr")))) {
+        castEl = castEl.parent();
+      }
+      // ... and take the next table row ^^
+      Element tr = castEl.nextElementSibling();
+
+      for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
+        String act = a.toString();
+        String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
+        if (!aname.isEmpty()) {
+          MediaCastMember cm = new MediaCastMember();
+          cm.setName(aname);
+          String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
+          if (!id.isEmpty()) {
+            cm.setId(id);
+            // thumb
+            // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
+            // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
+            try {
+              String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
+              if (!imgurl.isEmpty()) {
+                imgurl = BASE_URL + "/images/person/" + imgurl;
               }
-              String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>");
-              cm.setCharacter(arole);
-              cm.setType(type);
-              md.addCastMember(cm);
+              cm.setImageUrl(imgurl);
+            }
+            catch (Exception e) {
             }
           }
-          break;
+          String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>").replaceAll("<[^>]*>", "");
+          cm.setCharacter(arole);
+          cm.setType(type);
+          md.addCastMember(cm);
         }
       }
     }
