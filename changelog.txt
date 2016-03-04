@@ -6,6 +6,7 @@ Version 2.7.3
 +/x moved fanart.tv client key to the scraper settings (and released it for everyone)
 x Kodi scraper: fix some invalid XML headers
 x OFDB scraper: fix actor/cast parsing
+x Zelluloid.de: fix actor/cast parsing, and fallback for broken web search
 x improved data source update; parse new entries first
 x improved TV show renamer for multi episode files
 x finally fixed the NEW indicator behavior
