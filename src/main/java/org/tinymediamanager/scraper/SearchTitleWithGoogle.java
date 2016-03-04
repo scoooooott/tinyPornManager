@@ -22,7 +22,11 @@ public class SearchTitleWithGoogle {
   private static final String PAGE_ENCODING = "UTF-8";
 
   /**
-   * does a fallback search with google, returning the first 10 results...
+   * Does a fallback search with google, returning the first 10 results...<br>
+   * <br>
+   * You have to <br>
+   * 1) check, if url starts with your desired destination page (aka filter results)<br>
+   * 2) get the ID from url (if you work with it)
    * 
    * @param site
    *          the base hostname like "zelluloid.de"
@@ -87,7 +91,7 @@ public class SearchTitleWithGoogle {
         }
         sr.setUrl(URLDecoder.decode(gurl, "UTF-8"));
         // sr.setId(mpi.getId()); // we have no clue about ID!!
-        sr.setTitle(a.text().replaceAll(site, "(Google)"));
+        sr.setTitle(a.text().replaceAll(site, "(via Google)"));
         resultList.add(sr);
       }
     }
