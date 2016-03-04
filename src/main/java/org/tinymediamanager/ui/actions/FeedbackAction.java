@@ -19,21 +19,26 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.dialogs.FeedbackDialog;
 
 /**
- * The FeedbackAction to send feedback directly from tmm
+ * The FeedbackAction to call the forums for a feedback
  * 
  * @author Manuel Laggner
  */
 public class FeedbackAction extends AbstractAction {
   private static final long           serialVersionUID = 6615485711570687445L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackAction.class);
 
   public FeedbackAction() {
     putValue(NAME, BUNDLE.getString("Feedback")); //$NON-NLS-1$
@@ -44,9 +49,14 @@ public class FeedbackAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    JDialog dialog = new FeedbackDialog();
-    dialog.pack();
-    dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-    dialog.setVisible(true);
+    String url = StringEscapeUtils.unescapeHtml4("http://forum.xbmc.org/forumdisplay.php?fid=204");
+    try {
+      TmmUIHelper.browseUrl(url);
+    }
+    catch (Exception e1) {
+      LOGGER.error("FAQ", e1);
+      MessageManager.instance
+          .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+    }
   }
 }

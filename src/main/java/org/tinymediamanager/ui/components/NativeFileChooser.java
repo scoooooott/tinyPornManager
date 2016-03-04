@@ -252,7 +252,12 @@ public class NativeFileChooser extends JFileChooser {
           directoryChooser.setInitialDirectory(file.getParentFile());
         }
       }
-
+      else {
+        // okay, no dir and no file - just get the filename out of it
+        if (directoryChooser == null) {
+          fileChooser.setInitialFileName(file.getName());
+        }
+      }
     }
   }
 

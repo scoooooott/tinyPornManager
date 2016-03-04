@@ -38,10 +38,10 @@ public class TmmUIHelper {
 
   public static File selectDirectory(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title);
+    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, true, null);
   }
 
-  private static File openJFileChooser(int mode, String dialogTitle) {
+  private static File openJFileChooser(int mode, String dialogTitle, boolean open, String filename) {
     JFileChooser fileChooser;
     // are we forced to open the legacy file chooser?
     if ("true".equals(System.getProperty("tmm.legacy.filechooser"))) {
@@ -57,7 +57,16 @@ public class TmmUIHelper {
     }
     fileChooser.setDialogTitle(dialogTitle);
 
-    int result = fileChooser.showOpenDialog(MainWindow.getFrame());
+    int result = -1;
+    if (open) {
+      result = fileChooser.showOpenDialog(MainWindow.getFrame());
+    }
+    else {
+      if (StringUtils.isNotBlank(filename)) {
+        fileChooser.setSelectedFile(new File(filename));
+      }
+      result = fileChooser.showSaveDialog(MainWindow.getFrame());
+    }
 
     if (result == JFileChooser.APPROVE_OPTION) {
       if (mode == JFileChooser.DIRECTORIES_ONLY) {
@@ -74,7 +83,11 @@ public class TmmUIHelper {
 
   public static File selectFile(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.FILES_ONLY, title);
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, true, null);
+  }
+
+  public static File saveFile(String title, String filename) {
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, false, filename);
   }
 
   public static void openFile(File file) throws Exception {
