@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class BugReportDialog extends TmmDialog {
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    super(BUNDLE.getString("BugReport"), "bugReport");
+    super(BUNDLE.getString("BugReport"), "bugReportdialog");
     getContentPane().setLayout(new BorderLayout(0, 0));
 
     JPanel panelContent = new JPanel();
@@ -94,7 +95,7 @@ public class BugReportDialog extends TmmDialog {
       public void actionPerformed(ActionEvent e) {
         // open the log download window
         try {
-          File file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip"); //$NON-NLS-1$
+          File file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip", new FileNameExtensionFilter("Zip files", ".zip")); //$NON-NLS-1$
           if (file != null) {
             writeLogsFile(file);
           }

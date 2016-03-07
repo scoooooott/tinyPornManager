@@ -140,4 +140,18 @@ public class JFXFileChooser {
       return null;
     }
   }
+
+  @SuppressWarnings("unchecked")
+  public void addExtensionFilter(String description, List<String> ext) {
+    try {
+      Method method = clazz.getMethod("getExtensionFilters");
+      Object obj = Class.forName("javafx.collections.ObservableList").cast(method.invoke(fileChooser));
+      Object filter = Class.forName("javafx.stage.FileChooser$ExtensionFilter").getConstructor(String.class, List.class).newInstance(description,
+          ext);
+      ((List<Object>) obj).add(filter);
+    }
+    catch (Exception e) {
+      LOGGER.warn(e.getMessage());
+    }
+  }
 }

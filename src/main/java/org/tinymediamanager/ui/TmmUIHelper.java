@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,10 +39,10 @@ public class TmmUIHelper {
 
   public static File selectDirectory(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, true, null);
+    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, true, null, null);
   }
 
-  private static File openJFileChooser(int mode, String dialogTitle, boolean open, String filename) {
+  private static File openJFileChooser(int mode, String dialogTitle, boolean open, String filename, FileNameExtensionFilter filter) {
     JFileChooser fileChooser;
     // are we forced to open the legacy file chooser?
     if ("true".equals(System.getProperty("tmm.legacy.filechooser"))) {
@@ -64,6 +65,7 @@ public class TmmUIHelper {
     else {
       if (StringUtils.isNotBlank(filename)) {
         fileChooser.setSelectedFile(new File(filename));
+        fileChooser.setFileFilter(filter);
       }
       result = fileChooser.showSaveDialog(MainWindow.getFrame());
     }
@@ -83,11 +85,11 @@ public class TmmUIHelper {
 
   public static File selectFile(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.FILES_ONLY, title, true, null);
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, true, null, null);
   }
 
-  public static File saveFile(String title, String filename) {
-    return openJFileChooser(JFileChooser.FILES_ONLY, title, false, filename);
+  public static File saveFile(String title, String filename, FileNameExtensionFilter filter) {
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, false, filename, filter);
   }
 
   public static void openFile(File file) throws Exception {
