@@ -116,6 +116,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JPanel                      panelScraperOptions;
   private JPanel                      panelArtworkScraperOptions;
   private JScrollPane                 scrollPaneScraperDetails;
+  private JScrollPane                 scrollPaneArtworkScraperDetails;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -216,7 +217,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     panelArtworkScrapers.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("75dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("80dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
@@ -227,8 +228,12 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     tableArtworkScraper.setRowHeight(29);
     scrollPaneArtworkScraper.setViewportView(tableArtworkScraper);
 
+    scrollPaneArtworkScraperDetails = new JScrollPane();
+    scrollPaneArtworkScraperDetails.setBorder(null);
+    panelArtworkScrapers.add(scrollPaneArtworkScraperDetails, "6, 2, fill, fill");
+
     panelArtworkScraperDetails = new JPanel();
-    panelArtworkScrapers.add(panelArtworkScraperDetails, "6, 2, fill, fill");
+    scrollPaneArtworkScraperDetails.setViewportView(panelArtworkScraperDetails);
     panelArtworkScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
