@@ -1415,7 +1415,7 @@ public class TvShow extends MediaEntity {
    * 
    * @return true/false
    */
-  public boolean isNewlyAdded() {
+  public boolean hasNewlyAddedEpisodes() {
     for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       if (episode.isNewlyAdded()) {
         return true;

@@ -39,6 +39,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
@@ -257,15 +258,33 @@ public class TinyMediaManagerCMD {
 
         if (scrapeNew) {
           LOGGER.info("Commandline - scraping new TvShows...");
-          // TODO: scrape only if unscraped?!
           if (newTv.size() > 0) {
             TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
             options.loadDefaults();
             task = new TvShowScrapeTask(newTv, true, options);
             task.run(); // blocking
+
+            for (int i = newEp.size() - 1; i >= 0; i--) {
+              // we scraped the whole show - no need to scrape dedicated episodes for it
+              TvShowEpisode ep = newEp.get(i);
+              if (newTv.contains(ep.getTvShow())) {
+                newEp.remove(i);
+              }
+            }
           }
           else {
-            LOGGER.info("No new TvShows/episodes found to scrape - skipping");
+            LOGGER.info("No new TvShows found to scrape - skipping");
+          }
+
+          LOGGER.info("Commandline - scraping new episodes...");
+          if (newEp.size() > 0) {
+            TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+            options.loadDefaults();
+            task = new TvShowEpisodeScrapeTask(newEp, options.getMetadataScraper());
+            task.run(); // blocking
+          }
+          else {
+            LOGGER.info("No new episodes found to scrape - skipping");
           }
         }
 
