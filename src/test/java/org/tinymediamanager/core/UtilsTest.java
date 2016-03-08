@@ -1,5 +1,8 @@
 package org.tinymediamanager.core;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
@@ -24,6 +27,35 @@ public class UtilsTest {
     catch (AssertionError e) {
       System.err.println(expected + " - FAILED: " + e.getMessage());
       throw e;
+    }
+  }
+
+  @Test
+  public void parseIp() throws UnknownHostException, SecurityException {
+
+    System.out.println(getIP("localhost"));
+    System.out.println(getIP("localhost:22"));
+    System.out.println(getIP("::1"));
+    System.out.println(getIP("2001:0000:3238:DFE1:63:0000:0000:FEFB"));
+    System.out.println(getIP("[2001:0000:3238:DFE1:63:0000:0000:FEFB]:22"));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+    System.out.println(getIP(""));
+
+  }
+
+  private String getIP(String ip) {
+    // WORKAROUND: add any scheme to make the resulting URI valid.
+    try {
+      URI uri = new URI("my://" + ip);
+      return uri.getHost();
+    }
+    catch (URISyntaxException e) {
+      return "";
     }
   }
 

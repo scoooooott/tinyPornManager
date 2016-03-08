@@ -61,6 +61,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.CountryCode;
@@ -381,12 +382,12 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
       BufferedImage scaledImage;
       if (!scraper.isEnabled()) {
-        scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
-            height, Scalr.OP_GRAYSCALE);
+        scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+            Scalr.OP_GRAYSCALE);
       }
       else {
-        scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width,
-            height, Scalr.OP_ANTIALIAS);
+        scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+            Scalr.OP_ANTIALIAS);
       }
       return new ImageIcon(scaledImage);
     }

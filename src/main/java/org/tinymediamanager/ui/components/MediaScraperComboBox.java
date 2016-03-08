@@ -37,6 +37,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.imgscalr.Scalr;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.IconManager;
 
@@ -121,8 +122,8 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     int height = (int) (fm.getHeight() * 2f);
     int width = original.getIconWidth() / original.getIconHeight() * height;
 
-    BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC,
-        width, height, Scalr.OP_ANTIALIAS);
+    BufferedImage scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+        Scalr.OP_ANTIALIAS);
     return new ImageIcon(scaledImage);
   }
 

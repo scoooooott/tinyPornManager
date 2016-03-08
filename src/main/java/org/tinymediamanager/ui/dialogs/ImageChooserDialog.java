@@ -21,10 +21,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -552,8 +550,7 @@ public class ImageChooserDialog extends TmmDialog {
           }
 
           Url url = new Url(art.getPreviewUrl());
-          Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-          final BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+          final BufferedImage bufferedImage = ImageCache.createImage(url.getBytes());
 
           SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -825,8 +822,7 @@ public class ImageChooserDialog extends TmmDialog {
             Url url = null;
             try {
               url = new Url(art.getPreviewUrl());
-              Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-              BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+              BufferedImage bufferedImage = ImageCache.createImage(url.getBytes());
 
               DownloadChunk chunk = new DownloadChunk();
               chunk.artwork = art;

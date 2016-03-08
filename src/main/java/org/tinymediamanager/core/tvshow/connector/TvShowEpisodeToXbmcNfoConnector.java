@@ -25,6 +25,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -80,7 +81,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private float               rating         = 0;
   private int                 votes          = 0;
   private String              plot           = "";
-  private String              studio         = "";
+  @XmlElement(name = "studio")
+  private List<String>        studio         = null;
   private String              mpaa           = "";
   private String              aired          = "";
   private String              premiered      = "";
@@ -204,7 +206,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setPlot(episode.getPlot());
       xbmc.setAired(episode.getFirstAiredFormatted());
       xbmc.setPremiered(episode.getFirstAiredFormatted());
-      xbmc.setStudio(episode.getTvShow().getStudio());
+      if (StringUtils.isNotEmpty(episode.getTvShow().getProductionCompany())) {
+        xbmc.studio = Arrays.asList(episode.getTvShow().getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace
+                                                                                                         // around
+      }
+
       if (episode.getTvdbId() != null) {
         xbmc.setUniqueid(episode.getTvdbId().toString());
       }
@@ -540,15 +546,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement(name = "aired")
   public String getAired() {
     return aired;
-  }
-
-  @XmlElement(name = "studio")
-  public String getStudio() {
-    return studio;
-  }
-
-  public void setStudio(String studio) {
-    this.studio = studio;
   }
 
   public void setAired(String aired) {

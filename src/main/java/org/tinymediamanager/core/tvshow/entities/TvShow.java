@@ -90,8 +90,6 @@ public class TvShow extends MediaEntity {
   @JsonProperty
   private String                             status                = "";
   @JsonProperty
-  private String                             studio                = "";
-  @JsonProperty
   private boolean                            watched               = false;
   @JsonProperty
   private String                             sortTitle             = "";
@@ -536,7 +534,7 @@ public class TvShow extends MediaEntity {
     }
 
     if (config.isCast()) {
-      setStudio(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
+      setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
       List<TvShowActor> actors = new ArrayList<TvShowActor>();
       String director = "";
       String writer = "";
@@ -818,27 +816,6 @@ public class TvShow extends MediaEntity {
     int oldValue = getTraktId();
     ids.put(TRAKT, newValue);
     firePropertyChange("traktId", oldValue, newValue);
-  }
-
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
-  public String getStudio() {
-    return studio;
-  }
-
-  /**
-   * Sets the studio.
-   * 
-   * @param newValue
-   *          the new studio
-   */
-  public void setStudio(String newValue) {
-    String oldValue = this.studio;
-    this.studio = newValue;
-    firePropertyChange(STUDIO, oldValue, newValue);
   }
 
   /**
@@ -1440,7 +1417,7 @@ public class TvShow extends MediaEntity {
    * 
    * @return true/false
    */
-  public boolean isNewlyAdded() {
+  public boolean hasNewlyAddedEpisodes() {
     for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       if (episode.isNewlyAdded()) {
         return true;

@@ -16,11 +16,13 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,10 +40,10 @@ public class TmmUIHelper {
 
   public static Path selectDirectory(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title);
+    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, true, null, null);
   }
 
-  private static Path openJFileChooser(int mode, String dialogTitle) {
+  private static Path openJFileChooser(int mode, String dialogTitle, boolean open, String filename, FileNameExtensionFilter filter) {
     JFileChooser fileChooser;
     // are we forced to open the legacy file chooser?
     if ("true".equals(System.getProperty("tmm.legacy.filechooser"))) {
@@ -57,7 +59,17 @@ public class TmmUIHelper {
     }
     fileChooser.setDialogTitle(dialogTitle);
 
-    int result = fileChooser.showOpenDialog(MainWindow.getFrame());
+    int result = -1;
+    if (open) {
+      result = fileChooser.showOpenDialog(MainWindow.getFrame());
+    }
+    else {
+      if (StringUtils.isNotBlank(filename)) {
+        fileChooser.setSelectedFile(new File(filename));
+        fileChooser.setFileFilter(filter);
+      }
+      result = fileChooser.showSaveDialog(MainWindow.getFrame());
+    }
 
     if (result == JFileChooser.APPROVE_OPTION) {
       if (mode == JFileChooser.DIRECTORIES_ONLY) {
@@ -74,7 +86,11 @@ public class TmmUIHelper {
 
   public static Path selectFile(String title) {
     // open JFileChooser
-    return openJFileChooser(JFileChooser.FILES_ONLY, title);
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, true, null, null);
+  }
+
+  public static Path saveFile(String title, String filename, FileNameExtensionFilter filter) {
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, false, filename, filter);
   }
 
   public static void openFile(Path file) throws Exception {

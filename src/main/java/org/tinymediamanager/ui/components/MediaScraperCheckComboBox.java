@@ -35,6 +35,7 @@ import org.japura.gui.CheckComboBox;
 import org.japura.gui.CheckList;
 import org.japura.gui.model.ListCheckModel;
 import org.japura.gui.renderer.CheckListRenderer;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.IconManager;
 
@@ -147,8 +148,8 @@ public class MediaScraperCheckComboBox extends CheckComboBox {
       int height = (int) (fm.getHeight() * 2f);
       int width = original.getIconWidth() / original.getIconHeight() * height;
 
-      BufferedImage scaledImage = Scalr.resize(com.bric.image.ImageLoader.createImage(original.getImage()), Scalr.Method.QUALITY,
-          Scalr.Mode.AUTOMATIC, width, height, Scalr.OP_ANTIALIAS);
+      BufferedImage scaledImage = Scalr.resize(ImageCache.createImage(original.getImage()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, width, height,
+          Scalr.OP_ANTIALIAS);
       return new ImageIcon(scaledImage);
     }
   }

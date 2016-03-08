@@ -21,10 +21,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -367,8 +365,7 @@ public class ImageLabel extends JLabel {
     protected BufferedImage doInBackground() throws Exception {
       try {
         Url url = new Url(imageUrl);
-        Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-        return Scalr.resize(com.bric.image.ImageLoader.createImage(image), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+        return Scalr.resize(ImageCache.createImage(url.getBytes()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
             Scalr.OP_ANTIALIAS);
       }
       catch (Exception e) {
@@ -418,8 +415,8 @@ public class ImageLabel extends JLabel {
 
       if (file != null && Files.exists(file)) {
         try {
-          return Scalr.resize(com.bric.image.ImageLoader.createImage(file.toFile()), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width,
-              newSize.height, Scalr.OP_ANTIALIAS);
+          return Scalr.resize(ImageCache.createImage(file), Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newSize.width, newSize.height,
+              Scalr.OP_ANTIALIAS);
         }
         catch (Exception e) {
           return null;
