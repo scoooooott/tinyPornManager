@@ -15,11 +15,7 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
-import hu.kazocsaba.imageviewer.ImageViewer;
-
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ResourceBundle;
 
@@ -30,10 +26,13 @@ import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+
+import hu.kazocsaba.imageviewer.ImageViewer;
 
 /**
  * The class ImagePreviewDialog. To display a preview of the image in the image chooser
@@ -93,8 +92,7 @@ public class ImagePreviewDialog extends TmmDialog {
     protected BufferedImage doInBackground() throws Exception {
       try {
         Url url = new Url(imageUrl);
-        Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-        return com.bric.image.ImageLoader.createImage(image);
+        return ImageCache.createImage(url.getBytes());
       }
       catch (Exception e) {
         LOGGER.warn("fetch image: " + e.getMessage());

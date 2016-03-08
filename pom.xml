@@ -177,12 +177,6 @@
 		<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
 			-Dpackaging=jar -Dfile=lib\twinkle.jar -DgroupId=ch.swingfx -DartifactId=twinkle 
 			-Dversion=1.0.0 -->
-		<dependency>
-			<!-- https://java.net/projects/javagraphics/sources/svn/show/trunk/src/com/bric?rev=2250 -->
-			<groupId>com.bric</groupId>
-			<artifactId>scaling</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>

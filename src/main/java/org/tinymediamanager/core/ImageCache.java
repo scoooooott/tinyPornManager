@@ -48,6 +48,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.thirdparty.ImageLoader;
 
 /**
  * The Class ImageCache - used to build a local image cache (scaled down versions & thumbnails - also for offline access).
@@ -111,8 +112,14 @@ public class ImageCache {
    */
   public static InputStream scaleImage(String imageUrl, int width) throws IOException, InterruptedException {
     Url url = new Url(imageUrl);
-    Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-    BufferedImage originalImage = com.bric.image.ImageLoader.createImage(image);
+
+    BufferedImage originalImage = null;
+    try {
+      originalImage = createImage(url.getBytes());
+    }
+    catch (Exception e) {
+      throw new IOException(e.getMessage());
+    }
 
     Point size = new Point();
     size.x = width;
@@ -178,7 +185,13 @@ public class ImageCache {
    * @throws InterruptedException
    */
   public static InputStream scaleImage(File file, int width) throws IOException, InterruptedException {
-    BufferedImage originalImage = com.bric.image.ImageLoader.createImage(file);
+    BufferedImage originalImage = null;
+    try {
+      originalImage = createImage(file);
+    }
+    catch (Exception e) {
+      throw new IOException(e.getMessage());
+    }
 
     Point size = new Point();
     size.x = width;
@@ -256,7 +269,7 @@ public class ImageCache {
       // rescale & cache
       BufferedImage originalImage = null;
       try {
-        originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+        originalImage = createImage(originalFile);
       }
       catch (Exception e) {
         throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
@@ -482,5 +495,17 @@ public class ImageCache {
       size.y = maxHeight;
     }
     return size;
+  }
+
+  public static BufferedImage createImage(byte[] imageData) throws Exception {
+    return createImage(Toolkit.getDefaultToolkit().createImage(imageData));
+  }
+
+  public static BufferedImage createImage(File file) throws Exception {
+    return createImage(Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath()));
+  }
+
+  public static BufferedImage createImage(Image img) {
+    return ImageLoader.createImage(img);
   }
 }
