@@ -187,6 +187,8 @@ public class TvShowTest {
 
     // multi episode
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.s01e02.ext"));
+    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.s01e03.ext")); // second EP must be subsequent number (ascending)!
+    Assert.assertEquals("S:1 E:2", detectEpisode("name.s01e02.s01e01.ext")); // second EP must be subsequent number (ascending)!
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
     Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("name.s01e01.s01e02.s01e03.ext"));
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01_1x02.ext")); // works but shouldn't ;) _1 is detected as e1
