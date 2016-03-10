@@ -439,7 +439,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   private void cleanup(TvShow tvShow) {
     boolean dirty = false;
-    if (!tvShow.isNewlyAdded()) {
+    if (!tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
       // check and delete all not found MediaFiles
       List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
@@ -578,7 +578,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     if (tvShow != null) {
       findAdditionalTvShowFiles(tvShow, dir);
       findTvEpisodes(tvShow, dir);
-      if (tvShow.isNewlyAdded()) {
+      if (tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
         tvShow.saveToDb();
       }
     }

@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -180,7 +182,7 @@ public class TvShowChooserModel extends AbstractModelObject {
     }
   }
 
-  public List<MediaArtwork> getArtwork() {
+  public List<MediaArtwork> getArtwork(TvShow tvShow) {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
     if (!scraped) {
@@ -190,8 +192,10 @@ public class TvShowChooserModel extends AbstractModelObject {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
-    options.setId(MediaMetadata.TVDB, String.valueOf(metadata.getId(MediaMetadata.TVDB)));
+    for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
+      options.setId(entry.getKey(), entry.getValue().toString());
+    }
+
     options.setLanguage(language);
     options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 

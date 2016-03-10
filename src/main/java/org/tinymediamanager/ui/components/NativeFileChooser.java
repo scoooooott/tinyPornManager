@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -252,7 +254,12 @@ public class NativeFileChooser extends JFileChooser {
           directoryChooser.setInitialDirectory(file.getParentFile());
         }
       }
-
+      else {
+        // okay, no dir and no file - just get the filename out of it
+        if (directoryChooser == null) {
+          fileChooser.setInitialFileName(file.getName());
+        }
+      }
     }
   }
 
@@ -311,44 +318,45 @@ public class NativeFileChooser extends JFileChooser {
     }
   }
 
-  // @Override
-  // public void addChoosableFileFilter(FileFilter filter) {
-  // super.addChoosableFileFilter(filter);
-  // if (!JAVAFX_AVAILABLE || filter == null) {
-  // return;
-  // }
-  // if (filter.getClass().equals(FileNameExtensionFilter.class)) {
-  // FileNameExtensionFilter f = (FileNameExtensionFilter) filter;
-  //
-  // List<String> ext = new ArrayList<>();
-  // for (String extension : f.getExtensions()) {
-  // ext.add(extension.replaceAll("^\\*?\\.?(.*)$", "*.$1"));
-  // }
-  // fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(f.getDescription(), ext));
-  // }
-  // }
-  //
-  // @Override
-  // public void setAcceptAllFileFilterUsed(boolean bool) {
-  // boolean differs = isAcceptAllFileFilterUsed() ^ bool;
-  // super.setAcceptAllFileFilterUsed(bool);
-  // if (!JAVAFX_AVAILABLE) {
-  // return;
-  // }
-  // if (differs) {
-  // if (bool) {
-  // fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
-  // }
-  // else {
-  // for (Iterator<FileChooser.ExtensionFilter> it = fileChooser.getExtensionFilters().iterator(); it.hasNext();) {
-  // FileChooser.ExtensionFilter filter = it.next();
-  // if (filter.getExtensions().contains("*.*")) {
-  // it.remove();
-  // }
-  // }
-  // }
-  // }
-  // }
+  @Override
+  public void addChoosableFileFilter(FileFilter filter) {
+    super.addChoosableFileFilter(filter);
+    if (!JAVAFX_AVAILABLE || filter == null) {
+      return;
+    }
+    if (filter.getClass().equals(FileNameExtensionFilter.class)) {
+      FileNameExtensionFilter f = (FileNameExtensionFilter) filter;
+
+      List<String> ext = new ArrayList<>();
+      for (String extension : f.getExtensions()) {
+        ext.add(extension.replaceAll("^\\*?\\.?(.*)$", "*.$1"));
+      }
+      fileChooser.addExtensionFilter(f.getDescription(), ext);
+    }
+  }
+
+  @Override
+  public void setAcceptAllFileFilterUsed(boolean bool) {
+    boolean differs = isAcceptAllFileFilterUsed() ^ bool;
+    super.setAcceptAllFileFilterUsed(bool);
+    if (!JAVAFX_AVAILABLE) {
+      return;
+    }
+    if (differs) {
+      if (bool) {
+        fileChooser.addExtensionFilter("All files", Arrays.asList("*.*"));
+      }
+      else {
+        // ToDo
+        // for (Iterator<FileChooser.ExtensionFilter> it = fileChooser.getExtensionFilters().iterator(); it.hasNext();) {
+        // FileChooser.ExtensionFilter filter = it.next();
+        // if (filter.getExtensions().contains("*.*")) {
+        // it.remove();
+        // }
+        // }
+      }
+    }
+  }
 
   @Override
   public void setCurrentDirectory(File dir) {

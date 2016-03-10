@@ -132,7 +132,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
           tvShowTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
         }
 
-        if (tvShow.isNewlyAdded()) {
+        if (tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
           tvShowTitle.setIcon(IconManager.NEW);
         }
         else {

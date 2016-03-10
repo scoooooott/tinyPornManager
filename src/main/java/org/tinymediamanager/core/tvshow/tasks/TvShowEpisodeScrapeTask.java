@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,20 +38,22 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class TvShowEpisodeScrapeTask.
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisodeScrapeTask implements Runnable {
-  private static final Logger       LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
+public class TvShowEpisodeScrapeTask extends TmmTask {
+  private static final ResourceBundle BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final Logger         LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
-  private final List<TvShowEpisode> episodes;
-  private final MediaScraper        mediaScraper;
+  private final List<TvShowEpisode>   episodes;
+  private final MediaScraper          mediaScraper;
 
-  private boolean                   scrapeThumb;
-  private MediaLanguages            language = Globals.settings.getTvShowSettings().getScraperLanguage();
+  private boolean                     scrapeThumb;
+  private MediaLanguages              language = Globals.settings.getTvShowSettings().getScraperLanguage();
 
   /**
    * Instantiates a new tv show episode scrape task.
@@ -61,6 +64,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
    *          the media scraper to use
    */
   public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper) {
+    super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
     this.episodes = episodes;
     this.mediaScraper = mediaScraper;
     this.scrapeThumb = true;
@@ -77,13 +81,14 @@ public class TvShowEpisodeScrapeTask implements Runnable {
    *          should we also scrape thumbs?
    */
   public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, MediaScraper mediaScraper, boolean scrapeThumb) {
+    super(BUNDLE.getString("tvshow.scraping"), episodes.size(), TaskType.BACKGROUND_TASK);
     this.episodes = episodes;
     this.mediaScraper = mediaScraper;
     this.scrapeThumb = scrapeThumb;
   }
 
   @Override
-  public void run() {
+  public void doInBackground() {
     for (TvShowEpisode episode : episodes) {
       // only scrape if at least one ID is available
       if (episode.getTvShow().getIds().size() == 0) {

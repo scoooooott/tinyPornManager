@@ -412,7 +412,7 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterNewEpisodes(TvShow tvShow) {
-    return tvShow.isNewlyAdded();
+    return tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes();
   }
 
   private boolean filterNewEpisodes(TvShowSeason season) {

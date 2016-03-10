@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-ofdb</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-opensubtitles</artifactId> 
@@ -112,10 +112,9 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-zelluloid</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.uwetrottmann</groupId>
@@ -178,12 +177,6 @@
 		<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
 			-Dpackaging=jar -Dfile=lib\twinkle.jar -DgroupId=ch.swingfx -DartifactId=twinkle 
 			-Dversion=1.0.0 -->
-		<dependency>
-			<!-- https://java.net/projects/javagraphics/sources/svn/show/trunk/src/com/bric?rev=2250 -->
-			<groupId>com.bric</groupId>
-			<artifactId>scaling</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
