@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +23,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 
-import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.options.addpluginsfrom.OptionReportAfter;
 import net.xeoh.plugins.base.util.JSPFProperties;
@@ -49,9 +47,9 @@ public class PluginManager {
   public synchronized static PluginManager getInstance() {
     if (instance == null) {
       JSPFProperties props = new JSPFProperties();
-      props.setProperty(PluginManager.class, "cache.enabled", "true");
-      props.setProperty(PluginManager.class, "cache.mode", "weak"); // optional
-      props.setProperty(PluginManager.class, "cache.file", "jspf.cache");
+      props.setProperty(net.xeoh.plugins.base.PluginManager.class, "cache.enabled", "true");
+      props.setProperty(net.xeoh.plugins.base.PluginManager.class, "cache.mode", "weak"); // optional
+      props.setProperty(net.xeoh.plugins.base.PluginManager.class, "cache.file", "jspf.cache");
 
       instance = new PluginManager();
       pm = PluginManagerFactory.createPluginManager(props);
@@ -61,11 +59,14 @@ public class PluginManager {
       stopWatch.start();
       // dedicated folder just for plugins
       LOGGER.debug("loading external plugins...");
+      // Use NIO2 Paths insetad of file - not correctly generating scheme!!!
+      // file:/C:/tmm instead of file:///C:/tmm
+      // nevertheless, URIs with a "+" sign still do not work in loader :/
       if (LOGGER.isTraceEnabled()) {
-        pm.addPluginsFrom(new File("plugins/").toURI(), new OptionReportAfter());
+        pm.addPluginsFrom(Paths.get("plugins/").toUri(), new OptionReportAfter());
       }
       else {
-        pm.addPluginsFrom(new File("plugins/").toURI());
+        pm.addPluginsFrom(Paths.get("plugins/").toUri());
       }
       stopWatch.stop();
       LOGGER.debug("Done loading external plugins - took " + stopWatch);
@@ -101,17 +102,6 @@ public class PluginManager {
       plugins.add(mp);
     }
 
-    return plugins;
-  }
-
-  /**
-   * All plugins implementing the IMediaSubtitleProvider
-   */
-  public List<IMediaSubtitleProvider> getSubtitlePlugins() {
-    List<IMediaSubtitleProvider> plugins = new ArrayList<>();
-    for (Plugin p : pmu.getPlugins(IMediaSubtitleProvider.class)) {
-      plugins.add((IMediaSubtitleProvider) p);
-    }
     return plugins;
   }
 }
