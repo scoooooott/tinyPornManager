@@ -134,7 +134,12 @@ public class MovieChooserModel extends AbstractModelObject {
 
   public void setCombinedName() {
     String oldValue = this.combinedName;
-    this.combinedName = getName() + " (" + getYear() + ")";
+    if (StringUtils.isNotBlank(getYear())) {
+      this.combinedName = getName() + " (" + getYear() + ")";
+    }
+    else {
+      this.combinedName = getName();
+    }
     firePropertyChange("combinedName", oldValue, this.combinedName);
   }
 
@@ -155,7 +160,8 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setLanguage(language);
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
-      LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId());
+      LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId() + ", "
+          + metadataProvider.getMediaProvider().getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);

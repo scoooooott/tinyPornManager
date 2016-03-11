@@ -127,7 +127,7 @@ public class TvShowTreeModel implements TreeModel {
                 try {
                   listener.treeNodesChanged(event);
                 }
-                catch (Exception e) {
+                catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
                 }
               }
             }
@@ -180,7 +180,7 @@ public class TvShowTreeModel implements TreeModel {
           try {
             listener.treeNodesInserted(event);
           }
-          catch (NullPointerException npe) {
+          catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
           }
         }
       }
@@ -220,7 +220,7 @@ public class TvShowTreeModel implements TreeModel {
             try {
               listener.treeNodesRemoved(event);
             }
-            catch (NullPointerException npe) {
+            catch (NullPointerException | ArrayIndexOutOfBoundsException npe) {
             }
           }
         }
@@ -256,7 +256,7 @@ public class TvShowTreeModel implements TreeModel {
           try {
             listener.treeNodesInserted(event);
           }
-          catch (NullPointerException npe) {
+          catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
           }
         }
       }
@@ -268,7 +268,7 @@ public class TvShowTreeModel implements TreeModel {
         try {
           listener.treeNodesChanged(event);
         }
-        catch (NullPointerException npe) {
+        catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
         }
       }
     }
@@ -307,7 +307,7 @@ public class TvShowTreeModel implements TreeModel {
             try {
               listener.treeNodesInserted(event);
             }
-            catch (NullPointerException npe) {
+            catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
             }
           }
         }
@@ -319,7 +319,7 @@ public class TvShowTreeModel implements TreeModel {
           try {
             listener.treeNodesChanged(event);
           }
-          catch (NullPointerException npe) {
+          catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
           }
         }
       }
@@ -358,7 +358,7 @@ public class TvShowTreeModel implements TreeModel {
             try {
               listener.treeNodesRemoved(event);
             }
-            catch (NullPointerException npe) {
+            catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
             }
           }
         }
@@ -406,7 +406,7 @@ public class TvShowTreeModel implements TreeModel {
             try {
               listener.treeNodesRemoved(event);
             }
-            catch (NullPointerException npe) {
+            catch (NullPointerException | ArrayIndexOutOfBoundsException ignored) {
             }
           }
         }

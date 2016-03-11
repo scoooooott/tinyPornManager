@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +82,8 @@ public class TvShowToXbmcNfoConnector {
   private String              plot      = "";
   private String              mpaa      = "";
   private String              premiered = "";
-  private String              studio    = "";
+  @XmlElement(name = "studio")
+  private List<String>        studio    = null;
   private String              status    = "";
   private EpisodeGuide        episodeguide;
 
@@ -178,7 +180,10 @@ public class TvShowToXbmcNfoConnector {
       xbmc.setMpaa(tvShow.getCertification().getName());
     }
     xbmc.setPremiered(tvShow.getFirstAiredFormatted());
-    xbmc.setStudio(tvShow.getStudio());
+
+    if (StringUtils.isNotEmpty(tvShow.getProductionCompany())) {
+      xbmc.studio = Arrays.asList(tvShow.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    }
     xbmc.setStatus(tvShow.getStatus());
 
     xbmc.genres.clear();
@@ -256,7 +261,9 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setPlot(xbmc.getPlot());
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
       tvShow.setFirstAired(xbmc.getPremiered());
-      tvShow.setStudio(xbmc.getStudio());
+      tvShow.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+      tvShow.setProductionCompany(tvShow.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
+
       tvShow.setStatus(xbmc.getStatus());
 
       for (String genre : xbmc.getGenres()) {
@@ -416,15 +423,6 @@ public class TvShowToXbmcNfoConnector {
 
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
-  }
-
-  @XmlElement(name = "studio")
-  public String getStudio() {
-    return studio;
-  }
-
-  public void setStudio(String studio) {
-    this.studio = studio;
   }
 
   @XmlElement(name = "status")

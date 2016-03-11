@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -1031,7 +1032,7 @@ public class MovieRenamer {
         ret = mf.getVideoFormat();
         break;
       case "$S":
-        if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+        if (movie.getMediaSource() != MediaSource.UNKNOWN) {
           ret = movie.getMediaSource().toString();
         }
         break;

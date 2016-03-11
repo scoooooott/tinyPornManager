@@ -114,6 +114,7 @@ public class TvShowTest {
 
     // ************************************************************************
     // various real world examples
+    Assert.assertEquals("S:1 E:1", detectEpisode("TheShowName S01E01 Episode Name (1920x1080) [UploaderTag].mp4"));
     Assert.assertEquals("S:2 E:17", detectEpisode("Brooklyn Nine-Nine S02E17 HDTV x264 AAC E-Subs [GWC].mp4"));
     Assert.assertEquals("S:2 E:4", detectEpisode("Its Always Sunny In Philadelphia Season 02 Episode 04 Charlie Gets Crippled-1.mp4"));
     Assert.assertEquals("S:1 E:4", detectEpisode("Season 1/04 Charlie Has Cancer-1.mp4"));
@@ -186,6 +187,8 @@ public class TvShowTest {
 
     // multi episode
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.s01e02.ext"));
+    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.s01e03.ext")); // second EP must be subsequent number (ascending)!
+    Assert.assertEquals("S:1 E:2", detectEpisode("name.s01e02.s01e01.ext")); // second EP must be subsequent number (ascending)!
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
     Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("name.s01e01.s01e02.s01e03.ext"));
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01_1x02.ext")); // works but shouldn't ;) _1 is detected as e1

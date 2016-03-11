@@ -48,6 +48,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.thirdparty.ImageLoader;
 
 /**
  * The Class ImageCache - used to build a local image cache (scaled down versions & thumbnails - also for offline access).
@@ -111,8 +112,86 @@ public class ImageCache {
    */
   public static InputStream scaleImage(String imageUrl, int width) throws IOException, InterruptedException {
     Url url = new Url(imageUrl);
-    Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
-    BufferedImage originalImage = com.bric.image.ImageLoader.createImage(image);
+
+    BufferedImage originalImage = null;
+    try {
+      originalImage = createImage(url.getBytes());
+    }
+    catch (Exception e) {
+      throw new IOException(e.getMessage());
+    }
+
+    Point size = new Point();
+    size.x = width;
+    size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
+
+    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
+    originalImage = null;
+
+    ImageWriter imgWrtr = null;
+    ImageWriteParam imgWrtrPrm = null;
+
+    // here we have two different ways to create our thumb
+    // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
+    // b) a scaled down png (with transparency) which we can store without any more modifying as png
+    if (hasTransparentPixels(scaledImage)) {
+      // transparent image -> png
+      imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+
+    }
+    else {
+      // non transparent image -> jpg
+      // convert to rgb
+      BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+      ColorConvertOp xformOp = new ColorConvertOp(null);
+      xformOp.filter(scaledImage, rgb);
+      imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+      imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+      imgWrtrPrm.setCompressionQuality(0.80f);
+
+      scaledImage = rgb;
+    }
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageOutputStream output = ImageIO.createImageOutputStream(baos);
+    imgWrtr.setOutput(output);
+    IIOImage outputImage = new IIOImage(scaledImage, null, null);
+    imgWrtr.write(null, outputImage, imgWrtrPrm);
+    imgWrtr.dispose();
+    scaledImage = null;
+
+    byte[] bytes = baos.toByteArray();
+
+    output.flush();
+    output.close();
+    baos.close();
+
+    return new ByteArrayInputStream(bytes);
+  }
+
+  /**
+   * Scale image to fit in the given width.
+   * 
+   * @param file
+   *          the original image file
+   * @param width
+   *          the width
+   * @return the input stream
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
+   */
+  public static InputStream scaleImage(File file, int width) throws IOException, InterruptedException {
+    BufferedImage originalImage = null;
+    try {
+      originalImage = createImage(file);
+    }
+    catch (Exception e) {
+      throw new IOException(e.getMessage());
+    }
 
     Point size = new Point();
     size.x = width;
@@ -190,7 +269,7 @@ public class ImageCache {
       // rescale & cache
       BufferedImage originalImage = null;
       try {
-        originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+        originalImage = createImage(originalFile);
       }
       catch (Exception e) {
         throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
@@ -416,5 +495,17 @@ public class ImageCache {
       size.y = maxHeight;
     }
     return size;
+  }
+
+  public static BufferedImage createImage(byte[] imageData) throws Exception {
+    return createImage(Toolkit.getDefaultToolkit().createImage(imageData));
+  }
+
+  public static BufferedImage createImage(File file) throws Exception {
+    return createImage(Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath()));
+  }
+
+  public static BufferedImage createImage(Image img) {
+    return ImageLoader.createImage(img);
   }
 }

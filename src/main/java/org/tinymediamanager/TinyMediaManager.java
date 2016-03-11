@@ -331,6 +331,7 @@ public class TinyMediaManager {
 
             // wizard for new user
             if (Globals.settings.newConfig) {
+              Globals.settings.writeDefaultSettings(); // now all plugins are resolved - write again defaults!
               TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
               wizard.setVisible(true);
             }

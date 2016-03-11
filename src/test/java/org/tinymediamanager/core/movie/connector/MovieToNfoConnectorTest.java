@@ -12,11 +12,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
@@ -231,7 +231,7 @@ public class MovieToNfoConnectorTest {
     movie.addProducer(new MovieProducer("Donald W. Ernst", "Producer"));
 
     movie.setSpokenLanguages("en");
-    movie.setMediaSource(MovieMediaSource.BLURAY);
+    movie.setMediaSource(MediaSource.BLURAY);
     return movie;
   }
 
@@ -295,7 +295,7 @@ public class MovieToNfoConnectorTest {
     movie.addProducer(new MovieProducer("Ron Clements", "Producer"));
     movie.addProducer(new MovieProducer("Donald W. Ernst", "Producer"));
 
-    movie.setMediaSource(MovieMediaSource.BLURAY);
+    movie.setMediaSource(MediaSource.BLURAY);
     return movie;
   }
 }

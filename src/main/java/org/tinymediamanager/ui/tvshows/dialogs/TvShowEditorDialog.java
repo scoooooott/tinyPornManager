@@ -609,7 +609,7 @@ public class TvShowEditorDialog extends TmmDialog {
       lblThumb.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.THUMB));
       lblLogo.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.LOGO));
       lblClearart.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARART));
-      tfStudio.setText(tvShow.getStudio());
+      tfStudio.setText(tvShow.getProductionCompany());
 
       int year = 0;
       try {

@@ -435,7 +435,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             }
             else {
               // get artwork directly from provider
-              List<MediaArtwork> artwork = model.getArtwork();
+              List<MediaArtwork> artwork = model.getArtwork(tvShowToScrape);
               tvShowToScrape.setArtwork(artwork, scraperMetadataConfig);
             }
           }

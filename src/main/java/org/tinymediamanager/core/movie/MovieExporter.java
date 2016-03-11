@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +24,16 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntityExporter;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 import com.floreysoft.jmte.NamedRenderer;
@@ -63,6 +68,7 @@ public class MovieExporter extends MediaEntityExporter {
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new MovieFilenameRenderer());
+    engine.registerNamedRenderer(new ArtworkCopyRenderer(pathToExport));
 
     // prepare export destination
     File exportDir = new File(pathToExport);
@@ -149,10 +155,18 @@ public class MovieExporter extends MediaEntityExporter {
     }
   }
 
+  private static String getMovieFilename(Movie movie) {
+    String filename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+    if (StringUtils.isNotBlank(filename)) {
+      return filename;
+    }
+    return movie.getVideoBasenameWithoutStacking();
+  }
+
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  public static class MovieFilenameRenderer implements NamedRenderer {
+  private class MovieFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -172,14 +186,138 @@ public class MovieExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
-        String filename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
-        if (StringUtils.isNotBlank(filename)) {
-          return filename;
-        }
-        return movie.getVideoBasenameWithoutStacking();
+        return getMovieFilename(movie);
         // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
       }
       return null;
+    }
+  }
+
+  /**
+   * this renderer is used to copy artwork into the exported template
+   * 
+   * @author Manuel Laggner
+   */
+  private class ArtworkCopyRenderer implements NamedRenderer {
+    private String pathToExport;
+
+    public ArtworkCopyRenderer(String pathToExport) {
+      this.pathToExport = pathToExport;
+    }
+
+    @Override
+    public RenderFormatInfo getFormatInfo() {
+      return null;
+    }
+
+    @Override
+    public String getName() {
+      return "copyArtwork";
+    }
+
+    @Override
+    public Class<?>[] getSupportedClasses() {
+      return new Class[] { Movie.class };
+    }
+
+    @Override
+    public String render(Object o, String pattern, Locale locale) {
+      if (o instanceof Movie) {
+        Movie movie = (Movie) o;
+        Map<String, Object> parameters = parseParameters(pattern);
+
+        MediaFile mf = movie.getArtworkMap().get(parameters.get("type"));
+        if (mf == null || !mf.isGraphic()) {
+          return null;
+        }
+
+        String filename = parameters.get("destination") + File.separator + getMovieFilename(movie) + "-" + mf.getType();
+        try {
+          // we need to rescale the image; scale factor is fixed to
+          if (parameters.get("thumb") == Boolean.TRUE) {
+            filename += ".thumb." + FilenameUtils.getExtension(mf.getFilename());
+            int width = 150;
+            if (parameters.get("width") != null) {
+              width = (int) parameters.get("width");
+            }
+            InputStream is = ImageCache.scaleImage(mf.getFile(), width);
+            FileUtils.copyInputStreamToFile(is, new File(pathToExport, filename));
+          }
+          else {
+            filename += "." + FilenameUtils.getExtension(mf.getFilename());
+            FileUtils.copyFile(mf.getFile(), new File(pathToExport, filename));
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not copy artwork file: " + e.getMessage());
+          return null;
+        }
+
+        return filename;
+      }
+      return null;
+    }
+
+    /**
+     * parse the parameters out of the parameters string
+     * 
+     * @param parameters
+     *          the parameters as string
+     * @return a map containing all parameters
+     */
+    private Map<String, Object> parseParameters(String parameters) {
+      Map<String, Object> parameterMap = new HashMap<>();
+
+      // defaults
+      parameterMap.put("thumb", Boolean.FALSE);
+      parameterMap.put("destination", "images");
+
+      String[] details = parameters.split(",");
+      for (int x = 0; x < details.length; x++) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = details[x].split("=");
+          key = d[0].trim();
+          value = d[1].trim();
+        }
+        catch (Exception e) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase()) {
+          case "type":
+            MediaFileType type = MediaFileType.valueOf(value.toUpperCase());
+            if (type != null) {
+              parameterMap.put(key, type);
+            }
+            break;
+
+          case "destination":
+            parameterMap.put("destination", value);
+            break;
+
+          case "thumb":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          case "width":
+            try {
+              parameterMap.put(key, Integer.parseInt(value));
+            }
+            catch (Exception e) {
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return parameterMap;
     }
   }
 }

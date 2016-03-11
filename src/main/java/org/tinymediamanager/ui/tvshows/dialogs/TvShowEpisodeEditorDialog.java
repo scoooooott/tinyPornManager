@@ -63,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -133,6 +134,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private JTable                                                tableGuests;
   private JComboBox                                             cbTags;
   private JList                                                 listTags;
+  private JComboBox<MediaSource>                                cbMediaSource;
   private MediaFileEditorPanel                                  mediaFilesPanel;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
@@ -184,19 +186,19 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       tabbedPane.addTab(BUNDLE.getString("metatag.details"), detailsPanel); //$NON-NLS-1$
       detailsPanel.setLayout(new FormLayout(
           new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("40dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("40dlu"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("40dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("20dlu"), FormSpecs.RELATED_GAP_COLSPEC,
               ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
               FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
           new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
               FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
               FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("35dlu:grow"),
               FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("35dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
               FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, }));
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
       detailsPanel.add(lblTitle, "2, 4, right, default");
@@ -258,7 +260,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       detailsPanel.add(lblFirstAired, "8, 12, right, default");
 
       spFirstAired = new JSpinner(new SpinnerDateModel());
-      detailsPanel.add(spFirstAired, "10, 12, 3, 1");
+      detailsPanel.add(spFirstAired, "10, 12, 5, 1, left, default");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       detailsPanel.add(lblWatched, "2, 14, right, default");
@@ -270,13 +272,22 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       detailsPanel.add(lblDateAdded, "8, 14, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      detailsPanel.add(spDateAdded, "10, 14, 3, 1");
+      detailsPanel.add(spDateAdded, "10, 14, 5, 1, left, default");
+
+      JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      detailsPanel.add(lblMediasource, "2, 16, right, default");
+
+      cbMediaSource = new JComboBox<>();
+      for (MediaSource source : MediaSource.values()) {
+        cbMediaSource.addItem(source);
+      }
+      detailsPanel.add(cbMediaSource, "4, 16, 4, 1, fill, default");
 
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      detailsPanel.add(lblPlot, "2, 16, right, top");
+      detailsPanel.add(lblPlot, "2, 18, right, top");
 
       JScrollPane scrollPane = new JScrollPane();
-      detailsPanel.add(scrollPane, "4, 16, 13, 1, fill, fill");
+      detailsPanel.add(scrollPane, "4, 18, 13, 1, fill, fill");
 
       taPlot = new JTextArea();
       taPlot.setLineWrap(true);
@@ -296,39 +307,39 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         }
       });
       lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      detailsPanel.add(lblThumb, "20, 6, 3, 11");
+      detailsPanel.add(lblThumb, "20, 6, 3, 13");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      detailsPanel.add(lblDirector, "2, 18, right, default");
+      detailsPanel.add(lblDirector, "2, 20, right, default");
 
       tfDirector = new JTextField();
       tfDirector.setText((String) null);
       tfDirector.setColumns(10);
-      detailsPanel.add(tfDirector, "4, 18, 13, 1, fill, default");
+      detailsPanel.add(tfDirector, "4, 20, 13, 1, fill, default");
 
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      detailsPanel.add(lblWriter, "2, 20, right, default");
+      detailsPanel.add(lblWriter, "2, 22, right, default");
 
       tfWriter = new JTextField();
       tfWriter.setText((String) null);
       tfWriter.setColumns(10);
-      detailsPanel.add(tfWriter, "4, 20, 13, 1, fill, default");
+      detailsPanel.add(tfWriter, "4, 22, 13, 1, fill, default");
 
       JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
-      detailsPanel.add(lblGuests, "2, 22, right, top");
+      detailsPanel.add(lblGuests, "2, 24, right, top");
 
       JScrollPane scrollPaneGuests = new JScrollPane();
-      detailsPanel.add(scrollPaneGuests, "4, 22, 13, 7, fill, fill");
+      detailsPanel.add(scrollPaneGuests, "4, 24, 13, 7, fill, fill");
 
       tableGuests = new JTable();
       tableGuests.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
       scrollPaneGuests.setViewportView(tableGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      detailsPanel.add(lblTags, "20, 22, default, top");
+      detailsPanel.add(lblTags, "20, 24, default, top");
 
       JScrollPane scrollPaneTags = new JScrollPane();
-      detailsPanel.add(scrollPaneTags, "22, 22, 1, 5, fill, fill");
+      detailsPanel.add(scrollPaneTags, "22, 24, 1, 5, fill, fill");
 
       listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
@@ -337,29 +348,29 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
       btnAddActor.setIcon(IconManager.ADD_INV);
-      detailsPanel.add(btnAddActor, "2, 24, right, top");
+      detailsPanel.add(btnAddActor, "2, 26, right, top");
 
       JButton btnAddTag = new JButton("");
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(IconManager.ADD_INV);
-      detailsPanel.add(btnAddTag, "20, 24, right, top");
+      detailsPanel.add(btnAddTag, "20, 26, right, top");
 
       JButton btnRemoveActor = new JButton("");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
       btnRemoveActor.setIcon(IconManager.REMOVE_INV);
-      detailsPanel.add(btnRemoveActor, "2, 26, right, top");
+      detailsPanel.add(btnRemoveActor, "2, 28, right, top");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(IconManager.REMOVE_INV);
-      detailsPanel.add(btnRemoveTag, "20, 26, right, top");
+      detailsPanel.add(btnRemoveTag, "20, 28, right, top");
 
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
       cbTags.setEditable(true);
-      detailsPanel.add(cbTags, "22, 28, fill, default");
+      detailsPanel.add(cbTags, "22, 30, fill, default");
     }
 
     /**
@@ -464,6 +475,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       taPlot.setCaretPosition(0);
       tfDirector.setText(episodeToEdit.getDirector());
       tfWriter.setText(episodeToEdit.getWriter());
+      cbMediaSource.setSelectedItem(episodeToEdit.getMediaSource());
 
       for (TvShowActor origCast : episodeToEdit.getGuests()) {
         TvShowActor actor = new TvShowActor();
@@ -506,7 +518,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setDvdEpisode((Integer) spDvdEpisode.getValue());
       episodeToEdit.setDisplaySeason((Integer) spDisplaySeason.getValue());
       episodeToEdit.setDisplayEpisode((Integer) spDisplayEpisode.getValue());
-
+      episodeToEdit.setMediaSource((MediaSource) cbMediaSource.getSelectedItem());
       episodeToEdit.setPlot(taPlot.getText());
 
       // sync media files with the media file editor and fire the mediaFiles event
@@ -606,7 +618,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       options.setId(MediaMetadata.EPISODE_NR_DVD, spDvdEpisode.getValue().toString());
       try {
         LOGGER.info("=====================================================");
-        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
+        LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId() + ", "
+            + mediaScraper.getMediaProvider().getProviderInfo().getVersion());
         LOGGER.info(options.toString());
         LOGGER.info("=====================================================");
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);

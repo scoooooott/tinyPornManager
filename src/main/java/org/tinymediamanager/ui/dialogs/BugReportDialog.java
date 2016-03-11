@@ -15,15 +15,14 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
-import java.awt.Cursor;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Properties;
+import java.net.URLEncoder;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,36 +31,26 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.core.License;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.scraper.http.TmmHttpClient;
-import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 
 /**
  * The Class BugReportDialog, to send bug reports directly from inside tmm.
@@ -76,236 +65,181 @@ public class BugReportDialog extends TmmDialog {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
-  private JTextField                  tfName;
-  private JTextArea                   textArea;
-  private JTextField                  tfEmail;
-
   /**
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    super(BUNDLE.getString("BugReport"), "bugReport"); //$NON-NLS-1$
-    setBounds(100, 100, 600, 470);
-
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.RELATED_GAP_ROWSPEC, }));
+    super(BUNDLE.getString("BugReport"), "bugReportdialog");
+    getContentPane().setLayout(new BorderLayout(0, 0));
 
     JPanel panelContent = new JPanel();
-    getContentPane().add(panelContent, "2, 2, fill, fill");
+    getContentPane().add(panelContent, BorderLayout.CENTER);
     panelContent.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("250dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            RowSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, }));
 
-    JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
-    panelContent.add(lblName, "2, 2, right, default");
+    final JTextArea taDescription = new JTextArea();
+    taDescription.setOpaque(false);
+    taDescription.setWrapStyleWord(true);
+    taDescription.setLineWrap(true);
+    taDescription.setEditable(false);
+    taDescription.setText(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
+    panelContent.add(taDescription, "2, 2, 6, 1, fill, fill");
 
-    tfName = new JTextField();
-    panelContent.add(tfName, "4, 2, fill, default");
-    tfName.setColumns(10);
-
-    JLabel lblEmail = new JLabel(BUNDLE.getString("BugReport.email")); //$NON-NLS-1$
-    panelContent.add(lblEmail, "2, 4, right, default");
-
-    tfEmail = new JTextField();
-    panelContent.add(tfEmail, "4, 4, fill, default");
-
-    // pre-fill dialog
-    if (Globals.isDonator()) {
-      Properties p = License.decrypt();
-      tfEmail.setText(p.getProperty("email"));
-      tfName.setText(p.getProperty("user"));
-    }
-
-    JLabel lblEmaildesc = new JLabel(BUNDLE.getString("BugReport.email.description")); //$NON-NLS-1$
-    panelContent.add(lblEmaildesc, "2, 5, 3, 1");
-
-    JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
-    panelContent.add(lblFeedback, "2, 7, 3, 1");
-
-    JScrollPane scrollPane = new JScrollPane();
-    panelContent.add(scrollPane, "2, 9, 3, 1, fill, fill");
-
-    textArea = new JTextArea();
-    scrollPane.setViewportView(textArea);
-    textArea.setLineWrap(true);
-    textArea.setWrapStyleWord(true);
-
-    JTextPane textPane = new JTextPane();
-    textPane.setText(BUNDLE.getString("BugReport.hint"));//$NON-NLS-1$
-    textPane.setOpaque(false);
-    panelContent.add(textPane, "2, 11, 3, 1, fill, fill");
-
-    final JLabel lblHintImage = new JLabel(IconManager.INFO);
-    panelContent.add(lblHintImage, "2, 13");
-
-    final JTextPane tpHint = new JTextPane();
-    tpHint.setOpaque(false);
-    tpHint.setText(BUNDLE.getString("BugReport.hint2"));//$NON-NLS-1$
-    panelContent.add(tpHint, "4, 13, fill, fill");
-
-    JPanel panelButtons = new JPanel();
-    panelButtons.setLayout(new EqualsLayout(5));
-    getContentPane().add(panelButtons, "2, 4, fill, fill");
-
-    JButton btnSend = new JButton(BUNDLE.getString("BugReport.send")); //$NON-NLS-1$
-    btnSend.setIcon(IconManager.APPLY_INV);
-    btnSend.addActionListener(new ActionListener() {
+    final JButton btnSaveLogs = new JButton(BUNDLE.getString("BugReport.createlogs")); //$NON-NLS-1$
+    btnSaveLogs.addActionListener(new ActionListener() {
       @Override
-      public void actionPerformed(ActionEvent arg0) {
-        // check if feedback is provided
-        if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("BugReport.description.empty")); //$NON-NLS-1$
-          return;
-        }
-
-        // send bug report
+      public void actionPerformed(ActionEvent e) {
+        // open the log download window
         try {
-          sendBugReport();
+          File file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip", new FileNameExtensionFilter("Zip files", ".zip")); //$NON-NLS-1$
+          if (file != null) {
+            writeLogsFile(file);
+          }
         }
-        catch (Exception e) {
-          LOGGER.error("failed sending bug report: " + e.getMessage());
-          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error") + "\n" + e.getMessage()); //$NON-NLS-1$
-          return;
+        catch (Exception ex) {
+          LOGGER.error("Could not write logs.zip: " + ex.getMessage());
         }
-        BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok")); //$NON-NLS-1$
-        setVisible(false);
       }
     });
-    panelButtons.add(btnSend);
 
-    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCacnel.setIcon(IconManager.CANCEL_INV);
-    btnCacnel.addActionListener(new ActionListener() {
+    final JLabel lblStep1 = new JLabel(BUNDLE.getString("BugReport.step1")); //$NON-NLS-1$
+    panelContent.add(lblStep1, "2, 4, default, top");
+
+    final JTextArea taStep1 = new JTextArea();
+    taStep1.setText(BUNDLE.getString("BugReport.step1.description")); //$NON-NLS-1$
+    taStep1.setOpaque(false);
+    taStep1.setEditable(false);
+    panelContent.add(taStep1, "5, 4, fill, fill");
+    panelContent.add(btnSaveLogs, "7, 4");
+
+    final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue")); //$NON-NLS-1$
+    btnCreateIssue.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // create the url for github
+        String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?labels[]=bug&body=";
+        String params = "Version: " + ReleaseInfo.getRealVersion();
+        params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
+        params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
+        params += "\nJDK: " + System.getProperty("java.version") + " " + System.getProperty("os.arch") + " " + System.getProperty("java.vendor");
+        params += "\n\n__What is the actual behaviour?__\n\n";
+        params += "\n\n__What is the expected behaviour?__\n\n";
+        params += "\n\n__Steps to reproduce:__\n\n";
+        params += "\n\n__Additional__\nHave you attached the logfile from the day it happened?";
+
+        String url = "";
+        try {
+          url = baseUrl + URLEncoder.encode(params, "UTF-8");
+          TmmUIHelper.browseUrl(url);
+        }
+        catch (Exception e1) {
+          LOGGER.error("FAQ", e1);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
+        }
+      }
+    });
+
+    final JLabel lblStep2 = new JLabel(BUNDLE.getString("BugReport.step2")); //$NON-NLS-1$
+    panelContent.add(lblStep2, "2, 6, default, top");
+
+    final JTextArea taStep2 = new JTextArea();
+    taStep2.setOpaque(false);
+    taStep2.setEditable(false);
+    taStep2.setText(BUNDLE.getString("BugReport.step2.description")); //$NON-NLS-1$
+    panelContent.add(taStep2, "5, 6, fill, fill");
+    panelContent.add(btnCreateIssue, "7, 6");
+
+    final JLabel lblHintIcon = new JLabel(IconManager.HINT);
+    panelContent.add(lblHintIcon, "3, 8");
+
+    final JLabel lblHint = new JLabel(BUNDLE.getString("BugReport.languagehint")); //$NON-NLS-1$
+    panelContent.add(lblHint, "5, 8");
+
+    JPanel panelButtons = new JPanel();
+
+    getContentPane().add(panelButtons, BorderLayout.SOUTH);
+
+    JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+    btnClose.setIcon(IconManager.CANCEL_INV);
+    btnClose.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
       }
     });
-    panelButtons.add(btnCacnel);
+    panelButtons
+        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+    panelButtons.add(btnClose, "2, 2");
   }
 
-  private void sendBugReport() throws Exception {
-    OkHttpClient client = TmmHttpClient.getHttpClient();
-    String url = "https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec";
+  private void writeLogsFile(File file) throws Exception {
+    FileOutputStream os = new FileOutputStream(file);
+    ZipOutputStream zos = new ZipOutputStream(os);
 
-    StringBuilder message = new StringBuilder("Bug report from ");
-    message.append(tfName.getText());
-    message.append("\nEmail:");
-    message.append(tfEmail.getText());
-    message.append("\n");
-    message.append("\nis Donator?: ");
-    message.append(Globals.isDonator());
-    message.append("\nVersion: ");
-    message.append(ReleaseInfo.getRealVersion());
-    message.append("\nBuild: ");
-    message.append(ReleaseInfo.getRealBuildDate());
-    message.append("\nOS: ");
-    message.append(System.getProperty("os.name"));
-    message.append(" ");
-    message.append(System.getProperty("os.version"));
-    message.append("\nJDK: ");
-    message.append(System.getProperty("java.version"));
-    message.append(" ");
-    message.append(System.getProperty("java.vendor"));
-    message.append("\nUUID: ");
-    message.append(System.getProperty("tmm.uuid"));
-    message.append("\n\n");
-    message.append(textArea.getText());
+    // attach logs
+    File[] logs = new File("logs").listFiles(new FilenameFilter() {
+      Pattern logPattern = Pattern.compile("tmm\\.log\\.*");
 
-    BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      @Override
+      public boolean accept(File directory, String filename) {
+        Matcher matcher = logPattern.matcher(filename);
+        if (matcher.find()) {
+          return true;
+        }
+        return false;
+      }
+    });
+    if (logs != null) {
+      for (File logFile : logs) {
+        try {
+          FileInputStream in = new FileInputStream(logFile);
+          ZipEntry ze = new ZipEntry(logFile.getName());
+          zos.putNextEntry(ze);
 
-    MultipartBuilder multipartBuilder = new MultipartBuilder();
-    multipartBuilder.type(MultipartBuilder.FORM);
+          IOUtils.copy(in, zos);
+          in.close();
+          zos.closeEntry();
+        }
+        catch (Exception e) {
+          LOGGER.warn("unable to attach " + logFile.getName() + ": " + e.getMessage());
+        }
+      }
+    }
 
-    multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"message\""), RequestBody.create(null, message.toString()));
-    multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"sender\""), RequestBody.create(null, tfEmail.getText()));
-
-    // attach files
     try {
-      // build zip with selected files in it
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      ZipOutputStream zos = new ZipOutputStream(os);
+      FileInputStream in = new FileInputStream("launcher.log");
+      ZipEntry ze = new ZipEntry("launcher.log");
+      zos.putNextEntry(ze);
 
-      // attach logs
-      File[] logs = new File("logs").listFiles(new FilenameFilter() {
-        Pattern logPattern = Pattern.compile("tmm\\.log\\.*");
-
-        @Override
-        public boolean accept(File directory, String filename) {
-          Matcher matcher = logPattern.matcher(filename);
-          if (matcher.find()) {
-            return true;
-          }
-          return false;
-        }
-      });
-      if (logs != null) {
-        for (File logFile : logs) {
-          try {
-            FileInputStream in = new FileInputStream(logFile);
-            ZipEntry ze = new ZipEntry(logFile.getName());
-            zos.putNextEntry(ze);
-
-            IOUtils.copy(in, zos);
-            in.close();
-            zos.closeEntry();
-          }
-          catch (Exception e) {
-            LOGGER.warn("unable to attach " + logFile.getName() + ": " + e.getMessage());
-          }
-        }
-      }
-
-      try {
-        FileInputStream in = new FileInputStream("launcher.log");
-        ZipEntry ze = new ZipEntry("launcher.log");
-        zos.putNextEntry(ze);
-
-        IOUtils.copy(in, zos);
-        in.close();
-        zos.closeEntry();
-      }
-      catch (Exception e) {
-        LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
-      }
-
-      // attach config file
-      try {
-        ZipEntry ze = new ZipEntry("config.xml");
-        zos.putNextEntry(ze);
-        FileInputStream in = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), "config.xml"));
-
-        IOUtils.copy(in, zos);
-        in.close();
-        zos.closeEntry();
-      }
-      catch (Exception e) {
-        LOGGER.warn("unable to attach config.xml: " + e.getMessage());
-      }
-
-      zos.close();
-
-      byte[] data = os.toByteArray();
-      String data_string = Base64.encodeBase64String(data);
-      multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"logs\""), RequestBody.create(null, data_string));
+      IOUtils.copy(in, zos);
+      in.close();
+      zos.closeEntry();
     }
-    catch (IOException ex) {
-      LOGGER.warn("error adding attachments", ex);
+    catch (Exception e) {
+      LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
     }
-    Request request = new Request.Builder().url(url).post(multipartBuilder.build()).build();
-    client.newCall(request).execute();
-  }
 
-  @Override
-  public void pack() {
-    // pack will mess this dialog up
+    // attach config file
+    try {
+      ZipEntry ze = new ZipEntry("config.xml");
+      zos.putNextEntry(ze);
+      FileInputStream in = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), "config.xml"));
+
+      IOUtils.copy(in, zos);
+      in.close();
+      zos.closeEntry();
+    }
+    catch (Exception e) {
+      LOGGER.warn("unable to attach config.xml: " + e.getMessage());
+    }
+
+    zos.close();
+    os.close();
   }
 }

@@ -243,6 +243,7 @@ public class MovieSetArtworkHelper {
 
         // add all written media files to the movie set
         movieSet.addToMediaFiles(writtenArtworkFiles);
+        movieSet.saveToDb();
       }
       catch (Exception e) {
         if (e instanceof InterruptedException) {
