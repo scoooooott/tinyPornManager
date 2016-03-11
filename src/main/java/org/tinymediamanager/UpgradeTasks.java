@@ -185,6 +185,7 @@ public class UpgradeTasks {
           episode.setNewlyAdded(false);
           episode.saveToDb();
         }
+        tvShow.saveToDb();
       }
     }
   }
