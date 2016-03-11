@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
+import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
@@ -156,7 +157,7 @@ public class MediaScraper {
         plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieTrailerProvider.class));
         break;
       case SUBTITLE:
-        plugins.addAll(PluginManager.getInstance().getSubtitlePlugins());
+        plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMediaSubtitleProvider.class));
         break;
       default:
         break;

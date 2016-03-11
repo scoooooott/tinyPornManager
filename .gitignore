@@ -24,6 +24,7 @@ bin
 
 #tinyMediaManager
 cache
+jspf.cache
 logs
 log
 config.xml

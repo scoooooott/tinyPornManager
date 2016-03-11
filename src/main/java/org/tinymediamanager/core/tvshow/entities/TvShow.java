@@ -61,6 +61,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShow.
@@ -1448,5 +1449,17 @@ public class TvShow extends MediaEntity {
    */
   public boolean deleteFilesSafely() {
     return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+  }
+
+  /**
+   * this is legacy code to prevent data loss due to DB changes
+   * 
+   * @param studio
+   *          the studio
+   */
+  @Deprecated
+  @JsonSetter
+  public void setStudio(String studio) {
+    setProductionCompany(studio);
   }
 }
