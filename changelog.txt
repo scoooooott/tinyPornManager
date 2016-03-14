@@ -18,6 +18,7 @@ x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
 x remember last opened directory in the new chooser
 x TvShows: fix studio writing
+x fix loading of the movie-duplicate filter at startup
 
 
 Version 2.7.2

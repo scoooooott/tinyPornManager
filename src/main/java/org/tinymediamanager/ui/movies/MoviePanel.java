@@ -396,6 +396,7 @@ public class MoviePanel extends JPanel {
 
     // filter
     if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+      movieList.searchDuplicates();
       movieMatcherEditor.filterMovies(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
     }
   }
