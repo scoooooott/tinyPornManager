@@ -64,6 +64,7 @@ import com.jtattoo.plaf.AbstractLookAndFeel;
  * @author Manuel Laggner
  * 
  */
+@Deprecated
 public class TvShowExtendedSearchPanel extends RoundedPanel {
   private static final long            serialVersionUID = 5003714573168481816L;
   /**

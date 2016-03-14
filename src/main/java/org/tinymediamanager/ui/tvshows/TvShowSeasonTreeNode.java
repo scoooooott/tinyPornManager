@@ -15,28 +15,17 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.util.Collections;
-import java.util.Comparator;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
 /**
  * The Class TvShowSeasonTreeNode.
  * 
  * @author Manuel Laggner
  */
-public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
-
-  /** The Constant serialVersionUID. */
-  private static final long    serialVersionUID = -5734830011018805194L;
-
-  /** The node comparator. */
-  private Comparator<TreeNode> nodeComparator;
+@Deprecated
+public class TvShowSeasonTreeNode extends TmmTreeNode {
+  private static final long serialVersionUID = -5734830011018805194L;
 
   /**
    * Instantiates a new tv show season tree node.
@@ -46,19 +35,6 @@ public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
    */
   public TvShowSeasonTreeNode(Object userObject) {
     super(userObject);
-    nodeComparator = new Comparator<TreeNode>() {
-      @Override
-      public int compare(TreeNode o1, TreeNode o2) {
-        if (o1 instanceof TvShowEpisodeTreeNode && o2 instanceof TvShowEpisodeTreeNode) {
-          TvShowEpisodeTreeNode node1 = (TvShowEpisodeTreeNode) o1;
-          TvShowEpisode tvShowEpisode1 = (TvShowEpisode) node1.getUserObject();
-          TvShowEpisodeTreeNode node2 = (TvShowEpisodeTreeNode) o2;
-          TvShowEpisode tvShowEpisode2 = (TvShowEpisode) node2.getUserObject();
-          return tvShowEpisode1.getEpisode() - tvShowEpisode2.getEpisode();
-        }
-        return o1.toString().compareToIgnoreCase(o2.toString());
-      }
-    };
   }
 
   /**
@@ -78,27 +54,5 @@ public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
 
     // fallback: call super
     return super.toString();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.tree.DefaultMutableTreeNode#insert(javax.swing.tree.MutableTreeNode, int)
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public void insert(MutableTreeNode newChild, int childIndex) {
-    if (this.children != null) {
-      int index = Collections.binarySearch(this.children, newChild, nodeComparator);
-      if (index < 0) {
-        super.insert(newChild, -index - 1);
-      }
-      else if (index >= 0) {
-        super.insert(newChild, index);
-      }
-    }
-    else {
-      super.insert(newChild, childIndex);
-    }
   }
 }

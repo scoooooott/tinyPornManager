@@ -602,7 +602,7 @@ public class TvShowList extends AbstractModelObject {
       videoCodecsObservable.add(newCodec);
     }
 
-    firePropertyChange("videoCodec", null, videoCodecsObservable);
+    firePropertyChange(VIDEO_CODEC, null, videoCodecsObservable);
   }
 
   private void addAudioCodec(String newCodec) {
@@ -617,7 +617,7 @@ public class TvShowList extends AbstractModelObject {
       audioCodecsObservable.add(newCodec);
     }
 
-    firePropertyChange("audioCodec", null, audioCodecsObservable);
+    firePropertyChange(AUDIO_CODEC, null, audioCodecsObservable);
   }
 
   public List<String> getVideoCodecsInEpisodes() {

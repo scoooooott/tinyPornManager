@@ -39,6 +39,9 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmTree.BottomBorderBorder;
 import org.tinymediamanager.ui.components.TmmTree.VerticalBorderPanel;
+import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider.TvShowEpisodeTreeNode;
+import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider.TvShowSeasonTreeNode;
+import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider.TvShowTreeNode;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -233,6 +236,9 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
     // paint background
     if (selected) {
       returnValue.setBackground(defaultRenderer.getBackgroundSelectionColor());
+    }
+    else {
+      returnValue.setBackground(defaultRenderer.getBackgroundNonSelectionColor());
     }
 
     return returnValue;

@@ -187,6 +187,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     table.put("TextPane.foreground", getForegroundColor());
     table.put("TitledBorder.border", TmmLightBorderFactory.getInstance().getTitledBorder());
     table.put("Table.scrollPaneBorder", TmmLightBorderFactory.getInstance().getScrollPaneBorder());
+    table.put("Tree.textBackground", getBackgroundColor());
     // table.put("Table.foreground", getForegroundColor());
   }
 

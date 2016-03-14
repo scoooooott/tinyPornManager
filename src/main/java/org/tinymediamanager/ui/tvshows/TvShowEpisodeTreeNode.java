@@ -15,16 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
 /**
  * The Class TvShowEpisodeTreeNode.
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisodeTreeNode extends DefaultMutableTreeNode {
+@Deprecated
+public class TvShowEpisodeTreeNode extends TmmTreeNode {
 
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = -7108614568808831980L;

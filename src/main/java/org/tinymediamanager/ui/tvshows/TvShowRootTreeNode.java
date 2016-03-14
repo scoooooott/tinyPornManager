@@ -31,6 +31,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowRootTreeNode extends DefaultMutableTreeNode {
   private static final long    serialVersionUID = 6510900885675830369L;
 

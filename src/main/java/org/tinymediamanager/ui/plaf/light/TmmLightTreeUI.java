@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.tree.TreePath;
 
+import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseTreeUI;
 
 /**
@@ -46,13 +47,26 @@ public class TmmLightTreeUI extends BaseTreeUI {
   @Override
   protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
       boolean hasBeenExpanded, boolean isLeaf) {
-    if (editingComponent != null && editingRow == row)
+    if (editingComponent != null && editingRow == row) {
       return;
+    }
 
     bounds.width = tree.getWidth() - bounds.x;
-
     super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
   }
+
+  @Override
+  protected void paintExpandControl(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
+      boolean hasBeenExpanded, boolean isLeaf) {
+
+    // draw selection background behind expand control
+    Graphics g2 = g.create();
+    g2.setColor(getSelectionModel().isRowSelected(row) ? AbstractLookAndFeel.getTheme().getSelectionBackgroundColor()
+        : AbstractLookAndFeel.getTheme().getBackgroundColor());
+    g2.fillRect(clipBounds.x, bounds.y, bounds.x, bounds.height);
+
+    super.paintExpandControl(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
+  };
 
   @Override
   protected void paintVerticalLine(Graphics g, JComponent c, int x, int top, int bottom) {
@@ -78,10 +92,8 @@ public class TmmLightTreeUI extends BaseTreeUI {
 
   /**
    * The listener interface for receiving rowSelection events. The class that is interested in processing a rowSelection event implements this
-   * interface, and the object created with that class is registered with a component using the component's
-   * <code>addRowSelectionListener<code> method. When
-   * the rowSelection event occurs, that object's appropriate
-   * method is invoked.
+   * interface, and the object created with that class is registered with a component using the component's <code>addRowSelectionListener
+   * <code> method. When the rowSelection event occurs, that object's appropriate method is invoked.
    * 
    * @see RowSelectionEvent
    */

@@ -40,6 +40,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowExtendedMatcher {
 
   public enum SearchOptions {

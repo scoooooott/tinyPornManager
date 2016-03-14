@@ -26,10 +26,11 @@ public final class Constants {
 
   public final static String ACTORS                 = "actors";
   public final static String ADDED_EPISODE          = "addedEpisode";
-  public final static String ADDED_SEASON           = "season";
+  public final static String ADDED_SEASON           = "addedSeason";
   public final static String ADDED_TV_SHOW          = "addedTvShow";
   public final static String AIRED_EPISODE          = "airedEpisode";
   public final static String AIRED_SEASON           = "airedSeason";
+  public final static String AUDIO_CODEC            = "audioCodec";
   public final static String BANNER                 = "banner";
   public final static String BANNER_URL             = "bannerUrl";
   public final static String CAST                   = "cast";
@@ -98,6 +99,7 @@ public final class Constants {
   public final static String TV_SHOW                = "tvShow";
   public final static String TV_SHOW_COUNT          = "tvShowCount";
   public final static String TV_SHOWS               = "tvShows";
+  public final static String VIDEO_CODEC            = "videoCodec";
   public final static String VIDEO_IN_3D            = "videoIn3D";
   public final static String VOTES                  = "votes";
   public final static String WATCHED                = "watched";

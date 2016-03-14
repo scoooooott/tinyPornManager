@@ -46,6 +46,7 @@ import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowTreeModel implements TreeModel {
   private TvShowRootTreeNode      root       = new TvShowRootTreeNode();
   private List<TreeModelListener> listeners  = new ArrayList<TreeModelListener>();

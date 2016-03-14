@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 - 2015 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.tvshows.panels;
 
 import java.awt.event.ActionEvent;
@@ -10,19 +25,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -33,13 +43,13 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.EnhancedTextField;
-import org.tinymediamanager.ui.components.TmmTree;
-import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
-import org.tinymediamanager.ui.tvshows.TvShowRootTreeNode;
+import org.tinymediamanager.ui.components.tree.TmmTree;
+import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 import org.tinymediamanager.ui.tvshows.TvShowTreeCellRenderer;
-import org.tinymediamanager.ui.tvshows.TvShowTreeModel;
+import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -47,57 +57,30 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The class TvShowTreePanel is used to display the tree for TV dhows
+ * 
+ * @author Manuel Laggner
+ *
+ */
 public class TvShowTreePanel extends JPanel implements ITmmTabItem {
   private static final long           serialVersionUID = 5889203009864512935L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JTree                       tree;
-
-  private TvShowTreeModel             treeModel;
-  private TvShowSelectionModel        tvShowSelectionModel;
+  private TmmTree<TmmTreeNode>        tree;
   private TvShowList                  tvShowList       = TvShowList.getInstance();
+  private TvShowSelectionModel        tvShowSelectionModel;
 
   public TvShowTreePanel(TvShowSelectionModel selectionModel) {
     this.tvShowSelectionModel = selectionModel;
-    treeModel = new TvShowTreeModel(tvShowList.getTvShows());
 
     setLayout(new FormLayout(
         new ColumnSpec[] { ColumnSpec.decode("10dlu"), ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.DEFAULT_ROWSPEC, }));
 
-    final JTextField searchField = EnhancedTextField.createSearchTextField();
-    searchField.setColumns(12);
-    searchField.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void insertUpdate(final DocumentEvent e) {
-        applyFilter();
-      }
-
-      @Override
-      public void removeUpdate(final DocumentEvent e) {
-        applyFilter();
-      }
-
-      @Override
-      public void changedUpdate(final DocumentEvent e) {
-        applyFilter();
-      }
-
-      public void applyFilter() {
-        TvShowTreeModel filteredModel = (TvShowTreeModel) tree.getModel();
-        if (StringUtils.isNotBlank(searchField.getText())) {
-          filteredModel.setFilter(SearchOptions.TEXT, searchField.getText());
-        }
-        else {
-          filteredModel.removeFilter(SearchOptions.TEXT);
-        }
-
-        filteredModel.filter(tree);
-      }
-    });
-
+    final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "2, 1, fill, fill");
 
     final JToggleButton btnFilter = new JToggleButton("Filter");
@@ -114,7 +97,9 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     add(scrollPane, "1, 3, 5, 1, fill, fill");
 
-    tree = new TmmTree(treeModel);
+    TmmTreeDataProvider<TmmTreeNode> dataProvider = new TvShowTreeDataProvider();
+    tree = new TmmTree<TmmTreeNode>(dataProvider);
+    tree.addFilter(searchField);
     tvShowSelectionModel.setTree(tree);
 
     tree.setRootVisible(false);
@@ -148,7 +133,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         }
         else {
           // check if there is at least one tv show in the model
-          TvShowRootTreeNode root = (TvShowRootTreeNode) tree.getModel().getRoot();
+          TmmTreeNode root = (TmmTreeNode) tree.getModel().getRoot();
           if (root.getChildCount() == 0) {
             // sets an inital show
             tvShowSelectionModel.setSelectedTvShow(null);
@@ -226,7 +211,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     return TvShowUIModule.getInstance();
   }
 
-  public JTree getTree() {
+  public TmmTree<TmmTreeNode> getTree() {
     return tree;
   }
 

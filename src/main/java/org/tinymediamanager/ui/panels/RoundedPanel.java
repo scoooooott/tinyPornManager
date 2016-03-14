@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
@@ -48,10 +49,23 @@ public class RoundedPanel extends JPanel {
   protected int             shadowOffset     = 4;
   /** The transparency value of shadow. ( 0 - 255) */
   protected int             shadowAlpha      = 150;
+  /** the insets based on the arc */
+  protected Insets          insets;
 
   public RoundedPanel() {
     super();
     setOpaque(false);
+    insets = new Insets(arcs.height / 2, arcs.width / 2, arcs.height / 2, arcs.width / 2);
+  }
+
+  @Override
+  public java.awt.Insets getInsets() {
+    Insets insets = super.getInsets();
+    insets.top = this.insets.top + insets.top;
+    insets.left = this.insets.left + insets.left;
+    insets.bottom = this.insets.bottom + insets.bottom;
+    insets.right = this.insets.right + insets.right;
+    return insets;
   }
 
   @Override
