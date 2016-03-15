@@ -13,57 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
- * This class implements a data source filter for the TV show tree
+ * This class implements a tag filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
+public class TvShowTagFilter extends AbstractTvShowUIFilter {
+  private TvShowList        tvShowList = TvShowList.getInstance();
+
   private JComboBox<String> comboBox;
 
-  public TvShowDatasourceFilter() {
+  public TvShowTagFilter() {
     super();
-    buildAndInstallDatasourceArray();
+    buildAndInstallTagsArray();
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallDatasourceArray();
+        buildAndInstallTagsArray();
       }
     };
-    Settings.getInstance().getTvShowSettings().addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
+    tvShowList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
   }
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    String datasource = (String) comboBox.getSelectedItem();
-    if (new File(tvShow.getDataSource()).equals(new File(datasource))) {
-      return true;
-    }
+    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
   }
 
   @Override
@@ -72,12 +70,13 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
     return comboBox;
   }
 
-  private void buildAndInstallDatasourceArray() {
+  private void buildAndInstallTagsArray() {
     comboBox.removeAllItems();
-    List<String> datasources = new ArrayList<>(Settings.getInstance().getTvShowSettings().getTvShowDataSource());
-    Collections.sort(datasources);
-    for (String datasource : datasources) {
-      comboBox.addItem(datasource);
+    Set<String> tags = new TreeSet<String>(tvShowList.getTagsInTvShows());
+    tags.addAll(tvShowList.getTagsInEpisodes());
+    for (String tag : tags) {
+      comboBox.addItem(tag);
     }
   }
+
 }

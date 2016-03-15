@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.List;
 
@@ -23,34 +23,51 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
- * This class implements a genres filter for the TV show tree
+ * This class implements a watchted filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowGenreFilter extends AbstractTvShowUIFilter {
-  private JComboBox<MediaGenres> comboBox;
+public class TvShowWatchedFilter extends AbstractTvShowUIFilter {
+  private enum WatchedFlag {
+    WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$ ,
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched")); //$NON-NLS-1$ ,
 
-  @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    if (tvShow.getGenres().contains(comboBox.getSelectedItem())) {
-      return true;
+    private String title;
+
+    private WatchedFlag(String title) {
+      this.title = title;
     }
 
-    return false;
+    @Override
+    public String toString() {
+      return title;
+    }
   }
+
+  private JComboBox<WatchedFlag> comboBox;
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
   }
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(MediaGenres.values());
+    comboBox = new JComboBox<>(WatchedFlag.values());
     return comboBox;
+  }
+
+  @Override
+  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+    for (TvShowEpisode episode : episodes) {
+      if (episode.isWatched() == (comboBox.getSelectedItem() == WatchedFlag.WATCHED)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.List;
 
@@ -25,16 +25,20 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
- * This class implements a "missing subtitles" filter for the TV show tree
+ * This class implements a "missing artwork" filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
+public class TvShowMissingArtworkFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+    if (!tvShow.getHasImages()) {
+      return true;
+    }
+
     for (TvShowEpisode episode : episodes) {
-      if (!episode.hasSubtitles()) {
+      if (!episode.getHasImages()) {
         return true;
       }
     }
@@ -44,7 +48,7 @@ public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
   }
 
   @Override

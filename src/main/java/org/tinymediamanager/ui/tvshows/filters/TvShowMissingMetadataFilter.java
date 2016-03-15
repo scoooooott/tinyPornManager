@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.List;
 

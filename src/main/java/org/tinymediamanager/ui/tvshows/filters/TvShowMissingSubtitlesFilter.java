@@ -13,46 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
- * This class implements a media source filter for the TV show tree
+ * This class implements a "missing subtitles" filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
-  private JComboBox<MediaSource> combobox;
+public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    // search for media source in episodes
     for (TvShowEpisode episode : episodes) {
-      if (episode.getMediaSource() == combobox.getSelectedItem()) {
+      if (!episode.hasSubtitles()) {
         return true;
       }
     }
+
     return false;
   }
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
   }
 
   @Override
   protected JComponent createFilterComponent() {
-    combobox = new JComboBox<>(MediaSource.values());
-    return combobox;
+    return null;
   }
 }

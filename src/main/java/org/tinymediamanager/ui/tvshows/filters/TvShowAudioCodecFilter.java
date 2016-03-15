@@ -13,55 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filter;
+package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
- * This class implements a tag filter for the TV show tree
+ * This class implements a audio codec filter for the TV show tree
  * 
  * @author Manuel Laggner
  */
-public class TvShowTagFilter extends AbstractTvShowUIFilter {
+public class TvShowAudioCodecFilter extends AbstractTvShowUIFilter {
   private TvShowList        tvShowList = TvShowList.getInstance();
 
   private JComboBox<String> comboBox;
 
-  public TvShowTagFilter() {
+  public TvShowAudioCodecFilter() {
     super();
-    buildAndInstallTagsArray();
+    buildAndInstallCodecArray();
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallTagsArray();
+        buildAndInstallCodecArray();
       }
     };
-    tvShowList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
+    tvShowList.addPropertyChangeListener(Constants.AUDIO_CODEC, propertyChangeListener);
   }
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    // TODO Auto-generated method stub
+    String codec = (String) comboBox.getSelectedItem();
+    if (StringUtils.isBlank(codec)) {
+      return true;
+    }
+
+    // search codec in the episodes
+    for (TvShowEpisode episode : episodes) {
+      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      for (MediaFile mf : mfs) {
+        if (mf.getAudioCodec().equalsIgnoreCase(codec)) {
+          return true;
+        }
+      }
+    }
     return false;
   }
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
   }
 
   @Override
@@ -70,13 +86,12 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
     return comboBox;
   }
 
-  private void buildAndInstallTagsArray() {
+  private void buildAndInstallCodecArray() {
     comboBox.removeAllItems();
-    Set<String> tags = new TreeSet<String>(tvShowList.getTagsInTvShows());
-    tags.addAll(tvShowList.getTagsInEpisodes());
-    for (String tag : tags) {
-      comboBox.addItem(tag);
+    List<String> codecs = new ArrayList<>(tvShowList.getAudioCodecsInEpisodes());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      comboBox.addItem(codec);
     }
   }
-
 }
