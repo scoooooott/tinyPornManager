@@ -87,11 +87,17 @@ public class TvShowAudioCodecFilter extends AbstractTvShowUIFilter {
   }
 
   private void buildAndInstallCodecArray() {
+    String oldValue = (String) comboBox.getSelectedItem();
     comboBox.removeAllItems();
+
     List<String> codecs = new ArrayList<>(tvShowList.getAudioCodecsInEpisodes());
     Collections.sort(codecs);
     for (String codec : codecs) {
       comboBox.addItem(codec);
+    }
+
+    if (oldValue != null) {
+      comboBox.setSelectedItem(oldValue);
     }
   }
 }

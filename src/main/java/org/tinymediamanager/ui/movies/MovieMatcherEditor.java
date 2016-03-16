@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -31,11 +35,45 @@ import ca.odell.glazedlists.matchers.Matcher;
  * @author Manuel Laggner
  */
 public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
+  private final Set<IMovieUIFilter>    filters;
+  private final PropertyChangeListener filterChangeListener;
 
   /**
    * Instantiates a new movie matcher editor.
    */
   public MovieMatcherEditor() {
+    filters = new HashSet<>();
+    filterChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        updateFiltering();
+      }
+    };
+  }
+
+  /**
+   * Add a new UI filter to this matcher
+   * 
+   * @param filter
+   *          the new filter to be added
+   */
+  public void addFilter(IMovieUIFilter filter) {
+    filter.addPropertyChangeListener(filterChangeListener);
+    filters.add(filter);
+  }
+
+  /**
+   * re-filter the list
+   */
+  private void updateFiltering() {
+    Matcher<Movie> matcher = new MovieMatcher(new HashSet<>(filters));
+    fireChanged(matcher);
+
+    // ToDo
+    // if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+    // MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
+    // Globals.settings.saveSettings();
+    // }
   }
 
   /**
@@ -44,12 +82,35 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
    * @param filter
    *          the filter
    */
+  @Deprecated
   public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
     fireChanged(matcher);
     if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
       MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
       Globals.settings.saveSettings();
+    }
+  }
+
+  /*
+   * helper class for running all filters against the given movie
+   */
+  private class MovieMatcher implements Matcher<Movie> {
+    private final Set<IMovieUIFilter> filters;
+
+    public MovieMatcher(Set<IMovieUIFilter> filters) {
+      this.filters = filters;
+    }
+
+    @Override
+    public boolean matches(Movie movie) {
+      for (IMovieUIFilter filter : filters) {
+        if (filter.isActive() && !filter.accept(movie)) {
+          return false;
+        }
+      }
+
+      return true;
     }
   }
 }

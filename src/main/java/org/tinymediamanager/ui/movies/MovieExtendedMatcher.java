@@ -39,6 +39,7 @@ import ca.odell.glazedlists.matchers.Matcher;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieExtendedMatcher implements Matcher<Movie> {
   private Map<MovieSearchOptions, Object> searchOptions;
 

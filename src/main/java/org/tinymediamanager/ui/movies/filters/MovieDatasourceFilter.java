@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filters;
+package org.tinymediamanager.ui.movies.filters;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,22 +27,21 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
+import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
- * This class implements a data source filter for the TV show tree
+ * this class is used for a video - 3D movie filter
  * 
  * @author Manuel Laggner
  */
-public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
-  private TvShowSettings    tvShowSettings = Settings.getInstance().getTvShowSettings();
+public class MovieDatasourceFilter extends AbstractMovieUIFilter {
+  private MovieSettings     movieSettings = Settings.getInstance().getMovieSettings();
 
   private JComboBox<String> comboBox;
 
-  public TvShowDatasourceFilter() {
+  public MovieDatasourceFilter() {
     super();
     buildAndInstallDatasourceArray();
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
@@ -52,15 +50,16 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
         buildAndInstallDatasourceArray();
       }
     };
-    tvShowSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
+    movieSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
+  public boolean accept(Movie movie) {
     String datasource = (String) comboBox.getSelectedItem();
-    if (new File(tvShow.getDataSource()).equals(new File(datasource))) {
+    if (datasource.equals(movie.getDataSource())) {
       return true;
     }
+
     return false;
   }
 
@@ -79,7 +78,7 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
     String oldValue = (String) comboBox.getSelectedItem();
     comboBox.removeAllItems();
 
-    List<String> datasources = new ArrayList<>(tvShowSettings.getTvShowDataSource());
+    List<String> datasources = new ArrayList<>(movieSettings.getMovieDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       comboBox.addItem(datasource);

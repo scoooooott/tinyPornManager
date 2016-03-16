@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows;
+package org.tinymediamanager.ui.movies;
 
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmUIFilter;
-import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 
 /**
- * The interface ITvShowUIFilter just combines the interfaces ITmmUIFilter and ITmmTreeFilter
+ * The interface IMovieUIFilter is used for filtering movies in the JTable
  * 
  * @author Manuel Laggner
- *
- * @param <E>
  */
-public interface ITvShowUIFilter<E> extends ITmmUIFilter<E>, ITmmTreeFilter<E> {
+public interface IMovieUIFilter extends ITmmUIFilter<Movie> {
+
+  /**
+   * is the given accepted by the filter
+   * 
+   * @param movie
+   *          the movie to check
+   * @return true or false
+   */
+  public boolean accept(Movie movie);
 }

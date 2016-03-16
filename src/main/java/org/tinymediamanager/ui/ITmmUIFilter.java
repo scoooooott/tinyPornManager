@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui;
 
+import java.beans.PropertyChangeListener;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -24,7 +26,9 @@ import javax.swing.JLabel;
  * 
  * @author Manuel Laggner
  */
-public interface ITmmUIFilter {
+public interface ITmmUIFilter<E> {
+  public final static String FILTER_CHANGED = "filterChanged";
+
   /**
    * Get the JCheckBox for enabling/disabling the filter
    * 
@@ -45,4 +49,56 @@ public interface ITmmUIFilter {
    * @return the component for extended filtering (e.g. JComboBox for JTextfield) or null
    */
   public JComponent getFilterComponent();
+
+  /**
+   * Is this filter active?
+   * 
+   * @return true or false
+   */
+  public boolean isActive();
+
+  /**
+   * Returns whether the specified object is accepted by this filter or not.
+   *
+   * @param object
+   *          object to process
+   * @return true if the specified object is accepted by this filter, false otherwise
+   */
+  public boolean accept(E object);
+
+  /**
+   * Adds the property change listener.
+   * 
+   * @param listener
+   *          the listener
+   */
+  public void addPropertyChangeListener(PropertyChangeListener listener);
+
+  /**
+   * Adds the property change listener.
+   * 
+   * @param propertyName
+   *          the property name
+   * @param listener
+   *          the listener
+   */
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+  /**
+   * Removes the property change listener.
+   * 
+   * @param listener
+   *          the listener
+   */
+  public void removePropertyChangeListener(PropertyChangeListener listener);
+
+  /**
+   * Removes the property change listener.
+   * 
+   * @param propertyName
+   *          the property name
+   * @param listener
+   *          the listener
+   */
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 }

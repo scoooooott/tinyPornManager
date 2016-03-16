@@ -71,11 +71,17 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
   }
 
   private void buildAndInstallTagsArray() {
+    String oldValue = (String) comboBox.getSelectedItem();
     comboBox.removeAllItems();
+
     Set<String> tags = new TreeSet<String>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
     for (String tag : tags) {
       comboBox.addItem(tag);
+    }
+
+    if (oldValue != null) {
+      comboBox.setSelectedItem(oldValue);
     }
   }
 

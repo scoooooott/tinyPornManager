@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows.filters;
+package org.tinymediamanager.ui.movies.filters;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,46 +26,45 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
- * This class implements a data source filter for the TV show tree
+ * this class is used for a audio codec movie filter
  * 
  * @author Manuel Laggner
  */
-public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
-  private TvShowSettings    tvShowSettings = Settings.getInstance().getTvShowSettings();
+public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
+  private MovieList         movieList = MovieList.getInstance();
 
   private JComboBox<String> comboBox;
 
-  public TvShowDatasourceFilter() {
+  public MovieAudioCodecFilter() {
     super();
-    buildAndInstallDatasourceArray();
+    buildAndInstallCodecArray();
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallDatasourceArray();
+        buildAndInstallCodecArray();
       }
     };
-    tvShowSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
+    movieList.addPropertyChangeListener(Constants.AUDIO_CODEC, propertyChangeListener);
   }
 
   @Override
-  protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    String datasource = (String) comboBox.getSelectedItem();
-    if (new File(tvShow.getDataSource()).equals(new File(datasource))) {
+  public boolean accept(Movie movie) {
+    String audioCodec = (String) comboBox.getSelectedItem();
+    if (audioCodec.equals(movie.getMediaInfoAudioCodec())) {
       return true;
     }
+
     return false;
   }
 
   @Override
   protected JLabel createLabel() {
-    return new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    return new JLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
   }
 
   @Override
@@ -75,14 +73,14 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
     return comboBox;
   }
 
-  private void buildAndInstallDatasourceArray() {
+  private void buildAndInstallCodecArray() {
     String oldValue = (String) comboBox.getSelectedItem();
     comboBox.removeAllItems();
 
-    List<String> datasources = new ArrayList<>(tvShowSettings.getTvShowDataSource());
-    Collections.sort(datasources);
-    for (String datasource : datasources) {
-      comboBox.addItem(datasource);
+    List<String> codecs = new ArrayList<>(movieList.getAudioCodecsInMovies());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      comboBox.addItem(codec);
     }
 
     if (oldValue != null) {

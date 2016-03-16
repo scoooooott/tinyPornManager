@@ -15,21 +15,14 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.event.SwingPropertyChangeSupport;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.AbstractTmmUIFilter;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
@@ -38,14 +31,11 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * 
  * @author Manuel Laggner
  */
-public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter implements ITvShowUIFilter<TmmTreeNode> {
-  protected final PropertyChangeSupport propertyChangeSupport = new SwingPropertyChangeSupport(this, true);
-  protected static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
+public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTreeNode> implements ITvShowUIFilter<TmmTreeNode> {
   @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?
-    if (!checkBox.isSelected()) {
+    if (!isActive()) {
       return true;
     }
 
@@ -84,77 +74,5 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter impleme
   @Override
   protected void filterChanged() {
     firePropertyChange(ITmmTreeFilter.TREE_FILTER_CHANGED, checkBox.isSelected(), !checkBox.isSelected());
-  }
-
-  /**
-   * Adds the property change listener.
-   * 
-   * @param listener
-   *          the listener
-   */
-  @Override
-  public void addPropertyChangeListener(PropertyChangeListener listener) {
-    propertyChangeSupport.addPropertyChangeListener(listener);
-  }
-
-  /**
-   * Adds the property change listener.
-   * 
-   * @param propertyName
-   *          the property name
-   * @param listener
-   *          the listener
-   */
-  @Override
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-  }
-
-  /**
-   * Removes the property change listener.
-   * 
-   * @param listener
-   *          the listener
-   */
-  @Override
-  public void removePropertyChangeListener(PropertyChangeListener listener) {
-    propertyChangeSupport.removePropertyChangeListener(listener);
-  }
-
-  /**
-   * Removes the property change listener.
-   * 
-   * @param propertyName
-   *          the property name
-   * @param listener
-   *          the listener
-   */
-  @Override
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
-  }
-
-  /**
-   * Fire property change.
-   * 
-   * @param propertyName
-   *          the property name
-   * @param oldValue
-   *          the old value
-   * @param newValue
-   *          the new value
-   */
-  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
-  }
-
-  /**
-   * Fire property change.
-   * 
-   * @param evt
-   *          the evt
-   */
-  protected void firePropertyChange(PropertyChangeEvent evt) {
-    propertyChangeSupport.firePropertyChange(evt);
   }
 }

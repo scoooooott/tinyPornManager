@@ -1490,11 +1490,22 @@ public class MovieEditorDialog extends TmmDialog {
   @Override
   public void dispose() {
     super.dispose();
-    jTableBinding.unbind();
-    jListBinding.unbind();
-    jTableBinding_1.unbind();
-    jListBinding_1.unbind();
-    jTableBinding_2.unbind();
+
+    if (jTableBinding.isBound()) {
+      jTableBinding.unbind();
+    }
+    if (jListBinding.isBound()) {
+      jListBinding.unbind();
+    }
+    if (jTableBinding_1.isBound()) {
+      jTableBinding_1.unbind();
+    }
+    if (jListBinding_1.isBound()) {
+      jListBinding_1.unbind();
+    }
+    if (jTableBinding_2.isBound()) {
+      jTableBinding_2.unbind();
+    }
     mediaFilesPanel.unbindBindings();
   }
 

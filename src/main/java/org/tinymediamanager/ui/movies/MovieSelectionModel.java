@@ -258,4 +258,14 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     Comparator<Movie> comparator = new MovieExtendedComparator(column, ascending);
     sortedList.setComparator(comparator);
   }
+
+  /**
+   * Add an UI filter
+   * 
+   * @param filter
+   *          the new filter to be added
+   */
+  public void addFilter(IMovieUIFilter filter) {
+    matcherEditor.addFilter(filter);
+  }
 }
