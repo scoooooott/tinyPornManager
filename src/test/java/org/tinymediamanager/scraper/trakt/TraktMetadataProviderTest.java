@@ -85,4 +85,12 @@ public class TraktMetadataProviderTest {
     }
 
   }
+
+  @Test
+  // Game of Thrones
+  public void testTVShowScrape() {
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+    TraktMetadataProvider mp = new TraktMetadataProvider();
+    options.setId(mp.getProviderInfo().getId(), "353");
+  }
 }

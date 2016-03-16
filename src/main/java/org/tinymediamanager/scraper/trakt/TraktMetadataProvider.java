@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -26,13 +27,14 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.uwetrottmann.trakt.v2.TraktV2;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
-public class TraktMetadataProvider implements IMovieMetadataProvider {
+public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
   private static final Logger    LOGGER       = LoggerFactory.getLogger(TraktMetadataProvider.class);
   private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
@@ -45,7 +47,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider {
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("trakt", "Trakt.tv",
-        "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things, but primarily keeps track of TV shows and movies you watch. It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
+        "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things," + " but primarily keeps track of TV shows and movies you watch. "
+            + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
         TraktMetadataProvider.class.getResource("/trakt_tv.png"));
 
     return providerInfo;
@@ -67,7 +70,20 @@ public class TraktMetadataProvider implements IMovieMetadataProvider {
     return providerInfo;
   }
 
-  // Scraping
+  // Searching
+  @Override
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+    switch (options.getMediaType()) {
+      case MOVIE:
+        return new TraktMovieMetadataProvider(api).search(options);
+      case TV_SHOW:
+        return new TraktTVShowMetadataProvider(api).search(options);
+      default:
+        throw new UnsupportedMediaTypeException(options.getMediaType());
+    }
+  }
+
+  // Scraping Movie
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     switch (options.getType()) {
@@ -79,15 +95,15 @@ public class TraktMetadataProvider implements IMovieMetadataProvider {
     }
   }
 
-  // Searching
+  // Scraping Show
   @Override
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
-    switch (options.getMediaType()) {
-      case MOVIE:
-        return new TraktMovieMetadataProvider(api).search(options);
-
+  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    switch (options.getType()) {
+      case TV_SHOW:
+        return new TraktTVShowMetadataProvider(api).getEpisodeList(options);
       default:
-        throw new UnsupportedMediaTypeException(options.getMediaType());
+        throw new UnsupportedMediaTypeException(options.getType());
     }
   }
+
 }
