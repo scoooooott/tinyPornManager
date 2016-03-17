@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>tinyMediaManager</artifactId>
-	<version>2.7.3-SNAPSHOT</version>
+	<version>2.7.4-SNAPSHOT</version>
 	<name>tinyMediaManager</name>
 
 	<scm>
