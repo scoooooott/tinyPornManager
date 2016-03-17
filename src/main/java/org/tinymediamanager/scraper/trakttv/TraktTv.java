@@ -628,11 +628,13 @@ public class TraktTv {
               episodesInTrakt.add(tmmEP);
 
               // update ep IDs - NOT YET POSSIBLE
-              // boolean dirty = updateIDs(tmmEP, be.ids);
+              // boolean epDirty = updateIDs(tmmEP, be.ids);
 
               if (be.collected_at != null && !(be.collected_at.toDate().equals(tmmEP.getDateAdded()))) {
                 tmmEP.setDateAdded(be.collected_at.toDate());
-                dirty = true;
+                tmmEP.writeNFO();
+                tmmEP.saveToDb();
+                // epDirty = true;
               }
             }
           }
@@ -738,12 +740,14 @@ public class TraktTv {
             for (BaseEpisode be : bs.episodes) {
               TvShowEpisode tmmEP = tmmShow.getEpisode(bs.number, be.number);
               // update ep IDs - NOT YET POSSIBLE
-              // boolean dirty = updateIDs(tmmEP, be.ids);
+              // boolean epDirty = updateIDs(tmmEP, be.ids);
 
               if (tmmEP != null && be.last_watched_at != null && !(be.last_watched_at.toDate().equals(tmmEP.getLastWatched()))) {
                 tmmEP.setLastWatched(be.last_watched_at.toDate());
                 tmmEP.setWatched(true);
-                dirty = true;
+                tmmEP.writeNFO();
+                tmmEP.saveToDb();
+                // epDirty = true;
               }
             }
           }
