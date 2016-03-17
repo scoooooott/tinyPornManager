@@ -20,6 +20,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -29,8 +31,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.japura.gui.CheckComboBox;
-import org.japura.gui.model.ListCheckModel;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -41,8 +41,8 @@ import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
-import org.tinymediamanager.ui.components.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -65,8 +65,8 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
   private MediaScraperComboBox        cbMetadataScraper;
-  private CheckComboBox               cbArtworkScraper;
-  private CheckComboBox               cbTrailerScraper;
+  private MediaScraperCheckComboBox   cbArtworkScraper;
+  private MediaScraperCheckComboBox   cbTrailerScraper;
   private boolean                     startScrape                = false;
 
   /**
@@ -125,19 +125,13 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
-    cbArtworkScraper = new MediaScraperCheckComboBox();
-    cbArtworkScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
-    cbArtworkScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
-    cbArtworkScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    cbArtworkScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableArtworkScrapers());
     panelScraper.add(cbArtworkScraper, "4, 4, 5, 1");
 
     JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
     panelScraper.add(lblTrailerScraper, "2, 6, right, default");
 
-    cbTrailerScraper = new MediaScraperCheckComboBox();
-    cbTrailerScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
-    cbTrailerScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
-    cbTrailerScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    cbTrailerScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableTrailerScrapers());
     panelScraper.add(cbTrailerScraper, "4, 6, 5, 1");
 
     JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
@@ -178,23 +172,26 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     MediaScraper defaultScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
-    ListCheckModel model = cbArtworkScraper.getModel();
+    // artwork scraper
+    List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
     for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
-      model.addElement(artworkScraper);
-
       if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
-        model.addCheck(artworkScraper);
+        selectedArtworkScrapers.add(artworkScraper);
       }
+    }
+    if (!selectedArtworkScrapers.isEmpty()) {
+      cbArtworkScraper.setSelectedItems(selectedArtworkScrapers);
     }
 
     // trailer scraper
-    model = cbTrailerScraper.getModel();
+    List<MediaScraper> selectedTrailerScrapers = new ArrayList<>();
     for (MediaScraper trailerScraper : MovieList.getInstance().getAvailableTrailerScrapers()) {
-      model.addElement(trailerScraper);
-
       if (MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers().contains(trailerScraper.getId())) {
-        model.addCheck(trailerScraper);
+        selectedTrailerScrapers.add(trailerScraper);
       }
+    }
+    if (!selectedTrailerScrapers.isEmpty()) {
+      cbTrailerScraper.setSelectedItems(selectedTrailerScrapers);
     }
   }
 
@@ -208,19 +205,13 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     movieSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork scrapers
-    ListCheckModel model = cbArtworkScraper.getModel();
-    for (Object checked : model.getCheckeds()) {
-      if (checked != null && checked instanceof MediaScraper) {
-        movieSearchAndScrapeConfig.addArtworkScraper((MediaScraper) checked);
-      }
+    for (MediaScraper scraper : cbArtworkScraper.getSelectedItems()) {
+      movieSearchAndScrapeConfig.addArtworkScraper(scraper);
     }
 
     // tailer scraper
-    model = cbTrailerScraper.getModel();
-    for (Object checked : model.getCheckeds()) {
-      if (checked != null && checked instanceof MediaScraper) {
-        movieSearchAndScrapeConfig.addTrailerScraper((MediaScraper) checked);
-      }
+    for (MediaScraper scraper : cbTrailerScraper.getSelectedItems()) {
+      movieSearchAndScrapeConfig.addTrailerScraper(scraper);
     }
 
     return movieSearchAndScrapeConfig;

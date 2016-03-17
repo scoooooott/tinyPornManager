@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
+package org.tinymediamanager.ui.components.combobox;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -60,13 +60,13 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     init();
   }
 
-  public MediaScraperComboBox(Vector scrapers) {
+  public MediaScraperComboBox(Vector<MediaScraper> scrapers) {
     super(scrapers);
     init();
   }
 
   public MediaScraperComboBox(List<MediaScraper> scrapers) {
-    super(new Vector(scrapers));
+    super(new Vector<MediaScraper>(scrapers));
     init();
   }
 

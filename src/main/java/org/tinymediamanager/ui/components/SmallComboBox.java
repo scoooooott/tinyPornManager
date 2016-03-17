@@ -43,6 +43,7 @@ import com.jtattoo.plaf.luna.LunaComboBoxUI;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class SmallComboBox extends JComboBox {
   private static final long serialVersionUID = 256568641808640L;
 

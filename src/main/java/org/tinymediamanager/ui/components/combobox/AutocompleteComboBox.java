@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.components;
+package org.tinymediamanager.ui.components.combobox;
 
 import java.util.Collection;
 

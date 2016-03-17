@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -28,19 +30,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.japura.gui.CheckComboBox;
-import org.japura.gui.model.ListCheckModel;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
-import org.tinymediamanager.ui.components.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -48,7 +49,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.RowSpec;;
 
 /**
  * The Class TvShowScrapeMetadataDialog.
@@ -67,7 +68,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
   /** UI components */
   private MediaScraperComboBox         cbMetadataScraper;
-  private CheckComboBox                cbArtworkScraper;
+  private MediaScraperCheckComboBox    cbArtworkScraper;
 
   public TvShowScrapeMetadataDialog(String title) {
     super(title, "updateMetadata");
@@ -113,10 +114,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
-    cbArtworkScraper = new MediaScraperCheckComboBox();
-    cbArtworkScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
-    cbArtworkScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
-    cbArtworkScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    cbArtworkScraper = new MediaScraperCheckComboBox(TvShowList.getInstance().getAvailableArtworkScrapers());
     panelScraper.add(cbArtworkScraper, "4, 4");
 
     {
@@ -164,14 +162,15 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     MediaScraper defaultScraper = TvShowList.getInstance().getDefaultMediaScraper();
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
-    // artwork provider
-    ListCheckModel model = cbArtworkScraper.getModel();
-    for (MediaScraper artworkScraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
-      model.addElement(artworkScraper);
-
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowArtworkScrapers().contains(artworkScraper.getId())) {
-        model.addCheck(artworkScraper);
+    // artwork scraper
+    List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
+    for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
+        selectedArtworkScrapers.add(artworkScraper);
       }
+    }
+    if (!selectedArtworkScrapers.isEmpty()) {
+      cbArtworkScraper.setSelectedItems(selectedArtworkScrapers);
     }
   }
 
@@ -185,11 +184,8 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     tvShowSearchAndScrapeConfig.setMetadataScraper((MediaScraper) cbMetadataScraper.getSelectedItem());
 
     // artwork scrapers
-    ListCheckModel model = cbArtworkScraper.getModel();
-    for (Object checked : model.getCheckeds()) {
-      if (checked != null && checked instanceof MediaScraper) {
-        tvShowSearchAndScrapeConfig.addArtworkScraper((MediaScraper) checked);
-      }
+    for (MediaScraper scraper : cbArtworkScraper.getSelectedItems()) {
+      tvShowSearchAndScrapeConfig.addArtworkScraper(scraper);
     }
 
     return tvShowSearchAndScrapeConfig;
