@@ -114,15 +114,16 @@ class KodiScraperProcessor {
     String cond = regex.getConditional();
     if (cond != null) {
       boolean not = cond.startsWith("!");
-      if (not)
+      if (not) {
         cond = cond.substring(1);
+      }
       // Boolean b = BooleanUtils.toBooleanObject(options.get(cond));
       Boolean b = scraper.getProviderInfo().getConfig().getValueAsBool(cond);
 
-      LOGGER.debug("Processing Conditional: " + regex.getConditional() + "; " + b);
+      LOGGER.debug("Processing Conditional: " + regex.getConditional() + " > " + (not ? !b : b));
       boolean b2 = (b == null || b.booleanValue() == true);
       if (!(b2 || (not && !b2))) {
-        LOGGER.debug("Condition Not Met: " + regex.getConditional() + "; " + b2);
+        LOGGER.debug("Condition Not Met: " + regex.getConditional() + " > " + b2);
         return;
       }
     }

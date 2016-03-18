@@ -72,6 +72,7 @@ class KodiUtil {
             xmlHeaderNew = xmlHeaderNew.replace(m.group(), "");
             break;
         }
+        xmlHeaderNew = xmlHeaderNew.replaceAll(";", ""); // replace semicolons - should not be there...
       }
       if (!xmlHeaderNew.equals(xmlHeaderOrig)) {
         xmlHeaderNew = xmlHeaderNew.replaceAll("  ", " ");
