@@ -106,7 +106,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         NodeList titleList = el.getElementsByTagName("title");
         String t = titleList.item(0).getTextContent();
         NodeList yearList = el.getElementsByTagName("year");
-        String y = yearList.item(0).getTextContent();
+        String y = yearList == null || yearList.getLength() == 0 ? "" : yearList.item(0).getTextContent();
         NodeList urlList = el.getElementsByTagName("url");
         KodiUrl u = new KodiUrl((Element) urlList.item(0));
 
