@@ -97,7 +97,7 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
         }
       }
       {
-        JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
+        JLabel lblName = new JLabel(BUNDLE.getString("tmm.registerdonator.name")); //$NON-NLS-1$
         panelContent.add(lblName, "2, 4, right, default");
         tfName = new JTextField("");
         lblName.setLabelFor(tfName);
@@ -109,7 +109,7 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
         }
       }
       {
-        JLabel lblEmailAddress = new JLabel(BUNDLE.getString("BugReport.email")); //$NON-NLS-1$
+        JLabel lblEmailAddress = new JLabel(BUNDLE.getString("tmm.registerdonator.email")); //$NON-NLS-1$
         panelContent.add(lblEmailAddress, "2, 6, right, default");
         tfEmailAddress = new JTextField("");
         lblEmailAddress.setLabelFor(tfEmailAddress);
