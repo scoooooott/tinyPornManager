@@ -25,12 +25,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * This class parses the Kodi scraper and extracts the functions
@@ -44,10 +46,28 @@ class KodiScraperParser {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
 
-    String xmlFile = FileUtils.readFileToString(new File(scraper.getFolder(), scraper.getScraperXml()), "UTF-8");
+    File scraperFile = new File(scraper.getFolder(), scraper.getScraperXml());
+    String xmlFile = FileUtils.readFileToString(scraperFile, "UTF-8");
     xmlFile = KodiUtil.fixXmlHeader(xmlFile);
-    InputStream stream = new ByteArrayInputStream(xmlFile.getBytes(StandardCharsets.UTF_8));
-    Document xml = parser.parse(stream);
+
+    Document xml;
+    try {
+      InputStream stream = new ByteArrayInputStream(xmlFile.getBytes(StandardCharsets.UTF_8));
+      xml = parser.parse(stream);
+    }
+    catch (SAXException e) {
+      LOGGER.warn("Error parsing " + scraperFile + " - trying fallback");
+      // eg FilmAffinity.com scraper
+      // replace all known entities with their unicode notation
+      // this fixes the "entity 'Iacute' was referenced, but not declared" parsing problems, since we do not have to add doctype entity declarations
+      // might replace too much; so this is only a fallback
+      for (String[] ent : EntityArrays.ISO8859_1_UNESCAPE()) {
+        xmlFile = xmlFile.replace(ent[0], ent[1]);
+      }
+      InputStream stream = new ByteArrayInputStream(xmlFile.getBytes(StandardCharsets.UTF_8));
+      xml = parser.parse(stream);
+    }
+
     Element docEl = xml.getDocumentElement();
     NodeList nl = docEl.getChildNodes();
 
