@@ -107,18 +107,10 @@ public class NativeFileChooser extends JFileChooser {
           }
         };
 
-        try {
-          Class<?> clazz = Class.forName("javafx.application.Platform");
-          Method method = clazz.getMethod("runLater", Runnable.class);
-          method.invoke(null, runnable);
-          countDownLatch.await();
-        }
-        catch (InterruptedException ex) {
-          throw new RuntimeException(ex);
-        }
-        catch (Exception e) {
-          return JFileChooser.CANCEL_OPTION;
-        }
+        Class<?> clazz = Class.forName("javafx.application.Platform");
+        Method method = clazz.getMethod("runLater", Runnable.class);
+        method.invoke(null, runnable);
+        countDownLatch.await();
 
         if (isMultiSelectionEnabled()) {
           if (currentFiles != null) {
