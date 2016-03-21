@@ -1,6 +1,7 @@
 Version 2.7.4
 =======================
-x Display error, why plugins cannot be loaded.
+x Display information, why plugins could not be loaded.
+x fix TMM restart (when resetting database)
 
 
 Version 2.7.3.1
