@@ -23,7 +23,9 @@ public class TvShowRenamerTest {
     detect("Season $1", "$T - E$E"); // Season 1/episode - E01.avi
     detect("", "E$E - $T"); // E01 - episode.avi // no season at all!
     detect("", "$1$E"); // 102.avi
+    detect("", "$1x$E"); // 1x02.avi
     detect("", "$T"); // episode.avi // only title!
+    detect("", "S$1EP$E $D"); // episode.avi // FIXME: double episode pattern
   }
 
   private void detect(String seasonPattern, String filePattern) {
@@ -44,7 +46,7 @@ public class TvShowRenamerTest {
     combined = combined.replaceAll("[$][34ED]", "02"); // episode
     combined = combined.replaceAll("[$][T]", "first name"); // title
     combined = combined.replaceAll("[$][NM]", "showname"); // show
-    System.out.println("Single    file would be: \"" + combined + "\"");
+    System.out.println("Single file would be: \"" + combined + "\"");
   }
 
   private void genExampleMultiFile(String seasonPattern, String filePattern) {
@@ -63,8 +65,8 @@ public class TvShowRenamerTest {
         if (m.group(1) != null) {
           loopNumbers += m.group(1); // delimiter
         }
+        loopNumbers += filePattern.substring(m.end() - 2, m.end()); // add replacer
       }
-      loopNumbers += filePattern.substring(sePos, sePos + 2); // add replacer
     }
 
     int epPos = getPatternPos(filePattern, episodeNumbers);
@@ -74,8 +76,8 @@ public class TvShowRenamerTest {
         if (m.group(1) != null) {
           loopNumbers += m.group(1); // delimiter
         }
+        loopNumbers += filePattern.substring(m.end() - 2, m.end()); // add replacer
       }
-      loopNumbers += filePattern.substring(epPos, epPos + 2); // add replacer
     }
     loopNumbers = loopNumbers.trim();
 
@@ -108,7 +110,7 @@ public class TvShowRenamerTest {
     combined = combined.replaceAll("[$][12]", "01"); // season (eg for folder)
     combined = combined.replaceAll("[$][NM]", "showname"); // show
 
-    System.out.println("Multifile file would be: \"" + combined + "\"");
+    System.out.println("Multi  file would be: \"" + combined + "\"");
   }
 
   /**
