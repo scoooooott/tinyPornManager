@@ -22,6 +22,7 @@ public class TvShowRenamerTest {
     detect("Season $1", "E$E - $T"); // Season 1/E01 - episode.avi
     detect("Season $1", "$T - E$E"); // Season 1/episode - E01.avi
     detect("", "E$E - $T"); // E01 - episode.avi // no season at all!
+    detect("", "$1$E"); // 102.avi
     detect("", "$T"); // episode.avi // only title!
   }
 
@@ -59,7 +60,9 @@ public class TvShowRenamerTest {
     if (sePos > -1) {
       Matcher m = seDelimiter.matcher(filePattern);
       if (m.find()) {
-        loopNumbers += m.group(1); // delimiter
+        if (m.group(1) != null) {
+          loopNumbers += m.group(1); // delimiter
+        }
       }
       loopNumbers += filePattern.substring(sePos, sePos + 2); // add replacer
     }
@@ -68,7 +71,9 @@ public class TvShowRenamerTest {
     if (epPos > -1) {
       Matcher m = epDelimiter.matcher(filePattern);
       if (m.find()) {
-        loopNumbers += m.group(1); // delimiter
+        if (m.group(1) != null) {
+          loopNumbers += m.group(1); // delimiter
+        }
       }
       loopNumbers += filePattern.substring(epPos, epPos + 2); // add replacer
     }
@@ -125,14 +130,15 @@ public class TvShowRenamerTest {
       System.out.println("Too many/less episode/season/title replacer patterns");
       return false;
     }
-    if (seCnt > epCnt) {
-      System.out.println("Season pattern should be before episode pattern");
-      return false;
-    }
 
     int epPos = getPatternPos(filePattern, episodeNumbers);
     int sePos = getPatternPos(filePattern, seasonNumbers);
     int titlePos = getPatternPos(filePattern, episodeTitles);
+
+    if (sePos > epPos) {
+      System.out.println("Season pattern should be before episode pattern!");
+      return false;
+    }
 
     // check if title not in-between season/episode pattern in file
     if (titleCnt == 1 && seCnt == 1) {
