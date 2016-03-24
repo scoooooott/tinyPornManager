@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,8 +52,11 @@ public class TvShowRenamer {
   private static final String[]       seasonNumbers  = { "$1", "$2" };
   private static final String[]       episodeNumbers = { "$3", "$4", "$E", "$D" };
   private static final String[]       episodeTitles  = { "$T" };
-  private static Pattern              epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)?\\$[34ED]", Pattern.CASE_INSENSITIVE);
-  private static Pattern              seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)?[\\$][12]", Pattern.CASE_INSENSITIVE);
+  private static final String[]       showTitles     = { "$N", "$M" };
+
+  private static final Pattern        epDelimiter    = Pattern.compile("(\\s?(folge|episode|[epx]+)\\s?)?\\$[34ED]", Pattern.CASE_INSENSITIVE);
+  private static final Pattern        seDelimiter    = Pattern.compile("((staffel|season|s)\\s?)?[\\$][12]", Pattern.CASE_INSENSITIVE);
+  private static final Pattern        token          = Pattern.compile("(\\$[\\w#])");
 
   /**
    * add leadingZero if only 1 char
@@ -456,14 +460,8 @@ public class TvShowRenamer {
   public static String generateSeasonDir(String template, TvShowEpisode episode) {
     String seasonDir = template;
 
-    // replace $1 and $2 as the only episode specific tokens
-    seasonDir = seasonDir.replace("$1", String.valueOf(episode.getSeason()));
-    seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
-    seasonDir = seasonDir.replace("$1", String.valueOf(episode.getDvdSeason()));
-    seasonDir = seasonDir.replace("$2", lz(episode.getDvdSeason()));
-
     // replace all other tokens
-    seasonDir = createDestination(seasonDir, episode.getTvShow(), new ArrayList<TvShowEpisode>());
+    seasonDir = createDestination(seasonDir, episode.getTvShow(), Arrays.asList(episode));
 
     // only allow empty season dir if the season is in the filename
     if (StringUtils.isBlank(seasonDir) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
@@ -481,13 +479,90 @@ public class TvShowRenamer {
     String newPathname;
 
     if (StringUtils.isNotBlank(SETTINGS.getRenamerTvShowFoldername())) {
-      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow, new ArrayList<TvShowEpisode>());
+      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow, null);
     }
     else {
       newPathname = tvShow.getPath();
     }
 
     return newPathname;
+  }
+
+  /**
+   * gets the token value ($x) from specified movie object
+   * 
+   * @param show
+   *          our show
+   * @param episode
+   *          our episode
+   * @param token
+   *          the $x token
+   * @return value or empty string
+   */
+  public static String getTokenValue(TvShow show, TvShowEpisode episode, String token) {
+    String ret = "";
+    if (show == null) {
+      show = new TvShow();
+    }
+    if (episode == null) {
+      episode = new TvShowEpisode();
+    }
+    MediaFile mf = new MediaFile();
+    if (episode.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+      mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
+    }
+    switch (token.toUpperCase()) {
+      // SHOW
+      case "$N":
+        ret = show.getTitle();
+        break;
+      case "$M":
+        ret = show.getTitleSortable();
+        break;
+      case "$Y":
+        ret = show.getYear().equals("0") ? "" : show.getYear();
+        break;
+
+      // EPISODE
+      case "$1":
+        ret = String.valueOf(episode.getSeason());
+        break;
+      case "$2":
+        ret = lz(episode.getSeason());
+        break;
+      case "$3":
+        ret = String.valueOf(episode.getDvdSeason());
+        break;
+      case "$4":
+        ret = lz(episode.getDvdSeason());
+        break;
+      case "$E":
+        ret = lz(episode.getEpisode());
+        break;
+      case "$D":
+        ret = lz(episode.getDvdEpisode());
+        break;
+      case "$T":
+        ret = episode.getTitle();
+        break;
+
+      // MEDIAFILE
+      case "$R":
+        ret = mf.getVideoResolution();
+        break;
+      case "$A":
+        ret = mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels();
+        break;
+      case "$V":
+        ret = mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat();
+        break;
+      case "$F":
+        ret = mf.getVideoFormat();
+        break;
+      default:
+        break;
+    }
+    return ret;
   }
 
   /**
@@ -505,17 +580,30 @@ public class TvShowRenamer {
     String newDestination = template;
     TvShowEpisode firstEp = null;
 
-    // replace token show title ($N)
-    if (newDestination.contains("$N")) {
-      newDestination = replaceToken(newDestination, "$N", show.getTitle());
-    }
-    // replace token show title ($M)
-    if (newDestination.contains("$M")) {
-      newDestination = replaceToken(newDestination, "$M", show.getTitleSortable());
-    }
+    if (episodes == null || episodes.size() == 0) {
+      // TV show root folder
 
-    // parse out episode depended tokens - for multi EP naming
-    if (!episodes.isEmpty()) {
+      // replace all $x parameters
+      Matcher m = token.matcher(template);
+      while (m.find()) {
+        String value = getTokenValue(show, null, m.group(1));
+        newDestination = replaceToken(newDestination, m.group(1), value);
+      }
+    }
+    else if (episodes.size() == 1) {
+      // single episode
+
+      firstEp = episodes.get(0);
+      // replace all $x parameters
+      Matcher m = token.matcher(template);
+      while (m.find()) {
+        String value = getTokenValue(show, firstEp, m.group(1));
+        newDestination = replaceToken(newDestination, m.group(1), value);
+      }
+    }
+    else {
+      // multi episodes
+      firstEp = episodes.get(0);
 
       String loopNumbers = "";
       String loopTitles = "";
@@ -527,9 +615,9 @@ public class TvShowRenamer {
         Matcher m = seDelimiter.matcher(template);
         while (m.find()) {
           if (m.group(1) != null) {
-            loopNumbers += m.group(1); // delimiter
+            loopNumbers += m.group(1); // "delimiter"
           }
-          loopNumbers += template.substring(m.end() - 2, m.end()); // add replacer
+          loopNumbers += template.substring(m.end() - 2, m.end()); // add token
         }
       }
 
@@ -537,9 +625,9 @@ public class TvShowRenamer {
         Matcher m = epDelimiter.matcher(template);
         while (m.find()) {
           if (m.group(1) != null) {
-            loopNumbers += m.group(1); // delimiter
+            loopNumbers += m.group(1); // "delimiter"
           }
-          loopNumbers += template.substring(m.end() - 2, m.end()); // add replacer
+          loopNumbers += template.substring(m.end() - 2, m.end()); // add token
         }
       }
       loopNumbers = loopNumbers.trim();
@@ -547,42 +635,13 @@ public class TvShowRenamer {
       // foreach episode, replace and append pattern:
       String episodeParts = "";
       for (TvShowEpisode episode : episodes) {
-        if (firstEp == null) {
-          firstEp = episode;
-        }
-
         String episodePart = loopNumbers;
-
-        // Season w/o leading zeros ($1)
-        if (episodePart.contains("$1")) {
-          episodePart = replaceToken(episodePart, "$1", String.valueOf(episode.getSeason()));
+        // replace all $x parameters
+        Matcher m = token.matcher(episodePart);
+        while (m.find()) {
+          String value = getTokenValue(show, episode, m.group(1));
+          episodePart = replaceToken(episodePart, m.group(1), value);
         }
-
-        // Season leading zeros ($2)
-        if (episodePart.contains("$2")) {
-          episodePart = replaceToken(episodePart, "$2", lz(episode.getSeason()));
-        }
-
-        // DVD-Season w/o leading zeros ($3)
-        if (episodePart.contains("$3")) {
-          episodePart = replaceToken(episodePart, "$3", String.valueOf(episode.getDvdSeason()));
-        }
-
-        // DVD-Season leading zeros ($4)
-        if (episodePart.contains("$4")) {
-          episodePart = replaceToken(episodePart, "$4", lz(episode.getDvdSeason()));
-        }
-
-        // episode number
-        if (episodePart.contains("$E")) {
-          episodePart = replaceToken(episodePart, "$E", lz(episode.getEpisode()));
-        }
-
-        // DVD-episode number
-        if (episodePart.contains("$D")) {
-          episodePart = replaceToken(episodePart, "$D", lz(episode.getDvdEpisode()));
-        }
-
         episodeParts += " " + episodePart;
       }
 
@@ -605,9 +664,11 @@ public class TvShowRenamer {
       for (TvShowEpisode episode : episodes) {
         String episodePart = loopTitles;
 
-        // title
-        if (episodePart.contains("$T")) {
-          episodePart = replaceToken(episodePart, "$T", episode.getTitle());
+        // replace all $x parameters
+        Matcher m = token.matcher(episodePart);
+        while (m.find()) {
+          String value = getTokenValue(show, episode, m.group(1));
+          episodePart = replaceToken(episodePart, m.group(1), value);
         }
 
         // separate multiple titles via -
@@ -616,68 +677,21 @@ public class TvShowRenamer {
         }
         episodeParts += " " + episodePart;
       }
-
       // replace original pattern, with our combined
       if (!loopTitles.isEmpty()) {
         newDestination = newDestination.replace(loopTitles, episodeParts);
       }
 
-      // replace all left season tokens with space
-      for (String seasonToken : seasonNumbers) {
-        newDestination.replace(seasonToken, "");
-      }
-      // replace all left episode tokens with space
-      for (String episodeToken : episodeNumbers) {
-        newDestination.replace(episodeToken, "");
-      }
-    }
-    else {
-      // we're in either TV show folder or season folder generation;
-      // strip out episode tokens
-      newDestination = newDestination.replace("$E", "");
-      newDestination = newDestination.replace("$T", "");
-    }
-
-    // replace token year ($Y)
-    if (newDestination.contains("$Y")) {
-      if (show.getYear().equals("0")) {
-        newDestination = newDestination.replace("$Y", "");
-      }
-      else {
-        newDestination = replaceToken(newDestination, "$Y", show.getYear());
-      }
-    }
-
-    if (firstEp != null && firstEp.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-      MediaFile mf = firstEp.getMediaFiles(MediaFileType.VIDEO).get(0);
-      // replace token resolution ($R)
-      if (newDestination.contains("$R")) {
-        newDestination = replaceToken(newDestination, "$R", mf.getVideoResolution());
+      // replace all other $x parameters
+      Matcher m = token.matcher(newDestination);
+      while (m.find()) {
+        String value = getTokenValue(show, firstEp, m.group(1));
+        newDestination = replaceToken(newDestination, m.group(1), value);
       }
 
-      // replace token audio codec + channels ($A)
-      if (newDestination.contains("$A")) {
-        newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
-      }
+    } // end multi episodes
 
-      // replace token video codec + format ($V)
-      if (newDestination.contains("$V")) {
-        newDestination = replaceToken(newDestination, "$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
-      }
-
-      // replace token video format ($F)
-      if (newDestination.contains("$F")) {
-        newDestination = replaceToken(newDestination, "$F", mf.getVideoFormat());
-      }
-    }
-    else {
-      // no mediafiles; remove at least token (if available)
-      newDestination = newDestination.replace("$R", "");
-      newDestination = newDestination.replace("$A", "");
-      newDestination = newDestination.replace("$V", "");
-      newDestination = newDestination.replace("$F", "");
-    }
-
+    // DEFAULT CLEANUP
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
     newDestination = newDestination.replaceAll("\\[\\]", "");
@@ -713,12 +727,75 @@ public class TvShowRenamer {
     return newDestination.trim();
   }
 
+  /**
+   * checks, if the pattern has a recommended structure (S/E numbers, title filled)<br>
+   * when false, it might lead to some unpredictable renamings...
+   * 
+   * @param pattern
+   * @return
+   */
+  public static boolean isRecommended(String seasonPattern, String filePattern) {
+    // count em
+    int epCnt = count(filePattern, episodeNumbers);
+    int titleCnt = count(filePattern, episodeTitles);
+    int seCnt = count(filePattern, seasonNumbers);
+    int seFolderCnt = count(seasonPattern, seasonNumbers);// check season folder pattern
+
+    // check rules
+    if (epCnt != 1 || titleCnt != 1 || (seCnt + seFolderCnt) > 2 || (seCnt + seFolderCnt) == 0) {
+      System.out.println("Too many/less episode/season/title replacer patterns");
+      return false;
+    }
+
+    int epPos = getPatternPos(filePattern, episodeNumbers);
+    int sePos = getPatternPos(filePattern, seasonNumbers);
+    int titlePos = getPatternPos(filePattern, episodeTitles);
+
+    if (sePos > epPos) {
+      System.out.println("Season pattern should be before episode pattern!");
+      return false;
+    }
+
+    // check if title not in-between season/episode pattern in file
+    if (titleCnt == 1 && seCnt == 1) {
+      if (titlePos < epPos && titlePos > sePos) {
+        System.out.println("Title should not be between season/episode pattern");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Count the amount of renamer tokens per group
+   * 
+   * @param pattern
+   * @param possibleValues
+   * @return 0, or amount
+   */
+  private static int count(String pattern, String[] possibleValues) {
+    int count = 0;
+    for (String r : possibleValues) {
+      if (pattern.contains(r)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Returns first position of any matched patterns
+   * 
+   * @param pattern
+   * @param possibleValues
+   * @return
+   */
   private static int getPatternPos(String pattern, String[] possibleValues) {
     int pos = -1;
     for (String r : possibleValues) {
       if (pattern.contains(r)) {
         pos = pattern.indexOf(r);
-        break;
       }
     }
     return pos;
