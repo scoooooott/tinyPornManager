@@ -16,6 +16,7 @@ public class TvShowRenamerTest {
 
   @Test
   public void tvRenamerPatterns() {
+
     // SINGLE - RECOMMENDED
     assertEqual("\\singleshow (2009)\\Season 1\\singleshow - S01E02 - singleEP.avi", gen(single, "$N ($Y)", "Season $1", "$N - S$2E$E - $T", true));
     assertEqual("\\singleshow (2009)\\Season 1\\E02 - singleEP.avi", gen(single, "$N ($Y)", "Season $1", "E$E - $T", true));
@@ -29,7 +30,9 @@ public class TvShowRenamerTest {
     assertEqual("\\singleshow (2009)\\E02 - singleEP.avi", gen(single, "$N ($Y)", "", "E$E - $T", false));
     assertEqual("\\singleshow (2009)\\E02.avi", gen(single, "$N ($Y)", "", "E$E", false));
     assertEqual("\\singleshow (2009)\\Season 01\\102 303- singleEP.avi", gen(single, "$N ($Y)", "Season $2", "$1$E $3$4- $T", false));
+    assertEqual("\\singleshow (2009)\\Season 01\\102 3x04- singleEP.avi", gen(single, "$N ($Y)", "Season $2", "$1$E $3x$D- $T", false));
     assertEqual("\\singleshow (2009)\\singleEP.avi", gen(single, "$N ($Y)", "", "$T", false));
+    assertEqual("\\singleshow (2009)\\singleEPsingleEP.avi", gen(single, "$N ($Y)", "", "$T$T", false));
 
     // *******************
     // COPY 1:1 FROM ABOVE
@@ -48,9 +51,12 @@ public class TvShowRenamerTest {
     assertEqual("\\multishow (2009)\\Season 1\\S01 S01 - multiEP2 - multiEP3.avi", gen(multi, "$N ($Y)", "Season $1", "S$2 - $T", false));
     assertEqual("\\multishow (2009)\\E02 E03 - multiEP2 - multiEP3.avi", gen(multi, "$N ($Y)", "", "E$E - $T", false));
     assertEqual("\\multishow (2009)\\E02 E03.avi", gen(multi, "$N ($Y)", "", "E$E", false));
-    // invalid? only first pattern looped; $3$4 NOT looped but replaced with firstEP values...
-    assertEqual("\\multishow (2009)\\Season 01\\102 303- multiEP2 - multiEP3.avi", gen(multi, "$N ($Y)", "Season $2", "$1$E $3$4- $T", false));
+    assertEqual("\\multishow (2009)\\Season 01\\102 103 3 3 03 03 - multiEP2 - multiEP3.avi",
+        gen(multi, "$N ($Y)", "Season $2", "$1$E $3$4 - $T", false));
+    assertEqual("\\multishow (2009)\\Season 01\\102 103 3x04 3x05 - multiEP2 - multiEP3.avi",
+        gen(multi, "$N ($Y)", "Season $2", "$1$E $3x$D - $T", false));
     assertEqual("\\multishow (2009)\\multiEP2 - multiEP3.avi", gen(multi, "$N ($Y)", "", "$T", false));
+    assertEqual("\\multishow (2009)\\multiEP2 - multiEP3 multiEP2 - multiEP3.avi", gen(multi, "$N ($Y)", "", "$T$T", false));
 
   }
 
