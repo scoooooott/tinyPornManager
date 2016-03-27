@@ -7,11 +7,13 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -44,6 +46,7 @@ public class TraktMetadataProviderTest {
     List<MediaSearchResult> results = null;
 
     // Harry Potter
+    // Movie Search
     try {
       mp = new TraktMetadataProvider();
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY,
@@ -92,5 +95,24 @@ public class TraktMetadataProviderTest {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     TraktMetadataProvider mp = new TraktMetadataProvider();
     options.setId(mp.getProviderInfo().getId(), "353");
+    List<MediaEpisode> episodeList = new ArrayList<MediaEpisode>();
+    MediaEpisode test = null;
+
+    try {
+
+      episodeList = mp.getEpisodeList(options);
+
+      assertThat(episodeList.get(0)).isNotNull();
+
+      test = episodeList.get(0);
+
+      assertThat(test.title).isNotNull();
+      assertThat(test.plot).isNotNull();
+      assertThat(test.ids).isNotNull();
+
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

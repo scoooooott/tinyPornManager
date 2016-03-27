@@ -48,6 +48,7 @@ class TraktTVShowMetadataProvider {
     this.api = api;
   }
 
+  // Search
   List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
 
@@ -110,15 +111,29 @@ class TraktTVShowMetadataProvider {
     return results;
   }
 
+  // Episode List
   List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
 
-    List<MediaEpisode> results = new ArrayList<>();
-    MediaEpisode episodes = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
-    Show result = new Show();
+    List<MediaEpisode> results = new ArrayList<MediaEpisode>();
+    MediaEpisode mediaEpisode = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
+    Show traktResult = new Show();
 
-    result = api.shows().summary(TraktMetadataProvider.providerInfo.getId(), Extended.FULL);
+    traktResult = api.shows().summary("353", Extended.FULL);
 
-    return null;
+    mediaEpisode.title = traktResult.title;
+
+    mediaEpisode.ids.put("trakt", traktResult.ids.trakt);
+    mediaEpisode.ids.put("slug", traktResult.ids.slug);
+    mediaEpisode.ids.put("tvdb", traktResult.ids.tvdb);
+    mediaEpisode.ids.put("imdb", traktResult.ids.imdb);
+    mediaEpisode.ids.put("tmdb", traktResult.ids.tmdb);
+    mediaEpisode.ids.put("tvrage", traktResult.ids.tvrage);
+
+    mediaEpisode.plot = traktResult.overview;
+
+    results.add(mediaEpisode);
+
+    return results;
 
   }
 }
