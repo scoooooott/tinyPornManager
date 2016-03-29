@@ -604,53 +604,49 @@ public class TvShowRenamer {
     else {
       // multi episodes
       firstEp = episodes.get(0);
+      String loopNumbers = "";
 
-      // loop the LOOP :P if we have duplicated entries
-      while (count(newDestination, episodeNumbers) > 0 || count(newDestination, seasonNumbers) > 0) {
-        String loopNumbers = "";
-
-        // *******************
-        // LOOP 1 - season/episode
-        // *******************
-        if (getPatternPos(newDestination, seasonNumbers) > -1) {
-          Matcher m = seDelimiter.matcher(newDestination);
-          if (m.find()) {
-            if (m.group(1) != null) {
-              loopNumbers += m.group(1); // "delimiter"
-            }
-            loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
+      // *******************
+      // LOOP 1 - season/episode
+      // *******************
+      if (getPatternPos(newDestination, seasonNumbers) > -1) {
+        Matcher m = seDelimiter.matcher(newDestination);
+        if (m.find()) {
+          if (m.group(1) != null) {
+            loopNumbers += m.group(1); // "delimiter"
           }
+          loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
         }
+      }
 
-        if (getPatternPos(newDestination, episodeNumbers) > -1) {
-          Matcher m = epDelimiter.matcher(newDestination);
-          if (m.find()) {
-            if (m.group(1) != null) {
-              loopNumbers += m.group(1); // "delimiter"
-            }
-            loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
+      if (getPatternPos(newDestination, episodeNumbers) > -1) {
+        Matcher m = epDelimiter.matcher(newDestination);
+        if (m.find()) {
+          if (m.group(1) != null) {
+            loopNumbers += m.group(1); // "delimiter"
           }
+          loopNumbers += newDestination.substring(m.end() - 2, m.end()); // add token
         }
-        loopNumbers = loopNumbers.trim();
+      }
+      loopNumbers = loopNumbers.trim();
 
-        // foreach episode, replace and append pattern:
-        String episodeParts = "";
-        for (TvShowEpisode episode : episodes) {
-          String episodePart = loopNumbers;
-          // replace all $x parameters
-          Matcher m = token.matcher(episodePart);
-          while (m.find()) {
-            String value = getTokenValue(show, episode, m.group(1));
-            episodePart = replaceToken(episodePart, m.group(1), value);
-          }
-          episodeParts += " " + episodePart;
+      // foreach episode, replace and append pattern:
+      String episodeParts = "";
+      for (TvShowEpisode episode : episodes) {
+        String episodePart = loopNumbers;
+        // replace all $x parameters
+        Matcher m = token.matcher(episodePart);
+        while (m.find()) {
+          String value = getTokenValue(show, episode, m.group(1));
+          episodePart = replaceToken(episodePart, m.group(1), value);
         }
+        episodeParts += " " + episodePart;
+      }
 
-        // replace original pattern, with our combined
-        if (!loopNumbers.isEmpty()) {
-          newDestination = newDestination.replace(loopNumbers, episodeParts);
-        }
-      } // end LOOP loop
+      // replace original pattern, with our combined
+      if (!loopNumbers.isEmpty()) {
+        newDestination = newDestination.replace(loopNumbers, episodeParts);
+      }
 
       // *******************
       // LOOP 2 - title
@@ -663,7 +659,7 @@ public class TvShowRenamer {
       loopTitles = loopTitles.trim();
 
       // foreach episode, replace and append pattern:
-      String episodeParts = "";
+      episodeParts = "";
       for (TvShowEpisode episode : episodes) {
         String episodePart = loopTitles;
 
@@ -745,7 +741,7 @@ public class TvShowRenamer {
     int seFolderCnt = count(seasonPattern, seasonNumbers);// check season folder pattern
 
     // check rules
-    if (epCnt != 1 || titleCnt != 1 || (seCnt + seFolderCnt) > 2 || (seCnt + seFolderCnt) == 0) {
+    if (epCnt != 1 || titleCnt != 1 || seCnt > 1 || seFolderCnt > 1 || (seCnt + seFolderCnt) == 0) {
       LOGGER.debug("Too many/less episode/season/title replacer patterns");
       return false;
     }
