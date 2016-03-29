@@ -1,10 +1,12 @@
 Version 2.7.4
 =======================
-x fix TvShow renamer when having duplicate tokens or multi episodes
-x fix MovieRenamerPreview when using a sorted list
-x fix TMM restart (when resetting database)
+x fixed TvShow renamer when having duplicate tokens or multi episodes
+x fixed MovieRenamerPreview when using a sorted list
+x fixed TMM restart (when resetting database)
 x Display information, why plugins could not be loaded.
-
+x fixed copy/paste hotkeys for several UI field on OSX
+x fixed exporter file name creation
+x fixed writing set info for MediaPortal NFO files
 
 Version 2.7.3.1
 =======================
