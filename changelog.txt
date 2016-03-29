@@ -7,6 +7,8 @@ x Display information, why plugins could not be loaded.
 x fixed copy/paste hotkeys for several UI field on OSX
 x fixed exporter file name creation
 x fixed writing set info for MediaPortal NFO files
+x fixed movie import with folder stacking
+
 
 Version 2.7.3.1
 =======================
