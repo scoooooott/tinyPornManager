@@ -81,9 +81,9 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
-@XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors", "producers",
-    "watched", "playcount", "source" })
+@XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "set", "rating", "year", "votes", "outline", "plot", "tagline", "runtime",
+    "thumb", "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors",
+    "producers", "watched", "playcount", "source" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -92,9 +92,13 @@ public class MovieToMpNfoConnector {
   public String               title         = "";
   public String               originaltitle = "";
   public String               sorttitle     = "";
+  // legacy set style
   @XmlElementWrapper
   @XmlElement(name = "set", type = MovieSets.class)
+  @Deprecated
   public List<MovieSets>      sets;
+  // new set style
+  public String               set           = "";
   public float                rating        = 0;
   public String               year          = "";
   public int                  votes         = 0;
@@ -146,6 +150,7 @@ public class MovieToMpNfoConnector {
     actors = new ArrayList();
     producers = new ArrayList();
     genres = new ArrayList<>();
+    genresNoWrap = new ArrayList<>();
     fanart = new ArrayList<>();
     sets = new ArrayList<>();
     ids = new HashMap<>();
@@ -282,8 +287,12 @@ public class MovieToMpNfoConnector {
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      MovieSets set = new MovieSets(movieSet.getTitle(), movieSet.getMovieIndex(movie) + 1);
-      mp.sets.add(set);
+      mp.set = movieSet.getTitle();
+      // MovieSets set = new MovieSets(movieSet.getTitle(), movieSet.getMovieIndex(movie) + 1);
+      // mp.sets.add(set);
+    }
+    else {
+      mp.set = "";
     }
 
     return mp;
@@ -425,7 +434,7 @@ public class MovieToMpNfoConnector {
         }
       }
 
-      // movieset
+      // movieset (old style)
       if (mp.sets != null && !mp.sets.isEmpty()) {
         MovieSets sets = mp.sets.get(0);
         // search for that movieset
@@ -436,6 +445,17 @@ public class MovieToMpNfoConnector {
         if (movieSet != null) {
           movie.setMovieSet(movieSet);
           movie.setSortTitle(sets.name + String.format("%02d", sets.order));
+        }
+      }
+      // movie set (new style)
+      if (StringUtils.isNotEmpty(mp.set)) {
+        // search for that movieset
+        MovieList movieList = MovieList.getInstance();
+        MovieSet movieSet = movieList.getMovieSet(mp.set, 0);
+
+        // add movie to movieset
+        if (movieSet != null) {
+          movie.setMovieSet(movieSet);
         }
       }
 

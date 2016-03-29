@@ -45,6 +45,10 @@ public class NativeFileChooser extends JFileChooser {
   private static boolean isJavaFXAvailable() {
     try {
       Class.forName("javafx.stage.FileChooser");
+      // set an option to do not close JFX environment too early
+      Class<?> clazz = Class.forName("javafx.application.Platform");
+      Method method = clazz.getMethod("setImplicitExit", boolean.class);
+      method.invoke(null, Boolean.FALSE);
       // no exception till here; initialize the JavaFX environment
       Class.forName("javafx.embed.swing.JFXPanel").newInstance();
       return true;
@@ -107,18 +111,10 @@ public class NativeFileChooser extends JFileChooser {
           }
         };
 
-        try {
-          Class<?> clazz = Class.forName("javafx.application.Platform");
-          Method method = clazz.getMethod("runLater", Runnable.class);
-          method.invoke(null, runnable);
-          countDownLatch.await();
-        }
-        catch (InterruptedException ex) {
-          throw new RuntimeException(ex);
-        }
-        catch (Exception e) {
-          return JFileChooser.CANCEL_OPTION;
-        }
+        Class<?> clazz = Class.forName("javafx.application.Platform");
+        Method method = clazz.getMethod("runLater", Runnable.class);
+        method.invoke(null, runnable);
+        countDownLatch.await();
 
         if (isMultiSelectionEnabled()) {
           if (currentFiles != null) {

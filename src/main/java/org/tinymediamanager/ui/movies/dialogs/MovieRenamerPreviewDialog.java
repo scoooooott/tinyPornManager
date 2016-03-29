@@ -20,8 +20,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.RuleBasedCollator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -56,21 +56,21 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
+import org.tinymediamanager.ui.movies.MovieComparator;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 /**
  * The class RenamerPreviewDialog. generate a preview which movies have to be renamed.
@@ -85,7 +85,6 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
   private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer>              results;
-  private SortedList<MovieRenamerPreviewContainer>             sortedResults;
   private DefaultEventTableModel<MovieRenamerPreviewContainer> movieTableModel;
   private ResultSelectionModel                                 resultSelectionModel;
   private EventList<MediaFileContainer>                        oldMediaFileEventList;
@@ -106,8 +105,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
     setBounds(5, 5, 950, 700);
 
-    results = GlazedLists.threadSafeList(new BasicEventList<MovieRenamerPreviewContainer>());
-    sortedResults = new SortedList<MovieRenamerPreviewContainer>(GlazedListsSwing.swingThreadProxyList(results), new ResultComparator());
+    results = GlazedListsSwing.swingThreadProxyList(GlazedLists.threadSafeList(new BasicEventList<MovieRenamerPreviewContainer>()));
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
@@ -120,7 +118,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
         splitPane.setResizeWeight(0.2);
         panelContent.add(splitPane, "2, 2, fill, fill");
         {
-          movieTableModel = new DefaultEventTableModel<MovieRenamerPreviewContainer>(sortedResults, new ResultTableFormat());
+          movieTableModel = new DefaultEventTableModel<MovieRenamerPreviewContainer>(GlazedListsSwing.swingThreadProxyList(results),
+              new ResultTableFormat());
           tableMovies = new ZebraJTable(movieTableModel);
 
           DefaultEventSelectionModel<MovieRenamerPreviewContainer> tableSelectionModel = new DefaultEventSelectionModel<MovieRenamerPreviewContainer>(
@@ -355,27 +354,18 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     }
   }
 
-  private class ResultComparator implements Comparator<MovieRenamerPreviewContainer> {
-    private RuleBasedCollator stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
-
-    @Override
-    public int compare(MovieRenamerPreviewContainer result1, MovieRenamerPreviewContainer result2) {
-      if (stringCollator != null) {
-        return stringCollator.compare(result1.getMovie().getTitleSortable().toLowerCase(), result2.getMovie().getTitleSortable().toLowerCase());
-      }
-      return result1.getMovie().getTitleSortable().toLowerCase().compareTo(result2.getMovie().getTitleSortable().toLowerCase());
-    }
-  }
-
   private class MoviePreviewWorker extends SwingWorker<Void, Void> {
     private List<Movie> moviesToProcess;
 
     private MoviePreviewWorker(List<Movie> movies) {
-      this.moviesToProcess = movies;
+      this.moviesToProcess = new ArrayList<>(movies);
     }
 
     @Override
     protected Void doInBackground() throws Exception {
+      // sort movies
+      Collections.sort(moviesToProcess, new MovieComparator());
+      // rename them
       for (Movie movie : moviesToProcess) {
         MovieRenamerPreviewContainer container = MovieRenamerPreview.renameMovie(movie);
         if (container.isNeedsRename()) {
