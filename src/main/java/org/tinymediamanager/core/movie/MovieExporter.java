@@ -160,7 +160,15 @@ public class MovieExporter extends MediaEntityExporter {
     if (StringUtils.isNotBlank(filename)) {
       return filename;
     }
-    return movie.getVideoBasenameWithoutStacking();
+
+    // fallback (no renamer settings)
+    filename = MovieRenamer.createDestinationForFilename("$T ($Y)", movie);
+    if (StringUtils.isNotBlank(filename)) {
+      return filename;
+    }
+
+    // fallback (should no happen, but could)
+    return movie.getDbId().toString();
   }
 
   /*******************************************************************************
@@ -187,7 +195,6 @@ public class MovieExporter extends MediaEntityExporter {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
         return getMovieFilename(movie);
-        // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
       }
       return null;
     }

@@ -121,7 +121,7 @@ public class BugReportDialog extends TmmDialog {
       @Override
       public void actionPerformed(ActionEvent e) {
         // create the url for github
-        String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?labels[]=bug&body=";
+        String baseUrl = "https://github.com/tinyMediaManager/tinyMediaManager/issues/new?body=";
         String params = "Version: " + ReleaseInfo.getRealVersion();
         params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
         params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");

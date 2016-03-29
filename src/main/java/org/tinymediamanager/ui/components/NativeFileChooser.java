@@ -45,6 +45,10 @@ public class NativeFileChooser extends JFileChooser {
   private static boolean isJavaFXAvailable() {
     try {
       Class.forName("javafx.stage.FileChooser");
+      // set an option to do not close JFX environment too early
+      Class<?> clazz = Class.forName("javafx.application.Platform");
+      Method method = clazz.getMethod("setImplicitExit", boolean.class);
+      method.invoke(null, Boolean.FALSE);
       // no exception till here; initialize the JavaFX environment
       Class.forName("javafx.embed.swing.JFXPanel").newInstance();
       return true;

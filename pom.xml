@@ -37,9 +37,12 @@
 		</dependency>
 		<dependency>
 			<!-- own patched artifacts -->
+			<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
+				-Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
+				-DartifactId=JTattoo -Dversion=1.6.12.1 -->
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>JTattoo</artifactId>
-			<version>1.6.12</version>
+			<version>1.6.12.1</version>
 		</dependency>
 
 		<!-- our plugins - all provided for dependency resolution -->
@@ -171,12 +174,6 @@
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
 		</dependency>
-
-		<!-- FIXME: try to remove! -->
-		<!-- non mavenized ones - must be installed into our cloudbees repo -->
-		<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
-			-Dpackaging=jar -Dfile=lib\twinkle.jar -DgroupId=ch.swingfx -DartifactId=twinkle 
-			-Dversion=1.0.0 -->
 	</dependencies>
 
 	<build>

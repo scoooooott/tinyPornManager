@@ -15,17 +15,9 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.TmmModuleManager;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
-import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 
 /**
  * The Class TvShowTest.
@@ -33,77 +25,6 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
  * @author Manuel Laggner
  */
 public class TvShowTest {
-
-  /**
-   * Test tv shows.
-   */
-  @Test
-  public void testTvShows() {
-    try {
-      TmmModuleManager.getInstance().startUp();
-      TvShowModuleManager.getInstance().startUp();
-      TvShowList instance = TvShowList.getInstance();
-
-      for (TvShow show : instance.getTvShows()) {
-        System.out.println(show.getTitle());
-        for (TvShowSeason season : show.getSeasons()) {
-          System.out.println("Season " + season.getSeason());
-          for (MediaFile mf : season.getMediaFiles()) {
-            System.out.println(mf.toString());
-          }
-        }
-      }
-
-      TvShowModuleManager.getInstance().shutDown();
-      TmmModuleManager.getInstance().shutDown();
-    }
-    catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-  /**
-   * Test TV renamer
-   * 
-   * @throws Exception
-   */
-  @Test
-  public void testRenamerParams() throws Exception {
-    // setup dummy
-    MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
-
-    TmmModuleManager.getInstance().startUp();
-    TvShowModuleManager.getInstance().startUp();
-
-    TvShow show = new TvShow();
-    show.setTitle("showname");
-
-    TvShowEpisode ep = new TvShowEpisode();
-    ep.setTitle("episodetitle2");
-    ep.setSeason(1);
-    ep.setEpisode(2);
-    ep.addToMediaFiles(dmf);
-    ep.setTvShow(show);
-    show.addEpisode(ep);
-
-    ep = new TvShowEpisode();
-    ep.setTitle("3rd episodetitle");
-    ep.setSeason(1);
-    ep.setEpisode(3);
-    ep.addToMediaFiles(dmf);
-    ep.setTvShow(show);
-    show.addEpisode(ep);
-
-    TvShowList.getInstance().addTvShow(show);
-    // setup done
-
-    // display renamed EP name :)
-    System.out.println(TvShowRenamer.createDestination(Globals.settings.getTvShowSettings().getRenamerFilename(), show, show.getEpisodes()));
-    System.out.println(TvShowRenamer.generateFilename(show, dmf));
-
-    TvShowModuleManager.getInstance().shutDown();
-    TmmModuleManager.getInstance().shutDown();
-  }
 
   /**
    * Test episode matching.

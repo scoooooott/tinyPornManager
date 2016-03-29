@@ -1057,8 +1057,10 @@ public class Utils {
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-Dsilent=noupdate"); // start GD.jar instead of TMM.jar, since we don't have the libs in manifest
     arguments.add("-jar");
-    arguments.add("tmm.jar");
+    arguments.add("getdown.jar");
+    arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
     pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
     return pb;
