@@ -82,8 +82,6 @@ public class TvShow extends MediaEntity {
   @JsonProperty
   private int                                runtime               = 0;
   @JsonProperty
-  private int                                votes                 = 0;
-  @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                               firstAired            = null;
   @JsonProperty
@@ -1120,27 +1118,6 @@ public class TvShow extends MediaEntity {
   public void setCertification(Certification newValue) {
     this.certification = newValue;
     firePropertyChange(CERTIFICATION, null, newValue);
-  }
-
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
-  public int getVotes() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param newValue
-   *          the new votes
-   */
-  public void setVotes(int newValue) {
-    int oldValue = this.votes;
-    this.votes = newValue;
-    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**
