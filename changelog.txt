@@ -1,5 +1,6 @@
 Version 2.7.4
 =======================
++ added vote count for Tv shows and episodes
 x fixed TvShow renamer when having duplicate tokens or multi episodes
 x fixed MovieRenamerPreview when using a sorted list
 x fixed TMM restart (when resetting database)
