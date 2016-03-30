@@ -320,24 +320,43 @@ public class MoviePanel extends JPanel {
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 4, 1, fill, fill");
 
-    JToggleButton filterButton = new JToggleButton(IconManager.FILTER);
-    filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
-    panelMovieList.add(filterButton, "5, 1, right, bottom");
+    {
+      final JToggleButton filterButton = new JToggleButton(IconManager.FILTER);
+      filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+      panelMovieList.add(filterButton, "5, 1, right, bottom");
 
-    panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
-    panelExtendedSearch.setVisible(false);
-    // panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
-    filterButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        if (panelExtendedSearch.isVisible() == true) {
-          panelExtendedSearch.setVisible(false);
+      // add a propertychangelistener which reacts on setting a filter
+      movieSelectionModel.addPropertyChangeListener(new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+          if ("filterChanged".equals(evt.getPropertyName())) {
+            if (Boolean.TRUE.equals(evt.getNewValue())) {
+              filterButton.setIcon(IconManager.FILTER_ACTIVE);
+              filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options.active")); //$NON-NLS-1$
+            }
+            else {
+              filterButton.setIcon(IconManager.FILTER);
+              filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+            }
+          }
         }
-        else {
-          panelExtendedSearch.setVisible(true);
+      });
+
+      panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
+      panelExtendedSearch.setVisible(false);
+      // panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
+      filterButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          if (panelExtendedSearch.isVisible() == true) {
+            panelExtendedSearch.setVisible(false);
+          }
+          else {
+            panelExtendedSearch.setVisible(true);
+          }
         }
-      }
-    });
+      });
+    }
 
     JPanel panelStatus = new JPanel();
     panelMovieList.add(panelStatus, "2, 6, 2, 1");
@@ -397,7 +416,7 @@ public class MoviePanel extends JPanel {
     // filter
     if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
       movieList.searchDuplicates();
-      movieMatcherEditor.filterMovies(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
+      movieSelectionModel.filterMovies(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
     }
   }
 
