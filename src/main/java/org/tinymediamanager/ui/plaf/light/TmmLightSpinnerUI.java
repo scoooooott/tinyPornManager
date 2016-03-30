@@ -48,6 +48,7 @@ public class TmmLightSpinnerUI extends BaseSpinnerUI {
   public void installDefaults() {
     super.installDefaults();
     spinner.setBackground(AbstractLookAndFeel.getInputBackgroundColor());
+    spinner.setBorder(TmmLightBorderFactory.getInstance().getSpinnerBorder());
   }
 
   @Override

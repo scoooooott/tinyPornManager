@@ -143,7 +143,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JSpinner                                                  spRuntime;
   private JTextPane                                                 tfProductionCompanies;
   private JList                                                     listGenres;
-  private JComboBox<MediaGenres>                                    cbGenres;
+  private AutocompleteComboBox<MediaGenres>                         cbGenres;
   private JSpinner                                                  spRating;
   private JComboBox                                                 cbCertification;
   private JCheckBox                                                 cbWatched;
@@ -223,7 +223,7 @@ public class MovieEditorDialog extends TmmDialog {
     details1Panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
             FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
             FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
@@ -423,7 +423,10 @@ public class MovieEditorDialog extends TmmDialog {
       details1Panel.add(lblSourceT, "8, 26, right, default");
     }
     {
-      cbSource = new JComboBox<>(MediaSource.values());
+      cbSource = new JComboBox<>();
+      for (MediaSource source : MediaSource.values()) {
+        cbSource.addItem(source);
+      }
       details1Panel.add(cbSource, "10, 26, 3, 1, fill, default");
     }
     {
@@ -636,7 +639,7 @@ public class MovieEditorDialog extends TmmDialog {
       details2Panel.add(btnRemoveTag, "6, 18, right, top");
     }
     {
-      cbGenres = new AutocompleteComboBox<>(MediaGenres.values());
+      cbGenres = new AutocompleteComboBox<>(Arrays.asList(MediaGenres.values()));
       details2Panel.add(cbGenres, "4, 20");
     }
     {

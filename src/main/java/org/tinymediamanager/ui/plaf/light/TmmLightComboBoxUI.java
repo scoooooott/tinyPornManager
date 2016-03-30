@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -30,6 +29,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 
+import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseComboBoxUI;
 import com.jtattoo.plaf.NoFocusButton;
 
@@ -38,7 +38,6 @@ import com.jtattoo.plaf.NoFocusButton;
  * 
  */
 public class TmmLightComboBoxUI extends BaseComboBoxUI {
-  private static final Color FOREGROUND_COLOR = new Color(208, 208, 208);
 
   public static ComponentUI createUI(JComponent c) {
     return new TmmLightComboBoxUI();
@@ -125,7 +124,7 @@ public class TmmLightComboBoxUI extends BaseComboBoxUI {
       int w = getWidth();
       int h = getHeight();
 
-      g.setColor(FOREGROUND_COLOR);
+      g.setColor(AbstractLookAndFeel.getButtonForegroundColor());
 
       int[] xPoints = { w / 2 + 5, w / 2 - 5, w / 2 };
       int[] yPoints = { h / 2 - 1, h / 2 - 1, h / 2 + 4 };
