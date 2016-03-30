@@ -19,6 +19,24 @@
  */
 package com.omertron.thetvdbapi.tools;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.ws.WebServiceException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import com.omertron.thetvdbapi.TvDbException;
 import com.omertron.thetvdbapi.model.Actor;
 import com.omertron.thetvdbapi.model.Banner;
@@ -31,21 +49,6 @@ import com.omertron.thetvdbapi.model.EpisodeUpdate;
 import com.omertron.thetvdbapi.model.Series;
 import com.omertron.thetvdbapi.model.SeriesUpdate;
 import com.omertron.thetvdbapi.model.TVDBUpdates;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.xml.ws.WebServiceException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class TvdbParser {
 
@@ -457,6 +460,7 @@ public class TvdbParser {
         episode.setOverview(DOMHelper.getValueFromElement(eEpisode, OVERVIEW));
         episode.setProductionCode(DOMHelper.getValueFromElement(eEpisode, "ProductionCode"));
         episode.setRating(DOMHelper.getValueFromElement(eEpisode, RATING));
+        episode.setRatingCount(DOMHelper.getValueFromElement(eEpisode, "RatingCount"));
 
         episode.setSeasonNumber(getEpisodeValue(eEpisode, "SeasonNumber"));
 
@@ -519,6 +523,7 @@ public class TvdbParser {
         series.setNetwork(DOMHelper.getValueFromElement(eSeries, "Network"));
         series.setOverview(DOMHelper.getValueFromElement(eSeries, OVERVIEW));
         series.setRating(DOMHelper.getValueFromElement(eSeries, RATING));
+        series.setRatingCount(DOMHelper.getValueFromElement(eSeries, "RatingCount"));
         series.setRuntime(DOMHelper.getValueFromElement(eSeries, "Runtime"));
         series.setSeriesId(DOMHelper.getValueFromElement(eSeries, "SeriesID"));
         series.setSeriesName(DOMHelper.getValueFromElement(eSeries, SERIES_NAME));

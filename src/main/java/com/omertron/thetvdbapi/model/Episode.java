@@ -22,6 +22,7 @@ package com.omertron.thetvdbapi.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -51,6 +52,7 @@ public class Episode implements Serializable {
     private String overview;
     private String productionCode;
     private String rating;
+    private String ratingCount;
     private int seasonNumber;
     private List<String> writers = new ArrayList<String>();
     private String absoluteNumber;
@@ -156,6 +158,10 @@ public class Episode implements Serializable {
 
     public String getRating() {
         return rating;
+    }
+    
+    public String getRatingCount(){
+        return ratingCount;
     }
 
     public String getSeasonId() {
@@ -270,6 +276,10 @@ public class Episode implements Serializable {
         this.rating = rating;
     }
 
+    public void setRatingCount(String ratingCount){
+        this.ratingCount = ratingCount;
+    }
+    
     public void setSeasonId(String seasonId) {
         this.seasonId = seasonId;
     }

@@ -264,9 +264,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     try {
       md.storeMetadata(MediaMetadata.RATING, Double.parseDouble(show.getRating()));
+      md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.parseInt(show.getRatingCount()));
     }
     catch (NumberFormatException e) {
       md.storeMetadata(MediaMetadata.RATING, 0);
+      md.storeMetadata(MediaMetadata.VOTE_COUNT, 0);
     }
     try {
       md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(show.getFirstAired()));
@@ -415,9 +417,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     md.storeMetadata(MediaMetadata.PLOT, episode.getOverview());
     try {
       md.storeMetadata(MediaMetadata.RATING, Float.parseFloat(episode.getRating()));
+      md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.parseInt(episode.getRatingCount()));
     }
     catch (NumberFormatException e) {
       md.storeMetadata(MediaMetadata.RATING, 0);
+      md.storeMetadata(MediaMetadata.VOTE_COUNT, 0);
     }
     try {
       md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(episode.getFirstAired()));
