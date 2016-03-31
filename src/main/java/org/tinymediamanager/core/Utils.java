@@ -94,7 +94,7 @@ public class Utils {
 
   // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern                      folderStackingPattern = Pattern
-      .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)$", Pattern.CASE_INSENSITIVE);
+      .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
 
   private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
     Map<String, Locale> langArray = new HashMap<String, Locale>();
@@ -305,6 +305,24 @@ public class Utils {
       }
     }
     return filename; // no cleanup, return 1:1
+  }
+
+  /**
+   * Clean stacking markers.<br>
+   * Same logic as detection, but just returning string w/o
+   * 
+   * @param filename
+   *          the filename WITH extension
+   * @return the string
+   */
+  public static String cleanFolderStackingMarkers(String filename) {
+    if (!StringUtils.isEmpty(filename)) {
+      Matcher m = folderStackingPattern.matcher(filename);
+      if (m.matches()) {
+        return m.group(1) + m.group(3); // just return String w/o stacking
+      }
+    }
+    return filename;
   }
 
   /**
@@ -1057,8 +1075,10 @@ public class Utils {
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-Dsilent=noupdate"); // start GD.jar instead of TMM.jar, since we don't have the libs in manifest
     arguments.add("-jar");
-    arguments.add("tmm.jar");
+    arguments.add("getdown.jar");
+    arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
     pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
     return pb;

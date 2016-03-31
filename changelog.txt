@@ -1,3 +1,21 @@
+Version 2.7.4
+=======================
++ added vote count for Tv shows and episodes
+x fixed TvShow renamer when having duplicate tokens or multi episodes
+x fixed MovieRenamerPreview when using a sorted list
+x fixed TMM restart (when resetting database)
+x Display information, why plugins could not be loaded.
+x fixed copy/paste hotkeys for several UI field on OSX
+x fixed exporter file name creation
+x fixed writing set info for MediaPortal NFO files
+x fixed movie import with folder stacking
+
+
+Version 2.7.3.1
+=======================
+x fixed register donation version dialog
+
+
 Version 2.7.3
 =======================
 + bug reports are now solved via GitHub issues
@@ -7,6 +25,7 @@ Version 2.7.3
 x Kodi scraper: fix some invalid XML headers
 x OFDB scraper: fix actor/cast parsing
 x Zelluloid.de: fix actor/cast parsing, and fallback for broken web search
+x Trakt.tv: fix writing correct watched state to NFO
 x CMD: update TvShows only scrapes new episodes, not all
 x improved data source update; parse new entries first
 x improved TV show renamer for multi episode files
@@ -18,6 +37,7 @@ x only write guests into episode NFO
 x fixed error in movie set editor when no movie was selected
 x remember last opened directory in the new chooser
 x TvShows: fix studio writing
+x fix loading of the movie-duplicate filter at startup
 
 
 Version 2.7.2

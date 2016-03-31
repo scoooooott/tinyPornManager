@@ -48,9 +48,10 @@ import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.panels.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
+import org.tinymediamanager.ui.converter.VoteCountConverter;
+import org.tinymediamanager.ui.panels.ImagePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -337,37 +338,6 @@ public class TvShowInformationPanel extends JPanel {
 
   }
 
-  protected void initDataBindings() {
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty = BeanProperty.create("selectedTvShow.title");
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty, lblTvShowName, jLabelBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_1 = BeanProperty.create("selectedTvShow.plot");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowSelectionModel, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_1, tpOverview, jTextPaneBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating");
-    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
-    AutoBinding<TvShowSelectionModel, Float, StarRater, Float> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_2, panelRatingStars, starRaterBeanProperty);
-    autoBinding_2.bind();
-    //
-    AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
-    autoBinding_3.bind();
-    //
-    BeanProperty<TvShowSelectionModel, Certification> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.certification");
-    BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
-    AutoBinding<TvShowSelectionModel, Certification, JLabel, Icon> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowSelectionModel, tvShowSelectionModelBeanProperty_8, lblCertificationImage, jLabelBeanProperty_2);
-    autoBinding_9.setConverter(new CertificationImageConverter());
-    autoBinding_9.bind();
-  }
-
   private void setPoster(TvShow tvShow) {
     lblTvShowPoster.clearImage();
     lblTvShowPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
@@ -402,5 +372,42 @@ public class TvShowInformationPanel extends JPanel {
     else {
       lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty = BeanProperty.create("selectedTvShow.title");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty, lblTvShowName, jLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_1 = BeanProperty.create("selectedTvShow.plot");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowSelectionModel, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_1, tpOverview, jTextPaneBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Float> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.rating");
+    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
+    AutoBinding<TvShowSelectionModel, Float, StarRater, Float> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_2, panelRatingStars, starRaterBeanProperty);
+    autoBinding_2.bind();
+    //
+    AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Certification> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.certification");
+    BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
+    AutoBinding<TvShowSelectionModel, Certification, JLabel, Icon> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_8, lblCertificationImage, jLabelBeanProperty_2);
+    autoBinding_9.setConverter(new CertificationImageConverter());
+    autoBinding_9.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.votes");
+    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_3, lblVoteCount, jLabelBeanProperty);
+    autoBinding_4.setConverter(new VoteCountConverter());
+    autoBinding_4.bind();
   }
 }

@@ -68,6 +68,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   @JsonProperty
   protected float                      rating            = 0f;
   @JsonProperty
+  protected int                        votes             = 0;
+  @JsonProperty
   protected String                     path              = "";
   @JsonProperty
   protected Date                       dateAdded         = new Date();
@@ -214,6 +216,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     float oldValue = rating;
     rating = newValue;
     firePropertyChange(RATING, oldValue, newValue);
+  }
+
+  public int getVotes() {
+    return votes;
+  }
+
+  public void setVotes(int newValue) {
+    int oldValue = this.votes;
+    this.votes = newValue;
+    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   public void setYear(String newValue) {
