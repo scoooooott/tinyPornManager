@@ -18,9 +18,11 @@ package org.tinymediamanager.ui.plaf.light;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.UIDefaults;
+import javax.swing.plaf.ColorUIResource;
 
 import com.jtattoo.plaf.AbstractBorderFactory;
 import com.jtattoo.plaf.AbstractIconFactory;
@@ -46,16 +48,16 @@ import com.jtattoo.plaf.JTattooUtilities;
 
 public class TmmLightLookAndFeel extends AbstractLookAndFeel {
 
-  private static final long           serialVersionUID = 7771660244511173072L;
+  private static final long serialVersionUID = 7771660244511173072L;
 
-  private static TmmLightDefaultTheme myTheme          = null;
+  private static TmmLightDefaultTheme myTheme = null;
 
-  private static final List<String>   themesList       = new ArrayList<String>();
-  private static final HashMap        themesMap        = new HashMap();
-  private static final Properties     defaultProps     = new Properties();
-  private static final Properties     smallFontProps   = new Properties();
-  private static final Properties     largeFontProps   = new Properties();
-  private static final Properties     giantFontProps   = new Properties();
+  private static final List<String> themesList = new ArrayList<String>();
+  private static final Map<String, Properties> themesMap = new HashMap<>();
+  private static final Properties defaultProps = new Properties();
+  private static final Properties smallFontProps = new Properties();
+  private static final Properties largeFontProps = new Properties();
+  private static final Properties giantFontProps = new Properties();
 
   static {
     smallFontProps.setProperty("controlTextFont", "Roboto 10");
@@ -188,6 +190,9 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     table.put("TitledBorder.border", TmmLightBorderFactory.getInstance().getTitledBorder());
     table.put("Table.scrollPaneBorder", TmmLightBorderFactory.getInstance().getScrollPaneBorder());
     table.put("Tree.textBackground", getBackgroundColor());
+    table.put("ProgressBar.border", null);
+    table.put("ProgressBar.background", getTheme().getBackgroundColorDark());
+    table.put("ProgressBar.foreground", getFocusCellColor());
     // table.put("Table.foreground", getForegroundColor());
   }
 
@@ -196,42 +201,42 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     super.initClassDefaults(table);
     // @formatter:off
     Object[] uiDefaults = {
-        // BaseLookAndFeel classes
-        "LabelUI", BaseLabelUI.class.getName(), 
-        "SeparatorUI", BaseSeparatorUI.class.getName(),
-        "ToolTipUI", BaseToolTipUI.class.getName(), 
-        "SliderUI", BaseSliderUI.class.getName(), 
-        "ProgressBarUI", BaseProgressBarUI.class.getName(),
-        "SplitPaneUI", BaseSplitPaneUI.class.getName(),
-        "FileChooserUI", BaseFileChooserUI.class.getName(), 
-        "MenuBarUI", BaseMenuBarUI.class.getName(), 
-        "MenuUI", BaseMenuUI.class.getName(),
-        "PopupMenuUI", BasePopupMenuUI.class.getName(),
-        "MenuItemUI", BaseMenuItemUI.class.getName(), 
-        "CheckBoxMenuItemUI", BaseCheckBoxMenuItemUI.class.getName(), 
-        "RadioButtonMenuItemUI", BaseRadioButtonMenuItemUI.class.getName(), 
-        "PopupMenuSeparatorUI", BaseSeparatorUI.class.getName(), 
-        "DesktopPaneUI", BaseDesktopPaneUI.class.getName(),
-        "RootPaneUI", BaseRootPaneUI.class.getName(),
-        
-        // TmmLookAndFeel classes
-        "PanelUI", TmmLightPanelUI.class.getName(), 
-        "ScrollBarUI", TmmLightScrollBarUI.class.getName(),
-        "TabbedPaneUI", TmmLightTabbedPaneUI.class.getName(),
-        "TableUI", TmmLightTableUI.class.getName(),
-        "ButtonUI", TmmLightButtonUI.class.getName(),
-        "ToggleButtonUI", TmmLightToggleButtonUI.class.getName(),
-        "ComboBoxUI", TmmLightComboBoxUI.class.getName(),
-        "TreeUI", TmmLightTreeUI.class.getName(),
-        "ToolBarUI", TmmLightToolBarUI.class.getName(),
-        "TextFieldUI", TmmLightTextFieldUI.class.getName(),
-        "PasswordFieldUI", TmmLightPasswordFieldUI.class.getName(),
-        "CheckBoxUI", TmmLightCheckBoxUI.class.getName(),
-        "RadioButtonUI", TmmLightRadioButtonUI.class.getName(),
-        "TextAreaUI", TmmLightTextAreaUI.class.getName(),
-        "EditorPaneUI", TmmLightEditorPaneUI.class.getName(),
-        "TextPaneUI", TmmLightTextPaneUI.class.getName(),
-        "ScrollPaneUI", TmmLightScrollPaneUI.class.getName(),
+            // BaseLookAndFeel classes
+            "LabelUI", BaseLabelUI.class.getName(),
+            "SeparatorUI", BaseSeparatorUI.class.getName(),
+            "ToolTipUI", BaseToolTipUI.class.getName(),
+            "SliderUI", BaseSliderUI.class.getName(),
+            "SplitPaneUI", BaseSplitPaneUI.class.getName(),
+            "FileChooserUI", BaseFileChooserUI.class.getName(),
+            "MenuBarUI", BaseMenuBarUI.class.getName(),
+            "MenuUI", BaseMenuUI.class.getName(),
+            "PopupMenuUI", BasePopupMenuUI.class.getName(),
+            "MenuItemUI", BaseMenuItemUI.class.getName(),
+            "CheckBoxMenuItemUI", BaseCheckBoxMenuItemUI.class.getName(),
+            "RadioButtonMenuItemUI", BaseRadioButtonMenuItemUI.class.getName(),
+            "PopupMenuSeparatorUI", BaseSeparatorUI.class.getName(),
+            "DesktopPaneUI", BaseDesktopPaneUI.class.getName(),
+            "RootPaneUI", BaseRootPaneUI.class.getName(),
+
+            // TmmLookAndFeel classes
+            "PanelUI", TmmLightPanelUI.class.getName(),
+            "ScrollBarUI", TmmLightScrollBarUI.class.getName(),
+            "TabbedPaneUI", TmmLightTabbedPaneUI.class.getName(),
+            "TableUI", TmmLightTableUI.class.getName(),
+            "ButtonUI", TmmLightButtonUI.class.getName(),
+            "ToggleButtonUI", TmmLightToggleButtonUI.class.getName(),
+            "ComboBoxUI", TmmLightComboBoxUI.class.getName(),
+            "TreeUI", TmmLightTreeUI.class.getName(),
+            "ToolBarUI", TmmLightToolBarUI.class.getName(),
+            "TextFieldUI", TmmLightTextFieldUI.class.getName(),
+            "PasswordFieldUI", TmmLightPasswordFieldUI.class.getName(),
+            "CheckBoxUI", TmmLightCheckBoxUI.class.getName(),
+            "RadioButtonUI", TmmLightRadioButtonUI.class.getName(),
+            "TextAreaUI", TmmLightTextAreaUI.class.getName(),
+            "EditorPaneUI", TmmLightEditorPaneUI.class.getName(),
+            "TextPaneUI", TmmLightTextPaneUI.class.getName(),
+            "ScrollPaneUI", TmmLightScrollPaneUI.class.getName(),
+            "ProgressBarUI", TmmLightProgressBarUI.class.getName(),
 //        "ViewportUI", TmmLightViewportUI.class.getName(),
     };
     table.putDefaults(uiDefaults);
