@@ -36,7 +36,7 @@ public class VoteCountConverter extends Converter<Integer, String> {
    */
   @Override
   public String convertForward(Integer arg0) {
-    if (arg0 instanceof Integer) {
+    if (arg0 instanceof Integer && (int) arg0 > 0) {
       StringBuilder sb = new StringBuilder("(");
       sb.append(String.format(locale, "%,d", arg0));
       sb.append(" votes)");

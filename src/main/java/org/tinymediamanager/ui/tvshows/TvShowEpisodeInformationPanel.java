@@ -52,6 +52,7 @@ import org.tinymediamanager.ui.converter.CertificationImageConverter;
 import org.tinymediamanager.ui.converter.MediaInfoAudioCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoFormatConverter;
+import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.converter.WatchedIconConverter;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -316,6 +317,30 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     this.tvShowEpisodeSelectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
+  private void setSeasonPoster(TvShowEpisode tvShowEpisode) {
+    lblSeasonPoster.clearImage();
+    lblSeasonPoster.setImagePath(tvShowEpisode.getTvShowSeason().getPoster());
+    Dimension posterSize = tvShowEpisode.getTvShowSeason().getPosterSize();
+    if (posterSize.width > 0 && posterSize.height > 0) {
+      lblSeasonPosterSize.setText(BUNDLE.getString("mediafiletype.season_poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblSeasonPosterSize.setText(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
+    }
+  }
+
+  private void setEpisodeThumb(TvShowEpisode tvShowEpisode) {
+    lblEpisodeThumb.clearImage();
+    lblEpisodeThumb.setImagePath(tvShowEpisode.getArtworkFilename(MediaFileType.THUMB));
+    Dimension thumbSize = tvShowEpisode.getArtworkDimension(MediaFileType.THUMB);
+    if (thumbSize.width > 0 && thumbSize.height > 0) {
+      lblEpisodeThumbSize.setText(BUNDLE.getString("mediafiletype.thumb") + " - " + thumbSize.width + "x" + thumbSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblEpisodeThumbSize.setText(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+    }
+  }
+
   protected void initDataBindings() {
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty
         .create("selectedTvShowEpisode.tvShow.title");
@@ -381,29 +406,11 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_10, lblWatched, jLabelBeanProperty_1);
     autoBinding_11.setConverter(new WatchedIconConverter());
     autoBinding_11.bind();
-  }
-
-  private void setSeasonPoster(TvShowEpisode tvShowEpisode) {
-    lblSeasonPoster.clearImage();
-    lblSeasonPoster.setImagePath(tvShowEpisode.getTvShowSeason().getPoster());
-    Dimension posterSize = tvShowEpisode.getTvShowSeason().getPosterSize();
-    if (posterSize.width > 0 && posterSize.height > 0) {
-      lblSeasonPosterSize.setText(BUNDLE.getString("mediafiletype.season_poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
-    }
-    else {
-      lblSeasonPosterSize.setText(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
-    }
-  }
-
-  private void setEpisodeThumb(TvShowEpisode tvShowEpisode) {
-    lblEpisodeThumb.clearImage();
-    lblEpisodeThumb.setImagePath(tvShowEpisode.getArtworkFilename(MediaFileType.THUMB));
-    Dimension thumbSize = tvShowEpisode.getArtworkDimension(MediaFileType.THUMB);
-    if (thumbSize.width > 0 && thumbSize.height > 0) {
-      lblEpisodeThumbSize.setText(BUNDLE.getString("mediafiletype.thumb") + " - " + thumbSize.width + "x" + thumbSize.height); //$NON-NLS-1$
-    }
-    else {
-      lblEpisodeThumbSize.setText(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-    }
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, Integer> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShowEpisode.votes");
+    AutoBinding<TvShowEpisodeSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
+    autoBinding_2.setConverter(new VoteCountConverter());
+    autoBinding_2.bind();
   }
 }

@@ -88,8 +88,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonProperty
   private boolean                            watched               = false;
   @JsonProperty
-  private int                                votes                 = 0;
-  @JsonProperty
   private boolean                            subtitles             = false;
   @JsonProperty
   private boolean                            isDvdOrder            = false;
@@ -435,6 +433,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setDisplaySeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DISPLAY, -1));
     setDisplayEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DISPLAY, -1));
     setRating(metadata.getFloatValue(MediaMetadata.RATING));
+    setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();
     String director = "";
@@ -737,27 +736,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return "";
-  }
-
-  /**
-   * Gets the vote count.
-   * 
-   * @return the vote count
-   */
-  public int getVoteCount() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param newValue
-   *          the new votes
-   */
-  public void setVotes(int newValue) {
-    int oldValue = this.votes;
-    this.votes = newValue;
-    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**

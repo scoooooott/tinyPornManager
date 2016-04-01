@@ -18,8 +18,8 @@ package org.tinymediamanager.ui.movies;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -223,8 +223,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param filter
    *          the filter
    */
-  public void filterMovies(HashMap<MovieSearchOptions, Object> filter) {
+  public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     matcherEditor.filterMovies(filter);
+    firePropertyChange("filterChanged", filter.isEmpty(), !filter.isEmpty());
   }
 
   /**

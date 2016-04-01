@@ -94,8 +94,6 @@ public class Movie extends MediaEntity {
   @JsonProperty
   private String                                tagline                    = "";
   @JsonProperty
-  private int                                   votes                      = 0;
-  @JsonProperty
   private int                                   runtime                    = 0;
   @JsonProperty
   private String                                director                   = "";
@@ -592,27 +590,6 @@ public class Movie extends MediaEntity {
     int oldValue = getTraktId();
     ids.put(TRAKT, newValue);
     firePropertyChange("traktId", oldValue, newValue);
-  }
-
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
-  public int getVotes() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param newValue
-   *          the new votes
-   */
-  public void setVotes(int newValue) {
-    int oldValue = this.votes;
-    this.votes = newValue;
-    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**
@@ -1779,7 +1756,7 @@ public class Movie extends MediaEntity {
   /**
    * gets the basename (without stacking)
    * 
-   * @return
+   * @return the video base name (without stacking)
    */
   public String getVideoBasenameWithoutStacking() {
     MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
@@ -1869,7 +1846,7 @@ public class Movie extends MediaEntity {
   /**
    * Is the movie "stacked" (more than one video file)
    * 
-   * @return
+   * @return true if the movie is stacked; false otherwise
    */
   public boolean isStacked() {
     return stacked;
