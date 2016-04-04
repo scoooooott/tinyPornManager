@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie.tasks;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -113,7 +114,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      List<File> imageFiles = new ArrayList<File>();
+      List<Path> imageFiles = new ArrayList<Path>();
 
       for (String ds : dataSources) {
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
@@ -295,10 +296,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.debug("found NFO '" + nfo.getFile() + "' - try to parse");
           switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
             case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
+              movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               break;
             case MP:
-              movie = MovieToMpNfoConnector.getData(nfo.getFile());
+              movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               break;
           }
           if (movie != null) {
@@ -458,11 +459,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               Movie nfo = null;
               switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
                 case XBMC:
-                  nfo = MovieToXbmcNfoConnector.getData(mf.getFile());
+                  nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
                   break;
 
                 case MP:
-                  nfo = MovieToMpNfoConnector.getData(mf.getFile());
+                  nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
                   break;
               }
               if (nfo != null) {

@@ -23,8 +23,10 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +47,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -369,9 +370,9 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     btnSearchMediaPlayer.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && file.exists() && (file.isFile() || Platform.isMac())) {
-          tfMediaPlayer.setText(file.getPath());
+        Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+        if (file != null && Files.isRegularFile(file) || Platform.isMac()) {
+          tfMediaPlayer.setText(file.toAbsolutePath().toString());
         }
       }
     });
@@ -463,12 +464,12 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   }
 
   private void initMemorySlider() {
-    File file = new File("extra.txt");
+    Path file = Paths.get("extra.txt");
     int maxMemory = 512;
-    if (file.exists()) {
+    if (Files.exists(file)) {
       // parse out memory option from extra.txt
       try {
-        String extraTxt = FileUtils.readFileToString(file);
+        String extraTxt = Utils.readFileToString(file);
         Matcher matcher = MEMORY_PATTERN.matcher(extraTxt);
         if (matcher.find()) {
           maxMemory = Integer.parseInt(matcher.group(1));
@@ -513,18 +514,18 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       jvmArg = "";
     }
 
-    File file = new File("extra.txt");
+    Path file = Paths.get("extra.txt");
     // new file - do not write when 512MB is set
-    if (memoryAmount != 512 && !file.exists()) {
+    if (memoryAmount != 512 && Files.notExists(file)) {
       try {
-        FileUtils.write(file, jvmArg);
+        Utils.writeStringToFile(file, jvmArg);
       }
       catch (IOException e) {
       }
     }
-    else if (file.exists()) {
+    else if (Files.exists(file)) {
       try {
-        String extraTxt = FileUtils.readFileToString(file);
+        String extraTxt = Utils.readFileToString(file);
         Matcher matcher = MEMORY_PATTERN.matcher(extraTxt);
         if (matcher.find()) {
           extraTxt = extraTxt.replace(matcher.group(0), jvmArg);
@@ -539,7 +540,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         }
         else {
           // no -> rewrite it
-          FileUtils.write(file, extraTxt);
+          Utils.writeStringToFile(file, extraTxt);
         }
       }
       catch (Exception e) {

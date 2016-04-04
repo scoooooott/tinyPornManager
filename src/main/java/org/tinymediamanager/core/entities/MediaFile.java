@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -133,7 +136,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
-  private File                                       file               = null;
+  private Path                                       file               = null;
 
   /**
    * "clones" a new media file.
@@ -169,11 +172,37 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * Instantiates a new media file.
    * 
+   * @deprecated use Java 7 Path() instead of File()
    * @param f
    *          the file
    */
+  @Deprecated
   public MediaFile(File f) {
+    this(f.toPath(), null);
+  }
+
+  /**
+   * Instantiates a new media file.
+   * 
+   * @param f
+   *          the file
+   */
+  public MediaFile(Path f) {
     this(f, null);
+  }
+
+  /**
+   * Instantiates a new media file.
+   * 
+   * @deprecated use Java 7 Path() instead of File()
+   * @param f
+   *          the file
+   * @param type
+   *          the MediaFileType
+   */
+  @Deprecated
+  public MediaFile(File f, MediaFileType type) {
+    this(f.toPath(), type);
   }
 
   /**
@@ -184,10 +213,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @param type
    *          the MediaFileType
    */
-  public MediaFile(File f, MediaFileType type) {
-    this.path = f.getParent(); // just path w/o filename
-    this.filename = f.getName();
-    this.file = f;
+  public MediaFile(Path f, MediaFileType type) {
+    this.path = f.getParent().toString(); // just path w/o filename
+    this.filename = f.getFileName().toString();
+    this.file = f.toAbsolutePath();
     if (type == null) {
       this.type = parseType();
     }
@@ -434,18 +463,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
   }
 
+  @Deprecated
   public File getFile() {
     if (file == null) {
-      File f = new File(this.path, this.filename);
-      file = f;
+      file = getFileAsPath();
+    }
+    return file.toFile();
+  }
+
+  public Path getFileAsPath() {
+    if (file == null) {
+      Path f = Paths.get(this.path, this.filename);
+      file = f.toAbsolutePath();
     }
     return file;
   }
 
-  public void setFile(File file) {
-    setFilename(file.getName());
-    setPath(file.getParent());
-    this.file = file;
+  public void setFile(Path file) {
+    setFilename(file.getFileName().toString());
+    setPath(file.toAbsolutePath().getParent().toString());
+    this.file = file.toAbsolutePath();
   }
 
   /**
@@ -494,9 +531,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @param newPath
    *          the new path
    */
-  public void replacePathForRenamedFolder(File oldPath, File newPath) {
+  public void replacePathForRenamedFolder(Path oldPath, Path newPath) {
     String p = getPath();
-    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
+    p = p.replace(oldPath.toAbsolutePath().toString(), newPath.toAbsolutePath().toString());
     setPath(p);
   }
 
@@ -599,12 +636,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * detect stacking information for this media file
    */
   public void detectStackingInformation() {
-    this.stacking = Utils.getStackingNumber(file.getName());
+    this.stacking = Utils.getStackingNumber(this.filename);
     if (this.stacking == 0) {
       // try to parse from parent directory
       this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
     }
-    this.stackingMarker = Utils.getStackingMarker(file.getName());
+    this.stackingMarker = Utils.getStackingMarker(this.filename);
     if (this.stackingMarker.isEmpty()) {
       // try to parse from parent directory
       this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
@@ -673,16 +710,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       mediaInfo = new MediaInfo();
 
       try {
-        if (!mediaInfo.open(this.getFile())) {
-          LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
+        if (!mediaInfo.open(this.getFileAsPath())) {
+          LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
         }
       }
       catch (Exception e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
       catch (Error e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
 
       miSnapshot = mediaInfo.snapshot();
@@ -1189,7 +1226,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
 
-    LOGGER.debug("start MediaInfo for " + this.getFile().getAbsolutePath());
+    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
 
     mediaInfo = getMediaInfo();
     try {
@@ -1553,7 +1590,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean exists() {
-    return getFile().exists();
+    return Files.exists(getFileAsPath());
   }
 
   /**
@@ -1565,7 +1602,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false if successful
    */
   public boolean deleteSafely(String datasource) {
-    return Utils.deleteFileWithBackup(getFile(), datasource);
+    return Utils.deleteFileWithBackup(getFileAsPath(), datasource);
   }
 
   @Override
@@ -1578,11 +1615,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   @Override
   public int compareTo(MediaFile mf2) {
-    return this.getFile().compareTo(mf2.getFile());
+    return this.getFileAsPath().compareTo(mf2.getFileAsPath());
   }
 
   @Override
   public int hashCode() {
-    return this.getFile().hashCode();
+    return this.getFileAsPath().hashCode();
   }
 }

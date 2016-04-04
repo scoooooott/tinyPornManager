@@ -16,10 +16,12 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,8 +82,8 @@ public class MovieSetArtworkHelper {
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
-        File artworkFile = new File(artworkFolder, artworkFileName);
-        if (artworkFile.exists()) {
+        Path artworkFile = Paths.get(artworkFolder, artworkFileName);
+        if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
           mediaFile.gatherMediaInformation();
@@ -108,8 +110,8 @@ public class MovieSetArtworkHelper {
 
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
         String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
-        File artworkFile = new File(movie.getPath(), artworkFileName);
-        if (artworkFile.exists()) {
+        Path artworkFile = movie.getPathNIO().resolve(artworkFileName);
+        if (Files.exists(artworkFile)) {
           // add this artwork to the media files
           MediaFile mediaFile = new MediaFile(artworkFile, type);
           mediaFile.gatherMediaInformation();
@@ -257,18 +259,23 @@ public class MovieSetArtworkHelper {
     }
 
     private void writeImageToArtworkFolder(byte[] bytes) {
-      File artworkFolder = new File(this.artworkFolder);
+      Path artworkFolder = Paths.get(this.artworkFolder);
 
       // check if folder exists
-      if (!artworkFolder.exists()) {
-        artworkFolder.mkdirs();
+      if (Files.notExists(artworkFolder)) {
+        try {
+          Files.createDirectories(artworkFolder);
+        }
+        catch (IOException e) {
+          LOGGER.warn("could not create directory: " + artworkFolder, e);
+        }
       }
 
       // write files
       try {
         String providedFiletype = FilenameUtils.getExtension(urlToArtwork);
-        writeImage(bytes, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-"
-            + type.name().toLowerCase() + "." + providedFiletype);
+        writeImage(bytes, artworkFolder
+            .resolve(MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + providedFiletype));
       }
       catch (Exception e) {
         LOGGER.warn("could not write file", e);
@@ -287,7 +294,7 @@ public class MovieSetArtworkHelper {
       for (Movie movie : movies) {
         try {
           if (!movie.isMultiMovieDir()) {
-            writeImage(bytes, movie.getPath() + File.separator + filename);
+            writeImage(bytes, movie.getPathNIO().resolve(filename));
           }
         }
         catch (Exception e) {
@@ -297,18 +304,18 @@ public class MovieSetArtworkHelper {
     }
 
     private void writeImageToCacheFolder(byte[] bytes) {
-      String filename = ImageCache.getCachedFileName(urlToArtwork);
+      String filename = ImageCache.getMD5(urlToArtwork);
 
       try {
-        writeImage(bytes, ImageCache.getCacheDir() + File.separator + filename + ".jpg");
+        writeImage(bytes, ImageCache.getCacheDir().resolve(filename + ".jpg"));
       }
       catch (Exception e) {
         LOGGER.warn("error in image fetcher", e);
       }
     }
 
-    private void writeImage(byte[] bytes, String pathAndFilename) throws IOException, InterruptedException {
-      FileOutputStream outputStream = new FileOutputStream(pathAndFilename);
+    private void writeImage(byte[] bytes, Path pathAndFilename) throws IOException, InterruptedException {
+      FileOutputStream outputStream = new FileOutputStream(pathAndFilename.toFile());
       InputStream is = new ByteArrayInputStream(bytes);
       IOUtils.copy(is, outputStream);
       outputStream.flush();
@@ -323,7 +330,7 @@ public class MovieSetArtworkHelper {
 
       ImageCache.invalidateCachedImage(pathAndFilename);
 
-      MediaFile artwork = new MediaFile(new File(pathAndFilename), type);
+      MediaFile artwork = new MediaFile(pathAndFilename, type);
       artwork.gatherMediaInformation();
       writtenArtworkFiles.add(artwork);
     }

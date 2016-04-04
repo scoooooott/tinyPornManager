@@ -16,15 +16,16 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -44,10 +45,10 @@ public class ClearImageCacheAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    File cache = new File(ImageCache.CACHE_DIR);
-    if (cache.exists()) {
+    Path cache = ImageCache.getCacheDir();
+    if (Files.exists(cache)) {
       try {
-        FileUtils.deleteDirectory(cache);
+        Utils.deleteDirectoryRecursive(cache);
       }
       catch (Exception e) {
         LOGGER.warn(e.getMessage());

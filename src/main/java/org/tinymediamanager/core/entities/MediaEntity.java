@@ -18,8 +18,9 @@ package org.tinymediamanager.core.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -136,8 +137,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     return plot;
   }
 
+  /**
+   * @deprecated use getPathNIO()
+   */
+  @Deprecated
   public String getPath() {
     return path;
+  }
+
+  public Path getPathNIO() {
+    return Paths.get(path).toAbsolutePath();
   }
 
   /**
@@ -276,7 +285,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     return artworkUrlMap;
   }
 
-  public void setArtwork(File file, MediaFileType type) {
+  public void setArtwork(Path file, MediaFileType type) {
     List<MediaFile> images = getMediaFiles(type);
     MediaFile mediaFile = null;
     if (images.size() > 0) {
@@ -333,7 +342,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setDateAddedFromMediaFile(MediaFile mf) {
     try {
-      BasicFileAttributes view = Files.readAttributes(mf.getFile().toPath(), BasicFileAttributes.class);
+      BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
       Date dateCreated = new Date(view.creationTime().toMillis());
       if (dateCreated.compareTo(dateAdded) < 0) {
         setDateAdded(dateCreated);
@@ -655,7 +664,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  public void updateMediaFilePath(File oldPath, File newPath) {
+  public void updateMediaFilePath(Path oldPath, Path newPath) {
     readWriteLock.readLock().lock();
     List<MediaFile> mfs = new ArrayList<MediaFile>(this.mediaFiles);
     readWriteLock.readLock().unlock();

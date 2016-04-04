@@ -3,6 +3,9 @@ package org.tinymediamanager.core.movie.connector;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,8 +73,8 @@ public class MovieToNfoConnectorTest {
       List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
       MovieToXbmcNfoConnector.writeNfoFiles(movie, xbmc, nfoNames);
 
-      File nfoFile = new File("target/test-classes/xbmc_nfo/movie.nfo");
-      assertThat(nfoFile.exists()).isTrue();
+      Path nfoFile = Paths.get("target/test-classes/xbmc_nfo/movie.nfo");
+      assertThat(Files.exists(nfoFile)).isTrue();
 
       // unmarshal it
       Movie newMovie = MovieToXbmcNfoConnector.getData(nfoFile);
@@ -106,8 +109,8 @@ public class MovieToNfoConnectorTest {
       List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.FILENAME_NFO);
       MovieToMpNfoConnector.writeNfoFiles(movie, mp, nfoNames);
 
-      File nfoFile = new File("target/test-classes/mp_nfo/Aladdin.nfo");
-      assertThat(nfoFile.exists()).isTrue();
+      Path nfoFile = Paths.get("target/test-classes/mp_nfo/Aladdin.nfo");
+      assertThat(Files.exists(nfoFile)).isTrue();
 
       // unmarshal it
       Movie newMovie = MovieToMpNfoConnector.getData(nfoFile);

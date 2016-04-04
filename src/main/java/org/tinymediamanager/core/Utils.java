@@ -16,10 +16,7 @@
 package org.tinymediamanager.core;
 
 import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +25,21 @@ import java.lang.management.RuntimeMXBean;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,12 +55,8 @@ import java.util.MissingResourceException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -145,6 +152,22 @@ public class Utils {
   }
 
   /**
+   * gets the filename part, and returns last extension
+   * 
+   * @param path
+   * @return
+   */
+  public static String getExtension(Path path) {
+    String ext = "";
+    String fn = path.getFileName().toString();
+    int i = fn.lastIndexOf('.');
+    if (i > 0) {
+      ext = fn.substring(i + 1);
+    }
+    return ext;
+  }
+
+  /**
    * uses our localized language mapping table, to get the iso3 code
    * 
    * @param text
@@ -169,7 +192,8 @@ public class Utils {
   }
 
   /**
-   * returns the relative path of 2 absolute file paths
+   * returns the relative path of 2 absolute file paths<br>
+   * "/a/b & /a/b/c/d -> c/d
    * 
    * @param parent
    *          the directory
@@ -178,11 +202,12 @@ public class Utils {
    * @return relative path
    */
   public static String relPath(String parent, String child) {
-    return relPath(new File(parent), new File(child));
+    return relPath(Paths.get(parent), Paths.get(child));
   }
 
   /**
-   * returns the relative path of 2 absolute file paths
+   * returns the relative path of 2 absolute file paths<br>
+   * "/a/b & /a/b/c/d -> c/d
    * 
    * @param parent
    *          the directory
@@ -190,34 +215,8 @@ public class Utils {
    *          the subdirectory
    * @return relative path
    */
-  public static String relPath(File parent, String child) {
-    return relPath(parent, new File(child));
-  }
-
-  /**
-   * returns the relative path of 2 absolute file paths
-   * 
-   * @param parent
-   *          the directory
-   * @param child
-   *          the subdirectory
-   * @return relative path
-   */
-  public static String relPath(String parent, File child) {
-    return relPath(new File(parent), child);
-  }
-
-  /**
-   * returns the relative path of 2 absolute file paths
-   * 
-   * @param parent
-   *          the directory
-   * @param child
-   *          the subdirectory
-   * @return relative path
-   */
-  public static String relPath(File parent, File child) {
-    return parent.toURI().relativize(child.toURI()).getPath();
+  public static String relPath(Path parent, Path child) {
+    return parent.relativize(child).toString();
   }
 
   /**
@@ -492,14 +491,14 @@ public class Utils {
       public void run() {
         try {
           Thread.currentThread().setName("trackEventThread");
-          File uuidFile = new File("tmm.uuid");
-          File disable = new File("tmm.uuid.disable");
-          if (!uuidFile.exists()) {
-            FileUtils.write(uuidFile, UUID.randomUUID().toString());
+          Path uuidFile = Paths.get("tmm.uuid");
+          Path disable = Paths.get("tmm.uuid.disable");
+          if (Files.notExists(uuidFile)) {
+            writeStringToFile(uuidFile, UUID.randomUUID().toString());
           }
 
-          if (uuidFile.exists() && !disable.exists()) {
-            String uuid = FileUtils.readFileToString(uuidFile);
+          if (Files.exists(uuidFile) && Files.notExists(disable)) {
+            String uuid = readFileToString(uuidFile);
             System.setProperty("tmm.uuid", uuid);
 
             String session = "";
@@ -619,7 +618,7 @@ public class Utils {
   }
 
   /**
-   * modified version of commons-io FileUtils.moveDirectory();<br>
+   * modified version of commons-io FileUtils.moveDirectory(); adapted to Java 7 NIO<br>
    * since renameTo() might not work in first place, retry it up to 5 times.<br>
    * (better wait 5 sec for success, than always copying a 50gig directory ;)<br>
    * <b>And NO, we're NOT doing a copy+delete as fallback!</b>
@@ -632,7 +631,7 @@ public class Utils {
    * @throws IOException
    *           if an IO error occurs moving the file
    */
-  public static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
+  public static boolean moveDirectorySafe(Path srcDir, Path destDir) throws IOException {
     // rip-off from
     // http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
     if (srcDir == null) {
@@ -641,31 +640,46 @@ public class Utils {
     if (destDir == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    if (!srcDir.getAbsolutePath().equals(destDir.getAbsolutePath())) {
-      LOGGER.debug("try to move folder " + srcDir.getPath() + " to " + destDir.getPath());
-      if (!srcDir.exists()) {
-        throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
+    if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
+      LOGGER.debug("try to move folder " + srcDir + " to " + destDir);
+      if (!Files.isDirectory(srcDir)) {
+        throw new FileNotFoundException("Source '" + srcDir + "' does not exist, or is not a directory");
       }
-      if (!srcDir.isDirectory()) {
-        throw new IOException("Source '" + srcDir + "' is not a directory");
-      }
-      if (destDir.exists() && !srcDir.equals(destDir)) {
+      if (Files.exists(destDir) && !srcDir.equals(destDir)) {
         // extra check for windows, where the File.equals is case insensitive
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
-      if (!destDir.getParentFile().exists()) {
+      if (Files.notExists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
-        boolean ok = destDir.getParentFile().mkdirs();
-        if (!ok) {
-          LOGGER.error("could not create directory structure " + destDir.getParentFile());
+        try {
+          Files.createDirectories(destDir);
+        }
+        catch (Exception e) {
+          LOGGER.error("could not create directory structure " + destDir.getParent());
+          // but we try a move anyway...
         }
       }
 
       // rename folder; try 5 times and wait a sec
       boolean rename = false;
       for (int i = 0; i < 5; i++) {
-        rename = srcDir.renameTo(destDir);
+        try {
+          // need atomic fs move for changing cASE
+          Files.move(srcDir, destDir, StandardCopyOption.ATOMIC_MOVE);
+          rename = true;// no exception
+        }
+        catch (AtomicMoveNotSupportedException a) {
+          // if it fails (b/c not on same file system) use that
+          try {
+            Files.move(srcDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            rename = true; // no exception
+          }
+          catch (IOException e) {
+          }
+        }
+        catch (IOException e) {
+        }
         if (rename) {
           break; // ok it worked, step out
         }
@@ -683,13 +697,13 @@ public class Utils {
       // NOOO - we don't like to have some files copied and some not.
 
       if (!rename) {
-        LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
+        LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir);
         LOGGER.error("Movie renaming aborted.");
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir, "message.renamer.failedrename"));
         return false;
       }
       else {
-        LOGGER.info("Successfully moved folder " + srcDir.getPath() + " to " + destDir.getPath());
+        LOGGER.info("Successfully moved folder " + srcDir + " to " + destDir);
         return true;
       }
     }
@@ -697,7 +711,7 @@ public class Utils {
   }
 
   /**
-   * modified version of commons-io FileUtils.moveFile();<br>
+   * modified version of commons-io FileUtils.moveFile(); adapted to Java 7 NIO<br>
    * since renameTo() might not work in first place, retry it up to 5 times.<br>
    * (better wait 5 sec for success, than always copying a 50gig directory ;)<br>
    * <b>And NO, we're NOT doing a copy+delete as fallback!</b>
@@ -716,7 +730,7 @@ public class Utils {
    *           if an IO error occurs moving the file
    * @since 1.4
    */
-  public static boolean moveFileSafe(final File srcFile, final File destFile) throws IOException {
+  public static boolean moveFileSafe(final Path srcFile, final Path destFile) throws IOException {
     if (srcFile == null) {
       throw new NullPointerException("Source must not be null");
     }
@@ -724,27 +738,42 @@ public class Utils {
       throw new NullPointerException("Destination must not be null");
     }
     // if (!srcFile.equals(destFile)) {
-    if (!srcFile.getAbsolutePath().equals(destFile.getAbsolutePath())) {
-      LOGGER.debug("try to move file " + srcFile.getPath() + " to " + destFile.getPath());
-      if (!srcFile.exists()) {
+    if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
+      LOGGER.debug("try to move file " + srcFile + " to " + destFile);
+      if (Files.notExists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
-      if (srcFile.isDirectory()) {
+      if (Files.isDirectory(srcFile)) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (destFile.exists() && !srcFile.equals(destFile)) {
+      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
         // extra check for windows, where the File.equals is case insensitive
         // so we know now, that the File is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destFile + "' already exists");
       }
-      if (destFile.isDirectory()) {
+      if (Files.isDirectory(destFile)) {
         throw new IOException("Destination '" + destFile + "' is a directory");
       }
 
       // rename folder; try 5 times and wait a sec
       boolean rename = false;
       for (int i = 0; i < 5; i++) {
-        rename = srcFile.renameTo(destFile);
+        try {
+          // need atomic fs move for changing cASE
+          Files.move(srcFile, destFile, StandardCopyOption.ATOMIC_MOVE);
+          rename = true;// no exception
+        }
+        catch (AtomicMoveNotSupportedException a) {
+          // if it fails (b/c not on same file system) use that
+          try {
+            Files.move(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+            rename = true; // no exception
+          }
+          catch (IOException e) {
+          }
+        }
+        catch (IOException e) {
+        }
         if (rename) {
           break; // ok it worked, step out
         }
@@ -757,17 +786,74 @@ public class Utils {
         }
       }
 
-      // ok, we tried it 5 times - it still seems to be locked somehow. Continue
-      // with copying as fallback
-      // NOOO - we don't like to have some files copied and some not.
-
       if (!rename) {
-        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile.getPath());
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile.getPath(), "message.renamer.failedrename"));
+        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename"));
         return false;
       }
       else {
-        LOGGER.info("Successfully moved file from " + srcFile.getPath() + " to " + destFile.getPath());
+        LOGGER.info("Successfully moved file from " + srcFile + " to " + destFile);
+        return true;
+      }
+    }
+    return true; // files are equal
+  }
+
+  public static boolean copyFileSafe(final Path srcFile, final Path destFile) throws IOException {
+    if (srcFile == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destFile == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    // if (!srcFile.equals(destFile)) {
+    if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
+      LOGGER.debug("try to copy file " + srcFile + " to " + destFile);
+      if (Files.notExists(srcFile)) {
+        throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+      }
+      if (Files.isDirectory(srcFile)) {
+        throw new IOException("Source '" + srcFile + "' is a directory");
+      }
+      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
+        // extra check for windows, where the File.equals is case insensitive
+        // so we know now, that the File is the same, but the absolute name does not match
+        throw new FileExistsException("Destination '" + destFile + "' already exists");
+      }
+      if (Files.isDirectory(destFile)) {
+        throw new IOException("Destination '" + destFile + "' is a directory");
+      }
+
+      // rename folder; try 5 times and wait a sec
+      boolean rename = false;
+      for (int i = 0; i < 5; i++) {
+        try {
+          // replace existing for changing cASE
+          Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+          rename = true;// no exception
+        }
+        catch (IOException e) {
+        }
+
+        if (rename) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
+      }
+
+      if (!rename) {
+        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile, "message.renamer.failedrename"));
+        return false;
+      }
+      else {
+        LOGGER.info("Successfully moved file from " + srcFile + " to " + destFile);
         return true;
       }
     }
@@ -782,33 +868,33 @@ public class Utils {
    * @param file
    * @return true/false if successful
    */
-  public static boolean deleteFileWithBackup(File file, String datasource) {
-    String fn = file.getAbsolutePath();
-    if (file.isDirectory()) {
-      LOGGER.warn("could not delete file '" + fn + "': file is a directory!");
-      return false;
-    }
+  public static boolean deleteFileWithBackup(Path file, String datasource) {
+    String fn = file.toAbsolutePath().toString();
     if (!fn.startsWith(datasource)) { // safety
       LOGGER.warn("could not delete file '" + fn + "': datasource '" + datasource + "' does not match");
       return false;
     }
+    if (Files.isDirectory(file)) {
+      LOGGER.warn("could not delete file '" + fn + "': file is a directory!");
+      return false;
+    }
 
     // inject backup path
-    fn = fn.replace(datasource, datasource + File.separator + Constants.BACKUP_FOLDER);
+    fn = fn.replace(datasource, datasource + FileSystems.getDefault().getSeparator() + Constants.BACKUP_FOLDER);
 
     // backup
     try {
       // create path
-      File backup = new File(fn);
-      if (!backup.getParentFile().exists()) {
-        backup.getParentFile().mkdirs();
+      Path backup = Paths.get(fn);
+      if (Files.notExists(backup.getParent())) {
+        Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
-      FileUtils.deleteQuietly(backup);
-      return Utils.moveFileSafe(file, backup);
+      Files.deleteIfExists(backup);
+      return moveFileSafe(file, backup);
     }
     catch (IOException e) {
-      LOGGER.warn("could not delete file: " + e.getMessage());
+      LOGGER.warn("Could not delete file: " + e.getMessage());
       return false;
     }
   }
@@ -820,13 +906,20 @@ public class Utils {
    * @param file
    * @return true/false if successful
    */
-  public static boolean deleteFileSafely(File file) {
-    String fn = file.getAbsolutePath();
-    if (file.isDirectory()) {
-      LOGGER.warn("will not delete file '" + fn + "': file is a directory!");
+  public static boolean deleteFileSafely(Path file) {
+    file = file.toAbsolutePath();
+    if (Files.isDirectory(file)) {
+      LOGGER.warn("Will not delete file '" + file + "': file is a directory!");
       return false;
     }
-    return FileUtils.deleteQuietly(file);
+    try {
+      Files.deleteIfExists(file);
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not delete file: " + e.getMessage());
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -839,33 +932,34 @@ public class Utils {
    *          the datasource of this folder
    * @return true/false if successful
    */
-  public static boolean deleteDirectorySafely(File folder, String datasource) {
-    String fn = folder.getAbsolutePath();
-    if (folder.isFile()) {
-      LOGGER.warn("could not delete folder '" + fn + "': folder is a file, NOT a directory!");
+  public static boolean deleteDirectorySafely(Path folder, String datasource) {
+    folder = folder.toAbsolutePath();
+    String fn = folder.toAbsolutePath().toString();
+    if (!Files.isDirectory(folder)) {
+      LOGGER.warn("Will not delete folder '" + folder + "': folder is a file, NOT a directory!");
       return false;
     }
-    if (!fn.startsWith(datasource)) { // safety
-      LOGGER.warn("could not delete folder '" + fn + "': datasource '" + datasource + "' does not match");
+    if (!folder.toString().startsWith(datasource)) { // safety
+      LOGGER.warn("Will not delete folder '" + folder + "': datasource '" + datasource + "' does not match");
       return false;
     }
 
     // inject backup path
-    fn = fn.replace(datasource, datasource + File.separator + Constants.BACKUP_FOLDER);
+    fn = fn.replace(datasource, datasource + FileSystems.getDefault().getSeparator() + Constants.BACKUP_FOLDER);
 
     // backup
     try {
       // create path
-      File backup = new File(fn);
-      if (!backup.getParentFile().exists()) {
-        backup.getParentFile().mkdirs();
+      Path backup = Paths.get(fn);
+      if (Files.notExists(backup.getParent())) {
+        Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
-      FileUtils.deleteDirectory(backup);
-      return Utils.moveDirectorySafe(folder, backup);
+      deleteDirectoryRecursive(backup);
+      return moveDirectorySafe(folder, backup);
     }
     catch (IOException e) {
-      LOGGER.warn("could not delete file: " + e.getMessage());
+      LOGGER.warn("could not delete directory: " + e.getMessage());
       return false;
     }
   }
@@ -879,11 +973,10 @@ public class Utils {
     ArrayList<Locale> loc = new ArrayList<Locale>();
     loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
-      File[] props = new File(Constants.LOCALE_FOLDER).listFiles();
-      if (props != null) {
-        for (File file : props) {
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Constants.LOCALE_FOLDER))) {
+        for (Path path : directoryStream) {
           // String l = file.getName().substring(9, 11); // messages_XX.properties
-          Matcher matcher = localePattern.matcher(file.getName());
+          Matcher matcher = localePattern.matcher(path.getFileName().toString());
           if (matcher.matches()) {
             Locale myloc = null;
 
@@ -949,51 +1042,57 @@ public class Utils {
    * creates a zipped backup of file in backup folder with yyyy-MM-dd timestamp<br>
    * <b>does overwrite already existing file from today!</b>
    * 
-   * @param f
+   * @param file
    *          the file to backup
    */
-  public static final void createBackupFile(File f) {
-    createBackupFile(f, true);
+  public static final void createBackupFile(Path file) {
+    createBackupFile(file, true);
   }
 
   /**
    * creates a zipped backup of file in backup folder with yyyy-MM-dd timestamp
    * 
-   * @param f
+   * @param file
    *          the file to backup
    * @param overwrite
    *          if file is already there, ignore that and overwrite with new copy
    */
-  public static final void createBackupFile(File f, boolean overwrite) {
-    File backup = new File("backup");
-    if (!backup.exists()) {
-      backup.mkdir();
-    }
-    if (!f.exists()) {
-      return;
-    }
-    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    String date = formatter.format(f.lastModified());
-    backup = new File("backup", f.getName() + "." + date + ".zip");
-    if (!backup.exists() || overwrite == true) {
-      try {
+  public static final void createBackupFile(Path file, boolean overwrite) {
+    Path backup = Paths.get("backup");
+    try {
+      if (Files.notExists(backup)) {
+        Files.createDirectory(backup);
+      }
+      if (Files.notExists(file)) {
+        return;
+      }
+      DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+      String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
+      backup = backup.resolve(file.getFileName() + "." + date + ".zip");
+      if (Files.notExists(backup) || overwrite == true) {
+        // v1 - just copy
         // FileUtils.copyFile(f, backup, true);
 
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(backup));
-        zos.setComment("backup from " + date);
-        ZipEntry ze = new ZipEntry(f.getName());
-        zos.putNextEntry(ze);
-        FileInputStream in = new FileInputStream(f);
-        IOUtils.copy(in, zos);
-        in.close();
-        zos.closeEntry();
-        zos.close();
+        // v2 - zip'em
+        // ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(backup.toFile()));
+        // zos.setComment("backup from " + date);
+        // ZipEntry ze = new ZipEntry(f.getName());
+        // zos.putNextEntry(ze);
+        // FileInputStream in = new FileInputStream(f);
+        // IOUtils.copy(in, zos);
+        // in.close();
+        // zos.closeEntry();
+        // zos.close();
 
-      }
-      catch (IOException e) {
-        LOGGER.error("Could not backup file " + backup);
+        // v3 - Java 7 NIO file system zip
+        createZip(backup, file, "/" + file.getFileName().toString()); // just put in main dir
+        // TODO: add timestamp to zipped file, to archive ALL of one day ;)
       }
     }
+    catch (IOException e) {
+      LOGGER.error("Could not backup file " + file + ": " + e.getMessage());
+    }
+
   }
 
   /**
@@ -1004,22 +1103,25 @@ public class Utils {
    * @param keep
    *          keep last X versions
    */
-  public static final void deleteOldBackupFile(File f, int keep) {
-    File[] files = new File("backup").listFiles();
-    if (files == null) {
-      return;
-    }
-    ArrayList<File> al = new ArrayList<File>();
-    for (File s : files) {
-      if (s.getName().matches(f.getName() + "\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip") || // name.ext.yyyy-mm-dd.zip
-          s.getName().matches(f.getName() + "\\.\\d{4}\\-\\d{2}\\-\\d{2}")) { // old name.ext.yyyy-mm-dd
-        al.add(s);
+  public static final void deleteOldBackupFile(Path file, int keep) {
+    ArrayList<Path> al = new ArrayList<Path>();
+    String fname = file.getFileName().toString();
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
+      for (Path path : directoryStream) {
+        if (path.getFileName().toString().matches(fname + "\\.\\d{4}\\-\\d{2}\\-\\d{2}\\.zip") || // name.ext.yyyy-mm-dd.zip
+            path.getFileName().toString().matches(fname + "\\.\\d{4}\\-\\d{2}\\-\\d{2}")) { // old name.ext.yyyy-mm-dd
+          al.add(path);
+        }
       }
     }
+    catch (IOException ex) {
+    }
+
     for (int i = 0; i < al.size() - keep; i++) {
       // System.out.println("del " + al.get(i).getName());
       deleteFileSafely(al.get(i));
     }
+
   }
 
   /**
@@ -1068,8 +1170,8 @@ public class Utils {
    * @return the process builder
    */
   public static ProcessBuilder getPBforTMMrestart() {
-    File f = new File("tmm.jar");
-    if (!f.exists()) {
+    Path f = Paths.get("tmm.jar");
+    if (Files.notExists(f)) {
       LOGGER.error("cannot restart TMM - tmm.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1080,7 +1182,7 @@ public class Utils {
     arguments.add("getdown.jar");
     arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    pb.directory(Paths.get("").toAbsolutePath().toFile()); // set working directory (current TMM dir)
     return pb;
   }
 
@@ -1090,8 +1192,8 @@ public class Utils {
    * @return the process builder
    */
   public static ProcessBuilder getPBforTMMupdate() {
-    File f = new File("getdown.jar");
-    if (!f.exists()) {
+    Path f = Paths.get("getdown.jar");
+    if (Files.notExists(f)) {
       LOGGER.error("cannot start updater - getdown.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1101,7 +1203,7 @@ public class Utils {
     arguments.add("getdown.jar");
     arguments.add(".");
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    pb.directory(Paths.get("").toAbsolutePath().toFile()); // set working directory (current TMM dir)
     return pb;
   }
 
@@ -1123,5 +1225,149 @@ public class Utils {
       arguments.add("-Dfile.encoding=UTF-8");
     }
     return arguments;
+  }
+
+  /**
+   * Deletes a complete directory recursively, using Java NIO
+   * 
+   * @param dir
+   * @throws IOException
+   */
+  public static void deleteDirectoryRecursive(Path dir) throws IOException {
+    LOGGER.info("Deleting complete directory: " + dir);
+    Files.walkFileTree(dir, new FileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.delete(dir);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        LOGGER.warn("Could not delete " + file + "; " + exc.getMessage());
+        return FileVisitResult.CONTINUE;
+      }
+
+    });
+  }
+
+  /**
+   * Creates (or adds) a file to a ZIP
+   * 
+   * @param zipFile
+   *          Path of zip file
+   * @param toBeAdded
+   *          Path to be added
+   * @param internalPath
+   *          the location inside the ZIP like /aa/a.txt
+   * @throws Throwable
+   */
+  public static void createZip(Path zipFile, Path toBeAdded, String internalPath) {
+    Map<String, String> env = new HashMap<String, String>();
+    try {
+      // check if file exists
+      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      // use a Zip filesystem URI
+      URI fileUri = zipFile.toUri(); // here
+      URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
+      // System.out.println(zipUri);
+      // URI uri = URI.create("jar:file:"+zipLocation); // here creates the
+      // zip
+      // try with resource
+      try (FileSystem zipfs = FileSystems.newFileSystem(zipUri, env)) {
+        // Create internal path in the zipfs
+        Path internalTargetPath = zipfs.getPath(internalPath);
+        if (!Files.exists(internalTargetPath.getParent())) {
+          // Create directory
+          Files.createDirectory(internalTargetPath.getParent());
+        }
+        // copy a file into the zip file
+        Files.copy(toBeAdded, internalTargetPath, StandardCopyOption.REPLACE_EXISTING);
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Failed to create zip file!" + e.getMessage());
+    }
+  }
+
+  /**
+   * Java NIO replacement of commons-io
+   * 
+   * @param file
+   * @param text
+   * @throws IOException
+   */
+  public static void writeStringToFile(Path file, String text) throws IOException {
+    byte[] buf = text.getBytes(StandardCharsets.UTF_8);
+    Files.write(file, buf);
+  }
+
+  /**
+   * Java NIO replacement of commons-io
+   * 
+   * @param file
+   * @return
+   * @throws IOException
+   */
+  public static String readFileToString(Path file) throws IOException {
+    byte[] fileArray = Files.readAllBytes(file);
+    return new String(fileArray, StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Copies a complete directory recursively, using Java NIO
+   * 
+   * @param from
+   * @param to
+   * @throws IOException
+   */
+  public static void copyDirectoryRecursive(Path from, Path to) throws IOException {
+    LOGGER.info("Copyin complete directory from " + from + " to " + to);
+    Files.walkFileTree(from, new CopyFileVisitor(to));
+  }
+
+  /**
+   * Visitor for copying a directory recursively<br>
+   * Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
+   * 
+   * @author Myron Boyle
+   *
+   */
+  public static class CopyFileVisitor extends SimpleFileVisitor<Path> {
+    private final Path targetPath;
+    private Path       sourcePath = null;
+
+    public CopyFileVisitor(Path targetPath) {
+      this.targetPath = targetPath;
+    }
+
+    @Override
+    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+      if (sourcePath == null) {
+        sourcePath = dir;
+      }
+      else {
+        Files.createDirectories(targetPath.resolve(sourcePath.relativize(dir)));
+      }
+      return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+      return FileVisitResult.CONTINUE;
+    }
   }
 }

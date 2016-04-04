@@ -22,7 +22,7 @@ import java.awt.event.HierarchyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -129,7 +129,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             return null;
           }
           try {
-            File file = ImageCache.getCachedFile(mediaFile.getFile().getAbsolutePath());
+            Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());
             LOGGER.debug("loading " + file);
             BufferedImage bufferedImage = ImageCache.createImage(file);
             Point size = ImageCache.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
@@ -141,7 +141,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
               return null;
             }
 
-            publish(new ImageChunk(mediaFile.getFile().getAbsolutePath(), img));
+            publish(new ImageChunk(mediaFile.getFileAsPath().toString(), img));
             img = null;
           }
           catch (Exception e) {

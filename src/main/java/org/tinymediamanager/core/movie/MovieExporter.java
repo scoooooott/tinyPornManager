@@ -16,14 +16,18 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,7 +51,7 @@ import com.floreysoft.jmte.RenderFormatInfo;
 public class MovieExporter extends MediaEntityExporter {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieExporter.class);
 
-  public MovieExporter(String pathToTemplate) throws Exception {
+  public MovieExporter(Path pathToTemplate) throws Exception {
     super(pathToTemplate, TemplateType.MOVIE);
   }
 
@@ -62,32 +66,33 @@ public class MovieExporter extends MediaEntityExporter {
    *           the exception
    */
   @Override
-  public <T extends MediaEntity> void export(List<T> moviesToExport, String pathToExport) throws Exception {
+  public <T extends MediaEntity> void export(List<T> moviesToExport, Path exportDir) throws Exception {
     LOGGER.info("preparing movie export; using " + properties.getProperty("name"));
 
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new MovieFilenameRenderer());
-    engine.registerNamedRenderer(new ArtworkCopyRenderer(pathToExport));
 
     // prepare export destination
-    File exportDir = new File(pathToExport);
-    if (!exportDir.exists()) {
-      if (!exportDir.mkdirs()) {
+    if (Files.notExists(exportDir)) {
+      try {
+        Files.createDirectories(exportDir);
+      }
+      catch (Exception e) {
         throw new Exception("error creating export directory");
       }
     }
 
     // prepare listfile
-    File listExportFile = null;
+    Path listExportFile = null;
     if (fileExtension.equalsIgnoreCase("html")) {
-      listExportFile = new File(exportDir, "index.html");
+      listExportFile = exportDir.resolve("index.html");
     }
     if (fileExtension.equalsIgnoreCase("xml")) {
-      listExportFile = new File(exportDir, "movielist.xml");
+      listExportFile = exportDir.resolve("movielist.xml");
     }
     if (fileExtension.equalsIgnoreCase("csv")) {
-      listExportFile = new File(exportDir, "movielist.csv");
+      listExportFile = exportDir.resolve("movielist.csv");
     }
     if (listExportFile == null) {
       throw new Exception("error creating movie list file");
@@ -102,16 +107,16 @@ public class MovieExporter extends MediaEntityExporter {
 
     String output = engine.transform(listTemplate, root);
 
-    FileUtils.writeStringToFile(listExportFile, output, "UTF-8");
-    LOGGER.info("movie list generated: " + listExportFile.getAbsolutePath());
+    Utils.writeStringToFile(listExportFile, output);
+    LOGGER.info("movie list generated: " + listExportFile);
 
     // create details for
     if (StringUtils.isNotBlank(detailTemplate)) {
-      File detailsDir = new File(exportDir, "movies");
-      if (detailsDir.exists()) {
-        Utils.deleteFileSafely(detailsDir);
+      Path detailsDir = exportDir.resolve("movies");
+      if (Files.isDirectory(detailsDir)) {
+        Utils.deleteDirectoryRecursive(detailsDir);
       }
-      detailsDir.mkdirs();
+      Files.createDirectory(detailsDir);
 
       for (MediaEntity me : moviesToExport) {
         Movie movie = (Movie) me;
@@ -122,36 +127,34 @@ public class MovieExporter extends MediaEntityExporter {
           detailFilename = movie.getVideoBasenameWithoutStacking();
           // FilenameUtils.getBaseName(Utils.cleanStackingMarkers(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
         }
-        File detailsExportFile = new File(detailsDir, detailFilename + "." + fileExtension);
+        Path detailsExportFile = detailsDir.resolve(detailFilename + "." + fileExtension);
 
         root = new HashMap<String, Object>();
         root.put("movie", movie);
 
         output = engine.transform(detailTemplate, root);
-        FileUtils.writeStringToFile(detailsExportFile, output, "UTF-8");
+        Utils.writeStringToFile(detailsExportFile, output);
 
       }
 
-      LOGGER.info("movie detail pages generated: " + exportDir.getAbsolutePath());
+      LOGGER.info("movie detail pages generated: " + exportDir);
     }
 
     // copy all non .jtme/template.conf files to destination dir
-    File[] templateContent = templateDir.listFiles();
-    if (templateContent != null) {
-      for (File fileInTemplateDir : templateContent) {
-        if (fileInTemplateDir.getName().endsWith(".jmte")) {
-          continue;
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
+      for (Path path : directoryStream) {
+        if (Files.isRegularFile(path)) {
+          if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
+            continue;
+          }
+          Files.copy(path, exportDir, StandardCopyOption.REPLACE_EXISTING);
         }
-        if (fileInTemplateDir.getName().endsWith("template.conf")) {
-          continue;
-        }
-        if (fileInTemplateDir.isFile()) {
-          FileUtils.copyFileToDirectory(fileInTemplateDir, exportDir);
-        }
-        if (fileInTemplateDir.isDirectory()) {
-          FileUtils.copyDirectoryToDirectory(fileInTemplateDir, exportDir);
+        else if (Files.isDirectory(path)) {
+          Utils.copyDirectoryRecursive(path, exportDir);
         }
       }
+    }
+    catch (IOException ex) {
     }
   }
 
@@ -174,7 +177,7 @@ public class MovieExporter extends MediaEntityExporter {
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  private class MovieFilenameRenderer implements NamedRenderer {
+  public static class MovieFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -206,9 +209,9 @@ public class MovieExporter extends MediaEntityExporter {
    * @author Manuel Laggner
    */
   private class ArtworkCopyRenderer implements NamedRenderer {
-    private String pathToExport;
+    private Path pathToExport;
 
-    public ArtworkCopyRenderer(String pathToExport) {
+    public ArtworkCopyRenderer(Path pathToExport) {
       this.pathToExport = pathToExport;
     }
 
@@ -247,12 +250,12 @@ public class MovieExporter extends MediaEntityExporter {
             if (parameters.get("width") != null) {
               width = (int) parameters.get("width");
             }
-            InputStream is = ImageCache.scaleImage(mf.getFile(), width);
-            FileUtils.copyInputStreamToFile(is, new File(pathToExport, filename));
+            InputStream is = ImageCache.scaleImage(mf.getFileAsPath(), width);
+            Files.copy(is, pathToExport.resolve(filename));
           }
           else {
             filename += "." + FilenameUtils.getExtension(mf.getFilename());
-            FileUtils.copyFile(mf.getFile(), new File(pathToExport, filename));
+            Files.copy(mf.getFileAsPath(), pathToExport.resolve(filename));
           }
         }
         catch (Exception e) {

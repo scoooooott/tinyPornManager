@@ -1,9 +1,10 @@
 package org.tinymediamanager.core;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -56,6 +57,23 @@ public class UtilsTest {
     catch (URISyntaxException e) {
       return "";
     }
+  }
+
+  @Test
+  public void div() {
+    // Utils.trackEvent("test");
+
+    Path sub = Paths.get("cache\\image");
+    Path fil = Paths.get("C:\\Users\\User\\workspaceGIT\\tinyMediaManager\\cache\\image\\yyy");
+    System.out.println(sub.resolve(fil));
+  }
+
+  @Test
+  public void zip() {
+    Path zip = Paths.get("target", "test.zip");
+    Path add = Paths.get("pom.xml");
+    Utils.createZip(zip, add, "/pom.xml");
+    Utils.createZip(zip, add, "/sub/pom.xml");
   }
 
   @Test
@@ -192,8 +210,8 @@ public class UtilsTest {
 
   @Test
   public void backup() {
-    Utils.createBackupFile(new File("movies.db"));
-    Utils.deleteOldBackupFile(new File("movies.db"), 15);
+    Utils.createBackupFile(Paths.get("pom.xml"));
+    Utils.deleteOldBackupFile(Paths.get("pom.xml"), 2);
   }
 
   @Test

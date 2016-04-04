@@ -1,6 +1,6 @@
 package org.tinymediamanager.thirdparty;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.tinymediamanager.core.TmmModuleManager;
@@ -17,12 +17,12 @@ public class JmteTest {
     MovieModuleManager.getInstance().startUp();
     MovieList ml = MovieList.getInstance();
 
-    MovieExporter exporter = new MovieExporter("templates" + File.separator + "ListExampleHtml");
-    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleHtml");
-    exporter = new MovieExporter("templates" + File.separator + "ListExampleCsv");
-    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleCsv");
-    exporter = new MovieExporter("templates" + File.separator + "ListExampleXml");
-    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleXml");
+    MovieExporter exporter = new MovieExporter(Paths.get("templates", "ListExampleHtml"));
+    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleHtml"));
+    exporter = new MovieExporter(Paths.get("templates", "ListExampleCsv"));
+    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleCsv"));
+    exporter = new MovieExporter(Paths.get("templates", "ListExampleXml"));
+    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleXml"));
 
     MovieModuleManager.getInstance().shutDown();
   }
@@ -32,10 +32,10 @@ public class JmteTest {
 
     MovieModuleManager.getInstance().startUp();
     MovieList ml = MovieList.getInstance();
-    MovieExporter exporter = new MovieExporter("templates" + File.separator + "DetailExampleHtml");
-    exporter.export(ml.getMovies(), "export" + File.separator + "DetailExampleHtml");
-    exporter = new MovieExporter("templates" + File.separator + "DetailExample2Html");
-    exporter.export(ml.getMovies(), "export" + File.separator + "DetailExample2Html");
+    MovieExporter exporter = new MovieExporter(Paths.get("templates", "DetailExampleHtml"));
+    exporter.export(ml.getMovies(), Paths.get("export", "DetailExampleHtml"));
+    exporter = new MovieExporter(Paths.get("templates", "DetailExample2Html"));
+    exporter.export(ml.getMovies(), Paths.get("export", "DetailExample2Html"));
 
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();

@@ -26,7 +26,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -894,9 +895,9 @@ public class ImageChooserDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-      if (file != null && file.exists() && file.isFile()) {
-        String fileName = file.getPath();
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
+      if (file != null && Files.isRegularFile(file)) {
+        String fileName = file.toAbsolutePath().toString();
         imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);
         task.cancel(true);

@@ -22,6 +22,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1343,13 +1345,13 @@ public class TvShow extends MediaEntity {
    * 
    * @return the images to cache
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
 
     for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 
@@ -1425,7 +1427,7 @@ public class TvShow extends MediaEntity {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+    return Utils.deleteDirectorySafely(Paths.get(getPath()), getDataSource());
   }
 
   /**

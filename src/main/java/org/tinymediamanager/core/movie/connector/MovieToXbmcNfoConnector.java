@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,7 +51,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -62,6 +62,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -219,8 +220,8 @@ public class MovieToXbmcNfoConnector {
 
     // load existing NFO if possible
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
-      File file = mf.getFile();
-      if (file.exists()) {
+      Path file = mf.getFileAsPath();
+      if (Files.exists(file)) {
         try {
           xbmc = parseNFO(file);
         }
@@ -469,14 +470,14 @@ public class MovieToXbmcNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-        File f = new File(movie.getPath(), nfoFilename);
-        FileUtils.write(f, sb, "UTF-8");
+        Path f = movie.getPathNIO().resolve(nfoFilename);
+        Utils.writeStringToFile(f, sb.toString());
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
       }
       catch (Exception e) {
-        LOGGER.error("setData " + movie.getPath() + File.separator + nfoFilename, e);
+        LOGGER.error("setData " + movie.getPathNIO().resolve(nfoFilename), e);
         MessageManager.instance
             .pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -496,7 +497,7 @@ public class MovieToXbmcNfoConnector {
    *          the nfo filename
    * @return the newly created Movie instance
    */
-  public static Movie getData(File nfoFile) {
+  public static Movie getData(Path nfoFile) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
       return null;
@@ -535,7 +536,7 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPath());
+        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPathNIO());
       }
 
       if (StringUtils.isNotBlank(xbmc.thumb)) {
@@ -685,11 +686,11 @@ public class MovieToXbmcNfoConnector {
 
     }
     catch (UnmarshalException e) {
-      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e.getMessage());
+      LOGGER.error("getData " + nfoFile, e.getMessage());
       return null;
     }
     catch (Exception e) {
-      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e);
+      LOGGER.error("getData " + nfoFile, e);
       return null;
     }
 
@@ -701,7 +702,7 @@ public class MovieToXbmcNfoConnector {
     return movie;
   }
 
-  protected static MovieToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+  protected static MovieToXbmcNfoConnector parseNFO(Path nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
@@ -711,7 +712,7 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = null;
     Reader in = null;
     try {
-      in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
@@ -726,7 +727,7 @@ public class MovieToXbmcNfoConnector {
 
     if (xbmc == null) {
       // now trying to parse it via string
-      String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+      String completeNFO = Utils.readFileToString(nfoFile).trim().replaceFirst("^([\\W]+)<", "<");
       Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
       if (matcher.find()) {
         completeNFO = matcher

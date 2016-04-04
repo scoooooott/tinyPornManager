@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,9 +122,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * (re)sets the path (when renaming tv show/season folder).<br>
    * Exchanges the beginning path from oldPath with newPath<br>
    */
-  public void replacePathForRenamedFolder(File oldPath, File newPath) {
-    String p = getPath();
-    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
+  public void replacePathForRenamedFolder(Path oldPath, Path newPath) {
+    String p = getPathNIO().toAbsolutePath().toString();
+    p = p.replace(oldPath.toAbsolutePath().toString(), newPath.toAbsolutePath().toString());
     setPath(p);
   }
 
@@ -743,13 +744,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * 
    * @return the images to cache
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
 
     for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 

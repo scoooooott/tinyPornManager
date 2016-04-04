@@ -25,6 +25,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -198,26 +201,30 @@ public class Settings extends AbstractModelObject {
       // upgrade/move into own config dir
       // need to do here, since this is called quite in the beginning
 
-      File cfgFolder = new File("config"); // old impl
-      if (cfgFolder.exists() && cfgFolder.isDirectory()) {
+      Path cfgFolder = Paths.get("config"); // old impl
+      if (Files.isDirectory(cfgFolder)) {
         try {
-          Utils.moveDirectorySafe(cfgFolder, new File(".", folder));
+          Utils.moveDirectorySafe(cfgFolder, Paths.get(folder));
         }
         catch (IOException e) {
           LOGGER.warn("error migrating config folder");
         }
       }
 
-      cfgFolder = new File(folder);
-      if (!cfgFolder.exists()) {
-        cfgFolder.mkdir(); // don't care
+      cfgFolder = Paths.get(folder);
+      if (Files.notExists(cfgFolder)) {
+        try {
+          Files.createDirectories(cfgFolder);
+        }
+        catch (IOException e) {
+          // ignore
+        }
       }
 
-      File oldCfg = new File(CONFIG_FILE);
-      if (oldCfg.exists() && oldCfg.isFile()) {
+      Path oldCfg = Paths.get(CONFIG_FILE);
+      if (Files.isRegularFile(oldCfg)) {
         try {
-          File newCfg = new File(folder, CONFIG_FILE);
-          Utils.moveFileSafe(oldCfg, newCfg);
+          Utils.moveFileSafe(oldCfg, cfgFolder.resolve(CONFIG_FILE));
         }
         catch (IOException e) {
           LOGGER.warn("error migrating config.xml");

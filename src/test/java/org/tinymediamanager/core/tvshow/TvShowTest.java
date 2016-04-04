@@ -15,9 +15,17 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.nio.file.Paths;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 
 /**
  * The Class TvShowTest.
@@ -25,6 +33,77 @@ import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatc
  * @author Manuel Laggner
  */
 public class TvShowTest {
+
+  /**
+   * Test tv shows.
+   */
+  @Test
+  public void testTvShows() {
+    try {
+      TmmModuleManager.getInstance().startUp();
+      TvShowModuleManager.getInstance().startUp();
+      TvShowList instance = TvShowList.getInstance();
+
+      for (TvShow show : instance.getTvShows()) {
+        System.out.println(show.getTitle());
+        for (TvShowSeason season : show.getSeasons()) {
+          System.out.println("Season " + season.getSeason());
+          for (MediaFile mf : season.getMediaFiles()) {
+            System.out.println(mf.toString());
+          }
+        }
+      }
+
+      TvShowModuleManager.getInstance().shutDown();
+      TmmModuleManager.getInstance().shutDown();
+    }
+    catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  /**
+   * Test TV renamer
+   * 
+   * @throws Exception
+   */
+  @Test
+  public void testRenamerParams() throws Exception {
+    // setup dummy
+    MediaFile dmf = new MediaFile(Paths.get("/path/to", "video.avi"));
+
+    TmmModuleManager.getInstance().startUp();
+    TvShowModuleManager.getInstance().startUp();
+
+    TvShow show = new TvShow();
+    show.setTitle("showname");
+
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle("episodetitle2");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.addToMediaFiles(dmf);
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    ep = new TvShowEpisode();
+    ep.setTitle("3rd episodetitle");
+    ep.setSeason(1);
+    ep.setEpisode(3);
+    ep.addToMediaFiles(dmf);
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    TvShowList.getInstance().addTvShow(show);
+    // setup done
+
+    // display renamed EP name :)
+    System.out.println(TvShowRenamer.createDestination(Globals.settings.getTvShowSettings().getRenamerFilename(), show, show.getEpisodes()));
+    System.out.println(TvShowRenamer.generateFilename(show, dmf));
+
+    TvShowModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
+  }
 
   /**
    * Test episode matching.
@@ -36,6 +115,7 @@ public class TvShowTest {
     // ************************************************************************
     // various real world examples
     Assert.assertEquals("S:1 E:1", detectEpisode("TheShowName S01E01 Episode Name (1920x1080) [UploaderTag].mp4"));
+    Assert.assertEquals("S:8 E:1", detectEpisode("BlBlub - S08E01 - Messy S08E01 - Messy.mp4"));
     Assert.assertEquals("S:2 E:17", detectEpisode("Brooklyn Nine-Nine S02E17 HDTV x264 AAC E-Subs [GWC].mp4"));
     Assert.assertEquals("S:2 E:4", detectEpisode("Its Always Sunny In Philadelphia Season 02 Episode 04 Charlie Gets Crippled-1.mp4"));
     Assert.assertEquals("S:1 E:4", detectEpisode("Season 1/04 Charlie Has Cancer-1.mp4"));

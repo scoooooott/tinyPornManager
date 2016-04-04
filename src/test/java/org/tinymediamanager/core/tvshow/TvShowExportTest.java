@@ -1,6 +1,6 @@
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.tinymediamanager.core.TmmModuleManager;
@@ -13,11 +13,9 @@ public class TvShowExportTest {
     TmmModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
     TvShowList list = TvShowList.getInstance();
-    // TvShowExporter exporter = new TvShowExporter("templates" + File.separator + "TvShowListExampleHtml");
-    // exporter.export(list.getTvShows(), "export" + File.separator + "TvShowListExampleHtml");
 
-    TvShowExporter exporter = new TvShowExporter("templates" + File.separator + "TvShowDetailExampleHtml");
-    exporter.export(list.getTvShows(), "export" + File.separator + "TvShowDetailExampleHtml");
+    TvShowExporter exporter = new TvShowExporter(Paths.get("templates", "TvShowDetailExampleHtml"));
+    exporter.export(list.getTvShows(), Paths.get("target", "export", "TvShowDetailExampleHtml"));
 
     MovieModuleManager.getInstance().shutDown();
   }
