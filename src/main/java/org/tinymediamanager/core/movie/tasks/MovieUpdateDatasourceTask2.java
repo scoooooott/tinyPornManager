@@ -158,10 +158,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
         rootList.clear();
         for (Path path : newMovieDirs) {
-          searchAndParse(path, Integer.MAX_VALUE);
+          searchAndParse(Paths.get(ds), path, Integer.MAX_VALUE);
         }
         for (Path path : existingMovieDirs) {
-          searchAndParse(path, Integer.MAX_VALUE);
+          searchAndParse(Paths.get(ds), path, Integer.MAX_VALUE);
         }
         if (rootFiles.size() > 0) {
           submitTask(new parseMultiMovieDirTask(Paths.get(ds), Paths.get(ds), rootFiles));
@@ -988,9 +988,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   // detects movieRootDir (in case of stacked/disc folder)
   // and starts parsing directory immediately
   // **************************************
-  public void searchAndParse(Path folder, int deep) {
+  public void searchAndParse(Path datasource, Path folder, int deep) {
     folder = folder.toAbsolutePath();
-    SearchAndParseVisitor visitor = new SearchAndParseVisitor(folder);
+    SearchAndParseVisitor visitor = new SearchAndParseVisitor(datasource);
     try {
       Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
     }
@@ -1000,9 +1000,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   private class SearchAndParseVisitor implements FileVisitor<Path> {
-    private boolean           filesFound    = false;
     private Path              datasource;
     private ArrayList<String> unstackedRoot = new ArrayList<String>(); // only for folder stacking
+    private HashSet<Path>     videofolders  = new HashSet<Path>();     // all found video folders
 
     protected SearchAndParseVisitor(Path datasource) {
       this.datasource = datasource;
@@ -1014,7 +1014,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (attr.isRegularFile()) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
-          this.filesFound = true;
+          videofolders.add(file.getParent());
         }
       }
       return CONTINUE;
@@ -1039,8 +1039,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (cancel) {
         return TERMINATE;
       }
-      if (this.filesFound == true) {
 
+      if (this.videofolders.contains(dir)) {
         boolean update = true;
         // quick fix for folder stacking
         // name = stacking marker & parent has already been processed - skip
@@ -1054,11 +1054,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             unstackedRoot.add(dir.getParent().toString());
           }
         }
-
         if (update) {
+          // this.videofolders.remove(dir);
           submitTask(new FindMovieTask(dir, datasource));
         }
-        this.filesFound = false;
       }
       return CONTINUE;
     }
