@@ -82,12 +82,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private MovieList                   movieList;
   private HashSet<File>               filesFound       = new HashSet<File>();
 
+  @Deprecated
   public MovieUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
   }
 
+  @Deprecated
   public MovieUpdateDatasourceTask(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     movieList = MovieList.getInstance();

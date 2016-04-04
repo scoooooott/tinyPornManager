@@ -158,10 +158,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
         rootList.clear();
         for (Path path : newMovieDirs) {
-          searchAndParse(Paths.get(ds), path, Integer.MAX_VALUE);
+          searchAndParse(Paths.get(ds).toAbsolutePath(), path, Integer.MAX_VALUE);
         }
         for (Path path : existingMovieDirs) {
-          searchAndParse(Paths.get(ds), path, Integer.MAX_VALUE);
+          searchAndParse(Paths.get(ds).toAbsolutePath(), path, Integer.MAX_VALUE);
         }
         if (rootFiles.size() > 0) {
           submitTask(new parseMultiMovieDirTask(Paths.get(ds), Paths.get(ds), rootFiles));
@@ -1014,6 +1014,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (attr.isRegularFile()) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
+          if (file.getParent().getFileName().toString().equals("STREAM")) {
+            return CONTINUE; // BD folder has an additional parent video folder - ignore it here
+          }
           videofolders.add(file.getParent());
         }
       }
