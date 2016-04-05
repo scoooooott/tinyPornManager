@@ -197,11 +197,8 @@ public class UpgradeTasks {
       LOGGER.info("Performing database upgrade tasks to version 2.8");
       // reevaluate movie stacking (without the need for UDS) and save
       for (Movie movie : movieList.getMovies()) {
-        boolean stack = movie.isStacked();
         movie.reEvaluateStacking();
-        if (movie.isStacked() != stack) {
-          movie.saveToDb();
-        }
+        movie.saveToDb();
       }
     }
   }
