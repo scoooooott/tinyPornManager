@@ -164,7 +164,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           searchAndParse(Paths.get(ds).toAbsolutePath(), path, Integer.MAX_VALUE);
         }
         if (rootFiles.size() > 0) {
-          submitTask(new parseMultiMovieDirTask(Paths.get(ds), Paths.get(ds), rootFiles));
+          submitTask(new parseMultiMovieDirTask(Paths.get(ds).toAbsolutePath(), Paths.get(ds).toAbsolutePath(), rootFiles));
         }
 
         waitForCompletionOrCancel();

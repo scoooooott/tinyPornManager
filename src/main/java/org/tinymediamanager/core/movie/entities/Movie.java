@@ -1148,7 +1148,12 @@ public class Movie extends MediaEntity {
   public String getNfoFilename(MovieNfoNaming nfo) {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getNfoFilename(nfo, mfs.get(0).getFilename());
+      String name = mfs.get(0).getFilename();
+      if (isStacked()) {
+        // when movie IS stacked, remove stacking marker, else keep it!
+        name = Utils.cleanStackingMarkers(name);
+      }
+      return getNfoFilename(nfo, name);
     }
     else {
       return getNfoFilename(nfo, ""); // no video files
@@ -1161,7 +1166,7 @@ public class Movie extends MediaEntity {
    * @param nfo
    *          the nfo filenaming
    * @param newMovieFilename
-   *          the new/desired movie filename
+   *          the new/desired movie filename (stacking marker should already be set correct here!)
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo, String newMovieFilename) {
@@ -1170,7 +1175,7 @@ public class Movie extends MediaEntity {
       case FILENAME_NFO:
         if (isDisc()) {
           // if filename is activated, we generate them accordingly MF(1)
-          // but if disc, fixtate this
+          // but if disc, fixate this
           if (Files.exists(getPathNIO().resolve("VIDEO_TS.ifo")) || Files.exists(getPathNIO().resolve("VIDEO_TS"))) {
             filename = "VIDEO_TS.nfo";
           }
@@ -1182,8 +1187,8 @@ public class Movie extends MediaEntity {
           }
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
-          filename += movieFilename + ".nfo"; // w/o stacking information
+          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
+          filename += movieFilename + ".nfo";
         }
         break;
       case MOVIE_NFO:

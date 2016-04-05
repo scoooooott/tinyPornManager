@@ -548,16 +548,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return
    */
   public String getFilenameWithoutStacking() {
-    String fname = "";
     if (stackingMarker.isEmpty()) {
-      // no stacking, remove all occurences
-      fname = Utils.cleanStackingMarkers(filename);
+      // no stacking, remove all occurrences
+      // fname = Utils.cleanStackingMarkers(filename);
+      // NOO, keep em!!! "mockingjay part1" might be unstacked, so keep the part1 !!!
+      return filename;
     }
     else {
-      // stacking, so just remove knwon marker
-      fname = filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
+      // stacking, so just remove known marker
+      return filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
     }
-    return fname;
   }
 
   public void setFilename(String newValue) {
