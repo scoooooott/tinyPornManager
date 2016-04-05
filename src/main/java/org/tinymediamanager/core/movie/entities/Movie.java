@@ -1867,8 +1867,8 @@ public class Movie extends MediaEntity {
    */
   public void reEvaluateStacking() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs.size() > 1) {
-      // ok, more video files means stacking
+    if (mfs.size() > 1 && !isDisc()) {
+      // ok, more video files means stacking (if not a disc folder)
       this.setStacked(true);
       for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
         mf.detectStackingInformation();
