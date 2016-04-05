@@ -116,8 +116,8 @@ public class UtilsTest {
 
   @Test
   public void detectStackingMarkers() {
-    assertEqual("Easy A", FilenameUtils.getBaseName(Utils.cleanStackingMarkers("Easy A.avi"))); // not a stacking format!
 
+    assertEqual("Easy A", FilenameUtils.getBaseName(Utils.cleanStackingMarkers("Easy A.avi"))); // not a stacking format!
     assertEqual("", Utils.getStackingMarker("2 Guns (2013) x264-720p DTS-6ch.mkv"));
 
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");
@@ -141,8 +141,6 @@ public class UtilsTest {
     assertEqual(Utils.getStackingMarker("Movie Name CD 1 (2013).mkv"), ""); // no inbetween matching
     assertEqual(Utils.getStackingMarker("Movie Name 3of4 (2013).mkv"), ""); // no inbetween matching
     assertEqual(Utils.getStackingMarker("Movie Name Part 4 (2013)-Part 1.mkv"), "Part 1"); // no inbetween matching, but ending matching
-
-    assertEqual(Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"), "dvd1"); // folder - check without extension
 
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-cd1.mkv"), 1);
     assertEqual(Utils.getStackingNumber("Movie Name (2013)-PaRt1.mkv"), 1);
@@ -180,6 +178,15 @@ public class UtilsTest {
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-2.mkv"), "Movie Name (2013)-2.mkv"); // nah
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-a.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-b.mkv"), "Movie Name (2013).mkv");
+
+    // FOLDER
+    assertEqual(Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"), "dvd1"); // folder - check without extension
+    assertEqual(Utils.getFolderStackingMarker("moviename CD1"), "CD1");
+    assertEqual(Utils.getFolderStackingMarker("CD1"), "CD1");
+    assertEqual(Utils.getFolderStackingMarker("moviename CD1 whatever"), "CD1 whatever"); // there "should" be nothing after pattern
+    assertEqual(Utils.cleanFolderStackingMarkers("CD1"), "");
+    assertEqual(Utils.cleanFolderStackingMarkers("moviename CD1"), "moviename");
+    assertEqual(Utils.cleanFolderStackingMarkers("moviename CD1 whatever"), "moviename whatever");
 
   }
 

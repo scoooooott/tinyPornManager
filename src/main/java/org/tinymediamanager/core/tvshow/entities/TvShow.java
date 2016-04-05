@@ -62,6 +62,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShow.
@@ -81,8 +82,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private String                             writer                = "";
   @JsonProperty
   private int                                runtime               = 0;
-  @JsonProperty
-  private int                                votes                 = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                               firstAired            = null;
@@ -1121,27 +1120,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public void setCertification(Certification newValue) {
     this.certification = newValue;
     firePropertyChange(CERTIFICATION, null, newValue);
-  }
-
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
-  public int getVotes() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param newValue
-   *          the new votes
-   */
-  public void setVotes(int newValue) {
-    int oldValue = this.votes;
-    this.votes = newValue;
-    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**

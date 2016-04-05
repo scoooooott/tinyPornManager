@@ -37,6 +37,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
@@ -293,6 +294,7 @@ public class TinyMediaManager {
             updateProgress(g2, "loading plugins", 50);
             splash.update();
           }
+          checkPluginLocation();
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
           if (ReleaseInfo.isSvnBuild()) {
@@ -555,5 +557,24 @@ public class TinyMediaManager {
     InputStream is = new ByteArrayInputStream(bArray);
     InputStreamReader reader = new InputStreamReader(is);
     LOGGER.info(text + defaultCharacterEncoding + " | " + reader.getEncoding() + " | " + Charset.defaultCharset());
+  }
+
+  /**
+   * Plugins cannot load, when path contains a "+" sign
+   */
+  private static void checkPluginLocation() {
+    String path = Paths.get(".").toAbsolutePath().normalize().toString();
+    boolean fail = path.contains("+");
+    if (fail) {
+      LOGGER.error(path);
+      String msg = "\n=====================================================\n" + "Cannot load plugins!\n"
+          + "Installation path contains a \"+\" sign!\n" + "Please move TMM to another folder!\n"
+          + "=====================================================\n";
+      LOGGER.error(msg);
+      if (!GraphicsEnvironment.isHeadless()) {
+        JOptionPane.showMessageDialog(null, msg);
+      }
+      System.exit(1);
+    }
   }
 }
