@@ -148,6 +148,7 @@ public class Movie extends MediaEntity {
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
   private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
+  @JsonProperty
   private boolean                               stacked                    = false;
 
   /**

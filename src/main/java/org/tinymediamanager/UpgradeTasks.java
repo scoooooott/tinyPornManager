@@ -191,6 +191,19 @@ public class UpgradeTasks {
         tvShow.saveToDb();
       }
     }
+
+    // upgrade to v2.8
+    if (StrgUtils.compareVersion(v, "2.8") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8");
+      // reevaluate movie stacking (without the need for UDS) and save
+      for (Movie movie : movieList.getMovies()) {
+        boolean stack = movie.isStacked();
+        movie.reEvaluateStacking();
+        if (movie.isStacked() != stack) {
+          movie.saveToDb();
+        }
+      }
+    }
   }
 
   /**
