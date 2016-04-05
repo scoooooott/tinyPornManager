@@ -1,7 +1,22 @@
+/*
+ * Copyright 2012 - 2015 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.components;
 
-import java.awt.Dimension;
-import java.awt.LayoutManager;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
@@ -16,17 +31,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
+/**
+ * The class TaskListComponent is used to show one task in the
+ * {@link TaskListPopup}
+ * 
+ * @author Manuel Laggner
+ */
 public class TaskListComponent extends JPanel {
-  private static final long           serialVersionUID  = -6088880093610800005L;
-  private static final int            UPPERMARGIN       = 3;
-  private static final int            LEFTMARGIN        = 2;
-  private static final int            BOTTOMMARGIN      = 2;
-  private static final int            BETWEENTEXTMARGIN = 3;
-  private static final ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -6088880093610800005L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  static final int                    ITEM_WIDTH        = 400;
+  static final int                    ITEM_WIDTH       = 400;
 
   private TmmTaskHandle               taskHandle;
 
@@ -35,19 +53,15 @@ public class TaskListComponent extends JPanel {
   private JProgressBar                bar;
   private JButton                     closeButton;
 
-  private int                         mainHeight;
-  private int                         dynaHeight;
-  private int                         buttonWidth;
-
-  public TaskListComponent(TmmTaskHandle handle) {
+  private TaskListComponent() {
     setFocusable(true);
     setRequestFocusEnabled(true);
-    setLayout(new CustomLayout());
+    setLayout(new BorderLayout(5, 0));
     setBorder(BorderFactory.createEmptyBorder());
-
-    this.taskHandle = handle;
+    setOpaque(false);
 
     mainLabel = new JLabel();
+    TmmFontHelper.changeFont(mainLabel, 1.167, Font.BOLD);
     dynaLabel = new JLabel();
 
     bar = new JProgressBar();
@@ -59,25 +73,32 @@ public class TaskListComponent extends JPanel {
     closeButton.setContentAreaFilled(false);
     closeButton.setFocusable(false);
 
-    // start figure out height
-    mainLabel.setText("XYZ");
-    dynaLabel.setText("XYZ");
-    mainHeight = Math.max(mainLabel.getPreferredSize().height, closeButton.getPreferredSize().height);
-    dynaHeight = dynaLabel.getPreferredSize().height;
-    buttonWidth = closeButton.getPreferredSize().width;
-    mainLabel.setText(null);
-    dynaLabel.setText(null);
-    // end figure out height
+    add(mainLabel, BorderLayout.NORTH);
+    add(bar, BorderLayout.CENTER);
+    add(closeButton, BorderLayout.EAST);
+    add(dynaLabel, BorderLayout.SOUTH);
+  }
 
-    add(mainLabel);
-    add(bar);
-    add(closeButton);
-    add(dynaLabel);
+  TaskListComponent(String staticText) {
+    this();
+    mainLabel.setText(staticText);
+    bar.setVisible(false);
+    closeButton.setVisible(false);
+    dynaLabel.setVisible(false);
+    taskHandle = null;
+  }
 
+  public TaskListComponent(TmmTaskHandle handle) {
+    this();
+    this.taskHandle = handle;
     updateTaskInformation();
   }
 
-  public void updateTaskInformation() {
+  void updateTaskInformation() {
+    if (taskHandle == null) {
+      return;
+    }
+
     mainLabel.setText(taskHandle.getTaskName());
 
     switch (taskHandle.getState()) {
@@ -87,20 +108,20 @@ public class TaskListComponent extends JPanel {
           dynaLabel.setText(taskHandle.getTaskDescription());
         }
         else {
-          dynaLabel.setText(BUNDLE.getString("task.running"));
+          dynaLabel.setText(BUNDLE.getString("task.running")); //$NON-NLS-1$
         }
         break;
 
       case QUEUED:
-        dynaLabel.setText(BUNDLE.getString("task.queued"));
+        dynaLabel.setText(BUNDLE.getString("task.queued")); //$NON-NLS-1$
         break;
 
       case CANCELLED:
-        dynaLabel.setText(BUNDLE.getString("task.cancelled"));
+        dynaLabel.setText(BUNDLE.getString("task.cancelled")); //$NON-NLS-1$
         break;
 
       case FINISHED:
-        dynaLabel.setText(BUNDLE.getString("task.finished"));
+        dynaLabel.setText(BUNDLE.getString("task.finished")); //$NON-NLS-1$
         break;
     }
 
@@ -123,51 +144,11 @@ public class TaskListComponent extends JPanel {
     return taskHandle;
   }
 
-  /**************************************************************************
-   * helper classes
-   **************************************************************************/
-  private class CustomLayout implements LayoutManager {
-
-    @Override
-    public void addLayoutComponent(String name, java.awt.Component comp) {
-    }
-
-    @Override
-    public Dimension preferredLayoutSize(java.awt.Container parent) {
-      int height = UPPERMARGIN + mainHeight + BETWEENTEXTMARGIN + dynaHeight + BOTTOMMARGIN;
-      return new Dimension(ITEM_WIDTH, height);
-    }
-
-    @Override
-    public void layoutContainer(java.awt.Container parent) {
-      int parentWidth = parent.getWidth();
-      int offset = parentWidth - buttonWidth - LEFTMARGIN;
-      if (closeButton != null) {
-        closeButton.setBounds(offset, UPPERMARGIN, buttonWidth, mainHeight);
-      }
-
-      // have the bar approx 30 percent of the width
-      int barOffset = offset - (ITEM_WIDTH / 3);
-      bar.setBounds(barOffset, UPPERMARGIN, offset - barOffset - LEFTMARGIN, mainHeight);
-      mainLabel.setBounds(LEFTMARGIN, UPPERMARGIN, barOffset - LEFTMARGIN, mainHeight);
-      dynaLabel.setBounds(LEFTMARGIN, mainHeight + UPPERMARGIN + BETWEENTEXTMARGIN, parentWidth - LEFTMARGIN, dynaHeight);
-    }
-
-    @Override
-    public Dimension minimumLayoutSize(java.awt.Container parent) {
-      return preferredLayoutSize(parent);
-    }
-
-    @Override
-    public void removeLayoutComponent(java.awt.Component comp) {
-    }
-  }
-
   private class CancelAction extends AbstractAction {
     private static final long serialVersionUID = -2634569716059018131L;
 
-    public CancelAction() {
-      putValue(SMALL_ICON, IconManager.PROCESS_STOP);
+    private CancelAction() {
+      putValue(SMALL_ICON, IconManager.CANCEL);
     }
 
     @Override

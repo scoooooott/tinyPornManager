@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -99,6 +100,7 @@ public class IconManager {
   // Material icons normal
   public final static ImageIcon            ADD                    = createMaterialFontIcon('\uE145', 16);
   public final static ImageIcon            BUG                    = createMaterialFontIcon('\uE868', 16);
+  public final static ImageIcon            CANCEL                 = createMaterialFontIcon('\uE14C', 16);
   public final static ImageIcon            FEEDBACK               = createMaterialFontIcon('\uE158', 16);
   public final static ImageIcon            EDIT                   = createMaterialFontIcon('\uE150', 16);
   public final static ImageIcon            REMOVE                 = createMaterialFontIcon('\uE15B', 16);
@@ -127,10 +129,11 @@ public class IconManager {
 
   /**
    * loads an image from the given url
-   * 
+   *
    * @param url
    *          the url pointing to the image
-   * @return the image or an empty image (1x1 px transparent) if it is not loadable
+   * @return the image or an empty image (1x1 px transparent) if it is not
+   *         loadable
    */
   public static ImageIcon loadImageFromURL(URL url) {
     URI uri = null;
@@ -171,20 +174,20 @@ public class IconManager {
 
   /**
    * create a image off the material icon font
-   * 
+   *
    * @param iconId
    *          the icon id
    * @param size
    *          the desired font size
    * @return
    */
-  private static ImageIcon createMaterialFontIcon(char iconId, int size) {
-    return createMaterialFontIcon(iconId, size, false);
+  public static ImageIcon createMaterialFontIcon(char iconId, int size) {
+    return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
   }
 
   /**
    * create a image off the material icon font
-   * 
+   *
    * @param iconId
    *          the icon id
    * @param size
@@ -193,7 +196,27 @@ public class IconManager {
    *          inverse color
    * @return
    */
-  private static ImageIcon createMaterialFontIcon(char iconId, int size, boolean inverse) {
+  public static ImageIcon createMaterialFontIcon(char iconId, int size, boolean inverse) {
+    if (inverse) {
+      return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.background"));
+    }
+    else {
+      return createMaterialFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
+    }
+  }
+
+  /**
+   * create a image off the material icon font
+   *
+   * @param iconId
+   *          the icon id
+   * @param size
+   *          the desired font size
+   * @param color
+   *          the color to create the icon in
+   * @return
+   */
+  public static ImageIcon createMaterialFontIcon(char iconId, int size, Color color) {
     try {
       Font materialFont = new Font("Material Icons", Font.PLAIN, size);
 
@@ -212,12 +235,7 @@ public class IconManager {
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
       g2.setFont(materialFont);
-      if (inverse) {
-        g2.setColor(UIManager.getColor("Label.background"));
-      }
-      else {
-        g2.setColor(UIManager.getColor("Label.foreground"));
-      }
+      g2.setColor(color);
 
       int sy = size - iconOffset;
       g2.drawString(String.valueOf(iconId), 0, sy);

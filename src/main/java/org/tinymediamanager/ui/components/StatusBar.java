@@ -67,6 +67,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class StatusBar extends JPanel implements TmmTaskListener {
   private static final long                     serialVersionUID = -6375900257553323558L;
   /**

@@ -37,6 +37,7 @@ import org.tinymediamanager.core.threading.TmmTaskHandle;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class PopupPane extends JScrollPane {
   private static final long          serialVersionUID = 4151412495928010232L;
 

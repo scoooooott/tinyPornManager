@@ -27,7 +27,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -41,12 +43,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.threading.TmmTaskHandle;
+import org.tinymediamanager.core.threading.TmmTaskListener;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -60,8 +66,10 @@ import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.components.TaskListPopup;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
+import org.tinymediamanager.ui.images.LoadingSpinner;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -71,18 +79,18 @@ import com.jtattoo.plaf.BaseRootPaneUI;
 
 /**
  * The Class ToolbarPanel.
- * 
+ *
  * @author Manuel Laggner
  */
 public class ToolbarPanel extends JPanel {
-  private static final long           serialVersionUID = 7969400170662870244L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
+  private static final long           serialVersionUID  = 7969400170662870244L;
+  private static final ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());
+  private final static Logger         LOGGER            = LoggerFactory.getLogger(ToolbarPanel.class);            // $NON-NLS-1$
 
   private JButton                     btnSearch;
   private JButton                     btnEdit;
   private JButton                     btnUpdate;
-  private JButton                     btnDownload;
+  private JButton                     btnTasks;
   private JButton                     btnExport;
   private JButton                     btnTools;
   private JButton                     btnSettings;
@@ -103,18 +111,19 @@ public class ToolbarPanel extends JPanel {
   private Action                      editAction;
   private Action                      updateAction;
   private Action                      exportAction;
-  private Action                      settingsAction   = new SettingsAction();
-  private Action                      aboutAction      = new AboutAction();
-  private Action                      donateAction     = new DonateAction();
+  private Action                      settingsAction    = new SettingsAction();
+  private Action                      aboutAction       = new AboutAction();
+  private Action                      donateAction      = new DonateAction();
 
   private JPopupMenu                  updatePopupMenu;
   private JPopupMenu                  searchPopupMenu;
   private JPopupMenu                  editPopupMenu;
-  private JPopupMenu                  toolsPopupMenu   = buildToolsMenu();
+  private JPopupMenu                  toolsPopupMenu    = buildToolsMenu();
+  private JPopupMenu                  taskListPopupMenu = new TaskListPopup();
 
-  private int                         arrowSize        = 10;
-  private Color                       arrowColor       = Color.GRAY;
-  private Color                       arrowColorHover  = Color.WHITE;
+  private int                         arrowSize         = 10;
+  private Color                       arrowColor        = Color.GRAY;
+  private Color                       arrowColorHover   = Color.WHITE;
   private ImageIcon                   menuImage;
   private ImageIcon                   menuImageHover;
 
@@ -157,8 +166,8 @@ public class ToolbarPanel extends JPanel {
     btnSettings = createButton("", IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
     panelCenter.add(btnSettings, "16, 1, center, bottom");
 
-    btnDownload = createButton("", IconManager.TOOLBAR_DOWNLOAD, IconManager.TOOLBAR_DOWNLOAD_HOVER);
-    panelCenter.add(btnDownload, "18, 1, center, bottom");
+    btnTasks = createTaskButton();
+    panelCenter.add(btnTasks, "18, 1, center, bottom");
 
     btnAbout = createButton("", IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER);
     panelCenter.add(btnAbout, "20, 1, center, bottom");
@@ -278,9 +287,85 @@ public class ToolbarPanel extends JPanel {
     return button;
   }
 
+  private JButton createTaskButton() {
+    final JButton button = new JButton("");
+    final LoadingSpinner iconSpinner = new LoadingSpinner(30, button);
+    button.setIcon(iconSpinner);
+    button.setVerticalTextPosition(SwingConstants.BOTTOM);
+    button.setHorizontalTextPosition(SwingConstants.CENTER);
+    button.setOpaque(false);
+    button.setBorder(BorderFactory.createEmptyBorder());
+    button.putClientProperty("flatButton", Boolean.TRUE);
+    button.updateUI();
+    button.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseReleased(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mousePressed(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mouseExited(MouseEvent arg0) {
+        iconSpinner.resetCustomColor();
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent arg0) {
+        iconSpinner.setCustomColors(new Color(255, 161, 0), new Color(255, 122, 0));
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent arg0) {
+        buttonCallback(arg0.getSource());
+      }
+    });
+    TmmTaskListener tmmTaskListener = new TmmTaskListener() {
+      private Set<TmmTaskHandle> activeHandles = new HashSet<>();
+
+      @Override
+      public void processTaskEvent(final TmmTaskHandle task) {
+        // run the updates in EDT
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            // track the task states
+            switch (task.getState()) {
+              case CREATED:
+              case QUEUED:
+              case STARTED:
+                activeHandles.add(task);
+                break;
+
+              case CANCELLED:
+              case FINISHED:
+                activeHandles.remove(task);
+                break;
+            }
+
+            // change the buttons if needed
+            if (!activeHandles.isEmpty()) {
+              // yes -> change the icon to the running icon
+              iconSpinner.start();
+            }
+            else if (activeHandles.isEmpty()) {
+              // no -> change the icon to the idle icon
+              iconSpinner.stop();
+            }
+          }
+        });
+      }
+    };
+    TmmTaskManager.getInstance().addTaskListener(tmmTaskListener);
+
+    return button;
+  }
+
   /**
    * create the texts with a menu in it
    */
+
   private JLabel createMenu(String text) {
     final JLabel label = new JLabel(text, getMenuIndicatorImage(), SwingConstants.CENTER);
     label.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -321,6 +406,7 @@ public class ToolbarPanel extends JPanel {
    * callback method for button clicks (to call the right action)
    */
   private void buttonCallback(Object sender) {
+    // actions
     if (sender == btnSearch && searchAction != null) {
       searchAction.actionPerformed(null);
     }
@@ -341,6 +427,11 @@ public class ToolbarPanel extends JPanel {
     }
     else if (sender == btnDonate && donateAction != null) {
       donateAction.actionPerformed(null);
+    }
+
+    // menus
+    else if (sender == btnTasks && taskListPopupMenu != null) {
+      taskListPopupMenu.show(btnTasks, btnTasks.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), btnTasks.getHeight());
     }
   }
 
@@ -444,9 +535,8 @@ public class ToolbarPanel extends JPanel {
   }
 
   private Image paintMenuImage(boolean hover) {
-    Graphics2D g = null;
     BufferedImage img = new BufferedImage(arrowSize, arrowSize, BufferedImage.TYPE_INT_RGB);
-    g = (Graphics2D) img.createGraphics();
+    Graphics2D g = img.createGraphics();
     g.setColor(hover ? arrowColor : arrowColorHover);
     g.fillRect(0, 0, img.getWidth(), img.getHeight());
     g.setColor(hover ? arrowColorHover : arrowColor);
@@ -455,8 +545,9 @@ public class ToolbarPanel extends JPanel {
     g.dispose();
     // rotate it to face downwards
     img = rotate(img, 90);
+
     BufferedImage dimg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-    g = (Graphics2D) dimg.createGraphics();
+    g = dimg.createGraphics();
     g.setComposite(AlphaComposite.Src);
     g.drawImage(img, null, 0, 0);
     g.dispose();
