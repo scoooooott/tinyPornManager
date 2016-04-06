@@ -16,11 +16,12 @@
 package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
+import javax.swing.*;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.IconManager;
@@ -43,6 +44,7 @@ public class MovieSingleScrapeAction extends AbstractAction {
    * @param withTitle
    *          the with title
    */
+  @Deprecated
   public MovieSingleScrapeAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
@@ -52,11 +54,14 @@ public class MovieSingleScrapeAction extends AbstractAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
+  public MovieSingleScrapeAction(){
+    putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
+    putValue(SMALL_ICON, IconManager.SEARCH);
+    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+  }
+
   @Override
   public void actionPerformed(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());

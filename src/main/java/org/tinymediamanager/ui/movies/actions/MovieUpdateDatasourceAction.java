@@ -16,10 +16,10 @@
 package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -36,6 +36,7 @@ public class MovieUpdateDatasourceAction extends AbstractAction {
   private static final long           serialVersionUID = 6885253964781733478L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  @Deprecated
   public MovieUpdateDatasourceAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
@@ -43,6 +44,14 @@ public class MovieUpdateDatasourceAction extends AbstractAction {
     putValue(SMALL_ICON, IconManager.REFRESH);
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+  }
+
+  public MovieUpdateDatasourceAction() {
+    putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    putValue(SMALL_ICON, IconManager.REFRESH);
+    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }
 
   @Override

@@ -16,11 +16,12 @@
 package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
+import javax.swing.*;
 
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -40,16 +41,12 @@ public class MovieRemoveAction extends AbstractAction {
   public MovieRemoveAction() {
     putValue(SMALL_ICON, IconManager.CROSS);
     putValue(NAME, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // remove selected movies
     MovieList.getInstance().removeMovies(selectedMovies);

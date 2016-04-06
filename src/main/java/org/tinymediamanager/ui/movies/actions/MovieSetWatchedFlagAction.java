@@ -16,11 +16,12 @@
 package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
+import javax.swing.*;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.UTF8Control;
@@ -37,11 +38,12 @@ public class MovieSetWatchedFlagAction extends AbstractAction {
 
   public MovieSetWatchedFlagAction() {
     putValue(NAME, BUNDLE.getString("movie.setwatchedflag")); //$NON-NLS-1$
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    final List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     for (Movie movie : selectedMovies) {
       movie.setWatched(true);

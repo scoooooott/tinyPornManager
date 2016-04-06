@@ -40,14 +40,9 @@ public class MovieRewriteNfoAction extends AbstractAction {
     putValue(NAME, BUNDLE.getString("movie.rewritenfo")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
-    final List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rewrite selected NFOs
     TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {

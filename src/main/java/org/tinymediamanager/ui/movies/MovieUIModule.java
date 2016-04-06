@@ -15,13 +15,11 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.Action;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -29,25 +27,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MainTabbedPane;
-import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
-import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
-import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
-import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
-import org.tinymediamanager.ui.movies.actions.MovieEditAction;
-import org.tinymediamanager.ui.movies.actions.MovieExportAction;
-import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
-import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
-import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
-import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
-import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
-import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
-import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
-import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
-import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
-import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
-import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
-import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
-import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
+import org.tinymediamanager.ui.movies.actions.*;
 import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
 import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
@@ -75,6 +55,8 @@ public class MovieUIModule implements ITmmUIModule {
 
   private final MovieSelectionModel      selectionModel;
 
+  private Map<Class, Action>              actionMap;
+
   private Action                         searchAction;
   private Action                         editAction;
   private Action                         updateAction;
@@ -85,6 +67,8 @@ public class MovieUIModule implements ITmmUIModule {
   private JPopupMenu                     editPopupMenu;
 
   private MovieUIModule() {
+    actionMap = new HashMap<>();
+
     listPanel = new MovieListPanel();
     selectionModel = listPanel.getSelectionModel();
 
@@ -118,6 +102,7 @@ public class MovieUIModule implements ITmmUIModule {
 
     createActions();
     createPopupMenu();
+    registerAccelerators();
 
     listPanel.setPopupMenu(popupMenu);
   }
@@ -134,34 +119,52 @@ public class MovieUIModule implements ITmmUIModule {
   }
 
   private void createActions() {
-    searchAction = new MovieSingleScrapeAction(false);
-    editAction = new MovieEditAction(false);
-    updateAction = new MovieUpdateDatasourceAction(false);
+    searchAction = createAndRegisterAction(MovieSingleScrapeAction.class);
+    editAction = createAndRegisterAction(MovieEditAction.class);
+    updateAction = createAndRegisterAction(MovieUpdateDatasourceAction.class);
+  }
+
+  /**
+   * this factory creates the action and registers the hotkeys for accelerator management
+   * @param actionClass the class of the action
+   * @return the constructed action
+     */
+  private Action createAndRegisterAction(Class actionClass){
+    Action action = null;
+    try {
+      action = (Action)actionClass.newInstance();
+      actionMap.put(actionClass, action);
+      //KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+    } catch (Exception ignored){
+    }
+
+    return action;
   }
 
   private void createPopupMenu() {
     popupMenu = new JPopupMenu();
-    popupMenu.add(new MovieSingleScrapeAction(true));
-    popupMenu.add(new MovieSelectedScrapeAction());
-    popupMenu.add(new MovieSelectedScrapeMetadataAction());
-    popupMenu.add(new MovieAssignMovieSetAction());
+    popupMenu.add(createAndRegisterAction(MovieSingleScrapeAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSelectedScrapeAction.class));
+    popupMenu.add(createAndRegisterAction(MovieUnscrapedScrapeAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSelectedScrapeMetadataAction.class));
+    popupMenu.add(createAndRegisterAction(MovieAssignMovieSetAction.class));
     popupMenu.addSeparator();
-    popupMenu.add(new MovieEditAction(true));
-    popupMenu.add(new MovieBatchEditAction());
-    popupMenu.add(new MovieSetWatchedFlagAction());
-    popupMenu.add(new MovieRewriteNfoAction());
-    popupMenu.add(new MovieRenameAction(true));
-    popupMenu.add(new MovieRenamePreviewAction());
-    popupMenu.add(new MovieMediaInformationAction(true));
-    popupMenu.add(new MovieExportAction());
+    popupMenu.add(createAndRegisterAction(MovieEditAction.class));
+    popupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    popupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
+    popupMenu.add(createAndRegisterAction(MovieRenameAction.class));
+    popupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
+    popupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
+    popupMenu.add(createAndRegisterAction(MovieExportAction.class));
     popupMenu.addSeparator();
-    popupMenu.add(new MovieSyncTraktTvAction());
-    popupMenu.add(new MovieSyncWatchedTraktTvAction());
+    popupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
     popupMenu.addSeparator();
-    popupMenu.add(new MovieClearImageCacheAction());
+    popupMenu.add(createAndRegisterAction(MovieClearImageCacheAction.class));
     popupMenu.addSeparator();
-    popupMenu.add(new MovieRemoveAction());
-    popupMenu.add(new MovieDeleteAction());
+    popupMenu.add(createAndRegisterAction(MovieRemoveAction.class));
+    popupMenu.add(createAndRegisterAction(MovieDeleteAction.class));
 
     // update popup menu
     updatePopupMenu = new JPopupMenu();
@@ -169,7 +172,7 @@ public class MovieUIModule implements ITmmUIModule {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
         updatePopupMenu.removeAll();
-        updatePopupMenu.add(new MovieUpdateDatasourceAction(true));
+        updatePopupMenu.add(createAndRegisterAction(MovieUpdateDatasourceAction.class));
         updatePopupMenu.addSeparator();
         for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
           updatePopupMenu.add(new MovieUpdateSingleDatasourceAction(ds));
@@ -188,21 +191,42 @@ public class MovieUIModule implements ITmmUIModule {
 
     // search popup menu
     searchPopupMenu = new JPopupMenu();
-    searchPopupMenu.add(new MovieSingleScrapeAction(true));
-    searchPopupMenu.add(new MovieSelectedScrapeAction());
-    searchPopupMenu.add(new MovieSelectedScrapeMetadataAction());
+    searchPopupMenu.add(createAndRegisterAction(MovieSingleScrapeAction.class));
+    searchPopupMenu.add(createAndRegisterAction(MovieSelectedScrapeAction.class));
+    searchPopupMenu.add(createAndRegisterAction(MovieUnscrapedScrapeAction.class));
+    searchPopupMenu.add(createAndRegisterAction(MovieSelectedScrapeMetadataAction.class));
 
     // edit popup menu
     editPopupMenu = new JPopupMenu();
-    editPopupMenu.add(new MovieEditAction(true));
-    editPopupMenu.add(new MovieBatchEditAction());
-    editPopupMenu.add(new MovieSetWatchedFlagAction());
-    editPopupMenu.add(new MovieRewriteNfoAction());
-    editPopupMenu.add(new MovieRenameAction(true));
-    editPopupMenu.add(new MovieRenamePreviewAction());
-    editPopupMenu.add(new MovieMediaInformationAction(true));
-
+    editPopupMenu.add(createAndRegisterAction(MovieEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieBatchEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieSetWatchedFlagAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieRewriteNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieRenameAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
+    editPopupMenu.addSeparator();
+    editPopupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
+    editPopupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
   }
+
+  /**
+   * register accelerators
+   */
+  private void registerAccelerators(){
+    for(Map.Entry<Class, Action> entry : actionMap.entrySet()){
+      try {
+        KeyStroke keyStroke = (KeyStroke)entry.getValue().getValue(Action.ACCELERATOR_KEY);
+        if (keyStroke != null) {
+          String actionMapKey = "action" + entry.getKey().getName();
+          listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
+          listPanel.getActionMap().put(actionMapKey, entry.getValue());
+        }
+      } catch (Exception ignored) {
+      }
+    }
+  }
+
 
   public void setFilterMenuVisible(boolean visible) {
     filterPanel.setVisible(visible);
