@@ -13,10 +13,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 
 public class TvShowUpdateDatasourceTaskTest {
   private static String DATA_PATH         = "target/data";
@@ -29,15 +29,22 @@ public class TvShowUpdateDatasourceTaskTest {
     // create a default config file for config access
     Settings.getInstance(DATA_PATH);
     TmmModuleManager.getInstance().startUp();
-    MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
   }
 
   @AfterClass
   public static void tearDownAfterClass() throws Exception {
     TvShowModuleManager.getInstance().shutDown();
-    MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
+  }
+
+  @Test
+  public void udsNew() throws Exception {
+    // just a copy; we might have another test which uses these files
+    FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), new File(DATASOURCE_DEST));
+    TvShowModuleManager.TV_SHOW_SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
+    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
+    task.run();
   }
 
   @Test

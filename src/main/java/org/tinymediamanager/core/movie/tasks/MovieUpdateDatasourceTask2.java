@@ -459,6 +459,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           videoName = mf.getBasename();
         }
       } // end NFO MF loop
+      movie.setNewlyAdded(true);
     } // end first round - we might have a filled movie
 
     if (movie.getTitle().isEmpty()) {
@@ -480,7 +481,6 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     movie.setPath(movieDir.toAbsolutePath().toString());
     movie.setDataSource(dataSource.toString());
     movie.setDateAdded(new Date());
-    movie.setNewlyAdded(true);
 
     movie.findActorImages(); // TODO: find as MediaFiles
     LOGGER.debug("| store movie into DB as: " + movie.getTitle());

@@ -437,7 +437,7 @@ public class MovieList extends AbstractModelObject {
   public synchronized Movie getMovieByPath(Path path) {
 
     for (Movie movie : movieList) {
-      if (Paths.get(movie.getPath()).compareTo(path) == 0) {
+      if (movie.getPathNIO().compareTo(path.toAbsolutePath()) == 0) {
         LOGGER.debug("Ok, found already existing movie '" + movie.getTitle() + "' in DB (path: " + path + ")");
         return movie;
       }

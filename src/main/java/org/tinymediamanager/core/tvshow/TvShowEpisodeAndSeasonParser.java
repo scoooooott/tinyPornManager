@@ -400,7 +400,7 @@ public class TvShowEpisodeAndSeasonParser {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // check if directory is the root of the tv show
-    if (directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
+    if (rootDirOfTvShow == null || rootDirOfTvShow.isEmpty() || directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
       return result;
     }
 

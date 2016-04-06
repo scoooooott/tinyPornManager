@@ -687,10 +687,21 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public static List<TvShowEpisode> parseNFO(File episodeFile) {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
-
     String filename = episodeFile.getParent() + File.separator + FilenameUtils.getBaseName(episodeFile.getName()) + ".nfo";
     episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(new File(filename)));
+    return episodes;
+  }
 
+  /**
+   * Parses the nfo.
+   * 
+   * @param episodeFile
+   *          the episode mediafile
+   * @return the list
+   */
+  public static List<TvShowEpisode> parseNFO(MediaFile episodeFile) {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(episodeFile.getFile()));
     return episodes;
   }
 

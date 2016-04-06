@@ -20,6 +20,7 @@ import static org.tinymediamanager.core.Constants.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -634,12 +635,25 @@ public class TvShowList extends AbstractModelObject {
    * @param path
    *          the path
    * @return the TV show by path
+   * @deprecated use getTvShowByPath(Path path)
    */
+  @Deprecated
   public TvShow getTvShowByPath(File path) {
+    return getTvShowByPath(path.toPath());
+  }
+
+  /**
+   * Gets the TV show by path.
+   * 
+   * @param path
+   *          path
+   * @return the TV show by path
+   */
+  public TvShow getTvShowByPath(Path path) {
     ArrayList<TvShow> tvShows = new ArrayList<TvShow>(tvShowList);
     // iterate over all tv shows and check whether this path is being owned by one
     for (TvShow tvShow : tvShows) {
-      if (new File(tvShow.getPath()).compareTo(path) == 0) {
+      if (tvShow.getPathNIO().compareTo(path.toAbsolutePath()) == 0) {
         return tvShow;
       }
     }

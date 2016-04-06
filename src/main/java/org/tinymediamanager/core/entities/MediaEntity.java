@@ -453,17 +453,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    readWriteLock.writeLock().lock();
-    this.mediaFiles.addAll(mediaFiles);
-    sortMediaFiles();
-    readWriteLock.writeLock().unlock();
-
-    // fire the right events
     for (MediaFile mediaFile : mediaFiles) {
-      fireAddedEventForMediaFile(mediaFile);
+      addToMediaFiles(mediaFile);
     }
-
-    firePropertyChange(MEDIA_FILES, null, mediaFiles);
   }
 
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
