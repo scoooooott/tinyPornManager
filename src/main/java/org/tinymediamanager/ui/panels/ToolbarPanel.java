@@ -188,7 +188,8 @@ public class ToolbarPanel extends JPanel {
     lblExport.setForeground(arrowColor);
     panelCenter.add(lblExport, "12, 2, center, default");
 
-    lblTools = createMenu("Tools");
+    lblTools = new JLabel("Tools");
+    lblTools.setForeground(arrowColor);
     panelCenter.add(lblTools, "14, 2, center, default");
 
     lblSettings = new JLabel("Settings");
@@ -430,6 +431,9 @@ public class ToolbarPanel extends JPanel {
     }
 
     // menus
+    else if (sender == btnTools && toolsPopupMenu != null) {
+      toolsPopupMenu.show(btnTools, btnTools.getWidth() - (int) toolsPopupMenu.getPreferredSize().getWidth(), btnTools.getHeight());
+    }
     else if (sender == btnTasks && taskListPopupMenu != null) {
       taskListPopupMenu.show(btnTasks, btnTasks.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), btnTasks.getHeight());
     }
@@ -454,9 +458,6 @@ public class ToolbarPanel extends JPanel {
       if (editPopupMenu != null) {
         showPopupMenu(lblEdit, editPopupMenu);
       }
-    }
-    else if (sender == lblTools) {
-      showPopupMenu(lblTools, toolsPopupMenu);
     }
   }
 

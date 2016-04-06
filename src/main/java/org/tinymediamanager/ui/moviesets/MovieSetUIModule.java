@@ -142,11 +142,6 @@ public class MovieSetUIModule implements ITmmUIModule {
     return null;
   }
 
-  @Override
-  public JPopupMenu getExportMenu() {
-    return null;
-  }
-
   public MovieSetSelectionModel getSelectionModel() {
     return selectionModel;
   }

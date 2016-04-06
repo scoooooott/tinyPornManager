@@ -60,6 +60,7 @@ public class MovieUIModule implements ITmmUIModule {
   private Action                         searchAction;
   private Action                         editAction;
   private Action                         updateAction;
+  private Action                         exportAction;
 
   private JPopupMenu                     popupMenu;
   private JPopupMenu                     updatePopupMenu;
@@ -122,6 +123,7 @@ public class MovieUIModule implements ITmmUIModule {
     searchAction = createAndRegisterAction(MovieSingleScrapeAction.class);
     editAction = createAndRegisterAction(MovieEditAction.class);
     updateAction = createAndRegisterAction(MovieUpdateDatasourceAction.class);
+    exportAction = createAndRegisterAction(MovieExportAction.class);
   }
 
   /**
@@ -130,14 +132,15 @@ public class MovieUIModule implements ITmmUIModule {
    * @return the constructed action
      */
   private Action createAndRegisterAction(Class actionClass){
-    Action action = null;
-    try {
-      action = (Action)actionClass.newInstance();
-      actionMap.put(actionClass, action);
-      //KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-    } catch (Exception ignored){
+    Action action = actionMap.get(actionClass);
+    if (action == null) {
+      try {
+        action = (Action) actionClass.newInstance();
+        actionMap.put(actionClass, action);
+        //KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+      } catch (Exception ignored) {
+      }
     }
-
     return action;
   }
 
@@ -284,12 +287,7 @@ public class MovieUIModule implements ITmmUIModule {
 
   @Override
   public Action getExportAction() {
-    return null;
-  }
-
-  @Override
-  public JPopupMenu getExportMenu() {
-    return null;
+    return exportAction;
   }
 
   @Override

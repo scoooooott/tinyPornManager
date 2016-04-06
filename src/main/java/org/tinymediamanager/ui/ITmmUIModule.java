@@ -48,7 +48,5 @@ public interface ITmmUIModule {
 
   public Action getExportAction();
 
-  public JPopupMenu getExportMenu();
-
   public JPanel getSettingsPanel();
 }

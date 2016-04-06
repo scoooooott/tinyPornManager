@@ -219,11 +219,6 @@ public class TvShowUIModule implements ITmmUIModule {
     return exportAction;
   }
 
-  @Override
-  public JPopupMenu getExportMenu() {
-    return null;
-  }
-
   public TvShowSelectionModel getSelectionModel() {
     return tvShowSelectionModel;
   }
