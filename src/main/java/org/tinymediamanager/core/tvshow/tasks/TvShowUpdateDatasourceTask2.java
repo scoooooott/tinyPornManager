@@ -17,7 +17,6 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import static java.nio.file.FileVisitResult.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitOption;
@@ -175,9 +174,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             break;
           }
 
-          // cleanup DS
-          // gatherMI
-
+          cleanupDatasource(ds);
+          waitForCompletionOrCancel();
+          if (cancel) {
+            break;
+          }
         } // end forech datasource
       }
       else {
@@ -185,8 +186,29 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         for (Path path : tvShowFolders) {
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
-        // cleanup DS
-        // gatherMI
+        waitForCompletionOrCancel();
+
+        if (!cancel) {
+          cleanupShows();
+          waitForCompletionOrCancel();
+        }
+      }
+
+      LOGGER.info("getting Mediainfo...");
+      initThreadPool(1, "mediainfo");
+      setTaskName(BUNDLE.getString("update.mediainfo"));
+      setTaskDescription(null);
+      setProgressDone(0);
+      // gather MediaInformation for ALL shows - TBD
+      if (!cancel) {
+        for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+          if (cancel) {
+            break;
+          }
+          TvShow tvShow = tvShowList.getTvShows().get(i);
+          gatherMediaInformationForUngatheredMediaFiles(tvShow);
+        }
+        waitForCompletionOrCancel();
       }
 
       stopWatch.stop();
@@ -198,10 +220,64 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       System.out.println("PreDir " + preDir);
       System.out.println("PostDir " + postDir);
       System.out.println("VisFile " + visFile);
+      preDir = 0;
+      postDir = 0;
+      visFile = 0;
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
+    }
+  }
+
+  private void cleanupShows() {
+    setTaskName(BUNDLE.getString("update.cleanup"));
+    setTaskDescription(null);
+    setProgressDone(0);
+    setWorkUnits(0);
+    publishState();
+
+    LOGGER.info("removing orphaned movies/files...");
+    for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+      TvShow tvShow = tvShowList.getTvShows().get(i);
+
+      // check only Tv shows matching datasource
+      if (!tvShowFolders.contains(tvShow.getPathNIO())) {
+        continue;
+      }
+
+      cleanup(tvShow);
+    }
+  }
+
+  private void cleanupDatasource(String datasource) {
+    setTaskName(BUNDLE.getString("update.cleanup"));
+    setTaskDescription(null);
+    setProgressDone(0);
+    setWorkUnits(0);
+    publishState();
+    LOGGER.info("removing orphaned tv shows/files...");
+
+    for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+      TvShow tvShow = tvShowList.getTvShows().get(i);
+
+      // check only Tv shows matching datasource
+      if (Paths.get(datasource).toAbsolutePath().equals(Paths.get(tvShow.getDataSource()).toAbsolutePath())) {
+        continue;
+      }
+
+      if (Files.notExists(tvShow.getPathNIO())) {
+        tvShowList.removeTvShow(tvShow);
+      }
+      else {
+        cleanup(tvShow);
+      }
     }
   }
 
@@ -211,14 +287,14 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // check and delete all not found MediaFiles
       List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
-        if (!filesFound.contains(mf.getFile())) {
+        if (!filesFound.contains(mf.getFileAsPath())) {
           if (!mf.exists()) {
-            LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+            LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
             tvShow.removeFromMediaFiles(mf);
             dirty = true;
           }
           else {
-            LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+            LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
           }
         }
       }
@@ -226,14 +302,14 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       for (TvShowEpisode episode : episodes) {
         mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
-          if (!filesFound.contains(mf.getFile())) {
+          if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
-              LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
+              LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
               episode.removeFromMediaFiles(mf);
               dirty = true;
             }
             else {
-              LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
             }
           }
         }
@@ -255,6 +331,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * detect which mediafiles has to be parsed and start a thread to do that
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
+    int cnt = 0;
     // get mediainfo for tv show (fanart/poster..)
     ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
@@ -262,6 +339,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         ungatheredMediaFiles.add(mf);
       }
     }
+    cnt += ungatheredMediaFiles.size();
 
     if (ungatheredMediaFiles.size() > 0) {
       submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, tvShow, false));
@@ -272,14 +350,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       ungatheredMediaFiles = new ArrayList<MediaFile>();
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
-          ungatheredMediaFiles.add(mf);
+          if (!ungatheredMediaFiles.contains(mf)) {
+            ungatheredMediaFiles.add(mf);
+          }
         }
       }
+      cnt += ungatheredMediaFiles.size();
 
       if (ungatheredMediaFiles.size() > 0) {
         submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, episode, false));
       }
     }
+
+    setWorkUnits(cnt);
+    publishState();
   }
 
   /**
@@ -319,13 +403,17 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       }
       allFiles.clear();
 
-      // search for this tvshow folder in database
+      // ******************************
+      // STEP 1 - get (or create) TvShow object
+      // ******************************
       TvShow tvShow = tvShowList.getTvShowByPath(showDir);
       // FIXME: create a method to get a MF solely by constant name like SHOW_NFO or SEASON_BANNER
       MediaFile showNFO = new MediaFile(showDir.resolve("tvshow.nfo"), MediaFileType.NFO); // fixate
       if (tvShow == null) {
         // tvShow did not exist - try to parse a NFO file in parent folder
-        tvShow = TvShowToXbmcNfoConnector.getData(showNFO.getFile()); // FIXME: get at end from tmp.mf.list
+        if (Files.exists(showNFO.getFileAsPath())) {
+          tvShow = TvShowToXbmcNfoConnector.getData(showNFO.getFileAsPath().toFile());
+        }
         if (tvShow == null) {
           // create new one
           tvShow = new TvShow();
@@ -346,60 +434,92 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       }
 
       // ******************************
-      // STEP 1 - get all video MFs and create episodes, then match same named MFs (nfo, thumb)
+      // STEP 2 - get all video MFs and get or create episodes
       // ******************************
+      HashSet<Path> discFolders = new HashSet<Path>();
       for (MediaFile mf : getMediaFiles(mfs, MediaFileType.VIDEO)) {
-        if (mf.isDiscFile()) {
-          LOGGER.error("********************** DISC FILE: not yet! " + mf);
-          continue;
-        }
 
-        // build an array of MFs, which start with the same name as video MF (aka episode MFs)
-        String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
+        // build an array of MFs, which might be in same episode
         List<MediaFile> epFiles = new ArrayList<MediaFile>();
-        for (MediaFile em : mfs) {
-          if (em.getFilename().startsWith(basename)) {
-            epFiles.add(em);
+
+        if (mf.isDiscFile()) {
+          // find EP root folder, and do not walk lower than showDir!
+          Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+          String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+          while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+            discRoot = discRoot.getParent();
+            folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+          }
+          if (discFolders.contains(discRoot)) {
+            // we already parsed one disc file (which adds all other videos), so break here already
+            continue;
+          }
+          discFolders.add(discRoot);
+          // add all files starting with same discRootDir
+          for (MediaFile em : mfs) {
+            if (em.getFileAsPath().startsWith(discRoot)) {
+              epFiles.add(em);
+            }
+          }
+        }
+        else {
+          // normal episode file - get all same named files
+          String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
+          for (MediaFile em : mfs) {
+            if (em.getFilename().startsWith(basename)) {
+              epFiles.add(em);
+            }
           }
         }
 
-        // is this file already assigned to another episode?
+        // ******************************
+        // STEP 2.1 - is this file already assigned to another episode?
+        // ******************************
         List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, mf.getFile());
         if (episodes.size() == 0) {
 
           // ******************************
-          // STEP 1.1 - parse EP NFO
+          // STEP 2.1.1 - parse EP NFO (has precedence over files)
           // ******************************
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
           if (epNfo != null) {
-            LOGGER.info("found episode NFO - try to parse '" + epNfo.getFilename() + "'");
+            LOGGER.info("found episode NFO - try to parse '" + showDir.relativize(epNfo.getFileAsPath()) + "'");
             List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(epNfo);
             // did we find any episodes in the NFO?
             if (episodesInNfo.size() > 0) {
               // these have priority!
-              for (TvShowEpisode e : episodesInNfo) {
-                e.setPath(mf.getPath());
-                e.setTvShow(tvShow);
-                e.setDateAddedFromMediaFile(mf);
-                if (e.getMediaSource() == MediaSource.UNKNOWN) {
-                  e.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+              for (TvShowEpisode episode : episodesInNfo) {
+                episode.setPath(mf.getPath());
+                episode.setTvShow(tvShow);
+                episode.setDateAddedFromMediaFile(mf);
+                if (episode.getMediaSource() == MediaSource.UNKNOWN) {
+                  episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
                 }
-                e.setNewlyAdded(true);
-                e.addToMediaFiles(epFiles); // all found EP MFs
-                e.saveToDb();
-                tvShow.addEpisode(e);
+                episode.setNewlyAdded(true);
+                episode.addToMediaFiles(epFiles); // all found EP MFs
+                episode.setDisc(mf.isDiscFile());
+                if (episodesInNfo.size() > 1) {
+                  episode.setMultiEpisode(true);
+                }
+                else {
+                  episode.setMultiEpisode(false);
+                }
+
+                episode.saveToDb();
+                tvShow.addEpisode(episode);
               }
               continue; // with next video MF
             }
           }
 
           // ******************************
-          // STEP 1.2 - no NFO? try to parse episode/season
+          // STEP 2.1.2 - no NFO? try to parse episode/season
           // ******************************
           String relativePath = showDir.relativize(mf.getFileAsPath()).toString();
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
           // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers found?
+          // FIXME: uhm.. for what is that?!?
           if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {
             // get any assigned episode
             TvShowEpisode ep = tvShow.getEpisode(result.season, result.episodes.get(0));
@@ -438,13 +558,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
               }
               episode.setNewlyAdded(true);
+              episode.setDisc(mf.isDiscFile());
+              if (result.episodes.size() > 1) {
+                episode.setMultiEpisode(true);
+              }
+              else {
+                episode.setMultiEpisode(false);
+              }
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
           }
           else {
             // ******************************
-            // STEP 1.3 - episode detection found nothing - simply add this file
+            // STEP 2.1.3 - episode detection found nothing - simply add this video as -1/-1
             // ******************************
             TvShowEpisode episode = new TvShowEpisode();
             episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
@@ -466,19 +593,24 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         } // end creation of new episodes
         else {
           // ******************************
-          // STEP 1.4 - video MF was already found in DB - just add all non-video MFs
+          // STEP 2.2 - video MF was already found in DB - just add all non-video MFs
           // ******************************
           for (TvShowEpisode episode : episodes) {
-            for (MediaFile additional : getMediaFilesExceptType(epFiles, MediaFileType.VIDEO)) {
-              episode.addToMediaFiles(additional); // add one by one, to only add NON-existing
+            episode.addToMediaFiles(epFiles); // add all (dupes will be filtered)
+            episode.setDisc(mf.isDiscFile());
+            if (episodes.size() > 1) {
+              episode.setMultiEpisode(true);
+            }
+            else {
+              episode.setMultiEpisode(false);
             }
             episode.saveToDb();
           }
         }
-      } // end STEP 1 - for all video MFs
+      } // end for all video MFs loop
 
       // ******************************
-      // STEP2 - now we have a working show/episode object
+      // STEP 3 - now we have a working show/episode object
       // remove all used episode MFs, rest must be show MFs ;)
       // ******************************
       mfs.removeAll(tvShow.getEpisodesMediaFiles()); // remove EP files

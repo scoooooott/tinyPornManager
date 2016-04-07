@@ -87,6 +87,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonProperty
   private boolean                            disc                  = false;
   @JsonProperty
+  private boolean                            multiEpisode          = false;
+  @JsonProperty
   private boolean                            watched               = false;
   @JsonProperty
   private boolean                            subtitles             = false;
@@ -217,6 +219,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setDisc(boolean disc) {
     this.disc = disc;
+  }
+
+  /**
+   * is this Episode a MultiEpisode? (same files added to another episode?)
+   * 
+   * @return
+   */
+  public boolean isMultiEpisode() {
+    return multiEpisode;
+  }
+
+  public void setMultiEpisode(boolean multiEpisode) {
+    this.multiEpisode = multiEpisode;
   }
 
   /**
