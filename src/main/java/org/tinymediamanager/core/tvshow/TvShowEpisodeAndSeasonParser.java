@@ -214,7 +214,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse SxxEPyy 1-N
     regex = seasonMultiEP;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     int lastFoundEpisode = 0;
     while (m.find()) {
       int s = -1;
@@ -252,7 +252,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse XYY or XX_YY 1-N
     regex = seasonMultiEP2;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     while (m.find()) {
       int s = -1;
       try {

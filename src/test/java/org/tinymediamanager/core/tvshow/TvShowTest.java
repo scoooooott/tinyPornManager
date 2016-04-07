@@ -114,6 +114,7 @@ public class TvShowTest {
 
     // ************************************************************************
     // various real world examples
+    Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("Dexter S01E01 S01E02 S01E03\\VIDEO_TS\\VIDEO_TS.VOB"));
     Assert.assertEquals("S:1 E:1", detectEpisode("TheShowName S01E01 Episode Name (1920x1080) [UploaderTag].mp4"));
     Assert.assertEquals("S:8 E:1", detectEpisode("BlBlub - S08E01 - Messy S08E01 - Messy.mp4"));
     Assert.assertEquals("S:2 E:17", detectEpisode("Brooklyn Nine-Nine S02E17 HDTV x264 AAC E-Subs [GWC].mp4"));
