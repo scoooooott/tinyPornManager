@@ -60,26 +60,26 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
   private static final Properties giantFontProps = new Properties();
 
   static {
-    smallFontProps.setProperty("controlTextFont", "Roboto 10");
-    smallFontProps.setProperty("systemTextFont", "Roboto 10");
-    smallFontProps.setProperty("userTextFont", "Roboto 10");
-    smallFontProps.setProperty("menuTextFont", "Roboto 10");
-    smallFontProps.setProperty("windowTitleFont", "Roboto bold 10");
-    smallFontProps.setProperty("subTextFont", "Roboto 8");
+    smallFontProps.setProperty("controlTextFont", TmmLightDefaultTheme.FONT + " 10");
+    smallFontProps.setProperty("systemTextFont", TmmLightDefaultTheme.FONT + " 10");
+    smallFontProps.setProperty("userTextFont", TmmLightDefaultTheme.FONT + " 10");
+    smallFontProps.setProperty("menuTextFont", TmmLightDefaultTheme.FONT + " 10");
+    smallFontProps.setProperty("windowTitleFont", TmmLightDefaultTheme.FONT + " bold 10");
+    smallFontProps.setProperty("subTextFont", TmmLightDefaultTheme.FONT + " 8");
 
-    largeFontProps.setProperty("controlTextFont", "Roboto 14");
-    largeFontProps.setProperty("systemTextFont", "Roboto 14");
-    largeFontProps.setProperty("userTextFont", "Roboto 14");
-    largeFontProps.setProperty("menuTextFont", "Roboto 14");
-    largeFontProps.setProperty("windowTitleFont", "Roboto bold 14");
-    largeFontProps.setProperty("subTextFont", "Roboto 12");
+    largeFontProps.setProperty("controlTextFont", TmmLightDefaultTheme.FONT + " 14");
+    largeFontProps.setProperty("systemTextFont", TmmLightDefaultTheme.FONT + " 14");
+    largeFontProps.setProperty("userTextFont", TmmLightDefaultTheme.FONT + " 14");
+    largeFontProps.setProperty("menuTextFont", TmmLightDefaultTheme.FONT + " 14");
+    largeFontProps.setProperty("windowTitleFont", TmmLightDefaultTheme.FONT + " bold 14");
+    largeFontProps.setProperty("subTextFont", TmmLightDefaultTheme.FONT + " 12");
 
-    giantFontProps.setProperty("controlTextFont", "Roboto 18");
-    giantFontProps.setProperty("systemTextFont", "Roboto 18");
-    giantFontProps.setProperty("userTextFont", "Roboto 18");
-    giantFontProps.setProperty("menuTextFont", "Roboto 18");
-    giantFontProps.setProperty("windowTitleFont", "Roboto 18");
-    giantFontProps.setProperty("subTextFont", "Roboto 16");
+    giantFontProps.setProperty("controlTextFont", TmmLightDefaultTheme.FONT + " 18");
+    giantFontProps.setProperty("systemTextFont", TmmLightDefaultTheme.FONT + " 18");
+    giantFontProps.setProperty("userTextFont", TmmLightDefaultTheme.FONT + " 18");
+    giantFontProps.setProperty("menuTextFont", TmmLightDefaultTheme.FONT + " 18");
+    giantFontProps.setProperty("windowTitleFont", TmmLightDefaultTheme.FONT + " 18");
+    giantFontProps.setProperty("subTextFont", TmmLightDefaultTheme.FONT + " 16");
 
     themesList.add("Default");
     themesList.add("Small-Font");

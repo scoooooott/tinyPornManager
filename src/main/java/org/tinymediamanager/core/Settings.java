@@ -142,7 +142,7 @@ public class Settings extends AbstractModelObject {
   private String                      mediaPlayer                 = "";
 
   private int                         fontSize                    = 12;
-  private String                      fontFamily                  = "Dialog";
+  private String                      fontFamily                  = "DejaVu Sans";
 
   private boolean                     deleteTrashOnExit           = false;
 

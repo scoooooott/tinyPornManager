@@ -454,14 +454,22 @@ public class TinyMediaManager {
        *           the exception
        */
       private void setLookAndFeel() throws Exception {
-        // get font settings
+        // preload LaF (to prevent chicken-egg problem with font-loading)
+        String themeDefaultFont = TmmTheme.FONT;
+
+        // get font from settings
         String fontFamily = Globals.settings.getFontFamily();
-        try {
-          // sanity check
+        try {// sanity check
           fontFamily = Font.decode(fontFamily).getFamily();
         }
         catch (Exception e) {
-          fontFamily = "Dialog";
+          // try LaF font as fallback
+          try {
+            fontFamily = Font.decode(themeDefaultFont).getFamily();
+          } catch (Exception e1) {
+            // last resort fallback - default system font
+            fontFamily = "Dialog";
+          }
         }
 
         int fontSize = Globals.settings.getFontSize();
