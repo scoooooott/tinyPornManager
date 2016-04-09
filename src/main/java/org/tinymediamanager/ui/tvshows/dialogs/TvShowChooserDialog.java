@@ -71,7 +71,6 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -434,9 +433,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               }
             }
             else {
-              // get artwork directly from provider
-              List<MediaArtwork> artwork = model.getArtwork(tvShowToScrape);
-              tvShowToScrape.setArtwork(artwork, scraperMetadataConfig);
+              // get artwork asynchronous
+              model.startArtworkScrapeTask(tvShowToScrape, scraperMetadataConfig);
             }
           }
 

@@ -60,18 +60,15 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -510,27 +507,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
             }
             else {
-              // get artwork directly from provider
-              List<MediaArtwork> artwork = model.getArtwork();
-              movieToScrape.setArtwork(artwork, scraperMetadataConfig);
+              // get artwork asynchronous
+              model.startArtworkScrapeTask(movieToScrape, scraperMetadataConfig);
             }
           }
 
           // get trailers?
           if (scraperMetadataConfig.isTrailer()) {
-            List<MovieTrailer> trailers = model.getTrailers();
-            // add local trailers!
-            for (MediaFile mf : movieToScrape.getMediaFiles(MediaFileType.TRAILER)) {
-              LOGGER.debug("adding local trailer " + mf.getFilename());
-              MovieTrailer mt = new MovieTrailer();
-              mt.setName(mf.getFilename());
-              mt.setProvider("downloaded");
-              mt.setQuality(mf.getVideoFormat());
-              mt.setInNfo(false);
-              mt.setUrl(mf.getFile().toURI().toString());
-              trailers.add(0, mt); // add as first
-            }
-            movieToScrape.setTrailers(trailers);
+            model.startTrailerScrapeTask(movieToScrape);
           }
 
           // if configured - sync with trakt.tv
