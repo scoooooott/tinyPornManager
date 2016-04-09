@@ -15,9 +15,9 @@
  */
 package org.tinymediamanager.scraper.mediaprovider;
 
-import org.tinymediamanager.scraper.MediaType;
-
 import java.util.List;
+
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
  * just a dedicated interface, for JSPF to find all "special" Kodi impls.<br>

@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
  * The Class MediaSearchResult.
@@ -31,7 +32,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private String        providerId;
   private String        url;
   private String        title;
-  private String        year;
+  private int           year;
   private String        originalTitle;
   private String        id;
   private float         score;
@@ -54,7 +55,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public void mergeFrom(MediaSearchResult msr) {
     url = StringUtils.isEmpty(url) ? msr.getUrl() : url;
     title = StringUtils.isEmpty(title) ? msr.getTitle() : title;
-    year = StringUtils.isEmpty(year) ? msr.getYear() : year;
+    year = year == 0 ? msr.getYear() : year;
     originalTitle = StringUtils.isEmpty(originalTitle) ? msr.getOriginalTitle() : originalTitle;
     id = StringUtils.isEmpty(id) ? msr.getId() : id;
     imdbId = StringUtils.isEmpty(imdbId) ? msr.getIMDBId() : imdbId;
@@ -82,7 +83,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     this.score = score;
   }
 
-  public MediaSearchResult(String providerId, String id, String title, String year, float score) {
+  public MediaSearchResult(String providerId, String id, String title, int year, float score) {
     super();
     this.providerId = providerId;
     this.id = id;
@@ -107,11 +108,11 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     this.title = title;
   }
 
-  public String getYear() {
+  public int getYear() {
     return year;
   }
 
-  public void setYear(String year) {
+  public void setYear(int year) {
     this.year = year;
   }
 

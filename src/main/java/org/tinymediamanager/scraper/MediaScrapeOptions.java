@@ -17,9 +17,12 @@ package org.tinymediamanager.scraper;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

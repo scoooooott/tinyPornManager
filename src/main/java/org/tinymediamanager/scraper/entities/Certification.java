@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.entities;
 
 import java.util.ArrayList;
 import java.util.List;

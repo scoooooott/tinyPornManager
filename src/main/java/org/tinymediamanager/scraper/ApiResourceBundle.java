@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * The class ApiRespurceBundle. To provide a ResourceBundle for API tests (where the official tmm ResourceBundle is not available)
@@ -23,7 +27,7 @@ import java.util.*;
  * @author Manuel Laggner
  * @since 1.0
  */
-class ApiResourceBundle extends ResourceBundle {
+public class ApiResourceBundle extends ResourceBundle {
   private static ResourceBundle INSTANCE = new ApiResourceBundle();
 
   @SuppressWarnings("unchecked")

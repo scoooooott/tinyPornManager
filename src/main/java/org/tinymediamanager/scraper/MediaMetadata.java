@@ -15,77 +15,90 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
  * 
  * @author Manuel Laggner
- * @since 1.0
+ * @since 2.0
  */
 public class MediaMetadata {
-  public static final String PROVIDER_ID = "providerId";
-
-  public static final String COLLECTION_NAME    = "collectionName";
-  public static final String TITLE              = "title";
-  public static final String ORIGINAL_TITLE     = "originalTitle";
-  public static final String PLOT               = "plot";
-  public static final String RATING             = "rating";
-  public static final String VOTE_COUNT         = "voteCount";
-  public static final String TOP_250            = "top250";
-  public static final String RUNTIME            = "runtime";
-  public static final String TAGLINE            = "tagline";
-  public static final String PRODUCTION_COMPANY = "productionCompany";
-  public static final String YEAR               = "year";
-  public static final String RELEASE_DATE       = "releaseDate";
-  public static final String SPOKEN_LANGUAGES   = "spokenLanguages";
-  public static final String COUNTRY            = "country";
-  public static final String POSTER_URL         = "posterUrl";
-  public static final String BACKGROUND_URL     = "backgroundUrl";
-  public static final String STATUS             = "status";
-
-  // TV
-  public static final String EPISODE_NR          = "episodeNr";
-  public static final String SEASON_NR           = "seasonNr";
-  public static final String EPISODE_NR_DVD      = "dvdEpisodeNr";
-  public static final String SEASON_NR_DVD       = "dvdSeasonNr";
-  public static final String EPISODE_NR_DISPLAY  = "displayEpisodeNr";
-  public static final String SEASON_NR_DISPLAY   = "displaySeasonNr";
-  public static final String EPISODE_NR_COMBINED = "combinedEpisodeNr";
-  public static final String SEASON_NR_COMBINED  = "combinedSeasonNr";
-  public static final String ABSOLUTE_NR         = "absoluteNr";
-
   // some well known ids
-  public static final String IMDB     = "imdb";
-  public static final String TMDB     = "tmdb";
-  public static final String TVDB     = "tvdb";
-  public static final String TMDB_SET = "tmdbSet";
+  public static final String      IMDB                 = "imdb";
+  public static final String      TMDB                 = "tmdb";
+  public static final String      TVDB                 = "tvdb";
+  public static final String      TMDB_SET             = "tmdbSet";
 
-  public static Date INITIAL_DATE = new Date(0);
-
-  private List<MediaCastMember> castMembers    = new ArrayList<MediaCastMember>();
-  private List<MediaArtwork>    fanart         = new ArrayList<MediaArtwork>();
-  private List<MediaGenres>     genres         = new ArrayList<MediaGenres>();
-  private List<Certification>   certifications = new ArrayList<Certification>();
-  private List<MediaTrailer>    trailers       = new ArrayList<MediaTrailer>();
-  private List<MediaMetadata>   subItems       = new ArrayList<MediaMetadata>();
+  // some meta ids for TV show scraping
+  public static final String      EPISODE_NR           = "episodeNr";
+  public static final String      SEASON_NR            = "seasonNr";
+  public static final String      EPISODE_NR_DVD       = "dvdEpisodeNr";
+  public static final String      SEASON_NR_DVD        = "dvdSeasonNr";
 
   /**
-   * new infrastructure
+   * the initial date to indicate that no date has been set
    */
-  private HashMap<String, Object> ids      = new HashMap<String, Object>();
-  private HashMap<String, Object> metadata = new HashMap<String, Object>();
+  public static final Date        INITIAL_DATE         = new Date(0);
+
+  private final String            providerId;
+
+  // this map contains all set ids
+  private HashMap<String, Object> ids                  = new HashMap<String, Object>();
+
+  // genral media entity
+  private String                  title                = "";
+  private String                  originalTitle        = "";
+  private int                     year                 = 0;
+  private Date                    releaseDate          = INITIAL_DATE;
+  private String                  plot                 = "";
+  private String                  tagline              = "";
+  private int                     runtime              = 0;
+  private float                   rating               = 0.0f;
+  private int                     voteCount            = 0;
+
+  // movie
+  private String                  collectionName       = "";
+  private int                     top250               = 0;
+
+  // tv show
+  private int                     episodeNumber        = -1;
+  private int                     seasonNumber         = -1;
+  private int                     dvdEpisodeNumber     = -1;
+  private int                     dvdSeasonNumber      = -1;
+  private int                     displayEpisodeNumber = -1;
+  private int                     displaySeasonNumber  = -1;
+  private int                     absoluteNumber       = -1;
+  private String                  status               = "";
+
+  // multi value
+  private List<MediaCastMember>   castMembers          = new ArrayList<>();
+  private List<MediaArtwork>      artwork              = new ArrayList<>();
+  private List<MediaGenres>       genres               = new ArrayList<>();
+  private List<Certification>     certifications       = new ArrayList<>();
+  private List<String>            productionCompanies  = new ArrayList<>();
+  private List<String>            spokenLanguages      = new ArrayList<>();
+  private List<String>            countries            = new ArrayList<>();
+  private List<MediaTrailer>      trailers             = new ArrayList<>();
+  private List<MediaMetadata>     subItems             = new ArrayList<>();
+
+  private HashMap<String, Object> extraData            = new HashMap<>();
 
   /**
    * Instantiates a new media metadata for the given provider.
@@ -94,7 +107,7 @@ public class MediaMetadata {
    *          the provider id
    */
   public MediaMetadata(String providerId) {
-    storeMetadata(PROVIDER_ID, providerId);
+    this.providerId = providerId;
   }
 
   /**
@@ -104,27 +117,78 @@ public class MediaMetadata {
    * @param md
    *          other MediaMetadata
    */
+
   public void mergeFrom(MediaMetadata md) {
-    HashMap<String, Object> delta = md.getIds();
-    delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we
-                                            // have in our array
+    Map<String, Object> delta = md.getIds();
+    delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we have in our map
+
     ids.putAll(delta); // so no dupe on adding while not overwriting
 
-    delta = md.getAllMetadata();
-    delta.keySet().removeAll(metadata.keySet());
-    metadata.putAll(delta);
+    title = merge(title, md.getTitle());
+    originalTitle = merge(originalTitle, md.getOriginalTitle());
+    year = merge(year, md.getYear());
+    releaseDate = merge(releaseDate, md.getReleaseDate());
+    plot = merge(plot, md.getPlot());
+    tagline = merge(tagline, md.getTagline());
+    runtime = merge(runtime, md.getRuntime());
+    rating = merge(rating, md.getRating());
+    voteCount = merge(voteCount, md.getVoteCount());
+    collectionName = merge(collectionName, md.getCollectionName());
+    top250 = merge(top250, md.getTop250());
+    episodeNumber = merge(episodeNumber, md.getEpisodeNumber());
+    seasonNumber = merge(seasonNumber, md.getSeasonNumber());
+    dvdEpisodeNumber = merge(dvdEpisodeNumber, md.getDvdEpisodeNumber());
+    dvdSeasonNumber = merge(dvdSeasonNumber, md.getDvdSeasonNumber());
+    absoluteNumber = merge(absoluteNumber, md.getAbsoluteNumber());
+    status = merge(status, md.getStatus());
 
-    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which
-                                                // we have in other array
+    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which we have in other array
     castMembers.addAll(md.getCastMembers()); // so no dupe on adding all ;)
-    fanart.removeAll(md.getFanart());
-    fanart.addAll(md.getFanart());
+
+    artwork.removeAll(md.getFanart());
+    artwork.addAll(md.getFanart());
+
     genres.removeAll(md.getGenres());
     genres.addAll(md.getGenres());
+
     certifications.removeAll(md.getCertifications());
     certifications.addAll(md.getCertifications());
+
+    productionCompanies.removeAll(md.getProductionCompanies());
+    productionCompanies.addAll(md.getProductionCompanies());
+
+    spokenLanguages.removeAll(md.getSpokenLanguages());
+    spokenLanguages.addAll(md.getSpokenLanguages());
+
+    countries.removeAll(md.getCountries());
+    countries.addAll(md.getCountries());
+
     trailers.removeAll(md.getTrailers());
     trailers.addAll(md.getTrailers());
+
+    subItems.removeAll(md.getSubItems());
+    subItems.addAll(md.getSubItems());
+
+    delta = md.getExtraData();
+    delta.keySet().removeAll(extraData.keySet());
+    extraData.putAll(delta);
+    ;
+  }
+
+  private String merge(String val1, String val2) {
+    return StringUtils.isBlank(val1) ? val2 : val1;
+  }
+
+  private int merge(int val1, int val2) {
+    return val1 <= 0 ? val2 : val1;
+  }
+
+  private Date merge(Date val1, Date val2) {
+    return val1 == INITIAL_DATE ? val2 : val1;
+  }
+
+  private float merge(float val1, float val2) {
+    return val1 <= 0 ? val2 : val1;
   }
 
   /**
@@ -133,157 +197,7 @@ public class MediaMetadata {
    * @return the provider id
    */
   public String getProviderId() {
-    return getStringValue(PROVIDER_ID);
-  }
-
-  /**
-   * Stores a metadata in the internal map. Do not store IDs here. Use the ID map
-   * 
-   * @param key
-   *          the key
-   * @param value
-   *          the metadata
-   */
-  public void storeMetadata(String key, Object value) {
-    metadata.put(key, value);
-  }
-
-  /**
-   * Gets all metadata
-   * 
-   * @return the metadata obj
-   */
-  public HashMap<String, Object> getAllMetadata() {
-    return metadata;
-  }
-
-  /**
-   * Gets the String value for a given key
-   * 
-   * @param key
-   *          the key
-   * @return value the value
-   */
-  public String getStringValue(String key) {
-    Object data = metadata.get(key);
-    if (data != null) {
-      return String.valueOf(data);
-    }
-    return "";
-  }
-
-  /**
-   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer
-   * 
-   * @param key
-   *          the key
-   * @return value the value
-   */
-  public Integer getIntegerValue(String key) {
-    return getIntegerValue(key, 0);
-  }
-
-  /**
-   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer. If any error occur, the
-   * default value will be returned
-   * 
-   * @param key
-   *          the key
-   * @param defaultValue
-   *          the default value to be returned on any error
-   * @return value the value
-   */
-  public Integer getIntegerValue(String key, Integer defaultValue) {
-    Object data = metadata.get(key);
-    if (data != null && data instanceof Integer) {
-      // return the int
-      return (Integer) data;
-    }
-    else if (data != null) {
-      // try to parse out the int
-      try {
-        return Integer.parseInt(String.valueOf(data));
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    return defaultValue;
-  }
-
-  /**
-   * Gets the Float value for a given key. Float are passed right thru, whilst other type are casted to an Float
-   * 
-   * @param key
-   *          the key
-   * @return value the value
-   */
-  public Float getFloatValue(String key) {
-    Object data = metadata.get(key);
-    if (data != null && data instanceof Float) {
-      // return the float
-      return (Float) data;
-    }
-    else if (data != null) {
-      // try to parse out the float
-      try {
-        return Float.parseFloat(String.valueOf(data));
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    return 0f;
-  }
-
-  /**
-   * Gets the Double value for a given key. Double are passed right thru, whilst other type are casted to an Double
-   * 
-   * @param key
-   *          the key
-   * @return value the value
-   */
-  public Double getDoubleValue(String key) {
-    Object data = metadata.get(key);
-    if (data != null && data instanceof Double) {
-      // return the float
-      return (Double) data;
-    }
-    else if (data != null) {
-      // try to parse out the float
-      try {
-        return Double.parseDouble(String.valueOf(data));
-      }
-      catch (Exception ignored) {
-      }
-    }
-
-    return 0d;
-  }
-
-  /**
-   * Gets the Date value for a given key. Date are passed right thru, whilst trying to parse String to Date object. Other types are returned with an
-   * initial value
-   * 
-   * @param key
-   *          the key
-   * @return value the value
-   */
-  public Date getDateValue(String key) {
-    Object data = metadata.get(key);
-    if (data != null && data instanceof Date) {
-      // true Date object - return it
-      return (Date) data;
-    }
-    else if (data != null && data instanceof String) {
-      // maybe a String coded date - try to parse it
-      try {
-        return StrgUtils.parseDate((String) data);
-      }
-      catch (ParseException ignored) {
-      }
-    }
-    return INITIAL_DATE;
+    return providerId;
   }
 
   /**
@@ -374,14 +288,14 @@ public class MediaMetadata {
    *          the ma
    */
   public void addMediaArt(MediaArtwork ma) {
-    fanart.add(ma);
+    artwork.add(ma);
   }
 
   /**
    * Clear media art.
    */
   public void clearMediaArt() {
-    fanart.clear();
+    artwork.clear();
   }
 
   /**
@@ -391,7 +305,7 @@ public class MediaMetadata {
    *          the art
    */
   public void addMediaArt(List<MediaArtwork> art) {
-    fanart.addAll(art);
+    artwork.addAll(art);
   }
 
   /**
@@ -409,7 +323,7 @@ public class MediaMetadata {
    * @return the fanart
    */
   public List<MediaArtwork> getFanart() {
-    return fanart;
+    return artwork;
   }
 
   /**
@@ -524,6 +438,522 @@ public class MediaMetadata {
    */
   public HashMap<String, Object> getIds() {
     return ids;
+  }
+
+  /**
+   * Get all production companies
+   * 
+   * @return a list of all production companies
+   */
+  public List<String> getProductionCompanies() {
+    return productionCompanies;
+  }
+
+  /**
+   * Set the production companies
+   * 
+   * @param productionCompanies
+   *          set the given list of production companies
+   */
+  public void setProductionCompanies(List<String> productionCompanies) {
+    this.productionCompanies = productionCompanies;
+  }
+
+  /**
+   * Add a production company
+   * 
+   * @param productionCompany
+   *          add the given production company if it is not yet present
+   */
+  public void addProductionCompany(String productionCompany) {
+    if (!productionCompanies.contains(productionCompany)) {
+      productionCompanies.add(productionCompany);
+    }
+  }
+
+  /**
+   * Removes the given production company
+   * 
+   * @param productionCompany
+   *          the production company to be removed
+   */
+  public void removeProductionCompany(String productionCompany) {
+    productionCompanies.remove(productionCompany);
+  }
+
+  /**
+   * Get a list of all spoken languages (2 digit: ISO 639-1)
+   * 
+   * @return a list of all spoken languages
+   */
+  public List<String> getSpokenLanguages() {
+    return spokenLanguages;
+  }
+
+  /**
+   * Set the spoken languages (2 digit: ISO 639-1)
+   * 
+   * @param spokenLanguages
+   *          the spoken languages to be set
+   */
+  public void setSpokenLanguages(List<String> spokenLanguages) {
+    this.spokenLanguages = spokenLanguages;
+  }
+
+  /**
+   * Adds the given language if it is not present (2 digit: ISO 639-1)
+   * 
+   * @param language
+   *          the language to be set
+   */
+  public void addSpokenLanguage(String language) {
+    if (!spokenLanguages.contains(language)) {
+      spokenLanguages.add(language);
+    }
+  }
+
+  /**
+   * Removes the given language
+   * 
+   * @param language
+   *          the language to be removed
+   */
+  public void removeSpokenLanguage(String language) {
+    spokenLanguages.remove(language);
+  }
+
+  /**
+   * Get the list of all countries
+   * 
+   * @return a list of all countries
+   */
+  public List<String> getCountries() {
+    return countries;
+  }
+
+  /**
+   * Set the countries
+   * 
+   * @param countries
+   *          the countries to be set
+   */
+  public void setCountries(List<String> countries) {
+    this.countries = countries;
+  }
+
+  /**
+   * Add the country if it is not present
+   * 
+   * @param country
+   *          the country to be added
+   */
+  public void addCountry(String country) {
+    if (!countries.contains(country)) {
+      countries.add(country);
+    }
+  }
+
+  /**
+   * Remove the given country
+   * 
+   * @param country
+   *          the country to be removed
+   */
+  public void removeCountry(String country) {
+    countries.remove(country);
+  }
+
+  /**
+   * Get the title
+   * 
+   * @return the title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * Set the title
+   * 
+   * @param title
+   *          the title to be set
+   */
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  /**
+   * Get the original title
+   * 
+   * @return the original title
+   */
+  public String getOriginalTitle() {
+    return originalTitle;
+  }
+
+  /**
+   * Set the original title
+   * 
+   * @param originalTitle
+   *          the origial title to be set
+   */
+  public void setOriginalTitle(String originalTitle) {
+    this.originalTitle = originalTitle;
+  }
+
+  /**
+   * Get the year
+   * 
+   * @return the year
+   */
+  public int getYear() {
+    return year;
+  }
+
+  /**
+   * Set the year
+   * 
+   * @param year
+   *          the year to be set
+   */
+  public void setYear(int year) {
+    this.year = year;
+  }
+
+  /**
+   * Get the release date
+   * 
+   * @return the release date
+   */
+  public Date getReleaseDate() {
+    return releaseDate;
+  }
+
+  /**
+   * Set the release date
+   * 
+   * @param releaseDate
+   *          the release date to be set
+   */
+  public void setReleaseDate(Date releaseDate) {
+    this.releaseDate = releaseDate;
+  }
+
+  /**
+   * Get the plot
+   * 
+   * @return the plot
+   */
+  public String getPlot() {
+    return plot;
+  }
+
+  /**
+   * Set the plot
+   * 
+   * @param plot
+   *          the plot to be set
+   */
+  public void setPlot(String plot) {
+    this.plot = plot;
+  }
+
+  /**
+   * Get the tagline
+   * 
+   * @return the tagline
+   */
+  public String getTagline() {
+    return tagline;
+  }
+
+  /**
+   * Set the tagline
+   * 
+   * @param tagline
+   *          the tagline to be set
+   */
+  public void setTagline(String tagline) {
+    this.tagline = tagline;
+  }
+
+  /**
+   * Get the collection name
+   * 
+   * @return the collection name
+   */
+  public String getCollectionName() {
+    return collectionName;
+  }
+
+  /**
+   * Set the collection name
+   * 
+   * @param collectionName
+   *          the collection name to be set
+   */
+  public void setCollectionName(String collectionName) {
+    this.collectionName = collectionName;
+  }
+
+  /**
+   * Get the runtime in minutes
+   * 
+   * @return the runtime in minutes
+   */
+  public int getRuntime() {
+    return runtime;
+  }
+
+  /**
+   * Set the runtime in minutes (full minutes)
+   * 
+   * @param runtime
+   *          the runtime in minutes to be set
+   */
+  public void setRuntime(int runtime) {
+    this.runtime = runtime;
+  }
+
+  /**
+   * Get the rating (0 ... 10.0)
+   * 
+   * @return the rating
+   */
+  public float getRating() {
+    return rating;
+  }
+
+  /**
+   * Set the rating. The values are valid from 0 to 10.0
+   * 
+   * @param rating
+   *          the rating to be set
+   */
+  public void setRating(float rating) {
+    this.rating = rating;
+  }
+
+  /**
+   * Get the vote count
+   * 
+   * @return the vote count
+   */
+  public int getVoteCount() {
+    return voteCount;
+  }
+
+  /**
+   * Set the vote count
+   * 
+   * @param voteCount
+   *          the vote count to be set
+   */
+  public void setVoteCount(int voteCount) {
+    this.voteCount = voteCount;
+  }
+
+  /**
+   * Get the place in the top 250 or 0 if not set
+   * 
+   * @return the place in top 250 or 0
+   */
+  public int getTop250() {
+    return top250;
+  }
+
+  /**
+   * Set the place in the top 250
+   * 
+   * @param top250
+   *          the place to be set
+   */
+  public void setTop250(int top250) {
+    this.top250 = top250;
+  }
+
+  /**
+   * Get the episode number (or -1 if not set)
+   * 
+   * @return the episode number (or -1 if not set)
+   */
+  public int getEpisodeNumber() {
+    return episodeNumber;
+  }
+
+  /**
+   * Set the episode number
+   * 
+   * @param episodeNumber
+   *          the episode number to be set
+   */
+  public void setEpisodeNumber(int episodeNumber) {
+    this.episodeNumber = episodeNumber;
+  }
+
+  /**
+   * Get the season number (or -1 if not set)
+   * 
+   * @return the season number (or -1 if not set)
+   */
+  public int getSeasonNumber() {
+    return seasonNumber;
+  }
+
+  /**
+   * Set the season number
+   * 
+   * @param seasonNumber
+   *          the season number to be set
+   */
+  public void setSeasonNumber(int seasonNumber) {
+    this.seasonNumber = seasonNumber;
+  }
+
+  /**
+   * Get the DVD episode number (or -1 if not set)
+   * 
+   * @return the DVD episode number (or -1 if not set)
+   */
+  public int getDvdEpisodeNumber() {
+    return dvdEpisodeNumber;
+  }
+
+  /**
+   * Set the DVD episode number
+   * 
+   * @param dvdEpisodeNumber
+   *          the DVD episode number to be set
+   */
+  public void setDvdEpisodeNumber(int dvdEpisodeNumber) {
+    this.dvdEpisodeNumber = dvdEpisodeNumber;
+  }
+
+  /**
+   * Get the DVD season number (or -1 if not set)
+   * 
+   * @return the DVD season number (or -1 if not set)
+   */
+  public int getDvdSeasonNumber() {
+    return dvdSeasonNumber;
+  }
+
+  /**
+   * Set the DVD season number
+   * 
+   * @param dvdSeasonNumber
+   *          the DVD season number to be set
+   */
+  public void setDvdSeasonNumber(int dvdSeasonNumber) {
+    this.dvdSeasonNumber = dvdSeasonNumber;
+  }
+
+  /**
+   * Get the display-episode number (or -1 if not set)
+   * 
+   * @return the display-episode number (or -1 if not set)
+   */
+  public int getDisplayEpisodeNumber() {
+    return displayEpisodeNumber;
+  }
+
+  /**
+   * Set the display-episode number
+   * 
+   * @param displayEpisodeNumber
+   *          the display-episode number to be set
+   */
+  public void setDisplayEpisodeNumber(int displayEpisodeNumber) {
+    this.displayEpisodeNumber = displayEpisodeNumber;
+  }
+
+  /**
+   * Get the display-season number (or -1 if not set)
+   * 
+   * @return the display-season number (or -1 if not set)
+   */
+  public int getDisplaySeasonNumber() {
+    return displaySeasonNumber;
+  }
+
+  /**
+   * Set the display-season number
+   * 
+   * @param displaySeasonNumber
+   *          the display-season number to be set
+   */
+  public void setDisplaySeasonNumber(int displaySeasonNumber) {
+    this.displaySeasonNumber = displaySeasonNumber;
+  }
+
+  /**
+   * Get the absolute number (or -1 if not set)
+   * 
+   * @return the absolute number (or -1 if not set)
+   */
+  public int getAbsoluteNumber() {
+    return absoluteNumber;
+  }
+
+  /**
+   * Set the absolute number
+   * 
+   * @param absoluteNumber
+   *          the absolute number to be set
+   */
+  public void setAbsoluteNumber(int absoluteNumber) {
+    this.absoluteNumber = absoluteNumber;
+  }
+
+  /**
+   * Get the airing status
+   * 
+   * @return the airing status
+   */
+  public String getStatus() {
+    return status;
+  }
+
+  /**
+   * Set the airing status
+   * 
+   * @param status
+   *          the airing status to be set
+   */
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  /**
+   * Get all extra data. Handy key/value store to pass extra data inside a scraper
+   * 
+   * @return the key/value store
+   */
+  public Map<String, Object> getExtraData() {
+    return extraData;
+  }
+
+  /**
+   * Add an extra data. Handy key/value store to pass extra data inside a scraper
+   * 
+   * @param key
+   *          the key
+   * @param value
+   *          the value
+   */
+  public void addExtraData(String key, Object value) {
+    extraData.put(key, value);
+  }
+
+  /**
+   * Get an extra data. Handy key/value store to pass extra data inside a scraper
+   * 
+   * @param key
+   *          the key
+   * @return the value or null
+   */
+  public Object getExtraData(String key) {
+    return extraData.get(key);
   }
 
   /**

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
  * The Class SearchQuery. Pass arguments to the scraper searches

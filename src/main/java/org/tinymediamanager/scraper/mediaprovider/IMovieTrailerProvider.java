@@ -17,7 +17,7 @@
 package org.tinymediamanager.scraper.mediaprovider;
 
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
 
 import java.util.List;
 

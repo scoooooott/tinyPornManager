@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.entities;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.ApiResourceBundle;
+import org.tinymediamanager.scraper.DynaEnum;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

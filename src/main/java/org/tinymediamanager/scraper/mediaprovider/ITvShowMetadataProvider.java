@@ -15,11 +15,11 @@
  */
 package org.tinymediamanager.scraper.mediaprovider;
 
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
 
 import java.util.List;
 

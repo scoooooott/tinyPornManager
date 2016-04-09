@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.entities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +21,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.ApiResourceBundle;
 
 /**
  * This class is used to represent an artwork for a media
@@ -68,7 +70,7 @@ public class MediaArtwork {
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~185x277px", 1); //$NON-NLS-1$
 
     private String text;
-    private int order;
+    private int    order;
 
     private PosterSizes(String text, int order) {
       this.text = text;
@@ -97,7 +99,7 @@ public class MediaArtwork {
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~300x168px", 1); //$NON-NLS-1$
 
     private String text;
-    private int order;
+    private int    order;
 
     private FanartSizes(String text, int order) {
       this.text = text;
@@ -114,58 +116,107 @@ public class MediaArtwork {
     }
   }
 
-  private String           imdbId;
-  private int              tmdbId;
-  private int              season     = -1;
-  private String           previewUrl = "";
-  private String           defaultUrl = "";
-  private String           language   = "";
-  private String           providerId;
-  private MediaArtworkType type;
-  private int              sizeOrder  = 0;
-  private int              likes      = 0;
+  private String                imdbId;
+  private int                   tmdbId;
+  private int                   season     = -1;
+  private String                previewUrl = "";
+  private String                defaultUrl = "";
+  private String                language   = "";
+  private String                providerId;
+  private MediaArtworkType      type;
+  private int                   sizeOrder  = 0;
+  private int                   likes      = 0;
 
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
 
-  public MediaArtwork() {
+  /**
+   * Create a new instance of MediaArtwork for the given provider and type
+   * 
+   * @param providerId
+   *          the provider id
+   * @param type
+   *          the artwork type
+   */
+  public MediaArtwork(String providerId, MediaArtworkType type) {
+    this.providerId = providerId;
+    this.type = type;
   }
 
+  /**
+   * Get a preview url or the default url if no preview url is available
+   * 
+   * @return the preview url or the default url
+   */
   public String getPreviewUrl() {
+    // return the default url if the preview url has not been set
+    if (StringUtils.isBlank(previewUrl)) {
+      return defaultUrl;
+    }
     return previewUrl;
   }
 
-  public void setPreviewUrl(String downloadUrl) {
-    previewUrl = downloadUrl;
+  /**
+   * Set the preview url
+   * 
+   * @param previewUrl
+   *          the preview url
+   */
+  public void setPreviewUrl(String previewUrl) {
+    this.previewUrl = previewUrl;
   }
 
+  /**
+   * Get the default url for this artwork
+   * 
+   * @return the default url
+   */
   public String getDefaultUrl() {
     return defaultUrl;
   }
 
+  /**
+   * Set the default url
+   * 
+   * @param defaultUrl
+   *          the default url
+   */
   public void setDefaultUrl(String defaultUrl) {
     this.defaultUrl = defaultUrl;
   }
 
+  /**
+   * Get the provider id
+   * 
+   * @return the provider id
+   */
   public String getProviderId() {
     return providerId;
   }
 
-  public void setProviderId(String providerId) {
-    this.providerId = providerId;
-  }
-
+  /**
+   * Get the artwork type
+   * 
+   * @return the artwork type
+   */
   public MediaArtworkType getType() {
     return type;
   }
 
-  public void setType(MediaArtworkType type) {
-    this.type = type;
-  }
-
+  /**
+   * Get the language for this artwork if available
+   * 
+   * @return the language for this artwork
+   */
   public String getLanguage() {
     return language;
   }
 
+  /**
+   * Set the language for this artwork
+   * 
+   * @param language
+   *          the language
+   */
   public void setLanguage(String language) {
     if (language == null) {
       this.language = "";
@@ -175,26 +226,63 @@ public class MediaArtwork {
     }
   }
 
+  /**
+   * Get the assigned TMDB id for this artwork
+   * 
+   * @return the tmdb id
+   */
   public int getTmdbId() {
     return tmdbId;
   }
 
+  /**
+   * Set the assigned TMDB id for this artwork
+   * 
+   * @param tmdbId
+   *          the tmdb id
+   */
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
   }
 
+  /**
+   * Get the assigned IMDB id for this artwork
+   * 
+   * @return the imdb id
+   */
   public String getImdbId() {
     return imdbId;
   }
 
+  /**
+   * Set the assigned IMDB id for this artwork
+   * 
+   * @param imdbId
+   *          the imdb id
+   */
   public void setImdbId(String imdbId) {
     this.imdbId = imdbId;
   }
 
+  /**
+   * Add an image size. This is used for the image chooser to show the user the different sizes for this artwork
+   * 
+   * @param width
+   *          thw width
+   * @param height
+   *          the height
+   * @param url
+   *          the url
+   */
   public void addImageSize(int width, int height, String url) {
     imageSizes.add(new ImageSizeAndUrl(width, height, url));
   }
 
+  /**
+   * Get all available image sizes for this artwork
+   * 
+   * @return a list of all available image sizes
+   */
   public List<ImageSizeAndUrl> getImageSizes() {
     List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
 
@@ -204,6 +292,11 @@ public class MediaArtwork {
     return descImageSizes;
   }
 
+  /**
+   * Get the smallest artwork if different sizes are available or null
+   * 
+   * @return the smallest artwork or null
+   */
   public ImageSizeAndUrl getSmallestArtwork() {
     if (imageSizes.size() > 0) {
       List<ImageSizeAndUrl> ascImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
@@ -218,6 +311,11 @@ public class MediaArtwork {
     return null;
   }
 
+  /**
+   * Get the biggest artwork if different sizes are available or null
+   * 
+   * @return the biggest artwork or null
+   */
   public ImageSizeAndUrl getBiggestArtwork() {
     if (imageSizes.size() > 0) {
       List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
@@ -232,14 +330,30 @@ public class MediaArtwork {
     return null;
   }
 
+  /**
+   * Get the size order to indicate how big this artwork is
+   * 
+   * @return the size order
+   */
   public int getSizeOrder() {
     return sizeOrder;
   }
 
+  /**
+   * Set the size order to indicate how big this artwork is
+   * 
+   * @param sizeOrder
+   *          the size order
+   */
   public void setSizeOrder(int sizeOrder) {
     this.sizeOrder = sizeOrder;
   }
 
+  /**
+   * Get the likes of this artwork to indicate how popular this artwork is
+   * 
+   * @return the likes
+   */
   public int getLikes() {
     return likes;
   }
@@ -254,10 +368,21 @@ public class MediaArtwork {
     this.likes = likes;
   }
 
+  /**
+   * Get the season (useful for season artwork)
+   * 
+   * @return the season
+   */
   public int getSeason() {
     return season;
   }
 
+  /**
+   * Set the season (useful for season artwork)
+   * 
+   * @param season
+   *          the season
+   */
   public void setSeason(int season) {
     this.season = season;
   }

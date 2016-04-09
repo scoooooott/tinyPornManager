@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper;
 
+import org.tinymediamanager.scraper.entities.MediaType;
+
 /**
  * The UnsupportedMediaTypeException is used to indicate that the given media type cannot be used for the chosen meta data provider
  * 

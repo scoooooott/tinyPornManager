@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper;
+package org.tinymediamanager.scraper.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,18 +28,18 @@ import java.util.List;
 public class MediaEpisode {
   public final String                  providerId;
   /** a hashmap storing ids */
-  public final HashMap<String, Object> ids        = new HashMap<String, Object>();
-  public int                           season     = -1;
-  public int                           episode    = -1;
-  public int                           dvdSeason  = -1;
-  public int                           dvdEpisode = -1;
-  public String                        title      = "";
-  public String                        plot       = "";
-  public double                        rating     = 0.0;
-  public String                        firstAired = "";
+  public final HashMap<String, Object> ids         = new HashMap<String, Object>();
+  public int                           season      = -1;
+  public int                           episode     = -1;
+  public int                           dvdSeason   = -1;
+  public int                           dvdEpisode  = -1;
+  public String                        title       = "";
+  public String                        plot        = "";
+  public float                         rating      = 0.0f;
+  public String                        firstAired  = "";
 
-  public final List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
-  public final List<MediaArtwork>    artwork     = new ArrayList<MediaArtwork>();
+  public final List<MediaCastMember>   castMembers = new ArrayList<MediaCastMember>();
+  public final List<MediaArtwork>      artwork     = new ArrayList<MediaArtwork>();
 
   public MediaEpisode(String providerId) {
     this.providerId = providerId;

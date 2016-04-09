@@ -17,6 +17,8 @@ package org.tinymediamanager.scraper;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * Options for Subtitle downloading
