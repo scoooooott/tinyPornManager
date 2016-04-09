@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
 public class OfdbMetadataProviderTest {
@@ -105,13 +105,13 @@ public class OfdbMetadataProviderTest {
 
       md = mp.getMetadata(options);
 
-      assertThat(md.getStringValue(MediaMetadata.TITLE)).isEqualTo("Merida - Legende der Highlands");
-      assertThat(md.getStringValue(MediaMetadata.ORIGINAL_TITLE)).isEqualTo("Brave");
-      assertThat(md.getStringValue(MediaMetadata.YEAR)).isEqualTo("2012");
-      assertThat(md.getStringValue(MediaMetadata.PLOT)).startsWith(
+      assertThat(md.getTitle()).isEqualTo("Merida - Legende der Highlands");
+      assertThat(md.getOriginalTitle()).isEqualTo("Brave");
+      assertThat(md.getYear()).isEqualTo("2012");
+      assertThat(md.getPlot()).startsWith(
           "Merida wächst als Erstgeborene von König Fergus an, der im schottischen Hochland sein Volk, bestehend aus vier Clans, anführt. Fergus hatte, als Merida noch ein Kleinkind war, einen Teil seines linken Beines im Kampf gegen einen riesigen, gefährlichen Bären verloren -");
-      assertThat(md.getStringValue(MediaMetadata.TAGLINE)).isEmpty();
-      assertThat(md.getDoubleValue(MediaMetadata.RATING)).isBetween(6.5, 7d);
+      assertThat(md.getTagline()).isEmpty();
+      assertThat(md.getRating()).isBetween(6.5f, 7f);
 
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(9);
@@ -133,9 +133,9 @@ public class OfdbMetadataProviderTest {
       scop.setId(MediaMetadata.IMDB, "tt1194173");
       md = mp.getMetadata(scop);
 
-      assertThat(md.getStringValue(MediaMetadata.TITLE)).isEqualTo("Das Bourne Vermächtnis");
-      assertThat(md.getStringValue(MediaMetadata.ORIGINAL_TITLE)).isEqualTo("The Bourne Legacy");
-      assertThat(md.getStringValue(MediaMetadata.YEAR)).isEqualTo("2012");
+      assertThat(md.getTitle()).isEqualTo("Das Bourne Vermächtnis");
+      assertThat(md.getOriginalTitle()).isEqualTo("The Bourne Legacy");
+      assertThat(md.getYear()).isEqualTo("2012");
 
     }
     catch (Exception e) {

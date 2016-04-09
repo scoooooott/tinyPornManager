@@ -33,16 +33,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -166,14 +166,22 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       el = doc.getElementsByAttributeValue("property", "og:title");
       if (!el.isEmpty()) {
         String[] ty = parseTitle(el.first().attr("content"));
-        md.storeMetadata(MediaMetadata.TITLE, StrgUtils.removeCommonSortableName(ty[0]));
-        md.storeMetadata(MediaMetadata.YEAR, ty[1]);
+        md.setTitle(StrgUtils.removeCommonSortableName(ty[0]));
+        try {
+          md.setYear(Integer.parseInt(ty[1]));
+        }
+        catch (Exception ignored) {
+        }
       }
       // another year position
-      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.YEAR))) {
+      if (md.getYear() == 0) {
         // <a href="view.php?page=blaettern&Kat=Jahr&Text=2012">2012</a>
         el = doc.getElementsByAttributeValueContaining("href", "Kat=Jahr");
-        md.storeMetadata(MediaMetadata.YEAR, el.first().text());
+        try {
+          md.setYear(Integer.parseInt(el.first().text()));
+        }
+        catch (Exception ignored) {
+        }
       }
 
       // original title (has to be searched with a regexp)
@@ -186,7 +194,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       // </tr>
       String originalTitle = StrgUtils.substr(doc.body().html(), "(?s)Originaltitel.*?<b>(.*?)</b>");
       if (!originalTitle.isEmpty()) {
-        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, StrgUtils.removeCommonSortableName(originalTitle));
+        md.setOriginalTitle(StrgUtils.removeCommonSortableName(originalTitle));
       }
 
       // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
@@ -205,8 +213,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         String r = el.text();
         if (!r.isEmpty()) {
           try {
-            double rating = Double.parseDouble(r);
-            md.storeMetadata(MediaMetadata.RATING, rating);
+            md.setRating(Float.parseFloat(r));
           }
           catch (Exception e) {
             LOGGER.debug("could not parse rating");
@@ -230,7 +237,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
                                                                  // is plot
           String p = block.first().text(); // remove all html stuff
           p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
-          md.storeMetadata(MediaMetadata.PLOT, p);
+          md.setPlot(p);
         }
         catch (Exception e) {
           LOGGER.error("failed to get plot page: " + e.getMessage());
@@ -559,7 +566,11 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         sr.setTitle(StringEscapeUtils.unescapeHtml4(StrgUtils.removeCommonSortableName(StrgUtils.substr(a.toString(), ".*>(.*?)(\\[.*?\\])?<font"))));
         LOGGER.debug("found movie " + sr.getTitle());
         sr.setOriginalTitle(StringEscapeUtils.unescapeHtml4(StrgUtils.removeCommonSortableName(StrgUtils.substr(a.toString(), ".*> / (.*?)</font"))));
-        sr.setYear(StrgUtils.substr(a.toString(), "font> \\((.*?)\\)<\\/a"));
+        try {
+          sr.setYear(Integer.parseInt(StrgUtils.substr(a.toString(), "font> \\((.*?)\\)<\\/a")));
+        }
+        catch (Exception ignored) {
+        }
         sr.setMediaType(MediaType.MOVIE);
         sr.setUrl(BASE_URL + "/" + StrgUtils.substr(a.toString(), "href=\\\"(.*?)\\\""));
         sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
