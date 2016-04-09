@@ -8,13 +8,13 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
@@ -76,15 +76,15 @@ public class KodiMetadataProviderTest {
       scrapeOptions.setResult(results.get(0));
       MediaMetadata md = tmdb.getMetadata(scrapeOptions);
 
-      assertEquals("Harry Potter and the Philosopher's Stone", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("Harry Potter and the Philosopher's Stone", md.getStringValue(MediaMetadata.ORIGINAL_TITLE));
-      assertEquals("2001", md.getStringValue(MediaMetadata.YEAR));
+      assertEquals("Harry Potter and the Philosopher's Stone", md.getTitle());
+      assertEquals("Harry Potter and the Philosopher's Stone", md.getOriginalTitle());
+      assertEquals("2001", md.getYear());
       assertEquals(
           "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard -- with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths -- and about the villain who's to blame.",
-          md.getStringValue(MediaMetadata.PLOT));
-      assertEquals(new Integer(152), md.getIntegerValue(MediaMetadata.RUNTIME));
-      assertEquals("Let the Magic Begin.", md.getStringValue(MediaMetadata.TAGLINE));
-      assertEquals("Harry Potter Collection", md.getStringValue(MediaMetadata.COLLECTION_NAME));
+          md.getPlot());
+      assertEquals(152, md.getRuntime());
+      assertEquals("Let the Magic Begin.", md.getTagline());
+      assertEquals("Harry Potter Collection", md.getCollectionName());
 
       assertNotNull(md.getCastMembers(CastType.ACTOR));
       assertThat(md.getCastMembers(CastType.ACTOR).size()).isGreaterThan(0);

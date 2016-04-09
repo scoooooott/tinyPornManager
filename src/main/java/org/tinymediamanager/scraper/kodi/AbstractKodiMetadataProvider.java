@@ -29,15 +29,15 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -124,7 +124,11 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         // sr.setTitle(v[0]);
         // sr.setYear(v[1]);
         sr.setTitle(t);
-        sr.setYear(y);
+        try {
+          sr.setYear(Integer.parseInt(y));
+        }
+        catch (Exception ignored) {
+        }
         sr.setScore(MetadataUtil.calculateScore(arg, t));
         l.add(sr);
       }
@@ -144,7 +148,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     MediaSearchResult result = options.getResult();
 
     if (result.getIMDBId() != null && result.getIMDBId().contains("tt")) {
-      md.storeMetadata(MediaMetadata.IMDB, result.getIMDBId());
+      md.setId(MediaMetadata.IMDB, result.getIMDBId());
     }
 
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
@@ -214,38 +218,42 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
 
     String title = getInfoFromScraperFunctionOrBase("title", details, subDetails);
     if (StringUtils.isNotBlank(title)) {
-      md.storeMetadata(MediaMetadata.TITLE, title);
+      md.setTitle(title);
     }
 
     String originalTitle = getInfoFromScraperFunctionOrBase("originaltitle", details, subDetails);
     if (StringUtils.isNotBlank(originalTitle)) {
-      md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, originalTitle);
+      md.setOriginalTitle(originalTitle);
     }
 
     String plot = getInfoFromScraperFunctionOrBase("plot", details, subDetails);
     if (StringUtils.isNotBlank(plot)) {
-      md.storeMetadata(MediaMetadata.PLOT, plot);
+      md.setPlot(plot);
     }
 
     String year = getInfoFromScraperFunctionOrBase("year", details, subDetails);
     if (StringUtils.isNotBlank(year)) {
-      md.storeMetadata(MediaMetadata.YEAR, year);
+      try {
+        md.setYear(Integer.parseInt(year));
+      }
+      catch (Exception ignored) {
+      }
     }
 
     String tagline = getInfoFromScraperFunctionOrBase("tagline", details, subDetails);
     if (StringUtils.isNotBlank(tagline)) {
-      md.storeMetadata(MediaMetadata.TAGLINE, tagline);
+      md.setTagline(tagline);
     }
 
     String set = getInfoFromScraperFunctionOrBase("set", details, subDetails);
     if (StringUtils.isNotBlank(set)) {
-      md.storeMetadata(MediaMetadata.COLLECTION_NAME, set);
+      md.setCollectionName(set);
     }
 
     String runtime = getInfoFromScraperFunctionOrBase("runtime", details, subDetails);
     if (StringUtils.isNotBlank(runtime)) {
       try {
-        md.storeMetadata(MediaMetadata.RUNTIME, Integer.parseInt(runtime));
+        md.setRuntime(Integer.parseInt(runtime));
       }
       catch (NumberFormatException ignored) {
       }
@@ -366,7 +374,6 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   }
 
   private void processMediaArt(MediaMetadata md, MediaArtworkType type, String label, Element e, String baseUrl) {
-
     String image = e.getTextContent();
     if (image != null)
       image = image.trim();
@@ -378,8 +385,9 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   }
 
   private void processMediaArt(MediaMetadata md, MediaArtworkType type, String label, String image) {
-    MediaArtwork ma = new MediaArtwork();
-    ma.setType(type);
+    MediaArtwork ma = new MediaArtwork(md.getProviderId(), type);
+    ma.setPreviewUrl(image);
+    ma.setDefaultUrl(image);
     md.addMediaArt(ma);
   }
 

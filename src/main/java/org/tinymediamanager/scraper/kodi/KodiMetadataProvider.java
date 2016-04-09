@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
