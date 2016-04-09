@@ -34,11 +34,11 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -211,11 +211,11 @@ public class ImdbTvShowParser extends ImdbParser {
       // now we match the corresponding result from the episode parsing list
       if (anchors.get(0).attr("href").endsWith(wantedEpisode.ids.get(providerInfo.getId()) + "/")) {
         md.setId(providerInfo.getId(), wantedEpisode.ids.get(providerInfo.getId()));
-        md.storeMetadata(MediaMetadata.EPISODE_NR, wantedEpisode.episode);
-        md.storeMetadata(MediaMetadata.SEASON_NR, wantedEpisode.season);
-        md.storeMetadata(MediaMetadata.TITLE, wantedEpisode.title);
-        md.storeMetadata(MediaMetadata.RATING, wantedEpisode.rating);
-        md.storeMetadata(MediaMetadata.PLOT, "");
+        md.setEpisodeNumber(wantedEpisode.episode);
+        md.setSeasonNumber(wantedEpisode.season);
+        md.setTitle(wantedEpisode.title);
+        md.setRating((float) wantedEpisode.rating);
+        md.setPlot("");
 
         // parse release date
         Element releaseDate = h4.nextElementSibling();
@@ -223,7 +223,7 @@ public class ImdbTvShowParser extends ImdbParser {
           try {
             SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
             Date parsedDate = sdf.parse(releaseDate.ownText());
-            md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+            md.setReleaseDate(parsedDate);
           }
           catch (ParseException ignored) {
             ignored.printStackTrace();
@@ -239,7 +239,7 @@ public class ImdbTvShowParser extends ImdbParser {
           // right node
           for (TextNode node : content.textNodes()) {
             if (node.previousSibling() == b) {
-              md.storeMetadata(MediaMetadata.PLOT, node.text());
+              md.setPlot(node.text());
               break;
             }
           }
@@ -326,7 +326,7 @@ public class ImdbTvShowParser extends ImdbParser {
             if (cols != null && cols.size() >= 3) {
               try {
                 // rating is the third column
-                ep.rating = Double.parseDouble(cols.get(2).ownText());
+                ep.rating = Float.parseFloat(cols.get(2).ownText());
               }
               catch (Exception ignored) {
               }

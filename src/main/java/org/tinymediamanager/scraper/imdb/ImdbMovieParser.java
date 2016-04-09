@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
@@ -160,13 +160,13 @@ public class ImdbMovieParser extends ImdbParser {
         if (elements.size() > 0) {
           element = elements.first();
           String movieTitle = cleanString(element.ownText());
-          md.storeMetadata(MediaMetadata.TITLE, movieTitle);
+          md.setTitle(movieTitle);
         }
       }
     }
 
     // did we get a release date?
-    if (md.getDateValue(MediaMetadata.RELEASE_DATE) == null || md.getDateValue(MediaMetadata.RELEASE_DATE) == MediaMetadata.INITIAL_DATE) {
+    if (md.getReleaseDate() == null || md.getReleaseDate() == MediaMetadata.INITIAL_DATE) {
       // get the date from the releaseinfo page
       Future<Document> futureReleaseinfo;
       sb = new StringBuilder(imdbSite.getSite());
@@ -185,25 +185,24 @@ public class ImdbMovieParser extends ImdbParser {
         || ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo"))) {
       try {
         MediaMetadata tmdbMd = futureTmdb.get();
-        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null
-            && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+        if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("useTmdb") && tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getPlot())) {
           // tmdbid
           md.setId(MediaMetadata.TMDB, tmdbMd.getId(MediaMetadata.TMDB));
           // title
-          md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
+          md.setTitle(tmdbMd.getTitle());
           // original title
-          md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, tmdbMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+          md.setOriginalTitle(tmdbMd.getOriginalTitle());
           // tagline
-          md.storeMetadata(MediaMetadata.TAGLINE, tmdbMd.getStringValue(MediaMetadata.TAGLINE));
+          md.setTagline(tmdbMd.getTagline());
           // plot
-          md.storeMetadata(MediaMetadata.PLOT, tmdbMd.getStringValue(MediaMetadata.PLOT));
+          md.setPlot(tmdbMd.getPlot());
           // collection info
-          md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
-          md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
+          md.setCollectionName(tmdbMd.getCollectionName());
+          md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
         }
         if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeCollectionInfo") && tmdbMd != null) {
-          md.storeMetadata(MediaMetadata.TMDB_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDB_SET));
-          md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
+          md.setId(MediaMetadata.TMDB_SET, tmdbMd.getId(MediaMetadata.TMDB_SET));
+          md.setCollectionName(tmdbMd.getCollectionName());
         }
         md.setId(tmdbMd.getProviderId(), tmdbMd.getId(tmdbMd.getProviderId()));
       }
@@ -212,8 +211,8 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // if we have still no original title, take the title
-    if (StringUtils.isBlank(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
-      md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
+    if (StringUtils.isBlank(md.getOriginalTitle())) {
+      md.setOriginalTitle(md.getTitle());
     }
 
     // populate id
@@ -231,13 +230,13 @@ public class ImdbMovieParser extends ImdbParser {
         try {
           SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
           Date parsedDate = sdf.parse(td.text());
-          md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+          md.setReleaseDate(parsedDate);
         }
         catch (ParseException otherformat) {
           try {
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
             Date parsedDate = sdf.parse(td.text());
-            md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+            md.setReleaseDate(parsedDate);
           }
           catch (ParseException ignored) {
           }

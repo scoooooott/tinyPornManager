@@ -1,26 +1,29 @@
 package org.tinymediamanager.scraper.imdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class ImdbMetadataProviderTest {
@@ -196,7 +199,7 @@ public class ImdbMetadataProviderTest {
       // did we get metadata?
       assertNotNull("MediaMetadata", md);
 
-      assertEquals("Psych", md.getStringValue(MediaMetadata.TITLE));
+      assertEquals("Psych", md.getTitle());
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -217,8 +220,8 @@ public class ImdbMetadataProviderTest {
       // did we get metadata?
       assertNotNull("MediaMetadata", md);
 
-      assertEquals("Firefly - Der Aufbruch der Serenity", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("Firefly", md.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+      assertEquals("Firefly - Der Aufbruch der Serenity", md.getTitle());
+      assertEquals("Firefly", md.getOriginalTitle());
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -252,9 +255,9 @@ public class ImdbMetadataProviderTest {
       // did we get metadata?
       assertNotNull("MediaMetadata", md);
 
-      assertEquals("Pilot", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("The police department in Santa Barbara hires someone they think is a psychic detective.", md.getStringValue(MediaMetadata.PLOT));
-      assertEquals("7 July 2006", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
+      assertEquals("Pilot", md.getTitle());
+      assertEquals("The police department in Santa Barbara hires someone they think is a psychic detective.", md.getPlot());
+      assertEquals("7 July 2006", sdf.format(md.getReleaseDate()));
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
     }
     catch (Exception e) {
@@ -275,10 +278,9 @@ public class ImdbMetadataProviderTest {
       // did we get metadata?
       assertNotNull("MediaMetadata", md);
 
-      assertEquals("Earth, Wind and... Wait for It", md.getStringValue(MediaMetadata.TITLE));
-      assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.",
-          md.getStringValue(MediaMetadata.PLOT));
-      assertEquals("23 January 2009", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
+      assertEquals("Earth, Wind and... Wait for It", md.getTitle());
+      assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.", md.getPlot());
+      assertEquals("23 January 2009", sdf.format(md.getReleaseDate()));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -316,7 +318,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("9", "2009", "9", 7.0, 63365, "(1) To Protect Us...", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", "09-09-2009",
+      checkMovieDetails("9", 2009, "9", 7.0, 63365, "(1) To Protect Us...", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", "09-09-2009",
           md);
 
       // check poster
@@ -359,7 +361,9 @@ public class ImdbMetadataProviderTest {
       checkCastMembers(castMembers, 10, md);
 
       // check production company
-      checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Teen Cartoon Films, Tim Burton Productions", md);
+      checkProductionCompany(
+          Arrays.asList("Focus Features", "Relativity Media", "Arc Productions", "Starz Animation", "Teen Cartoon Films", "Tim Burton Productions"),
+          md);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -382,7 +386,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("12 Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
+      checkMovieDetails("12 Monkeys", 1995, "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
           "Chris Marker, David Webb Peoples, Janet Peoples", "16", "05-01-1996", md);
 
       // check poster
@@ -420,7 +424,7 @@ public class ImdbMetadataProviderTest {
       checkCastMembers(castMembers, 86, md);
 
       // check production company
-      checkProductionCompany("Universal Pictures, Atlas Entertainment, Classico", md);
+      checkProductionCompany(Arrays.asList("Universal Pictures", "Atlas Entertainment", "Classico"), md);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -443,7 +447,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("Brave", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
+      checkMovieDetails("Brave", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
           "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
 
       // check poster
@@ -483,7 +487,7 @@ public class ImdbMetadataProviderTest {
       checkCastMembers(castMembers, 15, md);
 
       // check production company
-      checkProductionCompany("Walt Disney Pictures, Pixar Animation Studios", md);
+      checkProductionCompany(Arrays.asList("Walt Disney Pictures", "Pixar Animation Studios"), md);
 
     }
     catch (Exception e) {
@@ -507,7 +511,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("Merida - Legende der Highlands", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
+      checkMovieDetails("Merida - Legende der Highlands", 2012, "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman",
           "Brenda Chapman, Mark Andrews, Steve Purcell, Irene Mecchi", "PG", "02-08-2012", md);
     }
     catch (Exception e) {
@@ -531,7 +535,7 @@ public class ImdbMetadataProviderTest {
       assertNotNull("MediaMetadata", md);
 
       // check moviedetails
-      checkMovieDetails("Winnebago Man", "2009", "Winnebago Man", 7.2, 3890, "", 85, "Ben Steinbauer",
+      checkMovieDetails("Winnebago Man", 2009, "Winnebago Man", 7.2, 3890, "", 85, "Ben Steinbauer",
           "Malcolm Pullinger, Ben Steinbauer, Louisa Hall, Joel Heller, Berndt Mader, Natasha Rosow", "", "14-03-2009", md);
 
       // check poster
@@ -568,7 +572,7 @@ public class ImdbMetadataProviderTest {
       checkCastMembers(castMembers, 14, md);
 
       // check production company
-      checkProductionCompany("Bear Media, The, Field Guide Media", md);
+      checkProductionCompany(Arrays.asList("Bear Media, The", "Field Guide Media"), md);
 
     }
     catch (Exception e) {
@@ -577,25 +581,25 @@ public class ImdbMetadataProviderTest {
     }
   }
 
-  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
+  private void checkMovieDetails(String title, int year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
       String director, String writer, String certification, String releaseDate, MediaMetadata md) {
     // title
-    assertEquals("title ", title, md.getStringValue(MediaMetadata.TITLE));
+    assertEquals("title ", title, md.getTitle());
     // year
-    assertEquals("year", year, md.getStringValue(MediaMetadata.YEAR));
+    assertEquals("year", year, md.getYear());
     // original title
-    assertEquals("originalTitle", originalTitle, md.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+    assertEquals("originalTitle", originalTitle, md.getOriginalTitle());
     // rating
-    assertEquals("rating", rating, md.getDoubleValue(MediaMetadata.RATING), 0.5);
+    assertEquals("rating", rating, md.getRating(), 0.5);
     // count (only check if parsed cout count is smaller than the given
     // votecount)
-    if (voteCount > md.getIntegerValue(MediaMetadata.VOTE_COUNT)) {
-      assertEquals("count", voteCount, (int) md.getIntegerValue(MediaMetadata.VOTE_COUNT));
+    if (voteCount > md.getVoteCount()) {
+      assertEquals("count", voteCount, (int) md.getVoteCount());
     }
     // tagline
-    assertEquals("tagline", tagline, md.getStringValue(MediaMetadata.TAGLINE));
+    assertEquals("tagline", tagline, md.getTagline());
     // runtime
-    assertEquals("runtime", runtime, (int) md.getIntegerValue(MediaMetadata.RUNTIME));
+    assertEquals("runtime", runtime, (int) md.getRuntime());
     // director
     StringBuilder sb = new StringBuilder();
     for (MediaCastMember cm : md.getCastMembers(CastType.DIRECTOR)) {
@@ -617,7 +621,7 @@ public class ImdbMetadataProviderTest {
 
     // date can differ depending on the IP address
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    assertNotEquals("release date", "", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
+    assertNotEquals("release date", "", sdf.format(md.getReleaseDate()));
     // certification
     // assertEquals("certification",
     // Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(),
@@ -648,7 +652,7 @@ public class ImdbMetadataProviderTest {
 
   private void checkPlot(String plot, MediaMetadata md) {
     // plot
-    assertEquals("plot", plot, md.getStringValue(MediaMetadata.PLOT));
+    assertEquals("plot", plot, md.getPlot());
   }
 
   private void checkCastMembers(List<MediaCastMember> castMembers, int count, MediaMetadata md) {
@@ -673,7 +677,7 @@ public class ImdbMetadataProviderTest {
     }
   }
 
-  private void checkProductionCompany(String company, MediaMetadata md) {
-    assertEquals("production company", company, md.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
+  private void checkProductionCompany(List<String> companies, MediaMetadata md) {
+    assertThat(md.getProductionCompanies()).containsAll(companies);
   }
 }

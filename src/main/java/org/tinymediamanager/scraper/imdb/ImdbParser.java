@@ -37,16 +37,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -169,8 +169,8 @@ public abstract class ImdbParser {
         options.setLanguage(MediaLanguages.valueOf(language));
         options.setCountry(CountryCode.valueOf(country));
         md = getMetadata(options);
-        if (!StringUtils.isEmpty(md.getStringValue(MediaMetadata.TITLE))) {
-          movieName = md.getStringValue(MediaMetadata.TITLE);
+        if (!StringUtils.isEmpty(md.getTitle())) {
+          movieName = md.getTitle();
         }
       }
 
@@ -179,15 +179,15 @@ public abstract class ImdbParser {
         MediaSearchResult sr = new MediaSearchResult(ImdbMetadataProvider.providerInfo.getId());
         sr.setTitle(movieName);
         sr.setIMDBId(movieId);
-        sr.setYear(md.getStringValue(MediaMetadata.YEAR));
+        sr.setYear(md.getYear());
         sr.setMetadata(md);
         sr.setScore(1);
 
         // and parse out the poster
         String posterUrl = "";
-        Element td = doc.getElementById("img_primary");
-        if (td != null) {
-          Elements imgs = td.getElementsByTag("img");
+        Elements posters = doc.getElementsByClass("poster");
+        if (posters != null && !posters.isEmpty()) {
+          Elements imgs = posters.get(0).getElementsByTag("img");
           for (Element img : imgs) {
             posterUrl = img.attr("src");
             posterUrl = posterUrl.replaceAll("UX[0-9]{2,4}_", "UX200_");
@@ -216,7 +216,7 @@ public abstract class ImdbParser {
       // find the id / name
       String movieName = "";
       String movieId = "";
-      String year = "";
+      int year = 0;
       Elements tds = tr.getElementsByClass("result_text");
       for (Element element : tds) {
         // we only want the td's
@@ -267,8 +267,12 @@ public abstract class ImdbParser {
             matcher = yearPattern.matcher(element.text());
             while (matcher.find()) {
               if (matcher.group(1) != null) {
-                year = matcher.group(1);
-                break;
+                try {
+                  year = Integer.parseInt(matcher.group(1));
+                  break;
+                }
+                catch (Exception ignored) {
+                }
               }
             }
             break;
@@ -413,7 +417,7 @@ public abstract class ImdbParser {
       if (elements.size() > 0) {
         element = elements.first();
         String movieTitle = cleanString(element.ownText());
-        md.storeMetadata(MediaMetadata.TITLE, movieTitle);
+        md.setTitle(movieTitle);
       }
 
       // year
@@ -428,8 +432,12 @@ public abstract class ImdbParser {
         while (matcher.find()) {
           if (matcher.group(1) != null) {
             String movieYear = matcher.group(1);
-            md.storeMetadata(MediaMetadata.YEAR, movieYear);
-            break;
+            try {
+              md.setYear(Integer.parseInt(movieYear));
+              break;
+            }
+            catch (Exception ignored) {
+            }
           }
         }
       }
@@ -440,7 +448,7 @@ public abstract class ImdbParser {
         element = elements.first();
         String content = element.ownText().trim();
         content = cleanString(StringUtils.removeEnd(StringUtils.removeStart(content, ","), ","));
-        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, content);
+        md.setOriginalTitle(content);
       }
     }
 
@@ -478,7 +486,7 @@ public abstract class ImdbParser {
               }
               catch (Exception ignored) {
               }
-              md.storeMetadata(MediaMetadata.RATING, rating);
+              md.setRating(rating);
               break;
             }
           }
@@ -494,7 +502,7 @@ public abstract class ImdbParser {
           }
           catch (Exception ignored) {
           }
-          md.storeMetadata(MediaMetadata.VOTE_COUNT, voteCount);
+          md.setVoteCount(voteCount);
         }
       }
 
@@ -508,13 +516,11 @@ public abstract class ImdbParser {
           Matcher matcher = topPattern.matcher(anchor.ownText());
           while (matcher.find()) {
             if (matcher.group(1) != null) {
-              int top250 = 0;
               try {
-                top250 = Integer.parseInt(matcher.group(1));
+                md.setTop250(Integer.parseInt(matcher.group(1)));
               }
               catch (Exception ignored) {
               }
-              md.storeMetadata(MediaMetadata.TOP_250, top250);
             }
           }
         }
@@ -552,13 +558,13 @@ public abstract class ImdbParser {
               try {
                 SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
                 Date parsedDate = sdf.parse(matcher.group(1));
-                md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+                md.setReleaseDate(parsedDate);
               }
               catch (ParseException otherformat) {
                 try {
                   SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.US);
                   Date parsedDate = sdf.parse(matcher.group(1));
-                  md.storeMetadata(MediaMetadata.RELEASE_DATE, parsedDate);
+                  md.setReleaseDate(parsedDate);
                 }
                 catch (ParseException ignored) {
                 }
@@ -579,7 +585,7 @@ public abstract class ImdbParser {
           if (div.size() > 0) {
             Element taglineElement = div.first();
             String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
-            md.storeMetadata(MediaMetadata.TAGLINE, tagline);
+            md.setTagline(tagline);
           }
         }
 
@@ -627,7 +633,7 @@ public abstract class ImdbParser {
                 runtime = Integer.parseInt(matcher.group(0));
               }
             }
-            md.storeMetadata(MediaMetadata.RUNTIME, runtime);
+            md.setRuntime(runtime);
           }
         }
 
@@ -643,14 +649,9 @@ public abstract class ImdbParser {
             Pattern pattern = Pattern.compile("/country/(.*)");
             Matcher matcher = pattern.matcher(anchor.attr("href"));
             if (matcher.matches()) {
-              String country = matcher.group(1);
-              if (StringUtils.isNotEmpty(countries)) {
-                countries += ", ";
-              }
-              countries += country.toUpperCase();
+              md.addCountry(matcher.group(1));
             }
           }
-          md.storeMetadata(MediaMetadata.COUNTRY, countries);
         }
 
         /*
@@ -660,19 +661,13 @@ public abstract class ImdbParser {
         // Spoken languages
         if (h5Title.matches("(?i)Language.*")) {
           Elements a = element.getElementsByTag("a");
-          String spokenLanguages = "";
           for (Element anchor : a) {
             Pattern pattern = Pattern.compile("/language/(.*)");
             Matcher matcher = pattern.matcher(anchor.attr("href"));
             if (matcher.matches()) {
-              String langu = matcher.group(1);
-              if (StringUtils.isNotEmpty(spokenLanguages)) {
-                spokenLanguages += ", ";
-              }
-              spokenLanguages += langu;
+              md.addSpokenLanguage(matcher.group(1));
             }
           }
-          md.storeMetadata(MediaMetadata.SPOKEN_LANGUAGES, spokenLanguages);
         }
 
         /*
@@ -800,14 +795,10 @@ public abstract class ImdbParser {
     for (Element blackcatheader : elements) {
       if (blackcatheader.ownText().equals(ImdbSiteDefinition.IMDB_COM.getProductionCompanies())) {
         Elements a = blackcatheader.nextElementSibling().getElementsByTag("a");
-        StringBuilder productionCompanies = new StringBuilder();
         for (Element anchor : a) {
-          if (StringUtils.isNotEmpty(productionCompanies)) {
-            productionCompanies.append(", ");
-          }
-          productionCompanies.append(anchor.ownText());
+          md.addProductionCompany(anchor.ownText());
         }
-        md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, productionCompanies.toString());
+
         break;
       }
     }
@@ -828,7 +819,7 @@ public abstract class ImdbParser {
           Elements p = odd.get(0).getElementsByTag("p");
           if (p.size() > 0) {
             String plot = cleanString(p.get(0).text());
-            md.storeMetadata(MediaMetadata.PLOT, plot);
+            md.setPlot(plot);
           }
         }
       }
@@ -837,7 +828,7 @@ public abstract class ImdbParser {
       Element wiki = doc.getElementById("swiki.2.1");
       if (wiki != null) {
         String plot = cleanString(wiki.ownText());
-        md.storeMetadata(MediaMetadata.PLOT, plot);
+        md.setPlot(plot);
       }
     }
 
