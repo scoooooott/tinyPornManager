@@ -179,11 +179,6 @@
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.6.1</version>
-		</dependency>
 	</dependencies>
 
 	<build>
