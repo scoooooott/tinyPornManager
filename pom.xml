@@ -49,43 +49,43 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-anidb</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-fanarttv</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-hdtrailers</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-imdb</artifactId>
-			<version>1.3</version>
+			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-kodi</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-moviemeter</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-ofdb</artifactId>
-			<version>1.3</version>
+			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-opensubtitles</artifactId> 
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-rottentomatoes</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> 
@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-tmdb</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-trakt</artifactId> 
@@ -109,13 +109,13 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-tvdb</artifactId>
-			<version>1.3</version>
+			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-zelluloid</artifactId>
-			<version>1.3</version>
+			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
