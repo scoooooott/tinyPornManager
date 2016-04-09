@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 
 public class HDTrailersNetTrailerProviderTest {
@@ -22,7 +22,7 @@ public class HDTrailersNetTrailerProviderTest {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
 
       MediaMetadata md = new MediaMetadata("foo");
-      md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, "Iron Man 3");
+      md.setOriginalTitle("Iron Man 3");
       options.setMetadata(md);
 
       List<MediaTrailer> trailers = mp.getTrailers(options);

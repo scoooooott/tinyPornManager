@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -63,12 +63,12 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
     MediaMetadata md = options.getMetadata();
 
-    if (md == null || StringUtils.isEmpty(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+    if (md == null || StringUtils.isEmpty(md.getOriginalTitle())) {
       LOGGER.warn("no originalTitle served");
       return trailers;
     }
 
-    String ot = md.getStringValue(MediaMetadata.ORIGINAL_TITLE);
+    String ot = md.getOriginalTitle();
 
     // check if the original title is not empty
     if (StringUtils.isEmpty(ot)) {
