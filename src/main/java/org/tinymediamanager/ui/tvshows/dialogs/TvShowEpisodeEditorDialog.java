@@ -69,13 +69,13 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -623,20 +623,20 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         MediaMetadata metadata = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getMetadata(options);
 
         // if nothing has been found -> open the search box
-        if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
+        if (metadata == null || StringUtils.isBlank(metadata.getTitle())) {
           // message
           JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$
         }
         else {
-          tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));
-          taPlot.setText(metadata.getStringValue(MediaMetadata.PLOT));
-          spFirstAired.setValue(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+          tfTitle.setText(metadata.getTitle());
+          taPlot.setText(metadata.getPlot());
+          spFirstAired.setValue(metadata.getReleaseDate());
 
           // set aireed or dvd ep/season
-          spSeason.setValue(metadata.getIntegerValue(MediaMetadata.SEASON_NR, -1));
-          spEpisode.setValue(metadata.getIntegerValue(MediaMetadata.EPISODE_NR, -1));
-          spDvdSeason.setValue(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD, -1));
-          spDvdEpisode.setValue(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD, -1));
+          spSeason.setValue(metadata.getSeasonNumber());
+          spEpisode.setValue(metadata.getEpisodeNumber());
+          spDvdSeason.setValue(metadata.getDvdSeasonNumber());
+          spDvdEpisode.setValue(metadata.getDvdEpisodeNumber());
 
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.THUMB) {

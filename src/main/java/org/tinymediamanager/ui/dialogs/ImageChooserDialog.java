@@ -62,12 +62,12 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -517,37 +517,37 @@ public class ImageChooserDialog extends TmmDialog {
       @Override
       public void run() {
         try {
-          final MediaArtwork art = new MediaArtwork();
-          art.setDefaultUrl(tfImageUrl.getText());
-          art.setPreviewUrl(tfImageUrl.getText());
+          final MediaArtwork art;
           switch (type) {
             case BANNER:
-              art.setType(MediaArtworkType.BANNER);
+              art = new MediaArtwork("", MediaArtworkType.BANNER);
               break;
             case CLEARART:
-              art.setType(MediaArtworkType.CLEARART);
+              art = new MediaArtwork("", MediaArtworkType.CLEARART);
               break;
             case DISC:
-              art.setType(MediaArtworkType.DISC);
+              art = new MediaArtwork("", MediaArtworkType.DISC);
               break;
             case FANART:
-              art.setType(MediaArtworkType.BACKGROUND);
+              art = new MediaArtwork("", MediaArtworkType.BACKGROUND);
               break;
             case LOGO:
-              art.setType(MediaArtworkType.LOGO);
+              art = new MediaArtwork("", MediaArtworkType.LOGO);
               break;
             case POSTER:
-              art.setType(MediaArtworkType.POSTER);
+              art = new MediaArtwork("", MediaArtworkType.POSTER);
               break;
             case SEASON:
-              art.setType(MediaArtworkType.SEASON);
+              art = new MediaArtwork("", MediaArtworkType.SEASON);
               break;
             case THUMB:
-              art.setType(MediaArtworkType.THUMB);
+              art = new MediaArtwork("", MediaArtworkType.THUMB);
               break;
             default:
               return;
           }
+          art.setDefaultUrl(tfImageUrl.getText());
+          art.setPreviewUrl(tfImageUrl.getText());
 
           Url url = new Url(art.getPreviewUrl());
           final BufferedImage bufferedImage = ImageCache.createImage(url.getBytes());

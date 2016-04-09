@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +33,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -180,23 +182,25 @@ public class MovieSetChooserModel extends AbstractModelObject {
         options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
         MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
-        // if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
-        // movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
-        // movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
-        // movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
-        // movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+        // if (info != null && StringUtils.isNotBlank(info.getTitle())) {
+        // movieSet.setTitle(info.getTitle());
+        // movieSet.setPlot(info.getPlot());
+        // movieSet.setArtworkUrl(info.getPosterUrl(), MediaFileType.POSTER);
+        // movieSet.setArtworkUrl(info.getFanartUrl(), MediaFileType.FANART);
         // }
         if (info != null) {
           this.metadata = info;
-          setFanartUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL));
+          if (!info.getMediaArt(MediaArtworkType.BACKGROUND).isEmpty()) {
+            setFanartUrl(info.getMediaArt(MediaArtworkType.BACKGROUND).get(0).getDefaultUrl());
+          }
           for (MediaMetadata item : info.getSubItems()) {
-            MovieInSet movie = new MovieInSet(item.getStringValue(MediaMetadata.TITLE));
+            MovieInSet movie = new MovieInSet(item.getTitle());
             try {
               movie.setTmdbId(Integer.parseInt(item.getId(MediaMetadata.TMDB).toString()));
             }
             catch (NumberFormatException ignored) {
             }
-            movie.setReleaseDate(item.getStringValue(MediaMetadata.RELEASE_DATE));
+            movie.setReleaseDate(new SimpleDateFormat("yyyy-MM-dd").format(item.getReleaseDate()));
             movies.add(movie);
           }
 
@@ -219,7 +223,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
     if (metadata == null) {
       return null;
     }
-    return metadata.getStringValue(MediaMetadata.PLOT);
+    return metadata.getPlot();
   }
 
   public List<MovieInSet> getMovies() {

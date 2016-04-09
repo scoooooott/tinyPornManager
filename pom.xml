@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>api-scraper</artifactId>
-			<version>1.2</version>
+			<version>2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
@@ -178,6 +178,11 @@
 			<groupId>org.japura</groupId>
 			<artifactId>japura-gui</artifactId>
 			<version>7.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.6.1</version>
 		</dependency>
 	</dependencies>
 

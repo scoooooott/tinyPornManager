@@ -62,16 +62,16 @@ import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -728,7 +728,7 @@ public class Movie extends MediaEntity {
     }
 
     // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
+    if (StringUtils.isEmpty(metadata.getTitle())) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
@@ -737,38 +737,43 @@ public class Movie extends MediaEntity {
 
     // set chosen metadata
     if (config.isTitle()) {
-      setTitle(metadata.getStringValue(MediaMetadata.TITLE));
+      setTitle(metadata.getTitle());
     }
 
     if (config.isOriginalTitle()) {
-      setOriginalTitle(metadata.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+      setOriginalTitle(metadata.getOriginalTitle());
     }
 
     if (config.isTagline()) {
-      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
+      setTagline(metadata.getTagline());
     }
 
     if (config.isPlot()) {
-      setPlot(metadata.getStringValue(MediaMetadata.PLOT));
+      setPlot(metadata.getPlot());
     }
 
     if (config.isYear()) {
-      setYear(metadata.getStringValue(MediaMetadata.YEAR));
-      setReleaseDate(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+      if (metadata.getYear() != 0) {
+        setYear(Integer.toString(metadata.getYear()));
+      }
+      else {
+        setYear("");
+      }
+      setReleaseDate(metadata.getReleaseDate());
     }
 
     if (config.isRating()) {
-      setRating(metadata.getFloatValue(MediaMetadata.RATING));
-      setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
-      setTop250(metadata.getIntegerValue(MediaMetadata.TOP_250));
+      setRating(metadata.getRating());
+      setVotes(metadata.getVoteCount());
+      setTop250(metadata.getTop250());
     }
 
     if (config.isRuntime()) {
-      setRuntime(metadata.getIntegerValue(MediaMetadata.RUNTIME));
+      setRuntime(metadata.getRuntime());
     }
 
-    setSpokenLanguages(metadata.getStringValue(MediaMetadata.SPOKEN_LANGUAGES));
-    setCountry(metadata.getStringValue(MediaMetadata.COUNTRY));
+    setSpokenLanguages(StringUtils.join(metadata.getSpokenLanguages(), ", "));
+    setCountry(StringUtils.join(metadata.getCountries(), ", "));
 
     // certifications
     if (config.isCertification()) {
@@ -779,7 +784,7 @@ public class Movie extends MediaEntity {
 
     // cast
     if (config.isCast()) {
-      setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
       List<MovieActor> actors = new ArrayList<MovieActor>();
       List<MovieProducer> producers = new ArrayList<MovieProducer>();
       String director = "";
@@ -837,9 +842,14 @@ public class Movie extends MediaEntity {
 
     // create MovieSet
     if (config.isCollection()) {
-      int col = metadata.getIntegerValue(MediaMetadata.TMDB_SET);
+      int col = 0;
+      try {
+        col = (int) metadata.getId(MediaMetadata.TMDB_SET);
+      }
+      catch (Exception ignored) {
+      }
       if (col != 0) {
-        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getStringValue(MediaMetadata.COLLECTION_NAME), col);
+        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName(), col);
         if (movieSet != null && movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
           // get movieset metadata
@@ -854,11 +864,16 @@ public class Movie extends MediaEntity {
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);
-              if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
-                movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
-                movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
-                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
-                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+              if (info != null && StringUtils.isNotBlank(info.getTitle())) {
+                movieSet.setTitle(info.getTitle());
+                movieSet.setPlot(info.getPlot());
+
+                if (!info.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+                  movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.POSTER).get(0).getDefaultUrl(), MediaFileType.POSTER);
+                }
+                if (!info.getMediaArt(MediaArtworkType.BACKGROUND).isEmpty()) {
+                  movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.BACKGROUND).get(0).getDefaultUrl(), MediaFileType.FANART);
+                }
               }
             }
           }
@@ -985,14 +1000,18 @@ public class Movie extends MediaEntity {
       md.setId(entry.getKey(), entry.getValue());
     }
 
-    md.storeMetadata(MediaMetadata.TITLE, title);
-    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, originalTitle);
-    md.storeMetadata(MediaMetadata.TAGLINE, tagline);
-    md.storeMetadata(MediaMetadata.PLOT, plot);
-    md.storeMetadata(MediaMetadata.YEAR, year);
-    md.storeMetadata(MediaMetadata.RATING, rating);
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, votes);
-    md.storeMetadata(MediaMetadata.RUNTIME, runtime);
+    md.setTitle(title);
+    md.setOriginalTitle(originalTitle);
+    md.setTagline(tagline);
+    md.setPlot(plot);
+    try {
+      md.setYear(Integer.parseInt(year));
+    }
+    catch (Exception ignored) {
+    }
+    md.setRating(rating);
+    md.setVoteCount(votes);
+    md.setRuntime(runtime);
     md.addCertification(certification);
 
     return md;

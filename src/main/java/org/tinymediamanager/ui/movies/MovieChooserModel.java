@@ -29,15 +29,15 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -79,7 +79,12 @@ public class MovieChooserModel extends AbstractModelObject {
     // name
     setName(result.getTitle());
     // year
-    setYear(result.getYear());
+    if (result.getYear() != 0) {
+      setYear(Integer.toString(result.getYear()));
+    }
+    else {
+      setYear("");
+    }
     // combined name (name (year))
     setCombinedName();
   }
@@ -165,11 +170,11 @@ public class MovieChooserModel extends AbstractModelObject {
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
-      setOverview(metadata.getStringValue(MediaMetadata.PLOT));
-      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
+      setOverview(metadata.getPlot());
+      setTagline(metadata.getTagline());
 
-      if (StringUtils.isBlank(posterUrl) && StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.POSTER_URL))) {
-        setPosterUrl(metadata.getStringValue(MediaMetadata.POSTER_URL));
+      if (StringUtils.isBlank(posterUrl) && !metadata.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+        setPosterUrl(metadata.getMediaArt(MediaArtworkType.POSTER).get(0).getPreviewUrl());
       }
 
       scraped = true;
@@ -221,10 +226,9 @@ public class MovieChooserModel extends AbstractModelObject {
 
     // at last take the poster from the result
     if (StringUtils.isNotBlank(getPosterUrl())) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setType(MediaArtworkType.POSTER);
+      MediaArtwork ma = new MediaArtwork(result.getProviderId(), MediaArtworkType.POSTER);
       ma.setDefaultUrl(getPosterUrl());
-      ma.setProviderId(result.getProviderId());
+      ma.setPreviewUrl(getPosterUrl());
       artwork.add(ma);
     }
 

@@ -32,10 +32,10 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 
 /**
  * The Class MovieSettings.

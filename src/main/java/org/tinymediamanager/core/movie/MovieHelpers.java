@@ -1,6 +1,6 @@
 package org.tinymediamanager.core.movie;
 
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 
 public class MovieHelpers {
   /**

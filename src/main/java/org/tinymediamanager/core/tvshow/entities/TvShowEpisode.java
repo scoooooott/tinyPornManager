@@ -47,10 +47,10 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -437,19 +437,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     boolean writeNewThumb = false;
 
-    setTitle(metadata.getStringValue(MediaMetadata.TITLE));
-    setPlot(metadata.getStringValue(MediaMetadata.PLOT));
+    setTitle(metadata.getTitle());
+    setPlot(metadata.getPlot());
     setIds(metadata.getIds());
 
-    setAiredSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR, -1));
-    setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR, -1));
-    setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD, -1));
-    setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD, -1));
-    setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
-    setDisplaySeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DISPLAY, -1));
-    setDisplayEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DISPLAY, -1));
-    setRating(metadata.getFloatValue(MediaMetadata.RATING));
-    setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
+    setAiredSeason(metadata.getSeasonNumber());
+    setAiredEpisode(metadata.getEpisodeNumber());
+    setDvdSeason(metadata.getDvdSeasonNumber());
+    setDvdEpisode(metadata.getDvdEpisodeNumber());
+    setFirstAired(metadata.getReleaseDate());
+    setDisplaySeason(metadata.getDisplaySeasonNumber());
+    setDisplayEpisode(metadata.getDisplayEpisodeNumber());
+    setRating(metadata.getRating());
+    setVotes(metadata.getVoteCount());
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();
     String director = "";

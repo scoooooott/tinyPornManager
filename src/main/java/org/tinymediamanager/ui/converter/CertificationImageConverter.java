@@ -23,7 +23,7 @@ import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.Converter;
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
 /**
