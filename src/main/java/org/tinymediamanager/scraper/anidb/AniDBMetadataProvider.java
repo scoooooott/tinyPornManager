@@ -17,8 +17,8 @@ package org.tinymediamanager.scraper.anidb;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,19 +35,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
@@ -146,8 +145,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       if ("startdate".equalsIgnoreCase(e.tagName())) {
         try {
           Date date = StrgUtils.parseDate(e.text());
-          md.storeMetadata(MediaMetadata.RELEASE_DATE, date);
-          md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(date));
+          md.setReleaseDate(date);
+
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          md.setYear(calendar.get(Calendar.YEAR));
         }
         catch (ParseException ignored) {
         }
@@ -158,7 +160,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       }
 
       if ("description".equalsIgnoreCase(e.tagName())) {
-        md.storeMetadata(MediaMetadata.PLOT, e.text());
+        md.setPlot(e.text());
       }
 
       if ("ratings".equalsIgnoreCase(e.tagName())) {
@@ -166,7 +168,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       }
 
       if ("picture".equalsIgnoreCase(e.tagName())) {
-        md.storeMetadata(MediaMetadata.POSTER_URL, IMAGE_SERVER + e.text());
+        // Poster
+        MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+        ma.setPreviewUrl(IMAGE_SERVER + e.text());
+        ma.setDefaultUrl(IMAGE_SERVER + e.text());
+        ma.setLanguage(options.getLanguage().name());
+        md.addMediaArt(ma);
       }
 
       if ("characters".equalsIgnoreCase(e.tagName())) {
@@ -204,8 +211,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     for (Element rating : e.children()) {
       if ("temporary".equalsIgnoreCase(rating.tagName())) {
         try {
-          md.storeMetadata(MediaMetadata.RATING, Float.parseFloat(rating.text()));
-          md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.parseInt(rating.attr("count")));
+          md.setRating(Float.parseFloat(rating.text()));
+          md.setVoteCount(Integer.parseInt(rating.attr("count")));
           break;
         }
         catch (NumberFormatException ignored) {
@@ -238,13 +245,13 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     if (StringUtils.isNotBlank(titleScraperLangu)) {
-      md.storeMetadata(MediaMetadata.TITLE, titleScraperLangu);
+      md.setTitle(titleScraperLangu);
     }
     else if (StringUtils.isNotBlank(titleEN)) {
-      md.storeMetadata(MediaMetadata.TITLE, titleEN);
+      md.setTitle(titleEN);
     }
     else {
-      md.storeMetadata(MediaMetadata.TITLE, titleFirst);
+      md.setTitle(titleFirst);
     }
   }
 
@@ -322,15 +329,15 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     if (StringUtils.isBlank(title)) {
       title = episode.titles.get("x-jat");
     }
-    md.storeMetadata(MediaMetadata.TITLE, title);
-    md.storeMetadata(MediaMetadata.PLOT, episode.summary);
-    md.storeMetadata(MediaMetadata.RATING, episode.rating);
+    md.setTitle(title);
+    md.setPlot(episode.summary);
+    md.setRating(episode.rating);
     try {
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(episode.airdate));
+      md.setReleaseDate(StrgUtils.parseDate(episode.airdate));
     }
     catch (ParseException ignored) {
     }
-    md.storeMetadata(MediaMetadata.RUNTIME, episode.runtime);
+    md.setRuntime(episode.runtime);
     md.setId(providerInfo.getId(), episode.id);
 
     return md;
@@ -645,12 +652,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
           return artwork;
         }
 
-        MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(md.getStringValue(MediaMetadata.POSTER_URL));
-        ma.setPreviewUrl(md.getStringValue(MediaMetadata.POSTER_URL));
-        ma.setLanguage(options.getLanguage().name());
-        ma.setType(MediaArtworkType.POSTER);
-        artwork.add(ma);
+        artwork.addAll(md.getMediaArt(options.getArtworkType()));
 
         break;
 

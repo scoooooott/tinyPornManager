@@ -21,13 +21,14 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 public class AniDBMetadataProviderTest {
@@ -63,15 +64,15 @@ public class AniDBMetadataProviderTest {
     options.setId("anidb", "4242");
     try {
       MediaMetadata md = mp.getMetadata(options);
-      assertEquals("2006-03-25", sdf.format(md.getDateValue(MediaMetadata.RELEASE_DATE)));
-      assertEquals("2006", md.getStringValue(MediaMetadata.YEAR));
-      assertEquals("Spider Riders", md.getStringValue(MediaMetadata.TITLE));
+      assertEquals("2006-03-25", sdf.format(md.getReleaseDate()));
+      assertEquals("2006", md.getYear());
+      assertEquals("Spider Riders", md.getTitle());
       assertEquals(
           "In this Earth, there exists unknown underground world, the Inner World. In the world, there are braves who fight with large spiders, and they are called Spider Riders. According to his grandfather`s diary, a boy, Hunter Steel is traveling around. Meanwhile he happens to enter the Inner World from a pyramid. There, the war between the insect squad that aims at conquest of the Inner World and Spider Riders continues. Oracle, the fairly of the Inner World, summons Hunter because he thinks Hunter will be the messiah of the world. However, the powers of Oracle are sealed by Mantid who is the rule of the Insecter. For the peace of the Inner World, he has to find four sealed keys of Oracle to retrieve Oracle`s power. Hunter asks Spider Shadow, which is a big spider chosen by Oracle, to become a member of Spider Riders to fight against enemies. Source: AnimeNfo Note: The first three episodes premiered in North America with a 2 month hiatus between episodes 3 and 4, after which the series continued without a break between seasons. Episodes 4-26 aired first in Japan.",
-          md.getStringValue(MediaMetadata.PLOT));
-      assertEquals(5.66d, md.getDoubleValue(MediaMetadata.RATING), 0.5);
-      assertEquals(56, md.getIntegerValue(MediaMetadata.VOTE_COUNT), 5);
-      assertEquals("http://img7.anidb.net/pics/anime/11059.jpg", md.getStringValue(MediaMetadata.POSTER_URL));
+          md.getPlot());
+      assertEquals(5.66d, md.getRating(), 0.5);
+      assertEquals(56, md.getVoteCount(), 5);
+      assertEquals("http://img7.anidb.net/pics/anime/11059.jpg", md.getMediaArt(MediaArtworkType.POSTER).get(0).getDefaultUrl());
       assertEquals("Anime", md.getGenres().get(0).toString());
 
       // first actor
