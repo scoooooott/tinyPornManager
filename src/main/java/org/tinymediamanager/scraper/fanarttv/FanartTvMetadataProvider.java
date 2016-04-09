@@ -22,14 +22,14 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.fanarttv.entities.Image;
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
@@ -277,9 +277,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     List<MediaArtwork> artworks = new ArrayList<MediaArtwork>();
 
     for (Image image : ListUtils.nullSafe(images)) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setProviderId(providerInfo.getId());
-      ma.setType(type.type);
+      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type.type);
       ma.setDefaultUrl(image.url);
       ma.setPreviewUrl(image.url.replace("/fanart/", "/preview/"));
       ma.setLanguage(image.lang);

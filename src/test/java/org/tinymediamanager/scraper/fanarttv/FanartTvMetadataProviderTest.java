@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 
 public class FanartTvMetadataProviderTest {
