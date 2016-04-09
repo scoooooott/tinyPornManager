@@ -16,8 +16,8 @@
 package org.tinymediamanager.scraper.thetvdb;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,22 +29,22 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -184,11 +184,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       MediaMetadata md = getTvShowMetadata(scrapeOptions);
 
-      if (md != null && StringUtils.isNotBlank(md.getStringValue(MediaMetadata.TITLE))) {
+      if (md != null && StringUtils.isNotBlank(md.getTitle())) {
         MediaSearchResult result = new MediaSearchResult(providerInfo.getId());
         result.setId((String) md.getId(providerInfo.getId()));
-        result.setTitle(md.getStringValue(MediaMetadata.TITLE));
-        result.setPosterUrl(md.getStringValue(MediaMetadata.POSTER_URL));
+        result.setTitle(md.getTitle());
+
+        if (!md.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+          MediaArtwork poster = md.getMediaArt(MediaArtworkType.POSTER).get(0);
+          result.setPosterUrl(poster.getPreviewUrl());
+        }
+
         results.add(result);
       }
     }
@@ -208,7 +213,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     sr.setPosterUrl(show.getPoster());
 
     if (show.getFirstAired() != null && show.getFirstAired().length() > 3) {
-      sr.setYear(show.getFirstAired().substring(0, 4));
+      try {
+        sr.setYear(Integer.parseInt(show.getFirstAired().substring(0, 4)));
+      }
+      catch (Exception ignored) {
+      }
     }
 
     sr.setScore(MetadataUtil.calculateScore(searchString, show.getSeriesName()));
@@ -250,41 +259,49 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // populate metadata
     md.setId(providerInfo.getId(), show.getId());
-    md.storeMetadata(MediaMetadata.TITLE, show.getSeriesName());
+    md.setTitle(show.getSeriesName());
     md.setId(MediaMetadata.IMDB, show.getImdbId());
-    md.storeMetadata(MediaMetadata.PLOT, show.getOverview());
+    md.setPlot(show.getOverview());
 
     try {
-      md.storeMetadata(MediaMetadata.RUNTIME, Integer.valueOf(show.getRuntime()));
+      md.setRuntime(Integer.valueOf(show.getRuntime()));
     }
     catch (NumberFormatException e) {
-      md.storeMetadata(MediaMetadata.RUNTIME, 0);
+      md.setRuntime(0);
     }
-    md.storeMetadata(MediaMetadata.POSTER_URL, show.getPoster());
+
+    // Poster
+    MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+    ma.setPreviewUrl(show.getPoster());
+    ma.setDefaultUrl(show.getPoster());
+    ma.setLanguage(options.getLanguage().name());
+    md.addMediaArt(ma);
 
     try {
-      md.storeMetadata(MediaMetadata.RATING, Double.parseDouble(show.getRating()));
-      md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.parseInt(show.getRatingCount()));
+      md.setRating(Float.parseFloat(show.getRating()));
+      md.setVoteCount(Integer.parseInt(show.getRatingCount()));
     }
     catch (NumberFormatException e) {
-      md.storeMetadata(MediaMetadata.RATING, 0);
-      md.storeMetadata(MediaMetadata.VOTE_COUNT, 0);
+      md.setRating(0);
+      md.setVoteCount(0);
     }
     try {
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(show.getFirstAired()));
+      md.setReleaseDate(StrgUtils.parseDate(show.getFirstAired()));
     }
     catch (ParseException ignored) {
     }
 
     try {
-      Date date = org.tinymediamanager.scraper.util.StrgUtils.parseDate(show.getFirstAired());
-      md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(date));
+      Date date = StrgUtils.parseDate(show.getFirstAired());
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      md.setYear(calendar.get(Calendar.YEAR));
     }
     catch (Exception e) {
     }
 
-    md.storeMetadata(MediaMetadata.STATUS, show.getStatus());
-    md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, show.getNetwork());
+    md.setStatus(show.getStatus());
+    md.addProductionCompany(show.getNetwork());
 
     // actors
     List<Actor> actors = new ArrayList<Actor>();
@@ -397,34 +414,32 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       return md;
     }
 
-    md.storeMetadata(MediaMetadata.EPISODE_NR, episode.getEpisodeNumber());
-    md.storeMetadata(MediaMetadata.SEASON_NR, episode.getSeasonNumber());
+    md.setEpisodeNumber(episode.getEpisodeNumber());
+    md.setSeasonNumber(episode.getSeasonNumber());
 
     // TVDB provides the EP number as e.g. 2.0
     try {
       int s = Integer.parseInt(episode.getDvdSeason());
       int e = (int) Math.floor(Double.parseDouble(episode.getDvdEpisodeNumber()));
-      md.storeMetadata(MediaMetadata.EPISODE_NR_DVD, e);
-      md.storeMetadata(MediaMetadata.SEASON_NR_DVD, s);
+      md.setDvdEpisodeNumber(e);
+      md.setDvdSeasonNumber(s);
+      md.setAbsoluteNumber(Integer.parseInt(episode.getAbsoluteNumber()));
     }
     catch (Exception e) {
     }
-    md.storeMetadata(MediaMetadata.EPISODE_NR_COMBINED, episode.getCombinedEpisodeNumber());
-    md.storeMetadata(MediaMetadata.SEASON_NR_COMBINED, episode.getCombinedSeason());
-    md.storeMetadata(MediaMetadata.ABSOLUTE_NR, episode.getAbsoluteNumber());
 
-    md.storeMetadata(MediaMetadata.TITLE, episode.getEpisodeName());
-    md.storeMetadata(MediaMetadata.PLOT, episode.getOverview());
+    md.setTitle(episode.getEpisodeName());
+    md.setPlot(episode.getOverview());
     try {
-      md.storeMetadata(MediaMetadata.RATING, Float.parseFloat(episode.getRating()));
-      md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.parseInt(episode.getRatingCount()));
+      md.setRating(Float.parseFloat(episode.getRating()));
+      md.setVoteCount(Integer.parseInt(episode.getRatingCount()));
     }
     catch (NumberFormatException e) {
-      md.storeMetadata(MediaMetadata.RATING, 0);
-      md.storeMetadata(MediaMetadata.VOTE_COUNT, 0);
+      md.setRating(0);
+      md.setVoteCount(0);
     }
     try {
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, StrgUtils.parseDate(episode.getFirstAired()));
+      md.setReleaseDate(StrgUtils.parseDate(episode.getFirstAired()));
     }
     catch (ParseException ignored) {
     }
@@ -453,8 +468,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // Thumb
     if (options.getArtworkType() == MediaArtworkType.ALL || options.getArtworkType() == MediaArtworkType.THUMB) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setType(MediaArtworkType.THUMB);
+      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
+      ma.setPreviewUrl(episode.getFilename());
       ma.setDefaultUrl(episode.getFilename());
       md.addMediaArt(ma);
     }
@@ -533,25 +548,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // build output
     for (Banner banner : bannerList) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setDefaultUrl(banner.getUrl());
-      if (StringUtils.isNotBlank(banner.getThumb())) {
-        ma.setPreviewUrl(banner.getThumb());
-      }
-      else {
-        ma.setPreviewUrl(banner.getUrl());
-      }
-
-      ma.setLanguage(banner.getLanguage());
+      MediaArtwork ma = null;
 
       // set banner type
       switch (banner.getBannerType()) {
         case POSTER:
-          ma.setType(MediaArtworkType.POSTER);
+          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.POSTER);
           break;
 
         case SERIES:
-          ma.setType(MediaArtworkType.BANNER);
+          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.BANNER);
           break;
 
         case SEASON:
@@ -560,13 +566,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
             continue;
           }
 
-          ma.setType(MediaArtworkType.SEASON);
+          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.SEASON);
           ma.setSeason(banner.getSeason());
           break;
 
         case FANART:
         default:
-          ma.setType(MediaArtworkType.BACKGROUND);
+          ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.BACKGROUND);
           // extract image sizes
           if (StringUtils.isNotBlank(banner.getBannerType2().getType())) {
             try {
@@ -584,6 +590,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           }
           break;
       }
+
+      ma.setDefaultUrl(banner.getUrl());
+      if (StringUtils.isNotBlank(banner.getThumb())) {
+        ma.setPreviewUrl(banner.getThumb());
+      }
+      else {
+        ma.setPreviewUrl(banner.getUrl());
+      }
+      ma.setLanguage(banner.getLanguage());
 
       artwork.add(ma);
     }
@@ -671,8 +686,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
 
       // Thumb
-      MediaArtwork ma = new MediaArtwork();
-      ma.setType(MediaArtworkType.THUMB);
+      MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
       ma.setDefaultUrl(ep.getFilename());
       episode.artwork.add(ma);
 
