@@ -23,9 +23,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import com.uwetrottmann.tmdb.Tmdb;
@@ -140,10 +141,8 @@ class TmdbArtworkProvider {
     // prepare posters
     if (artworkType == MediaArtwork.MediaArtworkType.POSTER || artworkType == MediaArtwork.MediaArtworkType.ALL) {
       for (Image image : ListUtils.nullSafe(tmdbArtwork.posters)) {
-        MediaArtwork ma = new MediaArtwork();
+        MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtworkType.POSTER);
         ma.setPreviewUrl(baseUrl + "w185" + image.file_path);
-        ma.setProviderId(TmdbMetadataProvider.providerInfo.getId());
-        ma.setType(MediaArtwork.MediaArtworkType.POSTER);
         ma.setLanguage(image.iso_639_1);
         ma.setTmdbId(tmdbId);
 
@@ -172,10 +171,8 @@ class TmdbArtworkProvider {
 
     if (artworkType == MediaArtwork.MediaArtworkType.BACKGROUND || artworkType == MediaArtwork.MediaArtworkType.ALL) {
       for (Image image : ListUtils.nullSafe(tmdbArtwork.backdrops)) {
-        MediaArtwork ma = new MediaArtwork();
+        MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtworkType.BACKGROUND);
         ma.setPreviewUrl(baseUrl + "w300" + image.file_path);
-        ma.setProviderId(TmdbMetadataProvider.providerInfo.getId());
-        ma.setType(MediaArtwork.MediaArtworkType.BACKGROUND);
         ma.setLanguage(image.iso_639_1);
         ma.setTmdbId(tmdbId);
 

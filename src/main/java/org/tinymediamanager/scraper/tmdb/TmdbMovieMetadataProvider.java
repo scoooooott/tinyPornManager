@@ -15,23 +15,24 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -305,17 +306,17 @@ class TmdbMovieMetadataProvider {
         options.setLanguage(MediaLanguages.en);
         MediaMetadata englishMd = getMetadata(options);
 
-        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.PLOT))) {
-          md.storeMetadata(MediaMetadata.PLOT, englishMd.getStringValue(MediaMetadata.PLOT));
+        if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(englishMd.getPlot())) {
+          md.setPlot(englishMd.getPlot());
         }
-        if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TITLE))) {
-          md.storeMetadata(MediaMetadata.TITLE, englishMd.getStringValue(MediaMetadata.TITLE));
+        if (StringUtils.isBlank(movie.title) && !StringUtils.isBlank(englishMd.getTitle())) {
+          md.setTitle(englishMd.getTitle());
         }
-        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
-          md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, englishMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+        if (StringUtils.isBlank(movie.original_title) && !StringUtils.isBlank(englishMd.getOriginalTitle())) {
+          md.setOriginalTitle(englishMd.getOriginalTitle());
         }
-        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getStringValue(MediaMetadata.TAGLINE))) {
-          md.storeMetadata(MediaMetadata.TAGLINE, englishMd.getStringValue(MediaMetadata.TAGLINE));
+        if (StringUtils.isBlank(movie.tagline) && !StringUtils.isBlank(englishMd.getTagline())) {
+          md.setTagline(englishMd.getTagline());
         }
       }
       catch (Exception e) {
@@ -445,7 +446,9 @@ class TmdbMovieMetadataProvider {
 
     // parse release date to year
     if (movie.release_date != null) {
-      searchResult.setYear(new SimpleDateFormat("yyyy").format(movie.release_date));
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(movie.release_date);
+      searchResult.setYear(calendar.get(Calendar.YEAR));
     }
 
     return searchResult;
@@ -455,55 +458,48 @@ class TmdbMovieMetadataProvider {
     MediaMetadata md = new MediaMetadata(TmdbMetadataProvider.providerInfo.getId());
 
     md.setId(TmdbMetadataProvider.providerInfo.getId(), movie.id);
-    md.storeMetadata(MediaMetadata.TITLE, movie.title);
-    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, movie.original_title);
-    md.storeMetadata(MediaMetadata.PLOT, movie.overview);
-    md.storeMetadata(MediaMetadata.TAGLINE, movie.tagline);
+    md.setTitle(movie.title);
+    md.setOriginalTitle(movie.original_title);
+    md.setPlot(movie.overview);
+    md.setTagline(movie.tagline);
 
-    md.storeMetadata(MediaMetadata.RATING, movie.vote_average);
-    md.storeMetadata(MediaMetadata.RUNTIME, movie.runtime);
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, movie.vote_count);
+    md.setRating(movie.vote_average.floatValue());
+    md.setRuntime(movie.runtime);
+    md.setVoteCount(movie.vote_count);
 
-    String spokenLanguages = "";
+    // Poster
+    MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + movie.poster_path);
+    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
+    ma.setLanguage(options.getLanguage().name());
+    ma.setTmdbId(movie.id);
+    md.addMediaArt(ma);
+
     for (SpokenLanguage lang : ListUtils.nullSafe(movie.spoken_languages)) {
-      if (StringUtils.isNotEmpty(spokenLanguages)) {
-        spokenLanguages += ", ";
-      }
-
-      spokenLanguages += lang.iso_639_1;
+      md.addSpokenLanguage(lang.iso_639_1);
     }
-    md.storeMetadata(MediaMetadata.SPOKEN_LANGUAGES, spokenLanguages);
 
-    String countries = "";
     for (ProductionCountry country : ListUtils.nullSafe(movie.production_countries)) {
-      if (StringUtils.isNotBlank(countries)) {
-        countries += ", ";
-      }
-      countries += country.iso_3166_1;
+      md.addCountry(country.iso_3166_1);
     }
-    md.storeMetadata(MediaMetadata.COUNTRY, countries);
 
     if (MetadataUtil.isValidImdbId(movie.imdb_id)) {
       md.setId(MediaMetadata.IMDB, movie.imdb_id);
     }
 
     // production companies
-    String productionCompanies = "";
     for (ProductionCompany company : ListUtils.nullSafe(movie.production_companies)) {
-      if (!StringUtils.isEmpty(productionCompanies)) {
-
-        productionCompanies += ", ";
-      }
-      productionCompanies += company.name.trim();
+      md.addProductionCompany(company.name.trim());
     }
-    md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, productionCompanies.toString());
 
     // parse release date to year
     Date releaseDate = movie.release_date;
     if (releaseDate != null) {
-      md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(releaseDate));
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(releaseDate);
+      md.setYear(calendar.get(Calendar.YEAR));
     }
-    md.storeMetadata(MediaMetadata.RELEASE_DATE, releaseDate);
+    md.setReleaseDate(releaseDate);
 
     // releases & certification
     if (movie.releases != null) {
@@ -568,8 +564,8 @@ class TmdbMovieMetadataProvider {
     }
 
     if (movie.belongs_to_collection != null) {
-      md.storeMetadata(MediaMetadata.TMDB_SET, movie.belongs_to_collection.id);
-      md.storeMetadata(MediaMetadata.COLLECTION_NAME, movie.belongs_to_collection.name);
+      md.setId(MediaMetadata.TMDB_SET, movie.belongs_to_collection.id);
+      md.setCollectionName(movie.belongs_to_collection.name);
     }
 
     return md;

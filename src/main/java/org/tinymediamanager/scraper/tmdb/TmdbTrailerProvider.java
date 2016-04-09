@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.util.ListUtils;
 
 import com.uwetrottmann.tmdb.Tmdb;

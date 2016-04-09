@@ -15,21 +15,22 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -110,7 +111,9 @@ class TmdbTvShowMetadataProvider {
 
       // parse release date to year
       if (show.first_air_date != null) {
-        result.setYear(new SimpleDateFormat("yyyy").format(show.first_air_date));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(show.first_air_date);
+        result.setYear(calendar.get(Calendar.YEAR));
       }
 
       // calculate score
@@ -168,7 +171,7 @@ class TmdbTvShowMetadataProvider {
               ep.episode = episode.episode_number;
               ep.season = episode.season_number;
               ep.title = episode.name;
-              ep.rating = episode.vote_average;
+              ep.rating = episode.vote_average.floatValue();
               ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
               episodes.add(ep);
             }
@@ -236,28 +239,32 @@ class TmdbTvShowMetadataProvider {
     }
 
     md.setId(TmdbMetadataProvider.providerInfo.getId(), tmdbId);
-    md.storeMetadata(MediaMetadata.TITLE, complete.name);
-    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, complete.original_name);
-    md.storeMetadata(MediaMetadata.RATING, complete.vote_average);
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, complete.vote_count);
+    md.setTitle(complete.name);
+    md.setOriginalTitle(complete.original_name);
+    md.setRating(complete.vote_average.floatValue());
+    md.setVoteCount(complete.vote_count);
     if (complete.first_air_date != null) {
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, complete.first_air_date);
+      md.setReleaseDate(complete.first_air_date);
     }
-    md.storeMetadata(MediaMetadata.PLOT, complete.overview);
-    md.storeMetadata(MediaMetadata.POSTER_URL, TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
+    md.setPlot(complete.overview);
 
-    String productionCompany = "";
+    // Poster
+    MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + complete.poster_path);
+    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
+    ma.setLanguage(options.getLanguage().name());
+    ma.setTmdbId(complete.id);
+    md.addMediaArt(ma);
+
     for (ProductionCompany company : ListUtils.nullSafe(complete.production_companies)) {
-      if (!productionCompany.isEmpty()) {
-        productionCompany += ", ";
-      }
-      productionCompany += company.name;
+      md.addProductionCompany(company.name.trim());
     }
-    md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, productionCompany);
-    md.storeMetadata(MediaMetadata.STATUS, complete.status);
+    md.setStatus(complete.status);
 
     if (complete.first_air_date != null) {
-      md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(complete.first_air_date));
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(complete.first_air_date);
+      md.setYear(calendar.get(Calendar.YEAR));
     }
 
     if (complete.credits != null) {
@@ -340,16 +347,16 @@ class TmdbTvShowMetadataProvider {
       return md;
     }
 
-    md.storeMetadata(MediaMetadata.EPISODE_NR, episode.episode_number);
-    md.storeMetadata(MediaMetadata.SEASON_NR, episode.season_number);
+    md.setEpisodeNumber(episode.episode_number);
+    md.setSeasonNumber(episode.season_number);
     md.setId(TmdbMetadataProvider.providerInfo.getId(), episode.id);
-    md.storeMetadata(MediaMetadata.TITLE, episode.name);
-    md.storeMetadata(MediaMetadata.PLOT, episode.overview);
-    md.storeMetadata(MediaMetadata.RATING, episode.vote_average);
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, episode.vote_count);
+    md.setTitle(episode.name);
+    md.setPlot(episode.overview);
+    md.setRating(episode.vote_average.floatValue());
+    md.setVoteCount(episode.vote_count);
 
     if (episode.air_date != null) {
-      md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.air_date);
+      md.setReleaseDate(episode.air_date);
     }
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
@@ -361,8 +368,8 @@ class TmdbTvShowMetadataProvider {
 
     // Thumb
     if (options.getArtworkType() == MediaArtwork.MediaArtworkType.ALL || options.getArtworkType() == MediaArtwork.MediaArtworkType.THUMB) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setType(MediaArtwork.MediaArtworkType.THUMB);
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtworkType.THUMB);
+      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
       md.addMediaArt(ma);
     }
