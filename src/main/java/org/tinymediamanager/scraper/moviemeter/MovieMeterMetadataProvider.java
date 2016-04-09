@@ -22,15 +22,16 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
@@ -148,38 +149,39 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     }
 
     md.setId(MediaMetadata.IMDB, fd.imdb);
-    md.storeMetadata(MediaMetadata.TITLE, fd.title);
-    md.storeMetadata(MediaMetadata.YEAR, fd.year);
-    md.storeMetadata(MediaMetadata.PLOT, fd.plot);
-    md.storeMetadata(MediaMetadata.TAGLINE, fd.plot.length() > 150 ? fd.plot.substring(0, 150) : fd.plot);
+    md.setTitle(fd.title);
+    md.setYear(fd.year);
+    md.setPlot(fd.plot);
+    md.setTagline(fd.plot.length() > 150 ? fd.plot.substring(0, 150) : fd.plot);
     // md.setOriginalTitle(fd.getAlternative_titles());
     try {
-      md.storeMetadata(MediaMetadata.RATING, fd.average);
+      md.setRating((float) fd.average);
     }
     catch (Exception e) {
-      md.storeMetadata(MediaMetadata.RATING, 0);
+      md.setRating(0);
     }
     md.setId(providerInfo.getId(), fd.id);
     try {
-      md.storeMetadata(MediaMetadata.RUNTIME, fd.duration);
+      md.setRuntime(fd.duration);
     }
     catch (Exception e) {
-      md.storeMetadata(MediaMetadata.RUNTIME, 0);
+      md.setRuntime(0);
     }
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, fd.votes_count);
+    md.setVoteCount(fd.votes_count);
     for (String g : fd.genres) {
       md.addGenre(getTmmGenre(g));
     }
-    md.storeMetadata(MediaMetadata.POSTER_URL, fd.posters.large); // full res
 
-    String countries = "";
+    // Poster
+    MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+    ma.setPreviewUrl(fd.posters.small);
+    ma.setDefaultUrl(fd.posters.large);
+    ma.setLanguage(options.getLanguage().name());
+    md.addMediaArt(ma);
+
     for (String country : fd.countries) {
-      if (StringUtils.isNotBlank(countries)) {
-        countries += ", ";
-      }
-      countries += country;
+      md.addCountry(country);
     }
-    md.storeMetadata(MediaMetadata.COUNTRY, countries);
 
     for (MMActor a : fd.actors) {
       MediaCastMember cm = new MediaCastMember();
@@ -263,7 +265,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       sr.setIMDBId(imdb);
       sr.setTitle(fd.title);
       sr.setUrl(fd.url);
-      sr.setYear(String.valueOf(fd.year));
+      sr.setYear(fd.year);
       sr.setScore(1);
       resultList.add(sr);
     }
@@ -273,7 +275,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       sr.setIMDBId(imdb);
       sr.setTitle(film.title);
       sr.setUrl(film.url);
-      sr.setYear(String.valueOf(film.year));
+      sr.setYear(film.year);
 
       // compare score based on names
       float score = MetadataUtil.calculateScore(searchString, film.title);
