@@ -65,7 +65,8 @@ public class TvShowList extends AbstractModelObject {
   private static final Logger    LOGGER     = LoggerFactory.getLogger(TvShowList.class);
   private static TvShowList      instance   = null;
 
-  private List<TvShow>           tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<TvShow>           tvShowList = ObservableCollections
+      .observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
   private List<String>           tvShowTagsObservable;
   private List<String>           episodeTagsObservable;
   private List<String>           videoCodecsObservable;
@@ -334,8 +335,8 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().persistEpisode(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
-          + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E"
+          + episode.getEpisode() + " - " + episode.getTitle() + "; " + e.getMessage());
     }
   }
 
@@ -345,13 +346,14 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeEpisodeFromDb(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
-          + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E"
+          + episode.getEpisode() + " - " + episode.getTitle() + "; " + e.getMessage());
     }
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(),
+        ScraperType.TV_SHOW);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
@@ -449,11 +451,13 @@ public class TvShowList extends AbstractModelObject {
         provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
       }
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY,
+          searchTerm);
       options.set(SearchParam.LANGUAGE, language.name());
       options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
       LOGGER.info("=====================================================");
-      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", "
+          + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       searchResult = provider.search(options);
