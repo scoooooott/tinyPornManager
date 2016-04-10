@@ -41,7 +41,7 @@ public enum MediaSource {
 
   // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
   private static Pattern blurayPattern = Pattern
-      .compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|hdrip)[ .\\-_/\\\\\\]\\)]?");
+      .compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|hdrip|blu\\-ray)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern hddvdPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hddvd|hddvdrip)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern dvdPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvd|video_ts|dvdrip|dvdr|r5)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern tvPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)[ .\\-_/\\\\\\]\\)]?");
