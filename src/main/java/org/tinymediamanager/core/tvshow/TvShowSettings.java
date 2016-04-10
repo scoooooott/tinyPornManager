@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -46,12 +47,17 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFoldername";
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
   private final static String ASCII_REPLACEMENT           = "asciiReplacement";
+  private final static String BAD_WORDS                   = "badWords";
   private final static String ENTRY                       = "entry";
   private final static String TV_SHOW_SKIP_FOLDERS        = "tvShowSkipFolders";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
   private final List<String>  tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = BAD_WORDS)
+  @XmlElement(name = ENTRY)
+  private final List<String>  badWords                    = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_ARTWORK_SCRAPERS)
   @XmlElement(name = ENTRY)
@@ -274,5 +280,26 @@ public class TvShowSettings extends AbstractModelObject {
 
   public List<String> getTvShowSkipFolders() {
     return tvShowSkipFolders;
+  }
+
+  public void addBadWord(String badWord) {
+    if (!badWords.contains(badWord.toLowerCase())) {
+      badWords.add(badWord.toLowerCase());
+      firePropertyChange(BAD_WORDS, null, badWords);
+    }
+  }
+
+  public void removeBadWord(String badWord) {
+    badWords.remove(badWord.toLowerCase());
+    firePropertyChange(BAD_WORDS, null, badWords);
+  }
+
+  public List<String> getBadWords() {
+    // convert to lowercase for easy contains checking
+    ListIterator<String> iterator = badWords.listIterator();
+    while (iterator.hasNext()) {
+      iterator.set(iterator.next().toLowerCase());
+    }
+    return badWords;
   }
 }

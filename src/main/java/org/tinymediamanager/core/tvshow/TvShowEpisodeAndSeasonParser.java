@@ -120,14 +120,14 @@ public class TvShowEpisodeAndSeasonParser {
     // remove problematic strings from name
     String filename = FilenameUtils.getName(name);
     String extension = FilenameUtils.getExtension(name);
-    String basename = ParserUtils.removeStopwordsFromTvEpisodeName(name);
+    String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(FilenameUtils.getBaseName(name));
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
       basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
       basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
     }
-    basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
+
     basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
 
     // parse foldername
@@ -140,6 +140,7 @@ public class TvShowEpisodeAndSeasonParser {
     basename = basename + " ";
 
     result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
+    result.name = basename;
 
     // season detection
     if (result.season == -1) {
