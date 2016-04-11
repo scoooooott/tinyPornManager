@@ -43,10 +43,10 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.http.CachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
@@ -465,7 +465,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     List<Integer> foundIds = new ArrayList<Integer>();
     for (Entry<String, List<AniDBShow>> entry : showsForLookup.entrySet()) {
       String title = entry.getKey();
-      float score = Similarity.compareStringsWithoutLog(title, searchString);
+      float score = Similarity.compareStrings(title, searchString);
       if (score > 0.4) {
         for (AniDBShow show : entry.getValue()) {
           if (!foundIds.contains(show.aniDbId)) {
