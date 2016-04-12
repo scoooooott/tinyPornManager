@@ -77,27 +77,27 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 
 public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask2.class);
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+  private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieUpdateDatasourceTask2.class);
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
-  private static long                 preDir           = 0;
-  private static long                 postDir          = 0;
-  private static long                 visFile          = 0;
-  private static long                 preDir2          = 0;
-  private static long                 postDir2         = 0;
-  private static long                 visFile2         = 0;
+  private static long                 preDir         = 0;
+  private static long                 postDir        = 0;
+  private static long                 visFile        = 0;
+  private static long                 preDir2        = 0;
+  private static long                 postDir2       = 0;
+  private static long                 visFile2       = 0;
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String>   skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+  private static final List<String>   skipFolders    = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
       "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipFoldersRegex = "^[.][\\w@]+.*";
-  private static Pattern              video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
+  private static final String         skipRegex      = "^[.][\\w@]+.*";
+  private static Pattern              video3DPattern = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
   private List<String>                dataSources;
   private MovieList                   movieList;
-  private HashSet<Path>               filesFound       = new HashSet<Path>();
+  private HashSet<Path>               filesFound     = new HashSet<Path>();
 
   public MovieUpdateDatasourceTask2() {
     super(BUNDLE.getString("update.datasource"));
@@ -153,14 +153,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             }
           }
           else {
-            // filter here only VIDEO files, since we use the parseMMD directly
-            MediaFile mf = new MediaFile();
-            mf.setPath(path.getParent().toString());
-            mf.setFilename(path.getFileName().toString());
-            mf.setType(mf.parseType());
-            if (mf.getType() == MediaFileType.VIDEO) {
-              rootFiles.add(path);
-            }
+            rootFiles.add(path);
           }
         }
         rootList.clear();
@@ -563,7 +556,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     // convert to MFs
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     for (Path file : allFiles) {
-      mfs.add(new MediaFile(file));
+      if (!file.getFileName().toString().matches(skipRegex)) {
+        mfs.add(new MediaFile(file));
+      }
     }
     // allFiles.clear(); // might come handy
 
@@ -575,7 +570,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
     });
 
-    for (MediaFile mf : mfs) {
+    for (MediaFile mf : getMediaFiles(mfs, MediaFileType.VIDEO)) {
 
       Movie movie = null;
       String basename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename()));
@@ -599,7 +594,6 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           }
         }
       }
-
       if (movie == null) {
         // 2) create if not found
         // check for NFO
@@ -888,6 +882,56 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
   }
 
+  /**
+   * gets mediaFile of specific type
+   * 
+   * @param mfs
+   *          the MF list to search
+   * @param types
+   *          the MediaFileTypes
+   * @return MF or NULL
+   */
+  private MediaFile getMediaFile(List<MediaFile> mfs, MediaFileType... types) {
+    MediaFile mf = null;
+    for (MediaFile mediaFile : mfs) {
+      boolean match = false;
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          match = true;
+        }
+      }
+      if (match) {
+        mf = new MediaFile(mediaFile);
+      }
+    }
+    return mf;
+  }
+
+  /**
+   * gets all mediaFiles of specific type
+   * 
+   * @param mfs
+   *          the MF list to search
+   * @param types
+   *          the MediaFileTypes
+   * @return list of matching MFs
+   */
+  private List<MediaFile> getMediaFiles(List<MediaFile> mfs, MediaFileType... types) {
+    List<MediaFile> mf = new ArrayList<MediaFile>();
+    for (MediaFile mediaFile : mfs) {
+      boolean match = false;
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          match = true;
+        }
+      }
+      if (match) {
+        mf.add(new MediaFile(mediaFile));
+      }
+    }
+    return mf;
+  }
+
   @Override
   public void callback(Object obj) {
     // do not publish task description here, because with different workers the text is never right
@@ -968,7 +1012,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir2++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
-          || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipFoldersRegex))) {
+          || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
@@ -1035,8 +1079,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
       // skip samples et all here too - we're only interested in videos...
-      if (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || skipFolders.contains(fn)
-          || fn.matches(skipFoldersRegex)) {
+      if (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || skipFolders.contains(fn) || fn.matches(skipRegex)) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
