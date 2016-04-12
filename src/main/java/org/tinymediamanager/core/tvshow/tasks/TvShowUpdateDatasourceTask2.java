@@ -65,24 +65,24 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 
 public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
+  private static final Logger         LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
+  private static final ResourceBundle BUNDLE        = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String>   skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST",
-      "CLPINF", "SSIF", "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String>   skipFolders   = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipFoldersRegex = "^[.][\\w@]+.*";
+  private static final String         skipRegex     = "^[.][\\w@]+.*";
 
-  private static long                 preDir           = 0;
-  private static long                 postDir          = 0;
-  private static long                 visFile          = 0;
+  private static long                 preDir        = 0;
+  private static long                 postDir       = 0;
+  private static long                 visFile       = 0;
 
   private List<String>                dataSources;
-  private List<Path>                  tvShowFolders    = new ArrayList<Path>();
+  private List<Path>                  tvShowFolders = new ArrayList<Path>();
   private TvShowList                  tvShowList;
-  private HashSet<Path>               filesFound       = new HashSet<Path>();
+  private HashSet<Path>               filesFound    = new HashSet<Path>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -124,8 +124,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     Utils.removeEmptyStringsFromList(dataSources);
     if (dataSources.isEmpty() && tvShowFolders.isEmpty()) {
       LOGGER.info("no datasource to update");
-      MessageManager.instance
-          .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
       return;
     }
 
@@ -227,8 +226,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
-      MessageManager.instance
-          .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }
   }
 
@@ -401,7 +399,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // convert to MFs (we need it anyways at the end)
       ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
       for (Path file : allFiles) {
-        mfs.add(new MediaFile(file));
+        if (!file.getFileName().toString().matches(skipRegex)) {
+          mfs.add(new MediaFile(file));
+        }
       }
       allFiles.clear();
 
@@ -518,8 +518,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           // STEP 2.1.2 - no NFO? try to parse episode/season
           // ******************************
           String relativePath = showDir.relativize(mf.getFileAsPath()).toString();
-          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath,
-              tvShow.getTitle());
+          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
           // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers
           // found?
@@ -780,9 +779,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir++;
       // getFilename returns null on DS root!
-      if (dir.getFileName() != null && (Files.exists(dir.resolve(".tmmignore"))
-          || Files.exists(dir.resolve("tmmignore")) || skipFolders.contains(dir.getFileName().toString().toUpperCase())
-          || dir.getFileName().toString().matches(skipFoldersRegex))) {
+      if (dir.getFileName() != null && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
