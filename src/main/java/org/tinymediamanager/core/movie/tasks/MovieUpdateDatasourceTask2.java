@@ -153,7 +153,14 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             }
           }
           else {
-            rootFiles.add(path);
+            // filter here only VIDEO files, since we use the parseMMD directly
+            MediaFile mf = new MediaFile();
+            mf.setPath(path.getParent().toString());
+            mf.setFilename(path.getFileName().toString());
+            mf.setType(mf.parseType());
+            if (mf.getType() == MediaFileType.VIDEO) {
+              rootFiles.add(path);
+            }
           }
         }
         rootList.clear();
