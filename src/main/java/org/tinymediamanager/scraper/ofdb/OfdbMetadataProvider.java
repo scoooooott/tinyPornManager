@@ -38,12 +38,12 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -297,32 +297,34 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       // ... and take the next table row ^^
       Element tr = castEl.nextElementSibling();
 
-      for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
-        String act = a.toString();
-        String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
-        if (!aname.isEmpty()) {
-          MediaCastMember cm = new MediaCastMember();
-          cm.setName(aname);
-          String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
-          if (!id.isEmpty()) {
-            cm.setId(id);
-            // thumb
-            // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
-            // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
-            try {
-              String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
-              if (!imgurl.isEmpty()) {
-                imgurl = BASE_URL + "/images/person/" + imgurl;
+      if (tr != null) {
+        for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
+          String act = a.toString();
+          String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
+          if (!aname.isEmpty()) {
+            MediaCastMember cm = new MediaCastMember();
+            cm.setName(aname);
+            String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
+            if (!id.isEmpty()) {
+              cm.setId(id);
+              // thumb
+              // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
+              // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
+              try {
+                String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
+                if (!imgurl.isEmpty()) {
+                  imgurl = BASE_URL + "/images/person/" + imgurl;
+                }
+                cm.setImageUrl(imgurl);
               }
-              cm.setImageUrl(imgurl);
+              catch (Exception e) {
+              }
             }
-            catch (Exception e) {
-            }
+            String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>").replaceAll("<[^>]*>", "");
+            cm.setCharacter(arole);
+            cm.setType(type);
+            md.addCastMember(cm);
           }
-          String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>").replaceAll("<[^>]*>", "");
-          cm.setCharacter(arole);
-          cm.setType(type);
-          md.addCastMember(cm);
         }
       }
     }
