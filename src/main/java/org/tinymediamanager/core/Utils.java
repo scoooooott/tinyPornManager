@@ -486,74 +486,78 @@ public class Utils {
    *          The event for the GET request
    */
   public static void trackEvent(final String event) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Thread.currentThread().setName("trackEventThread");
-          Path uuidFile = Paths.get("tmm.uuid");
-          Path disable = Paths.get("tmm.uuid.disable");
-          if (Files.notExists(uuidFile)) {
-            writeStringToFile(uuidFile, UUID.randomUUID().toString());
-          }
+    // should we track the event?
+    Path disable = Paths.get("tmm.uuid.disable");
+    if (Globals.settings.isEnableAnalytics() && Files.notExists(disable)) {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.currentThread().setName("trackEventThread");
+            Path uuidFile = Paths.get("tmm.uuid");
 
-          if (Files.exists(uuidFile) && Files.notExists(disable)) {
-            String uuid = readFileToString(uuidFile);
-            System.setProperty("tmm.uuid", uuid);
-
-            String session = "";
-            if ("startup".equals(event)) {
-              session = "&sc=start";
-            }
-            else if ("shutdown".equals(event)) {
-              session = "&sc=end";
+            if (Files.notExists(uuidFile)) {
+              writeStringToFile(uuidFile, UUID.randomUUID().toString());
             }
 
-            // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-            // @formatter:off
-            String ga = "v=1"
-                + "&tid=UA-35564534-5"
-                + "&cid=" + uuid 
-                + "&an=tinyMediaManager" 
-                + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR svn/nightly/prerel string
-                + "&t=event"
-                + "&ec=" + event
-                + "&ea=" + event 
-                + "&aip=1" 
-                + "&je=1"
-                + session
-                + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
-                + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
-                + "&cd1=" + getEncProp("os.name") 
-                + "&cd2=" + getEncProp("os.arch") 
-                + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
-                + "&cd4=" + ReleaseInfo.getVersion() // TMM version eg 2.5.5
-                + "&cd5=" + (Globals.isDonator() ? "1" : "0")
-                + "&z=" + System.currentTimeMillis();
-            if (!GraphicsEnvironment.isHeadless()) {
-              ga += "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height; 
-            }
-            // @formatter:on
-            Url url = new Url("https://ssl.google-analytics.com/collect?" + ga);
+            if (Files.exists(uuidFile)) {
+              String uuid = readFileToString(uuidFile);
+              System.setProperty("tmm.uuid", uuid);
 
-            InputStream in = url.getInputStream();
-            if (in != null) {
-              try {
-                in.close();
+              String session = "";
+              if ("startup".equals(event)) {
+                session = "&sc=start";
               }
-              catch (Exception ignored) {
+              else if ("shutdown".equals(event)) {
+                session = "&sc=end";
+              }
+
+              // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
+              // @formatter:off
+              String ga = "v=1"
+                  + "&tid=UA-35564534-5"
+                  + "&cid=" + uuid 
+                  + "&an=tinyMediaManager" 
+                  + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR svn/nightly/prerel string
+                  + "&t=event"
+                  + "&ec=" + event
+                  + "&ea=" + event 
+                  + "&aip=1" 
+                  + "&je=1"
+                  + session
+                  + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
+                  + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
+                  + "&cd1=" + getEncProp("os.name") 
+                  + "&cd2=" + getEncProp("os.arch") 
+                  + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
+                  + "&cd4=" + ReleaseInfo.getVersion() // TMM version eg 2.5.5
+                  + "&cd5=" + (Globals.isDonator() ? "1" : "0")
+                  + "&z=" + System.currentTimeMillis();
+              if (!GraphicsEnvironment.isHeadless()) {
+                ga += "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height; 
+              }
+              // @formatter:on
+              Url url = new Url("https://ssl.google-analytics.com/collect?" + ga);
+
+              InputStream in = url.getInputStream();
+              if (in != null) {
+                try {
+                  in.close();
+                }
+                catch (Exception ignored) {
+                }
               }
             }
           }
+          catch (RuntimeException e) {
+            throw e;
+          }
+          catch (Exception e) {
+            LOGGER.warn("could not ping our update server...");
+          }
         }
-        catch (RuntimeException e) {
-          throw e;
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not ping our update server...");
-        }
-      }
-    }).start();
+      }).start();
+    }
   }
 
   /**

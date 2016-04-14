@@ -97,6 +97,7 @@ public class Settings extends AbstractModelObject {
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
   private final static String         LANGUAGE                    = "language";
   private final static String         WOL_DEVICES                 = "wolDevices";
+  private final static String         ENABLE_ANALYTICS            = "enableAnalytics";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -148,6 +149,7 @@ public class Settings extends AbstractModelObject {
   private String                      fontFamily                  = "Dialog";
 
   private boolean                     deleteTrashOnExit           = false;
+  private boolean                     enableAnalytics             = true;
 
   private PropertyChangeListener      propertyChangeListener;
   @XmlTransient
@@ -1091,5 +1093,15 @@ public class Settings extends AbstractModelObject {
 
   public boolean isDeleteTrashOnExit() {
     return deleteTrashOnExit;
+  }
+
+  public boolean isEnableAnalytics() {
+    return enableAnalytics;
+  }
+
+  public void setEnableAnalytics(boolean newValue) {
+    boolean oldValue = this.enableAnalytics;
+    this.enableAnalytics = newValue;
+    firePropertyChange(ENABLE_ANALYTICS, oldValue, newValue);
   }
 }
