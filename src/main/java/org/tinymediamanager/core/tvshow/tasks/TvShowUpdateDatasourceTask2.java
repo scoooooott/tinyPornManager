@@ -182,7 +182,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         } // end forech datasource
       }
       else {
-        // update TV show
+        initThreadPool(1, "update");
+        // update selected TV show
         for (Path path : tvShowFolders) {
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
@@ -249,7 +250,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      cleanup(tvShow);
+      if (Files.notExists(tvShow.getPathNIO())) {
+        tvShowList.removeTvShow(tvShow);
+      }
+      else {
+        cleanup(tvShow);
+      }
     }
   }
 
@@ -268,7 +274,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       TvShow tvShow = tvShowList.getTvShows().get(i);
 
       // check only Tv shows matching datasource
-      if (Paths.get(datasource).toAbsolutePath().equals(Paths.get(tvShow.getDataSource()).toAbsolutePath())) {
+      if (!Paths.get(datasource).toAbsolutePath().equals(Paths.get(tvShow.getDataSource()).toAbsolutePath())) {
         continue;
       }
 
