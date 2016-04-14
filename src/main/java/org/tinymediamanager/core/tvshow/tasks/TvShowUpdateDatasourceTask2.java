@@ -33,6 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +76,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipRegex     = "^[.][\\w@]+.*";
+
+  private static final Pattern        seasonPattern = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
 
   private static long                 preDir        = 0;
   private static long                 postDir       = 0;
@@ -628,6 +632,25 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // ******************************
       mfs.removeAll(tvShow.getEpisodesMediaFiles()); // remove EP files
       tvShow.addToMediaFiles(mfs); // add remaining
+
+      // fill season posters map
+      for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_POSTER)) {
+        Matcher matcher = seasonPattern.matcher(mf.getFilename());
+        if (matcher.matches()) {
+          try {
+            int season = Integer.parseInt(matcher.group(1));
+            LOGGER.debug("found season poster " + mf.getFileAsPath());
+            tvShow.setSeasonPoster(season, mf);
+          }
+          catch (Exception e) {
+            if (mf.getFilename().startsWith("season-specials-poster")) {
+              LOGGER.debug("found season specials poster " + mf.getFileAsPath());
+              tvShow.setSeasonPoster(-1, mf);
+            }
+          }
+        }
+      }
+
       tvShow.saveToDb();
 
       return showDir.getFileName().toString();
