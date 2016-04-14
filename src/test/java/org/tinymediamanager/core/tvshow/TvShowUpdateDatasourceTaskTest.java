@@ -41,8 +41,8 @@ public class TvShowUpdateDatasourceTaskTest {
   @Test
   public void udsNew() throws Exception {
     // just a copy; we might have another test which uses these files
-    FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), new File(DATASOURCE_DEST));
-    TvShowModuleManager.TV_SHOW_SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
+    // FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), new File(DATASOURCE_DEST));
+    TvShowModuleManager.TV_SHOW_SETTINGS.addTvShowDataSources(DATASOURCE_SOURCE);
     TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
     task.run();
   }

@@ -999,7 +999,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile2++;
-      if (attr.isRegularFile()) {
+      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");
@@ -1062,7 +1062,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile()) {
+      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
           if (file.getParent().getFileName().toString().equals("STREAM")) {

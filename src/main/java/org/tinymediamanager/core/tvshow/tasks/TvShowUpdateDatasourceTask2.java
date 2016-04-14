@@ -145,7 +145,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShowFolders.size() == 0) {
 
         for (String ds : dataSources) {
-          initThreadPool(3, "update"); // FIXME: one thread here? - more threads killed the UI
+          initThreadPool(1, "update"); // FIXME: more threads result in duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<Path>();
           List<Path> existingTvShowDirs = new ArrayList<Path>();
           List<Path> rootList = listFilesAndDirs(Paths.get(ds));
@@ -391,6 +391,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public String call() throws Exception {
       LOGGER.info("start parsing " + showDir);
+      if (showDir.getFileName().toString().matches(skipRegex)) {
+        LOGGER.debug("Skipping dir: " + showDir);
+        return "";
+      }
 
       HashSet<Path> allFiles = getAllFilesRecursive(showDir, Integer.MAX_VALUE);
       filesFound.add(showDir.toAbsolutePath()); // our global cache
@@ -767,7 +771,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile()) {
+      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");
