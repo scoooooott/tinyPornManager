@@ -23,7 +23,7 @@ import org.tinymediamanager.thirdparty.MediaInfoUtils;
  */
 public class MovieUpdateDatasourceTaskTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 27;
+  private static final int NUMBER_OF_EXPECTED_MOVIES = 31;
   private static final int NUMBER_OF_STACKED_MOVIES  = 7;
   private static final int NUMBER_OF_DISC_MOVIES     = 6;
 
