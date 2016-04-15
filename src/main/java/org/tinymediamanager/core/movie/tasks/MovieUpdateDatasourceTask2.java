@@ -182,7 +182,6 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // mediainfo
         gatherMediainfo(ds);
 
-        waitForCompletionOrCancel();
         if (cancel) {
           break;
         }
@@ -880,6 +879,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, movie, false));
       }
     }
+    waitForCompletionOrCancel();
   }
 
   /**
