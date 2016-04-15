@@ -15,7 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.ADDED_SEASON;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.EPISODE;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.TITLE;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -240,6 +249,12 @@ public class TvShowTreeModel implements TreeModel {
     // since we can call this from addEpisode, we have to lock it at calling
     // synchronized (root) {
     // get the tv show node
+    // cross check if that season has not yet been added by an episode
+    if (nodeMap.get(season) != null) {
+      // node has already been added (multi threading..) - skip the logic
+      return;
+    }
+
     TvShowTreeNode parent = (TvShowTreeNode) nodeMap.get(tvShow);
     TvShowSeasonTreeNode child = new TvShowSeasonTreeNode(season);
     if (parent != null) {
