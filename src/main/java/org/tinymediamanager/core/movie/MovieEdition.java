@@ -27,12 +27,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum MovieEdition {
   NONE("", ""),
-  DIRECTORS_CUT("Director's Cut", "Director.?s.(Cut|Edition|Version)"),
-  EXTENDED_EDITION("Extended Edition", "Extended.(Cut|Edition|Version)?"),
-  UNRATED("Unrated", "Unrated.(Cut|Edition|Version)?"),
-  UNCUT("Uncut", "Uncut.(Cut|Edition|Version)?"),
+  DIRECTORS_CUT("Director's Cut", ".Director.?s.(Cut|Edition|Version)"),
+  EXTENDED_EDITION("Extended Edition", ".Extended.(Cut|Edition|Version)?"),
+  UNRATED("Unrated", ".Unrated.(Cut|Edition|Version)?"),
+  UNCUT("Uncut", ".Uncut.(Cut|Edition|Version)?"),
   IMAX("IMAX", "IMAX.(Cut|Edition|Version)?"),
-  SPECIAL_EDITION("Special Edition", "(Special|Remastered|Collectors|Ultimate).(Cut|Edition|Version)");
+  SPECIAL_EDITION("Special Edition", ".(Special|Remastered|Collectors|Ultimate).(Cut|Edition|Version)");
 
   private String  title;
   private Pattern pattern;
