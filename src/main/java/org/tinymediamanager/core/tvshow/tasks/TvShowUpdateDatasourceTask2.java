@@ -149,7 +149,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShowFolders.size() == 0) {
 
         for (String ds : dataSources) {
-          initThreadPool(1, "update"); // FIXME: more threads result in duplicate tree entries :/
+          initThreadPool(3, "update"); // FIXME: more threads result in duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<Path>();
           List<Path> existingTvShowDirs = new ArrayList<Path>();
           List<Path> rootList = listFilesAndDirs(Paths.get(ds));
@@ -186,7 +186,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         } // end forech datasource
       }
       else {
-        initThreadPool(1, "update");
+        initThreadPool(3, "update");
         // update selected TV show
         for (Path path : tvShowFolders) {
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
