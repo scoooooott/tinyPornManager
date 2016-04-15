@@ -68,10 +68,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -463,6 +463,10 @@ public class Movie extends MediaEntity {
   public boolean hasSubtitles() {
     if (this.subtitles) {
       return true; // local ones found
+    }
+
+    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+      return true;
     }
 
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {

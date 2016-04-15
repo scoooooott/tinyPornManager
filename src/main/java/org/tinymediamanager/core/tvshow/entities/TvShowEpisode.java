@@ -49,8 +49,8 @@ import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -861,7 +861,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public boolean hasSubtitles() {
     if (this.subtitles) {
-      return true; // local ones found
+      return true; // can be set in GUI
+    }
+
+    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+      return true;
     }
 
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
