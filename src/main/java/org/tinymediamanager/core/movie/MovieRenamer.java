@@ -1014,6 +1014,11 @@ public class MovieRenamer {
           ret = movie.getCertification().getName();
         }
         break;
+      case "$U":
+        if (movie.getEdition() != MovieEdition.NONE) {
+          ret = movie.getEditionAsString();
+        }
+        break;
       case "$G":
         if (!movie.getGenres().isEmpty()) {
           MediaGenres genre = movie.getGenres().get(0);
@@ -1231,7 +1236,6 @@ public class MovieRenamer {
    * What means, pattern has at least title set ($T|$E|$O)<br>
    * "empty" is considered as invalid - so not renaming files
    * 
-   * @param pattern
    * @return true/false
    */
   public static boolean isFilePatternValid() {

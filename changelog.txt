@@ -2,6 +2,7 @@ Version 2.8
 =======================
 + complete rewrite of "update datasource" for movies - massive performance boost!!!
 + complete rewrite of "update datasource" for TV shows - massive performance boost!!!
++ added edition field for movies (now you can have the same movie in multiple versions without problems)
 x fix #22 "search episode" scrollbar
 x fix stacking marker detection for movies
 x added setting for our internal statistics

@@ -33,15 +33,18 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * The Class MovieSettings.
  */
 @XmlRootElement(name = "MovieSettings")
 public class MovieSettings extends AbstractModelObject {
+  public final static String              DEFAULT_RENAMER_FOLDER_PATTERN           = "$T { - $U }($Y)";
+  public final static String              DEFAULT_RENAMER_FILE_PATTERN             = "$T { - $U }($Y) $V $A";
+
   private final static String             PATH                                     = "path";
   private final static String             FILENAME                                 = "filename";
   private final static String             MOVIE_DATA_SOURCE                        = "movieDataSource";
@@ -132,8 +135,8 @@ public class MovieSettings extends AbstractModelObject {
   private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
 
   // renamer
-  private String                          movieRenamerPathname                     = "$T ($Y)";
-  private String                          movieRenamerFilename                     = "$T ($Y) $V $A";
+  private String                          movieRenamerPathname                     = DEFAULT_RENAMER_FOLDER_PATTERN;
+  private String                          movieRenamerFilename                     = DEFAULT_RENAMER_FILE_PATTERN;
   private boolean                         movieRenamerSpaceSubstitution            = false;
   private String                          movieRenamerSpaceReplacement             = "_";
   private boolean                         movieRenamerNfoCleanup                   = false;

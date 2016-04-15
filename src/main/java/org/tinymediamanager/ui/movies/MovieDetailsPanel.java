@@ -43,9 +43,9 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -143,6 +143,8 @@ public class MovieDetailsPanel extends JPanel {
   private JLabel                      lblCountry;
   private JLabel                      lblReleaseDateT;
   private JLabel                      lblReleaseDate;
+  private JLabel                      lblEditionT;
+  private JLabel                      lblEdition;
 
   /**
    * Instantiates a new movie details panel.
@@ -154,17 +156,17 @@ public class MovieDetailsPanel extends JPanel {
     this.movieSelectionModel = model;
 
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
             new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(lblOriginalTitleT, "2, 2");
@@ -250,8 +252,14 @@ public class MovieDetailsPanel extends JPanel {
     lblTags = new JLabel("");
     add(lblTags, "4, 16, 9, 1");
 
+    lblEditionT = new JLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+    add(lblEditionT, "2, 18");
+
+    lblEdition = new JLabel("");
+    add(lblEdition, "4, 18, 7, 1");
+
     lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-    add(lblImdbIdT, "2, 18");
+    add(lblImdbIdT, "2, 20");
 
     lblImdbId = new LinkLabel("");
     lblImdbId.addActionListener(new ActionListener() {
@@ -268,11 +276,11 @@ public class MovieDetailsPanel extends JPanel {
       }
     });
 
-    add(lblImdbId, "4, 18, 3, 1, left, default");
+    add(lblImdbId, "4, 20, 3, 1, left, default");
     lblImdbIdT.setLabelFor(lblImdbId);
 
     lblTmdbIdT = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
-    add(lblTmdbIdT, "8, 18");
+    add(lblTmdbIdT, "8, 20");
 
     lblTmdbId = new LinkLabel("");
     lblTmdbId.addActionListener(new ActionListener() {
@@ -288,11 +296,11 @@ public class MovieDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblTmdbId, "10, 18, 3, 1, left, default");
+    add(lblTmdbId, "10, 20, 3, 1, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
 
     lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblMoviePathT, "2, 20");
+    add(lblMoviePathT, "2, 22");
 
     lblMoviePath = new LinkLabel("");
     lblMoviePath.addActionListener(new ActionListener() {
@@ -316,7 +324,7 @@ public class MovieDetailsPanel extends JPanel {
     });
     lblMoviePathT.setLabelFor(lblMoviePath);
     lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 20, 9, 1");
+    add(lblMoviePath, "4, 22, 9, 1");
 
     initDataBindings();
   }
@@ -388,5 +396,10 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_10, lblReleaseDate, jLabelBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.editionAsString");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_13, lblEdition, jLabelBeanProperty);
+    autoBinding_11.bind();
   }
 }

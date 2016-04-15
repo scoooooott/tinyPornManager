@@ -15,7 +15,37 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.EDITION;
+import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
+import static org.tinymediamanager.core.Constants.TOP250;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -49,6 +79,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -128,6 +159,8 @@ public class Movie extends MediaEntity {
   private Certification                         certification              = Certification.NOT_RATED;
   @JsonProperty
   private UUID                                  movieSetId;
+  @JsonProperty
+  private MovieEdition                          edition                    = MovieEdition.NONE;
 
   @JsonProperty
   private List<String>                          genres                     = new ArrayList<String>(1);
@@ -1929,5 +1962,20 @@ public class Movie extends MediaEntity {
     else {
       return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
     }
+  }
+
+  public MovieEdition getEdition() {
+    return edition;
+  }
+
+  public String getEditionAsString() {
+    return edition.toString();
+  }
+
+  public void setEdition(MovieEdition newValue) {
+    MovieEdition oldValue = this.edition;
+    this.edition = newValue;
+    firePropertyChange(EDITION, oldValue, newValue);
+    firePropertyChange(EDITION_AS_STRING, oldValue, newValue);
   }
 }

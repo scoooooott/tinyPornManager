@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -56,6 +58,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
@@ -477,6 +480,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     if (matcher.find()) {
       movie.setVideoIn3D(true);
     }
+    // get edition from name
+    movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
+
     movie.setPath(movieDir.toAbsolutePath().toString());
     movie.setDataSource(dataSource.toString());
     movie.setDateAdded(new Date());
@@ -632,6 +638,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           if (!ty[1].isEmpty()) {
             movie.setYear(ty[1]);
           }
+          // get edition from name
+          movie.setEdition(MovieEdition.getMovieEditionFromString(basename));
+
           // if the String 3D is in the movie file name, assume it is a 3D movie
           Matcher matcher = video3DPattern.matcher(basename);
           if (matcher.find()) {
