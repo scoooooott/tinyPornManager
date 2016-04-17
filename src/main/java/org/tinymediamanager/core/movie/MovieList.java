@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.movie;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -38,7 +41,6 @@ import org.h2.mvstore.MVMap;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
@@ -52,20 +54,19 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  * The Class MovieList.
@@ -518,21 +519,24 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-      options.set(SearchParam.LANGUAGE, langu.name());
-      options.set(SearchParam.COUNTRY, MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry().getAlpha2());
-      options.set(SearchParam.COLLECTION_INFO, Boolean.toString(Globals.settings.getMovieScraperMetadataConfig().isCollection()));
+      options.setLanguage(Locale.forLanguageTag(langu.name()));
+      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
-          options.set(SearchParam.IMDBID, movie.getImdbId());
+          options.setImdbId(movie.getImdbId());
           idFound = true;
         }
         if (movie.getTmdbId() != 0) {
-          options.set(SearchParam.TMDBID, String.valueOf(movie.getTmdbId()));
+          options.setTmdbId(movie.getTmdbId());
           idFound = true;
         }
-        options.set(SearchParam.QUERY, movie.getTitle());
+        options.setQuery(movie.getTitle());
         if (!movie.getYear().isEmpty()) {
-          options.set(SearchParam.YEAR, movie.getYear());
+          try {
+            options.setYear(Integer.parseInt(movie.getYear()));
+          }
+          catch (Exception ignored) {
+          }
         }
       }
       if (!searchTerm.isEmpty()) {
@@ -540,11 +544,11 @@ public class MovieList extends AbstractModelObject {
           // id found, so search for it
           // except when searchTerm differs from movie title (we entered something to search for)
           if (!searchTerm.equals(movie.getTitle())) {
-            options.set(SearchParam.QUERY, searchTerm);
+            options.setQuery(searchTerm);
           }
         }
         else {
-          options.set(SearchParam.QUERY, searchTerm);
+          options.setQuery(searchTerm);
         }
       }
 

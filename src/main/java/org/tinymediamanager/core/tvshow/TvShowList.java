@@ -15,7 +15,13 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,11 +53,10 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,8 +71,7 @@ public class TvShowList extends AbstractModelObject {
   private static final Logger    LOGGER     = LoggerFactory.getLogger(TvShowList.class);
   private static TvShowList      instance   = null;
 
-  private List<TvShow>           tvShowList = ObservableCollections
-      .observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<TvShow>           tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
   private List<String>           tvShowTagsObservable;
   private List<String>           episodeTagsObservable;
   private List<String>           videoCodecsObservable;
@@ -335,8 +340,8 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().persistEpisode(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E"
-          + episode.getEpisode() + " - " + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to persist episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
+          + episode.getTitle() + "; " + e.getMessage());
     }
   }
 
@@ -346,14 +351,13 @@ public class TvShowList extends AbstractModelObject {
       TvShowModuleManager.getInstance().removeEpisodeFromDb(episode);
     }
     catch (Exception e) {
-      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E"
-          + episode.getEpisode() + " - " + episode.getTitle() + "; " + e.getMessage());
+      LOGGER.error("failed to remove episode: " + episode.getTvShow().getTitle() + " - S" + episode.getSeason() + "E" + episode.getEpisode() + " - "
+          + episode.getTitle() + "; " + e.getMessage());
     }
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(),
-        ScraperType.TV_SHOW);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
@@ -451,13 +455,11 @@ public class TvShowList extends AbstractModelObject {
         provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
       }
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY,
-          searchTerm);
-      options.set(SearchParam.LANGUAGE, language.name());
-      options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
+      options.setLanguage(Locale.forLanguageTag(language.name()));
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       LOGGER.info("=====================================================");
-      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", "
-          + provider.getProviderInfo().getVersion());
+      LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       searchResult = provider.search(options);
