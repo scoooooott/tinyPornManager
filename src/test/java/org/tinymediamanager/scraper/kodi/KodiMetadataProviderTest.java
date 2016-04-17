@@ -2,19 +2,20 @@ package org.tinymediamanager.scraper.kodi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
-import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
@@ -62,10 +63,9 @@ public class KodiMetadataProviderTest {
       assertThat(tmdb).isNotNull();
 
       // search
-      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY,
-          "Harry Potter and the Philosopher's Stone");
-      searchOptions.set(SearchParam.YEAR, "2001");
-      searchOptions.set(SearchParam.LANGUAGE, "en");
+      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter and the Philosopher's Stone");
+      searchOptions.setYear(2001);
+      searchOptions.setLanguage(Locale.ENGLISH);
       List<MediaSearchResult> results = tmdb.search(searchOptions);
 
       assertThat(results).isNotNull();

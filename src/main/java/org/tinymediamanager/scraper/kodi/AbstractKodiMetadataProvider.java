@@ -35,9 +35,9 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.util.DOMUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -77,7 +77,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
 
   protected List<MediaSearchResult> _search(MediaSearchOptions options) throws Exception {
     List<MediaSearchResult> l = new ArrayList<MediaSearchResult>();
-    String arg = options.get(MediaSearchOptions.SearchParam.QUERY);
+    String arg = options.getQuery();
 
     // cannot search without any title/query
     if (StringUtils.isBlank(arg)) {
@@ -87,7 +87,10 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     // Kodi wants title and year separated, so let's do that
     String args[] = parseTitle(arg);
     String title = args[0];
-    String year = options.get(MediaSearchOptions.SearchParam.YEAR);
+    String year = "";
+    if (options.getYear() != 0) {
+      year = "" + options.getYear();
+    }
 
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
     KodiUrl url = processor.getSearchUrl(title, year);
