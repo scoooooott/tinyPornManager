@@ -1,7 +1,10 @@
 package org.tinymediamanager.scraper.imdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
@@ -19,11 +22,11 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class ImdbMetadataProviderTest {
@@ -38,8 +41,8 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "9");
-      options.set(MediaSearchOptions.SearchParam.LANGUAGE, "en");
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "9");
+      options.setLanguage(Locale.forLanguageTag("en"));
       results = mp.search(options);
 
       // did we get a result?
@@ -50,11 +53,11 @@ public class ImdbMetadataProviderTest {
 
       // check first result (9 - 2009 - tt0472033)
       MediaSearchResult result = results.get(0);
-      checkSearchResult("9", "2009", "tt0472033", result);
+      checkSearchResult("9", 2009, "tt0472033", result);
 
       // check second result (9 - 2002 - tt0443424)
       result = results.get(1);
-      checkSearchResult("9", "2002", "tt0342012", result);
+      checkSearchResult("9", 2002, "tt0342012", result);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -66,7 +69,7 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
-      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Inglorious Basterds"));
+      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, "Inglorious Basterds"));
 
       // did we get a result?
       assertNotNull("Result", results);
@@ -76,16 +79,16 @@ public class ImdbMetadataProviderTest {
 
       // check first result (Inglourious Basterds - 2009 - tt0361748)
       MediaSearchResult result = results.get(0);
-      checkSearchResult("Inglourious Basterds", "2009", "tt0361748", result);
+      checkSearchResult("Inglourious Basterds", 2009, "tt0361748", result);
 
       // check second result (The Real Inglorious Bastards - 2012 - tt3320110)
       result = results.get(1);
-      checkSearchResult("The Real Inglorious Bastards", "2012", "tt3320110", result);
+      checkSearchResult("The Real Inglorious Bastards", 2012, "tt3320110", result);
 
       // check third result (Inglourious Basterds: Movie Special - 2009 -
       // tt1515156)
       result = results.get(2);
-      checkSearchResult("Inglourious Basterds: Movie Special", "2009", "tt1515156", result);
+      checkSearchResult("Inglourious Basterds: Movie Special", 2009, "tt1515156", result);
 
     }
     catch (Exception e) {
@@ -98,8 +101,8 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Asterix der Gallier");
-      options.set(MediaSearchOptions.SearchParam.LANGUAGE, "de");
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Asterix der Gallier");
+      options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
 
       // did we get a result?
@@ -110,7 +113,7 @@ public class ImdbMetadataProviderTest {
 
       // check first result (Asterix der Gallier - 1967 - tt0061369)
       MediaSearchResult result = results.get(0);
-      checkSearchResult("Asterix der Gallier", "1967", "tt0061369", result);
+      checkSearchResult("Asterix der Gallier", 1967, "tt0061369", result);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -128,8 +131,8 @@ public class ImdbMetadataProviderTest {
      */
     try {
       mp = new ImdbMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, "Psych");
-      options.set(MediaSearchOptions.SearchParam.LANGUAGE, "en");
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, "Psych");
+      options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
 
       // did we get a result?
@@ -140,7 +143,7 @@ public class ImdbMetadataProviderTest {
 
       // check first result (Psych - 2006 - tt0491738)
       MediaSearchResult result = results.get(0);
-      checkSearchResult("Psych", "2006", "tt0491738", result);
+      checkSearchResult("Psych", 2006, "tt0491738", result);
 
     }
     catch (Exception e) {
@@ -288,7 +291,7 @@ public class ImdbMetadataProviderTest {
     }
   }
 
-  private void checkSearchResult(String title, String year, String imdbId, MediaSearchResult result) {
+  private void checkSearchResult(String title, int year, String imdbId, MediaSearchResult result) {
     // title
     assertEquals("title", title, result.getTitle());
     // year
@@ -330,7 +333,6 @@ public class ImdbMetadataProviderTest {
       genres.add(MediaGenres.ANIMATION);
       genres.add(MediaGenres.ACTION);
       genres.add(MediaGenres.ADVENTURE);
-      genres.add(MediaGenres.FANTASY);
       genres.add(MediaGenres.MYSTERY);
       genres.add(MediaGenres.SCIENCE_FICTION);
       genres.add(MediaGenres.THRILLER);
@@ -484,7 +486,7 @@ public class ImdbMetadataProviderTest {
       cm.setType(CastType.ACTOR);
       castMembers.add(cm);
 
-      checkCastMembers(castMembers, 15, md);
+      checkCastMembers(castMembers, 16, md);
 
       // check production company
       checkProductionCompany(Arrays.asList("Walt Disney Pictures", "Pixar Animation Studios"), md);

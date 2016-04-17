@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -100,12 +102,12 @@ public abstract class ImdbParser {
      */
     String searchTerm = "";
 
-    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.IMDBID))) {
-      searchTerm = query.get(MediaSearchOptions.SearchParam.IMDBID);
+    if (StringUtils.isNotEmpty(query.getImdbId())) {
+      searchTerm = query.getImdbId();
     }
 
     if (StringUtils.isEmpty(searchTerm)) {
-      searchTerm = query.get(MediaSearchOptions.SearchParam.QUERY);
+      searchTerm = query.getQuery();
     }
 
     if (StringUtils.isEmpty(searchTerm)) {
@@ -113,9 +115,9 @@ public abstract class ImdbParser {
     }
 
     // parse out language and coutry from the scraper query
-    String language = query.get(MediaSearchOptions.SearchParam.LANGUAGE);
-    String myear = query.get(MediaSearchOptions.SearchParam.YEAR);
-    String country = query.get(MediaSearchOptions.SearchParam.COUNTRY); // for passing the country to the scrape
+    String language = query.getLanguage().getLanguage();
+    int myear = query.getYear();
+    String country = query.getCountry().getAlpha2(); // for passing the country to the scrape
 
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
@@ -304,7 +306,7 @@ public abstract class ImdbParser {
       sr.setYear(year);
       sr.setPosterUrl(posterUrl);
 
-      if (movieId.equals(query.get(MediaSearchOptions.SearchParam.IMDBID))) {
+      if (movieId.equals(query.getImdbId())) {
         // perfect match
         sr.setScore(1);
       }
@@ -315,7 +317,7 @@ public abstract class ImdbParser {
           getLogger().debug("no poster - downgrading score by 0.01");
           score = score - 0.01f;
         }
-        if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(year)) {
+        if (myear != 0 && myear != year) {
           getLogger().debug("parsed year does not match search result year - downgrading score by 0.01");
           score = score - 0.01f;
         }
