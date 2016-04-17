@@ -62,8 +62,8 @@ class TmdbMovieSetMetadataProvider {
     List<MediaSearchResult> movieSetsFound = new ArrayList<MediaSearchResult>();
 
     String searchString = "";
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
+      searchString = query.getQuery();
     }
 
     if (StringUtils.isEmpty(searchString)) {
@@ -74,7 +74,7 @@ class TmdbMovieSetMetadataProvider {
     CollectionResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().collection(searchString, 1, query.get(MediaSearchOptions.SearchParam.LANGUAGE));
+      resultsPage = api.searchService().collection(searchString, 1, query.getLanguage().getLanguage());
     }
 
     if (resultsPage == null) {

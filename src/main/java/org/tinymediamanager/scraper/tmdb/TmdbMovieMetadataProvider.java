@@ -86,16 +86,12 @@ class TmdbMovieMetadataProvider {
       throw new Exception("wrong media type for this scraper");
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
+      searchString = query.getQuery();
     }
 
-    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
-      try {
-        year = Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
-      }
-      catch (Exception e) {
-      }
+    if (query.getYear() != 0) {
+      year = query.getYear();
     }
 
     if (StringUtils.isEmpty(searchString)) {
@@ -104,7 +100,7 @@ class TmdbMovieMetadataProvider {
     }
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
-    String language = query.get(MediaSearchOptions.SearchParam.LANGUAGE);
+    String language = query.getLanguage().getLanguage();
     String imdbId = "";
     int tmdbId = 0;
 
@@ -112,10 +108,10 @@ class TmdbMovieMetadataProvider {
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
     synchronized (api) {
       // 1. try with TMDBid
-      if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.TMDBID))) {
+      if (query.getTmdbId() != 0) {
         TmdbConnectionCounter.trackConnections();
         // if we have already an ID, get this result and do not search
-        tmdbId = Integer.valueOf(query.get(MediaSearchOptions.SearchParam.TMDBID));
+        tmdbId = query.getTmdbId();
         try {
           // /movie/{id}
           Movie movie = api.moviesService().summary(tmdbId, language, null);
@@ -129,9 +125,9 @@ class TmdbMovieMetadataProvider {
       }
 
       // 2. try with IMDBid
-      if (resultList.size() == 0 && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.IMDBID))) {
+      if (resultList.size() == 0 && StringUtils.isNotEmpty(query.getImdbId())) {
         TmdbConnectionCounter.trackConnections();
-        imdbId = query.get(MediaSearchOptions.SearchParam.IMDBID);
+        imdbId = query.getImdbId();
         try {
           // /find/{id}
           FindResults findResults = api.findService().find(imdbId, null, language);
@@ -141,7 +137,7 @@ class TmdbMovieMetadataProvider {
             }
           }
           // moviesFound.add(tmdb.getMovieInfoImdb(imdbId,
-          // query.get(MediaSearchOptions.SearchParam.LANGUAGE)));
+          // query.getLanguage().getLanguage()));
         }
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
@@ -161,7 +157,7 @@ class TmdbMovieMetadataProvider {
             }
           }
           // moviesFound = tmdb.searchMovie(searchString, year,
-          // query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // query.getLanguage().getLanguage(),
           // false, 0).getResults();
         }
         catch (Exception e) {
@@ -185,7 +181,7 @@ class TmdbMovieMetadataProvider {
             }
           }
           // moviesFound = tmdb.searchMovie(searchString, year,
-          // query.get(MediaSearchOptions.SearchParam.LANGUAGE),
+          // query.getLanguage().getLanguage(),
           // false, 0).getResults();
         }
         catch (Exception e) {

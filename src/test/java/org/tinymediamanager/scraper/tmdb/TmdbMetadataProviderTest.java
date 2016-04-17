@@ -2,22 +2,24 @@ package org.tinymediamanager.scraper.tmdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
@@ -37,8 +39,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Harry Potter");
-      options.set(SearchParam.LANGUAGE, "en");
+      options = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter");
+      options.setLanguage(Locale.ENGLISH);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -54,8 +56,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Slevin");
-      options.set(SearchParam.LANGUAGE, "en");
+      options = new MediaSearchOptions(MediaType.MOVIE, "Slevin");
+      options.setLanguage(Locale.ENGLISH);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -64,7 +66,7 @@ public class TmdbMetadataProviderTest {
       assertEquals("Result count", 1, results.size());
 
       assertEquals("Lucky Number Slevin", results.get(0).getTitle());
-      assertEquals("2006", results.get(0).getYear());
+      assertEquals(2006, results.get(0).getYear());
     }
     catch (Exception e) {
       fail(e.getMessage());
@@ -78,8 +80,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Die Piefke Saga");
-      options.set(SearchParam.LANGUAGE, "de");
+      options = new MediaSearchOptions(MediaType.MOVIE, "Die Piefke Saga");
+      options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -95,8 +97,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Slevin");
-      options.set(SearchParam.LANGUAGE, "de");
+      options = new MediaSearchOptions(MediaType.MOVIE, "Slevin");
+      options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -105,7 +107,7 @@ public class TmdbMetadataProviderTest {
       assertEquals("Result count", 1, results.size());
 
       assertEquals("Lucky # Slevin", results.get(0).getTitle());
-      assertEquals("2006", results.get(0).getYear());
+      assertEquals(2006, results.get(0).getYear());
     }
     catch (Exception e) {
       fail(e.getMessage());
@@ -131,7 +133,7 @@ public class TmdbMetadataProviderTest {
       md = mp.getMetadata(options);
 
       assertEquals("Twelve Monkeys", md.getTitle());
-      assertEquals("1995", md.getYear());
+      assertEquals(1995, md.getYear());
       assertEquals(
           "In the year 2035, convict James Cole (Bruce Willis) reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly (Madeleine Stowe), and patient Jeffrey Goines (Brad Pitt), the son of a famous virus expert, who may hold the key to the mysterious rogue group, the Army of the 12 Monkeys, thought to be responsible for unleashing the killer disease.",
           md.getPlot());
@@ -153,7 +155,7 @@ public class TmdbMetadataProviderTest {
       md = mp.getMetadata(options);
 
       assertEquals("Harry Potter and the Philosopher's Stone", md.getTitle());
-      assertEquals("2001", md.getYear());
+      assertEquals(2001, md.getYear());
       assertEquals(
           "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard -- with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths -- and about the villain who's to blame.",
           md.getPlot());
@@ -182,7 +184,7 @@ public class TmdbMetadataProviderTest {
       md = mp.getMetadata(options);
 
       assertEquals("Merida - Legende der Highlands", md.getTitle());
-      assertEquals("2012", md.getYear());
+      assertEquals(2012, md.getYear());
       assertEquals(
           "Merida – Legende der Highlands spielt im Schottland des 10. Jahrhunderts. König Fergus und Königin Elinor haben es nicht leicht. Ihre Tochter Merida, ein Ass im Bogenschießen, ist ein echter Wildfang und Sturkopf. In ihrem Ungestüm verletzt die Prinzessin alte Traditionen, indem sie bei einem Turnier mit ihrer Schussfertigkeit auftrumpft, die offiziellen Teilnehmer brüskiert und damit den Zorn der schottischen Lords auf sich zieht. Als sie dadurch das Königreich in ein Chaos stürzt, bittet sie eine weise alte Frau um Hilfe, die ihr einen verhängnisvollen Wunsch gewährt. Um ihre Fehler wieder gut zu machen, muss Merida lernen, was wahrer Mut bedeutet und so den Fluch aufheben, bevor es zu spät ist.",
           md.getPlot());
@@ -210,8 +212,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE_SET, MediaSearchOptions.SearchParam.QUERY, "Harry Potter");
-      options.set(SearchParam.LANGUAGE, "en");
+      options = new MediaSearchOptions(MediaType.MOVIE_SET, "Harry Potter");
+      options.setLanguage(Locale.ENGLISH);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -233,8 +235,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       mp = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.MOVIE_SET, MediaSearchOptions.SearchParam.QUERY, "101 Dalmatiner");
-      options.set(SearchParam.LANGUAGE, "de");
+      options = new MediaSearchOptions(MediaType.MOVIE_SET, "101 Dalmatiner");
+      options.setLanguage(Locale.GERMAN);
       results = mp.search(options);
       // did we get a result?
       assertNotNull("Result", results);
@@ -292,8 +294,8 @@ public class TmdbMetadataProviderTest {
      ********************************************************/
     try {
       metadataProvider = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, "Psych");
-      options.set(SearchParam.LANGUAGE, "en");
+      options = new MediaSearchOptions(MediaType.TV_SHOW, "Psych");
+      options.setLanguage(Locale.ENGLISH);
       results = metadataProvider.search(options);
 
       assertNotNull(results);
@@ -311,8 +313,8 @@ public class TmdbMetadataProviderTest {
     results = null;
     try {
       metadataProvider = new TmdbMetadataProvider();
-      options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, "Die Simpsons");
-      options.set(SearchParam.LANGUAGE, "de");
+      options = new MediaSearchOptions(MediaType.TV_SHOW, "Die Simpsons");
+      options.setLanguage(Locale.GERMAN);
       results = metadataProvider.search(options);
 
       assertNotNull(results);
@@ -380,7 +382,7 @@ public class TmdbMetadataProviderTest {
       assertEquals(
           "Psych is an American detective comedy-drama television series created by Steve Franks and broadcast on USA Network. The series stars James Roday as Shawn Spencer, a young crime consultant for the Santa Barbara Police Department whose \"heightened observational skills\" and impressive detective instincts allow him to convince people that he solves cases with psychic abilities. The program also stars Dulé Hill as Shawn's best friend and reluctant partner Burton \"Gus\" Guster, as well as Corbin Bernsen as Shawn's father, Henry, a former officer of the Santa Barbara Police Department.",
           md.getPlot());
-      assertEquals("2006", md.getYear());
+      assertEquals(2006, md.getYear());
       assertNotEquals(0d, md.getRating());
       assertNotEquals(0, (int) md.getVoteCount());
       assertEquals("Ended", md.getStatus());

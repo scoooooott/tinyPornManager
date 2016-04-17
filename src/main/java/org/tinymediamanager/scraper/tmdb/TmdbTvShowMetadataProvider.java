@@ -27,10 +27,10 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -75,8 +75,8 @@ class TmdbTvShowMetadataProvider {
       throw new Exception("wrong media type for this scraper");
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
+      searchString = query.getQuery();
     }
 
     if (StringUtils.isEmpty(searchString)) {
@@ -85,7 +85,7 @@ class TmdbTvShowMetadataProvider {
     }
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
-    String language = query.get(MediaSearchOptions.SearchParam.LANGUAGE);
+    String language = query.getLanguage().getLanguage();
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
