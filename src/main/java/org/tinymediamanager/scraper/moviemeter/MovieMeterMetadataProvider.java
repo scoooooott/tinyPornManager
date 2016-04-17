@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +31,15 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit.RetrofitError;
 
 /**
@@ -207,17 +208,17 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
 
     LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
-    String imdb = query.get(MediaSearchOptions.SearchParam.IMDBID);
+    String imdb = query.getImdbId();
     String searchString = "";
-    String myear = query.get(MediaSearchOptions.SearchParam.YEAR);
+    int myear = query.getYear();
 
     // check type
     if (query.getMediaType() != MediaType.MOVIE) {
       throw new Exception("wrong media type for this scraper");
     }
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {
+      searchString = query.getQuery();
     }
 
     if (StringUtils.isEmpty(searchString)) {
@@ -280,7 +281,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       // compare score based on names
       float score = MetadataUtil.calculateScore(searchString, film.title);
 
-      if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(sr.getYear())) {
+      if (myear != 0 && myear != sr.getYear()) {
         LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
         score = score - 0.01f;
       }

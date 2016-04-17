@@ -2,7 +2,7 @@ package org.tinymediamanager.scraper.moviemeter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -21,9 +21,7 @@ public class MoviemeterMetadataProviderTest {
   public void testSearch() {
     try {
       IMovieMetadataProvider rt = new MovieMeterMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-
-      options.set(MediaSearchOptions.SearchParam.QUERY, "Avatar");
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Avatar");
 
       List<MediaSearchResult> results = rt.search(options);
       assertEquals(3, results.size());
@@ -50,7 +48,7 @@ public class MoviemeterMetadataProviderTest {
       assertThat(md).isNotNull();
 
       assertThat(md.getTitle()).isEqualTo("Avatar");
-      assertThat(md.getYear()).isEqualTo("2009");
+      assertThat(md.getYear()).isEqualTo(2009);
       assertThat(md.getRating()).isGreaterThan(0);
       assertThat(md.getPlot()).startsWith("Jake Sully (Sam Worthington) is een verlamde oorlogsveteraan in de toekomst, die met enkele");
       assertThat(md.getProductionCompanies()).isEmpty();
