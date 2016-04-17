@@ -28,6 +28,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,8 +56,6 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB)
@@ -453,8 +453,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // detect the string to search
     String searchString = "";
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isNotEmpty(options.getQuery())) {
+      searchString = options.getQuery();
     }
 
     // return an empty search result if no query provided
