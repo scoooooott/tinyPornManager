@@ -17,9 +17,8 @@ package org.tinymediamanager.scraper.mediaprovider;
 
 import java.util.List;
 
-import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaSubtitleDownloadOptions;
+import org.tinymediamanager.scraper.SubtitleSearchOptions;
 
 /**
  * The Interface IMediaSubtitleProvider.
@@ -38,13 +37,5 @@ public interface IMediaSubtitleProvider extends IMediaProvider {
    * @throws Exception
    *           the exception
    */
-  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
-
-  /**
-   * download subtitle
-   * 
-   * @param options
-   *          the options for downloading a subtitle
-   */
-  public void download(MediaSubtitleDownloadOptions options) throws Exception;
+  public List<MediaSearchResult> search(SubtitleSearchOptions options) throws Exception;
 }

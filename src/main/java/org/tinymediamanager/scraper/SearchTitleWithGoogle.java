@@ -42,13 +42,13 @@ public class SearchTitleWithGoogle {
     String searchTerm = "";
 
     try {
-      if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
+      if (StringUtils.isNotEmpty(options.getQuery())) {
         if (!site.startsWith("http")) {
           site = "http://" + site;
         }
         site = new URL(site).getHost();
-        searchTerm = options.get(MediaSearchOptions.SearchParam.QUERY);
-        String lang = options.get(MediaSearchOptions.SearchParam.LANGUAGE);
+        searchTerm = options.getQuery();
+        String lang = options.getLanguage().getLanguage();
         searchUrl = "https://www.google." + lang + "/search?q=" + URLEncoder.encode("site:" + site + " " + searchTerm, "UTF-8");
         LOGGER.debug("search for : " + searchTerm + " (" + searchUrl + ")");
       }

@@ -15,17 +15,17 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
  * This class is used to set the scrape options for scraping.
@@ -37,15 +37,15 @@ import java.util.HashMap;
 public class MediaScrapeOptions {
   private MediaSearchResult       result;
   private MediaMetadata           metadata;
-  private HashMap<String, String> ids         = new HashMap<String, String>();
+  private HashMap<String, String> ids         = new HashMap<>();
   private MediaType               type;
   private MediaArtworkType        artworkType = MediaArtworkType.ALL;
   private MediaLanguages          language    = MediaLanguages.en;
   private CountryCode             country     = CountryCode.US;
-  private FanartSizes             fanartSize  = FanartSizes.MEDIUM;           // default; will be overwritten by tmm
-                                                                              // settings
-  private PosterSizes             posterSize  = PosterSizes.MEDIUM;           // default; will be overwritten by tmm
-                                                                              // settings
+  private FanartSizes             fanartSize  = FanartSizes.MEDIUM;  // default; will be overwritten by tmm
+                                                                     // settings
+  private PosterSizes             posterSize  = PosterSizes.MEDIUM;  // default; will be overwritten by tmm
+                                                                     // settings
 
   public MediaScrapeOptions(MediaType type) {
     this.type = type;

@@ -15,50 +15,159 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
- * The Class SearchQuery. Pass arguments to the scraper searches
+ * The Class MediaSearchOptions. Pass arguments to the scraper searches
  * 
  * @author Manuel Laggner
- * @since 1.0
+ * @since 2.0
  */
 public class MediaSearchOptions {
-  public enum SearchParam {
-    QUERY, YEAR, IMDBID, TMDBID, SEASON, EPISODE, LANGUAGE, COUNTRY, COLLECTION_INFO, IMDB_FOREIGN_LANGUAGE, FILE
-  }
+  protected MediaType   type;
 
-  private Map<SearchParam, String> options = new HashMap<SearchParam, String>();
-  private MediaType                type;
+  protected String      query    = "";
+  protected int         year     = 0;
+  protected String      imdbId   = "";
+  protected int         tmdbId   = 0;
+  protected Locale      language = Locale.getDefault();
+  protected CountryCode country  = CountryCode.getDefault();
 
   public MediaSearchOptions(MediaType type) {
     this.type = type;
   }
 
   public MediaSearchOptions(MediaType type, String query) {
-    this(type, SearchParam.QUERY, query);
-  }
-
-  public MediaSearchOptions(MediaType type, SearchParam field, String value) {
     this.type = type;
-    set(field, value);
+    this.query = query;
   }
 
+  /**
+   * Get the media type for this options
+   *
+   * @return the media type
+   */
   public MediaType getMediaType() {
     return type;
   }
 
-  public void set(SearchParam field, String value) {
-    options.put(field, value);
+  /**
+   * Get the search query
+   *
+   * @return the search query
+   */
+  public String getQuery() {
+    return query;
   }
 
-  public String get(SearchParam field) {
-    return options.get(field);
+  /**
+   * Set the search query
+   *
+   * @param query
+   *          the search query
+   */
+  public void setQuery(String query) {
+    this.query = query;
+  }
+
+  /**
+   * Get the year
+   *
+   * @return the year or 0 if none set
+   */
+  public int getYear() {
+    return year;
+  }
+
+  /**
+   * Set the year
+   *
+   * @param year
+   *          the year
+   */
+  public void setYear(int year) {
+    this.year = year;
+  }
+
+  /**
+   * Get the IMDB Id
+   *
+   * @return the IMDB Id
+   */
+  public String getImdbId() {
+    return imdbId;
+  }
+
+  /**
+   * Set the IMDB Id
+   *
+   * @param imdbId
+   *          the IMDB Id
+   */
+  public void setImdbId(String imdbId) {
+    this.imdbId = imdbId;
+  }
+
+  /**
+   * Get the TMDB Id
+   *
+   * @return the TMDB Id
+   */
+  public int getTmdbId() {
+    return tmdbId;
+  }
+
+  /**
+   * Set the TMDB Id
+   *
+   * @param tmdbId
+   *          the TMDB Id
+   */
+  public void setTmdbId(int tmdbId) {
+    this.tmdbId = tmdbId;
+  }
+
+  /**
+   * Get the language for the search
+   *
+   * @return a locale holding the right language
+   */
+  public Locale getLanguage() {
+    return language;
+  }
+
+  /**
+   * Set the language for the search
+   *
+   * @param language
+   *          a locale for the right language
+   */
+  public void setLanguage(Locale language) {
+    this.language = language;
+  }
+
+  /**
+   * Get the CountryCode for the search
+   *
+   * @return the CountryCode
+   */
+  public CountryCode getCountry() {
+    return country;
+  }
+
+  /**
+   * Set the CountryCode for the search
+   *
+   * @param country
+   *          the CountryCode
+   */
+  public void setCountry(CountryCode country) {
+    this.country = country;
   }
 
   @Override

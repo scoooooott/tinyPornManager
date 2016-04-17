@@ -17,6 +17,7 @@
 package org.tinymediamanager.scraper.entities;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -981,7 +982,7 @@ public enum CountryCode {
 
   ;
 
-  private static final Map<String, CountryCode> alpha3Map = new HashMap<String, CountryCode>();
+  private static final Map<String, CountryCode>  alpha3Map  = new HashMap<String, CountryCode>();
   private static final Map<Integer, CountryCode> numericMap = new HashMap<Integer, CountryCode>();
 
   static {
@@ -993,7 +994,7 @@ public enum CountryCode {
 
   private final String name;
   private final String alpha3;
-  private final int numeric;
+  private final int    numeric;
 
   private CountryCode(String name, String alpha3, int numeric) {
     this.name = name;
@@ -1087,6 +1088,20 @@ public enum CountryCode {
    */
   public static CountryCode getByCode(int code) {
     return numericMap.get(code);
+  }
+
+  /**
+   * Get the CountryCode for the systems default locale or CountryCode.US
+   * 
+   * @return the default CountryCode
+   */
+  public static CountryCode getDefault() {
+    Locale defaultLocale = Locale.getDefault();
+    CountryCode countryCode = getByCode(defaultLocale.getCountry());
+    if (countryCode == null) {
+      countryCode = US;
+    }
+    return countryCode;
   }
 
   @Override

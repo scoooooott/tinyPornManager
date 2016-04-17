@@ -22,7 +22,11 @@ package org.tinymediamanager.scraper.entities;
  * @since 1.0
  */
 public enum MediaType {
-  TV_SHOW, TV_EPISODE, MOVIE, MOVIE_SET;
+  TV_SHOW,
+  TV_EPISODE,
+  MOVIE,
+  MOVIE_SET,
+  SUBTITLE;
 
   public static MediaType toMediaType(String id) {
     if (id == null) {
