@@ -17,10 +17,12 @@
 package org.tinymediamanager.scraper.ofdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,8 +49,8 @@ public class OfdbMetadataProviderTest {
       results = null;
       try {
         mp = new OfdbMetadataProvider();
-        options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Die Piefke Saga");
-        options.set(MediaSearchOptions.SearchParam.LANGUAGE, "de");
+        options = new MediaSearchOptions(MediaType.MOVIE, "Die Piefke Saga");
+        options.setLanguage(Locale.GERMAN);
         results = mp.search(options);
         // did we get a result?
         assertNotNull("Result", results);
@@ -66,8 +68,8 @@ public class OfdbMetadataProviderTest {
       results = null;
       try {
         mp = new OfdbMetadataProvider();
-        options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Slevin");
-        options.set(MediaSearchOptions.SearchParam.LANGUAGE, "de");
+        options = new MediaSearchOptions(MediaType.MOVIE, "Slevin");
+        options.setLanguage(Locale.GERMAN);
         results = mp.search(options);
         // did we get a result?
         assertNotNull("Result", results);
@@ -77,7 +79,7 @@ public class OfdbMetadataProviderTest {
 
         assertEquals("Lucky # Slevin", results.get(0).getTitle());
         assertEquals("Lucky Number Slevin", results.get(0).getOriginalTitle());
-        assertEquals("2006", results.get(0).getYear());
+        assertEquals(2006, results.get(0).getYear());
       }
       catch (Exception e) {
         e.printStackTrace();
@@ -107,7 +109,7 @@ public class OfdbMetadataProviderTest {
 
       assertThat(md.getTitle()).isEqualTo("Merida - Legende der Highlands");
       assertThat(md.getOriginalTitle()).isEqualTo("Brave");
-      assertThat(md.getYear()).isEqualTo("2012");
+      assertThat(md.getYear()).isEqualTo(2012);
       assertThat(md.getPlot()).startsWith(
           "Merida wächst als Erstgeborene von König Fergus an, der im schottischen Hochland sein Volk, bestehend aus vier Clans, anführt. Fergus hatte, als Merida noch ein Kleinkind war, einen Teil seines linken Beines im Kampf gegen einen riesigen, gefährlichen Bären verloren -");
       assertThat(md.getTagline()).isEmpty();
@@ -135,7 +137,7 @@ public class OfdbMetadataProviderTest {
 
       assertThat(md.getTitle()).isEqualTo("Das Bourne Vermächtnis");
       assertThat(md.getOriginalTitle()).isEqualTo("The Bourne Legacy");
-      assertThat(md.getYear()).isEqualTo("2012");
+      assertThat(md.getYear()).isEqualTo(2012);
 
     }
     catch (Exception e) {

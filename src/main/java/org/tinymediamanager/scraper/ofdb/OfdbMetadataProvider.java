@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -37,7 +39,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
@@ -49,8 +50,6 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -115,7 +114,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     // case b)
     if (options.getResult() == null && StringUtils.isNotBlank(options.getId(MediaMetadata.IMDB))) {
       MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE);
-      searchOptions.set(SearchParam.IMDBID, options.getId(MediaMetadata.IMDB));
+      searchOptions.setImdbId(options.getId(MediaMetadata.IMDB));
       try {
         List<MediaSearchResult> results = search(searchOptions);
         if (results != null && !results.isEmpty()) {
@@ -500,16 +499,16 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     String searchQuery = "";
     String imdb = "";
     Elements filme = null;
-    String myear = options.get(MediaSearchOptions.SearchParam.YEAR);
+    int myear = options.getYear();
 
     /*
      * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
      * http://www.ofdb.de//view.php?page=suchergebnis &Kat=xxxxxxxxx&SText=yyyyyyyyyyy
      */
     // 1. search with imdbId
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID)) && (filme == null || filme.isEmpty())) {
+    if (StringUtils.isNotEmpty(options.getImdbId()) && (filme == null || filme.isEmpty())) {
       try {
-        imdb = options.get(MediaSearchOptions.SearchParam.IMDBID);
+        imdb = options.getImdbId();
         searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
         LOGGER.debug("search with imdbId: " + imdb);
 
@@ -527,9 +526,9 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     }
 
     // 2. search for search string
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY)) && (filme == null || filme.isEmpty())) {
+    if (StringUtils.isNotEmpty(options.getQuery()) && (filme == null || filme.isEmpty())) {
       try {
-        String query = options.get(MediaSearchOptions.SearchParam.QUERY);
+        String query = options.getQuery();
         searchQuery = query;
         query = MetadataUtil.removeNonSearchCharacters(query);
         searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
@@ -596,7 +595,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
           // compare score based on names
           float score = MetadataUtil.calculateScore(searchQuery, sr.getTitle());
 
-          if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(sr.getYear())) {
+          if (myear != 0 && myear != sr.getYear()) {
             LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
             score = score - 0.01f;
           }
