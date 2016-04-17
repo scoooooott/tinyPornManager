@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +35,18 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
@@ -59,8 +60,6 @@ import com.omertron.thetvdbapi.model.BannerType;
 import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
 import com.omertron.thetvdbapi.model.Series;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class TheTvDbMetadataProvider.
@@ -128,8 +127,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     // detect the string to search
     String searchString = "";
-    if (StringUtils.isNotEmpty(options.get(SearchParam.QUERY))) {
-      searchString = options.get(SearchParam.QUERY);
+    if (StringUtils.isNotEmpty(options.getQuery())) {
+      searchString = options.getQuery();
     }
 
     // return an empty search result if no query provided
@@ -137,9 +136,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       return results;
     }
 
-    String language = options.get(SearchParam.LANGUAGE);
-    String country = options.get(SearchParam.COUNTRY); // for passing the
-                                                       // country to the scrape
+    String language = options.getLanguage().getLanguage();
+    String country = options.getCountry().name(); // for passing the country to the scrape
 
     // search via the api
     List<Series> series = null;

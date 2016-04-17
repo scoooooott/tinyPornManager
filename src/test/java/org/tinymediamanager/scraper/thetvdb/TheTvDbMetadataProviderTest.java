@@ -1,13 +1,13 @@
 package org.tinymediamanager.scraper.thetvdb;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 public class TheTvDbMetadataProviderTest {
@@ -32,10 +32,8 @@ public class TheTvDbMetadataProviderTest {
 
     try {
       mp = new TheTvDbMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW);
-
-      options.set(SearchParam.QUERY, title);
-      options.set(SearchParam.LANGUAGE, language);
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, title);
+      options.setLanguage(Locale.forLanguageTag(language));
 
       List<MediaSearchResult> results = mp.search(options);
       if (results.isEmpty()) {
