@@ -459,8 +459,10 @@ class TmdbMovieMetadataProvider {
     md.setPlot(movie.overview);
     md.setTagline(movie.tagline);
 
+    if (movie.runtime != null) {
+      md.setRuntime(movie.runtime);
+    }
     md.setRating(movie.vote_average.floatValue());
-    md.setRuntime(movie.runtime);
     md.setVoteCount(movie.vote_count);
 
     // Poster
