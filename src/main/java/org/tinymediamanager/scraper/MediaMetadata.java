@@ -27,11 +27,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
@@ -60,9 +60,9 @@ public class MediaMetadata {
   private final String            providerId;
 
   // this map contains all set ids
-  private HashMap<String, Object> ids                  = new HashMap<String, Object>();
+  private HashMap<String, Object> ids                  = new HashMap<>();
 
-  // genral media entity
+  // general media entity
   private String                  title                = "";
   private String                  originalTitle        = "";
   private int                     year                 = 0;
@@ -97,6 +97,7 @@ public class MediaMetadata {
   private List<String>            countries            = new ArrayList<>();
   private List<MediaTrailer>      trailers             = new ArrayList<>();
   private List<MediaMetadata>     subItems             = new ArrayList<>();
+  private List<String>            tags                 = new ArrayList<>();
 
   private HashMap<String, Object> extraData            = new HashMap<>();
 
@@ -169,10 +170,12 @@ public class MediaMetadata {
     subItems.removeAll(md.getSubItems());
     subItems.addAll(md.getSubItems());
 
+    tags.removeAll(md.getTags());
+    tags.addAll(md.getTags());
+
     delta = md.getExtraData();
     delta.keySet().removeAll(extraData.keySet());
     extraData.putAll(delta);
-    ;
   }
 
   private String merge(String val1, String val2) {
@@ -222,7 +225,7 @@ public class MediaMetadata {
     }
 
     // get all castmember for the given type
-    List<MediaCastMember> l = new ArrayList<MediaCastMember>(castMembers.size());
+    List<MediaCastMember> l = new ArrayList<>(castMembers.size());
     for (MediaCastMember cm : castMembers) {
       if (cm.getType() == type) {
         l.add(cm);
@@ -245,7 +248,7 @@ public class MediaMetadata {
     }
 
     // get all artwork
-    List<MediaArtwork> l = new ArrayList<MediaArtwork>(mediaArt.size());
+    List<MediaArtwork> l = new ArrayList<>(mediaArt.size());
     for (MediaArtwork ma : mediaArt) {
       if (ma.getType() == type) {
         l.add(ma);
@@ -957,6 +960,47 @@ public class MediaMetadata {
   }
 
   /**
+   * Get the tags
+   * 
+   * @return a list containing all tags
+   */
+  public List<String> getTags() {
+    return tags;
+  }
+
+  /**
+   * Set tags
+   * 
+   * @param tags
+   *          the tags to be set
+   */
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
+  /**
+   * Add a new tag
+   * 
+   * @param tag
+   *          the tag
+   */
+  public void addTag(String tag) {
+    if (tags != null && !tag.contains(tag)) {
+      tags.add(tag);
+    }
+  }
+
+  /**
+   * Remove the given tag
+   * 
+   * @param tag
+   *          the tag to be removed
+   */
+  public void removeTag(String tag) {
+    tags.remove(tag);
+  }
+
+  /**
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
@@ -968,5 +1012,4 @@ public class MediaMetadata {
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
-
 }
