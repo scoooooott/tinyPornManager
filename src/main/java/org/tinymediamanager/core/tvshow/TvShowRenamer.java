@@ -396,6 +396,8 @@ public class TvShowRenamer {
   }
 
   private static String generateName(String template, TvShow tvShow, MediaFile mf, boolean forFile) {
+    String forcedExtension = "";
+
     String filename = "";
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
     if (eps == null || eps.size() == 0) {
@@ -421,10 +423,18 @@ public class TvShowRenamer {
     // since we can use this method for folders too, use the next options solely for files
     if (forFile) {
       if (mf.getType().equals(MediaFileType.THUMB)) {
-        if (SETTINGS.isUseRenamerThumbPostfix()) {
-          filename = filename + "-thumb";
+        switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+          case FILENAME_THUMB_POSTFIX:
+            filename = filename + "-thumb";
+            break;
+
+          case FILENAME_THUMB_TBN:
+            forcedExtension = "tbn";
+            break;
+
+          default:
+            break;
         }
-        // else let the filename as is
       }
       if (mf.getType().equals(MediaFileType.FANART)) {
         filename = filename + "-fanart";
@@ -467,7 +477,12 @@ public class TvShowRenamer {
       filename = StrgUtils.convertToAscii(filename, false);
     }
 
-    filename = filename + "." + mf.getExtension(); // readd original extension
+    if (StringUtils.isNotBlank(forcedExtension)) {
+      filename = filename + "." + forcedExtension; // add forced extension
+    }
+    else {
+      filename = filename + "." + mf.getExtension(); // readd original extension
+    }
 
     return filename;
   }

@@ -36,7 +36,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -46,6 +45,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -405,11 +405,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename;
-      if (Globals.settings.getTvShowSettings().isUseRenamerThumbPostfix()) {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
-      }
-      else {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+      switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+        case FILENAME_THUMB_POSTFIX:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
+          break;
+
+        case FILENAME_THUMB:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+          break;
+
+        case FILENAME_THUMB_TBN:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + ".tbn";
+          break;
+
+        default:
+          filename = "";
+          break;
       }
 
       if (StringUtils.isBlank(thumbUrl) || StringUtils.isBlank(filename)) {
