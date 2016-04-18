@@ -43,6 +43,7 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   private boolean artwork       = true;
   private boolean trailer       = true;
   private boolean collection    = true;
+  private boolean tags          = true;
 
   public MovieScraperMetadataConfig() {
   }
@@ -166,6 +167,15 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
    */
   public boolean isCollection() {
     return collection;
+  }
+
+  /**
+   * Check if is tags
+   * 
+   * @return true, is is tags
+   */
+  public boolean isTags() {
+    return tags;
   }
 
   /**
@@ -322,4 +332,15 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
     firePropertyChange("collection", oldValue, newValue);
   }
 
+  /**
+   * Set the tags
+   * 
+   * @param newValue
+   *          the tag
+   */
+  public void setTags(boolean newValue) {
+    boolean oldValue = this.tags;
+    this.tags = newValue;
+    firePropertyChange("tags", oldValue, newValue);
+  }
 }

@@ -170,6 +170,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     scraperMetadataConfig.setArtwork(settings.isArtwork());
     scraperMetadataConfig.setTrailer(settings.isTrailer());
     scraperMetadataConfig.setCollection(settings.isCollection());
+    scraperMetadataConfig.setTags(settings.isTags());
 
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
