@@ -97,6 +97,7 @@ public class SubtitleUtils {
    * @return hash
    */
   @SuppressWarnings("resource")
+  @Deprecated
   public static String computeOpenSubtitlesHash(File file) {
     long size = file.length();
     long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);

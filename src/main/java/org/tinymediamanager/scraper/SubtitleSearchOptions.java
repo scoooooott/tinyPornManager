@@ -33,12 +33,22 @@ public class SubtitleSearchOptions extends MediaSearchOptions {
 
   private File file;
 
-  public SubtitleSearchOptions(MediaType type) {
-    super(type);
+  public SubtitleSearchOptions() {
+    super(MediaType.SUBTITLE);
   }
 
-  public SubtitleSearchOptions(MediaType type, String query) {
-    super(type, query);
+  public SubtitleSearchOptions(File file) {
+    super(MediaType.SUBTITLE);
+    this.file = file;
+  }
+
+  public SubtitleSearchOptions(String query) {
+    super(MediaType.SUBTITLE, query);
+  }
+
+  public SubtitleSearchOptions(File file, String query) {
+    super(MediaType.SUBTITLE, query);
+    this.file = file;
   }
 
   /**
