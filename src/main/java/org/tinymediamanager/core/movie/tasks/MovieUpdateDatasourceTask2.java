@@ -15,9 +15,7 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static java.nio.file.FileVisitResult.TERMINATE;
+import static java.nio.file.FileVisitResult.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -561,9 +559,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     // convert to MFs
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     for (Path file : allFiles) {
-      if (!file.getFileName().toString().matches(skipRegex)) {
-        mfs.add(new MediaFile(file));
-      }
+      mfs.add(new MediaFile(file));
     }
     // allFiles.clear(); // might come handy
 
@@ -949,7 +945,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
+   * returns ONLY regular files (NO folders, NO hidden) in specified dir, filtering against our badwords (NOT recursive)
    * 
    * @param directory
    * @return list of files&folders
@@ -959,7 +955,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
-          fileNames.add(path.toAbsolutePath());
+          String fn = path.getFileName().toString().toUpperCase();
+          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+            fileNames.add(path.toAbsolutePath());
+          }
+          else {
+            LOGGER.debug("Skipping: " + path);
+          }
         }
       }
     }
@@ -970,7 +972,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns all files & folders in specified dir (NOT recursive)
+   * returns all files & folders in specified dir, filtering against our badwords(NOT recursive)
    * 
    * @param directory
    * @return list of files&folders
@@ -979,7 +981,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        fileNames.add(path.toAbsolutePath());
+        String fn = path.getFileName().toString().toUpperCase();
+        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+          fileNames.add(path.toAbsolutePath());
+        }
+        else {
+          LOGGER.debug("Skipping: " + path);
+        }
       }
     }
     catch (IOException ex) {
@@ -1087,8 +1095,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
-      // skip samples et all here too - we're only interested in videos...
-      if (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || skipFolders.contains(fn) || fn.matches(skipRegex)) {
+      if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

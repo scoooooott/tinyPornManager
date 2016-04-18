@@ -751,7 +751,13 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
-          fileNames.add(path.toAbsolutePath());
+          String fn = path.getFileName().toString().toUpperCase();
+          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+            fileNames.add(path.toAbsolutePath());
+          }
+          else {
+            LOGGER.debug("Skipping: " + path);
+          }
         }
       }
     }
@@ -771,7 +777,13 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        fileNames.add(path.toAbsolutePath());
+        String fn = path.getFileName().toString().toUpperCase();
+        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+          fileNames.add(path.toAbsolutePath());
+        }
+        else {
+          LOGGER.debug("Skipping: " + path);
+        }
       }
     }
     catch (IOException ex) {
