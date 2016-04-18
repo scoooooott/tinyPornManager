@@ -42,7 +42,13 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.ApiKey;
+
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
 
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
@@ -62,9 +68,6 @@ import com.uwetrottmann.trakt.v2.entities.SyncStats;
 import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
 
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 /**
  * Sync your collection and watched status with Trakt.tv<br>
  * Using best practice 2-way-sync according to http://trakt.tv/api-docs/sync<br>
@@ -81,12 +84,18 @@ public class TraktTv {
   private static final TraktV2     TRAKT        = createTraktApi();
   private static TraktTv           instance;
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
-      "Scraper for Trakt.tv; yes, we can scraper here too :)");
+      "Scraper for Trakt.tv; yes, we can scrape here too :)");
 
   private SyncResponse             response;
 
   private static TraktV2 createTraktApi() {
-    TraktV2 api = new TraktV2();
+    TraktV2 api = new TraktV2() {
+      // tell the trakt api to use our OkHttp client
+      @Override
+      protected RestAdapter.Builder newRestAdapterBuilder() {
+        return new RestAdapter.Builder().setClient(new OkClient(TmmHttpClient.getHttpClient()));
+      }
+    };
     api.setApiKey(CLIENT_ID);
     if (LOGGER.isTraceEnabled()) {
       api.setIsDebug(true);
@@ -1098,8 +1107,8 @@ public class TraktTv {
   /**
    * prints some trakt response status
    * 
-   * @param reponse
-   *          the reponse
+   * @param resp
+   *          the response
    */
   private void printStatus(SyncResponse resp) {
     if (resp != null) {
