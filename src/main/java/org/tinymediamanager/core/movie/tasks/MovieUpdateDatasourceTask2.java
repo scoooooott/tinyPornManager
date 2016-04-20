@@ -668,9 +668,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       List<MediaFile> foundMediaFiles = new ArrayList<MediaFile>();
       for (int i = allFiles.size() - 1; i >= 0; i--) {
         Path fileInDir = allFiles.get(i);
-        if (fileInDir.getFileName().toString().startsWith(basename)) { // need toString b/c of possible spcaes!!
+        if (fileInDir.getFileName().toString().startsWith(basename)) { // need toString b/c of possible spaces!!
           MediaFile mediaFile = new MediaFile(fileInDir);
           if (!existingMediaFiles.contains(mediaFile)) {
+            if (mediaFile.getType() == MediaFileType.GRAPHIC) {
+              // same named graphics (unknown, not detected without postfix) treated as posters
+              mediaFile.setType(MediaFileType.POSTER);
+            }
             foundMediaFiles.add(mediaFile);
           }
           // started with basename, so remove it for others

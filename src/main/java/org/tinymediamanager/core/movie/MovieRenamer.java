@@ -722,7 +722,7 @@ public class MovieRenamer {
         for (MoviePosterNaming name : posternames) {
           String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
           if (newPosterName != null && !newPosterName.isEmpty()) {
-            String curExt = mf.getExtension();
+            String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
             if (curExt.equalsIgnoreCase("tbn")) {
               String cont = mf.getContainerFormat();
               if (cont.equalsIgnoreCase("PNG")) {
