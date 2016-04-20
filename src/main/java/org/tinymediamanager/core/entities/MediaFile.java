@@ -76,7 +76,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static Pattern                             seasonPattern      = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
   private static Pattern                             logoPattern        = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   // be careful: disc.avi would be valid!
-  private static Pattern                             discartPattern     = Pattern.compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|png|tbn)");
+  private static Pattern                             discartPattern     = Pattern
+      .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
   private static Pattern                             clearartPattern    = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_480P  = "480p";
@@ -288,7 +289,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.NFO;
     }
 
-    if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
+    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn")) {
       return parseImageType();
     }
 
