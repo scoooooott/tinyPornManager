@@ -15,23 +15,16 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import java.util.List;
-
+import com.uwetrottmann.trakt.v2.TraktV2;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaEpisode;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaProviderInfo;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
-import com.uwetrottmann.trakt.v2.TraktV2;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+import java.util.List;
 
 @PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
@@ -83,6 +76,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     }
   }
 
+
+
   // Scraping Movie
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
@@ -96,13 +91,22 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
   }
 
   // Scraping Show
+//  @Override
+//  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+//    switch (options.getType()) {
+//      case TV_SHOW:
+//        return new TraktTVShowMetadataProvider(api).getEpisodeList(options);
+//      default:
+//        throw new UnsupportedMediaTypeException(options.getType());
+//    }
+//  }
   @Override
-  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    switch (options.getType()) {
+  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions mediaScrapeOptions) throws Exception {
+    switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
-        return new TraktTVShowMetadataProvider(api).getEpisodeList(options);
+        return new TraktTVShowMetadataProvider(api).getEpisodeList(mediaScrapeOptions);
       default:
-        throw new UnsupportedMediaTypeException(options.getType());
+        throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
     }
   }
 

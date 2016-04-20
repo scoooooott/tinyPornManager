@@ -1,24 +1,24 @@
 package org.tinymediamanager.scraper.trakt;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.LogManager;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.LogManager;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class TraktMetadataProviderTest {
   private static final String CRLF = "\n";
@@ -42,16 +42,15 @@ public class TraktMetadataProviderTest {
 
   @Test
   public void testMovieSearch() {
-    TraktMetadataProvider mp = null;
-    List<MediaSearchResult> results = null;
+    TraktMetadataProvider mp;
+    List<MediaSearchResult> results;
 
     // Harry Potter
     // Movie Search
     try {
       mp = new TraktMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY,
-          "Harry Potter and the Philosopher's Stone");
-      options.set(MediaSearchOptions.SearchParam.LANGUAGE, "en");
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter and the Philosopher's Stone");
+      options.setLanguage(Locale.ENGLISH);
       results = mp.search(options);
 
       // did we get a result?
@@ -59,7 +58,7 @@ public class TraktMetadataProviderTest {
       // are there all fields filled in the result?
       MediaSearchResult result = results.get(0);
       assertThat(result.getTitle()).isNotEmpty();
-      assertThat(result.getYear()).isNotEmpty();
+      assertThat(result.getYear()).isNotNull();
       assertThat(result.getId()).isNotEmpty();
       assertThat(result.getScore()).isNotNull();
       assertThat(result.getIMDBId()).isNotNull();
@@ -95,8 +94,8 @@ public class TraktMetadataProviderTest {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     TraktMetadataProvider mp = new TraktMetadataProvider();
     options.setId(mp.getProviderInfo().getId(), "353");
-    List<MediaEpisode> episodeList = new ArrayList<MediaEpisode>();
-    MediaEpisode test = null;
+    List<MediaEpisode> episodeList;
+    MediaEpisode test;
 
     try {
 

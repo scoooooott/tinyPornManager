@@ -15,25 +15,21 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaEpisode;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.SearchResult;
 import com.uwetrottmann.trakt.v2.entities.Show;
 import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.enums.Type;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
@@ -59,13 +55,13 @@ class TraktTVShowMetadataProvider {
     String searchString = "";
     int year = 0;
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
+      searchString = options.getQuery();
     }
 
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.YEAR))) {
+    if (options.getYear() != 0) {
       try {
-        year = Integer.parseInt(options.get(MediaSearchOptions.SearchParam.YEAR));
+        year = options.getYear();
       }
       catch (Exception e) {
         year = 0;
@@ -97,7 +93,7 @@ class TraktTVShowMetadataProvider {
       MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId());
 
       mediaSearchResult.setTitle(result.show.title);
-      mediaSearchResult.setYear((result.show.year).toString());
+      mediaSearchResult.setYear(result.show.year);
       mediaSearchResult.setId((result.show.ids.trakt).toString());
       mediaSearchResult.setIMDBId(result.show.ids.imdb);
       mediaSearchResult.setProviderId((result.show.ids.trakt).toString());
@@ -112,11 +108,11 @@ class TraktTVShowMetadataProvider {
   }
 
   // Episode List
-  List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+  List<MediaEpisode> getEpisodeList(MediaScrapeOptions mediaScrapeOptions) throws Exception {
 
     List<MediaEpisode> results = new ArrayList<MediaEpisode>();
     MediaEpisode mediaEpisode = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
-    Show traktResult = new Show();
+    Show traktResult;
 
     traktResult = api.shows().summary("353", Extended.FULL);
 

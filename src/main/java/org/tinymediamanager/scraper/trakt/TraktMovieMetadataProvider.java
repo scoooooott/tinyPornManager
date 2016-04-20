@@ -15,25 +15,19 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
-import org.tinymediamanager.scraper.util.MetadataUtil;
-
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.Movie;
 import com.uwetrottmann.trakt.v2.entities.SearchResult;
 import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.enums.Type;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.MetadataUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
@@ -58,13 +52,13 @@ class TraktMovieMetadataProvider {
     String searchString = "";
     int year = 0;
 
-    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
-      searchString = options.get(MediaSearchOptions.SearchParam.QUERY);
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.getQuery())) {
+      searchString = options.getQuery();
     }
 
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.YEAR))) {
+    if (options.getYear() != 0) {
       try {
-        year = Integer.parseInt(options.get(MediaSearchOptions.SearchParam.YEAR));
+        year = options.getYear();
       }
       catch (Exception e) {
         year = 0;
@@ -96,7 +90,7 @@ class TraktMovieMetadataProvider {
       MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId());
 
       mediaSearchResult.setTitle(result.movie.title);
-      mediaSearchResult.setYear((result.movie.year).toString());
+      mediaSearchResult.setYear((result.movie.year));
       mediaSearchResult.setId((result.movie.ids.trakt).toString());
       mediaSearchResult.setIMDBId(result.movie.ids.imdb);
       mediaSearchResult.setProviderId((result.movie.ids.trakt).toString());
@@ -112,7 +106,7 @@ class TraktMovieMetadataProvider {
 
   MediaMetadata scrape(MediaScrapeOptions options) throws Exception {
 
-    Movie result = new Movie();
+    Movie result;
     MediaMetadata metadata = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
     if (options.getType() != MediaType.MOVIE)
@@ -122,15 +116,15 @@ class TraktMovieMetadataProvider {
 
     result = api.movies().summary(options.getId(TraktMetadataProvider.providerInfo.getId()), Extended.FULL);
 
-    metadata.storeMetadata(MediaMetadata.IMDB, result.ids.imdb);
-    metadata.storeMetadata(MediaMetadata.RATING, result.rating);
-    metadata.storeMetadata(MediaMetadata.RUNTIME, result.runtime);
-    metadata.storeMetadata(MediaMetadata.ORIGINAL_TITLE, result.title);
-    metadata.storeMetadata(MediaMetadata.PLOT, result.overview);
-    metadata.storeMetadata(MediaMetadata.VOTE_COUNT, result.votes);
-    metadata.storeMetadata(MediaMetadata.TMDB, result.ids.tmdb);
-    metadata.storeMetadata(MediaMetadata.YEAR, result.year);
-    metadata.storeMetadata(MediaMetadata.TITLE, result.title);
+    metadata.setId(MediaMetadata.IMDB, result.ids.imdb);
+    metadata.setRating(result.rating.floatValue());
+    metadata.setRuntime(result.runtime);
+    metadata.setOriginalTitle(result.title);
+    metadata.setPlot(result.overview);
+    metadata.setVoteCount(result.votes);
+    metadata.setId(MediaMetadata.TMDB, result.ids.tmdb);
+    metadata.setYear(result.year);
+    metadata.setTitle(result.title);
 
     return metadata;
   }
