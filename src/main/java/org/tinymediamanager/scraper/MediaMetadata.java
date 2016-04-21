@@ -985,7 +985,7 @@ public class MediaMetadata {
    *          the tag
    */
   public void addTag(String tag) {
-    if (tags != null && !tag.contains(tag)) {
+    if (tag != null && !tags.contains(tag)) {
       tags.add(tag);
     }
   }
