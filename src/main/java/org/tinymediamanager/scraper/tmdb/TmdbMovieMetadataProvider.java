@@ -43,7 +43,9 @@ import com.uwetrottmann.tmdb.entities.CountryRelease;
 import com.uwetrottmann.tmdb.entities.CrewMember;
 import com.uwetrottmann.tmdb.entities.FindResults;
 import com.uwetrottmann.tmdb.entities.Genre;
+import com.uwetrottmann.tmdb.entities.Keyword;
 import com.uwetrottmann.tmdb.entities.Movie;
+import com.uwetrottmann.tmdb.entities.MovieKeywords;
 import com.uwetrottmann.tmdb.entities.MovieResultsPage;
 import com.uwetrottmann.tmdb.entities.ProductionCompany;
 import com.uwetrottmann.tmdb.entities.ProductionCountry;
@@ -294,7 +296,28 @@ class TmdbMovieMetadataProvider {
 
     md = morphMovieToMediaMetadata(movie, options);
 
-    // check if there was translateable content
+    // add some special keywords as tags
+    // see http://forum.kodi.tv/showthread.php?tid=254004
+    try {
+      TmdbConnectionCounter.trackConnections();
+      MovieKeywords mk = api.moviesService().keywords(tmdbId);
+      for (Keyword kw : mk.keywords) {
+        switch (kw.name) {
+          case "aftercreditsstinger":
+          case "duringcreditsstinger":
+            md.addTag(kw.name);
+            break;
+          default:
+            // ignore other tags?
+            break;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.warn("Error getting keywords");
+    }
+
+    // check if there was translatable content
     if (StringUtils.isBlank(movie.overview) && options.getLanguage() != MediaLanguages.en) {
       // plot was empty - scrape in english
       MediaLanguages oldLang = options.getLanguage();
