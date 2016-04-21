@@ -17,8 +17,7 @@
 package org.tinymediamanager.scraper.ofdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -116,7 +115,7 @@ public class OfdbMetadataProviderTest {
       assertThat(md.getRating()).isBetween(6.5f, 7f);
 
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR)).isNotNull();
-      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(9);
+      assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).size()).isEqualTo(11);
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0).getName()).isEqualTo("Billy Connolly");
       assertThat(md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0).getCharacter()).isEqualTo("Fergus");
       assertThat(md.getCastMembers(MediaCastMember.CastType.DIRECTOR)).isNotNull();

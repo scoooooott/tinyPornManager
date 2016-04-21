@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -50,6 +48,8 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -258,9 +258,10 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       }
 
       if (doc != null) {
-        parseCast(doc.getElementsContainingOwnText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
-        parseCast(doc.getElementsContainingOwnText("Synchronstimme (deutsch)"), MediaCastMember.CastType.ACTOR, md);
         parseCast(doc.getElementsContainingOwnText("Regie"), MediaCastMember.CastType.DIRECTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Darsteller"), MediaCastMember.CastType.ACTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Stimme/Sprecher"), MediaCastMember.CastType.ACTOR, md);
+        parseCast(doc.getElementsContainingOwnText("Synchronstimme (deutsch)"), MediaCastMember.CastType.ACTOR, md);
         parseCast(doc.getElementsContainingOwnText("Drehbuchautor(in)"), MediaCastMember.CastType.WRITER, md);
         parseCast(doc.getElementsContainingOwnText("Produzent(in)"), MediaCastMember.CastType.PRODUCER, md);
       }
@@ -299,7 +300,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       if (tr != null) {
         for (Element a : tr.getElementsByAttributeValue("valign", "middle")) {
           String act = a.toString();
-          String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
+          String aname = StrgUtils.substr(act, "alt=\"(.*?)\"");
           if (!aname.isEmpty()) {
             MediaCastMember cm = new MediaCastMember();
             cm.setName(aname);
