@@ -48,11 +48,11 @@ public class DownloadTask extends TmmTask {
   private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
   private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      url;
-  private Path                        file;
-  private MediaEntity                 media;
-  private MediaFileType               fileType;
-  private String                      userAgent = "";
+  protected String                    url;
+  protected Path                      file;
+  protected MediaEntity               media;
+  protected MediaFileType             fileType;
+  protected String                    userAgent = "";
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -156,11 +156,21 @@ public class DownloadTask extends TmmTask {
           ext = ext.replaceAll("x-", ""); // x-wmf and others
           file = file.getParent().resolve(file.getFileName() + "." + ext);
         }
+        if ("application/zip".equals(type)) {
+          ext = "zip";
+          file = file.getParent().resolve(file.getFileName() + "." + ext);
+        }
+      }
+
+      // ext still empty?
+      if (ext.isEmpty()) {
+        // fallback!
+        ext = "dat";
       }
 
       LOGGER.info("Downloading to " + file);
 
-      Path tempFile = file.resolve(".part");
+      Path tempFile = file.resolveSibling(file.getFileName() + ".part");
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
       FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
       int count = 0;

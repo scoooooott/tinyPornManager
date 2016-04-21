@@ -72,6 +72,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String             MOVIE_SCRAPER                            = "movieScraper";
   private final static String             MOVIE_ARTWORK_SCRAPERS                   = "movieArtworkScrapers";
   private final static String             MOVIE_TRAILER_SCRAPERS                   = "movieTrailerScrapers";
+  private final static String             MOVIE_SUBTITLE_SCRAPERS                  = "movieSubtitleScrapers";
   private final static String             SCRAPE_BEST_IMAGE                        = "scrapeBestImage";
   private final static String             WRITE_ACTOR_IMAGES                       = "writeActorImages";
   private final static String             SCRAPER_LANGU                            = "scraperLanguage";
@@ -122,6 +123,10 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElementWrapper(name = MOVIE_TRAILER_SCRAPERS)
   @XmlElement(name = ENTRY)
   private final List<String>              movieTrailerScrapers                     = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = MOVIE_SUBTITLE_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String>              movieSubtitleScrapers                    = ObservableCollections.observableList(new ArrayList<String>());
 
   private Map<MovieSearchOptions, Object> uiFilters                                = new HashMap<>();
 
@@ -502,6 +507,24 @@ public class MovieSettings extends AbstractModelObject {
 
   public List<String> getMovieTrailerScrapers() {
     return movieTrailerScrapers;
+  }
+
+  public void addMovieSubtitleScraper(String newValue) {
+    if (!movieSubtitleScrapers.contains(newValue)) {
+      movieSubtitleScrapers.add(newValue);
+      firePropertyChange(MOVIE_SUBTITLE_SCRAPERS, null, movieSubtitleScrapers);
+    }
+  }
+
+  public void removeMovieSubtitleScraper(String newValue) {
+    if (movieSubtitleScrapers.contains(newValue)) {
+      movieSubtitleScrapers.remove(newValue);
+      firePropertyChange(MOVIE_SUBTITLE_SCRAPERS, null, movieSubtitleScrapers);
+    }
+  }
+
+  public List<String> getMovieSubtitleScrapers() {
+    return movieSubtitleScrapers;
   }
 
   public void addMovieSkipFolder(String newValue) {

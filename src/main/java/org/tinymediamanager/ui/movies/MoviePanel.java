@@ -88,6 +88,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
 import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
@@ -138,6 +139,7 @@ public class MoviePanel extends JPanel {
   private final Action                  actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
   private final Action                  actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
   private final Action                  actionTrailerDownload        = new MovieTrailerDownloadAction();
+  private final Action                  actionSearchSubtitle         = new MovieSubtitleSearchAction();
   private final Action                  actionRename                 = new MovieRenameAction(false);
   private final Action                  actionRename2                = new MovieRenameAction(true);
   private final Action                  actionRemove2                = new MovieRemoveAction();
@@ -496,6 +498,7 @@ public class MoviePanel extends JPanel {
     menuItem = menu.add(actionRewriteNfo);
     menuItem.setMnemonic(KeyEvent.VK_N);
     menuItem = menu.add(actionTrailerDownload);
+    menuItem = menu.add(actionSearchSubtitle);
 
     menu.addSeparator();
     menuItem = menu.add(actionMediaInformation2);
@@ -538,6 +541,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
     popupMenu.add(actionTrailerDownload);
+    popupMenu.add(actionSearchSubtitle);
     popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);

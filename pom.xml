@@ -88,8 +88,12 @@
 			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-opensubtitles</artifactId> 
-			<version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
+		<dependency>
+			<groupId>org.tinymediamanager.plugins</groupId>
+			<artifactId>scraper-opensubtitles</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-rottentomatoes</artifactId>

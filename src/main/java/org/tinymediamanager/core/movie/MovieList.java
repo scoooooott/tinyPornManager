@@ -700,6 +700,49 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * all available subtitle scrapers.
+   *
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getAvailableSubtitleScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.SUBTITLE);
+    Collections.sort(availableScrapers, new MovieMediaScraperComparator());
+    return availableScrapers;
+  }
+
+  /**
+   * get all default (specified via settings) subtitle scrapers
+   *
+   * @return the specified subtitle scrapers
+   */
+  public List<MediaScraper> getDefaultSubtitleScrapers() {
+    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+  }
+
+  /**
+   * get all specified subtitle scrapers.
+   *
+   * @param providerIds
+   *          the scrapers
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getSubtitleScrapers(List<String> providerIds) {
+    List<MediaScraper> subtitleScrapers = new ArrayList<>();
+
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
+      }
+      MediaScraper subtitleScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.SUBTITLE);
+      if (subtitleScraper != null) {
+        subtitleScrapers.add(subtitleScraper);
+      }
+    }
+
+    return subtitleScrapers;
+  }
+
+  /**
    * Gets the movie count.
    * 
    * @return the movie count
