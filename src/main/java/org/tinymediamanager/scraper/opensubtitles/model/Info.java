@@ -62,6 +62,7 @@ public class Info {
     public String movieTitle      = "";
     public String subFormat       = "";
     public String subDownloadLink = "";
+    public String zipDownloadLink = "";
 
     public MovieInfo(Object data) throws Exception {
       Map<String, Object> values = (Map<String, Object>) data;
@@ -70,6 +71,7 @@ public class Info {
       this.movieTitle = (String) values.get("MovieName");
       this.subFormat = (String) values.get("SubFormat");
       this.subDownloadLink = (String) values.get("SubDownloadLink");
+      this.zipDownloadLink = (String) values.get("ZipDownloadLink");
     }
 
     @Override

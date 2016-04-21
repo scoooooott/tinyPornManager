@@ -26,11 +26,10 @@ import java.nio.ByteOrder;
 import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,6 +45,7 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.Similarity;
 
 import de.timroes.axmlrpc.XMLRPCException;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * OpensubtitlesMetadataProvider provides subtitle scraping from OpenSubtitles.org
@@ -59,11 +59,18 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static final String      USER_AGENT      = "OSTestUserAgent";                                           // TODO: register!!!
   private static final int         HASH_CHUNK_SIZE = 64 * 1024;
 
-  private static MediaProviderInfo providerInfo    = new MediaProviderInfo("opensubtitles", "opensubtitles.org",
-      "Scraper for opensubtitles.org which is able to scrape subtitles");
+  private static MediaProviderInfo providerInfo    = createMediaProviderInfo();
 
   private static TmmXmlRpcClient   client          = null;
   private static String            sessionToken    = "";
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo("opensubtitles", "OpenSubtitles.org",
+        "<html><h3>OpenSubtitles.org</h3><br />A subtitle scraper for OpenSubtitles.org</html>",
+        OpensubtitlesMetadataProvider.class.getResource("/opensubtitles_org.png"));
+    providerInfo.setVersion(OpensubtitlesMetadataProvider.class);
+    return providerInfo;
+  }
 
   public OpensubtitlesMetadataProvider() {
     initAPI();
@@ -90,18 +97,14 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   public List<MediaSearchResult> search(SubtitleSearchOptions options) throws Exception {
     List<MediaSearchResult> results = new ArrayList<>();
 
-    boolean searchByQuery = false;
-
     if (options.getMediaType() != MediaType.SUBTITLE) {
       throw new UnsupportedMediaTypeException(options.getMediaType());
     }
 
-    Info info = null;
-
     // first try: search with moviehash & filesize
     if (options.getFile() != null) {
       File file = options.getFile();
-      if (file.exists()) {
+      if (file.exists() && file.length() > 0) {
         long fileSize = file.length();
         String hash = computeOpenSubtitlesHash(file);
 
@@ -115,7 +118,17 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
         mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
         try {
           Object[] arrayQuery = { mapQuery };
-          info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+          Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+
+          for (Info.MovieInfo movieInfo : info.getMovieInfo()) {
+            // hash search will give a 100% perfect match
+            MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.SUBTITLE, 1.0f);
+            result.setId(movieInfo.id);
+            result.setTitle(movieInfo.movieTitle);
+            result.setUrl(movieInfo.zipDownloadLink);
+
+            results.add(result);
+          }
         }
         catch (Exception e) {
           LOGGER.error("Could not search subtitle.", e);
@@ -128,15 +141,24 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     }
 
     // second try: search by IMDB Id
-    if (info != null && info.getMovieInfo().isEmpty() && StringUtils.isNotBlank(options.getImdbId())) {
+    if (results.isEmpty() && StringUtils.isNotBlank(options.getImdbId())) {
       Map<String, Object> mapQuery = new HashMap<>();
       // use IMDB Id without leading tt
       mapQuery.put("imdbid", options.getImdbId().replace("tt", ""));
       mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
-      searchByQuery = true;
       try {
         Object[] arrayQuery = { mapQuery };
-        info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+        Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+
+        for (Info.MovieInfo movieInfo : info.getMovieInfo()) {
+          // degrade maximal search score of imdb search to 0.9
+          MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.SUBTITLE, 0.9f);
+          result.setId(movieInfo.id);
+          result.setTitle(movieInfo.movieTitle);
+          result.setUrl(movieInfo.zipDownloadLink);
+
+          results.add(result);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Could not search subtitle.", e);
@@ -144,34 +166,31 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     }
 
     // third try: search by query
-    if (info != null && info.getMovieInfo().isEmpty() && StringUtils.isNotBlank(options.getQuery())) {
+    if (results.isEmpty() && StringUtils.isNotBlank(options.getQuery())) {
       Map<String, Object> mapQuery = new HashMap<>();
       mapQuery.put("query", options.getQuery());
       mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
-      searchByQuery = true;
       try {
         Object[] arrayQuery = { mapQuery };
-        info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+        Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));
+        for (Info.MovieInfo movieInfo : info.getMovieInfo()) {
+          // degrade maximal search score of title search to 0.8
+          float score = 0.8f * Similarity.compareStrings(options.getQuery(), movieInfo.movieTitle);
+          MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.SUBTITLE, score);
+          result.setId(movieInfo.id);
+          result.setTitle(movieInfo.movieTitle);
+          result.setUrl(movieInfo.zipDownloadLink);
+
+          results.add(result);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Could not search subtitle.", e);
       }
     }
 
-    if (info != null) {
-      for (Info.MovieInfo movieInfo : info.getMovieInfo()) {
-        float score = 0;
-        if (searchByQuery) {
-          score = Similarity.compareStrings(options.getQuery(), movieInfo.movieTitle);
-        }
-        MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.SUBTITLE, score);
-        result.setId(movieInfo.id);
-        result.setTitle(movieInfo.movieTitle);
-        result.setUrl(movieInfo.subDownloadLink);
-
-        results.add(result);
-      }
-    }
+    Collections.sort(results);
+    Collections.reverse(results);
 
     return results;
   }
@@ -232,9 +251,11 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     long size = file.length();
     long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
 
+    FileInputStream is = null;
     FileChannel fileChannel = null;
     try {
-      fileChannel = new FileInputStream(file).getChannel();
+      is = new FileInputStream(file);
+      fileChannel = is.getChannel();
       long head = computeOpenSubtitlesHashForChunk(fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, chunkSizeForFile));
       long tail = computeOpenSubtitlesHashForChunk(
           fileChannel.map(FileChannel.MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
@@ -248,6 +269,9 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
       try {
         if (fileChannel != null) {
           fileChannel.close();
+        }
+        if (is != null) {
+          is.close();
         }
       }
       catch (IOException e) {
