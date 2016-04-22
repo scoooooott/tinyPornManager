@@ -1095,13 +1095,23 @@ public class MovieRenamer {
 
     // if there are multiple file separators in a row - strip them out
     if (SystemUtils.IS_OS_WINDOWS) {
+      if (!forFilename) {
+        // trim whitespace around directory sep
+        newDestination = newDestination.replaceAll("\\s+\\\\", "\\\\");
+        newDestination = newDestination.replaceAll("\\\\\\s+", "\\\\");
+      }
       // we need to mask it in windows
       newDestination = newDestination.replaceAll("\\\\{2,}", "\\\\");
       newDestination = newDestination.replaceAll("^\\\\", "");
     }
     else {
-      newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
-      newDestination = newDestination.replaceAll("^" + File.separator, "");
+      if (!forFilename) {
+        // trim whitespace around directory sep
+        newDestination = newDestination.replaceAll("\\s+/", "/");
+        newDestination = newDestination.replaceAll("/\\s+", "/");
+      }
+      newDestination = newDestination.replaceAll("/{2,}", "/");
+      newDestination = newDestination.replaceAll("^/", "");
     }
 
     // replace ALL directory separators, if we generate this for filenames!

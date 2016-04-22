@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -24,7 +23,6 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -70,10 +68,10 @@ public class MovieRenamerPreview {
     String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname();
     if (pattern.isEmpty()) {
       // same
-      container.newPath = Utils.relPath(Paths.get(movie.getDataSource()), movie.getPathNIO());
+      container.newPath = Paths.get(movie.getDataSource()).relativize(movie.getPathNIO());
     }
     else {
-      container.newPath = MovieRenamer.createDestinationForFoldername(pattern, movie);
+      container.newPath = Paths.get(MovieRenamer.createDestinationForFoldername(pattern, movie));
     }
     Path newMovieFolder = Paths.get(movie.getDataSource()).resolve(container.newPath);
 
