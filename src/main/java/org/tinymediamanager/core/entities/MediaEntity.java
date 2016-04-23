@@ -343,9 +343,13 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void setDateAddedFromMediaFile(MediaFile mf) {
     try {
       BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
-      Date dateCreated = new Date(view.creationTime().toMillis());
-      if (dateCreated.compareTo(dateAdded) < 0) {
-        setDateAdded(dateCreated);
+      Date creDat = new Date(view.creationTime().toMillis());
+      Date modDat = new Date(view.lastModifiedTime().toMillis());
+      if (creDat.compareTo(dateAdded) < 0) {
+        setDateAdded(creDat);
+      }
+      if (modDat.compareTo(dateAdded) < 0) {
+        setDateAdded(modDat);
       }
     }
     catch (Exception e) {
