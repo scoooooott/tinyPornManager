@@ -112,7 +112,7 @@ class KodiScraperProcessor {
 
   private void executeRegexp(RegExp regex) {
     String cond = regex.getConditional();
-    if (cond != null) {
+    if (cond != null && !cond.isEmpty()) {
       boolean not = cond.startsWith("!");
       if (not) {
         cond = cond.substring(1);
