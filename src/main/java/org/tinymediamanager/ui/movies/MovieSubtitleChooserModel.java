@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -35,16 +35,18 @@ public class MovieSubtitleChooserModel extends AbstractModelObject {
   public static final MovieSubtitleChooserModel EMPTY_RESULT = new MovieSubtitleChooserModel();
 
   private MediaLanguages                        language     = null;
-  private MediaSearchResult                     result       = null;
+  private SubtitleSearchResult                  result       = null;
 
   private String                                name         = "";
+  private String                                releaseName  = "";
   private String                                downloadUrl  = "";
 
-  public MovieSubtitleChooserModel(MediaSearchResult result, MediaLanguages language) {
+  public MovieSubtitleChooserModel(SubtitleSearchResult result, MediaLanguages language) {
     this.result = result;
     this.language = language;
 
     name = result.getTitle();
+    releaseName = result.getReleaseName();
     downloadUrl = result.getUrl();
   }
 
@@ -57,6 +59,10 @@ public class MovieSubtitleChooserModel extends AbstractModelObject {
 
   public String getName() {
     return name;
+  }
+
+  public String getReleaseName() {
+    return releaseName;
   }
 
   public String getDownloadUrl() {

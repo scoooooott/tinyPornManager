@@ -88,6 +88,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
 import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
@@ -97,11 +98,6 @@ import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.MatcherEditor;
@@ -109,6 +105,11 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MoviePanel.
@@ -140,6 +141,7 @@ public class MoviePanel extends JPanel {
   private final Action                  actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
   private final Action                  actionTrailerDownload        = new MovieTrailerDownloadAction();
   private final Action                  actionSearchSubtitle         = new MovieSubtitleSearchAction();
+  private final Action                  actionDownloadSubtitle       = new MovieSubtitleDownloadAction();
   private final Action                  actionRename                 = new MovieRenameAction(false);
   private final Action                  actionRename2                = new MovieRenameAction(true);
   private final Action                  actionRemove2                = new MovieRemoveAction();
@@ -499,6 +501,7 @@ public class MoviePanel extends JPanel {
     menuItem.setMnemonic(KeyEvent.VK_N);
     menuItem = menu.add(actionTrailerDownload);
     menuItem = menu.add(actionSearchSubtitle);
+    menuItem = menu.add(actionDownloadSubtitle);
 
     menu.addSeparator();
     menuItem = menu.add(actionMediaInformation2);
@@ -542,6 +545,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionExport);
     popupMenu.add(actionTrailerDownload);
     popupMenu.add(actionSearchSubtitle);
+    popupMenu.add(actionDownloadSubtitle);
     popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);

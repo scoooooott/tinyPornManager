@@ -1,5 +1,6 @@
 Version 2.8
 =======================
++ added subtitle scraping (via OpenSubtitles.org)
 + complete rewrite of "update datasource" for movies - massive performance boost!!!
 + complete rewrite of "update datasource" for TV shows - massive performance boost!!!
 + added edition field for movies (now you can have the same movie in multiple versions without problems)

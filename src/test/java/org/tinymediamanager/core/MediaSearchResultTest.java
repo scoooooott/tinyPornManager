@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
 
 public class MediaSearchResultTest {
 
@@ -15,7 +16,7 @@ public class MediaSearchResultTest {
   @Test
   public void test() {
 
-    MediaSearchResult my = new MediaSearchResult("providerID0");
+    MediaSearchResult my = new MediaSearchResult("providerID0", MediaType.MOVIE);
 
     MediaMetadata md = new MediaMetadata("providerId");
     md.setId(MediaMetadata.IMDB, "tt1000000");
@@ -24,10 +25,10 @@ public class MediaSearchResultTest {
     md.addGenre(MediaGenres.ACTION);
     md.addGenre(MediaGenres.FAMILY);
 
-    MediaSearchResult s1 = new MediaSearchResult("imdb", "tt1651", "movie1", 2014, 0.5f);
+    MediaSearchResult s1 = new MediaSearchResult("imdb", MediaType.MOVIE, "tt1651", "movie1", 2014, 0.5f);
     s1.setMetadata(md);
 
-    MediaSearchResult s2 = new MediaSearchResult("TMDB", "66666666666", "movie2", 2014, 0.6f);
+    MediaSearchResult s2 = new MediaSearchResult("TMDB", MediaType.MOVIE, "66666666666", "movie2", 2014, 0.6f);
     md = new MediaMetadata("anotherOne");
     md.setId(MediaMetadata.TMDB, "101010");
     md.addExtraData("key1", "XXXXXXXXXXXnooverwriteXXXXXXXXX");

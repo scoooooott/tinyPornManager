@@ -56,8 +56,8 @@ import org.tinymediamanager.core.movie.tasks.MovieSubtitleDownloadTask;
 import org.tinymediamanager.core.threading.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -69,12 +69,6 @@ import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -82,6 +76,12 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * This dialog is used to show a chooser for subtitles found with the subtitle scrapers
@@ -325,13 +325,13 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
   }
 
   private class SearchTask extends SwingWorker<Void, Void> {
-    private File                    file;
-    private String                  searchTerm;
-    private String                  imdbId;
-    private List<MediaSearchResult> searchResults;
-    private MediaLanguages          language;
-    private List<MediaScraper>      scrapers;
-    boolean                         cancel;
+    private File                       file;
+    private String                     searchTerm;
+    private String                     imdbId;
+    private List<SubtitleSearchResult> searchResults;
+    private MediaLanguages             language;
+    private List<MediaScraper>         scrapers;
+    boolean                            cancel;
 
     public SearchTask(File file, String imdbId, String searchTerm, List<MediaScraper> scrapers) {
       this.file = file;
@@ -377,7 +377,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
           subtitleEventList.add(MovieSubtitleChooserModel.EMPTY_RESULT);
         }
         else {
-          for (MediaSearchResult result : searchResults) {
+          for (SubtitleSearchResult result : searchResults) {
             subtitleEventList.add(new MovieSubtitleChooserModel(result, language));
             // get metadataProvider from searchresult
           }
@@ -394,7 +394,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
   private static class SubtitleTableFormat implements AdvancedTableFormat<MovieSubtitleChooserModel> {
     @Override
     public int getColumnCount() {
-      return 2;
+      return 3;
     }
 
     @Override
@@ -405,6 +405,10 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
         case 1:
           return BUNDLE.getString("metatag.title"); //$NON-NLS-1$
+
+        case 2:
+          return BUNDLE.getString("metatag.releasename"); //$NON-NLS-1$
+
       }
 
       throw new IllegalStateException();
@@ -418,6 +422,9 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
         case 1:
           return model.getName();
+
+        case 2:
+          return model.getReleaseName();
       }
 
       throw new IllegalStateException();
@@ -431,6 +438,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
           return ImageIcon.class;
 
         case 1:
+        case 2:
           return String.class;
       }
 
@@ -457,7 +465,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         MovieSubtitleChooserModel model = subtitleEventList.get(row);
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
-          String filename = FilenameUtils.getBaseName(fileToScrape.getFilename()) + "_" + model.getLanguage().name();
+          String filename = FilenameUtils.getBaseName(fileToScrape.getFilename()) + "." + model.getLanguage().name();
           DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), movieToScrape.getPathNIO().resolve(filename), movieToScrape);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }

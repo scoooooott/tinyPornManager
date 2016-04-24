@@ -22,46 +22,45 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.tasks.MovieSubtitleSearchAndDownloadTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.movies.dialogs.MovieSubtitleChooserDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieDownloadSubtitleDialog;
 
 /**
- * The MovieSubtitleSearchAction - search for subtitles for all selected movies
+ * The MovieSubtitleDownloadAction - download subtitles (via hash) for all selected movies
  * 
  * @author Manuel Laggner
  */
-public class MovieSubtitleSearchAction extends AbstractAction {
-  private static final long           serialVersionUID = -6006932119900795735L;
+public class MovieSubtitleDownloadAction extends AbstractAction {
+  private static final long           serialVersionUID = -6002932119900795735L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieSubtitleSearchAction() {
-    putValue(NAME, BUNDLE.getString("movie.search.subtitle")); //$NON-NLS-1$
+  public MovieSubtitleDownloadAction() {
+    putValue(NAME, BUNDLE.getString("movie.download.subtitle")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.SUBTITLE);
     putValue(LARGE_ICON_KEY, IconManager.SUBTITLE);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.search.subtitle")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.download.subtitle")); //$NON-NLS-1$
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
-    for (Movie movie : selectedMovies) {
-      // no subtitle download for discs
-      if (movie.isDisc()) {
-        continue;
-      }
+    if (!selectedMovies.isEmpty()) {
+      MovieDownloadSubtitleDialog dialog = new MovieDownloadSubtitleDialog(BUNDLE.getString("movie.download.subtitle")); //$NON-NLS-1$
+      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      dialog.setVisible(true);
 
-      // show the dialog for every movie video file (multi part video files problem)
-      for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
-        MovieSubtitleChooserDialog dialogMovieSubtitleChooser = new MovieSubtitleChooserDialog(movie, mediaFile, selectedMovies.size() > 1);
-        if (!dialogMovieSubtitleChooser.showDialog()) {
-          return;
-        }
+      // do we want to scrape?
+      if (dialog.shouldStartDownload()) {
+        MovieSubtitleSearchAndDownloadTask task = new MovieSubtitleSearchAndDownloadTask(selectedMovies, dialog.getSubtitleScrapers(),
+            dialog.getLanguage());
+        TmmTaskManager.getInstance().addMainTask(task);
       }
     }
   }

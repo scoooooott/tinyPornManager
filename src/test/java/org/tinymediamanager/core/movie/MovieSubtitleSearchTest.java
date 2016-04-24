@@ -14,9 +14,9 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 
 public class MovieSubtitleSearchTest {
@@ -45,7 +45,7 @@ public class MovieSubtitleSearchTest {
       for (Movie movie : MovieList.getInstance().getMovies()) {
         for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
           SubtitleSearchOptions options = new SubtitleSearchOptions(mediaFile.getFile());
-          List<MediaSearchResult> results = ((IMediaSubtitleProvider) scraper.getMediaProvider()).search(options);
+          List<SubtitleSearchResult> results = ((IMediaSubtitleProvider) scraper.getMediaProvider()).search(options);
           if (!results.isEmpty()) {
             System.out.println("Subtitle for hash found: " + results.get(0).getUrl());
           }
