@@ -41,8 +41,24 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   private MediaType     type;
   private String        posterUrl;
 
-  public MediaSearchResult(String providerId) {
+  public MediaSearchResult(String providerId, MediaType type) {
     this.providerId = providerId;
+    this.type = type;
+  }
+
+  public MediaSearchResult(String providerId, MediaType type, float score) {
+    this.providerId = providerId;
+    this.type = type;
+    this.score = score;
+  }
+
+  public MediaSearchResult(String providerId, MediaType type, String id, String title, int year, float score) {
+    this.providerId = providerId;
+    this.type = type;
+    this.id = id;
+    this.title = title;
+    this.year = year;
+    this.score = score;
   }
 
   /**
@@ -69,105 +85,201 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     }
   }
 
+  /**
+   * Get the original title of this search result
+   * 
+   * @return the orignal title
+   */
   public String getOriginalTitle() {
     return originalTitle;
   }
 
+  /**
+   * Set the original title for this search result
+   * 
+   * @param originalTitle
+   *          the original title
+   */
   public void setOriginalTitle(String originalTitle) {
     this.originalTitle = originalTitle;
   }
 
-  public MediaSearchResult(String providerId, MediaType type, float score) {
-    this.providerId = providerId;
-    this.type = type;
-    this.score = score;
-  }
-
-  public MediaSearchResult(String providerId, String id, String title, int year, float score) {
-    super();
-    this.providerId = providerId;
-    this.id = id;
-    this.title = title;
-    this.year = year;
-    this.score = score;
-  }
-
+  /**
+   * Get the provider id
+   * 
+   * @return the provider id
+   */
   public String getProviderId() {
     return providerId;
   }
 
+  /**
+   * Set the provider id
+   * 
+   * @param providerId
+   *          the provider id
+   */
   public void setProviderId(String providerId) {
     this.providerId = providerId;
   }
 
+  /**
+   * Get the title of this search result
+   * 
+   * @return the title
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Set the title of this search result
+   * 
+   * @param title
+   *          the title
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  /**
+   * Get the year of this search result
+   * 
+   * @return the year
+   */
   public int getYear() {
     return year;
   }
 
+  /**
+   * Set the year of this search result
+   * 
+   * @param year
+   *          the year
+   */
   public void setYear(int year) {
     this.year = year;
   }
 
+  /**
+   * Get the score of this search result. 1.0 is perfect match
+   * 
+   * @return the score
+   */
   public float getScore() {
     return score;
   }
 
+  /**
+   * Set the score of this result
+   * 
+   * @param score
+   *          the result
+   */
   public void setScore(float score) {
     this.score = score;
   }
 
+  /**
+   * Get the url to this search result
+   * 
+   * @return the url
+   */
   public String getUrl() {
     return url;
   }
 
+  /**
+   * Set the url to this search result
+   * 
+   * @param url
+   *          the url
+   */
   public void setUrl(String url) {
     this.url = url;
   }
 
+  /**
+   * Get the media type this search result is for
+   * 
+   * @return the media type
+   */
   public MediaType getMediaType() {
     return type;
   }
 
-  public void setMediaType(MediaType type) {
-    this.type = type;
-  }
-
+  /**
+   * Get the id of this search result
+   * 
+   * @return the id
+   */
   public String getId() {
     return id;
   }
 
+  /**
+   * Set the id of this search result
+   * 
+   * @param id
+   *          the search result id
+   */
   public void setId(String id) {
     this.id = id;
   }
 
+  /**
+   * Get the IMDB id
+   * 
+   * @return the IMDB id
+   */
   public String getIMDBId() {
     return imdbId;
   }
 
+  /**
+   * Set the IMDB id
+   * 
+   * @param imdbid
+   *          the IMDB id
+   */
   public void setIMDBId(String imdbid) {
     imdbId = imdbid;
   }
 
+  /**
+   * Get the MediaMetadata
+   * 
+   * @return the MediaMetadata
+   */
   public MediaMetadata getMediaMetadata() {
     return metadata;
   }
 
+  /**
+   * Set the MediaMetadata
+   * 
+   * @param md
+   *          the MediaMetadata
+   */
   public void setMetadata(MediaMetadata md) {
     metadata = md;
   }
 
+  /**
+   * Get the poster url
+   * 
+   * @return the poster url
+   */
   public String getPosterUrl() {
     return posterUrl;
   }
 
+  /**
+   * Set the poster url
+   * 
+   * @param posterUrl
+   *          the poster url
+   */
   public void setPosterUrl(String posterUrl) {
     this.posterUrl = posterUrl;
   }

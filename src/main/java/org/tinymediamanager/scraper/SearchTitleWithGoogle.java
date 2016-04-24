@@ -75,7 +75,7 @@ public class SearchTitleWithGoogle {
       Elements res = doc.getElementsByClass("r");
       for (Element el : res) {
         Element a = el.getElementsByTag("a").first();
-        MediaSearchResult sr = new MediaSearchResult(mpi.getId());
+        MediaSearchResult sr = new MediaSearchResult(mpi.getId(), options.getMediaType());
         String gurl = a.attr("href");
         if (gurl.contains("url?q=")) {
           // google manipulated tracking url
