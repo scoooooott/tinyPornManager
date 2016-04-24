@@ -113,7 +113,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         NodeList urlList = el.getElementsByTagName("url");
         KodiUrl u = new KodiUrl((Element) urlList.item(0));
 
-        MediaSearchResult sr = new MediaSearchResult(scraper.getProviderInfo().getId());
+        MediaSearchResult sr = new MediaSearchResult(scraper.getProviderInfo().getId(), options.getMediaType());
         String id = DOMUtils.getElementValue(el, "id");
         sr.setId(id);
         sr.setUrl(u.toExternalForm());
