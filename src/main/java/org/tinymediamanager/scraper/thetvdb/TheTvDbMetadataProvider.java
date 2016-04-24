@@ -183,7 +183,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       MediaMetadata md = getTvShowMetadata(scrapeOptions);
 
       if (md != null && StringUtils.isNotBlank(md.getTitle())) {
-        MediaSearchResult result = new MediaSearchResult(providerInfo.getId());
+        MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), options.getMediaType());
         result.setId((String) md.getId(providerInfo.getId()));
         result.setTitle(md.getTitle());
 
@@ -204,7 +204,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   }
 
   private MediaSearchResult createSearchResult(Series show, MediaSearchOptions options, String searchString) {
-    MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+    MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), options.getMediaType());
     sr.setId(show.getId());
     sr.setIMDBId(show.getImdbId());
     sr.setTitle(show.getSeriesName());
