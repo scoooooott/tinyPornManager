@@ -261,7 +261,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     }
 
     if (fd != null) { // imdb film detail page
-      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), query.getMediaType());
       sr.setId(String.valueOf(fd.id));
       sr.setIMDBId(imdb);
       sr.setTitle(fd.title);
@@ -271,7 +271,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       resultList.add(sr);
     }
     for (MMFilm film : moviesFound) {
-      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), query.getMediaType());
       sr.setId(String.valueOf(film.id));
       sr.setIMDBId(imdb);
       sr.setTitle(film.title);
