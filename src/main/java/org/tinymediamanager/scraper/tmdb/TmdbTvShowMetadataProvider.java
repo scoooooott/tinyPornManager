@@ -102,8 +102,7 @@ class TmdbTvShowMetadataProvider {
 
     LOGGER.info("found " + resultsPage.results.size() + " results");
     for (TvShow show : resultsPage.results) {
-      MediaSearchResult result = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId());
-      result.setMediaType(MediaType.TV_SHOW);
+      MediaSearchResult result = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.TV_SHOW);
       result.setId(Integer.toString(show.id));
       result.setTitle(show.name);
       result.setOriginalTitle(show.original_name);

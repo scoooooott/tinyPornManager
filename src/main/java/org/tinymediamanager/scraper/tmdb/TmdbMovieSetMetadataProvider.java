@@ -82,8 +82,7 @@ class TmdbMovieSetMetadataProvider {
     }
 
     for (Collection collection : ListUtils.nullSafe(resultsPage.results)) {
-      MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId());
-      searchResult.setMediaType(MediaType.MOVIE_SET);
+      MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE_SET);
       searchResult.setId(Integer.toString(collection.id));
       searchResult.setTitle(collection.name);
       searchResult.setPosterUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);

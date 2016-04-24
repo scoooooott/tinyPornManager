@@ -455,8 +455,7 @@ class TmdbMovieMetadataProvider {
   }
 
   private MediaSearchResult morphMovieToSearchResult(Movie movie) {
-    MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId());
-    searchResult.setMediaType(MediaType.MOVIE);
+    MediaSearchResult searchResult = new MediaSearchResult(TmdbMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
     searchResult.setId(Integer.toString(movie.id));
     searchResult.setIMDBId(movie.imdb_id);
     searchResult.setTitle(movie.title);
