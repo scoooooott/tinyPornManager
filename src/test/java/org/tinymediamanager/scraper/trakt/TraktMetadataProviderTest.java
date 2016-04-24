@@ -102,7 +102,6 @@ public class TraktMetadataProviderTest {
       episodeList = mp.getEpisodeList(options);
 
       assertThat(episodeList.get(0)).isNotNull();
-
       test = episodeList.get(0);
 
       assertThat(test.title).isNotNull();

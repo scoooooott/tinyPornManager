@@ -71,6 +71,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
         return new TraktMovieMetadataProvider(api).search(options);
       case TV_SHOW:
         return new TraktTVShowMetadataProvider(api).search(options);
+      case TV_EPISODE:
+        return new TraktEpisodeMetadataProvider(api).search(options);
       default:
         throw new UnsupportedMediaTypeException(options.getMediaType());
     }
@@ -105,6 +107,8 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
     switch (mediaScrapeOptions.getType()) {
       case TV_SHOW:
         return new TraktTVShowMetadataProvider(api).getEpisodeList(mediaScrapeOptions);
+      case TV_EPISODE:
+        return new TraktEpisodeMetadataProvider(api).getEpisodeList(mediaScrapeOptions);
       default:
         throw new UnsupportedMediaTypeException(mediaScrapeOptions.getType());
     }
