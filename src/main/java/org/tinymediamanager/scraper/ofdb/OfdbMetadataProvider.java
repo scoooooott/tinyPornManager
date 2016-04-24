@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -48,8 +50,6 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -560,7 +560,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     HashSet<String> foundResultUrls = new HashSet<String>();
     for (Element a : filme) {
       try {
-        MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+        MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
         if (StringUtils.isNotEmpty(imdb)) {
           sr.setIMDBId(imdb);
         }
@@ -573,7 +573,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
         }
         catch (Exception ignored) {
         }
-        sr.setMediaType(MediaType.MOVIE);
+
         sr.setUrl(BASE_URL + "/" + StrgUtils.substr(a.toString(), "href=\\\"(.*?)\\\""));
         sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
 
