@@ -178,7 +178,7 @@ public abstract class ImdbParser {
 
       // if a movie name/id was found - return it
       if (StringUtils.isNotEmpty(movieName) && StringUtils.isNotEmpty(movieId)) {
-        MediaSearchResult sr = new MediaSearchResult(ImdbMetadataProvider.providerInfo.getId());
+        MediaSearchResult sr = new MediaSearchResult(ImdbMetadataProvider.providerInfo.getId(), query.getMediaType());
         sr.setTitle(movieName);
         sr.setIMDBId(movieId);
         sr.setYear(md.getYear());
@@ -300,7 +300,7 @@ public abstract class ImdbParser {
         continue;
       }
 
-      MediaSearchResult sr = new MediaSearchResult(ImdbMetadataProvider.providerInfo.getId());
+      MediaSearchResult sr = new MediaSearchResult(ImdbMetadataProvider.providerInfo.getId(), query.getMediaType());
       sr.setTitle(movieName);
       sr.setIMDBId(movieId);
       sr.setYear(year);
