@@ -469,7 +469,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       if (score > 0.4) {
         for (AniDBShow show : entry.getValue()) {
           if (!foundIds.contains(show.aniDbId)) {
-            MediaSearchResult result = new MediaSearchResult(providerInfo.getId());
+            MediaSearchResult result = new MediaSearchResult(providerInfo.getId(), MediaType.TV_SHOW);
             result.setId(String.valueOf(show.aniDbId));
             result.setTitle(show.title);
             results.add(result);
