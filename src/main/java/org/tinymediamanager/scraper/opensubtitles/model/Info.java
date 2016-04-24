@@ -57,18 +57,21 @@ public class Info {
   }
 
   public static class MovieInfo {
-    public String id              = "";
-    public String movieKind       = "";
-    public String movieTitle      = "";
-    public String subFormat       = "";
-    public String subDownloadLink = "";
-    public String zipDownloadLink = "";
+    public String id               = "";
+    public String movieKind        = "";
+    public String movieTitle       = "";
+    public String movieReleaseName = "";
+    public String subFormat        = "";
+    public String subDownloadLink  = "";
+    public String zipDownloadLink  = "";
 
+    @SuppressWarnings("unchecked")
     public MovieInfo(Object data) throws Exception {
       Map<String, Object> values = (Map<String, Object>) data;
       this.id = (String) values.get("IDSubtitleFile");
       this.movieKind = (String) values.get("MovieKind");
       this.movieTitle = (String) values.get("MovieName");
+      this.movieReleaseName = (String) values.get("MovieReleaseName");
       this.subFormat = (String) values.get("SubFormat");
       this.subDownloadLink = (String) values.get("SubDownloadLink");
       this.zipDownloadLink = (String) values.get("ZipDownloadLink");

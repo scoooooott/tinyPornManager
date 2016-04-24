@@ -17,8 +17,8 @@ import java.util.logging.LogManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
+import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.opensubtitles.model.Info;
 
 public class OpensubtitlesMetadataProviderTest {
@@ -70,7 +70,7 @@ public class OpensubtitlesMetadataProviderTest {
           for (File file : files) {
             SubtitleSearchOptions options = new SubtitleSearchOptions(file);
             options.setLanguage(Locale.GERMAN);
-            List<MediaSearchResult> results = os.search(options);
+            List<SubtitleSearchResult> results = os.search(options);
             if (!results.isEmpty()) {
               System.out.println("Subtitle for hash found: " + results.get(0).getUrl());
             }
@@ -90,7 +90,7 @@ public class OpensubtitlesMetadataProviderTest {
       SubtitleSearchOptions options = new SubtitleSearchOptions();
       options.setQuery("The Matrix");
       options.setLanguage(Locale.GERMAN);
-      List<MediaSearchResult> results = mp.search(options);
+      List<SubtitleSearchResult> results = mp.search(options);
       assertThat(results).isNotEmpty();
       assertThat(results.size()).isGreaterThanOrEqualTo(11);
     }
