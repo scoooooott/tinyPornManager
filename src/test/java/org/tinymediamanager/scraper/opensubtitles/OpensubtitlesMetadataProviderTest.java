@@ -24,7 +24,7 @@ import org.tinymediamanager.scraper.opensubtitles.model.Info;
 public class OpensubtitlesMetadataProviderTest {
   private static final String CRLF       = "\n";
   private static final String SERVICE    = "http://api.opensubtitles.org/xml-rpc";
-  private static final String USER_AGENT = "OSTestUserAgent";
+  private static final String USER_AGENT = "tinyMediaManager v1";
 
   @BeforeClass
   public static void setUp() {

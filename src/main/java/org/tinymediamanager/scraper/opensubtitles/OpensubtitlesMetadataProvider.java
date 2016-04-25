@@ -57,7 +57,7 @@ import de.timroes.axmlrpc.XMLRPCException;
 public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static final Logger      LOGGER          = LoggerFactory.getLogger(OpensubtitlesMetadataProvider.class);
   private static final String      SERVICE         = "http://api.opensubtitles.org/xml-rpc";
-  private static final String      USER_AGENT      = "OSTestUserAgent";                                           // TODO: register!!!
+  private static final String      USER_AGENT      = "tinyMediaManager v1";
   private static final int         HASH_CHUNK_SIZE = 64 * 1024;
 
   private static MediaProviderInfo providerInfo    = createMediaProviderInfo();
