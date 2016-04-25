@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +59,8 @@ import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
 import com.omertron.thetvdbapi.model.Series;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 /**
  * The Class TheTvDbMetadataProvider.
  * 
@@ -87,7 +87,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   private static synchronized void initAPI() throws Exception {
     if (tvdb == null) {
       try {
-        tvdb = new TheTVDBApi(ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8="));
+        tvdb = new TheTVDBApi(ApiKey.decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=")); // when changing key, check other occurrences!
       }
       catch (Exception e) {
         LOGGER.error("TheTvDbMetadataProvider", e);
