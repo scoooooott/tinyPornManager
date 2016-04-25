@@ -85,7 +85,6 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   cbMovieNfoFilename1;
   private JCheckBox                   cbMovieNfoFilename2;
   private JCheckBox                   cbMovieNfoFilename3;
-  private JCheckBox                   chckbxMultipleMoviesPerFolder;
   private JCheckBox                   chckbxImageCache;
   private JTextField                  tfAddBadword;
   private JList<String>               listBadWords;
@@ -209,8 +208,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow(2)"),
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
-            FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblDataSource = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
     panelMovieDataSources.add(lblDataSource, "2, 2, 5, 1");
@@ -307,24 +306,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
     });
     panelIgnoreButtons.add(btnRemoveIgnore, "1, 3");
 
-    JLabel lblAllowMultipleMoviesPerFolder = new JLabel(BUNDLE.getString("Settings.multipleMovies")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblAllowMultipleMoviesPerFolder, "2, 6, right, default");
-
-    chckbxMultipleMoviesPerFolder = new JCheckBox("");
-    panelMovieDataSources.add(chckbxMultipleMoviesPerFolder, "4, 6");
-
-    JTextPane tpMultipleMoviesHint = new JTextPane();
-    TmmFontHelper.changeFont(tpMultipleMoviesHint, 0.833);
-    tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
-    tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
-    tpMultipleMoviesHint.setEditable(false);
-    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 6, 9, 1, fill, fill");
-
-    JSeparator separator_1 = new JSeparator();
-    panelMovieDataSources.add(separator_1, "2, 8, 13, 1");
-
     JPanel panel = new JPanel();
-    panelMovieDataSources.add(panel, "2, 10, 13, 1, fill, fill");
+    panelMovieDataSources.add(panel, "2, 8, 13, 1, fill, fill");
     panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
@@ -462,10 +445,6 @@ public class MovieSettingsPanel extends ScrollablePanel {
     }
   }
 
-  /*
-   * inti data bindings
-   */
-  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieSettings.movieConnector");
     BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -473,13 +452,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
         settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.detectMovieMultiDir");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
-    //
     BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.buildImageCacheOnImport");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_3.bind();

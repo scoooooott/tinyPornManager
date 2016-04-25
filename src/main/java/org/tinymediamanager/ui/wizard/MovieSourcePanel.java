@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.UIManager;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -46,7 +44,6 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -70,7 +67,6 @@ class MovieSourcePanel extends JPanel {
   private final MovieSettings         settings         = MovieModuleManager.MOVIE_SETTINGS;
 
   private JList<String>               listDataSources;
-  private JCheckBox                   chckbxMultipleMoviesPerFolder;
   private JComboBox<MovieConnectors>  cbNfoFormat;
 
   public MovieSourcePanel() {
@@ -88,29 +84,27 @@ class MovieSourcePanel extends JPanel {
 
     add(panelMovieDataSources, "2, 2, fill, fill");
     panelMovieDataSources.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
-            RowSpec.decode("70dlu:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+            RowSpec.decode("70dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblMovieDataSources = new JLabel(BUNDLE.getString("wizard.movie.datasources")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblMovieDataSources, "2, 2, 7, 1");
+    panelMovieDataSources.add(lblMovieDataSources, "2, 2, 5, 1");
 
     JTextPane tpDatasourceHint = new JTextPane();
     tpDatasourceHint.setText(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
     tpDatasourceHint.setOpaque(false);
-    panelMovieDataSources.add(tpDatasourceHint, "2, 3, 7, 1, fill, fill");
+    panelMovieDataSources.add(tpDatasourceHint, "2, 3, 5, 1, fill, fill");
 
     JScrollPane scrollPaneDataSources = new JScrollPane();
-    panelMovieDataSources.add(scrollPaneDataSources, "2, 5, 5, 1, fill, fill");
+    panelMovieDataSources.add(scrollPaneDataSources, "2, 5, 3, 1, fill, fill");
 
     listDataSources = new JList<>();
     scrollPaneDataSources.setViewportView(listDataSources);
 
     JPanel panelMovieSourcesButtons = new JPanel();
-    panelMovieDataSources.add(panelMovieSourcesButtons, "8, 5, fill, top");
+    panelMovieDataSources.add(panelMovieSourcesButtons, "6, 5, fill, top");
     panelMovieSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
         new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
@@ -152,21 +146,8 @@ class MovieSourcePanel extends JPanel {
     });
     panelMovieSourcesButtons.add(btnRemove, "1, 3, fill, top");
 
-    JLabel lblAllowMultipleMoviesPerFolder = new JLabel(BUNDLE.getString("Settings.multipleMovies")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblAllowMultipleMoviesPerFolder, "2, 7, right, default");
-
-    chckbxMultipleMoviesPerFolder = new JCheckBox("");
-    panelMovieDataSources.add(chckbxMultipleMoviesPerFolder, "4, 7");
-
-    JTextPane tpMultipleMoviesHint = new JTextPane();
-    TmmFontHelper.changeFont(tpMultipleMoviesHint, 0.833);
-    tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
-    tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
-    tpMultipleMoviesHint.setEditable(false);
-    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 7, 3, 1, fill, fill");
-
     JPanel panel = new JPanel();
-    panelMovieDataSources.add(panel, "2, 9, 3, 1, fill, fill");
+    panelMovieDataSources.add(panel, "2, 7, fill, fill");
     panel.setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("right:default"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
             new RowSpec[] { RowSpec.decode("26px"), }));
@@ -181,25 +162,15 @@ class MovieSourcePanel extends JPanel {
     JTextPane tpNfoHint = new JTextPane();
     tpNfoHint.setText(BUNDLE.getString("wizard.nfo.hint")); //$NON-NLS-1$
     tpNfoHint.setOpaque(false);
-    panelMovieDataSources.add(tpNfoHint, "6, 9, 3, 1, fill, fill");
+    panelMovieDataSources.add(tpNfoHint, "4, 7, 3, 1, fill, fill");
   }
 
-  /*
-   * init data bindings
-   */
-  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<MovieSettings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
     BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     AutoBinding<MovieSettings, MovieConnectors, JComboBox<MovieConnectors>, Object> autoBinding_9 = Bindings
         .createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("detectMovieMultiDir");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
     //
     BeanProperty<MovieSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieDataSource");
     JListBinding<String, MovieSettings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,

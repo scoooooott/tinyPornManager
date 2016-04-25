@@ -627,7 +627,9 @@ public class MovieSettings extends AbstractModelObject {
    * Should we detect (and create) movies from directories containing more than one movie?
    * 
    * @return true/false
+   * @Deprecated obsolete with UDS2
    */
+  @Deprecated
   public boolean isDetectMovieMultiDir() {
     return detectMovieMultiDir;
   }
@@ -637,7 +639,9 @@ public class MovieSettings extends AbstractModelObject {
    * 
    * @param newValue
    *          true/false
+   * @Deprecated obsolete with UDS2
    */
+  @Deprecated
   public void setDetectMovieMultiDir(boolean newValue) {
     boolean oldValue = this.detectMovieMultiDir;
     this.detectMovieMultiDir = newValue;
