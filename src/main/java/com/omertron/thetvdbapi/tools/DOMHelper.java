@@ -19,8 +19,25 @@
  */
 package com.omertron.thetvdbapi.tools;
 
-import com.omertron.thetvdbapi.ApiExceptionType;
-import com.omertron.thetvdbapi.TvDbException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,14 +49,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.nio.charset.Charset;
+import com.omertron.thetvdbapi.ApiExceptionType;
+import com.omertron.thetvdbapi.TvDbException;
 
 /**
  * Generic set of routines to process the DOM model data
@@ -172,7 +183,7 @@ public class DOMHelper {
       }
       catch (Exception e) {
         // Couldn't get a valid webPage so, quit.
-        throw new TvDbException(ApiExceptionType.UNKNOWN_CAUSE, content, cachedUrl != null ? cachedUrl.getStatusCode() : -1, url);
+        throw new TvDbException(ApiExceptionType.UNKNOWN_CAUSE, content, cachedUrl != null ? cachedUrl.getStatusCode() : -1, url, e);
 
       }
 
