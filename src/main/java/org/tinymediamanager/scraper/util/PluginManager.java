@@ -19,16 +19,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
-
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.options.addpluginsfrom.OptionReportAfter;
 import net.xeoh.plugins.base.util.JSPFProperties;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 import net.xeoh.plugins.base.util.uri.ClassURI;
+
+import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 /**
  * This class manages loading of external plugins. It is intended to be accessed via TmmModuleManager to ensure controlled access (i.e. caching)
@@ -59,9 +59,9 @@ public class PluginManager {
       stopWatch.start();
       // dedicated folder just for plugins
       LOGGER.debug("loading external plugins...");
-      // Use NIO2 Paths insetad of file - not correctly generating scheme!!!
+      // Use NIO2 Paths instead of file - not correctly generating scheme!!!
       // file:/C:/tmm instead of file:///C:/tmm
-      // nevertheless, URIs with a "+" sign still do not work in loader :/
+      // to load plugins from a path containing a + we've overridden the class FileLoader in the tmm classpath
       if (LOGGER.isTraceEnabled()) {
         pm.addPluginsFrom(Paths.get("plugins/").toUri(), new OptionReportAfter());
       }
