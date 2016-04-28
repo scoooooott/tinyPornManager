@@ -1235,6 +1235,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
     catch (Exception e) {
       LOGGER.error("error getting MediaInfo for " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
       closeMediaInfo();
       return;
     }
@@ -1243,6 +1245,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
       LOGGER.warn("0 Byte file detected: " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
       closeMediaInfo();
       return;
     }
