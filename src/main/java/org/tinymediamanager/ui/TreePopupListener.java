@@ -23,8 +23,6 @@ import javax.swing.JTree;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.tree.TreePath;
 
-import org.tinymediamanager.ui.tvshows.PopupListenerData;
-
 /**
  * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
  * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When the popup event
@@ -32,9 +30,9 @@ import org.tinymediamanager.ui.tvshows.PopupListenerData;
  * 
  * @see PopupMenuEvent
  */
-public class PopupListener extends MouseAdapter {
-  private PopupListenerData data = new PopupListenerData();
-  private JTree             tree;
+public class TreePopupListener extends MouseAdapter {
+  private final JPopupMenu popup;
+  private final JTree      tree;
 
   /**
    * Instantiates a new popup listener.
@@ -42,39 +40,21 @@ public class PopupListener extends MouseAdapter {
    * @param popupMenu
    *          the popup menu
    */
-  public PopupListener(JPopupMenu popupMenu, JTree tree) {
-    data.popup = popupMenu;
+  public TreePopupListener(JPopupMenu popupMenu, JTree tree) {
+    this.popup = popupMenu;
     this.tree = tree;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-   */
   @Override
   public void mousePressed(MouseEvent e) {
     maybeShowPopup(e);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
-   */
   @Override
   public void mouseReleased(MouseEvent e) {
-    // if (table.getSelectedRow() != -1) {
     maybeShowPopup(e);
-    // }
   }
 
-  /**
-   * Maybe show popup.
-   * 
-   * @param e
-   *          the e
-   */
   private void maybeShowPopup(MouseEvent e) {
     if (e.isPopupTrigger()) {
       boolean selected = false;
@@ -99,7 +79,7 @@ public class PopupListener extends MouseAdapter {
         tree.getSelectionModel().setSelectionPath(tree.getPathForRow(row));
       }
 
-      data.popup.show(e.getComponent(), e.getX(), e.getY());
+      popup.show(e.getComponent(), e.getX(), e.getY());
     }
   }
 }
