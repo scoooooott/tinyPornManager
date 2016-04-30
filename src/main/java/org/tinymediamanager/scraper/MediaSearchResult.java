@@ -256,7 +256,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   /**
-   * Set the MediaMetadata
+   * Set the MediaMetadata if you already got the whole meta data while searching (for buffering)
    * 
    * @param md
    *          the MediaMetadata
@@ -291,18 +291,13 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     }
     else if (getScore() == arg0.getScore()) {
       // same score - rank on year
-      try {
-        int y1 = Integer.valueOf(getYear());
-        int y2 = Integer.valueOf(arg0.getYear());
-        if (y1 > y2) {
-          return 1;
-        }
-        else {
-          return -1;
-        }
+      int y1 = getYear();
+      int y2 = arg0.getYear();
+      if (y1 > y2) {
+        return 1;
       }
-      catch (Exception e) {
-        return 0;
+      else {
+        return -1;
       }
     }
     else {
