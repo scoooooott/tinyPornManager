@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;

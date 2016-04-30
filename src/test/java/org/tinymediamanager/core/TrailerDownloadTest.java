@@ -3,6 +3,7 @@ package org.tinymediamanager.core;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
@@ -20,7 +21,7 @@ public class TrailerDownloadTest {
       Locale.setDefault(new Locale("en", "US"));
       Movie m = new Movie();
       m.setPath(".");
-      MediaFile mf = new MediaFile(new File("movie.avi"), MediaFileType.VIDEO);
+      MediaFile mf = new MediaFile(Paths.get("movie.avi"), MediaFileType.VIDEO);
       m.addToMediaFiles(mf);
 
       MovieTrailer t = new MovieTrailer();

@@ -21,7 +21,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -44,15 +46,15 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 
 /**
  * The Class MovieMediaInformationPanel.
@@ -184,11 +186,11 @@ public class MovieMediaFilesPanel extends JPanel {
     lblMoviePath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-          File path = new File(lblMoviePath.getNormalText());
+          Path path = Paths.get(lblMoviePath.getNormalText());
           try {
             // get the location from the label
             // check whether this location exists
-            if (path.exists()) {
+            if (Files.exists(path)) {
               TmmUIHelper.openFile(path);
             }
           }

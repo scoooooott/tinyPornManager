@@ -15,10 +15,11 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -30,25 +31,27 @@ import org.tinymediamanager.core.movie.entities.Movie;
 public class MovieRenamerPreviewContainer {
 
   Movie           movie;
-  String          oldPath       = "";
-  String          newPath       = "";
+  Path            oldPath;
+  Path            newPath;
   List<MediaFile> newMediaFiles = new ArrayList<MediaFile>();
   boolean         needsRename   = false;
 
   public MovieRenamerPreviewContainer(Movie movie) {
     this.movie = movie;
-    this.oldPath = Utils.relPath(movie.getDataSource(), movie.getPath());
+    if (movie != null && !movie.getDataSource().isEmpty()) {
+      this.oldPath = Paths.get(movie.getDataSource()).relativize(movie.getPathNIO());
+    }
   }
 
   public Movie getMovie() {
     return movie;
   }
 
-  public String getOldPath() {
+  public Path getOldPath() {
     return oldPath;
   }
 
-  public String getNewPath() {
+  public Path getNewPath() {
     return newPath;
   }
 

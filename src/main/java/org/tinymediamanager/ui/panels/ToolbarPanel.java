@@ -26,7 +26,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -482,10 +484,10 @@ public class ToolbarPanel extends JPanel {
     tmmFolder.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File path = new File(System.getProperty("user.dir"));
+        Path path = Paths.get(System.getProperty("user.dir"));
         try {
           // check whether this location exists
-          if (path.exists()) {
+          if (Files.exists(path)) {
             TmmUIHelper.openFile(path);
           }
         }

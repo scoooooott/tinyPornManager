@@ -22,6 +22,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,12 +54,12 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -492,7 +494,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
+    if (StringUtils.isEmpty(metadata.getTitle())) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
@@ -503,36 +505,41 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     if (config.isTitle()) {
-      setTitle(metadata.getStringValue(MediaMetadata.TITLE));
+      setTitle(metadata.getTitle());
     }
 
     if (config.isPlot()) {
-      setPlot(metadata.getStringValue(MediaMetadata.PLOT));
+      setPlot(metadata.getPlot());
     }
 
     if (config.isYear()) {
-      setYear(metadata.getStringValue(MediaMetadata.YEAR));
+      if (metadata.getYear() != 0) {
+        setYear(Integer.toString(metadata.getYear()));
+      }
+      else {
+        setYear("");
+      }
     }
 
     if (config.isRating()) {
-      setRating(metadata.getFloatValue(MediaMetadata.RATING));
-      setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
+      setRating(metadata.getRating());
+      setVotes(metadata.getVoteCount());
     }
 
     if (config.isAired()) {
-      setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+      setFirstAired(metadata.getReleaseDate());
     }
 
     if (config.isStatus()) {
-      setStatus(metadata.getStringValue(MediaMetadata.STATUS));
+      setStatus(metadata.getStatus());
     }
 
     if (config.isRuntime()) {
-      setRuntime(metadata.getIntegerValue(MediaMetadata.RUNTIME));
+      setRuntime(metadata.getRuntime());
     }
 
     if (config.isCast()) {
-      setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
       List<TvShowActor> actors = new ArrayList<TvShowActor>();
       String director = "";
       String writer = "";
@@ -1345,13 +1352,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @return the images to cache
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
 
     for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 
@@ -1427,7 +1434,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+    return Utils.deleteDirectorySafely(Paths.get(getPath()), getDataSource());
   }
 
   @Override

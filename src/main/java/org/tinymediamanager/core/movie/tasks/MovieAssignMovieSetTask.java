@@ -31,8 +31,9 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -91,9 +92,9 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           }
 
           MediaMetadata md = mp.getMetadata(options);
-          int collectionId = md.getIntegerValue(MediaMetadata.TMDB_SET);
+          int collectionId = (int) md.getId(MediaMetadata.TMDB_SET);
           if (collectionId > 0) {
-            String collectionName = md.getStringValue(MediaMetadata.COLLECTION_NAME);
+            String collectionName = md.getCollectionName();
             MovieSet movieSet = movieList.getMovieSet(collectionName, collectionId);
             if (movieSet != null && movieSet.getTmdbId() == 0) {
               movieSet.setTmdbId(collectionId);
@@ -105,11 +106,15 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
                 options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
                 MediaMetadata info = mp.getMetadata(options);
-                if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
-                  movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
-                  movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
-                  movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
-                  movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+                if (info != null && StringUtils.isNotBlank(info.getTitle())) {
+                  movieSet.setTitle(info.getTitle());
+                  movieSet.setPlot(info.getPlot());
+                  if (!info.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+                    movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.POSTER).get(0).getDefaultUrl(), MediaFileType.POSTER);
+                  }
+                  if (!info.getMediaArt(MediaArtworkType.BACKGROUND).isEmpty()) {
+                    movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.BACKGROUND).get(0).getDefaultUrl(), MediaFileType.FANART);
+                  }
                 }
               }
               catch (Exception e) {

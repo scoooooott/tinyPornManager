@@ -19,7 +19,8 @@ import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -111,9 +112,9 @@ class TvShowSourcePanel extends JPanel {
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.addTvShowDataSources(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          settings.addTvShowDataSources(file.toAbsolutePath().toString());
         }
       }
     });

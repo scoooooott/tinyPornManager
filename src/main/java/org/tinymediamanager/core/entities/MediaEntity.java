@@ -18,8 +18,9 @@ package org.tinymediamanager.core.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,7 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -136,8 +137,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     return plot;
   }
 
+  /**
+   * @deprecated use getPathNIO()
+   */
+  @Deprecated
   public String getPath() {
     return path;
+  }
+
+  public Path getPathNIO() {
+    return Paths.get(path).toAbsolutePath();
   }
 
   /**
@@ -190,19 +199,19 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setTitle(String newValue) {
     String oldValue = title;
-    title = newValue.trim();
+    title = newValue == null ? "" : newValue.trim();
     firePropertyChange(TITLE, oldValue, newValue);
   }
 
   public void setOriginalTitle(String newValue) {
     String oldValue = originalTitle;
-    originalTitle = newValue.trim();
+    originalTitle = newValue == null ? "" : newValue.trim();
     firePropertyChange(ORIGINAL_TITLE, oldValue, newValue);
   }
 
   public void setPlot(String newValue) {
     String oldValue = plot;
-    plot = newValue.trim();
+    plot = newValue == null ? "" : newValue.trim();
     firePropertyChange(PLOT, oldValue, newValue);
   }
 
@@ -230,7 +239,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setYear(String newValue) {
     String oldValue = year;
-    year = newValue.trim();
+    year = newValue == null ? "" : newValue.trim();
     firePropertyChange(YEAR, oldValue, newValue);
   }
 
@@ -276,7 +285,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     return artworkUrlMap;
   }
 
-  public void setArtwork(File file, MediaFileType type) {
+  public void setArtwork(Path file, MediaFileType type) {
     List<MediaFile> images = getMediaFiles(type);
     MediaFile mediaFile = null;
     if (images.size() > 0) {
@@ -333,10 +342,14 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setDateAddedFromMediaFile(MediaFile mf) {
     try {
-      BasicFileAttributes view = Files.readAttributes(mf.getFile().toPath(), BasicFileAttributes.class);
-      Date dateCreated = new Date(view.creationTime().toMillis());
-      if (dateCreated.compareTo(dateAdded) < 0) {
-        setDateAdded(dateCreated);
+      BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
+      Date creDat = new Date(view.creationTime().toMillis());
+      Date modDat = new Date(view.lastModifiedTime().toMillis());
+      if (creDat.compareTo(dateAdded) < 0) {
+        setDateAdded(creDat);
+      }
+      if (modDat.compareTo(dateAdded) < 0) {
+        setDateAdded(modDat);
       }
     }
     catch (Exception e) {
@@ -444,17 +457,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    readWriteLock.writeLock().lock();
-    this.mediaFiles.addAll(mediaFiles);
-    sortMediaFiles();
-    readWriteLock.writeLock().unlock();
-
-    // fire the right events
     for (MediaFile mediaFile : mediaFiles) {
-      fireAddedEventForMediaFile(mediaFile);
+      addToMediaFiles(mediaFile);
     }
-
-    firePropertyChange(MEDIA_FILES, null, mediaFiles);
   }
 
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
@@ -655,7 +660,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  public void updateMediaFilePath(File oldPath, File newPath) {
+  public void updateMediaFilePath(Path oldPath, Path newPath) {
     readWriteLock.readLock().lock();
     List<MediaFile> mfs = new ArrayList<MediaFile>(this.mediaFiles);
     readWriteLock.readLock().unlock();

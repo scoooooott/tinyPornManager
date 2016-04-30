@@ -47,7 +47,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.PopupListener;
+import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTree;
@@ -300,7 +300,7 @@ public class MovieSetPanel extends JPanel {
     Action actionRenameMovies = new MovieSetRenameAction();
     popupMenu.add(actionRenameMovies);
 
-    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 

@@ -16,7 +16,7 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -60,7 +60,7 @@ public class RebuildImageCacheAction extends AbstractAction {
       return;
     }
 
-    List<File> imageFiles = new ArrayList<File>();
+    List<Path> imageFiles = new ArrayList<Path>();
     // movie list
     List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
     for (Movie movie : movies) {

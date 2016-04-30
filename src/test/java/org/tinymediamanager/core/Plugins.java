@@ -1,7 +1,7 @@
 package org.tinymediamanager.core;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;

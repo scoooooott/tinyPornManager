@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.w3c.tidy.Tidy;
 
 /**
@@ -144,7 +145,26 @@ public class ParserUtils {
       if (!s[i].isEmpty()) {
         // check for bad words
         if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
-          name = name + WordUtils.capitalizeFully(s[i]) + " "; // make CamelCase
+          String word = s[i];
+          // roman characters such as "Part Iv" should not be camel-cased
+          switch (word.toUpperCase()) {
+            case "I":
+            case "II":
+            case "III":
+            case "IV":
+            case "V":
+            case "VI":
+            case "VII":
+            case "VIII":
+            case "IX":
+            case "X":
+              name = name + word.toUpperCase() + " ";
+              break;
+
+            default:
+              name = name + WordUtils.capitalizeFully(word) + " "; // make CamelCase
+              break;
+          }
         }
       }
     }
@@ -164,7 +184,7 @@ public class ParserUtils {
   /**
    * gets IMDB id out of filename
    * 
-   * @param filename
+   * @param text
    *          a string
    * @return imdbid or empty
    */
@@ -188,16 +208,26 @@ public class ParserUtils {
    * @param filename
    * @return the cleaned one
    */
-  public static String removeStopwordsFromTvEpisodeName(String filename) {
+  public static String removeStopwordsAndBadwordsFromTvEpisodeName(String filename) {
     String before = filename;
 
     // replaces any resolution 1234x1234 (must start with a non-word (else too global)
     filename = filename.replaceFirst("(?i)\\W\\d{3,4}x\\d{3,4}", " ");
 
     for (String s : stopwords) {
-      filename = filename.replaceAll("(?i)\\W" + s + "\\W", " "); // TV stopwords must start AND END with a non-word (else too global)
+      filename = filename.replaceAll("(?i)\\W" + s + "(\\W|$)", " "); // TV stop words must start AND END with a non-word (else too global) or line
+                                                                      // end
       if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
         LOGGER.trace("Removed some TV stopword (" + s + "): " + before + " -> " + filename);
+        before = filename;
+      }
+    }
+
+    // also remove bad words
+    for (String s : TvShowModuleManager.TV_SHOW_SETTINGS.getBadWords()) {
+      filename = filename.replaceAll("(?i)\\W" + s + "(\\W|$)", " "); // TV bad words must start AND END with a non-word (else too global) or line end
+      if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
+        LOGGER.trace("Removed some TV bad word (" + s + "): " + before + " -> " + filename);
         before = filename;
       }
     }
@@ -312,8 +342,8 @@ public class ParserUtils {
    * returns a count how "clean" a string is<br>
    * CamelCase name with space as delimiter should get a higher value...<br>
    * 
-   * @param name
-   *          the string to rate
+   * @param info
+   *          the info to rate
    * @return number, the higher, the better
    */
   public static int rateCleanness(ParserInfo info) {

@@ -15,13 +15,13 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
 
 /**
@@ -135,8 +135,8 @@ public class MovieExtraImageFetcher implements Runnable {
 
       // fetch and store images
       Url url1 = new Url(artworkUrl);
-      File tempFile = new File(movie.getPath(), filename + ".part");
-      FileOutputStream outputStream = new FileOutputStream(tempFile);
+      Path tempFile = movie.getPathNIO().resolve(filename + ".part");
+      FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
       InputStream is = url1.getInputStream();
       IOUtils.copy(is, outputStream);
       outputStream.flush();
@@ -157,18 +157,18 @@ public class MovieExtraImageFetcher implements Runnable {
       }
 
       // check if the file has been downloaded
-      if (!tempFile.exists() || tempFile.length() == 0) {
+      if (Files.notExists(tempFile) || Files.size(tempFile) == 0) {
         throw new Exception("0byte file downloaded: " + filename);
       }
 
       // delete the old one if exisiting
       if (StringUtils.isNotBlank(oldFilename)) {
-        File oldFile = new File(movie.getPath(), oldFilename);
+        Path oldFile = movie.getPathNIO().resolve(oldFilename);
         Utils.deleteFileSafely(oldFile);
       }
 
       // delete new destination if existing
-      File destinationFile = new File(movie.getPath(), filename);
+      Path destinationFile = movie.getPathNIO().resolve(filename);
       Utils.deleteFileSafely(destinationFile);
 
       // move the temp file to the expected filename
@@ -189,8 +189,8 @@ public class MovieExtraImageFetcher implements Runnable {
         LOGGER.error("fetch image: " + e.getMessage());
       }
       // remove temp file
-      File tempFile = new File(movie.getPath(), filename + ".part");
-      if (tempFile.exists()) {
+      Path tempFile = movie.getPathNIO().resolve(filename + ".part");
+      if (Files.exists(tempFile)) {
         Utils.deleteFileSafely(tempFile);
       }
     }
@@ -205,20 +205,20 @@ public class MovieExtraImageFetcher implements Runnable {
     }
 
     try {
-      File folder = new File(movie.getPath(), "extrafanart");
-      if (folder.exists()) {
-        FileUtils.deleteDirectory(folder);
+      Path folder = movie.getPathNIO().resolve("extrafanart");
+      if (Files.isDirectory(folder)) {
+        Utils.deleteDirectoryRecursive(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRAFANART);
       }
-      folder.mkdirs();
+      Files.createDirectory(folder);
 
       // fetch and store images
       for (int i = 0; i < fanarts.size(); i++) {
         String urlAsString = fanarts.get(i);
         String providedFiletype = FilenameUtils.getExtension(urlAsString);
         Url url = new Url(urlAsString);
-        File file = new File(folder, "fanart" + (i + 1) + "." + providedFiletype);
-        FileOutputStream outputStream = new FileOutputStream(file);
+        Path file = folder.resolve("fanart" + (i + 1) + "." + providedFiletype);
+        FileOutputStream outputStream = new FileOutputStream(file.toFile());
         InputStream is = url.getInputStream();
         IOUtils.copy(is, outputStream);
         outputStream.flush();
@@ -255,12 +255,12 @@ public class MovieExtraImageFetcher implements Runnable {
     }
 
     try {
-      File folder = new File(movie.getPath(), "extrathumbs");
-      if (folder.exists()) {
-        FileUtils.deleteDirectory(folder);
+      Path folder = movie.getPathNIO().resolve("extrathumbs");
+      if (Files.isDirectory(folder)) {
+        Utils.deleteDirectoryRecursive(folder);
         movie.removeAllMediaFiles(MediaFileType.EXTRATHUMB);
       }
-      folder.mkdirs();
+      Files.createDirectory(folder);
 
       // fetch and store images
       for (int i = 0; i < thumbs.size(); i++) {
@@ -269,10 +269,10 @@ public class MovieExtraImageFetcher implements Runnable {
 
         FileOutputStream outputStream = null;
         InputStream is = null;
-        File file = null;
+        Path file = null;
         if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize() > 0) {
-          file = new File(folder, "thumb" + (i + 1) + ".jpg");
-          outputStream = new FileOutputStream(file);
+          file = folder.resolve("thumb" + (i + 1) + ".jpg");
+          outputStream = new FileOutputStream(file.toFile());
           try {
             is = ImageCache.scaleImage(url, MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize());
           }
@@ -282,8 +282,8 @@ public class MovieExtraImageFetcher implements Runnable {
           }
         }
         else {
-          file = new File(folder, "thumb" + (i + 1) + "." + providedFiletype);
-          outputStream = new FileOutputStream(file);
+          file = folder.resolve("thumb" + (i + 1) + "." + providedFiletype);
+          outputStream = new FileOutputStream(file.toFile());
           Url url1 = new Url(url);
           is = url1.getInputStream();
         }

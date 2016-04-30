@@ -40,8 +40,8 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTree;
 import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
@@ -221,7 +221,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     popupMenu.add(new ExpandAllAction());
     popupMenu.add(new CollapseAllAction());
 
-    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 

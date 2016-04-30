@@ -20,10 +20,12 @@ import static org.tinymediamanager.core.Constants.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -43,13 +45,12 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -448,9 +449,9 @@ public class TvShowList extends AbstractModelObject {
         provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
       }
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
-      options.set(SearchParam.LANGUAGE, language.name());
-      options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
+      options.setLanguage(Locale.forLanguageTag(language.name()));
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
@@ -634,12 +635,25 @@ public class TvShowList extends AbstractModelObject {
    * @param path
    *          the path
    * @return the TV show by path
+   * @deprecated use getTvShowByPath(Path path)
    */
+  @Deprecated
   public TvShow getTvShowByPath(File path) {
+    return getTvShowByPath(path.toPath());
+  }
+
+  /**
+   * Gets the TV show by path.
+   * 
+   * @param path
+   *          path
+   * @return the TV show by path
+   */
+  public TvShow getTvShowByPath(Path path) {
     ArrayList<TvShow> tvShows = new ArrayList<TvShow>(tvShowList);
     // iterate over all tv shows and check whether this path is being owned by one
     for (TvShow tvShow : tvShows) {
-      if (new File(tvShow.getPath()).compareTo(path) == 0) {
+      if (tvShow.getPathNIO().compareTo(path.toAbsolutePath()) == 0) {
         return tvShow;
       }
     }

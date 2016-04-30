@@ -58,8 +58,8 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -606,8 +606,8 @@ public class MovieSetEditorDialog extends TmmDialog {
               options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
               MediaMetadata md = mp.getMetadata(options);
-              if (md.getIntegerValue(MediaMetadata.TMDB_SET) > 0) {
-                tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDB_SET)));
+              if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
+                tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));
                 break;
               }
             }

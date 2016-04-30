@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -34,7 +35,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+
+import com.squareup.okhttp.OkUrlFactory;
 
 /**
  * The class License. Used for the generation/validation of the license file (for the donator version)
@@ -247,9 +250,8 @@ public class License {
         String value = props.getProperty(key);
         urlParameters += "&" + key + "=" + URLEncoder.encode(value, "UTF-8");
       }
-      Url url = new Url(request);
 
-      HttpURLConnection connection = (HttpURLConnection) url.getUrl().openConnection();
+      HttpURLConnection connection = new OkUrlFactory(TmmHttpClient.getHttpClient()).open(new URL(request));
       connection.setDoOutput(true);
       connection.setDoInput(true);
       connection.setInstanceFollowRedirects(true);

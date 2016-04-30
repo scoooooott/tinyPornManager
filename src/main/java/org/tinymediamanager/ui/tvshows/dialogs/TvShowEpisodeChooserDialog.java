@@ -38,10 +38,10 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -103,10 +103,10 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<TvShowEpisodeChooserModel>(
         GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
 
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:405px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                RowSpec.decode("fill:37px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+    getContentPane()
+        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:37px"),
+                FormSpecs.RELATED_GAP_ROWSPEC, }));
     {
       JSplitPane splitPane = new JSplitPane();
       getContentPane().add(splitPane, "2, 2, fill, fill");
@@ -114,7 +114,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       JPanel panelLeft = new JPanel();
       panelLeft.setLayout(
           new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200dlu:grow"),
+              new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
                   FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       textField = EnhancedTextField.createSearchTextField();

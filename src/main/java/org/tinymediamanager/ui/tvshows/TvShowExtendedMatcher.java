@@ -33,7 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 
 /**
  * The class TvShowExtendedMatcher. For search&filter TV shows

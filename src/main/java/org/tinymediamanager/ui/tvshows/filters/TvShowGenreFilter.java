@@ -23,7 +23,7 @@ import javax.swing.JLabel;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**

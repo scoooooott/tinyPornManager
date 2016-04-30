@@ -23,7 +23,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -330,11 +332,11 @@ public class MovieMediaInformationPanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent arg0) {
       if (!StringUtils.isBlank(lblMoviePath.getNormalText())) {
-        File path = new File(lblMoviePath.getNormalText());
+        Path path = Paths.get(lblMoviePath.getNormalText());
         try {
           // get the location from the label
           // check whether this location exists
-          if (path.exists()) {
+          if (Files.exists(path)) {
             TmmUIHelper.openFile(path);
           }
         }

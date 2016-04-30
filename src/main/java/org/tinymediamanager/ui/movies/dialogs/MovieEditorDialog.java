@@ -61,6 +61,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -70,10 +71,10 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -163,6 +164,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JCheckBox                                                 chckbxVideo3D;
   private JTable                                                    tableIds;
   private MediaFileEditorPanel                                      mediaFilesPanel;
+  private JComboBox                                                 cbEdition;
 
   private ImageLabel                                                lblLogo;
   private ImageLabel                                                lblBanner;
@@ -215,462 +217,474 @@ public class MovieEditorDialog extends TmmDialog {
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     /**
+     * DetailsPanel 1
+     */
+    {
+      details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+      details1Panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu"),
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+
+      {
+        JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+        details1Panel.add(lblTitle, "2, 4, right, default");
+      }
+      {
+        tfTitle = new JTextField();
+        details1Panel.add(tfTitle, "4, 4, 15, 1, fill, default");
+        tfTitle.setColumns(10);
+      }
+      {
+        // JLabel lblPoster = new JLabel("");
+        lblPoster = new ImageLabel();
+        lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+        lblPoster.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.POSTER, movieList.getDefaultArtworkScrapers(),
+                lblPoster, null, null, MediaType.MOVIE);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+          }
+        });
+        lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        details1Panel.add(lblPoster, "22, 4, 3, 23, fill, fill");
+      }
+      {
+        JLabel lblOriginalTitle = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
+        details1Panel.add(lblOriginalTitle, "2, 6, right, default");
+      }
+      {
+        tfOriginalTitle = new JTextField();
+        details1Panel.add(tfOriginalTitle, "4, 6, 15, 1, fill, top");
+        tfOriginalTitle.setColumns(10);
+      }
+      {
+        JLabel lblSorttitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
+        details1Panel.add(lblSorttitle, "2, 8, right, default");
+      }
+      {
+        tfSorttitle = new JTextField();
+        details1Panel.add(tfSorttitle, "4, 8, 15, 1, fill, default");
+        tfSorttitle.setColumns(10);
+      }
+      {
+        JLabel lblTagline = new JLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
+        details1Panel.add(lblTagline, "2, 10, right, top");
+      }
+      {
+        JScrollPane scrollPaneTagline = new JScrollPane();
+        tpTagline = new JTextPane();
+        scrollPaneTagline.setViewportView(tpTagline);
+        details1Panel.add(scrollPaneTagline, "4, 10, 15, 1, fill, fill");
+      }
+      {
+        JLabel lblYear = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+        details1Panel.add(lblYear, "2, 12, right, default");
+      }
+      {
+        spYear = new JSpinner();
+        details1Panel.add(spYear, "4, 12, fill, top");
+      }
+      {
+        JLabel lblRuntime = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+        details1Panel.add(lblRuntime, "8, 12, right, default");
+      }
+      {
+        spRuntime = new JSpinner();
+        details1Panel.add(spRuntime, "10, 12, fill, default");
+      }
+      {
+        JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
+        details1Panel.add(lblMin, "12, 12");
+      }
+      {
+        JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+        details1Panel.add(lblRating, "16, 12, right, default");
+      }
+      {
+        spRating = new JSpinner();
+        details1Panel.add(spRating, "18, 12");
+      }
+
+      spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
+      {
+        JLabel lblReleaseDate = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
+        details1Panel.add(lblReleaseDate, "2, 14, right, default");
+      }
+      {
+        spReleaseDate = new JSpinner(new SpinnerDateModel());
+        details1Panel.add(spReleaseDate, "4, 14");
+      }
+      {
+        JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+        details1Panel.add(lblCertification, "8, 14, right, default");
+      }
+      cbCertification = new JComboBox();
+      details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
+      {
+        JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
+        details1Panel.add(lblTop, "16, 14, right, default");
+      }
+      {
+        spTop250 = new JSpinner();
+        details1Panel.add(spTop250, "18, 14");
+      }
+      spTop250.setValue(Integer.valueOf(movie.getTop250()));
+      {
+        JLabel lblIds = new JLabel("Ids");
+        details1Panel.add(lblIds, "2, 16, right, bottom");
+      }
+      {
+        JScrollPane scrollPaneIds = new JScrollPane();
+        details1Panel.add(scrollPaneIds, "4, 16, 9, 5, fill, fill");
+        {
+          tableIds = new MediaIdTable(ids, ScraperType.MOVIE);
+          scrollPaneIds.setViewportView(tableIds);
+        }
+      }
+      {
+        JButton btnAddId = new JButton("");
+        btnAddId.setAction(new AddIdAction());
+        btnAddId.setIcon(IconManager.ADD_INV);
+        btnAddId.setMargin(new Insets(2, 2, 2, 2));
+        details1Panel.add(btnAddId, "2, 18, right, top");
+      }
+      {
+        JButton btnRemoveId = new JButton("");
+        btnRemoveId.setAction(new RemoveIdAction());
+        btnRemoveId.setIcon(IconManager.REMOVE_INV);
+        btnRemoveId.setMargin(new Insets(2, 2, 2, 2));
+        details1Panel.add(btnRemoveId, "2, 20, right, top");
+      }
+      {
+        JLabel lblSpokenLanguages = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+        details1Panel.add(lblSpokenLanguages, "2, 22, right, default");
+      }
+      {
+        tfSpokenLanguages = new JTextField();
+        details1Panel.add(tfSpokenLanguages, "4, 22, fill, default");
+        tfSpokenLanguages.setColumns(10);
+      }
+      {
+        JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+        details1Panel.add(lblCountry, "8, 22, right, default");
+      }
+      {
+        tfCountry = new JTextField();
+        details1Panel.add(tfCountry, "10, 22, 3, 1, fill, default");
+        tfCountry.setColumns(10);
+      }
+      {
+        JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
+        details1Panel.add(lblMovieSet, "2, 24, right, default");
+      }
+      {
+        cbMovieSet = new JComboBox();
+        cbMovieSet.addItem("");
+        details1Panel.add(cbMovieSet, "4, 24, 9, 1, fill, default");
+      }
+      {
+        JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+        details1Panel.add(lblDateAdded, "2, 26, right, default");
+      }
+      {
+        spDateAdded = new JSpinner(new SpinnerDateModel());
+        // JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spDateAdded,
+        // "dd.MM.yyyy HH:mm:ss");
+        // spDateAdded.setEditor(timeEditor);
+        details1Panel.add(spDateAdded, "4, 26");
+      }
+      spDateAdded.setValue(movie.getDateAdded());
+      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      details1Panel.add(lblWatched, "8, 26, right, default");
+      {
+        cbWatched = new JCheckBox("");
+        details1Panel.add(cbWatched, "10, 26");
+      }
+      cbWatched.setSelected(movie.isWatched());
+      lblWatched.setLabelFor(cbWatched);
+      {
+        JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+        details1Panel.add(lblSourceT, "2, 28, right, default");
+      }
+      {
+        cbSource = new JComboBox(MediaSource.values());
+        details1Panel.add(cbSource, "4, 28, fill, default");
+      }
+      cbSource.setSelectedItem(movie.getMediaSource());
+      {
+        final JLabel lblEditionT = new JLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+        details1Panel.add(lblEditionT, "8, 28, right, default");
+      }
+      {
+        cbEdition = new JComboBox(MovieEdition.values());
+        details1Panel.add(cbEdition, "10, 28, 3, 1, fill, default");
+      }
+      {
+        JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+        details1Panel.add(lblVideod, "16, 28, right, default");
+      }
+      {
+        chckbxVideo3D = new JCheckBox("");
+        details1Panel.add(chckbxVideo3D, "18, 28");
+      }
+      chckbxVideo3D.setSelected(movie.isVideoIn3D());
+      {
+        JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        details1Panel.add(lblPlot, "2, 30, right, top");
+      }
+      {
+        JScrollPane scrollPanePlot = new JScrollPane();
+        details1Panel.add(scrollPanePlot, "4, 30, 15, 1, fill, fill");
+        {
+          tpPlot = new JTextPane();
+          scrollPanePlot.setViewportView(tpPlot);
+        }
+      }
+      {
+        lblFanart = new ImageLabel();
+        lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
+        lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblFanart.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.FANART, movieList.getDefaultArtworkScrapers(),
+                lblFanart, extrathumbs, extrafanarts, MediaType.MOVIE);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+          }
+        });
+        details1Panel.add(lblFanart, "22, 30, 3, 5, fill, fill");
+      }
+      lblFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
+      {
+        JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+        details1Panel.add(lblDirector, "2, 32, right, default");
+      }
+      {
+        tfDirector = new JTextField();
+        details1Panel.add(tfDirector, "4, 32, 15, 1, fill, top");
+        tfDirector.setColumns(10);
+      }
+      {
+        JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+        details1Panel.add(lblWriter, "2, 34, right, default");
+      }
+      {
+        tfWriter = new JTextField();
+        details1Panel.add(tfWriter, "4, 34, 15, 1, fill, top");
+        tfWriter.setColumns(10);
+      }
+      {
+        JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
+        details1Panel.add(lblCompany, "2, 36, right, top");
+      }
+      {
+        JScrollPane scrollPaneProduction = new JScrollPane();
+        details1Panel.add(scrollPaneProduction, "4, 36, 15, 1, fill, fill");
+        tfProductionCompanies = new JTextPane();
+        scrollPaneProduction.setViewportView(tfProductionCompanies);
+      }
+      tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
+    }
+
+    /**
      * DetailsPanel 2
      */
-    tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
-
-    details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    details1Panel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu:grow"),
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"),
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
-
     {
-      JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
-      details1Panel.add(lblTitle, "2, 4, right, default");
-    }
-    {
-      tfTitle = new JTextField();
-      details1Panel.add(tfTitle, "4, 4, 15, 1, fill, default");
-      tfTitle.setColumns(10);
-    }
-    {
-      // JLabel lblPoster = new JLabel("");
-      lblPoster = new ImageLabel();
-      lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
-      lblPoster.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.POSTER, movieList.getDefaultArtworkScrapers(), lblPoster,
-              null, null, MediaType.MOVIE);
-          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-          dialog.setVisible(true);
+      tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
+      details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+      details2Panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
+      {
+        JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+        details2Panel.add(lblActors, "2, 2, right, default");
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        details2Panel.add(scrollPane, "4, 2, 1, 11");
+        tableActors = new JTable();
+        tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        scrollPane.setViewportView(tableActors);
+      }
+      {
+        JLabel lblProducers = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
+        details2Panel.add(lblProducers, "6, 2, right, default");
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        details2Panel.add(scrollPane, "8, 2, 1, 11");
+        tableProducers = new JTable();
+        tableProducers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        scrollPane.setViewportView(tableProducers);
+      }
+      {
+        JButton btnAddActor = new JButton(BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
+        btnAddActor.setMargin(new Insets(2, 2, 2, 2));
+        btnAddActor.setAction(new AddActorAction());
+        btnAddActor.setIcon(IconManager.ADD_INV);
+        details2Panel.add(btnAddActor, "2, 4, right, top");
+      }
+      {
+        JButton btnAddProducer = new JButton((String) null);
+        btnAddProducer.setMargin(new Insets(2, 2, 2, 2));
+        btnAddProducer.setAction(new AddProducerAction());
+        btnAddProducer.setIcon(IconManager.ADD_INV);
+        details2Panel.add(btnAddProducer, "6, 4, right, top");
+      }
+      {
+        JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
+        btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
+        btnRemoveActor.setAction(new RemoveActorAction());
+        btnRemoveActor.setIcon(IconManager.REMOVE_INV);
+        details2Panel.add(btnRemoveActor, "2,6, right, top");
+      }
+      {
+        JButton btnRemoveProducer = new JButton((String) null);
+        btnRemoveProducer.setMargin(new Insets(2, 2, 2, 2));
+        btnRemoveProducer.setAction(new RemoveProducerAction());
+        btnRemoveProducer.setIcon(IconManager.REMOVE_INV);
+        details2Panel.add(btnRemoveProducer, "6, 6, right, top");
+      }
+      {
+        JButton btnMoveActorUp = new JButton((String) null);
+        btnMoveActorUp.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveActorUp.setAction(new MoveActorUpAction());
+        btnMoveActorUp.setIcon(IconManager.ARROW_UP_INV);
+        details2Panel.add(btnMoveActorUp, "2, 8, right, top");
+      }
+      {
+        JButton btnMoveProducerUp = new JButton((String) null);
+        btnMoveProducerUp.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveProducerUp.setAction(new MoveProducerUpAction());
+        btnMoveProducerUp.setIcon(IconManager.ARROW_UP_INV);
+        details2Panel.add(btnMoveProducerUp, "6, 8, right, top");
+      }
+      {
+        JButton btnMoveActorDown = new JButton((String) null);
+        btnMoveActorDown.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveActorDown.setAction(new MoveActorDownAction());
+        btnMoveActorDown.setIcon(IconManager.ARROW_DOWN_INV);
+        details2Panel.add(btnMoveActorDown, "2, 10, right, top");
+      }
+      {
+        JButton btnMoveProducerDown = new JButton((String) null);
+        btnMoveProducerDown.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveProducerDown.setAction(new MoveProducerDownAction());
+        btnMoveProducerDown.setIcon(IconManager.ARROW_DOWN_INV);
+        details2Panel.add(btnMoveProducerDown, "6, 10, right, top");
+      }
+      {
+        JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+        details2Panel.add(lblGenres, "2, 14, right, default");
+      }
+      {
+        JScrollPane scrollPaneGenres = new JScrollPane();
+        details2Panel.add(scrollPaneGenres, "4, 14, 1, 5");
+        {
+          listGenres = new JList();
+          scrollPaneGenres.setViewportView(listGenres);
         }
-      });
-      lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "22, 4, 3, 23, fill, fill");
-    }
-    {
-      JLabel lblOriginalTitle = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
-      details1Panel.add(lblOriginalTitle, "2, 6, right, default");
-    }
-    {
-      tfOriginalTitle = new JTextField();
-      details1Panel.add(tfOriginalTitle, "4, 6, 15, 1, fill, top");
-      tfOriginalTitle.setColumns(10);
-    }
-    {
-      JLabel lblSorttitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
-      details1Panel.add(lblSorttitle, "2, 8, right, default");
-    }
-    {
-      tfSorttitle = new JTextField();
-      details1Panel.add(tfSorttitle, "4, 8, 15, 1, fill, default");
-      tfSorttitle.setColumns(10);
-    }
-    {
-      JLabel lblTagline = new JLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-      details1Panel.add(lblTagline, "2, 10, right, top");
-    }
-    {
-      JScrollPane scrollPaneTagline = new JScrollPane();
-      tpTagline = new JTextPane();
-      scrollPaneTagline.setViewportView(tpTagline);
-      details1Panel.add(scrollPaneTagline, "4, 10, 15, 1, fill, fill");
-    }
-    {
-      JLabel lblYear = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-      details1Panel.add(lblYear, "2, 12, right, default");
-    }
-    {
-      spYear = new JSpinner();
-      details1Panel.add(spYear, "4, 12, fill, top");
-    }
-    {
-      JLabel lblRuntime = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      details1Panel.add(lblRuntime, "8, 12, right, default");
-    }
-    {
-      spRuntime = new JSpinner();
-      details1Panel.add(spRuntime, "10, 12, fill, default");
-    }
-    {
-      JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
-      details1Panel.add(lblMin, "12, 12");
-    }
-    {
-      JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-      details1Panel.add(lblRating, "16, 12, right, default");
-    }
-    {
-      spRating = new JSpinner();
-      details1Panel.add(spRating, "18, 12");
-    }
-
-    spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
-    {
-      JLabel lblReleaseDate = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
-      details1Panel.add(lblReleaseDate, "2, 14, right, default");
-    }
-    {
-      spReleaseDate = new JSpinner(new SpinnerDateModel());
-      details1Panel.add(spReleaseDate, "4, 14");
-    }
-    {
-      JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-      details1Panel.add(lblCertification, "8, 14, right, default");
-    }
-    cbCertification = new JComboBox();
-    details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
-    {
-      JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
-      details1Panel.add(lblTop, "16, 14, right, default");
-    }
-    {
-      spTop250 = new JSpinner();
-      details1Panel.add(spTop250, "18, 14");
-    }
-    spTop250.setValue(Integer.valueOf(movie.getTop250()));
-    {
-      JLabel lblIds = new JLabel("Ids");
-      details1Panel.add(lblIds, "2, 16, right, bottom");
-    }
-    {
-      JScrollPane scrollPaneIds = new JScrollPane();
-      details1Panel.add(scrollPaneIds, "4, 16, 9, 5, fill, fill");
+      }
       {
-        tableIds = new MediaIdTable(ids, ScraperType.MOVIE);
-        scrollPaneIds.setViewportView(tableIds);
+        JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+        details2Panel.add(lblTags, "6, 14, right, default");
       }
-    }
-    {
-      JButton btnAddId = new JButton("");
-      btnAddId.setAction(new AddIdAction());
-      btnAddId.setIcon(IconManager.ADD_INV);
-      btnAddId.setMargin(new Insets(2, 2, 2, 2));
-      details1Panel.add(btnAddId, "2, 18, right, top");
-    }
-    {
-      JButton btnRemoveId = new JButton("");
-      btnRemoveId.setAction(new RemoveIdAction());
-      btnRemoveId.setIcon(IconManager.REMOVE_INV);
-      btnRemoveId.setMargin(new Insets(2, 2, 2, 2));
-      details1Panel.add(btnRemoveId, "2, 20, right, top");
-    }
-    {
-      JLabel lblSpokenLanguages = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
-      details1Panel.add(lblSpokenLanguages, "2, 22, right, default");
-    }
-    {
-      tfSpokenLanguages = new JTextField();
-      details1Panel.add(tfSpokenLanguages, "4, 22, fill, default");
-      tfSpokenLanguages.setColumns(10);
-    }
-    {
-      JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-      details1Panel.add(lblCountry, "8, 22, right, default");
-    }
-    {
-      tfCountry = new JTextField();
-      details1Panel.add(tfCountry, "10, 22, 3, 1, fill, default");
-      tfCountry.setColumns(10);
-    }
-    {
-      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
-      details1Panel.add(lblMovieSet, "2, 24, right, default");
-    }
-    {
-      cbMovieSet = new JComboBox();
-      details1Panel.add(cbMovieSet, "4, 24, 9, 1, fill, default");
-    }
-    cbMovieSet.addItem("");
-    JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-    details1Panel.add(lblWatched, "16, 24, right, default");
-    {
-      cbWatched = new JCheckBox("");
-      details1Panel.add(cbWatched, "18, 24");
-    }
-    cbWatched.setSelected(movie.isWatched());
-    lblWatched.setLabelFor(cbWatched);
-    {
-      JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      details1Panel.add(lblDateAdded, "2, 26, right, default");
-    }
-    {
-      spDateAdded = new JSpinner(new SpinnerDateModel());
-      // JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spDateAdded,
-      // "dd.MM.yyyy HH:mm:ss");
-      // spDateAdded.setEditor(timeEditor);
-      details1Panel.add(spDateAdded, "4, 26");
-    }
-    spDateAdded.setValue(movie.getDateAdded());
-    {
-      JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-      details1Panel.add(lblSourceT, "8, 26, right, default");
-    }
-    {
-      cbSource = new JComboBox<>();
-      for (MediaSource source : MediaSource.values()) {
-        cbSource.addItem(source);
-      }
-      details1Panel.add(cbSource, "10, 26, 3, 1, fill, default");
-    }
-    {
-      JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
-      details1Panel.add(lblVideod, "16, 26, right, default");
-    }
-    {
-      chckbxVideo3D = new JCheckBox("");
-      details1Panel.add(chckbxVideo3D, "18, 26");
-    }
-    chckbxVideo3D.setSelected(movie.isVideoIn3D());
-    {
-      JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      details1Panel.add(lblPlot, "2, 28, right, top");
-    }
-    {
-      JScrollPane scrollPanePlot = new JScrollPane();
-      details1Panel.add(scrollPanePlot, "4, 28, 15, 1, fill, fill");
       {
-        tpPlot = new JTextPane();
-        scrollPanePlot.setViewportView(tpPlot);
+        JScrollPane scrollPaneTags = new JScrollPane();
+        details2Panel.add(scrollPaneTags, "8, 14, 1, 5");
+        listTags = new JList();
+        scrollPaneTags.setViewportView(listTags);
       }
-    }
-    {
-      lblFanart = new ImageLabel();
-      lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
-      lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      lblFanart.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.FANART, movieList.getDefaultArtworkScrapers(), lblFanart,
-              extrathumbs, extrafanarts, MediaType.MOVIE);
-          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-          dialog.setVisible(true);
-        }
-      });
-      details1Panel.add(lblFanart, "22, 28, 3, 5, fill, fill");
-    }
-    lblFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
-    {
-      JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      details1Panel.add(lblDirector, "2, 30, right, default");
-    }
-    {
-      tfDirector = new JTextField();
-      details1Panel.add(tfDirector, "4, 30, 15, 1, fill, top");
-      tfDirector.setColumns(10);
-    }
-    {
-      JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      details1Panel.add(lblWriter, "2, 32, right, default");
-    }
-    {
-      tfWriter = new JTextField();
-      details1Panel.add(tfWriter, "4, 32, 15, 1, fill, top");
-      tfWriter.setColumns(10);
-    }
-    {
-      JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-      details1Panel.add(lblCompany, "2, 34, right, top");
-    }
-    {
-      JScrollPane scrollPaneProduction = new JScrollPane();
-      details1Panel.add(scrollPaneProduction, "4, 34, 15, 1, fill, fill");
-      tfProductionCompanies = new JTextPane();
-      scrollPaneProduction.setViewportView(tfProductionCompanies);
-    }
-
-    tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
-    details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    details2Panel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
-    {
-      JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-      details2Panel.add(lblActors, "2, 2, right, default");
-    }
-    {
-      JScrollPane scrollPane = new JScrollPane();
-      details2Panel.add(scrollPane, "4, 2, 1, 11");
-      tableActors = new JTable();
-      tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-      scrollPane.setViewportView(tableActors);
-    }
-    {
-      JLabel lblProducers = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
-      details2Panel.add(lblProducers, "6, 2, right, default");
-    }
-    {
-      JScrollPane scrollPane = new JScrollPane();
-      details2Panel.add(scrollPane, "8, 2, 1, 11");
-      tableProducers = new JTable();
-      tableProducers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-      scrollPane.setViewportView(tableProducers);
-    }
-    {
-      JButton btnAddActor = new JButton(BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
-      btnAddActor.setMargin(new Insets(2, 2, 2, 2));
-      btnAddActor.setAction(new AddActorAction());
-      btnAddActor.setIcon(IconManager.ADD_INV);
-      details2Panel.add(btnAddActor, "2, 4, right, top");
-    }
-    {
-      JButton btnAddProducer = new JButton((String) null);
-      btnAddProducer.setMargin(new Insets(2, 2, 2, 2));
-      btnAddProducer.setAction(new AddProducerAction());
-      btnAddProducer.setIcon(IconManager.ADD_INV);
-      details2Panel.add(btnAddProducer, "6, 4, right, top");
-    }
-    {
-      JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
-      btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveActor.setAction(new RemoveActorAction());
-      btnRemoveActor.setIcon(IconManager.REMOVE_INV);
-      details2Panel.add(btnRemoveActor, "2,6, right, top");
-    }
-    {
-      JButton btnRemoveProducer = new JButton((String) null);
-      btnRemoveProducer.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveProducer.setAction(new RemoveProducerAction());
-      btnRemoveProducer.setIcon(IconManager.REMOVE_INV);
-      details2Panel.add(btnRemoveProducer, "6, 6, right, top");
-    }
-    {
-      JButton btnMoveActorUp = new JButton((String) null);
-      btnMoveActorUp.setMargin(new Insets(2, 2, 2, 2));
-      btnMoveActorUp.setAction(new MoveActorUpAction());
-      btnMoveActorUp.setIcon(IconManager.ARROW_UP_INV);
-      details2Panel.add(btnMoveActorUp, "2, 8, right, top");
-    }
-    {
-      JButton btnMoveProducerUp = new JButton((String) null);
-      btnMoveProducerUp.setMargin(new Insets(2, 2, 2, 2));
-      btnMoveProducerUp.setAction(new MoveProducerUpAction());
-      btnMoveProducerUp.setIcon(IconManager.ARROW_UP_INV);
-      details2Panel.add(btnMoveProducerUp, "6, 8, right, top");
-    }
-    {
-      JButton btnMoveActorDown = new JButton((String) null);
-      btnMoveActorDown.setMargin(new Insets(2, 2, 2, 2));
-      btnMoveActorDown.setAction(new MoveActorDownAction());
-      btnMoveActorDown.setIcon(IconManager.ARROW_DOWN_INV);
-      details2Panel.add(btnMoveActorDown, "2, 10, right, top");
-    }
-    {
-      JButton btnMoveProducerDown = new JButton((String) null);
-      btnMoveProducerDown.setMargin(new Insets(2, 2, 2, 2));
-      btnMoveProducerDown.setAction(new MoveProducerDownAction());
-      btnMoveProducerDown.setIcon(IconManager.ARROW_DOWN_INV);
-      details2Panel.add(btnMoveProducerDown, "6, 10, right, top");
-    }
-    {
-      JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-      details2Panel.add(lblGenres, "2, 14, right, default");
-    }
-    {
-      JScrollPane scrollPaneGenres = new JScrollPane();
-      details2Panel.add(scrollPaneGenres, "4, 14, 1, 5");
       {
-        listGenres = new JList();
-        scrollPaneGenres.setViewportView(listGenres);
+        JButton btnAddGenre = new JButton("");
+        btnAddGenre.setAction(new AddGenreAction());
+        btnAddGenre.setIcon(IconManager.ADD_INV);
+        btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
+        details2Panel.add(btnAddGenre, "2, 16, right, top");
       }
-    }
-    {
-      JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      details2Panel.add(lblTags, "6, 14, right, default");
-    }
-    {
-      JScrollPane scrollPaneTags = new JScrollPane();
-      details2Panel.add(scrollPaneTags, "8, 14, 1, 5");
-      listTags = new JList();
-      scrollPaneTags.setViewportView(listTags);
-    }
-    {
-      JButton btnAddGenre = new JButton("");
-      btnAddGenre.setAction(new AddGenreAction());
-      btnAddGenre.setIcon(IconManager.ADD_INV);
-      btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddGenre, "2, 16, right, top");
-    }
-    {
-      JButton btnAddTag = new JButton("");
-      btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(IconManager.ADD_INV);
-      btnAddTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTag, "6, 16, right, top");
-    }
+      {
+        JButton btnAddTag = new JButton("");
+        btnAddTag.setAction(new AddTagAction());
+        btnAddTag.setIcon(IconManager.ADD_INV);
+        btnAddTag.setMargin(new Insets(2, 2, 2, 2));
+        details2Panel.add(btnAddTag, "6, 16, right, top");
+      }
 
-    {
-      JButton btnRemoveGenre = new JButton("");
-      btnRemoveGenre.setAction(new RemoveGenreAction());
-      btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
-      details2Panel.add(btnRemoveGenre, "2, 18, right, top");
-    }
-    {
-      JButton btnRemoveTag = new JButton("");
-      btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(IconManager.REMOVE_INV);
-      btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTag, "6, 18, right, top");
-    }
-    {
-      cbGenres = new AutocompleteComboBox<>(Arrays.asList(MediaGenres.values()));
-      details2Panel.add(cbGenres, "4, 20");
-    }
-    {
-      cbTags = new AutocompleteComboBox<>(movieList.getTagsInMovies());
-      details2Panel.add(cbTags, "8, 20");
-    }
+      {
+        JButton btnRemoveGenre = new JButton("");
+        btnRemoveGenre.setAction(new RemoveGenreAction());
+        btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
+        btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
+        details2Panel.add(btnRemoveGenre, "2, 18, right, top");
+      }
+      {
+        JButton btnRemoveTag = new JButton("");
+        btnRemoveTag.setAction(new RemoveTagAction());
+        btnRemoveTag.setIcon(IconManager.REMOVE_INV);
+        btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
+        details2Panel.add(btnRemoveTag, "6, 18, right, top");
+      }
+      {
+        cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        details2Panel.add(cbGenres, "4, 20");
+      }
+      {
+        cbTags = new AutocompleteComboBox(movieList.getTagsInMovies());
+        details2Panel.add(cbTags, "8, 20");
+      }
 
-    {
-      JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-      details2Panel.add(lblTrailer, "2, 22, right, default");
-    }
-    {
-      JScrollPane scrollPaneTrailer = new JScrollPane();
-      details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
-      tableTrailer = new JTable();
-      tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-      scrollPaneTrailer.setViewportView(tableTrailer);
-    }
-    {
-      JButton btnAddTrailer = new JButton("");
-      btnAddTrailer.setAction(new AddTrailerAction());
-      btnAddTrailer.setIcon(IconManager.ADD_INV);
-      btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTrailer, "2, 24, right, top");
-    }
-    {
-      JButton btnRemoveTrailer = new JButton("");
-      btnRemoveTrailer.setAction(new RemoveTrailerAction());
-      btnRemoveTrailer.setIcon(IconManager.REMOVE_INV);
-      btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
+      {
+        JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+        details2Panel.add(lblTrailer, "2, 22, right, default");
+      }
+      {
+        JScrollPane scrollPaneTrailer = new JScrollPane();
+        details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
+        tableTrailer = new JTable();
+        tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        scrollPaneTrailer.setViewportView(tableTrailer);
+      }
+      {
+        JButton btnAddTrailer = new JButton("");
+        btnAddTrailer.setAction(new AddTrailerAction());
+        btnAddTrailer.setIcon(IconManager.ADD_INV);
+        btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
+        details2Panel.add(btnAddTrailer, "2, 24, right, top");
+      }
+      {
+        JButton btnRemoveTrailer = new JButton("");
+        btnRemoveTrailer.setAction(new RemoveTrailerAction());
+        btnRemoveTrailer.setIcon(IconManager.REMOVE_INV);
+        btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
+        details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
+      }
     }
 
     /**
@@ -828,6 +842,19 @@ public class MovieEditorDialog extends TmmDialog {
     initDataBindings();
 
     {
+      int year = 0;
+      try {
+        year = Integer.parseInt(movieToEdit.getYear());
+      }
+      catch (Exception ignored) {
+      }
+
+      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
+        cbCertification.addItem(cert);
+      }
+
       tfTitle.setText(movieToEdit.getTitle());
       tfOriginalTitle.setText(movieToEdit.getOriginalTitle());
       tfSorttitle.setText(movieToEdit.getSortTitle());
@@ -839,28 +866,15 @@ public class MovieEditorDialog extends TmmDialog {
       lblPoster.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.POSTER));
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(movieToEdit.getRuntime()));
-      cbSource.setSelectedItem(movie.getMediaSource());
+      cbEdition.setSelectedItem(movieToEdit.getEdition());
 
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
-
-      {
-        int year = 0;
-        try {
-          year = Integer.parseInt(movieToEdit.getYear());
-        }
-        catch (Exception ignored) {
-        }
-        spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
-        spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
-      }
-      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+      spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
+      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
       spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
-
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
-        cbCertification.addItem(cert);
-      }
       cbCertification.setSelectedItem(movieToEdit.getCertification());
+      tfSorttitle.setText(movieToEdit.getSortTitle());
 
       lblMoviePath.setText(movieToEdit.getPath());
       lblLogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.LOGO));
@@ -917,7 +931,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
       toggleSorttitle();
-      tfSorttitle.setText(movieToEdit.getSortTitle());
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
@@ -998,6 +1011,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setMediaSource((MediaSource) cbSource.getSelectedItem());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
+      movieToEdit.setEdition((MovieEdition) cbEdition.getSelectedItem());
 
       // sync of media ids
       // first round -> add existing ids
@@ -1150,8 +1164,8 @@ public class MovieEditorDialog extends TmmDialog {
     public DiscardAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
-      putValue(SMALL_ICON, IconManager.CANCEL_INV);
-      putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
+      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
     @Override
@@ -1493,22 +1507,11 @@ public class MovieEditorDialog extends TmmDialog {
   @Override
   public void dispose() {
     super.dispose();
-
-    if (jTableBinding.isBound()) {
-      jTableBinding.unbind();
-    }
-    if (jListBinding.isBound()) {
-      jListBinding.unbind();
-    }
-    if (jTableBinding_1.isBound()) {
-      jTableBinding_1.unbind();
-    }
-    if (jListBinding_1.isBound()) {
-      jListBinding_1.unbind();
-    }
-    if (jTableBinding_2.isBound()) {
-      jTableBinding_2.unbind();
-    }
+    jTableBinding.unbind();
+    jListBinding.unbind();
+    jTableBinding_1.unbind();
+    jListBinding_1.unbind();
+    jTableBinding_2.unbind();
     mediaFilesPanel.unbindBindings();
   }
 

@@ -26,7 +26,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;

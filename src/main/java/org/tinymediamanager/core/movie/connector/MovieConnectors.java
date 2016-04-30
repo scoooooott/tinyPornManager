@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * The Enum MovieConnectors.
@@ -43,7 +43,7 @@ public enum MovieConnectors {
    * @param nfo
    * @return
    */
-  public static boolean isValidNFO(File nfo) {
+  public static boolean isValidNFO(Path nfo) {
     MovieToXbmcNfoConnector tmp = null;
     try {
       tmp = MovieToXbmcNfoConnector.parseNFO(nfo);

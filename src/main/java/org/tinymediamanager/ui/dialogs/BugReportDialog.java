@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,9 +96,9 @@ public class BugReportDialog extends TmmDialog {
       public void actionPerformed(ActionEvent e) {
         // open the log download window
         try {
-          File file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip", new FileNameExtensionFilter("Zip files", ".zip")); //$NON-NLS-1$
+          Path file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip", new FileNameExtensionFilter("Zip files", ".zip")); //$NON-NLS-1$
           if (file != null) {
-            writeLogsFile(file);
+            writeLogsFile(file.toFile());
           }
         }
         catch (Exception ex) {

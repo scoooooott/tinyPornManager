@@ -18,8 +18,8 @@ package org.tinymediamanager.ui.tvshows;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**

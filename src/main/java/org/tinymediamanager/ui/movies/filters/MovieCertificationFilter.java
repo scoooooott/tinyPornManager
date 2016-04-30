@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**

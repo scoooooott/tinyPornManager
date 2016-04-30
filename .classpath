@@ -34,7 +34,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-    <classpathentry combineaccessrules="false" kind="src" path="/api-scraper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/api-scraper"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-anidb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-fanarttv"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scraper-imdb"/>

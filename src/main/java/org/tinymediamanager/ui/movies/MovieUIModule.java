@@ -19,7 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -27,7 +33,29 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MainTabbedPane;
-import org.tinymediamanager.ui.movies.actions.*;
+import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
+import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
+import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
+import org.tinymediamanager.ui.movies.actions.MovieEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieExportAction;
+import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
+import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
+import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
+import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
+import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
+import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
+import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
+import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
+import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
+import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
 import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
@@ -55,7 +83,7 @@ public class MovieUIModule implements ITmmUIModule {
 
   private final MovieSelectionModel      selectionModel;
 
-  private Map<Class, Action>              actionMap;
+  private Map<Class, Action>             actionMap;
 
   private Action                         searchAction;
   private Action                         editAction;
@@ -128,17 +156,20 @@ public class MovieUIModule implements ITmmUIModule {
 
   /**
    * this factory creates the action and registers the hotkeys for accelerator management
-   * @param actionClass the class of the action
+   * 
+   * @param actionClass
+   *          the class of the action
    * @return the constructed action
-     */
-  private Action createAndRegisterAction(Class actionClass){
+   */
+  private Action createAndRegisterAction(Class<? extends Action> actionClass) {
     Action action = actionMap.get(actionClass);
     if (action == null) {
       try {
         action = (Action) actionClass.newInstance();
         actionMap.put(actionClass, action);
-        //KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-      } catch (Exception ignored) {
+        // KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+      }
+      catch (Exception ignored) {
       }
     }
     return action;
@@ -160,6 +191,10 @@ public class MovieUIModule implements ITmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
     popupMenu.add(createAndRegisterAction(MovieMediaInformationAction.class));
     popupMenu.add(createAndRegisterAction(MovieExportAction.class));
+    popupMenu.addSeparator();
+    popupMenu.add(createAndRegisterAction(MovieTrailerDownloadAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSubtitleSearchAction.class));
+    popupMenu.add(createAndRegisterAction(MovieSubtitleDownloadAction.class));
     popupMenu.addSeparator();
     popupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     popupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
@@ -216,20 +251,20 @@ public class MovieUIModule implements ITmmUIModule {
   /**
    * register accelerators
    */
-  private void registerAccelerators(){
-    for(Map.Entry<Class, Action> entry : actionMap.entrySet()){
+  private void registerAccelerators() {
+    for (Map.Entry<Class, Action> entry : actionMap.entrySet()) {
       try {
-        KeyStroke keyStroke = (KeyStroke)entry.getValue().getValue(Action.ACCELERATOR_KEY);
+        KeyStroke keyStroke = (KeyStroke) entry.getValue().getValue(Action.ACCELERATOR_KEY);
         if (keyStroke != null) {
           String actionMapKey = "action" + entry.getKey().getName();
           listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
           listPanel.getActionMap().put(actionMapKey, entry.getValue());
         }
-      } catch (Exception ignored) {
+      }
+      catch (Exception ignored) {
       }
     }
   }
-
 
   public void setFilterMenuVisible(boolean visible) {
     filterPanel.setVisible(visible);

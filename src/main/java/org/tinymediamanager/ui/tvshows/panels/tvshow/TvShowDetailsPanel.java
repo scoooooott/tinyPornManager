@@ -18,7 +18,9 @@ package org.tinymediamanager.ui.tvshows.panels.tvshow;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -191,10 +193,10 @@ public class TvShowDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblPath.getNormalText())) {
           // get the location from the label
-          File path = new File(lblPath.getNormalText());
+          Path path = Paths.get(lblPath.getNormalText());
           try {
             // check whether this location exists
-            if (path.exists()) {
+            if (Files.exists(path)) {
               TmmUIHelper.openFile(path);
             }
           }

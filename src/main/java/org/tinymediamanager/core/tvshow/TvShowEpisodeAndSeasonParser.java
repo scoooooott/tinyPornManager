@@ -120,14 +120,14 @@ public class TvShowEpisodeAndSeasonParser {
     // remove problematic strings from name
     String filename = FilenameUtils.getName(name);
     String extension = FilenameUtils.getExtension(name);
-    String basename = ParserUtils.removeStopwordsFromTvEpisodeName(name);
+    String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(FilenameUtils.getBaseName(name));
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
       basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
       basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
     }
-    basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
+
     basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
 
     // parse foldername
@@ -140,6 +140,7 @@ public class TvShowEpisodeAndSeasonParser {
     basename = basename + " ";
 
     result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
+    result.name = basename;
 
     // season detection
     if (result.season == -1) {
@@ -214,7 +215,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse SxxEPyy 1-N
     regex = seasonMultiEP;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     int lastFoundEpisode = 0;
     while (m.find()) {
       int s = -1;
@@ -252,7 +253,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse XYY or XX_YY 1-N
     regex = seasonMultiEP2;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     while (m.find()) {
       int s = -1;
       try {
@@ -400,7 +401,7 @@ public class TvShowEpisodeAndSeasonParser {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // check if directory is the root of the tv show
-    if (directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
+    if (rootDirOfTvShow == null || rootDirOfTvShow.isEmpty() || directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
       return result;
     }
 

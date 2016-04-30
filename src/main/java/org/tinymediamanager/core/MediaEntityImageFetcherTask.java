@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
 
 /**
@@ -81,13 +83,14 @@ public class MediaEntityImageFetcherTask implements Runnable {
 
         // debug message
         LOGGER.debug("writing " + type + " " + filename);
+        Path destFile = entity.getPathNIO().resolve(filename);
+        Path tempFile = entity.getPathNIO().resolve(filename + ".part");
 
         // check if old and new file are the same (possible if you select it in the imagechooser)
         boolean sameFile = false;
         if (url.startsWith("file:")) {
           String newUrl = url.replace("file:/", "");
-          File file = new File(newUrl);
-          File destFile = new File(entity.getPath(), filename);
+          Path file = Paths.get(newUrl);
           if (file.equals(destFile)) {
             sameFile = true;
           }
@@ -96,8 +99,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         // fetch and store images
         if (!sameFile) {
           Url url1 = new Url(url);
-          File tempFile = new File(entity.getPath(), filename + ".part");
-          FileOutputStream outputStream = new FileOutputStream(tempFile);
+          FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
           InputStream is = url1.getInputStream();
           IOUtils.copy(is, outputStream);
           outputStream.flush();
@@ -113,22 +115,21 @@ public class MediaEntityImageFetcherTask implements Runnable {
           is.close();
 
           // check if the file has been downloaded
-          if (!tempFile.exists() || tempFile.length() == 0) {
+          if (Files.notExists(tempFile) || Files.size(tempFile) == 0) {
             throw new Exception("0byte file downloaded: " + filename);
           }
 
           // delete the old one if exisiting
           if (StringUtils.isNotBlank(oldFilename)) {
-            File oldFile = new File(entity.getPath(), oldFilename);
+            Path oldFile = entity.getPathNIO().resolve(oldFilename);
             Utils.deleteFileSafely(oldFile);
           }
 
           // delete new destination if existing
-          File destinationFile = new File(entity.getPath(), filename);
-          Utils.deleteFileSafely(destinationFile);
+          Utils.deleteFileSafely(destFile);
 
           // move the temp file to the expected filename
-          if (!Utils.moveFileSafe(tempFile, destinationFile)) {
+          if (!Utils.moveFileSafe(tempFile, destFile)) {
             throw new Exception("renaming temp file failed: " + filename);
           }
         }
@@ -141,7 +142,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         // set the new image if its the first image
         if (firstImage) {
           LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
-          ImageCache.invalidateCachedImage(entity.getPath() + File.separator + filename);
+          ImageCache.invalidateCachedImage(entity.getPathNIO().resolve(filename));
           switch (type) {
             case POSTER:
             case BACKGROUND:
@@ -150,7 +151,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case CLEARART:
             case DISC:
             case LOGO:
-              entity.setArtwork(new File(entity.getPath(), filename), MediaFileType.getMediaFileType(type));
+              entity.setArtwork(destFile, MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();
               break;
@@ -171,8 +172,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
         }
 
         // remove temp file
-        File tempFile = new File(entity.getPath(), filename + ".part");
-        if (tempFile.exists()) {
+        Path tempFile = entity.getPathNIO().resolve(filename + ".part");
+        if (Files.exists(tempFile)) {
           Utils.deleteFileSafely(tempFile);
         }
 
@@ -186,7 +187,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case CLEARART:
             case DISC:
             case LOGO:
-              entity.setArtwork(new File(oldFilename), MediaFileType.getMediaFileType(type));
+              entity.setArtwork(Paths.get(oldFilename), MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();
               break;

@@ -55,8 +55,8 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**

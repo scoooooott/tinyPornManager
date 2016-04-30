@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 
 /**
  * The Class TvShowGenresPanel.

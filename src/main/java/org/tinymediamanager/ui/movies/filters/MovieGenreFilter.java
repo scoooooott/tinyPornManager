@@ -20,7 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**

@@ -32,7 +32,7 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -42,7 +42,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -173,14 +173,14 @@ public class TinyMediaManagerCMD {
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
         if (updateMovieDs.isEmpty()) {
-          task = new MovieUpdateDatasourceTask();
+          task = new MovieUpdateDatasourceTask2();
           task.run(); // blocking
         }
         else {
           List<String> dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
           for (Integer i : updateMovieDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
-              task = new MovieUpdateDatasourceTask(dataSources.get(i - 1));
+              task = new MovieUpdateDatasourceTask2(dataSources.get(i - 1));
               task.run(); // blocking
             }
           }
@@ -240,14 +240,14 @@ public class TinyMediaManagerCMD {
       if (updateTv) {
         LOGGER.info("Commandline - updating TvShows and episodes...");
         if (updateTvDs.isEmpty()) {
-          task = new TvShowUpdateDatasourceTask();
+          task = new TvShowUpdateDatasourceTask2();
           task.run(); // blocking
         }
         else {
           List<String> dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
           for (Integer i : updateTvDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
-              task = new TvShowUpdateDatasourceTask(dataSources.get(i - 1));
+              task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
               task.run(); // blocking
             }
           }
@@ -306,7 +306,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : m.getMediaFiles()) {
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -316,7 +316,7 @@ public class TinyMediaManagerCMD {
           for (MediaFile mf : s.getMediaFiles()) { // show MFs
             if (!mf.exists()) {
               System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
               allOk = false;
             }
           }
@@ -324,7 +324,7 @@ public class TinyMediaManagerCMD {
             for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
               if (!mf.exists()) {
                 System.out.println();
-                LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+                LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
                 allOk = false;
               }
             }

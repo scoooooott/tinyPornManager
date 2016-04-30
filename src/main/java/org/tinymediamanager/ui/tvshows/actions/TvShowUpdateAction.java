@@ -16,7 +16,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -50,17 +50,17 @@ public class TvShowUpdateAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
-    List<File> tvShowFolders = new ArrayList<File>();
+    List<Path> tvShowFolders = new ArrayList<Path>();
 
     if (selectedTvShows.isEmpty()) {
       return;
     }
 
     for (TvShow tvShow : selectedTvShows) {
-      tvShowFolders.add(new File(tvShow.getPath()));
+      tvShowFolders.add(tvShow.getPathNIO());
     }
 
-    TmmThreadPool task = new TvShowUpdateDatasourceTask(tvShowFolders);
+    TmmThreadPool task = new TvShowUpdateDatasourceTask2(tvShowFolders);
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

@@ -24,20 +24,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -60,6 +65,7 @@ public class MovieChooserModel extends AbstractModelObject {
   private MediaLanguages                language         = null;
   private MediaSearchResult             result           = null;
   private MediaMetadata                 metadata         = null;
+
   private String                        name             = "";
   private String                        overview         = "";
   private String                        year             = "";
@@ -79,7 +85,12 @@ public class MovieChooserModel extends AbstractModelObject {
     // name
     setName(result.getTitle());
     // year
-    setYear(result.getYear());
+    if (result.getYear() != 0) {
+      setYear(Integer.toString(result.getYear()));
+    }
+    else {
+      setYear("");
+    }
     // combined name (name (year))
     setCombinedName();
   }
@@ -165,15 +176,14 @@ public class MovieChooserModel extends AbstractModelObject {
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
-      setOverview(metadata.getStringValue(MediaMetadata.PLOT));
-      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
+      setOverview(metadata.getPlot());
+      setTagline(metadata.getTagline());
 
-      if (StringUtils.isBlank(posterUrl) && StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.POSTER_URL))) {
-        setPosterUrl(metadata.getStringValue(MediaMetadata.POSTER_URL));
+      if (StringUtils.isBlank(posterUrl) && !metadata.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+        setPosterUrl(metadata.getMediaArt(MediaArtworkType.POSTER).get(0).getPreviewUrl());
       }
 
       scraped = true;
-
     }
     catch (IOException e) {
       LOGGER.error("scrapeMedia", e);
@@ -185,87 +195,6 @@ public class MovieChooserModel extends AbstractModelObject {
       MessageManager.instance.pushMessage(
           new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
-  }
-
-  public List<MediaArtwork> getArtwork() {
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
-
-    if (!scraped) {
-      return artwork;
-    }
-
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-    options.setArtworkType(MediaArtworkType.ALL);
-    options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
-    try {
-      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
-    }
-    catch (Exception e) {
-      options.setTmdbId(0);
-    }
-    options.setLanguage(language);
-    options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-    options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-    options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
-
-    // scrape providers till one artwork has been found
-    for (MediaScraper artworkScraper : artworkScrapers) {
-      IMovieArtworkProvider artworkProvider = (IMovieArtworkProvider) artworkScraper.getMediaProvider();
-      try {
-        artwork.addAll(artworkProvider.getArtwork(options));
-      }
-      catch (Exception e) {
-      }
-    }
-
-    // at last take the poster from the result
-    if (StringUtils.isNotBlank(getPosterUrl())) {
-      MediaArtwork ma = new MediaArtwork();
-      ma.setType(MediaArtworkType.POSTER);
-      ma.setDefaultUrl(getPosterUrl());
-      ma.setProviderId(result.getProviderId());
-      artwork.add(ma);
-    }
-
-    return artwork;
-  }
-
-  public List<MovieTrailer> getTrailers() {
-    List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
-
-    if (!scraped) {
-      return trailers;
-    }
-
-    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-    options.setMetadata(metadata);
-    options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
-    try {
-      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
-    }
-    catch (Exception e) {
-      options.setTmdbId(0);
-    }
-    options.setLanguage(language);
-    options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-
-    // scrape trailers
-    for (MediaScraper trailerScraper : trailerScrapers) {
-      try {
-        IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
-        List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
-        for (MediaTrailer mediaTrailer : foundTrailers) {
-          MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);
-          trailers.add(movieTrailer);
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn(e.getMessage());
-      }
-    }
-
-    return trailers;
   }
 
   public MediaMetadata getMetadata() {
@@ -286,4 +215,123 @@ public class MovieChooserModel extends AbstractModelObject {
     return tagline;
   }
 
+  public void startArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+    TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(movie, config));
+  }
+
+  public void startTrailerScrapeTask(Movie movie) {
+    TmmTaskManager.getInstance().addUnnamedTask(new TrailerScrapeTask(movie));
+  }
+
+  private class ArtworkScrapeTask implements Runnable {
+    private Movie                      movieToScrape;
+    private MovieScraperMetadataConfig config;
+
+    public ArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+      this.movieToScrape = movie;
+      this.config = config;
+    }
+
+    @Override
+    public void run() {
+      if (!scraped) {
+        return;
+      }
+
+      List<MediaArtwork> artwork = new ArrayList<>();
+
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      options.setArtworkType(MediaArtworkType.ALL);
+      options.setMetadata(metadata);
+      options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
+      try {
+        options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
+      }
+      catch (Exception e) {
+        options.setTmdbId(0);
+      }
+      options.setLanguage(language);
+      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+
+      // scrape providers till one artwork has been found
+      for (MediaScraper artworkScraper : artworkScrapers) {
+        IMovieArtworkProvider artworkProvider = (IMovieArtworkProvider) artworkScraper.getMediaProvider();
+        try {
+          artwork.addAll(artworkProvider.getArtwork(options));
+        }
+        catch (Exception e) {
+        }
+      }
+
+      // at last take the poster from the result
+      if (StringUtils.isNotBlank(getPosterUrl())) {
+        MediaArtwork ma = new MediaArtwork(result.getProviderId(), MediaArtworkType.POSTER);
+        ma.setDefaultUrl(getPosterUrl());
+        ma.setPreviewUrl(getPosterUrl());
+        artwork.add(ma);
+      }
+
+      movieToScrape.setArtwork(artwork, config);
+    }
+  }
+
+  private class TrailerScrapeTask implements Runnable {
+    private Movie movieToScrape;
+
+    public TrailerScrapeTask(Movie movie) {
+      this.movieToScrape = movie;
+    }
+
+    @Override
+    public void run() {
+      if (!scraped) {
+        return;
+      }
+
+      List<MovieTrailer> trailer = new ArrayList<>();
+
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      options.setMetadata(metadata);
+      options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
+      try {
+        options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB))));
+      }
+      catch (Exception e) {
+        options.setTmdbId(0);
+      }
+      options.setLanguage(language);
+      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+
+      // scrape trailers
+      for (MediaScraper trailerScraper : trailerScrapers) {
+        try {
+          IMovieTrailerProvider trailerProvider = (IMovieTrailerProvider) trailerScraper.getMediaProvider();
+          List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
+          for (MediaTrailer mediaTrailer : foundTrailers) {
+            MovieTrailer movieTrailer = new MovieTrailer(mediaTrailer);
+            trailer.add(movieTrailer);
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn(e.getMessage());
+        }
+      }
+
+      // add local trailers!
+      for (MediaFile mf : movieToScrape.getMediaFiles(MediaFileType.TRAILER)) {
+        LOGGER.debug("adding local trailer " + mf.getFilename());
+        MovieTrailer mt = new MovieTrailer();
+        mt.setName(mf.getFilename());
+        mt.setProvider("downloaded");
+        mt.setQuality(mf.getVideoFormat());
+        mt.setInNfo(false);
+        mt.setUrl(mf.getFile().toURI().toString());
+        trailer.add(0, mt); // add as first
+      }
+
+      movieToScrape.setTrailers(trailer);
+    }
+  }
 }

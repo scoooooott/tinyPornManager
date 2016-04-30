@@ -24,8 +24,8 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmTree;
 import org.tinymediamanager.ui.moviesets.MovieSetRootTreeNode;
@@ -214,7 +214,7 @@ public class MovieSetTreePanel extends JPanel implements ITmmTabItem {
     popupMenu.add(new ExpandAllAction());
     popupMenu.add(new CollapseAllAction());
 
-    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 

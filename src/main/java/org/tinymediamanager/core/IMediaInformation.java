@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 
 /**
  * The interface IMediaInformation is used to provide an interface to common media related infos

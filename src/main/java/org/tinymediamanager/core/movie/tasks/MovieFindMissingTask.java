@@ -15,8 +15,19 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.io.File;
+import static java.nio.file.FileVisitResult.*;
+
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -78,15 +89,12 @@ public class MovieFindMissingTask extends TmmThreadPool {
       for (String ds : dataSources) {
         start();
 
-        ArrayList<File> bigFiles = getBigFiles(new File(ds));
+        HashSet<Path> bigFiles = getBigFilesRecursive(Paths.get(ds));
         if (cancel) {
           break;
         }
 
-        for (File file : bigFiles) {
-          if (cancel) {
-            break;
-          }
+        for (Path file : bigFiles) {
 
           MediaFile mf = new MediaFile(file);
           if (!mfs.contains(mf)) {
@@ -109,34 +117,52 @@ public class MovieFindMissingTask extends TmmThreadPool {
     }
   }
 
-  /**
-   * recursively gets all Files >100mb from a dir
-   */
-  private ArrayList<File> getBigFiles(File dir) {
-    ArrayList<File> mv = new ArrayList<File>();
-
-    File[] list = dir.listFiles();
-    if (list == null || cancel) {
-      return mv;
+  public HashSet<Path> getBigFilesRecursive(Path folder) {
+    BigFilesRecursive visitor = new BigFilesRecursive();
+    try {
+      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE, visitor);
     }
-    for (File file : list) {
+    catch (IOException e) {
+      // can not happen, since we overrided visitFileFailed, which throws no exception ;)
+    }
+    return visitor.fFound;
+  }
+
+  private class BigFilesRecursive extends SimpleFileVisitor<Path> {
+    private HashSet<Path> fFound = new HashSet<Path>();
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
+      if (attr.isRegularFile() && attr.size() > 1024 * 1024 * 100) {
+        fFound.add(file.toAbsolutePath());
+      }
+      return CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+      // getFilename returns null on DS root!
+      if (dir.getFileName() != null && dir.getFileName().toString().equals(Constants.BACKUP_FOLDER)) {
+        LOGGER.debug("Skipping backup folder: " + dir);
+        // but not any other well known
+        return SKIP_SUBTREE;
+      }
+      return CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
       if (cancel) {
-        break;
+        return TERMINATE;
       }
-
-      if (file.isFile()) {
-        if (file.length() > 1024 * 1024 * 100) {
-          mv.add(file);
-        }
-      }
-      else {
-        // ignore our backup folder, but include ALL others
-        if (!file.getName().equals(Constants.BACKUP_FOLDER)) {
-          mv.addAll(getBigFiles(file));
-        }
-      }
+      return CONTINUE;
     }
-    return mv;
+
+    @Override
+    public FileVisitResult visitFileFailed(Path file, IOException exc) {
+      LOGGER.error("" + exc);
+      return CONTINUE;
+    }
   }
 
   @Override

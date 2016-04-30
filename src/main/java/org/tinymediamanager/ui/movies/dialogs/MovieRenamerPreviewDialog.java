@@ -395,8 +395,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
 
       lblTitle.setText(selectedResult.getMovie().getTitleSortable());
       lblDatasource.setText(selectedResult.getMovie().getDataSource());
-      lblFolderOld.setText(selectedResult.getOldPath());
-      lblFolderNew.setText(selectedResult.getNewPath());
+      lblFolderOld.setText(selectedResult.getOldPath().toString());
+      lblFolderNew.setText(selectedResult.getNewPath().toString());
 
       // set Mfs
       try {

@@ -17,7 +17,9 @@ package org.tinymediamanager.ui.actions;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -68,10 +70,10 @@ public class ClearDatabaseAction extends AbstractAction {
     catch (Exception e) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.error")); //$NON-NLS-1$
       // open the tmm folder
-      File path = new File(".");
+      Path path = Paths.get("");
       try {
         // check whether this location exists
-        if (path.exists()) {
+        if (Files.exists(path)) {
           TmmUIHelper.openFile(path);
         }
       }

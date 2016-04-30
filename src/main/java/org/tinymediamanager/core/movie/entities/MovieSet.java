@@ -17,7 +17,9 @@ package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +38,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -144,9 +146,9 @@ public class MovieSet extends MediaEntity {
     if (StringUtils.isBlank(artworkFilename)) {
       final String artworkUrl = getArtworkUrl(type);
       if (StringUtils.isNotBlank(artworkUrl)) {
-        File artworkFile = new File(ImageCache.getCacheDir(), ImageCache.getCachedFileName(artworkUrl));
-        if (artworkFile.exists()) {
-          artworkFilename = artworkFile.getPath();
+        Path artworkFile = ImageCache.getCacheDir().resolve(ImageCache.getMD5(artworkUrl));
+        if (Files.exists(artworkFile)) {
+          artworkFilename = artworkFile.toAbsolutePath().toString();
         }
       }
     }
@@ -231,12 +233,12 @@ public class MovieSet extends MediaEntity {
    */
   public void removeMovie(Movie movie) {
     // remove images from movie folder
-    File imageFile = new File(movie.getPath(), "movieset-fanart.jpg");
-    if (imageFile.exists()) {
+    Path imageFile = movie.getPathNIO().resolve("movieset-fanart.jpg");
+    if (Files.exists(imageFile)) {
       Utils.deleteFileSafely(imageFile);
     }
-    imageFile = new File(movie.getPath(), "movieset-poster.jpg");
-    if (imageFile.exists()) {
+    imageFile = movie.getPathNIO().resolve("movieset-poster.jpg");
+    if (Files.exists(imageFile)) {
       Utils.deleteFileSafely(imageFile);
     }
     if (movie.getMovieSet() != null) {
@@ -286,12 +288,12 @@ public class MovieSet extends MediaEntity {
     // remove images from movie folder
     synchronized (movies) {
       for (Movie movie : movies) {
-        File imageFile = new File(movie.getPath(), "movieset-fanart.jpg");
-        if (imageFile.exists()) {
+        Path imageFile = movie.getPathNIO().resolve("movieset-fanart.jpg");
+        if (Files.exists(imageFile)) {
           Utils.deleteFileSafely(imageFile);
         }
-        imageFile = new File(movie.getPath(), "movieset-poster.jpg");
-        if (imageFile.exists()) {
+        imageFile = movie.getPathNIO().resolve("movieset-poster.jpg");
+        if (Files.exists(imageFile)) {
           Utils.deleteFileSafely(imageFile);
         }
 
@@ -351,16 +353,16 @@ public class MovieSet extends MediaEntity {
     return false;
   }
 
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<Path>();
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER))) {
-      filesToCache.add(new File(getArtworkFilename(MediaFileType.POSTER)));
+      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.POSTER)));
     }
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.FANART))) {
-      filesToCache.add(new File(getArtworkFilename(MediaFileType.FANART)));
+      filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.FANART)));
     }
 
     return filesToCache;

@@ -67,7 +67,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.PopupListener;
+import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -633,7 +633,7 @@ public class TvShowPanel extends JPanel {
       popupMenu.add(menuDebug);
     }
 
-    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 

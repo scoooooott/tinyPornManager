@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.text.Collator;
+import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
 
@@ -26,19 +28,27 @@ import org.tinymediamanager.core.movie.entities.Movie;
  * @author Manuel Laggner
  */
 public class MovieComparator implements Comparator<Movie> {
-  private RuleBasedCollator stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+  private Collator stringCollator;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-   */
+  public MovieComparator() {
+    RuleBasedCollator defaultCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
+    try {
+      // default collator ignores whitespaces
+      // using hack from http://stackoverflow.com/questions/16567287/java-collation-ignores-space
+      stringCollator = new RuleBasedCollator(defaultCollator.getRules().replace("<'\u005f'", "<' '<'\u005f'"));
+    }
+    catch (Exception e) {
+      stringCollator = defaultCollator;
+    }
+  }
+
   @Override
   public int compare(Movie movie1, Movie movie2) {
     if (stringCollator != null) {
-      return stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
+      String titleMovie1 = Normalizer.normalize(movie1.getTitleSortable().toLowerCase(), Normalizer.Form.NFD);
+      String titleMovie2 = Normalizer.normalize(movie2.getTitleSortable().toLowerCase(), Normalizer.Form.NFD);
+      return stringCollator.compare(titleMovie1, titleMovie2);
     }
     return movie1.getTitleSortable().toLowerCase().compareTo(movie2.getTitleSortable().toLowerCase());
   }
-
 }
