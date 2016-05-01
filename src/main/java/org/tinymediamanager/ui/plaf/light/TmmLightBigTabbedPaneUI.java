@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,24 +38,44 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
-
-  protected static int BORDER_RADIUS = 0;
+  protected static int BORDER_RADIUS = 15;
   protected static int TAB_GAP       = 0;
+
+  private boolean      rightBorder   = true;
+  private boolean      leftBorder    = true;
 
   public static ComponentUI createUI(JComponent c) {
     Object prop = c.getClientProperty("class");
     if (prop != null && prop instanceof String && "big".equals(prop.toString())) {
-      return new TmmLightBigTabbedPaneUI();
+      return new TmmLightBigTabbedPaneUI(c);
     }
     return new TmmLightTabbedPaneUI();
+  }
+
+  public TmmLightBigTabbedPaneUI(JComponent c) {
+    super();
+
+    if (Boolean.FALSE.equals(c.getClientProperty("rightBorder"))) {
+      rightBorder = false;
+    }
+
+    if (Boolean.FALSE.equals(c.getClientProperty("leftBorder"))) {
+      leftBorder = false;
+    }
   }
 
   @Override
   public void installDefaults() {
     super.installDefaults();
     tabInsets = new Insets(5, 20, 5, 20);
-    tabAreaInsets = new Insets(0, 0, 15, 0);
+    tabAreaInsets = new Insets(0, leftBorder ? 20 : 0, 15, rightBorder ? 20 : 0);
+    contentBorderInsets = new Insets(0, leftBorder ? 20 : 0, 20 + BORDER_RADIUS, rightBorder ? 20 : 0);
     roundedTabs = false;
+  }
+
+  @Override
+  protected Insets getContentBorderInsets(int tabPlacement) {
+    return contentBorderInsets;
   }
 
   @Override
@@ -95,6 +115,16 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
 
   @Override
   protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w, int h) {
+    Graphics2D g2D = (Graphics2D) g.create();
+    g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    int xt = contentBorderInsets.left;
+    int yt = 0;
+    int wt = w - contentBorderInsets.left - contentBorderInsets.right;
+    int ht = h - contentBorderInsets.bottom + BORDER_RADIUS;
+
+    g2D.setColor(AbstractLookAndFeel.getBackgroundColor());
+    g2D.fillRoundRect(xt, yt, wt, ht, BORDER_RADIUS, BORDER_RADIUS);
   }
 
   @Override
@@ -159,5 +189,4 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     g.fillRect(clipRect.x, clipRect.y, clipRect.width, maxTabHeight);
     super.paintTabArea(g, tabPlacement, selectedIndex);
   }
-
 }

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.UIDefaults;
-import javax.swing.plaf.ColorUIResource;
 
 import com.jtattoo.plaf.AbstractBorderFactory;
 import com.jtattoo.plaf.AbstractIconFactory;
@@ -37,7 +36,6 @@ import com.jtattoo.plaf.BaseMenuBarUI;
 import com.jtattoo.plaf.BaseMenuItemUI;
 import com.jtattoo.plaf.BaseMenuUI;
 import com.jtattoo.plaf.BasePopupMenuUI;
-import com.jtattoo.plaf.BaseProgressBarUI;
 import com.jtattoo.plaf.BaseRadioButtonMenuItemUI;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.BaseSeparatorUI;
@@ -48,16 +46,16 @@ import com.jtattoo.plaf.JTattooUtilities;
 
 public class TmmLightLookAndFeel extends AbstractLookAndFeel {
 
-  private static final long serialVersionUID = 7771660244511173072L;
+  private static final long                    serialVersionUID = 7771660244511173072L;
 
-  private static TmmLightDefaultTheme myTheme = null;
+  private static TmmLightDefaultTheme          myTheme          = null;
 
-  private static final List<String> themesList = new ArrayList<String>();
-  private static final Map<String, Properties> themesMap = new HashMap<>();
-  private static final Properties defaultProps = new Properties();
-  private static final Properties smallFontProps = new Properties();
-  private static final Properties largeFontProps = new Properties();
-  private static final Properties giantFontProps = new Properties();
+  private static final List<String>            themesList       = new ArrayList<String>();
+  private static final Map<String, Properties> themesMap        = new HashMap<>();
+  private static final Properties              defaultProps     = new Properties();
+  private static final Properties              smallFontProps   = new Properties();
+  private static final Properties              largeFontProps   = new Properties();
+  private static final Properties              giantFontProps   = new Properties();
 
   static {
     smallFontProps.setProperty("controlTextFont", TmmLightDefaultTheme.FONT + " 10");
@@ -193,6 +191,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     table.put("ProgressBar.border", null);
     table.put("ProgressBar.background", getTheme().getBackgroundColorDark());
     table.put("ProgressBar.foreground", getFocusCellColor());
+
     // table.put("Table.foreground", getForegroundColor());
   }
 

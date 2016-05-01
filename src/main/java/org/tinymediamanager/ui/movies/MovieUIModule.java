@@ -102,6 +102,7 @@ public class MovieUIModule implements ITmmUIModule {
     selectionModel = listPanel.getSelectionModel();
 
     detailPanel = new JPanel();
+    detailPanel.setOpaque(false);
     detailPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec.decode("default:grow") }));
 
     // layeredpane for displaying the filter dialog at the top
@@ -111,7 +112,15 @@ public class MovieUIModule implements ITmmUIModule {
     detailPanel.add(layeredPane, "1, 1, fill, fill");
 
     // tabbed pane containing the movie data
-    JTabbedPane tabbedPane = new MainTabbedPane();
+    JTabbedPane tabbedPane = new MainTabbedPane() {
+      private static final long serialVersionUID = 9041548865608767661L;
+
+      @Override
+      public void updateUI() {
+        putClientProperty("leftBorder", Boolean.FALSE);
+        super.updateUI();
+      }
+    };
     tabbedPane.addTab(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$

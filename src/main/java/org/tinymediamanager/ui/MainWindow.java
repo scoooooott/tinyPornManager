@@ -92,10 +92,8 @@ import org.tinymediamanager.ui.panels.ToolbarPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.sun.jna.Platform;
@@ -342,31 +340,39 @@ public class MainWindow extends JFrame {
     layeredPane.add(rootPanel, "1, 1, 1, 2, fill, fill");
 
     rootPanel.setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("12dlu"), ColumnSpec.decode("max(50dlu;default):grow"), ColumnSpec.decode("12dlu"), },
-            new RowSpec[] { RowSpec.decode("fill:500px:grow"), RowSpec.decode("10dlu"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(50dlu;default):grow"), }, new RowSpec[] { RowSpec.decode("fill:500px:grow"), }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setContinuousLayout(true);
     splitPane.setOpaque(false);
-    splitPane.putClientProperty("flatMode", true);
-    rootPanel.add(splitPane, "2, 1, fill, fill");
+    // splitPane.putClientProperty("flatMode", true);
+    rootPanel.add(splitPane, "1, 1, fill, fill");
 
-    JPanel leftPanel = new JPanel();
-    leftPanel.putClientProperty("class", "roundedPanel");
-    leftPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
-    tabbedPane = new MainTabbedPane();
-    leftPanel.add(tabbedPane, "1, 1, fill, fill");
-    splitPane.setLeftComponent(leftPanel);
+    // JPanel leftPanel = new JPanel();
+    // leftPanel.putClientProperty("class", "roundedPanel");
+    // leftPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
+    // new RowSpec[] { RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+    tabbedPane = new MainTabbedPane() {
+      private static final long serialVersionUID = 9041548865608767661L;
 
-    JPanel rightPanel = new JPanel();
-    rightPanel.putClientProperty("class", "roundedPanel");
-    rightPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300dlu:grow(3)"), },
-        new RowSpec[] { RowSpec.decode("fill:200px:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+      @Override
+      public void updateUI() {
+        putClientProperty("rightBorder", Boolean.FALSE);
+        super.updateUI();
+      }
+    };
+    // leftPanel.add(tabbedPane, "1, 1, fill, fill");
+    splitPane.setLeftComponent(tabbedPane);
+
+    // JPanel rightPanel = new JPanel();
+    // rightPanel.putClientProperty("class", "roundedPanel");
+    // rightPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300dlu:grow(3)"), },
+    // new RowSpec[] { RowSpec.decode("fill:200px:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
     detailPanel = new JPanel();
+    detailPanel.setOpaque(false);
     detailPanel.setLayout(new CardLayout(0, 0));
-    rightPanel.add(detailPanel, "1, 1, fill, fill");
-    splitPane.setRightComponent(rightPanel);
+    // rightPanel.add(detailPanel, "1, 1, fill, fill");
+    splitPane.setRightComponent(detailPanel);
 
     // to draw the shadow beneath the toolbar
     JPanel shadowPanel = new JPanel() {

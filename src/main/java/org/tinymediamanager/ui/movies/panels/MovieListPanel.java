@@ -75,7 +75,8 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   private JLabel                      lblMovieCountFiltered;
 
   public MovieListPanel() {
-    putClientProperty("class", "roundedPanel");
+    // putClientProperty("class", "roundedPanel");
+    setOpaque(false);
     setLayout(new FormLayout(
         new ColumnSpec[] { ColumnSpec.decode("10dlu"), ColumnSpec.decode("130dlu:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
             FormFactory.RELATED_GAP_COLSPEC, },

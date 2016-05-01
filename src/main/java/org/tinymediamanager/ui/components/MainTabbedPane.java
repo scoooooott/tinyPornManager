@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class MainTabbedPane extends JTabbedPane {
   private static final long serialVersionUID = -2587027562615455270L;
 
   public MainTabbedPane() {
+    super(TOP, SCROLL_TAB_LAYOUT);
     setBorder(null);
   }
 
