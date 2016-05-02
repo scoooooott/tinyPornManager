@@ -79,8 +79,8 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
         new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-    JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-    panelScraper.add(lblArtworkScraper, "2, 2, right, default");
+    JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+    panelScraper.add(lblScraper, "2, 2, right, default");
 
     cbSubtitleScraper = new MediaScraperCheckComboBox();
     cbSubtitleScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
