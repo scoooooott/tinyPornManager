@@ -69,6 +69,12 @@ import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -76,12 +82,6 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * This dialog is used to show a chooser for subtitles found with the subtitle scrapers
@@ -142,9 +142,9 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     for (MediaScraper scraper : movieList.getAvailableSubtitleScrapers()) {
       model.addElement(scraper);
 
-      // if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(scraper.getId())) {
-      model.addCheck(scraper);
-      // }
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers().contains(scraper.getId())) {
+        model.addCheck(scraper);
+      }
     }
 
     for (MediaLanguages language : MediaLanguages.values()) {
