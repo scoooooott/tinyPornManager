@@ -838,7 +838,7 @@ public class Settings extends AbstractModelObject {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (StringUtils.isNotEmpty(getProxyHost())) {
+    if (StringUtils.isNotBlank(getProxyHost())) {
       return true;
     }
     return false;
