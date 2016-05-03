@@ -167,6 +167,7 @@ public class DOMHelper {
       retryCount++;
       try {
         cachedUrl = new CachedUrl(url);
+        cachedUrl.addHeader("Accept-Encoding", "gzip"); // fix for issue #29
         StringWriter writer = new StringWriter();
         IOUtils.copy(cachedUrl.getInputStream(), writer);
         content = writer.toString();
