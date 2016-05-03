@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +45,7 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.Similarity;
 
 import de.timroes.axmlrpc.XMLRPCException;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * OpensubtitlesMetadataProvider provides subtitle scraping from OpenSubtitles.org
@@ -61,9 +60,10 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static final int         HASH_CHUNK_SIZE = 64 * 1024;
 
   private static MediaProviderInfo providerInfo    = createMediaProviderInfo();
-
   private static TmmXmlRpcClient   client          = null;
   private static String            sessionToken    = "";
+  private static String            username        = "";
+  private static String            password        = "";
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("opensubtitles", "OpenSubtitles.org",
@@ -74,6 +74,12 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   }
 
   public OpensubtitlesMetadataProvider() {
+    // configure/load settings
+    providerInfo.getConfig().addText("username", "");
+    providerInfo.getConfig().addText("password", "", true);
+
+    providerInfo.getConfig().load();
+
     initAPI();
   }
 
@@ -241,9 +247,16 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
    */
   @SuppressWarnings("unchecked")
   private static synchronized void startSession() {
+    if ((providerInfo.getConfig().getValue("username") != null && !username.equals(providerInfo.getConfig().getValue("username")))
+        || (providerInfo.getConfig().getValue("password") != null && !password.equals(providerInfo.getConfig().getValue("password")))) {
+      username = providerInfo.getConfig().getValue("username");
+      password = providerInfo.getConfig().getValue("password");
+      sessionToken = "";
+    }
+
     if (StringUtils.isBlank(sessionToken)) {
       try {
-        Map<String, Object> response = (Map<String, Object>) client.call("LogIn", new Object[] { "", "", "", USER_AGENT });
+        Map<String, Object> response = (Map<String, Object>) client.call("LogIn", new Object[] { username, password, "", USER_AGENT });
         sessionToken = (String) response.get("token");
         LOGGER.debug("Login OK");
       }
