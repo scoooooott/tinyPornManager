@@ -824,7 +824,7 @@ public class Settings extends AbstractModelObject {
       // System.setProperty("java.net.useSystemProxies", "true");
     }
     try {
-      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort()), getProxyUsername(),
+      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort().trim()), getProxyUsername(),
           getProxyPassword());
     }
     catch (NumberFormatException e) {
