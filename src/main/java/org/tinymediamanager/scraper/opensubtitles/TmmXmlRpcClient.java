@@ -28,15 +28,14 @@ import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.OkUrlFactory;
-
 import de.timroes.axmlrpc.Call;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
 import de.timroes.axmlrpc.XMLUtil;
 import de.timroes.axmlrpc.serializer.SerializerHandler;
+import okhttp3.OkHttpClient;
+import okhttp3.OkUrlFactory;
 
 /**
  * This is the tinyMediaManager implementation of the XMLRPCClient to use our http client
