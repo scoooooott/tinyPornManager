@@ -30,10 +30,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.DateTypeAdapter;
+import com.jakewharton.retrofit.Ok3Client;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 
 /**
@@ -103,7 +103,7 @@ public class FanartTv {
       RestAdapter.Builder builder = newRestAdapterBuilder();
       builder.setEndpoint(API_URL);
       builder.setConverter(new GsonConverter(getGsonBuilder().create()));
-      builder.setClient(new OkClient(TmmHttpClient.getHttpClient()));
+      builder.setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
       builder.setRequestInterceptor(new RequestInterceptor() {
         @Override
         public void intercept(RequestInterceptor.RequestFacade requestFacade) {
