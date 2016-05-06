@@ -37,13 +37,13 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 
+import com.jakewharton.retrofit.Ok3Client;
 import com.uwetrottmann.tmdb.Tmdb;
 import com.uwetrottmann.tmdb.entities.Configuration;
 import com.uwetrottmann.tmdb.entities.Genre;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -76,7 +76,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         // tell the tmdb api to use our OkHttp client
         @Override
         protected RestAdapter.Builder newRestAdapterBuilder() {
-          return new RestAdapter.Builder().setClient(new OkClient(TmmHttpClient.getHttpClient()));
+          return new RestAdapter.Builder().setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
         }
       };
       api.setApiKey(ApiKey.decryptApikey("8XAdwmcn1zEWLdbc30Kco2ZvOIKyxNxGeiL5kpQlEbXMHwhWBCWKzbNZQ/LINTKb"));
