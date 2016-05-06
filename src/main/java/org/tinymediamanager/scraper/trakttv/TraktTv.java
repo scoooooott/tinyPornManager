@@ -45,6 +45,7 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.ApiKey;
 
+import com.jakewharton.retrofit.Ok3Client;
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
 import com.uwetrottmann.trakt.v2.entities.BaseMovie;
@@ -65,7 +66,6 @@ import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 
 /**
@@ -93,7 +93,7 @@ public class TraktTv {
       // tell the trakt api to use our OkHttp client
       @Override
       protected RestAdapter.Builder newRestAdapterBuilder() {
-        return new RestAdapter.Builder().setClient(new OkClient(TmmHttpClient.getHttpClient()));
+        return new RestAdapter.Builder().setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
       }
     };
     api.setApiKey(CLIENT_ID);

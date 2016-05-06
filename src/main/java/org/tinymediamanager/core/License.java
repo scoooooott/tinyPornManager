@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 
-import com.squareup.okhttp.OkUrlFactory;
+import okhttp3.OkUrlFactory;
 
 /**
  * The class License. Used for the generation/validation of the license file (for the donator version)

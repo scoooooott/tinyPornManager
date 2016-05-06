@@ -37,7 +37,7 @@ import org.tinymediamanager.scraper.http.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.squareup.okhttp.Headers;
+import okhttp3.Headers;
 
 /**
  * DownloadTask for bigger downloads with status updates
