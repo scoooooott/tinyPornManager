@@ -24,10 +24,10 @@ import java.net.UnknownHostException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import org.tinymediamanager.scraper.util.Pair;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).

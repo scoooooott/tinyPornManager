@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.Pair;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * The Class Url. Used to make simple, blocking URL requests. The request is temporarily streamed into a ByteArrayInputStream, before the InputStream

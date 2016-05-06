@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.tinymediamanager.scraper.util.CacheMap;
 import org.tinymediamanager.scraper.util.Pair;
 
-import com.squareup.okhttp.Headers;
+import okhttp3.Headers;
 
 /**
  * The class CachedUrl is used to cache some sort of Urls (e.g. when they are accessed several times in a short period)
@@ -91,16 +91,16 @@ public class CachedUrl extends Url {
    * A inner class for representing cached entries
    */
   private static class CachedRequest {
-    byte[] content;
+    byte[]                     content;
 
-    int     responseCode          = 0;
-    String  responseMessage       = "";
-    Charset responseCharset       = null;
-    String  responseContentType   = "";
-    long    responseContentLength = -1;
+    int                        responseCode          = 0;
+    String                     responseMessage       = "";
+    Charset                    responseCharset       = null;
+    String                     responseContentType   = "";
+    long                       responseContentLength = -1;
 
-    Headers                    headersResponse = null;
-    List<Pair<String, String>> headersRequest  = new ArrayList<>();
+    Headers                    headersResponse       = null;
+    List<Pair<String, String>> headersRequest        = new ArrayList<>();
 
     CachedRequest(Url url, byte[] content) {
       this.content = content;

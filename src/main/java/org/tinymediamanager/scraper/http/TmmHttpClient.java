@@ -15,18 +15,20 @@
  */
 package org.tinymediamanager.scraper.http;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.squareup.okhttp.Authenticator;
-import com.squareup.okhttp.ConnectionPool;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.Authenticator;
+import okhttp3.ConnectionPool;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Route;
 
 /**
  * The class HttpClient. To construct our HTTP client for internet access
@@ -43,22 +45,22 @@ public class TmmHttpClient {
    * @return OkHttpClient
    */
   public static OkHttpClient createHttpClient() {
-    OkHttpClient client = new OkHttpClient();
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
     // pool
-    client.setConnectionPool(new ConnectionPool(5, 5000));
+    builder.connectionPool(new ConnectionPool(5, 5000, TimeUnit.MILLISECONDS));
 
     // timeouts
-    client.setConnectTimeout(10, TimeUnit.SECONDS);
-    client.setWriteTimeout(10, TimeUnit.SECONDS);
-    client.setReadTimeout(30, TimeUnit.SECONDS);
+    builder.connectTimeout(10, TimeUnit.SECONDS);
+    builder.writeTimeout(10, TimeUnit.SECONDS);
+    builder.readTimeout(30, TimeUnit.SECONDS);
 
     // proxy
     if ((ProxySettings.INSTANCE.useProxy())) {
-      setProxy(client);
+      setProxy(builder);
     }
 
-    return client;
+    return builder.build();
   }
 
   /**
@@ -78,7 +80,7 @@ public class TmmHttpClient {
     client = createHttpClient();
   }
 
-  private static void setProxy(OkHttpClient client) {
+  private static void setProxy(OkHttpClient.Builder builder) {
     Proxy proxyHost;
 
     if (ProxySettings.INSTANCE.getPort() > 0) {
@@ -92,17 +94,12 @@ public class TmmHttpClient {
       return;
     }
 
-    client.setProxy(proxyHost);
+    builder.proxy(proxyHost);
     // authenticate
     if (StringUtils.isNotBlank(ProxySettings.INSTANCE.getUsername()) && StringUtils.isNotBlank(ProxySettings.INSTANCE.getPassword())) {
-      client.setAuthenticator(new Authenticator() {
+      builder.authenticator(new Authenticator() {
         @Override
-        public Request authenticate(Proxy proxy, Response response) {
-          return null; // Null indicates no attempt to authenticate.
-        }
-
-        @Override
-        public Request authenticateProxy(Proxy proxy, Response response) {
+        public Request authenticate(Route route, Response response) throws IOException {
           String credential = Credentials.basic(ProxySettings.INSTANCE.getUsername(), ProxySettings.INSTANCE.getPassword());
           return response.request().newBuilder().header("Proxy-Authorization", credential).build();
         }
