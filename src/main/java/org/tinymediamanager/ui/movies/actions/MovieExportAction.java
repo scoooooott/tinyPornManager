@@ -51,7 +51,7 @@ public class MovieExportAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> movies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> movies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // export selected movies
     if (movies.size() > 0) {

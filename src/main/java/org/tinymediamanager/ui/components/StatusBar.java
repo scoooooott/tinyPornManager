@@ -92,7 +92,7 @@ public class StatusBar extends JPanel implements TmmTaskListener {
   }
 
   private void initComponents() {
-    taskMap = new HashMap<TmmTaskHandle, TaskListComponent>();
+    taskMap = new HashMap<>();
     setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,

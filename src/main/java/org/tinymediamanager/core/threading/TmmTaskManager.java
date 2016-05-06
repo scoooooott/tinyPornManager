@@ -37,8 +37,8 @@ import org.tinymediamanager.ui.UTF8Control;
 public class TmmTaskManager implements TmmTaskListener {
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static TmmTaskManager    instance         = new TmmTaskManager();
-  private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<TmmTaskListener>();
-  private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<TmmTaskHandle>();
+  private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<>();
+  private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<>();
 
   // we have some "named" queues, holding different types of tasks
   // image download/subtitle download are rather small/fast tasks - we only queue them in a queue and provide to abort the complete queue

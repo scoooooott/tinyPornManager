@@ -413,8 +413,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               // fanart
               {
                 ImageLabel lblImage = new ImageLabel();
-                List<String> extrathumbs = new ArrayList<String>();
-                List<String> extrafanarts = new ArrayList<String>();
+                List<String> extrathumbs = new ArrayList<>();
+                List<String> extrafanarts = new ArrayList<>();
                 ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
                     extrafanarts, MediaType.TV_SHOW);
                 dialog.setVisible(true);

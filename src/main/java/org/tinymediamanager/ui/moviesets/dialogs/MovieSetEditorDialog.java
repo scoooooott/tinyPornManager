@@ -91,8 +91,8 @@ public class MovieSetEditorDialog extends TmmDialog {
   private MovieList                   movieList           = MovieList.getInstance();
   private MovieSet                    movieSetToEdit;
   private List<Movie>                 moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
-  private List<Movie>                 removedMovies       = new ArrayList<Movie>();
-  private List<MediaScraper>          artworkScrapers     = new ArrayList<MediaScraper>();
+  private List<Movie>                 removedMovies       = new ArrayList<>();
+  private List<MediaScraper>          artworkScrapers     = new ArrayList<>();
   private boolean                     continueQueue       = true;
 
   /** UI components */
@@ -169,7 +169,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         }
         catch (Exception e1) {
         }
-        HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
+        HashMap<String, Object> ids = new HashMap<>(movieSetToEdit.getIds());
         ids.put(Constants.TMDB, tmdbId);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkScrapers, lblPoster, null, null, MediaType.MOVIE_SET);
@@ -227,7 +227,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         }
         catch (Exception e1) {
         }
-        HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
+        HashMap<String, Object> ids = new HashMap<>(movieSetToEdit.getIds());
         ids.put(Constants.TMDB, tmdbId);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkScrapers, lblFanart, null, null, MediaType.MOVIE_SET);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);

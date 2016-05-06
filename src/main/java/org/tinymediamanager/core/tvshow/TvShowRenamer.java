@@ -98,7 +98,7 @@ public class TvShowRenamer {
           if (ok) {
             show.updateMediaFilePath(srcDir, destDir); // TvShow MFs
             show.setPath(newPathname);
-            for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+            for (TvShowEpisode episode : new ArrayList<>(show.getEpisodes())) {
               episode.replacePathForRenamedFolder(srcDir, destDir);
               episode.updateMediaFilePath(srcDir, destDir);
             }
@@ -131,7 +131,7 @@ public class TvShowRenamer {
     }
 
     LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
-    for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
+    for (MediaFile mf : new ArrayList<>(episode.getMediaFiles())) {
       renameMediaFile(mf, episode.getTvShow());
     }
   }

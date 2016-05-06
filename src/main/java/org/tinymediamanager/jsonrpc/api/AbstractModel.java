@@ -107,31 +107,31 @@ public abstract class AbstractModel implements JsonSerializable {
   public static ArrayList<String> getStringArray(JsonNode node, String key) {
     if (node.has(key)) {
       final ArrayNode a = (ArrayNode) node.get(key);
-      final ArrayList<String> l = new ArrayList<String>(a.size());
+      final ArrayList<String> l = new ArrayList<>(a.size());
       for (int i = 0; i < a.size(); i++) {
         l.add(a.get(i).getTextValue());
       }
       return l;
     }
-    return new ArrayList<String>(0);
+    return new ArrayList<>(0);
   }
 
   public static ArrayList<Integer> getIntegerArray(JsonNode node, String key) {
     if (node.has(key)) {
       final ArrayNode a = (ArrayNode) node.get(key);
-      final ArrayList<Integer> l = new ArrayList<Integer>(a.size());
+      final ArrayList<Integer> l = new ArrayList<>(a.size());
       for (int i = 0; i < a.size(); i++) {
         l.add(a.get(i).getIntValue());
       }
       return l;
     }
-    return new ArrayList<Integer>(0);
+    return new ArrayList<>(0);
   }
 
   public static HashMap<String, String> getStringMap(JsonNode node, String key) {
     if (node.has(key)) {
       final ObjectNode n = (ObjectNode) node.get(key);
-      final HashMap<String, String> m = new HashMap<String, String>();
+      final HashMap<String, String> m = new HashMap<>();
       final Iterator<String> it = n.getFieldNames();
       while (it.hasNext()) {
         final String fieldName = it.next();
@@ -139,7 +139,7 @@ public abstract class AbstractModel implements JsonSerializable {
       }
       return m;
     }
-    return new HashMap<String, String>();
+    return new HashMap<>();
   }
 
 }

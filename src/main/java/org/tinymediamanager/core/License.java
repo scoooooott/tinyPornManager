@@ -111,7 +111,7 @@ public class License {
    * @return MAC or empty string
    */
   private static List<String> getAllMacAddresses() {
-    List<String> m = new ArrayList<String>();
+    List<String> m = new ArrayList<>();
     m.add(UNKNOWN_MAC); // lic generated with empty mac, but java cannot handle this :/ use fake mac for further checks
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {

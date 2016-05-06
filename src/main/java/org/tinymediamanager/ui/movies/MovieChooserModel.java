@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -184,11 +183,6 @@ public class MovieChooserModel extends AbstractModelObject {
       }
 
       scraped = true;
-    }
-    catch (IOException e) {
-      LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(
-          new Message(MessageLevel.ERROR, "MovieChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);

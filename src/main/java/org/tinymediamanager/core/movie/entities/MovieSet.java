@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.TMDB;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,9 +52,9 @@ public class MovieSet extends MediaEntity {
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new MovieMediaFileComparator();
 
   @JsonProperty
-  private List<UUID>                         movieIds              = new ArrayList<UUID>();
+  private List<UUID>                         movieIds              = new ArrayList<>();
 
-  private List<Movie>                        movies                = new ArrayList<Movie>(0);
+  private List<Movie>                        movies                = new ArrayList<>(0);
   private String                             titleSortable         = "";
 
   /**
@@ -177,7 +177,7 @@ public class MovieSet extends MediaEntity {
     }
 
     // write images
-    List<Movie> movies = new ArrayList<Movie>(1);
+    List<Movie> movies = new ArrayList<>(1);
     movies.add(movie);
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
@@ -215,7 +215,7 @@ public class MovieSet extends MediaEntity {
     }
 
     // write images
-    List<Movie> movies = new ArrayList<Movie>(1);
+    List<Movie> movies = new ArrayList<>(1);
     movies.add(movie);
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
@@ -284,7 +284,7 @@ public class MovieSet extends MediaEntity {
    */
   public void removeAllMovies() {
     // store all old movies to remove the nodes in the tree
-    List<Movie> oldValue = new ArrayList<Movie>(movies);
+    List<Movie> oldValue = new ArrayList<>(movies);
     // remove images from movie folder
     synchronized (movies) {
       for (Movie movie : movies) {
@@ -348,7 +348,7 @@ public class MovieSet extends MediaEntity {
 
   public List<Path> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<Path>();
+    List<Path> filesToCache = new ArrayList<>();
 
     if (StringUtils.isNotBlank(getArtworkFilename(MediaFileType.POSTER))) {
       filesToCache.add(Paths.get(getArtworkFilename(MediaFileType.POSTER)));

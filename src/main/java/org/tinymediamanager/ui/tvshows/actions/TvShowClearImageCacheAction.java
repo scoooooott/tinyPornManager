@@ -46,7 +46,7 @@ public class TvShowClearImageCacheAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent arg0) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
-    List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+    List<TvShowEpisode> selectedEpisodes = new ArrayList<>();
 
     // add all episodes which are not part of a selected tv show
     for (Object obj : TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects()) {

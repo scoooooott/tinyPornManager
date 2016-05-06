@@ -270,7 +270,7 @@ public class TvShowEditorDialog extends TmmDialog {
       spRuntime = new JSpinner();
       details1Panel.add(spRuntime, "16, 6, fill, default");
     }
-    spRuntime.setValue(Integer.valueOf(tvShow.getRuntime()));
+    spRuntime.setValue(tvShow.getRuntime());
 
     {
       JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$

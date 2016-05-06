@@ -33,7 +33,7 @@ public class MovieRenamerPreviewContainer {
   Movie           movie;
   Path            oldPath;
   Path            newPath;
-  List<MediaFile> newMediaFiles = new ArrayList<MediaFile>();
+  List<MediaFile> newMediaFiles = new ArrayList<>();
   boolean         needsRename   = false;
 
   public MovieRenamerPreviewContainer(Movie movie) {

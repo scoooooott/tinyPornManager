@@ -49,7 +49,7 @@ public class DebugDumpShow extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
-    HashSet<TvShow> shows = new HashSet<TvShow>(); // no dupes
+    HashSet<TvShow> shows = new HashSet<>(); // no dupes
     for (Object obj : selectedObjects) {
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;

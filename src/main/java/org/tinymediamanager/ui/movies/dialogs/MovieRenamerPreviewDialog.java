@@ -118,12 +118,10 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
         splitPane.setResizeWeight(0.2);
         panelContent.add(splitPane, "2, 2, fill, fill");
         {
-          movieTableModel = new DefaultEventTableModel<MovieRenamerPreviewContainer>(GlazedListsSwing.swingThreadProxyList(results),
-              new ResultTableFormat());
+          movieTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(results), new ResultTableFormat());
           tableMovies = new ZebraJTable(movieTableModel);
 
-          DefaultEventSelectionModel<MovieRenamerPreviewContainer> tableSelectionModel = new DefaultEventSelectionModel<MovieRenamerPreviewContainer>(
-              results);
+          DefaultEventSelectionModel<MovieRenamerPreviewContainer> tableSelectionModel = new DefaultEventSelectionModel<>(results);
           resultSelectionModel = new ResultSelectionModel();
           tableSelectionModel.addListSelectionListener(resultSelectionModel);
           resultSelectionModel.selectedResults = tableSelectionModel.getSelected();
@@ -199,7 +197,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             }
             {
               oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
-              oldMediaFileTableModel = new DefaultEventTableModel<MediaFileContainer>(GlazedListsSwing.swingThreadProxyList(oldMediaFileEventList),
+              oldMediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(oldMediaFileEventList),
                   new MediaFileTableFormat());
               tableMediaFilesOld = new ZebraJTable(oldMediaFileTableModel);
               JScrollPane scrollPaneMediaFilesOld = ZebraJTable.createStripedJScrollPane(tableMediaFilesOld);
@@ -210,7 +208,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             }
             {
               newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
-              newMediaFileTableModel = new DefaultEventTableModel<MediaFileContainer>(GlazedListsSwing.swingThreadProxyList(newMediaFileEventList),
+              newMediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(newMediaFileEventList),
                   new MediaFileTableFormat());
               tableMediaFilesNew = new ZebraJTable(newMediaFileTableModel);
               JScrollPane scrollPaneMediaFilesNew = ZebraJTable.createStripedJScrollPane(tableMediaFilesNew);
@@ -236,8 +234,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
         btnRename.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent arg0) {
-            List<Movie> selectedMovies = new ArrayList<Movie>();
-            List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<MovieRenamerPreviewContainer>(resultSelectionModel.selectedResults);
+            List<Movie> selectedMovies = new ArrayList<>();
+            List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
             for (MovieRenamerPreviewContainer result : selectedResults) {
               selectedMovies.add(result.getMovie());
             }

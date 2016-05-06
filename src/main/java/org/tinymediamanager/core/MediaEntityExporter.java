@@ -105,7 +105,7 @@ public abstract class MediaEntityExporter {
    * @return the list of all found template types
    */
   public static List<ExportTemplate> findTemplates(TemplateType type) {
-    List<ExportTemplate> templatesFound = new ArrayList<ExportTemplate>();
+    List<ExportTemplate> templatesFound = new ArrayList<>();
 
     // search in template folder for templates
     Path root = Paths.get(TEMPLATE_DIRECTORY);
@@ -214,9 +214,7 @@ public abstract class MediaEntityExporter {
           return format;
         }
       }
-      catch (IllegalArgumentException iae) {
-      }
-      catch (NullPointerException npe) {
+      catch (IllegalArgumentException | NullPointerException iae) {
       }
       return null;
     }

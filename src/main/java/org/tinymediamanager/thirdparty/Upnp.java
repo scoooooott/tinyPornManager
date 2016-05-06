@@ -49,7 +49,7 @@ public class Upnp {
    * @throws IOException
    */
   public List<UpnpDevice> getUpnpDevices() throws IOException {
-    List<UpnpDevice> upnpDevices = new ArrayList<UpnpDevice>();
+    List<UpnpDevice> upnpDevices = new ArrayList<>();
     MulticastSocket socket = null;
     try {
       InetAddress multicastAddress = InetAddress.getByName("239.255.255.250");

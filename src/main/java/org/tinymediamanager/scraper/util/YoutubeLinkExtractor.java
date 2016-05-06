@@ -54,7 +54,7 @@ public class YoutubeLinkExtractor {
   }
 
   // http://en.wikipedia.org/wiki/YouTube#Quality_and_codecs
-  static final Map<Integer, VideoQuality> itagMap = new HashMap<Integer, VideoQuality>();
+  static final Map<Integer, VideoQuality> itagMap = new HashMap<>();
 
   static {
     itagMap.put(264, VideoQuality.p1080);
@@ -235,7 +235,7 @@ public class YoutubeLinkExtractor {
   }
 
   private List<VideoDownload> extractJsonInfo() throws Exception {
-    List<VideoDownload> sNextVideoURL = new ArrayList<VideoDownload>();
+    List<VideoDownload> sNextVideoURL = new ArrayList<>();
     {
       Matcher matcher = patternAge.matcher(jsonConfiguration);
       if (matcher.find())
@@ -310,7 +310,7 @@ public class YoutubeLinkExtractor {
   }
 
   private List<VideoDownload> extractUrlEncodedVideos(String sline, String id) throws Exception {
-    List<VideoDownload> sNextVideoURL = new ArrayList<VideoDownload>();
+    List<VideoDownload> sNextVideoURL = new ArrayList<>();
     String[] urlStrings = sline.split("url=");
 
     for (String urlString : urlStrings) {
@@ -472,7 +472,7 @@ public class YoutubeLinkExtractor {
 
   private List<JSObjectMethod> getSubfunctions(String functionSource) {
     boolean first = true;
-    List<JSObjectMethod> subfunctions = new ArrayList<JSObjectMethod>();
+    List<JSObjectMethod> subfunctions = new ArrayList<>();
 
     // attempt to find all functions which have been called in this function
     Matcher matcher = patternSubfunction.matcher(functionSource);

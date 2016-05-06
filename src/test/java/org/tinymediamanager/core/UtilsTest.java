@@ -87,7 +87,7 @@ public class UtilsTest {
 
   @Test
   public void map() {
-    HashMap<String, Object> ids = new HashMap<String, Object>(0);
+    HashMap<String, Object> ids = new HashMap<>(0);
     ids.put("STR1", "str1");
     ids.put("STR2", "1000");
     ids.put("INT1", Integer.parseInt("1000"));

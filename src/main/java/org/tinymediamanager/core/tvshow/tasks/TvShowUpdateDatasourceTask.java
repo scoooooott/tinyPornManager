@@ -90,9 +90,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Pattern        seasonPattern         = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
 
   private List<String>                dataSources;
-  private List<File>                  tvShowFolders         = new ArrayList<File>();
+  private List<File>                  tvShowFolders         = new ArrayList<>();
   private TvShowList                  tvShowList;
-  private HashSet<File>               filesFound            = new HashSet<File>();
+  private HashSet<File>               filesFound            = new HashSet<>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -101,7 +101,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+    dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
   }
 
   /**
@@ -112,7 +112,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(1);
+    dataSources = new ArrayList<>(1);
     dataSources.add(datasource);
   }
 
@@ -124,7 +124,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask(List<File> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(0);
+    dataSources = new ArrayList<>(0);
     this.tvShowFolders.addAll(tvShowFolders);
   }
 
@@ -167,18 +167,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * update one or more datasources
    */
   private void updateDatasource() {
-    List<Path> imageFiles = new ArrayList<Path>();
+    List<Path> imageFiles = new ArrayList<>();
 
     // get existing tv show folders
-    List<File> existing = new ArrayList<File>();
+    List<File> existing = new ArrayList<>();
     for (TvShow tvShow : tvShowList.getTvShows()) {
       existing.add(new File(tvShow.getPath()));
     }
 
     for (String path : dataSources) {
       File[] dirs = new File(path).listFiles();
-      List<File> newShows = new ArrayList<File>();
-      List<File> existingShows = new ArrayList<File>();
+      List<File> newShows = new ArrayList<>();
+      List<File> existingShows = new ArrayList<>();
 
       // check whether the path is accessible (eg disconnected shares)
       if (dirs == null || dirs.length == 0) {
@@ -297,17 +297,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
       // build image cache on import
       if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
-        for (TvShow tvShow : new ArrayList<TvShow>(tvShowList.getTvShows())) {
+        for (TvShow tvShow : new ArrayList<>(tvShowList.getTvShows())) {
           if (!new File(path).equals(new File(tvShow.getDataSource()))) {
             continue;
           }
-          for (MediaFile mf : new ArrayList<MediaFile>(tvShow.getMediaFiles())) {
+          for (MediaFile mf : new ArrayList<>(tvShow.getMediaFiles())) {
             if (mf.isGraphic()) {
               imageFiles.add(mf.getFileAsPath());
             }
           }
           for (TvShowEpisode episode : tvShow.getEpisodes()) {
-            for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
+            for (MediaFile mf : new ArrayList<>(episode.getMediaFiles())) {
               if (mf.isGraphic()) {
                 imageFiles.add(mf.getFileAsPath());
               }
@@ -407,7 +407,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     // build up the image cache
     if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
-      List<Path> imageFiles = new ArrayList<Path>();
+      List<Path> imageFiles = new ArrayList<>();
       for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
         if (cancel) {
           break;
@@ -419,13 +419,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           continue;
         }
 
-        for (MediaFile mf : new ArrayList<MediaFile>(tvShow.getMediaFiles())) {
+        for (MediaFile mf : new ArrayList<>(tvShow.getMediaFiles())) {
           if (mf.isGraphic()) {
             imageFiles.add(mf.getFileAsPath());
           }
         }
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
+          for (MediaFile mf : new ArrayList<>(episode.getMediaFiles())) {
             if (mf.isGraphic()) {
               imageFiles.add(mf.getFileAsPath());
             }
@@ -442,7 +442,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     boolean dirty = false;
     if (!tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
       // check and delete all not found MediaFiles
-      List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+      List<MediaFile> mediaFiles = new ArrayList<>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
         if (!filesFound.contains(mf.getFile())) {
           if (!mf.exists()) {
@@ -455,9 +455,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tvShow.getEpisodes());
+      List<TvShowEpisode> episodes = new ArrayList<>(tvShow.getEpisodes());
       for (TvShowEpisode episode : episodes) {
-        mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
+        mediaFiles = new ArrayList<>(episode.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFile())) {
             if (!mf.exists()) {
@@ -489,7 +489,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
     // get mediainfo for tv show (fanart/poster..)
-    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
       if (StringUtils.isBlank(mf.getContainerFormat())) {
         ungatheredMediaFiles.add(mf);
@@ -501,8 +501,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     // get mediainfo for all episodes within this tv show
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
-      ungatheredMediaFiles = new ArrayList<MediaFile>();
+    for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
+      ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           ungatheredMediaFiles.add(mf);
@@ -860,7 +860,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     LOGGER.debug("parsing disc structure in " + dir.getPath() + " parent: " + parentDir);
     // crawl this folder and try to find every episode in it
 
-    List<MediaFile> videoFiles = new ArrayList<MediaFile>();
+    List<MediaFile> videoFiles = new ArrayList<>();
     File firstVideoFile = null;
 
     File[] content = dir.listFiles();

@@ -164,24 +164,24 @@ public class Movie extends MediaEntity {
   private MovieEdition                          edition                    = MovieEdition.NONE;
 
   @JsonProperty
-  private List<String>                          genres                     = new ArrayList<String>(1);
+  private List<String>                          genres                     = new ArrayList<>(1);
   @JsonProperty
-  private List<String>                          tags                       = new ArrayList<String>(0);
+  private List<String>                          tags                       = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraThumbs                = new ArrayList<String>(0);
+  private List<String>                          extraThumbs                = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraFanarts               = new ArrayList<String>(0);
+  private List<String>                          extraFanarts               = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieActor>                      actors                     = new ArrayList<MovieActor>();
+  private List<MovieActor>                      actors                     = new ArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer>                   producers                  = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieTrailer>                    trailer                    = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer>                    trailer                    = new ArrayList<>(0);
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
-  private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
+  private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
   @JsonProperty
   private boolean                               stacked                    = false;
 
@@ -314,13 +314,11 @@ public class Movie extends MediaEntity {
    * @return the title for ui
    */
   public String getTitleForUi() {
-    StringBuffer titleForUi = new StringBuffer(title);
-    if (year != null && !year.isEmpty()) {
-      titleForUi.append(" (");
-      titleForUi.append(year);
-      titleForUi.append(")");
+    String titleForUi = title;
+    if (StringUtils.isNotBlank(year)) {
+      titleForUi += " (" + year + ")";
     }
-    return titleForUi.toString();
+    return titleForUi;
   }
 
   /**
@@ -334,7 +332,7 @@ public class Movie extends MediaEntity {
     Utils.removeEmptyStringsFromList(genres);
 
     // load genres
-    for (String genre : new ArrayList<String>(genres)) {
+    for (String genre : new ArrayList<>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
 
@@ -675,7 +673,7 @@ public class Movie extends MediaEntity {
       return false;
     }
 
-    for (MediaFile file : new ArrayList<MediaFile>(getMediaFiles())) {
+    for (MediaFile file : new ArrayList<>(getMediaFiles())) {
       if (filename.compareTo(file.getFilename()) == 0) {
         return true;
       }
@@ -823,8 +821,8 @@ public class Movie extends MediaEntity {
     // cast
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      List<MovieActor> actors = new ArrayList<MovieActor>();
-      List<MovieProducer> producers = new ArrayList<MovieProducer>();
+      List<MovieActor> actors = new ArrayList<>();
+      List<MovieProducer> producers = new ArrayList<>();
       String director = "";
       String writer = "";
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -1697,8 +1695,8 @@ public class Movie extends MediaEntity {
    */
   public List<Path> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<Path>();
-    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+    List<Path> filesToCache = new ArrayList<>();
+    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
       }
@@ -1708,7 +1706,7 @@ public class Movie extends MediaEntity {
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {
-    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<>(1);
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -1726,7 +1724,7 @@ public class Movie extends MediaEntity {
   }
 
   public List<MediaFile> getMediaFilesContainingSubtitles() {
-    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
     // look in the first media file if it has subtitles
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);

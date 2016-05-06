@@ -48,10 +48,10 @@ public class TvShowScrapeNewItemsAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<TvShow> newTvShows = new ArrayList<TvShow>();
-    List<TvShowEpisode> newEpisodes = new ArrayList<TvShowEpisode>();
+    List<TvShow> newTvShows = new ArrayList<>();
+    List<TvShowEpisode> newEpisodes = new ArrayList<>();
 
-    for (TvShow tvShow : new ArrayList<TvShow>(TvShowList.getInstance().getTvShows())) {
+    for (TvShow tvShow : new ArrayList<>(TvShowList.getInstance().getTvShows())) {
       // if there is at least one new episode and no scraper id we assume the TV show is new
       if (tvShow.isNewlyAdded() && !tvShow.isScraped()) {
         newTvShows.add(tvShow);

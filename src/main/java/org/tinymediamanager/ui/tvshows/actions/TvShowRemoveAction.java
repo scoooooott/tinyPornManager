@@ -61,7 +61,7 @@ public class TvShowRemoveAction extends AbstractAction {
       // remove seasons
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
-        List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+        List<TvShowEpisode> episodes = new ArrayList<>();
         for (TvShowEpisode episode : season.getEpisodes()) {
           episodes.add(episode);
         }

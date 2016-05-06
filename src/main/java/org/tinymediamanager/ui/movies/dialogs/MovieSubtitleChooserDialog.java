@@ -120,10 +120,9 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     this.fileToScrape = mediaFile;
     this.inQueue = inQueue;
 
-    subtitleEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieSubtitleChooserModel>(
-        new BasicEventList<MovieSubtitleChooserModel>(), GlazedLists.beanConnector(MovieSubtitleChooserModel.class)));
-    subtitleTableModel = new DefaultEventTableModel<MovieSubtitleChooserModel>(GlazedListsSwing.swingThreadProxyList(subtitleEventList),
-        new SubtitleTableFormat());
+    subtitleEventList = GlazedLists.threadSafeList(
+        new ObservableElementList<>(new BasicEventList<MovieSubtitleChooserModel>(), GlazedLists.beanConnector(MovieSubtitleChooserModel.class)));
+    subtitleTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(subtitleEventList), new SubtitleTableFormat());
 
     initComponents();
 

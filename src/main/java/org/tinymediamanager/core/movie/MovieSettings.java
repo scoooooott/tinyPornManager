@@ -102,15 +102,15 @@ public class MovieSettings extends AbstractModelObject {
 
   @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<MovieNfoNaming>();
+  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<MoviePosterNaming>();
+  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<MovieFanartNaming>();
+  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = BAD_WORDS)
   @XmlElement(name = ENTRY)
@@ -239,7 +239,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieNfoNaming> getMovieNfoFilenames() {
-    return new ArrayList<MovieNfoNaming>(this.movieNfoFilenames);
+    return new ArrayList<>(this.movieNfoFilenames);
   }
 
   public void addMoviePosterFilename(MoviePosterNaming filename) {
@@ -262,7 +262,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MoviePosterNaming> getMoviePosterFilenames() {
-    return new ArrayList<MoviePosterNaming>(this.moviePosterFilenames);
+    return new ArrayList<>(this.moviePosterFilenames);
   }
 
   public void addMovieFanartFilename(MovieFanartNaming filename) {
@@ -285,7 +285,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieFanartNaming> getMovieFanartFilenames() {
-    return new ArrayList<MovieFanartNaming>(this.movieFanartFilenames);
+    return new ArrayList<>(this.movieFanartFilenames);
   }
 
   @XmlElement(name = IMAGE_POSTER_SIZE)
@@ -567,7 +567,7 @@ public class MovieSettings extends AbstractModelObject {
     if (storeUiFilters) {
       return uiFilters;
     }
-    return new HashMap<MovieSearchOptions, Object>();
+    return new HashMap<>();
   }
 
   public void setStoreUiFilters(boolean newValue) {

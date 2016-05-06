@@ -459,7 +459,7 @@ public class ImageCache {
    *          the media entity
    */
   public static void clearImageCacheForMediaEntity(MediaEntity entity) {
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(entity.getMediaFiles());
+    List<MediaFile> mediaFiles = new ArrayList<>(entity.getMediaFiles());
     for (MediaFile mediaFile : mediaFiles) {
       if (mediaFile.isGraphic()) {
         Path file = ImageCache.getCachedFile(mediaFile.getFileAsPath());

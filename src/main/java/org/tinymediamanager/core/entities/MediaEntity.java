@@ -15,7 +15,25 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.DATE_ADDED;
+import static org.tinymediamanager.core.Constants.DATE_ADDED_AS_STRING;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.NEWLY_ADDED;
+import static org.tinymediamanager.core.Constants.ORIGINAL_TITLE;
+import static org.tinymediamanager.core.Constants.PATH;
+import static org.tinymediamanager.core.Constants.PLOT;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.PRODUCTION_COMPANY;
+import static org.tinymediamanager.core.Constants.RATING;
+import static org.tinymediamanager.core.Constants.SCRAPED;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.TITLE;
+import static org.tinymediamanager.core.Constants.VOTES;
+import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
 import java.nio.file.Files;
@@ -56,7 +74,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>    ids               = new HashMap<String, Object>(0);
+  protected HashMap<String, Object>    ids               = new HashMap<>(0);
 
   @JsonProperty
   protected String                     title             = "";
@@ -80,9 +98,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                    scraped           = false;
 
   @JsonProperty
-  private List<MediaFile>              mediaFiles        = new ArrayList<MediaFile>();
+  private List<MediaFile>              mediaFiles        = new ArrayList<>();
   @JsonProperty
-  protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<>();
 
   protected boolean                    newlyAdded        = false;
   protected boolean                    duplicate         = false;
@@ -517,7 +535,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public List<MediaFile> getMediaFiles() {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     try {
       mf.addAll(mediaFiles);
@@ -537,7 +555,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return list of MF (may be empty, but never null)
    */
   public List<MediaFile> getMediaFiles(MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
       boolean match = false;
@@ -584,7 +602,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return list of MF (may be empty, but never null)
    */
   public List<MediaFile> getMediaFilesExceptType(MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
       boolean match = false;
@@ -602,7 +620,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFiles() {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
+    List<MediaFile> changedMediafiles = new ArrayList<>(mediaFiles);
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
       mediaFiles.remove(i);
@@ -627,7 +645,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFilesExceptType(MediaFileType type) {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+    List<MediaFile> changedMediafiles = new ArrayList<>();
 
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
@@ -644,7 +662,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFiles(MediaFileType type) {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+    List<MediaFile> changedMediafiles = new ArrayList<>();
 
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
@@ -662,7 +680,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void updateMediaFilePath(Path oldPath, Path newPath) {
     readWriteLock.readLock().lock();
-    List<MediaFile> mfs = new ArrayList<MediaFile>(this.mediaFiles);
+    List<MediaFile> mfs = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
     for (MediaFile mf : mfs) {
       mf.replacePathForRenamedFolder(oldPath, newPath);
@@ -671,7 +689,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void gatherMediaFileInformation(boolean force) {
     readWriteLock.readLock().lock();
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(this.mediaFiles);
+    List<MediaFile> mediaFiles = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
     for (MediaFile mediaFile : mediaFiles) {
       mediaFile.gatherMediaInformation(force);

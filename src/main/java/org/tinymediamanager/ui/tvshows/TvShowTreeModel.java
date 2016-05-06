@@ -57,7 +57,7 @@ import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
  */
 public class TvShowTreeModel implements TreeModel {
   private TvShowRootTreeNode      root       = new TvShowRootTreeNode();
-  private List<TreeModelListener> listeners  = new ArrayList<TreeModelListener>();
+  private List<TreeModelListener> listeners  = new ArrayList<>();
   private Map<Object, TreeNode>   nodeMap    = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
   private TvShowList              tvShowList = TvShowList.getInstance();
   private PropertyChangeListener  propertyChangeListener;
@@ -167,14 +167,14 @@ public class TvShowTreeModel implements TreeModel {
       root.add(tvShowNode);
       nodeMap.put(tvShow, tvShowNode);
 
-      for (TvShowSeason season : new ArrayList<TvShowSeason>(tvShow.getSeasons())) {
+      for (TvShowSeason season : new ArrayList<>(tvShow.getSeasons())) {
         // check if there is a node for its season
         TvShowSeasonTreeNode seasonNode = (TvShowSeasonTreeNode) nodeMap.get(season);
         if (seasonNode == null) {
           addTvShowSeason(season, tvShow);
         }
 
-        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(season.getEpisodes())) {
+        for (TvShowEpisode episode : new ArrayList<>(season.getEpisodes())) {
           addTvShowEpisode(episode, season);
         }
       }
@@ -211,7 +211,7 @@ public class TvShowTreeModel implements TreeModel {
         int index = getIndexOfChild(parent, child);
 
         nodeMap.remove(tvShow);
-        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+        for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
           nodeMap.remove(episode);
           episode.removePropertyChangeListener(propertyChangeListener);
         }
@@ -565,7 +565,7 @@ public class TvShowTreeModel implements TreeModel {
   }
 
   private List<TreePath> getCurrExpandedPaths(JTree tree) {
-    List<TreePath> paths = new ArrayList<TreePath>();
+    List<TreePath> paths = new ArrayList<>();
     Enumeration<TreePath> expandEnum = tree.getExpandedDescendants(new TreePath(root.getPath()));
     if (expandEnum == null) {
       return null;

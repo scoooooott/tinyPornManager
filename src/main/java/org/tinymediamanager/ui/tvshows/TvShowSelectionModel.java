@@ -99,7 +99,7 @@ public class TvShowSelectionModel extends AbstractModelObject {
    * @return the selected TV shows
    */
   public List<TvShow> getSelectedTvShows() {
-    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
+    List<TvShow> selectedTvShows = new ArrayList<>();
 
     TreePath[] paths = tree.getSelectionPaths();
 
@@ -125,7 +125,7 @@ public class TvShowSelectionModel extends AbstractModelObject {
    * @return the selected episodes
    */
   public List<TvShowEpisode> getSelectedEpisodes() {
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+    List<TvShowEpisode> episodes = new ArrayList<>();
 
     for (Object obj : getSelectedObjects()) {
       if (obj instanceof TvShowEpisode) {
@@ -161,7 +161,7 @@ public class TvShowSelectionModel extends AbstractModelObject {
    * @return the selected objects
    */
   public List<Object> getSelectedObjects() {
-    List<Object> selectedObjects = new ArrayList<Object>();
+    List<Object> selectedObjects = new ArrayList<>();
 
     TreePath[] paths = tree.getSelectionPaths();
 

@@ -333,7 +333,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallDatasourceArray() {
     cbDatasource.removeAllItems();
-    List<String> datasources = new ArrayList<String>(Settings.getInstance().getTvShowSettings().getTvShowDataSource());
+    List<String> datasources = new ArrayList<>(Settings.getInstance().getTvShowSettings().getTvShowDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       cbDatasource.addItem(datasource);
@@ -342,7 +342,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallTagsArray() {
     cbTag.removeAllItems();
-    Set<String> tags = new TreeSet<String>(tvShowList.getTagsInTvShows());
+    Set<String> tags = new TreeSet<>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
     for (String tag : tags) {
       cbTag.addItem(tag);
@@ -351,14 +351,14 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallCodecArray() {
     cbVideoCodec.removeAllItems();
-    List<String> codecs = new ArrayList<String>(tvShowList.getVideoCodecsInEpisodes());
+    List<String> codecs = new ArrayList<>(tvShowList.getVideoCodecsInEpisodes());
     Collections.sort(codecs);
     for (String codec : codecs) {
       cbVideoCodec.addItem(codec);
     }
 
     cbAudioCodec.removeAllItems();
-    codecs = new ArrayList<String>(tvShowList.getAudioCodecsInEpisodes());
+    codecs = new ArrayList<>(tvShowList.getAudioCodecsInEpisodes());
     Collections.sort(codecs);
     for (String codec : codecs) {
       cbAudioCodec.addItem(codec);

@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -36,6 +36,11 @@ import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -43,11 +48,6 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * Panel to display the movie actors, writer and director
@@ -78,9 +78,8 @@ public class MovieCrewPanel extends JPanel {
   public MovieCrewPanel(MovieSelectionModel model) {
     selectionModel = model;
     producerEventList = GlazedLists.threadSafeList(
-        new ObservableElementList<MovieProducer>(new BasicEventList<MovieProducer>(), GlazedLists.beanConnector(MovieProducer.class)));
-    ProducerTableModel = new DefaultEventTableModel<MovieProducer>(GlazedListsSwing.swingThreadProxyList(producerEventList),
-        new ProducerTableFormat());
+        new ObservableElementList<>(new BasicEventList<MovieProducer>(), GlazedLists.beanConnector(MovieProducer.class)));
+    ProducerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(producerEventList), new ProducerTableFormat());
 
     setLayout(new FormLayout(
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,

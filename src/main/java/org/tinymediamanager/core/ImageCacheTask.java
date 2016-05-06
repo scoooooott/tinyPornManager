@@ -37,7 +37,7 @@ public class ImageCacheTask extends TmmTask {
   private static final Logger         LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
   private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<Path>                  filesToCache = new ArrayList<Path>();
+  private List<Path>                  filesToCache = new ArrayList<>();
 
   public ImageCacheTask(String pathToFile) {
     super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);

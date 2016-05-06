@@ -65,9 +65,9 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -117,7 +117,7 @@ public class ImageChooserDialog extends TmmDialog {
   private ImageType            type;
   private MediaType            mediaType;
   private ButtonGroup          buttonGroup     = new ButtonGroup();
-  private List<JToggleButton>  buttons         = new ArrayList<JToggleButton>();
+  private List<JToggleButton>  buttons         = new ArrayList<>();
 
   private final Action         actionOK        = new OkAction();
   private final Action         actionCancel    = new CancelAction();

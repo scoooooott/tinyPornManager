@@ -63,7 +63,7 @@ public abstract class TmmThreadPool extends TmmTask {
         new TmmThreadFactory(name) // our thread settings
     );
     pool.allowCoreThreadTimeOut(true);
-    this.service = new ExecutorCompletionService<Object>(pool);
+    this.service = new ExecutorCompletionService<>(pool);
   }
 
   /**

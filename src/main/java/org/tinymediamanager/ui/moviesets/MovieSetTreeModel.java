@@ -41,7 +41,7 @@ import org.tinymediamanager.core.movie.entities.MovieSet;
  */
 public class MovieSetTreeModel implements TreeModel {
   private MovieSetRootTreeNode    root      = new MovieSetRootTreeNode();
-  private List<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
+  private List<TreeModelListener> listeners = new ArrayList<>();
   private Map<Object, TreeNode>   nodeMap   = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
   private PropertyChangeListener  propertyChangeListener;
   private MovieList               movieList = MovieList.getInstance();

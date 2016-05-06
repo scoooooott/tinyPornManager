@@ -111,8 +111,8 @@ public class TvShowExporter extends MediaEntityExporter {
     LOGGER.info("generating tv show list");
     Utils.deleteFileSafely(listExportFile);
 
-    Map<String, Object> root = new HashMap<String, Object>();
-    root.put("tvShows", new ArrayList<T>(tvShowsToExport));
+    Map<String, Object> root = new HashMap<>();
+    root.put("tvShows", new ArrayList<>(tvShowsToExport));
     String output = engine.transform(listTemplate, root);
     Utils.writeStringToFile(listExportFile, output);
     LOGGER.info("movie list generated: " + listExportFile);
@@ -128,7 +128,7 @@ public class TvShowExporter extends MediaEntityExporter {
         Files.createDirectory(showDir);
 
         Path detailsExportFile = showDir.resolve("tvshow." + fileExtension);
-        root = new HashMap<String, Object>();
+        root = new HashMap<>();
         root.put("tvShow", show);
 
         output = engine.transform(detailTemplate, root);
@@ -145,7 +145,7 @@ public class TvShowExporter extends MediaEntityExporter {
 
               String episodeFileName = getFilename(episode) + "." + fileExtension;
               Path episodeExportFile = seasonDir.resolve(episodeFileName);
-              root = new HashMap<String, Object>();
+              root = new HashMap<>();
               root.put("episode", episode);
               output = engine.transform(episodeTemplate, root);
               Utils.writeStringToFile(episodeExportFile, output);

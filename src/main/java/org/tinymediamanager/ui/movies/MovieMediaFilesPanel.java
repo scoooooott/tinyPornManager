@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,7 +90,7 @@ public class MovieMediaFilesPanel extends JPanel {
    */
   public MovieMediaFilesPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(

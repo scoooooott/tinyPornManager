@@ -33,7 +33,7 @@ public class MessageManager {
   }
 
   private MessageManager() {
-    listeners = new ArrayList<IMessageListener>();
+    listeners = new ArrayList<>();
   }
 
   /**

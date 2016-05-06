@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -98,18 +100,18 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   private List<String>                dataSources;
   private MovieList                   movieList;
-  private HashSet<Path>               filesFound     = new HashSet<Path>();
+  private HashSet<Path>               filesFound     = new HashSet<>();
 
   public MovieUpdateDatasourceTask2() {
     super(BUNDLE.getString("update.datasource"));
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+    dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
   }
 
   public MovieUpdateDatasourceTask2(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(1);
+    dataSources = new ArrayList<>(1);
     dataSources.add(datasource);
   }
 
@@ -124,7 +126,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     // get existing movie folders
-    List<Path> existing = new ArrayList<Path>();
+    List<Path> existing = new ArrayList<>();
     for (Movie movie : movieList.getMovies()) {
       existing.add(movie.getPathNIO());
     }
@@ -132,7 +134,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     try {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      List<Path> imageFiles = new ArrayList<Path>();
+      List<Path> imageFiles = new ArrayList<>();
 
       for (String ds : dataSources) {
         initThreadPool(3, "update");
@@ -140,10 +142,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         publishState();
 
         // just check datasource folder, parse NEW folders first
-        List<Path> newMovieDirs = new ArrayList<Path>();
-        List<Path> existingMovieDirs = new ArrayList<Path>();
+        List<Path> newMovieDirs = new ArrayList<>();
+        List<Path> existingMovieDirs = new ArrayList<>();
         List<Path> rootList = listFilesAndDirs(Paths.get(ds));
-        List<Path> rootFiles = new ArrayList<Path>();
+        List<Path> rootFiles = new ArrayList<>();
         for (Path path : rootList) {
           if (Files.isDirectory(path)) {
             if (existing.contains(path)) {
@@ -276,9 +278,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   private void parseMovieDirectory(Path movieDir, Path dataSource) {
     List<Path> movieDirList = listFilesAndDirs(movieDir);
-    ArrayList<Path> files = new ArrayList<Path>();
-    ArrayList<Path> dirs = new ArrayList<Path>(); // FIXME: what for....?
-    HashSet<String> normalizedVideoFiles = new HashSet<String>(); // just for identifying MMD
+    ArrayList<Path> files = new ArrayList<>();
+    ArrayList<Path> dirs = new ArrayList<>(); // FIXME: what for....?
+    HashSet<String> normalizedVideoFiles = new HashSet<>(); // just for identifying MMD
 
     boolean isDiscFolder = false;
     boolean isMultiMovieDir = false;
@@ -378,7 +380,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     filesFound.addAll(allFiles); // our global cache
 
     // convert to MFs (we need it anyways at the end)
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> mfs = new ArrayList<>();
     for (Path file : allFiles) {
       mfs.add(new MediaFile(file));
     }
@@ -557,7 +559,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     filesFound.addAll(allFiles); // our global cache
 
     // convert to MFs
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> mfs = new ArrayList<>();
     for (Path file : allFiles) {
       mfs.add(new MediaFile(file));
     }
@@ -664,8 +666,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
-      List<MediaFile> existingMediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
-      List<MediaFile> foundMediaFiles = new ArrayList<MediaFile>();
+      List<MediaFile> existingMediaFiles = new ArrayList<>(movie.getMediaFiles());
+      List<MediaFile> foundMediaFiles = new ArrayList<>();
       for (int i = allFiles.size() - 1; i >= 0; i--) {
         Path fileInDir = allFiles.get(i);
         if (fileInDir.getFileName().toString().startsWith(basename)) { // need toString b/c of possible spaces!!
@@ -702,7 +704,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   private void addMediafilesToMovie(Movie movie, List<MediaFile> mediaFiles) {
-    List<MediaFile> current = new ArrayList<MediaFile>(movie.getMediaFiles());
+    List<MediaFile> current = new ArrayList<>(movie.getMediaFiles());
 
     for (MediaFile mf : mediaFiles) {
       if (!current.contains(mf)) { // a new mediafile was found!
@@ -809,7 +811,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     publishState();
 
     LOGGER.info("removing orphaned movies/files...");
-    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    List<Movie> moviesToRemove = new ArrayList<>();
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
       if (cancel) {
         break;
@@ -836,7 +838,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // have a look if that movie has just been added -> so we don't need any cleanup
         if (!movie.isNewlyAdded()) {
           // check and delete all not found MediaFiles
-          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+          List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
           for (MediaFile mf : mediaFiles) {
             if (!filesFound.contains(mf.getFileAsPath())) {
               if (!mf.exists()) {
@@ -877,8 +879,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
-      for (MediaFile mf : new ArrayList<MediaFile>(movie.getMediaFiles())) {
+      ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
+      for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           ungatheredMediaFiles.add(mf);
         }
@@ -926,7 +928,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
    * @return list of matching MFs
    */
   private List<MediaFile> getMediaFiles(List<MediaFile> mfs, MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     for (MediaFile mediaFile : mfs) {
       boolean match = false;
       for (MediaFileType type : types) {
@@ -1015,7 +1017,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
-    private HashSet<Path> fFound = new HashSet<Path>();
+    private HashSet<Path> fFound = new HashSet<>();
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
@@ -1073,8 +1075,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   private class SearchAndParseVisitor implements FileVisitor<Path> {
     private Path              datasource;
-    private ArrayList<String> unstackedRoot = new ArrayList<String>(); // only for folder stacking
-    private HashSet<Path>     videofolders  = new HashSet<Path>();     // all found video folders
+    private ArrayList<String> unstackedRoot = new ArrayList<>(); // only for folder stacking
+    private HashSet<Path>     videofolders  = new HashSet<>();   // all found video folders
 
     protected SearchAndParseVisitor(Path datasource) {
       this.datasource = datasource;

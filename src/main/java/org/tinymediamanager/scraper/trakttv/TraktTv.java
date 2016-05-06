@@ -45,11 +45,6 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.OkClient;
-import retrofit.client.Response;
-
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
 import com.uwetrottmann.trakt.v2.entities.BaseMovie;
@@ -67,6 +62,11 @@ import com.uwetrottmann.trakt.v2.entities.SyncShow;
 import com.uwetrottmann.trakt.v2.entities.SyncStats;
 import com.uwetrottmann.trakt.v2.enums.Extended;
 import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
+
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
 
 /**
  * Sync your collection and watched status with Trakt.tv<br>
@@ -188,14 +188,14 @@ public class TraktTv {
     }
 
     // create a local copy of the list
-    List<Movie> tmmMovies = new ArrayList<Movie>(moviesInTmm);
+    List<Movie> tmmMovies = new ArrayList<>(moviesInTmm);
     // *****************************************************************************
     // 1) get diff of TMM <-> Trakt collection
     // *****************************************************************************
     LOGGER.info("got up to " + tmmMovies.size() + " movies for Trakt.tv collection sync");
 
     // get ALL Trakt movies in collection
-    List<BaseMovie> traktMovies = new ArrayList<BaseMovie>();
+    List<BaseMovie> traktMovies = new ArrayList<>();
 
     try {
       traktMovies = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
@@ -265,7 +265,7 @@ public class TraktTv {
     // *****************************************************************************
     LOGGER.debug("prepare " + tmmMovies.size() + " movies for Trakt.tv collection sync");
 
-    List<SyncMovie> movies = new ArrayList<SyncMovie>();
+    List<SyncMovie> movies = new ArrayList<>();
     int nosync = 0;
     for (Movie tmmMovie : tmmMovies) {
       if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
@@ -312,7 +312,7 @@ public class TraktTv {
     if (!isEnabled()) {
       return;
     }
-    syncTraktMovieCollection(new ArrayList<Movie>(MovieList.getInstance().getMovies()));
+    syncTraktMovieCollection(new ArrayList<>(MovieList.getInstance().getMovies()));
   }
 
   /**
@@ -323,8 +323,8 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get ALL Trakt movies in collection / watched
     // *****************************************************************************
-    List<BaseMovie> traktCollection = new ArrayList<BaseMovie>();
-    List<BaseMovie> traktWatched = new ArrayList<BaseMovie>();
+    List<BaseMovie> traktCollection = new ArrayList<>();
+    List<BaseMovie> traktWatched = new ArrayList<>();
     try {
       traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
       traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
@@ -356,7 +356,7 @@ public class TraktTv {
     // *****************************************************************************
     // 2) remove every movie from the COLLECTION state
     // *****************************************************************************
-    List<SyncMovie> movieToRemove = new ArrayList<SyncMovie>();
+    List<SyncMovie> movieToRemove = new ArrayList<>();
     for (BaseMovie traktMovie : traktCollection) {
       movieToRemove.add(toSyncMovie(traktMovie));
     }
@@ -412,12 +412,12 @@ public class TraktTv {
     }
 
     // create a local copy of the list
-    List<Movie> tmmMovies = new ArrayList<Movie>(moviesInTmm);
+    List<Movie> tmmMovies = new ArrayList<>(moviesInTmm);
 
     // *****************************************************************************
     // 1) get all Trakt watched movies and update our "watched" status
     // *****************************************************************************
-    List<BaseMovie> traktMovies = new ArrayList<BaseMovie>();
+    List<BaseMovie> traktMovies = new ArrayList<>();
     try {
       traktMovies = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
@@ -481,7 +481,7 @@ public class TraktTv {
     // 2) mark additionally "watched" movies as 'seen' on Trakt
     // *****************************************************************************
     // Now get all TMM watched movies...
-    List<Movie> tmmWatchedMovies = new ArrayList<Movie>();
+    List<Movie> tmmWatchedMovies = new ArrayList<>();
     for (Movie movie : tmmMovies) {
       if (movie.isWatched()) {
         tmmWatchedMovies.add(movie);
@@ -506,7 +506,7 @@ public class TraktTv {
     }
 
     LOGGER.debug("prepare " + tmmWatchedMovies.size() + " movies for Trakt.tv sync");
-    List<SyncMovie> movies = new ArrayList<SyncMovie>();
+    List<SyncMovie> movies = new ArrayList<>();
     int nosync = 0;
     for (Movie tmmMovie : tmmWatchedMovies) {
       if (tmmMovie.getIdAsInt(providerInfo.getId()) != 0 || !tmmMovie.getIdAsString(Constants.IMDB).isEmpty()
@@ -576,11 +576,11 @@ public class TraktTv {
     }
 
     // create a local copy of the list
-    List<TvShow> tvShows = new ArrayList<TvShow>(tvShowsInTmm);
+    List<TvShow> tvShows = new ArrayList<>(tvShowsInTmm);
     // *****************************************************************************
     // 1) sync ALL missing show IDs & dates from trakt
     // *****************************************************************************
-    List<BaseShow> traktShows = new ArrayList<BaseShow>();
+    List<BaseShow> traktShows = new ArrayList<>();
     try {
       traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
     }
@@ -691,7 +691,7 @@ public class TraktTv {
     if (!isEnabled()) {
       return;
     }
-    syncTraktTvShowCollection(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
+    syncTraktTvShowCollection(new ArrayList<>(TvShowList.getInstance().getTvShows()));
   }
 
   public void syncTraktTvShowWatched(List<TvShow> tvShowsInTmm) {
@@ -700,9 +700,9 @@ public class TraktTv {
     }
 
     // create a local copy of the list
-    List<TvShow> tvShows = new ArrayList<TvShow>(tvShowsInTmm);
+    List<TvShow> tvShows = new ArrayList<>(tvShowsInTmm);
 
-    List<BaseShow> traktShows = new ArrayList<BaseShow>();
+    List<BaseShow> traktShows = new ArrayList<>();
     try {
       traktShows = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
     }
@@ -801,7 +801,7 @@ public class TraktTv {
     if (!isEnabled()) {
       return;
     }
-    syncTraktTvShowWatched(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
+    syncTraktTvShowWatched(new ArrayList<>(TvShowList.getInstance().getTvShows()));
   }
 
   /**
@@ -812,8 +812,8 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get ALL Trakt shows in collection / watched
     // *****************************************************************************
-    List<BaseShow> traktCollection = new ArrayList<BaseShow>();
-    List<BaseShow> traktWatched = new ArrayList<BaseShow>();
+    List<BaseShow> traktCollection = new ArrayList<>();
+    List<BaseShow> traktWatched = new ArrayList<>();
     try {
       traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
       traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
@@ -845,7 +845,7 @@ public class TraktTv {
     // *****************************************************************************
     // 2) remove every shows from the COLLECTION state
     // *****************************************************************************
-    List<SyncShow> showToRemove = new ArrayList<SyncShow>();
+    List<SyncShow> showToRemove = new ArrayList<>();
     for (BaseShow traktShow : traktCollection) {
       showToRemove.add(toSyncShow(traktShow));
     }
@@ -1049,11 +1049,11 @@ public class TraktTv {
       return show;
     }
 
-    ArrayList<SyncSeason> ss = new ArrayList<SyncSeason>();
+    ArrayList<SyncSeason> ss = new ArrayList<>();
     boolean foundS = false;
     for (TvShowSeason tmmSeason : tmmShow.getSeasons()) {
       boolean foundEP = false;
-      ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
+      ArrayList<SyncEpisode> se = new ArrayList<>();
       for (TvShowEpisode tmmEp : tmmSeason.getEpisodes()) {
         // we have to decide what we send; trakt behaves differenty when sending data to
         // sync collection and sync history.
@@ -1091,9 +1091,9 @@ public class TraktTv {
 
   private SyncShow toSyncShow(BaseShow baseShow) {
     // TODO: used only on clear() - so we don't need the episodes? TBC
-    ArrayList<SyncSeason> ss = new ArrayList<SyncSeason>();
+    ArrayList<SyncSeason> ss = new ArrayList<>();
     for (BaseSeason baseSeason : baseShow.seasons) {
-      ArrayList<SyncEpisode> se = new ArrayList<SyncEpisode>();
+      ArrayList<SyncEpisode> se = new ArrayList<>();
       for (BaseEpisode baseEp : baseSeason.episodes) {
         se.add(new SyncEpisode().number(baseEp.number).collectedAt(new DateTime(baseEp.collected_at)).watchedAt(new DateTime(baseEp.collected_at)));
       }

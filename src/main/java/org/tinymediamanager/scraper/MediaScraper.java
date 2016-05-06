@@ -135,9 +135,9 @@ public class MediaScraper {
    * @return
    */
   public static List<MediaScraper> getMediaScrapers(ScraperType type) {
-    ArrayList<MediaScraper> scraper = new ArrayList<MediaScraper>();
+    ArrayList<MediaScraper> scraper = new ArrayList<>();
 
-    ArrayList<IMediaProvider> plugins = new ArrayList<IMediaProvider>();
+    ArrayList<IMediaProvider> plugins = new ArrayList<>();
     switch (type) {
       case MOVIE:
         plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class));

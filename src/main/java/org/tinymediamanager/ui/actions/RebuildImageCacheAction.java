@@ -60,21 +60,21 @@ public class RebuildImageCacheAction extends AbstractAction {
       return;
     }
 
-    List<Path> imageFiles = new ArrayList<Path>();
+    List<Path> imageFiles = new ArrayList<>();
     // movie list
-    List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+    List<Movie> movies = new ArrayList<>(MovieList.getInstance().getMovies());
     for (Movie movie : movies) {
       imageFiles.addAll(movie.getImagesToCache());
     }
 
     // moviesets
-    List<MovieSet> movieSets = new ArrayList<MovieSet>(MovieList.getInstance().getMovieSetList());
+    List<MovieSet> movieSets = new ArrayList<>(MovieList.getInstance().getMovieSetList());
     for (MovieSet movieSet : movieSets) {
       imageFiles.addAll(movieSet.getImagesToCache());
     }
 
     // tv dhows
-    List<TvShow> tvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
+    List<TvShow> tvShows = new ArrayList<>(TvShowList.getInstance().getTvShows());
     for (TvShow tvShow : tvShows) {
       imageFiles.addAll(tvShow.getImagesToCache());
     }

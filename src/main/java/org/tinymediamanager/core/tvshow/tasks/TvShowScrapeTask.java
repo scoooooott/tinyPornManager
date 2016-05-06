@@ -39,8 +39,8 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -215,7 +215,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
      * @return the artwork
      */
     public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<MediaScraper> artworkScrapers) {
-      List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+      List<MediaArtwork> artwork = new ArrayList<>();
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);

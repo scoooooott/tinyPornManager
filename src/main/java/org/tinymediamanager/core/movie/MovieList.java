@@ -61,12 +61,12 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  * The Class MovieList.
@@ -158,7 +158,7 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    List<Movie> moviesToRemove = new ArrayList<>();
     for (int i = movieList.size() - 1; i >= 0; i--) {
       Movie movie = movieList.get(i);
       if (new File(path).equals(new File(movie.getDataSource()))) {
@@ -175,7 +175,7 @@ public class MovieList extends AbstractModelObject {
    * @return the unscraped movies
    */
   public List<Movie> getUnscrapedMovies() {
-    List<Movie> unscrapedMovies = new ArrayList<Movie>();
+    List<Movie> unscrapedMovies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (!movie.isScraped()) {
         unscrapedMovies.add(movie);
@@ -190,7 +190,7 @@ public class MovieList extends AbstractModelObject {
    * @return the new movies
    */
   public List<Movie> getNewMovies() {
-    List<Movie> newMovies = new ArrayList<Movie>();
+    List<Movie> newMovies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (movie.isNewlyAdded()) {
         newMovies.add(movie);
@@ -209,7 +209,7 @@ public class MovieList extends AbstractModelObject {
     if (movies == null || movies.size() == 0) {
       return;
     }
-    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
+    Set<MovieSet> modifiedMovieSets = new HashSet<>();
     int oldValue = movieList.size();
 
     // remove in inverse order => performance
@@ -252,7 +252,7 @@ public class MovieList extends AbstractModelObject {
     if (movies == null || movies.size() == 0) {
       return;
     }
-    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
+    Set<MovieSet> modifiedMovieSets = new HashSet<>();
     int oldValue = movieList.size();
 
     // remove in inverse order => performance
@@ -290,7 +290,7 @@ public class MovieList extends AbstractModelObject {
    */
   public ObservableElementList<Movie> getMovies() {
     if (movieList == null) {
-      movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+      movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     }
     return movieList;
   }
@@ -300,7 +300,7 @@ public class MovieList extends AbstractModelObject {
    */
   void loadMoviesFromDatabase(MVMap<UUID, String> movieMap, ObjectMapper objectMapper) {
     // load movies
-    movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+    movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     ObjectReader movieObjectReader = objectMapper.readerFor(Movie.class);
 
     for (UUID uuid : movieMap.keyList()) {
@@ -468,7 +468,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie list
    */
   public synchronized List<Movie> getMoviesByPath(Path path) {
-    ArrayList<Movie> movies = new ArrayList<Movie>();
+    ArrayList<Movie> movies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (Paths.get(movie.getPath()).compareTo(path) == 0) {
         movies.add(movie);
@@ -926,8 +926,8 @@ public class MovieList extends AbstractModelObject {
    * Search duplicates.
    */
   public void searchDuplicates() {
-    Map<String, Movie> imdbDuplicates = new HashMap<String, Movie>();
-    Map<Integer, Movie> tmdbDuplicates = new HashMap<Integer, Movie>();
+    Map<String, Movie> imdbDuplicates = new HashMap<>();
+    Map<Integer, Movie> tmdbDuplicates = new HashMap<>();
 
     for (Movie movie : movieList) {
       movie.clearDuplicate();
@@ -982,7 +982,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie set list (sorted)
    */
   public List<MovieSet> getSortedMovieSetList() {
-    List<MovieSet> sortedMovieSets = new ArrayList<MovieSet>(getMovieSetList());
+    List<MovieSet> sortedMovieSets = new ArrayList<>(getMovieSetList());
     Collections.sort(sortedMovieSets, movieSetComparator);
     return sortedMovieSets;
   }
@@ -1081,7 +1081,7 @@ public class MovieList extends AbstractModelObject {
    * check if there are movies without (at least) one VIDEO mf
    */
   private void checkAndCleanupMediaFiles() {
-    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    List<Movie> moviesToRemove = new ArrayList<>();
     for (Movie movie : movieList) {
       List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
       if (mfs.isEmpty()) {
@@ -1116,7 +1116,7 @@ public class MovieList extends AbstractModelObject {
    * invalidate the title sortable upon changes to the sortable prefixes
    */
   public void invalidateTitleSortable() {
-    for (Movie movie : new ArrayList<Movie>(movieList)) {
+    for (Movie movie : new ArrayList<>(movieList)) {
       movie.clearTitleSortable();
     }
   }

@@ -480,7 +480,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbTag.removeAllItems();
-    List<String> tags = new ArrayList<String>(movieList.getTagsInMovies());
+    List<String> tags = new ArrayList<>(movieList.getTagsInMovies());
     Collections.sort(tags);
     for (String tag : tags) {
       cbTag.addItem(tag);
@@ -500,7 +500,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbVideoCodec.removeAllItems();
-    List<String> codecs = new ArrayList<String>(movieList.getVideoCodecsInMovies());
+    List<String> codecs = new ArrayList<>(movieList.getVideoCodecsInMovies());
     Collections.sort(codecs);
     for (String codec : codecs) {
       cbVideoCodec.addItem(codec);
@@ -518,7 +518,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbAudioCodec.removeAllItems();
-    codecs = new ArrayList<String>(movieList.getAudioCodecsInMovies());
+    codecs = new ArrayList<>(movieList.getAudioCodecsInMovies());
     Collections.sort(codecs);
     for (String codec : codecs) {
       cbAudioCodec.addItem(codec);
@@ -538,7 +538,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbDatasource.removeAllItems();
-    List<String> datasources = new ArrayList<String>(Settings.getInstance().getMovieSettings().getMovieDataSource());
+    List<String> datasources = new ArrayList<>(Settings.getInstance().getMovieSettings().getMovieDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       cbDatasource.addItem(datasource);
@@ -558,7 +558,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbCertification.removeAllItems();
-    List<Certification> certifications = new ArrayList<Certification>(movieList.getCertificationsInMovies());
+    List<Certification> certifications = new ArrayList<>(movieList.getCertificationsInMovies());
     Collections.sort(certifications);
     for (Certification cert : certifications) {
       cbCertification.addItem(cert);
@@ -590,7 +590,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      HashMap<MovieSearchOptions, Object> searchOptions = new HashMap<MovieSearchOptions, Object>();
+      HashMap<MovieSearchOptions, Object> searchOptions = new HashMap<>();
 
       // filter duplicates
       if (cbFilterDuplicates.isSelected()) {

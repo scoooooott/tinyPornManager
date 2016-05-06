@@ -50,7 +50,7 @@ public class TvShowUpdateAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
-    List<Path> tvShowFolders = new ArrayList<Path>();
+    List<Path> tvShowFolders = new ArrayList<>();
 
     if (selectedTvShows.isEmpty()) {
       return;

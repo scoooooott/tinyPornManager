@@ -36,8 +36,8 @@ public class MovieRenamerPreview {
   public static MovieRenamerPreviewContainer renameMovie(Movie movie) {
     MovieRenamerPreviewContainer container = new MovieRenamerPreviewContainer(movie);
 
-    LinkedHashMap<String, MediaFile> oldFiles = new LinkedHashMap<String, MediaFile>();
-    Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
+    LinkedHashMap<String, MediaFile> oldFiles = new LinkedHashMap<>();
+    Set<MediaFile> newFiles = new LinkedHashSet<>();
 
     String newVideoBasename = "";
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().trim().isEmpty()) {

@@ -357,13 +357,13 @@ public class MediaInfo implements Closeable {
    * @return the map
    */
   public Map<StreamKind, List<Map<String, String>>> snapshot() {
-    Map<StreamKind, List<Map<String, String>>> mediaInfo = new EnumMap<StreamKind, List<Map<String, String>>>(StreamKind.class);
+    Map<StreamKind, List<Map<String, String>>> mediaInfo = new EnumMap<>(StreamKind.class);
 
     for (StreamKind streamKind : StreamKind.values()) {
       int streamCount = streamCount(streamKind);
 
       if (streamCount > 0) {
-        List<Map<String, String>> streamInfoList = new ArrayList<Map<String, String>>(streamCount);
+        List<Map<String, String>> streamInfoList = new ArrayList<>(streamCount);
 
         for (int i = 0; i < streamCount; i++) {
           streamInfoList.add(snapshot(streamKind, i));
@@ -386,7 +386,7 @@ public class MediaInfo implements Closeable {
    * @return the map
    */
   public Map<String, String> snapshot(StreamKind streamKind, int streamNumber) {
-    Map<String, String> streamInfo = new LinkedHashMap<String, String>();
+    Map<String, String> streamInfo = new LinkedHashMap<>();
 
     for (int i = 0, count = parameterCount(streamKind, streamNumber); i < count; i++) {
       String value = get(streamKind, streamNumber, i, InfoKind.Text);

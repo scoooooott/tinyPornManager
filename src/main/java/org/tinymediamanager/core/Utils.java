@@ -104,7 +104,7 @@ public class Utils {
       .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
 
   private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
-    Map<String, Locale> langArray = new HashMap<String, Locale>();
+    Map<String, Locale> langArray = new HashMap<>();
 
     Locale intl = Locale.ENGLISH;
     Locale locales[] = Locale.getAvailableLocales();
@@ -134,14 +134,14 @@ public class Utils {
     }
 
     // sort
-    List<String> keys = new LinkedList<String>(langArray.keySet());
+    List<String> keys = new LinkedList<>(langArray.keySet());
     Collections.sort(keys, new Comparator<String>() {
       @Override
       public int compare(String s1, String s2) {
         return s2.length() - s1.length();
       }
     });
-    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<String, Locale>();
+    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<>();
     for (String key : keys) {
       if (!key.isEmpty()) {
         sortedMap.put(key.toLowerCase(), langArray.get(key));
@@ -974,7 +974,7 @@ public class Utils {
    * @return List of Locales
    */
   public static List<Locale> getLanguages() {
-    ArrayList<Locale> loc = new ArrayList<Locale>();
+    ArrayList<Locale> loc = new ArrayList<>();
     loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Constants.LOCALE_FOLDER))) {
@@ -1108,7 +1108,7 @@ public class Utils {
    *          keep last X versions
    */
   public static final void deleteOldBackupFile(Path file, int keep) {
-    ArrayList<Path> al = new ArrayList<Path>();
+    ArrayList<Path> al = new ArrayList<>();
     String fname = file.getFileName().toString();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
       for (Path path : directoryStream) {
@@ -1220,7 +1220,7 @@ public class Utils {
    */
   private static List<String> getJVMArguments() {
     RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-    List<String> arguments = new ArrayList<String>(runtimeMxBean.getInputArguments());
+    List<String> arguments = new ArrayList<>(runtimeMxBean.getInputArguments());
     // fixtate some
     if (!arguments.contains("-Djava.net.preferIPv4Stack=true")) {
       arguments.add("-Djava.net.preferIPv4Stack=true");
@@ -1279,7 +1279,7 @@ public class Utils {
    * @throws Throwable
    */
   public static void createZip(Path zipFile, Path toBeAdded, String internalPath) {
-    Map<String, String> env = new HashMap<String, String>();
+    Map<String, String> env = new HashMap<>();
     try {
       // check if file exists
       env.put("create", String.valueOf(Files.notExists(zipFile)));

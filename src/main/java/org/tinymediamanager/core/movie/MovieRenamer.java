@@ -193,8 +193,8 @@ public class MovieRenamer {
     }
 
     // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
-    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> needed = new ArrayList<>();
+    ArrayList<MediaFile> cleanup = new ArrayList<>();
 
     LOGGER.info("Renaming movie: " + movie.getTitle());
     LOGGER.debug("movie year: " + movie.getYear());
@@ -396,7 +396,7 @@ public class MovieRenamer {
     // ## rename POSTER, FANART (copy 1:N)
     // ######################################################################
     // we can have multiple ones, just get the newest one and copy(overwrite) them to all needed
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> mfs = new ArrayList<>();
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.FANART));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.POSTER));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -462,7 +462,7 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<MediaFile>();
+    mfs = new ArrayList<>();
     mfs.addAll(
         movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -498,7 +498,7 @@ public class MovieRenamer {
     }
 
     // remove duplicate MediaFiles
-    Set<MediaFile> newMFs = new LinkedHashSet<MediaFile>(needed);
+    Set<MediaFile> newMFs = new LinkedHashSet<>(needed);
     needed.clear();
     needed.addAll(newMFs);
 
@@ -582,7 +582,7 @@ public class MovieRenamer {
    */
   public static ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
     // return list of all generated MFs
-    ArrayList<MediaFile> newFiles = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> newFiles = new ArrayList<>();
     boolean newDestIsMultiMovieDir = movie.isMultiMovieDir();
     String newPathname = "";
 
@@ -682,7 +682,7 @@ public class MovieRenamer {
 
       case NFO:
         if (MovieConnectors.isValidNFO(mf.getFileAsPath())) {
-          List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+          List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
             nfonames.add(MovieNfoNaming.FILENAME_NFO);
@@ -710,7 +710,7 @@ public class MovieRenamer {
         break;
 
       case POSTER:
-        List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+        List<MoviePosterNaming> posternames = new ArrayList<>();
         if (newDestIsMultiMovieDir) {
           // Fixate the name regardless of setting
           posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
@@ -746,7 +746,7 @@ public class MovieRenamer {
         break;
 
       case FANART:
-        List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+        List<MovieFanartNaming> fanartnames = new ArrayList<>();
         if (newDestIsMultiMovieDir) {
           // Fixate the name regardless of setting
           fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);

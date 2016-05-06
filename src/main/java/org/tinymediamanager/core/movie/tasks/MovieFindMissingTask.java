@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -61,13 +63,13 @@ public class MovieFindMissingTask extends TmmThreadPool {
   public MovieFindMissingTask() {
     super(BUNDLE.getString("movie.findmissing"));
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+    dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
   }
 
   public MovieFindMissingTask(String datasource) {
     super(BUNDLE.getString("movie.findmissing") + " (" + datasource + ")");
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(1);
+    dataSources = new ArrayList<>(1);
     dataSources.add(datasource);
   }
 
@@ -78,7 +80,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
       stopWatch.start();
 
       // build MF list
-      ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+      ArrayList<MediaFile> mfs = new ArrayList<>();
       for (Movie movie : movieList.getMovies()) {
         mfs.addAll(movie.getMediaFiles());
         // mfs.addAll(movie.getMediaFiles(MediaFileType.VIDEO));
@@ -129,7 +131,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
   }
 
   private class BigFilesRecursive extends SimpleFileVisitor<Path> {
-    private HashSet<Path> fFound = new HashSet<Path>();
+    private HashSet<Path> fFound = new HashSet<>();
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {

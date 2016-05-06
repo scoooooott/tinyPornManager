@@ -61,6 +61,12 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -68,12 +74,6 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The class MovieRenamerSettingsPanel.
@@ -86,7 +86,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSettings                  settings                   = Settings.getInstance().getMovieSettings();
-  private List<String>                   separators                 = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private List<String>                   separators                 = new ArrayList<>(Arrays.asList("_", ".", "-"));
   private EventList<MovieRenamerExample> exampleEventList           = null;
 
   /**
@@ -245,9 +245,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     chckbxRemoveOtherNfos = new JCheckBox(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
     panelRenamer.add(chckbxRemoveOtherNfos, "8, 14, 5, 1");
 
-    exampleEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieRenamerExample>(new BasicEventList<MovieRenamerExample>(),
-        GlazedLists.beanConnector(MovieRenamerExample.class)));
-    DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<MovieRenamerExample>(
+    exampleEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<MovieRenamerExample>(), GlazedLists.beanConnector(MovieRenamerExample.class)));
+    DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
         GlazedListsSwing.swingThreadProxyList(exampleEventList), new MovieRenamerExampleTableFormat());
 
     panelExample = new JPanel();
@@ -318,7 +318,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
 
   private void buildAndInstallMovieArray() {
     cbMovieForPreview.removeAllItems();
-    List<Movie> allMovies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+    List<Movie> allMovies = new ArrayList<>(MovieList.getInstance().getMovies());
     Collections.sort(allMovies, new MovieComparator());
     for (Movie movie : allMovies) {
       MoviePreviewContainer container = new MoviePreviewContainer();

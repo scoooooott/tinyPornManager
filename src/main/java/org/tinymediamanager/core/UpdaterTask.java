@@ -61,7 +61,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
     File getdownFile = new File("getdown.txt");
     File digestFile = new File("digest.txt");
 
-    ArrayList<String> updateUrls = new ArrayList<String>();
+    ArrayList<String> updateUrls = new ArrayList<>();
     try {
       Thread.currentThread().setName("updateThread");
       LOGGER.info("Checking for updates...");
@@ -190,7 +190,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
    * Reads the contents of the supplied input stream into a list of lines. Closes the reader on successful or failed completion.
    */
   private static List<String> readLines(Reader in) throws IOException {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
     try {
       BufferedReader bin = new BufferedReader(in);
       for (String line = null; (line = bin.readLine()) != null; lines.add(line)) {

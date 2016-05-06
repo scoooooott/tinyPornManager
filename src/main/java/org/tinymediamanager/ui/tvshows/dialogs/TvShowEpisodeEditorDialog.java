@@ -73,9 +73,9 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -112,7 +112,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private TvShowEpisode                                         episodeToEdit;
   private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
   private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private List<MediaFile>                                       mediaFiles       = new ArrayList<MediaFile>();
+  private List<MediaFile>                                       mediaFiles       = new ArrayList<>();
   private boolean                                               continueQueue    = true;
 
   private JTextField                                            tfTitle;

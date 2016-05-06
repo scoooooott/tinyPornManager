@@ -95,7 +95,7 @@ public class TmmWindowSaver implements AWTEventListener {
 
         @Override
         public synchronized Enumeration<Object> keys() {
-          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+          return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
       };
       tmp.putAll(properties);

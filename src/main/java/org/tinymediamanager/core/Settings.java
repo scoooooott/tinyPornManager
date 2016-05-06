@@ -448,7 +448,7 @@ public class Settings extends AbstractModelObject {
    * @return list
    */
   public List<String> getAllSupportedFileTypes() {
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     list.addAll(getAudioFileType());
     list.addAll(getVideoFileType());
     list.addAll(getSubtitleFileType());

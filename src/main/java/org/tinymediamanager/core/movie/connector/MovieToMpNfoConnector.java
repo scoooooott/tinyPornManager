@@ -171,7 +171,7 @@ public class MovieToMpNfoConnector {
     MovieToMpNfoConnector mp = createInstanceFromMovie(movie);
 
     // and marshall it
-    List<MovieNfoNaming> nfoNames = new ArrayList<MovieNfoNaming>();
+    List<MovieNfoNaming> nfoNames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       nfoNames.add(MovieNfoNaming.FILENAME_NFO);
@@ -300,7 +300,7 @@ public class MovieToMpNfoConnector {
 
   static void writeNfoFiles(Movie movie, MovieToMpNfoConnector mp, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
-    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
+    List<MediaFile> newNfos = new ArrayList<>(1);
 
     for (MovieNfoNaming name : nfoNames) {
       try {
@@ -523,9 +523,7 @@ public class MovieToMpNfoConnector {
       in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       mp = (MovieToMpNfoConnector) um.unmarshal(in);
     }
-    catch (UnmarshalException e) {
-    }
-    catch (IllegalArgumentException e) {
+    catch (UnmarshalException | IllegalArgumentException e) {
     }
     finally {
       if (in != null) {
@@ -575,7 +573,7 @@ public class MovieToMpNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;
@@ -593,7 +591,7 @@ public class MovieToMpNfoConnector {
   public List<Producer> getProducers() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in producers;
     // filter producers out
-    List<Producer> pureProducers = new ArrayList<Producer>();
+    List<Producer> pureProducers = new ArrayList<>();
     // for (Object obj : producers) {
     for (Object obj : actors) { // ugly hack for invalid xml structure
       if (obj instanceof Producer) {

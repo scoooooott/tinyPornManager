@@ -47,7 +47,7 @@ public class MovieRewriteNfoAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    final List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rewrite selected NFOs
     TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {

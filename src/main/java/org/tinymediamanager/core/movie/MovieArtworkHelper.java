@@ -159,7 +159,7 @@ public class MovieArtworkHelper {
     }
 
     int i = 0;
-    List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+    List<MovieFanartNaming> fanartnames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
@@ -205,7 +205,7 @@ public class MovieArtworkHelper {
     String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
 
     int i = 0;
-    List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+    List<MoviePosterNaming> posternames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
@@ -432,7 +432,7 @@ public class MovieArtworkHelper {
     setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
 
     // extrathumbs
-    List<String> extrathumbs = new ArrayList<String>();
+    List<String> extrathumbs = new ArrayList<>();
     if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
@@ -452,7 +452,7 @@ public class MovieArtworkHelper {
     }
 
     // extrafanarts
-    List<String> extrafanarts = new ArrayList<String>();
+    List<String> extrafanarts = new ArrayList<>();
     if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution

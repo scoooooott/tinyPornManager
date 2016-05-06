@@ -90,7 +90,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
       Class swingUtilities2Class = Class.forName("sun.swing.SwingUtilities2");
       Class classParams[] = { JComponent.class, Graphics.class, String.class, Integer.TYPE, Integer.TYPE };
       Method m = swingUtilities2Class.getMethod("drawString", classParams);
-      Object methodParams[] = { c, g, text, Integer.valueOf(offset), Integer.valueOf(fm.getLeading() + fm.getAscent()) };
+      Object methodParams[] = { c, g, text, offset, fm.getLeading() + fm.getAscent() };
       m.invoke(null, methodParams);
     }
     catch (Exception ex) {
@@ -123,7 +123,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
       case JTabbedPane.RIGHT:
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
-        UIManager.put("TabbedPane.textIconGap", Integer.valueOf(1));
+        UIManager.put("TabbedPane.textIconGap", 1);
         UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
         JTabbedPane tabPane = new JTabbedPane(tabPlacement);
         UIManager.put("TabbedPane.textIconGap", textIconGap);

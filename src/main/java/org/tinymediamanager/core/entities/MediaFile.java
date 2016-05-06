@@ -17,7 +17,6 @@ package org.tinymediamanager.core.entities;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -131,9 +130,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     stackingMarker     = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
+  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<>(0);
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<>(0);
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
@@ -262,9 +261,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
         }
         br.close();
-      }
-      catch (FileNotFoundException e) {
-        // ignore
       }
       catch (IOException e) {
         // ignore
@@ -655,7 +651,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getSubtitlesAsString() {
     StringBuilder sb = new StringBuilder();
-    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<MediaFileSubtitle>(subtitles);
+    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<>(subtitles);
 
     for (MediaFileSubtitle sub : cleansub) {
       if (sb.length() > 0) {
@@ -715,13 +711,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
         }
       }
-      catch (Exception e) {
+      catch (Exception | Error e) {
         LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
-      catch (Error e) {
-        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
-      }
+
 
       miSnapshot = mediaInfo.snapshot();
     }
