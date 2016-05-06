@@ -101,6 +101,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxDateAdded;
   private JCheckBox                   chckbxSaveUiFilter;
   private JList<String>               listIgnore;
+  private JCheckBox                   chckbxRename;
 
   /**
    * Instantiates a new movie settings panel.
@@ -123,7 +124,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
             FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblVisiblecolumns = new JLabel(BUNDLE.getString("Settings.movie.visiblecolumns")); //$NON-NLS-1$
     panelGeneral.add(lblVisiblecolumns, "2, 2, right, default");
@@ -177,11 +178,17 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JSeparator separator = new JSeparator();
     panelGeneral.add(separator, "2, 14, 9, 1");
 
+    final JLabel lblAutomaticRename = new JLabel(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
+    panelGeneral.add(lblAutomaticRename, "2, 16, right, default");
+
+    chckbxRename = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
+    panelGeneral.add(chckbxRename, "4, 16, 7, 1");
+
     JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-    panelGeneral.add(lblTraktTv, "2, 16");
+    panelGeneral.add(lblTraktTv, "2, 18");
 
     chckbxTraktTv = new JCheckBox("");
-    panelGeneral.add(chckbxTraktTv, "4, 16");
+    panelGeneral.add(chckbxTraktTv, "4, 18");
 
     JButton btnClearTraktTvMovies = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));//$NON-NLS-1$
     btnClearTraktTvMovies.addActionListener(new ActionListener() {
@@ -195,7 +202,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panelGeneral.add(btnClearTraktTvMovies, "6, 16, 3, 1, left, default");
+    panelGeneral.add(btnClearTraktTvMovies, "6, 18, 3, 1, left, default");
 
     JPanel panelMovieDataSources = new JPanel();
 
@@ -527,5 +534,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.movieRenameAfterScrape");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, chckbxRename, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

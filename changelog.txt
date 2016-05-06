@@ -9,6 +9,7 @@ Version 2.8
 + added bad words for TV shows
 + added option to opt-out our internal statistics
 + moved scraping of artwork/trailers in a separate task after searching for a movie
++ added option to automatically rename a movie after scraping
 x fixed plugin loading from paths containing a +
 x fix #22 "search episode" scrollbar
 x fix stacking marker detection for movies

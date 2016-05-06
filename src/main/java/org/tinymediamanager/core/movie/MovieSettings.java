@@ -140,6 +140,7 @@ public class MovieSettings extends AbstractModelObject {
   private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
 
   // renamer
+  private boolean                         movieRenameAfterScrape                   = false;
   private String                          movieRenamerPathname                     = DEFAULT_RENAMER_FOLDER_PATTERN;
   private String                          movieRenamerFilename                     = DEFAULT_RENAMER_FILE_PATTERN;
   private boolean                         movieRenamerSpaceSubstitution            = false;
@@ -439,6 +440,16 @@ public class MovieSettings extends AbstractModelObject {
 
   public void setMovieRenamerSpaceSubstitution(boolean movieRenamerSpaceSubstitution) {
     this.movieRenamerSpaceSubstitution = movieRenamerSpaceSubstitution;
+  }
+
+  public void setMovieRenameAfterScrape(boolean newValue) {
+    boolean oldValue = this.movieRenameAfterScrape;
+    this.movieRenameAfterScrape = newValue;
+    firePropertyChange("movieRenameAfterScrape", oldValue, newValue);
+  }
+
+  public boolean isMovieRenameAfterScrape() {
+    return this.movieRenameAfterScrape;
   }
 
   @XmlElement(name = MOVIE_RENAMER_SPACE_REPLACEMENT)
