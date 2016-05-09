@@ -211,7 +211,7 @@ public class StrgUtils {
 
   /**
    * This method takes an input String and replaces all special characters like umlauts, accented or other letter with diacritical marks with their
-   * basic ascii eqivalents. Originally written by Jens Hausherr (https://github.com/jabbrwcky), modified by Manuel Laggner
+   * basic ascii equivalents. Originally written by Jens Hausherr (https://github.com/jabbrwcky), modified by Manuel Laggner
    * 
    * @param input
    *          String to convert
@@ -335,7 +335,9 @@ public class StrgUtils {
    * if we have SNAPSHOT or SVN version, and both are the same, return -1
    * 
    * @param v1
+   *          given version
    * @param v2
+   *          other version
    * @return < 0 if v1 is lower<br>
    *         > 0 if v1 is higher<br>
    *         = 0 if equal

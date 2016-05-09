@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * The class ApiRespurceBundle. To provide a ResourceBundle for API tests (where the official tmm ResourceBundle is not available)
+ * The class ApiResourceBundle. To provide a ResourceBundle for API tests (where the official tmm ResourceBundle is not available)
  * 
  * @author Manuel Laggner
  * @since 1.0
