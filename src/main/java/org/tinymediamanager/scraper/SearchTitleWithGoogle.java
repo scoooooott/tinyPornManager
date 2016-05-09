@@ -36,7 +36,7 @@ public class SearchTitleWithGoogle {
    */
   public List<MediaSearchResult> search(String site, MediaProviderInfo mpi, MediaSearchOptions options) {
     LOGGER.debug("SearchTitleWithGoogle() " + options.toString());
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> resultList = new ArrayList<>();
 
     String searchUrl = "";
     String searchTerm = "";

@@ -119,7 +119,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return array of alternate names
    */
   public static String[] loadAlternateNames(String propName) {
-    ArrayList<String> alt = new ArrayList<String>();
+    ArrayList<String> alt = new ArrayList<>();
     for (Locale loc : getLanguages()) {
       if (loc == null || loc.getLanguage().equals("en")) {
         // English not needed, since it's in default properties

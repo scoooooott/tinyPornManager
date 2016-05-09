@@ -33,7 +33,7 @@ import java.util.Map;
  * @since 1.0
  */
 public class DynaEnum<E extends DynaEnum<E>> {
-  private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>> elements = new LinkedHashMap<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>>();
+  private static Map<Class<? extends DynaEnum<?>>, Map<String, DynaEnum<?>>> elements = new LinkedHashMap<>();
   private final String                                                       name;
   protected final int                                                        ordinal;
 
@@ -63,7 +63,7 @@ public class DynaEnum<E extends DynaEnum<E>> {
     this.ordinal = ordinal;
     Map<String, DynaEnum<?>> typeElements = elements.get(getClass());
     if (typeElements == null) {
-      typeElements = new LinkedHashMap<String, DynaEnum<?>>();
+      typeElements = new LinkedHashMap<>();
       elements.put(getDynaEnumClass(), typeElements);
     }
     typeElements.put(name, this);

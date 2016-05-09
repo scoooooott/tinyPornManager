@@ -42,7 +42,7 @@ public class MediaProviderConfigObject {
   boolean                     encrypt         = false;
   boolean                     visible         = true;
   ConfigType                  type            = ConfigType.TEXT;
-  ArrayList<String>           possibleValues  = new ArrayList<String>();
+  ArrayList<String>           possibleValues  = new ArrayList<>();
 
   public String getKey() {
     return key;

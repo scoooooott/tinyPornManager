@@ -211,7 +211,7 @@ public class RingBuffer<T> {
    * @return the iterator
    */
   public Iterator<T> iterator() {
-    return new RingBufferIterator<T>(this);
+    return new RingBufferIterator<>(this);
   }
 
   private static class RingBufferIterator<T> implements Iterator<T> {

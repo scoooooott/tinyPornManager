@@ -127,7 +127,7 @@ public class MediaArtwork {
   private int                   sizeOrder  = 0;
   private int                   likes      = 0;
 
-  private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
+  private List<ImageSizeAndUrl> imageSizes = new ArrayList<>();
 
   /**
    * Create a new instance of MediaArtwork for the given provider and type
@@ -284,7 +284,7 @@ public class MediaArtwork {
    * @return a list of all available image sizes
    */
   public List<ImageSizeAndUrl> getImageSizes() {
-    List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
+    List<ImageSizeAndUrl> descImageSizes = new ArrayList<>(imageSizes);
 
     // sort descending
     Collections.sort(descImageSizes, Collections.reverseOrder());
@@ -299,7 +299,7 @@ public class MediaArtwork {
    */
   public ImageSizeAndUrl getSmallestArtwork() {
     if (imageSizes.size() > 0) {
-      List<ImageSizeAndUrl> ascImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
+      List<ImageSizeAndUrl> ascImageSizes = new ArrayList<>(imageSizes);
 
       // sort ascending
       Collections.sort(ascImageSizes);
@@ -318,7 +318,7 @@ public class MediaArtwork {
    */
   public ImageSizeAndUrl getBiggestArtwork() {
     if (imageSizes.size() > 0) {
-      List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
+      List<ImageSizeAndUrl> descImageSizes = new ArrayList<>(imageSizes);
 
       // sort descending
       Collections.sort(descImageSizes, Collections.reverseOrder());

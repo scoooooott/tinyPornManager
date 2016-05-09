@@ -39,7 +39,7 @@ public class StrgUtils {
    * build a replacement map of characters, which are not handled right by the normalizer method
    */
   private static Map<Integer, Replacement> buildReplacementMap() {
-    Map<Integer, Replacement> replacements = new HashMap<Integer, Replacement>();
+    Map<Integer, Replacement> replacements = new HashMap<>();
     replacements.put(0xc6, new Replacement("AE", "Ae"));
     replacements.put(0xe6, new Replacement("ae"));
     replacements.put(0xd0, new Replacement("D"));
@@ -195,7 +195,7 @@ public class StrgUtils {
    * @return a string with unique whitespace.
    */
   public static String removeDuplicateWhitespace(String s) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     int length = s.length();
     boolean isPreviousWhiteSpace = false;
     for (int i = 0; i < length; i++) {

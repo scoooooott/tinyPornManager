@@ -154,7 +154,7 @@ public class CacheMap<K, T> {
    */
   public void cleanup(boolean force) {
     long now = System.currentTimeMillis();
-    ArrayList<K> deleteKey = new ArrayList<K>((cacheMap.size() / 2) + 1);
+    ArrayList<K> deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
 
     readWriteLock.writeLock().lock();
     for (Map.Entry<K, CacheObject> entry : cacheMap.entrySet()) {

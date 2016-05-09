@@ -279,7 +279,7 @@ public enum Certification {
    * @return the certifications for the given country
    */
   public static List<Certification> getCertificationsforCountry(CountryCode country) {
-    List<Certification> certifications = new ArrayList<Certification>();
+    List<Certification> certifications = new ArrayList<>();
 
     for (Certification cert : Certification.values()) {
       if (cert.getCountry() == country) {

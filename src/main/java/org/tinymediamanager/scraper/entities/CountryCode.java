@@ -982,8 +982,8 @@ public enum CountryCode {
 
   ;
 
-  private static final Map<String, CountryCode>  alpha3Map  = new HashMap<String, CountryCode>();
-  private static final Map<Integer, CountryCode> numericMap = new HashMap<Integer, CountryCode>();
+  private static final Map<String, CountryCode>  alpha3Map  = new HashMap<>();
+  private static final Map<Integer, CountryCode> numericMap = new HashMap<>();
 
   static {
     for (CountryCode cc : values()) {

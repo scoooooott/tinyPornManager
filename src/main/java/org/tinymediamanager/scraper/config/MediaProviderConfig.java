@@ -132,7 +132,7 @@ public class MediaProviderConfig {
    * @return
    */
   public Map<String, String> getConfigKeyValuePairs() {
-    Map<String, String> result = new HashMap<String, String>();
+    Map<String, String> result = new HashMap<>();
     for (Map.Entry<String, MediaProviderConfigObject> entry : this.settings.entrySet()) {
       result.put(entry.getKey(), entry.getValue().getValue());
     }

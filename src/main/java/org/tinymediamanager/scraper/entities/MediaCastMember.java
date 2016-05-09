@@ -48,7 +48,7 @@ public class MediaCastMember {
   private String       providerDataUrl;
   private String       imageUrl;
   private CastType     type;
-  private List<String> fanart = new LinkedList<String>();
+  private List<String> fanart = new LinkedList<>();
 
   public MediaCastMember() {
   }
