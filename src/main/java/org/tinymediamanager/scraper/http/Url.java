@@ -247,22 +247,27 @@ public class Url {
       headersResponse = response.headers();
       responseCode = response.code();
       responseMessage = response.message();
+
+      // log any "connection problems"
+      if (responseCode < 200 || responseCode >= 400) {
+        LOGGER.error("bad http response: " + responseCode + " ; " + responseMessage);
+      }
+
       if (response.body().contentType() != null) { // could be null, see AnimeDB
         responseCharset = response.body().contentType().charset();
         responseContentType = response.body().contentType().toString();
       }
       is = response.body().byteStream();
-
     }
     catch (InterruptedIOException e) {
-      LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
+      LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
-      LOGGER.error("proxy or host not found/reachable", e);
+      LOGGER.error("proxy or host not found/reachable; " + e.getMessage(), e);
     }
     catch (Exception e) {
-      LOGGER.error("Exception getting url " + logUrl, e);
+      LOGGER.error("Exception getting url " + logUrl + " ; " + e.getMessage(), e);
     }
     return is;
   }
