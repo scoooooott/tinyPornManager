@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package org.tinymediamanager.scraper.mediaprovider;
 
-import net.xeoh.plugins.base.Plugin;
 import org.tinymediamanager.scraper.MediaProviderInfo;
+
+import net.xeoh.plugins.base.Plugin;
 
 /**
  * The interface IMediaProvider. This is the root interface for all tinyMediaManager metadata provider interfaces You should not implement this

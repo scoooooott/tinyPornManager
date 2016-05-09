@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.tinymediamanager.scraper.mediaprovider;
 
+import java.util.List;
+
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
-
-import java.util.List;
 
 /**
  * The Interface IMovieTrailerProvider. All scrapers providing movie trailers must implement this interface
