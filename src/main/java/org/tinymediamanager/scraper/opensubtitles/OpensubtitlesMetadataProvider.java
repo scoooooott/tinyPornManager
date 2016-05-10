@@ -156,6 +156,14 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
       // use IMDB Id without leading tt
       mapQuery.put("imdbid", options.getImdbId().replace("tt", ""));
       mapQuery.put("sublanguageid", LanguageUtils.getISO3BLanguage(options.getLanguage().getLanguage()));
+
+      if (options.getEpisode() > -1) {
+        mapQuery.put("episode", String.valueOf(options.getEpisode()));
+      }
+      if (options.getSeason() > -1) {
+        mapQuery.put("season", String.valueOf(options.getSeason()));
+      }
+
       try {
         Object[] arrayQuery = { mapQuery };
         Info info = new Info((Map<String, Object>) methodCall("SearchSubtitles", arrayQuery));

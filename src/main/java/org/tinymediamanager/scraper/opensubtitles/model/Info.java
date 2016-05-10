@@ -64,6 +64,8 @@ public class Info {
     public String subFormat        = "";
     public String subDownloadLink  = "";
     public String zipDownloadLink  = "";
+    public String season           = "";
+    public String episode          = "";
 
     @SuppressWarnings("unchecked")
     public MovieInfo(Object data) throws Exception {
@@ -75,6 +77,8 @@ public class Info {
       this.subFormat = (String) values.get("SubFormat");
       this.subDownloadLink = (String) values.get("SubDownloadLink");
       this.zipDownloadLink = (String) values.get("ZipDownloadLink");
+      this.season = (String) values.get("SeriesSeason");
+      this.episode = (String) values.get("SeriesEpisode");
     }
 
     @Override

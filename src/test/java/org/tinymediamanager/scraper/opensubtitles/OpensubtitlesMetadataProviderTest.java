@@ -117,7 +117,7 @@ public class OpensubtitlesMetadataProviderTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void testSearchSubtitles() {
+  public void testSearchMovieSubtitles() {
     try {
       // login
       TmmXmlRpcClient client = new TmmXmlRpcClient(new URL(SERVICE), USER_AGENT);
@@ -219,6 +219,42 @@ public class OpensubtitlesMetadataProviderTest {
       assertThat(info.getSeconds()).isGreaterThan(0);
       assertThat(info.getStatus()).isNotEmpty();
       assertThat(info.getMovieInfo()).isEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testSearchEpisodeSubtitles() {
+    try {
+      // login
+      TmmXmlRpcClient client = new TmmXmlRpcClient(new URL(SERVICE), USER_AGENT);
+      Map<String, Object> result = (Map<String, Object>) client.call("LogIn", new Object[] { "", "", "", USER_AGENT });
+      assertThat(result).isNotEmpty();
+      assertThat((String) result.get("token")).isNotEmpty();
+      String token = (String) result.get("token");
+
+      // search with query
+      Map<String, Object> mapQuery = new HashMap<>();
+      mapQuery.put("imdbid", "0944947"); // note without leading tt
+      mapQuery.put("season", "1");
+      mapQuery.put("episode", "1");
+      mapQuery.put("sublanguageid", "ger");
+
+      Object[] arrayQuery = new Object[] { mapQuery };
+      result = (Map<String, Object>) client.call("SearchSubtitles", new Object[] { token, arrayQuery });
+      assertThat(result).isNotEmpty();
+      Info info = new Info(result);
+      assertThat(info.getSeconds()).isGreaterThan(0);
+      assertThat(info.getStatus()).isNotEmpty();
+      assertThat(info.getMovieInfo()).isNotEmpty();
+      assertThat(info.getMovieInfo().get(0).movieKind).isEqualTo("episode");
+      assertThat(info.getMovieInfo().get(0).season).isEqualTo("1");
+      assertThat(info.getMovieInfo().get(0).episode).isEqualTo("1");
+      assertThat(info.getMovieInfo().get(0).subFormat).isNotEmpty();
+      assertThat(info.getMovieInfo().get(0).subDownloadLink).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
