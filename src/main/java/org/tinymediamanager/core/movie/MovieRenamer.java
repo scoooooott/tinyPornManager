@@ -758,7 +758,7 @@ public class MovieRenamer {
         for (MovieFanartNaming name : fanartnames) {
           String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
           if (newFanartName != null && !newFanartName.isEmpty()) {
-            String curExt = mf.getExtension();
+            String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
             if (curExt.equalsIgnoreCase("tbn")) {
               String cont = mf.getContainerFormat();
               if (cont.equalsIgnoreCase("PNG")) {
@@ -785,6 +785,7 @@ public class MovieRenamer {
       // *************
       case BANNER:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -797,6 +798,7 @@ public class MovieRenamer {
         break;
       case CLEARART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -809,6 +811,7 @@ public class MovieRenamer {
         break;
       case DISCART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-disc" + defaultMFext);
@@ -821,6 +824,7 @@ public class MovieRenamer {
         break;
       case LOGO:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -833,6 +837,7 @@ public class MovieRenamer {
         break;
       case THUMB:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);

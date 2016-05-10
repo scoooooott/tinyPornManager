@@ -477,6 +477,11 @@ public class TvShowRenamer {
       filename = StrgUtils.convertToAscii(filename, false);
     }
 
+    // don't write jpeg -> write jpg
+    if (mf.getExtension().equalsIgnoreCase("JPEG")) {
+      forcedExtension = "jpg";
+    }
+
     if (StringUtils.isNotBlank(forcedExtension)) {
       filename = filename + "." + forcedExtension; // add forced extension
     }

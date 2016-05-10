@@ -60,6 +60,11 @@ public class MediaEntityImageFetcherTask implements Runnable {
         return;
       }
 
+      // don't write jpeg -> write jpg
+      if (FilenameUtils.getExtension(filename).equalsIgnoreCase("JPEG")) {
+        filename = FilenameUtils.getBaseName(filename) + ".jpg";
+      }
+
       String oldFilename = null;
       try {
         // store old filename at the first image
