@@ -37,12 +37,15 @@ public class MediaInfoUtils {
           nativepath += "mac";
         }
 
-        // https://en.wikipedia.org/wiki/X86-64
-        if (Platform.is64Bit()) {
-          nativepath += "-x64";
-        }
-        else {
-          nativepath += "-x86";
+        // mac uses the same lib for 32 and 64 bit
+        if (!Platform.isMac()) {
+          // https://en.wikipedia.org/wiki/X86-64
+          if (Platform.is64Bit()) {
+            nativepath += "-x64";
+          }
+          else {
+            nativepath += "-x86";
+          }
         }
 
         // need that, since we cannot try and reload/unload a Class
