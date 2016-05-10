@@ -661,6 +661,7 @@ public class Settings extends AbstractModelObject {
     }
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
       movieSettings.addMovieSubtitleScraper(ms.getId());
+      tvShowSettings.addTvShowSubtitleScraper(ms.getId());
     }
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
       tvShowSettings.addTvShowArtworkScraper(ms.getId());

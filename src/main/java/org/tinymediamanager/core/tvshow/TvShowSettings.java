@@ -50,6 +50,7 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String      BAD_WORDS                   = "badWords";
   private final static String      ENTRY                       = "entry";
   private final static String      TV_SHOW_SKIP_FOLDERS        = "tvShowSkipFolders";
+  private final static String      TV_SHOW_SUBTITLE_SCRAPERS   = "tvShowSubtitleScrapers";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -66,6 +67,10 @@ public class TvShowSettings extends AbstractModelObject {
   @XmlElementWrapper(name = TV_SHOW_SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
   private final List<String>       tvShowSkipFolders           = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = TV_SHOW_SUBTITLE_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String>       tvShowSubtitleScrapers      = ObservableCollections.observableList(new ArrayList<String>());
 
   private String                   tvShowScraper               = Constants.TVDB;
   private boolean                  scrapeBestImage             = true;
@@ -301,5 +306,23 @@ public class TvShowSettings extends AbstractModelObject {
     TvShowEpisodeThumbNaming oldValue = this.tvShowEpisodeThumbFilename;
     this.tvShowEpisodeThumbFilename = newValue;
     firePropertyChange("tvShowEpisodeThumbFilename", oldValue, newValue);
+  }
+
+  public void addTvShowSubtitleScraper(String newValue) {
+    if (!tvShowSubtitleScrapers.contains(newValue)) {
+      tvShowSubtitleScrapers.add(newValue);
+      firePropertyChange(TV_SHOW_SUBTITLE_SCRAPERS, null, tvShowSubtitleScrapers);
+    }
+  }
+
+  public void removeTvShowSubtitleScraper(String newValue) {
+    if (tvShowSubtitleScrapers.contains(newValue)) {
+      tvShowSubtitleScrapers.remove(newValue);
+      firePropertyChange(TV_SHOW_SUBTITLE_SCRAPERS, null, tvShowSubtitleScrapers);
+    }
+  }
+
+  public List<String> getTvShowSubtitleScrapers() {
+    return tvShowSubtitleScrapers;
   }
 }

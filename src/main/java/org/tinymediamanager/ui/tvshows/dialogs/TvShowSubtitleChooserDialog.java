@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.dialogs;
+package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -40,7 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
@@ -49,12 +48,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.japura.gui.CheckComboBox;
 import org.japura.gui.model.ListCheckModel;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieSubtitleDownloadTask;
 import org.tinymediamanager.core.threading.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.tasks.TvShowSubtitleDownloadTask;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
@@ -67,7 +66,7 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
-import org.tinymediamanager.ui.movies.MovieSubtitleChooserModel;
+import org.tinymediamanager.ui.tvshows.TvShowSubtitleChooserModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -88,40 +87,39 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * 
  * @author Manuel Laggner
  */
-public class MovieSubtitleChooserDialog extends TmmDialog {
-  private static final long                                 serialVersionUID   = -3104541519073924724L;
+public class TvShowSubtitleChooserDialog extends TmmDialog {
+  private static final long                                  serialVersionUID   = -3104541519073924724L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                       BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                        BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final MovieList                                   movieList          = MovieList.getInstance();
-  private final Movie                                       movieToScrape;
-  private final MediaFile                                   fileToScrape;
-  private SearchTask                                        activeSearchTask   = null;
+  private final TvShowList                                   tvShowList         = TvShowList.getInstance();
+  private final TvShowEpisode                                episodeToScrape;
+  private final MediaFile                                    fileToScrape;
+  private SearchTask                                         activeSearchTask   = null;
 
-  private EventList<MovieSubtitleChooserModel>              subtitleEventList  = null;
-  private DefaultEventTableModel<MovieSubtitleChooserModel> subtitleTableModel = null;
+  private EventList<TvShowSubtitleChooserModel>              subtitleEventList  = null;
+  private DefaultEventTableModel<TvShowSubtitleChooserModel> subtitleTableModel = null;
 
-  private final boolean                                     inQueue;
-  private boolean                                           continueQueue      = true;
+  private final boolean                                      inQueue;
+  private boolean                                            continueQueue      = true;
 
   // UI components
-  private JTable                                            tableSubs;
-  private JTextField                                        tfSearchQuery;
-  private JComboBox<MediaLanguages>                         cbLanguage;
-  private CheckComboBox                                     cbScraper;
-  private JLabel                                            lblProgressAction;
-  private JProgressBar                                      progressBar;
+  private JTable                                             tableSubs;
+  private JComboBox<MediaLanguages>                          cbLanguage;
+  private CheckComboBox                                      cbScraper;
+  private JLabel                                             lblProgressAction;
+  private JProgressBar                                       progressBar;
 
-  public MovieSubtitleChooserDialog(Movie movie, MediaFile mediaFile, boolean inQueue) {
-    super(BUNDLE.getString("moviesubtitlechooser.search"), "movieSubtitleChooser"); //$NON-NLS-1$
+  public TvShowSubtitleChooserDialog(TvShowEpisode episode, MediaFile mediaFile, boolean inQueue) {
+    super(BUNDLE.getString("tvshowepisodesubtitlechooser.search"), "episodeSubtitleChooser"); //$NON-NLS-1$
     setBounds(5, 5, 712, 429);
 
-    this.movieToScrape = movie;
+    this.episodeToScrape = episode;
     this.fileToScrape = mediaFile;
     this.inQueue = inQueue;
 
     subtitleEventList = GlazedLists.threadSafeList(
-        new ObservableElementList<>(new BasicEventList<MovieSubtitleChooserModel>(), GlazedLists.beanConnector(MovieSubtitleChooserModel.class)));
+        new ObservableElementList<>(new BasicEventList<TvShowSubtitleChooserModel>(), GlazedLists.beanConnector(TvShowSubtitleChooserModel.class)));
     subtitleTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(subtitleEventList), new SubtitleTableFormat());
 
     initComponents();
@@ -138,23 +136,24 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     cbScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
 
     ListCheckModel model = cbScraper.getModel();
-    for (MediaScraper scraper : movieList.getAvailableSubtitleScrapers()) {
+    for (MediaScraper scraper : tvShowList.getAvailableSubtitleScrapers()) {
       model.addElement(scraper);
 
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers().contains(scraper.getId())) {
+      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(scraper.getId())) {
         model.addCheck(scraper);
       }
     }
 
     for (MediaLanguages language : MediaLanguages.values()) {
       cbLanguage.addItem(language);
-      if (language == MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage()) {
+      if (language == TvShowModuleManager.TV_SHOW_SETTINGS.getScraperLanguage()) {
         cbLanguage.setSelectedItem(language);
       }
     }
 
     // start initial search
-    searchSubtitle(fileToScrape.getFileAsPath().toFile(), movieToScrape.getImdbId(), tfSearchQuery.getText());
+    searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(), episodeToScrape.getSeason(),
+        episodeToScrape.getEpisode());
   }
 
   private void initComponents() {
@@ -164,62 +163,59 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     getContentPane().add(panelContent, BorderLayout.CENTER);
     panelContent.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("120dlu:grow"),
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("120dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-    final JLabel lblMovieTitle = new JLabel(movieToScrape.getTitle());
-    TmmFontHelper.changeFont(lblMovieTitle, 1.33, Font.BOLD);
-    panelContent.add(lblMovieTitle, "2, 2, 9, 1");
+    final JLabel lblEpisodeTitle = new JLabel(episodeToScrape.getTitle());
+    TmmFontHelper.changeFont(lblEpisodeTitle, 1.33, Font.BOLD);
+    panelContent.add(lblEpisodeTitle, "2, 2, 9, 1");
+
+    JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+    panelContent.add(lblSeasonT, "2, 4, right, default");
+
+    JLabel lblSeason = new JLabel(String.valueOf(episodeToScrape.getSeason()));
+    panelContent.add(lblSeason, "4, 4");
+
+    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+    panelContent.add(lblEpisodeT, "2, 6, right, default");
+
+    JLabel lblEpisode = new JLabel(String.valueOf(episodeToScrape.getEpisode()));
+    panelContent.add(lblEpisode, "4, 6");
 
     final JLabel lblMediaFileNameT = new JLabel(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
-    panelContent.add(lblMediaFileNameT, "2, 4, right, default");
+    panelContent.add(lblMediaFileNameT, "2, 8, right, default");
 
     final JLabel lblMediaFileName = new JLabel(fileToScrape.getFilename());
-    panelContent.add(lblMediaFileName, "4, 4, 7, 1");
-
-    final JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    panelContent.add(lblRuntimeT, "2, 6, right, default");
-
-    final JLabel lblRuntime = new JLabel(fileToScrape.getDurationHHMMSS());
-    panelContent.add(lblRuntime, "4, 6");
-
-    final JLabel lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-    panelContent.add(lblImdbIdT, "6, 6, right, default");
-
-    final JLabel lblImdbId = new JLabel(movieToScrape.getImdbId());
-    panelContent.add(lblImdbId, "8, 6");
+    panelContent.add(lblMediaFileName, "4, 8, 7, 1");
 
     final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
-    panelContent.add(lblScraperT, "2, 8, right, default");
+    panelContent.add(lblScraperT, "2, 10, right, default");
 
     cbScraper = new MediaScraperCheckComboBox();
-    panelContent.add(cbScraper, "4, 8, fill, default");
+    panelContent.add(cbScraper, "4, 10, fill, default");
 
-    tfSearchQuery = new JTextField(movieToScrape.getTitle());
-    panelContent.add(tfSearchQuery, "6, 8, 3, 1, fill, default");
-    tfSearchQuery.setColumns(10);
+    final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+    panelContent.add(lblLanguageT, "2, 12, right, default");
+
+    cbLanguage = new JComboBox<>();
+    panelContent.add(cbLanguage, "4, 12, fill, default");
 
     final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
     btnSearch.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        searchSubtitle(null, "", tfSearchQuery.getText());
+        searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(), episodeToScrape.getSeason(),
+            episodeToScrape.getEpisode());
       }
     });
-    panelContent.add(btnSearch, "10, 8");
-
-    final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
-    panelContent.add(lblLanguageT, "2, 10, right, default");
-
-    cbLanguage = new JComboBox<>();
-    panelContent.add(cbLanguage, "4, 10, fill, default");
+    panelContent.add(btnSearch, "8, 12");
 
     final JScrollPane scrollPaneSubs = new JScrollPane();
-    panelContent.add(scrollPaneSubs, "2, 12, 9, 1, fill, fill");
+    panelContent.add(scrollPaneSubs, "2, 14, 9, 1, fill, fill");
 
     tableSubs = new JTable(subtitleTableModel);
     scrollPaneSubs.setViewportView(tableSubs);
@@ -271,7 +267,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     }
   }
 
-  private void searchSubtitle(File file, String imdbId, String searchTerm) {
+  private void searchSubtitle(File file, String imdbId, int season, int episode) {
     if (activeSearchTask != null && !activeSearchTask.isDone()) {
       activeSearchTask.cancel();
     }
@@ -285,7 +281,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       }
     }
 
-    activeSearchTask = new SearchTask(file, imdbId, searchTerm, scrapers);
+    activeSearchTask = new SearchTask(file, imdbId, season, episode, scrapers);
     activeSearchTask.execute();
   }
 
@@ -325,16 +321,18 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
   private class SearchTask extends SwingWorker<Void, Void> {
     private File                       file;
-    private String                     searchTerm;
+    private int                        season;
+    private int                        episode;
     private String                     imdbId;
     private List<SubtitleSearchResult> searchResults;
     private MediaLanguages             language;
     private List<MediaScraper>         scrapers;
     boolean                            cancel;
 
-    public SearchTask(File file, String imdbId, String searchTerm, List<MediaScraper> scrapers) {
+    SearchTask(File file, String imdbId, int season, int episode, List<MediaScraper> scrapers) {
       this.file = file;
-      this.searchTerm = searchTerm;
+      this.season = season;
+      this.episode = episode;
       this.imdbId = imdbId;
       this.language = (MediaLanguages) cbLanguage.getSelectedItem();
       this.searchResults = new ArrayList<>();
@@ -344,16 +342,18 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + episodeToScrape.getTitle()); //$NON-NLS-1$
       for (MediaScraper scraper : scrapers) {
         try {
           IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
-          SubtitleSearchOptions options = new SubtitleSearchOptions(file, searchTerm);
+          SubtitleSearchOptions options = new SubtitleSearchOptions(file);
           options.setImdbId(imdbId);
           options.setLanguage(Locale.forLanguageTag(language.name()));
+          options.setSeason(season);
+          options.setEpisode(episode);
           searchResults.addAll(subtitleProvider.search(options));
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
 
@@ -373,11 +373,11 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         subtitleEventList.clear();
         if (searchResults == null || searchResults.size() == 0) {
           // display empty result
-          subtitleEventList.add(MovieSubtitleChooserModel.EMPTY_RESULT);
+          subtitleEventList.add(TvShowSubtitleChooserModel.EMPTY_RESULT);
         }
         else {
           for (SubtitleSearchResult result : searchResults) {
-            subtitleEventList.add(new MovieSubtitleChooserModel(result, language));
+            subtitleEventList.add(new TvShowSubtitleChooserModel(result, language));
             // get metadataProvider from searchresult
           }
         }
@@ -390,7 +390,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     }
   }
 
-  private static class SubtitleTableFormat implements AdvancedTableFormat<MovieSubtitleChooserModel> {
+  private static class SubtitleTableFormat implements AdvancedTableFormat<TvShowSubtitleChooserModel> {
     @Override
     public int getColumnCount() {
       return 3;
@@ -414,7 +414,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     }
 
     @Override
-    public Object getColumnValue(MovieSubtitleChooserModel model, int column) {
+    public Object getColumnValue(TvShowSubtitleChooserModel model, int column) {
       switch (column) {
         case 0:
           return IconManager.DOWNLOAD;
@@ -461,11 +461,11 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
       // click on the download button
       if (col == 0) {
         row = table.convertRowIndexToModel(row);
-        MovieSubtitleChooserModel model = subtitleEventList.get(row);
+        TvShowSubtitleChooserModel model = subtitleEventList.get(row);
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
           String filename = FilenameUtils.getBaseName(fileToScrape.getFilename()) + "." + model.getLanguage().name();
-          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), movieToScrape.getPathNIO().resolve(filename), movieToScrape);
+          DownloadTask task = new TvShowSubtitleDownloadTask(model.getDownloadUrl(), episodeToScrape.getPathNIO().resolve(filename), episodeToScrape);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }
       }

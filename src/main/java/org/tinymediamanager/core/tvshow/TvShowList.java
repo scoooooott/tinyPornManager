@@ -49,6 +49,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -776,6 +777,49 @@ public class TvShowList extends AbstractModelObject {
       });
       thread.start();
     }
+  }
+
+  /**
+   * all available subtitle scrapers.
+   *
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getAvailableSubtitleScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.SUBTITLE);
+    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    return availableScrapers;
+  }
+
+  /**
+   * get all default (specified via settings) subtitle scrapers
+   *
+   * @return the specified subtitle scrapers
+   */
+  public List<MediaScraper> getDefaultSubtitleScrapers() {
+    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+  }
+
+  /**
+   * get all specified subtitle scrapers.
+   *
+   * @param providerIds
+   *          the scrapers
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getSubtitleScrapers(List<String> providerIds) {
+    List<MediaScraper> subtitleScrapers = new ArrayList<>();
+
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
+      }
+      MediaScraper subtitleScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.SUBTITLE);
+      if (subtitleScraper != null) {
+        subtitleScrapers.add(subtitleScraper);
+      }
+    }
+
+    return subtitleScrapers;
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {
