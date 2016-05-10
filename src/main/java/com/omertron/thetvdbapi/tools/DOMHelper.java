@@ -20,6 +20,7 @@
 package com.omertron.thetvdbapi.tools;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -166,11 +167,21 @@ public class DOMHelper {
     while (!valid && (retryCount < RETRY_COUNT)) {
       retryCount++;
       try {
-        cachedUrl = new CachedUrl(url);
-        cachedUrl.addHeader("Accept-Encoding", "gzip"); // fix for issue #29
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(cachedUrl.getInputStream(), writer);
-        content = writer.toString();
+        // first try to let okhttp negotiate the content encoding
+        try {
+          cachedUrl = new CachedUrl(url);
+          StringWriter writer = new StringWriter();
+          IOUtils.copy(cachedUrl.getInputStream(), writer);
+          content = writer.toString();
+        }
+        catch (EOFException e) {
+          // if there was an exception like java.io.EOFException: source exhausted prematurely
+          cachedUrl = new CachedUrl(url);
+          cachedUrl.addHeader("Accept-Encoding", "identity");
+          StringWriter writer = new StringWriter();
+          IOUtils.copy(cachedUrl.getInputStream(), writer);
+          content = writer.toString();
+        }
         if (StringUtils.isNotBlank(content)) {
           // See if the ID is null
           if (!content.contains("<id>") || content.contains("<id></id>")) {
