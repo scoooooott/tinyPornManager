@@ -962,7 +962,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
-          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
+              && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(directory.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -988,7 +989,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
-        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
+            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(directory.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -1034,8 +1036,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir2++;
       // getFilename returns null on DS root!
-      if (dir.getFileName() != null && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
-          || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))) {
+      if (dir.getFileName() != null
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+              || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
+          || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
@@ -1101,7 +1105,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
-      if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))) {
+      if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
