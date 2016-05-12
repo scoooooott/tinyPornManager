@@ -96,6 +96,7 @@ public class DownloadTask extends TmmTask {
    * Set a special user agent which is needed for the download
    * 
    * @param userAgent
+   *          the user agent
    */
   public void setSpecialUserAgent(String userAgent) {
     this.userAgent = userAgent;

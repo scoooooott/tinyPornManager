@@ -78,6 +78,7 @@ public class ImageLoader {
    * Note that if <code>i</code> is already an ARGB BufferedImage, then it is immediately returned and this method does NOT duplicate it.
    * 
    * @param i
+   *          the source image to create the buffered image of
    * @return an ARGB BufferedImage identical to the argument.
    */
   public static BufferedImage createImage(Image i) {

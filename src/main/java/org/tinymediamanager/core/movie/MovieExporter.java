@@ -60,7 +60,7 @@ public class MovieExporter extends MediaEntityExporter {
    * 
    * @param moviesToExport
    *          list of movies
-   * @param pathToExport
+   * @param exportDir
    *          the path to export
    * @throws Exception
    *           the exception

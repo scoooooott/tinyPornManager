@@ -940,9 +940,12 @@ public class MovieRenamer {
    * if $Y replacement was empty, the complete optional tag will be empty.
    * 
    * @param s
+   *          the string to replace the optional variable for
    * @param movie
+   *          the movie holding all needed meta data
    * @param forFilename
-   * @return
+   *          do the logic for file or for folder names?
+   * @return the resulting string
    */
   private static String replaceOptionalVariable(String s, Movie movie, boolean forFilename) {
     Pattern regex = Pattern.compile("\\$.{1}");
@@ -1237,6 +1240,7 @@ public class MovieRenamer {
    * Unique true, when having at least a $T/$E-$Y combo or $I imdbId<br>
    * 
    * @param pattern
+   *          the pattern to check the uniqueness for
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {

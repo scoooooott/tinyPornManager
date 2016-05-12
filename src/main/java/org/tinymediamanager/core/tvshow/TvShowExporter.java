@@ -61,7 +61,7 @@ public class TvShowExporter extends MediaEntityExporter {
    * 
    * @param tvShowsToExport
    *          list of movies
-   * @param pathToExport
+   * @param exportDir
    *          the path to export
    * @throws Exception
    *           the exception

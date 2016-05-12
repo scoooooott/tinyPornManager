@@ -542,7 +542,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * it might be, that there "seems" to be a stacking marker in filename,<br>
    * but the file is not stacked itself. Just return correct string.
    * 
-   * @return
+   * @return the file name without the stacking info
    */
   public String getFilenameWithoutStacking() {
     if (stackingMarker.isEmpty()) {
@@ -715,7 +715,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
-
 
       miSnapshot = mediaInfo.snapshot();
     }
@@ -1186,6 +1185,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * explicit set the 3D format
    * 
    * @param video3DFormat
+   *          the 3D format
    */
   public void setVideo3DFormat(String video3DFormat) {
     this.video3DFormat = video3DFormat;
@@ -1598,6 +1598,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * maintaining its orginating directory
    * 
    * @param datasource
+   *          the data source (for the location of the backup folder)
    * @return true/false if successful
    */
   public boolean deleteSafely(String datasource) {

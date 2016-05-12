@@ -206,6 +206,7 @@ public class ParserUtils {
    * removes some weird number-stopwords like 1080, 720 etc.. to ease the regex parsing for season/episode
    * 
    * @param filename
+   *          the file name to remove the stop- and bad words for
    * @return the cleaned one
    */
   public static String removeStopwordsAndBadwordsFromTvEpisodeName(String filename) {

@@ -182,7 +182,7 @@ public class License {
   /**
    * gets the license file (from possible locations)
    * 
-   * @return
+   * @return the file containing the license or null
    */
   private static File getLicenseFile() {
     File f = new File(LICENSE_FILE); // app dir

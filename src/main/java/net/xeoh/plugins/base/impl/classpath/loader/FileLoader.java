@@ -52,11 +52,6 @@ public class FileLoader extends AbstractLoader {
     super(pluginManager);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see net.xeoh.plugins.base.impl.loader.AbstractLoader#handlesURI(java.net.URI)
-   */
   @Override
   public boolean handlesURI(URI uri) {
     if (uri != null && "file".equals(uri.getScheme()))
@@ -64,11 +59,6 @@ public class FileLoader extends AbstractLoader {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see net.xeoh.plugins.base.impl.loader.AbstractLoader#loadFrom(java.net.URI)
-   */
   @Override
   public void loadFrom(URI url, AddPluginsFromOption[] options) {
     // If not caught by the previous handler, handle files normally.

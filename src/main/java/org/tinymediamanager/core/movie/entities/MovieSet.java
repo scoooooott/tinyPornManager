@@ -191,6 +191,7 @@ public class MovieSet extends MediaEntity {
    * Inserts the movie into the right position of the list
    * 
    * @param movie
+   *          the movie to insert into the movie set
    */
   public void insertMovie(Movie movie) {
     synchronized (movies) {

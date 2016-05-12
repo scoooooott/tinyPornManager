@@ -109,7 +109,8 @@ public class TvShowEpisodeAndSeasonParser {
    * @param name
    *          the RELATIVE filename (like /dir2/seas1/fname.ext) from the TvShowRoot
    * @param showname
-   * @return result
+   *          the show name
+   * @return result the calculated result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
     LOGGER.debug("parsing '" + name + "'");

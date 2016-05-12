@@ -217,7 +217,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
   /**
    * when forced, do not ask for confirmation dialog.
    * 
-   * @return
+   * @return true/false
    */
   public boolean isForcedUpdate() {
     return forceUpdate;

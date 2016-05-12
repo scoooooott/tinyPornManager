@@ -142,6 +142,7 @@ public class MovieModuleManager implements ITmmModule {
    * dumps a whole movie to logfile
    * 
    * @param movie
+   *          the movie to make the dump for
    */
   public void dump(Movie movie) {
     try {

@@ -155,6 +155,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * create a deep copy of this episode
    * 
    * @param source
+   *          the source episode
    */
   public TvShowEpisode(TvShowEpisode source) {
     // the reference to the tv show and the media files are the only things we don't copy
@@ -245,7 +246,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   /**
    * is this Episode a MultiEpisode? (same files added to another episode?)
    * 
-   * @return
+   * @return true/false
    */
   public boolean isMultiEpisode() {
     return multiEpisode;

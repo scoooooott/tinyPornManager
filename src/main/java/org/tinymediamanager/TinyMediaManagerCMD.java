@@ -67,6 +67,7 @@ public class TinyMediaManagerCMD {
    * parse command line params
    * 
    * @param args
+   *          an array of params to parse
    */
   static void parseParams(String[] args) {
     for (String cmd : args) {

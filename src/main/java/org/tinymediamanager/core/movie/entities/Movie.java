@@ -754,9 +754,6 @@ public class Movie extends MediaEntity {
    * @param config
    *          the config
    */
-  /**
-   * @param metadata
-   */
   public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
     if (metadata == null) {
       LOGGER.error("metadata was null");

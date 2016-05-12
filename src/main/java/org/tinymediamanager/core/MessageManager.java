@@ -40,6 +40,7 @@ public class MessageManager {
    * Add a new listener
    * 
    * @param newListener
+   *          the new listener to be added
    */
   public void addListener(IMessageListener newListener) {
     synchronized (listeners) {
@@ -51,6 +52,7 @@ public class MessageManager {
    * Remove a listener
    * 
    * @param listener
+   *          the listener to be removed
    */
   public void removeListener(IMessageListener listener) {
     synchronized (listeners) {
@@ -62,6 +64,7 @@ public class MessageManager {
    * Push a message to all listeners
    * 
    * @param message
+   *          the message to push to all listeners
    */
   public void pushMessage(Message message) {
     for (IMessageListener listener : listeners) {

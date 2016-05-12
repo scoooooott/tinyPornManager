@@ -765,8 +765,11 @@ public class TvShowRenamer {
    * checks, if the pattern has a recommended structure (S/E numbers, title filled)<br>
    * when false, it might lead to some unpredictable renamings...
    * 
-   * @param pattern
-   * @return
+   * @param seasonPattern
+   *          the season pattern
+   * @param filePattern
+   *          the file pattern
+   * @return true/false
    */
   public static boolean isRecommended(String seasonPattern, String filePattern) {
     // count em
@@ -805,7 +808,9 @@ public class TvShowRenamer {
    * Count the amount of renamer tokens per group
    * 
    * @param pattern
+   *          the pattern to analyze
    * @param possibleValues
+   *          an array of possible values
    * @return 0, or amount
    */
   private static int count(String pattern, String[] possibleValues) {
@@ -822,8 +827,10 @@ public class TvShowRenamer {
    * Returns first position of any matched patterns
    * 
    * @param pattern
+   *          the pattern to get the position for
    * @param possibleValues
-   * @return
+   *          an array of all possible values
+   * @return the position of the first occurrence
    */
   private static int getPatternPos(String pattern, String[] possibleValues) {
     int pos = -1;

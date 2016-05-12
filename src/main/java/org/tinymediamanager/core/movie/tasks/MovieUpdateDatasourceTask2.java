@@ -357,8 +357,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * for SingleMovie or DiscFolders
-   * 
+   *
+   * @param dataSource
+   *          the data source
    * @param movieDir
+   *          the movie folder
+   * @param isDiscFolder
+   *          is the movie in a disc folder?
    */
   private void createSingleMovieFromDir(Path dataSource, Path movieDir, boolean isDiscFolder) {
     LOGGER.info("Parsing single movie directory: " + movieDir + " (are we a disc folder? " + isDiscFolder + ")");
@@ -535,7 +540,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   /**
    * more than one movie in dir? Then use that!
    * 
+   * @param dataSource
+   *          the data source
    * @param movieDir
+   *          the movie folder
    */
   private void createMultiMovieFromDir(Path dataSource, Path movieDir) {
     List<Path> allFiles = listFilesOnly(movieDir);
@@ -546,7 +554,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
    * more than one movie in dir? Then use that with already known files
    * 
    * @param dataSource
+   *          the data source
    * @param movieDir
+   *          the movie folder
    * @param allFiles
    *          just use this files, do not list again
    */
@@ -954,6 +964,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
    * returns ONLY regular files (NO folders, NO hidden) in specified dir, filtering against our badwords (NOT recursive)
    * 
    * @param directory
+   *          the folder to list the files for
    * @return list of files&folders
    */
   public static List<Path> listFilesOnly(Path directory) {
@@ -982,6 +993,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
    * returns all files & folders in specified dir, filtering against our badwords(NOT recursive)
    * 
    * @param directory
+   *          the folder to list the items for
    * @return list of files&folders
    */
   public static List<Path> listFilesAndDirs(Path directory) {

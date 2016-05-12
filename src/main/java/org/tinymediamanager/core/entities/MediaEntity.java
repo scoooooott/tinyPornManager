@@ -576,6 +576,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * From all MediaFiles of specified type, get the newest one (according to MI filedate)
    * 
    * @param type
+   *          the MediaFileType to get the MediaFile for
    * @return NULL or MF
    */
   public MediaFile getNewestMediaFilesOfType(MediaFileType type) {

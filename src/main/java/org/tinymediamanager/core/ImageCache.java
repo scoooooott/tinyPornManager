@@ -60,7 +60,8 @@ public class ImageCache {
   private static final Path   CACHE_DIR = Paths.get("cache/image");
 
   public enum CacheType {
-    FAST, SMOOTH
+    FAST,
+    SMOOTH
   }
 
   /**
@@ -474,10 +475,15 @@ public class ImageCache {
    * calculate a new size which fits into maxWidth and maxHeight
    * 
    * @param maxWidth
+   *          the maximum width of the result
    * @param maxHeight
+   *          the maximum height of the result
    * @param originalWidth
+   *          the width of the source
    * @param originalHeight
+   *          the height of the source
    * @param respectFactor
+   *          should we respect the aspect ratio?
    * @return the calculated new size
    */
   public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {

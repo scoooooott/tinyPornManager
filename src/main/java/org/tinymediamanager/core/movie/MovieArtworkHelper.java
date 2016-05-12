@@ -412,7 +412,9 @@ public class MovieArtworkHelper {
    * set the found artwork for the given movie
    * 
    * @param movie
+   *          the movie to set the artwork for
    * @param artwork
+   *          a list of all artworks to be set
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)

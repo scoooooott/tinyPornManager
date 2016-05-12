@@ -347,8 +347,6 @@ public class TvShowTreeModel implements TreeModel {
    * 
    * @param episode
    *          the episode
-   * @param season
-   *          the season
    */
   private void removeTvShowEpisode(TvShowEpisode episode) {
     synchronized (root) {

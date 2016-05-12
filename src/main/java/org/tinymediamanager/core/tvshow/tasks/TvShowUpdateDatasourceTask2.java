@@ -104,6 +104,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * Instantiates a new scrape task - to update a single datasource
    * 
    * @param datasource
+   *          the data source to start the task for
    */
   public TvShowUpdateDatasourceTask2(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
@@ -116,6 +117,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * Instantiates a new scrape task - to update given tv shows
    * 
    * @param tvShowFolders
+   *          a list of TV show folders to start the task for
    */
   public TvShowUpdateDatasourceTask2(List<Path> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));
@@ -750,6 +752,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
    * 
    * @param directory
+   *          the folder to list the files for
    * @return list of files&folders
    */
   public static List<Path> listFilesOnly(Path directory) {
@@ -778,6 +781,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * returns all files & folders in specified dir (NOT recursive)
    * 
    * @param directory
+   *          the folder to list the items for
    * @return list of files&folders
    */
   public static List<Path> listFilesAndDirs(Path directory) {

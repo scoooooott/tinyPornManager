@@ -984,6 +984,7 @@ public class Settings extends AbstractModelObject {
    * set Locale.toString() 5 char into settings
    * 
    * @param language
+   *          the language to be set
    */
   public void setLanguage(String language) {
     String oldValue = this.language;

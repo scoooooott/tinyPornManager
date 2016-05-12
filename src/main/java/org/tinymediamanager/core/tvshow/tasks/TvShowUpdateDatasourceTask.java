@@ -59,7 +59,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
-
+@Deprecated
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                       //$NON-NLS-1$
@@ -108,6 +108,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * Instantiates a new scrape task - to update a single datasource
    * 
    * @param datasource
+   *          the data source to start the task for
    */
   public TvShowUpdateDatasourceTask(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
@@ -120,6 +121,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * Instantiates a new scrape task - to update given tv shows
    * 
    * @param tvShowFolders
+   *          a list of TV show folders to start the task for
    */
   public TvShowUpdateDatasourceTask(List<File> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));

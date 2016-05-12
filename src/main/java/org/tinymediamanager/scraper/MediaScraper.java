@@ -132,7 +132,7 @@ public class MediaScraper {
    * 
    * @param type
    *          Movie or Tv
-   * @return
+   * @return a list of all found media scrapers
    */
   public static List<MediaScraper> getMediaScrapers(ScraperType type) {
     ArrayList<MediaScraper> scraper = new ArrayList<>();

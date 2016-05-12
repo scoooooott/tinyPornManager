@@ -138,8 +138,6 @@ public class MediaInfo implements Closeable {
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
    * @param infoKind
    *          Kind of information you want about the parameter (the text, the measure, the help...)
-   * @param searchKind
-   *          Where to look for the parameter
    */
   public String Get(StreamKind StreamKind, int StreamNumber, String parameter, InfoKind infoKind) {
     return Get(StreamKind, StreamNumber, parameter, infoKind, InfoKind.Name);
@@ -177,7 +175,7 @@ public class MediaInfo implements Closeable {
    *          Kind of Stream (general, video, audio...)
    * @param StreamNumber
    *          Stream number in Kind of Stream (first, second...)
-   * @param parameter
+   * @param parameterIndex
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
    * @return a string about information you search, an empty string if there is a problem
    */
@@ -192,7 +190,7 @@ public class MediaInfo implements Closeable {
    *          Kind of Stream (general, video, audio...)
    * @param StreamNumber
    *          Stream number in Kind of Stream (first, second...)
-   * @param parameter
+   * @param parameterIndex
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
    * @param infoKind
    *          Kind of information you want about the parameter (the text, the measure, the help...)
