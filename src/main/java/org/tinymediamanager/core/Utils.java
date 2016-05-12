@@ -569,11 +569,16 @@ public class Utils {
    */
   @SuppressWarnings("deprecation")
   private static String getEncProp(String prop) {
+    String property = System.getProperty(prop);
+    if (StringUtils.isBlank(property)) {
+      return "";
+    }
+
     try {
-      return URLEncoder.encode(System.getProperty(prop), "UTF-8");
+      return URLEncoder.encode(property, "UTF-8");
     }
     catch (UnsupportedEncodingException e) {
-      return URLEncoder.encode(System.getProperty(prop));
+      return URLEncoder.encode(property);
     }
   }
 
