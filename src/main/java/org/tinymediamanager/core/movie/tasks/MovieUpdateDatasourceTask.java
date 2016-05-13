@@ -66,6 +66,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Myron Boyle
  */
+@Deprecated
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
