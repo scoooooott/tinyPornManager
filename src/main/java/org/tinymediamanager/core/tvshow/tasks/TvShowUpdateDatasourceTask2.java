@@ -762,7 +762,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         if (Files.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(directory.toFile().getAbsolutePath())) {
+              && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -790,7 +790,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(directory.toFile().getAbsolutePath())) {
+            && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {

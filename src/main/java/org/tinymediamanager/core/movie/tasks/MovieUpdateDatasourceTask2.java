@@ -974,7 +974,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         if (Files.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(directory.toFile().getAbsolutePath())) {
+              && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -1002,7 +1002,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(directory.toFile().getAbsolutePath())) {
+            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
