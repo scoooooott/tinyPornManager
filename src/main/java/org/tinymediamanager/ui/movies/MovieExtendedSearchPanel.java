@@ -60,6 +60,7 @@ import org.tinymediamanager.ui.SmallTextFieldBorder;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.SmallComboBox;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
+import org.tinymediamanager.ui.movies.MovieExtendedComparator.OfflineMovie;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
@@ -129,6 +130,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterYear;
   private JLabel                       lblYear;
   private JSpinner                     spYear;
+  private JCheckBox                    cbFilterOffline;
+  private JLabel                       lblOffline;
+  private JComboBox                    cbOffline;
 
   /**
    * Instantiates a new movie extended search
@@ -156,14 +160,16 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, }));
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.UNRELATED_GAP_ROWSPEC, }));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
     add(lblFilterBy, "2, 2, 3, 1");
 
     cbFilterNewMovies = new JCheckBox("");
+    cbFilterNewMovies.setUI(CHECKBOX_UI); // $hide$
     cbFilterNewMovies.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.NEW_MOVIES));
     cbFilterNewMovies.setAction(actionFilter);
     add(cbFilterNewMovies, "2, 4");
@@ -425,24 +431,37 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
     setComponentFont(lblMissingSubtitles);
     add(lblMissingSubtitles, "4, 21, right, default");
-    cbFilterNewMovies.setUI(CHECKBOX_UI); // $hide$
+
+    cbFilterOffline = new JCheckBox("");
+    cbFilterOffline.setUI(CHECKBOX_UI); // $hide$
+    cbFilterOffline.setSelected(savedSearchOptions.containsKey(MovieSearchOptions.OFFLINE));
+    cbFilterOffline.setAction(actionFilter);
+    add(cbFilterOffline, "2, 22");
+
+    lblOffline = new JLabel(BUNDLE.getString("movieextendedsearch.offline")); //$NON-NLS-1$
+    setComponentFont(lblOffline);
+    add(lblOffline, "4, 22, right, default");
+
+    cbOffline = new SmallComboBox(OfflineMovie.values());
+    cbOffline.setAction(actionFilter);
+    add(cbOffline, "6, 22, fill, default");
 
     JSeparator separator = new JSeparator();
-    add(separator, "2, 22, 5, 1");
+    add(separator, "2, 24, 5, 1");
 
     JLabel lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
-    add(lblSortBy, "2, 24, 3, 1");
+    add(lblSortBy, "2, 26, 3, 1");
 
     cbSortColumn = new SmallComboBox(SortColumn.values());
     setComponentFont(cbSortColumn);
     cbSortColumn.setAction(actionSort);
-    add(cbSortColumn, "2, 26, 3, 1, fill, default");
+    add(cbSortColumn, "2, 28, 3, 1, fill, default");
 
     cbSortOrder = new SmallComboBox(SortOrder.values());
     setComponentFont(cbSortOrder);
     cbSortOrder.setAction(actionSort);
-    add(cbSortOrder, "6, 26, fill, default");
+    add(cbSortOrder, "6, 28, fill, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -711,6 +730,16 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       // filter by 3D
       if (cbFilterVideo3D.isSelected()) {
         searchOptions.put(MovieSearchOptions.VIDEO_3D, Boolean.TRUE);
+      }
+
+      // filter by offline
+      if (cbFilterOffline.isSelected()) {
+        if (cbOffline.getSelectedItem() == OfflineMovie.OFFLINE) {
+          searchOptions.put(MovieSearchOptions.OFFLINE, Boolean.TRUE);
+        }
+        else {
+          searchOptions.put(MovieSearchOptions.OFFLINE, Boolean.FALSE);
+        }
       }
 
       // apply the filter

@@ -533,6 +533,17 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
     }
 
+    // ***************************************************************
+    // check if that movie is an offline movie
+    // ***************************************************************
+    boolean isOffline = false;
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      if ("disc".equalsIgnoreCase(mf.getExtension())) {
+        isOffline = true;
+      }
+    }
+    movie.setOffline(isOffline);
+
     movie.reEvaluateStacking();
     movie.saveToDb();
   }
@@ -694,6 +705,15 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
       }
       addMediafilesToMovie(movie, foundMediaFiles);
+
+      // check if that movie is an offline movie
+      boolean isOffline = false;
+      for (MediaFile mediaFiles : movie.getMediaFiles(MediaFileType.VIDEO)) {
+        if ("disc".equalsIgnoreCase(mediaFiles.getExtension())) {
+          isOffline = true;
+        }
+      }
+      movie.setOffline(isOffline);
 
       if (movie.getMovieSet() != null) {
         LOGGER.debug("| movie is part of a movieset");

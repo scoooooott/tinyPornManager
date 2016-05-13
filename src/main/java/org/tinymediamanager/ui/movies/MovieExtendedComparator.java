@@ -108,6 +108,22 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
   }
 
+  public enum OfflineMovie {
+    OFFLINE(BUNDLE.getString("movie.offline")), //$NON-NLS-1$
+    NOT_OFFLINE(BUNDLE.getString("movie.online")); //$NON-NLS-1$
+
+    private String title;
+
+    private OfflineMovie(String title) {
+      this.title = title;
+    }
+
+    @Override
+    public String toString() {
+      return title;
+    }
+  }
+
   public MovieExtendedComparator(SortColumn sortColumn, boolean sortAscending) {
     this.sortColumn = sortColumn;
     this.sortAscending = sortAscending;

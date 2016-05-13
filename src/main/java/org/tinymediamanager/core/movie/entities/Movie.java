@@ -162,6 +162,10 @@ public class Movie extends MediaEntity {
   private UUID                                  movieSetId;
   @JsonProperty
   private MovieEdition                          edition                    = MovieEdition.NONE;
+  @JsonProperty
+  private boolean                               stacked                    = false;
+  @JsonProperty
+  private boolean                               offline                    = false;
 
   @JsonProperty
   private List<String>                          genres                     = new ArrayList<>(1);
@@ -182,8 +186,6 @@ public class Movie extends MediaEntity {
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
   private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
-  @JsonProperty
-  private boolean                               stacked                    = false;
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -1978,6 +1980,16 @@ public class Movie extends MediaEntity {
 
   public String getEditionAsString() {
     return edition.toString();
+  }
+
+  public void setOffline(boolean newValue) {
+    boolean oldValue = this.offline;
+    this.offline = newValue;
+    firePropertyChange("offline", oldValue, newValue);
+  }
+
+  public boolean isOffline() {
+    return offline;
   }
 
   public void setEdition(MovieEdition newValue) {

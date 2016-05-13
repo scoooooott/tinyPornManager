@@ -22,11 +22,14 @@ import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -77,6 +81,7 @@ public class MovieList extends AbstractModelObject {
   private static final Logger          LOGGER             = LoggerFactory.getLogger(MovieList.class);
   private static MovieList             instance;
 
+  private final MovieSettings          movieSettings;
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;
   private PropertyChangeListener       tagListener;
@@ -115,6 +120,8 @@ public class MovieList extends AbstractModelObject {
         }
       }
     };
+
+    movieSettings = MovieModuleManager.MOVIE_SETTINGS;
   }
 
   /**
@@ -489,7 +496,7 @@ public class MovieList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper metadataScraper) {
-    return searchMovie(searchTerm, movie, metadataScraper, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    return searchMovie(searchTerm, movie, metadataScraper, movieSettings.getScraperLanguage());
   }
 
   /**
@@ -520,7 +527,7 @@ public class MovieList extends AbstractModelObject {
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
       options.setLanguage(Locale.forLanguageTag(langu.name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setCountry(movieSettings.getCertificationCountry());
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
           options.setImdbId(movie.getImdbId());
@@ -558,7 +565,7 @@ public class MovieList extends AbstractModelObject {
       LOGGER.info("=====================================================");
       sr = provider.search(options);
       // if result is empty, try all scrapers
-      if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
+      if (sr.isEmpty() && movieSettings.isScraperFallback()) {
         for (MediaScraper ms : getAvailableMediaScrapers()) {
           if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())
               || ms.getMediaProvider().getProviderInfo().getName().startsWith("Kodi")) {
@@ -600,7 +607,7 @@ public class MovieList extends AbstractModelObject {
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(movieSettings.getMovieScraper(), ScraperType.MOVIE);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.MOVIE);
     }
@@ -652,7 +659,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getDefaultArtworkScrapers() {
-    return getArtworkScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers());
+    return getArtworkScrapers(movieSettings.getMovieArtworkScrapers());
   }
 
   /**
@@ -673,7 +680,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified trailer scrapers
    */
   public List<MediaScraper> getDefaultTrailerScrapers() {
-    return getTrailerScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers());
+    return getTrailerScrapers(movieSettings.getMovieTrailerScrapers());
   }
 
   /**
@@ -716,7 +723,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+    return getSubtitleScrapers(movieSettings.getMovieSubtitleScrapers());
   }
 
   /**
@@ -1119,6 +1126,70 @@ public class MovieList extends AbstractModelObject {
     for (Movie movie : new ArrayList<>(movieList)) {
       movie.clearTitleSortable();
     }
+  }
+
+  /**
+   * create a new offline movie with the given title in the specified data source
+   * 
+   * @param title
+   *          the given title
+   * @param datasource
+   *          the data source to create the offline movie in
+   */
+  public void addOfflineMovie(String title, String datasource) {
+    addOfflineMovie(title, datasource, MediaSource.UNKNOWN);
+  }
+
+  /**
+   * create a new offline movie with the given title in the specified data source
+   * 
+   * @param title
+   *          the given title
+   * @param datasource
+   *          the data source to create the offline movie in
+   * @param mediaSource
+   *          the media source to be set for the offline movie
+   */
+  public void addOfflineMovie(String title, String datasource, MediaSource mediaSource) {
+    // first crosscheck if the data source is in our settings
+    if (!movieSettings.getMovieDataSource().contains(datasource)) {
+      return;
+    }
+
+    // check if there is already an identical stub folder
+    int i = 1;
+    Path stubFolder = Paths.get(datasource, title);
+    while (Files.exists(stubFolder)) {
+      stubFolder = Paths.get(datasource, title + "(" + i++ + ")");
+    }
+
+    Path stubFile = stubFolder.resolve(title + ".disc");
+
+    // create the stub file
+    try {
+      Files.createDirectory(stubFolder);
+      Files.createFile(stubFile);
+    }
+    catch (IOException e) {
+      LOGGER.error("could not create stub file: " + e.getMessage());
+      return;
+    }
+
+    // create a movie and set it as MF
+    MediaFile mf = new MediaFile(stubFile);
+    mf.gatherMediaInformation();
+    Movie movie = new Movie();
+
+    movie.setTitle(title);
+    movie.setPath(stubFolder.toAbsolutePath().toString());
+    movie.setDataSource(datasource);
+    movie.setMediaSource(mediaSource);
+    movie.setDateAdded(new Date());
+    movie.addToMediaFiles(mf);
+    movie.setOffline(true);
+    movie.setNewlyAdded(true);
+    addMovie(movie);
+    movie.saveToDb();
   }
 
   private class MovieSetComparator implements Comparator<MovieSet> {

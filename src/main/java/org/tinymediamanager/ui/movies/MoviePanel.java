@@ -75,6 +75,7 @@ import org.tinymediamanager.ui.movies.actions.DebugDumpMovie;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
+import org.tinymediamanager.ui.movies.actions.MovieCreateOfflineAction;
 import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
@@ -283,6 +284,10 @@ public class MoviePanel extends JPanel {
     btnMediaInformation.setAction(actionMediaInformation);
     toolBar.add(btnMediaInformation);
 
+    JButton btnCreateOflline = new JButton();
+    btnCreateOflline.setAction(new MovieCreateOfflineAction(false));
+    toolBar.add(btnCreateOflline);
+
     textField = EnhancedTextField.createSearchTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(13);
@@ -460,6 +465,7 @@ public class MoviePanel extends JPanel {
 
     menu.add(new MovieFindMissingAction());
     menu.add(menuFindMissingMovies);
+    menu.add(new MovieCreateOfflineAction(true));
 
     menu.addSeparator();
 

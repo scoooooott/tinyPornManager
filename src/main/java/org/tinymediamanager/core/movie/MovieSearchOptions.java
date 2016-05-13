@@ -36,8 +36,25 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
  */
 public enum MovieSearchOptions {
   // hint: whenever a non String search option is added, you have to add it to the (un)marshaller below too
-  DUPLICATES, WATCHED, GENRE, CERTIFICATION, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA,
-  MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES, MEDIA_SOURCE, YEAR, VIDEO_3D;
+  DUPLICATES,
+  WATCHED,
+  GENRE,
+  CERTIFICATION,
+  CAST,
+  TAG,
+  MOVIESET,
+  VIDEO_FORMAT,
+  VIDEO_CODEC,
+  AUDIO_CODEC,
+  DATASOURCE,
+  MISSING_METADATA,
+  MISSING_ARTWORK,
+  MISSING_SUBTITLES,
+  NEW_MOVIES,
+  MEDIA_SOURCE,
+  YEAR,
+  VIDEO_3D,
+  OFFLINE;
 
   /*
    * helper classes for transforming entities to writeable strings
@@ -63,6 +80,7 @@ public enum MovieSearchOptions {
             case "MISSING_SUBTITLES":
             case "NEW_MOVIES":
             case "VIDEO_3D":
+            case "OFFLINE":
               options.put(MovieSearchOptions.valueOf(entry.key), Boolean.valueOf(entry.value));
               break;
 
