@@ -1,9 +1,10 @@
 package org.tinymediamanager.core;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -59,6 +60,23 @@ public class UtilsTest {
   }
 
   @Test
+  public void div() {
+    // Utils.trackEvent("test");
+
+    Path sub = Paths.get("cache\\image");
+    Path fil = Paths.get("C:\\Users\\User\\workspaceGIT\\tinyMediaManager\\cache\\image\\yyy");
+    System.out.println(sub.resolve(fil));
+  }
+
+  @Test
+  public void zip() {
+    Path zip = Paths.get("target", "test.zip");
+    Path add = Paths.get("pom.xml");
+    Utils.createZip(zip, add, "/pom.xml");
+    Utils.createZip(zip, add, "/sub/pom.xml");
+  }
+
+  @Test
   public void compareVersions() {
     assertEqual(true, StrgUtils.compareVersion("SVN", "SVN") < 0); // SVN always "lower"
     assertEqual(true, StrgUtils.compareVersion("SVN", "2.7.2") < 0); // SVN always "lower"
@@ -69,7 +87,7 @@ public class UtilsTest {
 
   @Test
   public void map() {
-    HashMap<String, Object> ids = new HashMap<String, Object>(0);
+    HashMap<String, Object> ids = new HashMap<>(0);
     ids.put("STR1", "str1");
     ids.put("STR2", "1000");
     ids.put("INT1", Integer.parseInt("1000"));
@@ -192,8 +210,8 @@ public class UtilsTest {
 
   @Test
   public void backup() {
-    Utils.createBackupFile(new File("movies.db"));
-    Utils.deleteOldBackupFile(new File("movies.db"), 15);
+    Utils.createBackupFile(Paths.get("pom.xml"));
+    Utils.deleteOldBackupFile(Paths.get("pom.xml"), 2);
   }
 
   @Test

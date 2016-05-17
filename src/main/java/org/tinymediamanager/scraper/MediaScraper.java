@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
@@ -131,12 +132,12 @@ public class MediaScraper {
    * 
    * @param type
    *          Movie or Tv
-   * @return
+   * @return a list of all found media scrapers
    */
   public static List<MediaScraper> getMediaScrapers(ScraperType type) {
-    ArrayList<MediaScraper> scraper = new ArrayList<MediaScraper>();
+    ArrayList<MediaScraper> scraper = new ArrayList<>();
 
-    ArrayList<IMediaProvider> plugins = new ArrayList<IMediaProvider>();
+    ArrayList<IMediaProvider> plugins = new ArrayList<>();
     switch (type) {
       case MOVIE:
         plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class));

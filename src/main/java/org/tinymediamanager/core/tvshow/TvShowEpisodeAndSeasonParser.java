@@ -109,7 +109,8 @@ public class TvShowEpisodeAndSeasonParser {
    * @param name
    *          the RELATIVE filename (like /dir2/seas1/fname.ext) from the TvShowRoot
    * @param showname
-   * @return result
+   *          the show name
+   * @return result the calculated result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
     LOGGER.debug("parsing '" + name + "'");
@@ -120,14 +121,14 @@ public class TvShowEpisodeAndSeasonParser {
     // remove problematic strings from name
     String filename = FilenameUtils.getName(name);
     String extension = FilenameUtils.getExtension(name);
-    String basename = ParserUtils.removeStopwordsFromTvEpisodeName(name);
+    String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(FilenameUtils.getBaseName(name));
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
       basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
       basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
     }
-    basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
+
     basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
 
     // parse foldername
@@ -140,6 +141,7 @@ public class TvShowEpisodeAndSeasonParser {
     basename = basename + " ";
 
     result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
+    result.name = basename;
 
     // season detection
     if (result.season == -1) {
@@ -214,7 +216,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse SxxEPyy 1-N
     regex = seasonMultiEP;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     int lastFoundEpisode = 0;
     while (m.find()) {
       int s = -1;
@@ -252,7 +254,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse XYY or XX_YY 1-N
     regex = seasonMultiEP2;
-    m = regex.matcher(basename);
+    m = regex.matcher(foldername + basename);
     while (m.find()) {
       int s = -1;
       try {
@@ -349,11 +351,8 @@ public class TvShowEpisodeAndSeasonParser {
           s = Integer.parseInt(m.group(1));
           result.date = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException | ParseException nfe) {
           // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        catch (ParseException e) {
-          // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s);
@@ -369,11 +368,8 @@ public class TvShowEpisodeAndSeasonParser {
           s = Integer.parseInt(m.group(3));
           result.date = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException | ParseException nfe) {
           // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        catch (ParseException e) {
-          // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s);
@@ -400,7 +396,7 @@ public class TvShowEpisodeAndSeasonParser {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // check if directory is the root of the tv show
-    if (directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
+    if (rootDirOfTvShow == null || rootDirOfTvShow.isEmpty() || directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
       return result;
     }
 
@@ -639,7 +635,7 @@ public class TvShowEpisodeAndSeasonParser {
   public static class EpisodeMatchingResult {
 
     public int           season              = -1;
-    public List<Integer> episodes            = new ArrayList<Integer>();
+    public List<Integer> episodes            = new ArrayList<>();
     public String        name                = "";
     public Date          date                = null;
     public boolean       stackingMarkerFound = false;

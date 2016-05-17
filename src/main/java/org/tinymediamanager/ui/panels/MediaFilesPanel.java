@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -41,16 +40,16 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ZebraJTable;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import org.tinymediamanager.ui.components.ZebraJTable;
 
 /**
  * The Class MediaFilesPanel.
@@ -72,7 +71,7 @@ public class MediaFilesPanel extends JPanel {
     this.mediaFileEventList = mediaFiles;
     setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("default:grow"), }));
 
-    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
+    mediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
     tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -207,7 +206,7 @@ public class MediaFilesPanel extends JPanel {
         // open the video file in the desired player
         if (mf.isVideo()) {
           try {
-            TmmUIHelper.openFile(mf.getFile());
+            TmmUIHelper.openFile(mf.getFileAsPath());
           }
           catch (Exception e) {
             LOGGER.error("open file", e);
@@ -217,7 +216,7 @@ public class MediaFilesPanel extends JPanel {
         }
         // open the graphic in the lightbox
         if (mf.isGraphic()) {
-          MainWindow.getActiveInstance().createLightbox(mf.getPath() + File.separator + mf.getFilename(), "");
+          MainWindow.getActiveInstance().createLightbox(mf.getFileAsPath().toString(), "");
         }
       }
     }

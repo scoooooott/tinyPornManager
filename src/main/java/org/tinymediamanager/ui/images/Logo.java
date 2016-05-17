@@ -1,8 +1,9 @@
 package org.tinymediamanager.ui.images;
 
-import static java.awt.Color.*;
-import static java.awt.MultipleGradientPaint.ColorSpaceType.*;
-import static java.awt.MultipleGradientPaint.CycleMethod.*;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.WHITE;
+import static java.awt.MultipleGradientPaint.ColorSpaceType.SRGB;
+import static java.awt.MultipleGradientPaint.CycleMethod.NO_CYCLE;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -91,7 +92,7 @@ public class Logo implements javax.swing.Icon {
   private static void paint(Graphics2D g) {
     Shape shape = null;
 
-    java.util.LinkedList<AffineTransform> transformations = new java.util.LinkedList<AffineTransform>();
+    java.util.LinkedList<AffineTransform> transformations = new java.util.LinkedList<>();
 
     //
     transformations.offer(g.getTransform());

@@ -49,7 +49,7 @@ public class Globals {
   /**
    * are we in our internal debug mode?
    * 
-   * @return
+   * @return true/false
    */
   public static boolean isDebug() {
     return DEBUG;

@@ -32,16 +32,19 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * The Class MovieSettings.
  */
 @XmlRootElement(name = "MovieSettings")
 public class MovieSettings extends AbstractModelObject {
+  public final static String              DEFAULT_RENAMER_FOLDER_PATTERN           = "$T { - $U }($Y)";
+  public final static String              DEFAULT_RENAMER_FILE_PATTERN             = "$T { - $U }($Y) $V $A";
+
   private final static String             PATH                                     = "path";
   private final static String             FILENAME                                 = "filename";
   private final static String             MOVIE_DATA_SOURCE                        = "movieDataSource";
@@ -69,6 +72,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String             MOVIE_SCRAPER                            = "movieScraper";
   private final static String             MOVIE_ARTWORK_SCRAPERS                   = "movieArtworkScrapers";
   private final static String             MOVIE_TRAILER_SCRAPERS                   = "movieTrailerScrapers";
+  private final static String             MOVIE_SUBTITLE_SCRAPERS                  = "movieSubtitleScrapers";
   private final static String             SCRAPE_BEST_IMAGE                        = "scrapeBestImage";
   private final static String             WRITE_ACTOR_IMAGES                       = "writeActorImages";
   private final static String             SCRAPER_LANGU                            = "scraperLanguage";
@@ -98,15 +102,15 @@ public class MovieSettings extends AbstractModelObject {
 
   @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<MovieNfoNaming>();
+  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<MoviePosterNaming>();
+  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<MovieFanartNaming>();
+  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = BAD_WORDS)
   @XmlElement(name = ENTRY)
@@ -120,6 +124,10 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String>              movieTrailerScrapers                     = ObservableCollections.observableList(new ArrayList<String>());
 
+  @XmlElementWrapper(name = MOVIE_SUBTITLE_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String>              movieSubtitleScrapers                    = ObservableCollections.observableList(new ArrayList<String>());
+
   private Map<MovieSearchOptions, Object> uiFilters                                = new HashMap<>();
 
   @XmlElementWrapper(name = MOVIE_SKIP_FOLDERS)
@@ -132,8 +140,9 @@ public class MovieSettings extends AbstractModelObject {
   private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
 
   // renamer
-  private String                          movieRenamerPathname                     = "$T ($Y)";
-  private String                          movieRenamerFilename                     = "$T ($Y) $V $A";
+  private boolean                         movieRenameAfterScrape                   = false;
+  private String                          movieRenamerPathname                     = DEFAULT_RENAMER_FOLDER_PATTERN;
+  private String                          movieRenamerFilename                     = DEFAULT_RENAMER_FILE_PATTERN;
   private boolean                         movieRenamerSpaceSubstitution            = false;
   private String                          movieRenamerSpaceReplacement             = "_";
   private boolean                         movieRenamerNfoCleanup                   = false;
@@ -230,7 +239,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieNfoNaming> getMovieNfoFilenames() {
-    return new ArrayList<MovieNfoNaming>(this.movieNfoFilenames);
+    return new ArrayList<>(this.movieNfoFilenames);
   }
 
   public void addMoviePosterFilename(MoviePosterNaming filename) {
@@ -253,7 +262,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MoviePosterNaming> getMoviePosterFilenames() {
-    return new ArrayList<MoviePosterNaming>(this.moviePosterFilenames);
+    return new ArrayList<>(this.moviePosterFilenames);
   }
 
   public void addMovieFanartFilename(MovieFanartNaming filename) {
@@ -276,7 +285,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieFanartNaming> getMovieFanartFilenames() {
-    return new ArrayList<MovieFanartNaming>(this.movieFanartFilenames);
+    return new ArrayList<>(this.movieFanartFilenames);
   }
 
   @XmlElement(name = IMAGE_POSTER_SIZE)
@@ -433,6 +442,16 @@ public class MovieSettings extends AbstractModelObject {
     this.movieRenamerSpaceSubstitution = movieRenamerSpaceSubstitution;
   }
 
+  public void setMovieRenameAfterScrape(boolean newValue) {
+    boolean oldValue = this.movieRenameAfterScrape;
+    this.movieRenameAfterScrape = newValue;
+    firePropertyChange("movieRenameAfterScrape", oldValue, newValue);
+  }
+
+  public boolean isMovieRenameAfterScrape() {
+    return this.movieRenameAfterScrape;
+  }
+
   @XmlElement(name = MOVIE_RENAMER_SPACE_REPLACEMENT)
   public String getMovieRenamerSpaceReplacement() {
     return movieRenamerSpaceReplacement;
@@ -501,6 +520,24 @@ public class MovieSettings extends AbstractModelObject {
     return movieTrailerScrapers;
   }
 
+  public void addMovieSubtitleScraper(String newValue) {
+    if (!movieSubtitleScrapers.contains(newValue)) {
+      movieSubtitleScrapers.add(newValue);
+      firePropertyChange(MOVIE_SUBTITLE_SCRAPERS, null, movieSubtitleScrapers);
+    }
+  }
+
+  public void removeMovieSubtitleScraper(String newValue) {
+    if (movieSubtitleScrapers.contains(newValue)) {
+      movieSubtitleScrapers.remove(newValue);
+      firePropertyChange(MOVIE_SUBTITLE_SCRAPERS, null, movieSubtitleScrapers);
+    }
+  }
+
+  public List<String> getMovieSubtitleScrapers() {
+    return movieSubtitleScrapers;
+  }
+
   public void addMovieSkipFolder(String newValue) {
     if (!movieSkipFolders.contains(newValue)) {
       movieSkipFolders.add(newValue);
@@ -530,7 +567,7 @@ public class MovieSettings extends AbstractModelObject {
     if (storeUiFilters) {
       return uiFilters;
     }
-    return new HashMap<MovieSearchOptions, Object>();
+    return new HashMap<>();
   }
 
   public void setStoreUiFilters(boolean newValue) {
@@ -601,7 +638,9 @@ public class MovieSettings extends AbstractModelObject {
    * Should we detect (and create) movies from directories containing more than one movie?
    * 
    * @return true/false
+   * @Deprecated obsolete with UDS2
    */
+  @Deprecated
   public boolean isDetectMovieMultiDir() {
     return detectMovieMultiDir;
   }
@@ -611,7 +650,9 @@ public class MovieSettings extends AbstractModelObject {
    * 
    * @param newValue
    *          true/false
+   * @Deprecated obsolete with UDS2
    */
+  @Deprecated
   public void setDetectMovieMultiDir(boolean newValue) {
     boolean oldValue = this.detectMovieMultiDir;
     this.detectMovieMultiDir = newValue;

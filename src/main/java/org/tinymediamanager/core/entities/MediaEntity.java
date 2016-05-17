@@ -15,11 +15,30 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.DATE_ADDED;
+import static org.tinymediamanager.core.Constants.DATE_ADDED_AS_STRING;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.NEWLY_ADDED;
+import static org.tinymediamanager.core.Constants.ORIGINAL_TITLE;
+import static org.tinymediamanager.core.Constants.PATH;
+import static org.tinymediamanager.core.Constants.PLOT;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.PRODUCTION_COMPANY;
+import static org.tinymediamanager.core.Constants.RATING;
+import static org.tinymediamanager.core.Constants.SCRAPED;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.TITLE;
+import static org.tinymediamanager.core.Constants.VOTES;
+import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,7 +59,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -55,7 +74,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The ids to store the ID from several metadataproviders. */
   @JsonProperty
-  protected HashMap<String, Object>    ids               = new HashMap<String, Object>(0);
+  protected HashMap<String, Object>    ids               = new HashMap<>(0);
 
   @JsonProperty
   protected String                     title             = "";
@@ -79,9 +98,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                    scraped           = false;
 
   @JsonProperty
-  private List<MediaFile>              mediaFiles        = new ArrayList<MediaFile>();
+  private List<MediaFile>              mediaFiles        = new ArrayList<>();
   @JsonProperty
-  protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<MediaFileType, String>();
+  protected Map<MediaFileType, String> artworkUrlMap     = new HashMap<>();
 
   protected boolean                    newlyAdded        = false;
   protected boolean                    duplicate         = false;
@@ -136,8 +155,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     return plot;
   }
 
+  /**
+   * @deprecated use getPathNIO()
+   */
+  @Deprecated
   public String getPath() {
     return path;
+  }
+
+  public Path getPathNIO() {
+    return Paths.get(path).toAbsolutePath();
   }
 
   /**
@@ -190,19 +217,19 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setTitle(String newValue) {
     String oldValue = title;
-    title = newValue.trim();
+    title = newValue == null ? "" : newValue.trim();
     firePropertyChange(TITLE, oldValue, newValue);
   }
 
   public void setOriginalTitle(String newValue) {
     String oldValue = originalTitle;
-    originalTitle = newValue.trim();
+    originalTitle = newValue == null ? "" : newValue.trim();
     firePropertyChange(ORIGINAL_TITLE, oldValue, newValue);
   }
 
   public void setPlot(String newValue) {
     String oldValue = plot;
-    plot = newValue.trim();
+    plot = newValue == null ? "" : newValue.trim();
     firePropertyChange(PLOT, oldValue, newValue);
   }
 
@@ -230,7 +257,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setYear(String newValue) {
     String oldValue = year;
-    year = newValue.trim();
+    year = newValue == null ? "" : newValue.trim();
     firePropertyChange(YEAR, oldValue, newValue);
   }
 
@@ -276,7 +303,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     return artworkUrlMap;
   }
 
-  public void setArtwork(File file, MediaFileType type) {
+  public void setArtwork(Path file, MediaFileType type) {
     List<MediaFile> images = getMediaFiles(type);
     MediaFile mediaFile = null;
     if (images.size() > 0) {
@@ -333,10 +360,14 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void setDateAddedFromMediaFile(MediaFile mf) {
     try {
-      BasicFileAttributes view = Files.readAttributes(mf.getFile().toPath(), BasicFileAttributes.class);
-      Date dateCreated = new Date(view.creationTime().toMillis());
-      if (dateCreated.compareTo(dateAdded) < 0) {
-        setDateAdded(dateCreated);
+      BasicFileAttributes view = Files.readAttributes(mf.getFileAsPath(), BasicFileAttributes.class);
+      Date creDat = new Date(view.creationTime().toMillis());
+      Date modDat = new Date(view.lastModifiedTime().toMillis());
+      if (creDat.compareTo(dateAdded) < 0) {
+        setDateAdded(creDat);
+      }
+      if (modDat.compareTo(dateAdded) < 0) {
+        setDateAdded(modDat);
       }
     }
     catch (Exception e) {
@@ -444,17 +475,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    readWriteLock.writeLock().lock();
-    this.mediaFiles.addAll(mediaFiles);
-    sortMediaFiles();
-    readWriteLock.writeLock().unlock();
-
-    // fire the right events
     for (MediaFile mediaFile : mediaFiles) {
-      fireAddedEventForMediaFile(mediaFile);
+      addToMediaFiles(mediaFile);
     }
-
-    firePropertyChange(MEDIA_FILES, null, mediaFiles);
   }
 
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
@@ -512,7 +535,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public List<MediaFile> getMediaFiles() {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     try {
       mf.addAll(mediaFiles);
@@ -532,7 +555,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return list of MF (may be empty, but never null)
    */
   public List<MediaFile> getMediaFiles(MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
       boolean match = false;
@@ -553,6 +576,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * From all MediaFiles of specified type, get the newest one (according to MI filedate)
    * 
    * @param type
+   *          the MediaFileType to get the MediaFile for
    * @return NULL or MF
    */
   public MediaFile getNewestMediaFilesOfType(MediaFileType type) {
@@ -579,7 +603,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return list of MF (may be empty, but never null)
    */
   public List<MediaFile> getMediaFilesExceptType(MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
       boolean match = false;
@@ -597,7 +621,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFiles() {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
+    List<MediaFile> changedMediafiles = new ArrayList<>(mediaFiles);
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
       mediaFiles.remove(i);
@@ -622,7 +646,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFilesExceptType(MediaFileType type) {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+    List<MediaFile> changedMediafiles = new ArrayList<>();
 
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
@@ -639,7 +663,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeAllMediaFiles(MediaFileType type) {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+    List<MediaFile> changedMediafiles = new ArrayList<>();
 
     readWriteLock.writeLock().lock();
     for (int i = mediaFiles.size() - 1; i >= 0; i--) {
@@ -655,9 +679,9 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  public void updateMediaFilePath(File oldPath, File newPath) {
+  public void updateMediaFilePath(Path oldPath, Path newPath) {
     readWriteLock.readLock().lock();
-    List<MediaFile> mfs = new ArrayList<MediaFile>(this.mediaFiles);
+    List<MediaFile> mfs = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
     for (MediaFile mf : mfs) {
       mf.replacePathForRenamedFolder(oldPath, newPath);
@@ -666,7 +690,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void gatherMediaFileInformation(boolean force) {
     readWriteLock.readLock().lock();
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(this.mediaFiles);
+    List<MediaFile> mediaFiles = new ArrayList<>(this.mediaFiles);
     readWriteLock.readLock().unlock();
     for (MediaFile mediaFile : mediaFiles) {
       mediaFile.gatherMediaInformation(force);

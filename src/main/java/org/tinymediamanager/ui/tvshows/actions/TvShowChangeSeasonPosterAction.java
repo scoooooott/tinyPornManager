@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.tvshows.actions;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -26,7 +25,7 @@ import javax.swing.AbstractAction;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;

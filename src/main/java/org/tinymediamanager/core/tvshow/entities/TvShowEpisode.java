@@ -15,9 +15,31 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.AIRED_EPISODE;
+import static org.tinymediamanager.core.Constants.AIRED_SEASON;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.DISPLAY_EPISODE;
+import static org.tinymediamanager.core.Constants.DISPLAY_SEASON;
+import static org.tinymediamanager.core.Constants.DVD_EPISODE;
+import static org.tinymediamanager.core.Constants.DVD_ORDER;
+import static org.tinymediamanager.core.Constants.DVD_SEASON;
+import static org.tinymediamanager.core.Constants.EPISODE;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TVDB;
+import static org.tinymediamanager.core.Constants.TV_SHOW;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +57,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -45,11 +66,12 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -86,6 +108,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonProperty
   private boolean                            disc                  = false;
   @JsonProperty
+  private boolean                            multiEpisode          = false;
+  @JsonProperty
   private boolean                            watched               = false;
   @JsonProperty
   private boolean                            subtitles             = false;
@@ -97,9 +121,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private MediaSource                        mediaSource           = MediaSource.UNKNOWN;                         // DVD, Bluray, etc
 
   @JsonProperty
-  private List<TvShowActor>                  actors                = new ArrayList<TvShowActor>(0);
+  private List<TvShowActor>                  actors                = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<String>(0);
+  private List<String>                       tags                  = new ArrayList<>(0);
 
   private TvShow                             tvShow                = null;
   private Date                               lastWatched           = null;
@@ -121,9 +145,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * (re)sets the path (when renaming tv show/season folder).<br>
    * Exchanges the beginning path from oldPath with newPath<br>
    */
-  public void replacePathForRenamedFolder(File oldPath, File newPath) {
-    String p = getPath();
-    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
+  public void replacePathForRenamedFolder(Path oldPath, Path newPath) {
+    String p = getPathNIO().toAbsolutePath().toString();
+    p = p.replace(oldPath.toAbsolutePath().toString(), newPath.toAbsolutePath().toString());
     setPath(p);
   }
 
@@ -131,6 +155,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * create a deep copy of this episode
    * 
    * @param source
+   *          the source episode
    */
   public TvShowEpisode(TvShowEpisode source) {
     // the reference to the tv show and the media files are the only things we don't copy
@@ -216,6 +241,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setDisc(boolean disc) {
     this.disc = disc;
+  }
+
+  /**
+   * is this Episode a MultiEpisode? (same files added to another episode?)
+   * 
+   * @return true/false
+   */
+  public boolean isMultiEpisode() {
+    return multiEpisode;
+  }
+
+  public void setMultiEpisode(boolean multiEpisode) {
+    this.multiEpisode = multiEpisode;
   }
 
   /**
@@ -358,7 +396,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the title for ui
    */
   public String getTitleForUi() {
-    StringBuffer titleForUi = new StringBuffer();
+    StringBuilder titleForUi = new StringBuilder();
     int episode = getEpisode();
     int season = getSeason();
     if (episode > 0 && season > 0) {
@@ -389,11 +427,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename;
-      if (Globals.settings.getTvShowSettings().isUseRenamerThumbPostfix()) {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
-      }
-      else {
-        filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+      switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+        case FILENAME_THUMB_POSTFIX:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
+          break;
+
+        case FILENAME_THUMB:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+          break;
+
+        case FILENAME_THUMB_TBN:
+          filename = FilenameUtils.getBaseName(mf.getFilename()) + ".tbn";
+          break;
+
+        default:
+          filename = "";
+          break;
       }
 
       if (StringUtils.isBlank(thumbUrl) || StringUtils.isBlank(filename)) {
@@ -421,21 +470,21 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     boolean writeNewThumb = false;
 
-    setTitle(metadata.getStringValue(MediaMetadata.TITLE));
-    setPlot(metadata.getStringValue(MediaMetadata.PLOT));
+    setTitle(metadata.getTitle());
+    setPlot(metadata.getPlot());
     setIds(metadata.getIds());
 
-    setAiredSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR, -1));
-    setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR, -1));
-    setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD, -1));
-    setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD, -1));
-    setFirstAired(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
-    setDisplaySeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DISPLAY, -1));
-    setDisplayEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DISPLAY, -1));
-    setRating(metadata.getFloatValue(MediaMetadata.RATING));
-    setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
+    setAiredSeason(metadata.getSeasonNumber());
+    setAiredEpisode(metadata.getEpisodeNumber());
+    setDvdSeason(metadata.getDvdSeasonNumber());
+    setDvdEpisode(metadata.getDvdEpisodeNumber());
+    setFirstAired(metadata.getReleaseDate());
+    setDisplaySeason(metadata.getDisplaySeasonNumber());
+    setDisplayEpisode(metadata.getDisplayEpisodeNumber());
+    setRating(metadata.getRating());
+    setVotes(metadata.getVoteCount());
 
-    List<TvShowActor> actors = new ArrayList<TvShowActor>();
+    List<TvShowActor> actors = new ArrayList<>();
     String director = "";
     String writer = "";
     for (MediaCastMember member : metadata.getCastMembers()) {
@@ -492,7 +541,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Write nfo.
    */
   public void writeNFO() {
-    List<TvShowEpisode> episodesInNfo = new ArrayList<TvShowEpisode>(1);
+    List<TvShowEpisode> episodesInNfo = new ArrayList<>(1);
 
     LOGGER.debug("write nfo: " + getTvShow().getTitle() + " S" + getSeason() + "E" + getEpisode());
     // worst case: multi episode in multiple files
@@ -589,7 +638,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the actors
    */
   public List<TvShowActor> getActors() {
-    List<TvShowActor> allActors = new ArrayList<TvShowActor>();
+    List<TvShowActor> allActors = new ArrayList<>();
     if (tvShow != null) {
       allActors.addAll(tvShow.getActors());
     }
@@ -598,7 +647,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   public List<TvShowActor> getGuests() {
-    List<TvShowActor> allActors = new ArrayList<TvShowActor>();
+    List<TvShowActor> allActors = new ArrayList<>();
     allActors.addAll(actors);
     return allActors;
   }
@@ -623,7 +672,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
-    List<TvShowActor> tvShowActors = new ArrayList<TvShowActor>();
+    List<TvShowActor> tvShowActors = new ArrayList<>();
 
     // tvShow is null while loading
     if (getTvShow() != null) {
@@ -685,11 +734,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the list
    */
   public static List<TvShowEpisode> parseNFO(File episodeFile) {
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
-
+    List<TvShowEpisode> episodes = new ArrayList<>(1);
     String filename = episodeFile.getParent() + File.separator + FilenameUtils.getBaseName(episodeFile.getName()) + ".nfo";
     episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(new File(filename)));
+    return episodes;
+  }
 
+  /**
+   * Parses the nfo.
+   * 
+   * @param episodeFile
+   *          the episode mediafile
+   * @return the list
+   */
+  public static List<TvShowEpisode> parseNFO(MediaFile episodeFile) {
+    List<TvShowEpisode> episodes = new ArrayList<>(1);
+    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(episodeFile.getFile()));
     return episodes;
   }
 
@@ -743,13 +803,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * 
    * @return the images to cache
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
+    List<Path> filesToCache = new ArrayList<>();
 
-    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 
@@ -793,7 +853,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {
-    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<>(1);
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -811,7 +871,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   public List<MediaFile> getMediaFilesContainingSubtitles() {
-    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
     // look in the first media file if it has subtitles
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -834,7 +894,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public boolean hasSubtitles() {
     if (this.subtitles) {
-      return true; // local ones found
+      return true; // can be set in GUI
+    }
+
+    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+      return true;
     }
 
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {

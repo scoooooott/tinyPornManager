@@ -49,8 +49,8 @@ public class TvShowBulkEditAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent arg0) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
-    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
-    List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+    List<TvShow> selectedTvShows = new ArrayList<>();
+    List<TvShowEpisode> selectedEpisodes = new ArrayList<>();
 
     for (Object obj : selectedObjects) {
       // display tv show editor

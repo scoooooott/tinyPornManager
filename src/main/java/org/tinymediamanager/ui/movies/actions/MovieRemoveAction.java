@@ -49,7 +49,7 @@ public class MovieRemoveAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // remove selected movies
     MovieList.getInstance().removeMovies(selectedMovies);

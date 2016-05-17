@@ -45,12 +45,12 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
 
   public TvShowReloadMediaInformationTask(List<TvShow> tvShows, List<TvShowEpisode> episodes) {
     super(BUNDLE.getString("tvshow.updatemediainfo"));
-    this.tvShows = new ArrayList<TvShow>(tvShows);
-    this.episodes = new ArrayList<TvShowEpisode>(episodes);
+    this.tvShows = new ArrayList<>(tvShows);
+    this.episodes = new ArrayList<>(episodes);
 
     // add the episodes from the shows
     for (TvShow show : this.tvShows) {
-      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+      for (TvShowEpisode episode : new ArrayList<>(show.getEpisodes())) {
         if (!this.episodes.contains(episode)) {
           this.episodes.add(episode);
         }

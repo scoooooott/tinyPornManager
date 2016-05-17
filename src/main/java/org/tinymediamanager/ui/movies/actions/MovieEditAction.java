@@ -53,7 +53,7 @@ public class MovieEditAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     for (Movie movie : selectedMovies) {
       MovieEditorDialog dialogMovieEditor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);

@@ -89,6 +89,7 @@ public class TmmOsUtils {
    * need to do add path to Classpath with reflection since the URLClassLoader.addURL(URL url) method is protected:
    * 
    * @param s
+   *          the path to be set
    * @throws Exception
    */
   public static void addPath(String s) throws Exception {

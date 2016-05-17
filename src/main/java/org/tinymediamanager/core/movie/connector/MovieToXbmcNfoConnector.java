@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,7 +51,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -62,6 +62,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
@@ -76,9 +77,9 @@ import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
@@ -195,7 +196,7 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = createInstanceFromMovie(movie);
 
     // and marshall it
-    List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+    List<MovieNfoNaming> nfonames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
@@ -215,12 +216,12 @@ public class MovieToXbmcNfoConnector {
    */
   static MovieToXbmcNfoConnector createInstanceFromMovie(Movie movie) {
     MovieToXbmcNfoConnector xbmc = null;
-    List<Object> unsupportedTags = new ArrayList<Object>();
+    List<Object> unsupportedTags = new ArrayList<>();
 
     // load existing NFO if possible
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
-      File file = mf.getFile();
-      if (file.exists()) {
+      Path file = mf.getFileAsPath();
+      if (Files.exists(file)) {
         try {
           xbmc = parseNFO(file);
         }
@@ -337,22 +338,22 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.actors.clear();
-    for (MovieActor cast : new ArrayList<MovieActor>(movie.getActors())) {
+    for (MovieActor cast : new ArrayList<>(movie.getActors())) {
       xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
     xbmc.producers.clear();
-    for (MovieProducer producer : new ArrayList<MovieProducer>(movie.getProducers())) {
+    for (MovieProducer producer : new ArrayList<>(movie.getProducers())) {
       xbmc.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
     xbmc.genres.clear();
-    for (MediaGenres genre : new ArrayList<MediaGenres>(movie.getGenres())) {
+    for (MediaGenres genre : new ArrayList<>(movie.getGenres())) {
       xbmc.genres.add(genre.toString());
     }
 
     xbmc.trailer = "";
-    for (MovieTrailer trailer : new ArrayList<MovieTrailer>(movie.getTrailer())) {
+    for (MovieTrailer trailer : new ArrayList<>(movie.getTrailer())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
         xbmc.trailer = prepareTrailerForXbmc(trailer);
@@ -365,7 +366,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.tags.clear();
-    for (String tag : new ArrayList<String>(movie.getTags())) {
+    for (String tag : new ArrayList<>(movie.getTags())) {
       xbmc.tags.add(tag);
     }
 
@@ -441,7 +442,7 @@ public class MovieToXbmcNfoConnector {
 
   static void writeNfoFiles(Movie movie, MovieToXbmcNfoConnector xbmc, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
-    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
+    List<MediaFile> newNfos = new ArrayList<>(1);
 
     for (MovieNfoNaming name : nfoNames) {
       try {
@@ -469,14 +470,14 @@ public class MovieToXbmcNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-        File f = new File(movie.getPath(), nfoFilename);
-        FileUtils.write(f, sb, "UTF-8");
+        Path f = movie.getPathNIO().resolve(nfoFilename);
+        Utils.writeStringToFile(f, sb.toString());
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
       }
       catch (Exception e) {
-        LOGGER.error("setData " + movie.getPath() + File.separator + nfoFilename, e);
+        LOGGER.error("setData " + movie.getPathNIO().resolve(nfoFilename), e);
         MessageManager.instance
             .pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -496,7 +497,7 @@ public class MovieToXbmcNfoConnector {
    *          the nfo filename
    * @return the newly created Movie instance
    */
-  public static Movie getData(File nfoFile) {
+  public static Movie getData(Path nfoFile) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
       return null;
@@ -535,7 +536,7 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPath());
+        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPathNIO());
       }
 
       if (StringUtils.isNotBlank(xbmc.thumb)) {
@@ -685,11 +686,11 @@ public class MovieToXbmcNfoConnector {
 
     }
     catch (UnmarshalException e) {
-      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e.getMessage());
+      LOGGER.error("getData " + nfoFile, e.getMessage());
       return null;
     }
     catch (Exception e) {
-      LOGGER.error("getData " + nfoFile.getAbsolutePath(), e);
+      LOGGER.error("getData " + nfoFile, e);
       return null;
     }
 
@@ -701,7 +702,7 @@ public class MovieToXbmcNfoConnector {
     return movie;
   }
 
-  protected static MovieToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+  protected static MovieToXbmcNfoConnector parseNFO(Path nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
@@ -711,12 +712,10 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = null;
     Reader in = null;
     try {
-      in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
     }
-    catch (UnmarshalException e) {
-    }
-    catch (IllegalArgumentException e) {
+    catch (UnmarshalException | IllegalArgumentException e) {
     }
     finally {
       if (in != null) {
@@ -726,7 +725,7 @@ public class MovieToXbmcNfoConnector {
 
     if (xbmc == null) {
       // now trying to parse it via string
-      String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+      String completeNFO = Utils.readFileToString(nfoFile).trim().replaceFirst("^([\\W]+)<", "<");
       Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
       if (matcher.find()) {
         completeNFO = matcher
@@ -753,7 +752,7 @@ public class MovieToXbmcNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;
@@ -771,7 +770,7 @@ public class MovieToXbmcNfoConnector {
   public List<Producer> getProducers() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in producers;
     // filter producers out
-    List<Producer> pureProducers = new ArrayList<Producer>();
+    List<Producer> pureProducers = new ArrayList<>();
     // for (Object obj : producers) {
     for (Object obj : actors) { // ugly hack for invalid xml structure
       if (obj instanceof Producer) {
@@ -887,8 +886,8 @@ public class MovieToXbmcNfoConnector {
 
     public Streamdetails() {
       video = new Video();
-      audio = new ArrayList<Audio>();
-      subtitle = new ArrayList<Subtitle>();
+      audio = new ArrayList<>();
+      subtitle = new ArrayList<>();
     }
   }
 

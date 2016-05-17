@@ -68,12 +68,11 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -414,8 +413,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               // fanart
               {
                 ImageLabel lblImage = new ImageLabel();
-                List<String> extrathumbs = new ArrayList<String>();
-                List<String> extrafanarts = new ArrayList<String>();
+                List<String> extrathumbs = new ArrayList<>();
+                List<String> extrafanarts = new ArrayList<>();
                 ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkScrapers, lblImage, extrathumbs,
                     extrafanarts, MediaType.TV_SHOW);
                 dialog.setVisible(true);
@@ -434,9 +433,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
               }
             }
             else {
-              // get artwork directly from provider
-              List<MediaArtwork> artwork = model.getArtwork(tvShowToScrape);
-              tvShowToScrape.setArtwork(artwork, scraperMetadataConfig);
+              // get artwork asynchronous
+              model.startArtworkScrapeTask(tvShowToScrape, scraperMetadataConfig);
             }
           }
 

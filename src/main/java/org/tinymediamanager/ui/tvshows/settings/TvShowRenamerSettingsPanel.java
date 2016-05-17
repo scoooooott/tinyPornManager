@@ -89,7 +89,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
-  private List<String>                    spaceReplacement = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private List<String>                    spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
   private EventList<TvShowRenamerExample> exampleEventList = null;
 
   /**
@@ -118,9 +118,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
             new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
                 RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    exampleEventList = GlazedLists.threadSafeList(new ObservableElementList<TvShowRenamerExample>(new BasicEventList<TvShowRenamerExample>(),
-        GlazedLists.beanConnector(TvShowRenamerExample.class)));
-    DefaultEventTableModel<TvShowRenamerExample> exampleTableModel = new DefaultEventTableModel<TvShowRenamerExample>(
+    exampleEventList = GlazedLists.threadSafeList(
+        new ObservableElementList<>(new BasicEventList<TvShowRenamerExample>(), GlazedLists.beanConnector(TvShowRenamerExample.class)));
+    DefaultEventTableModel<TvShowRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
         GlazedListsSwing.swingThreadProxyList(exampleEventList), new TvShowRenamerExampleTableFormat());
 
     // the panel renamer
@@ -296,7 +296,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
   private void buildAndInstallTvShowArray() {
     cbTvShowForPreview.removeAllItems();
-    List<TvShow> allTvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
+    List<TvShow> allTvShows = new ArrayList<>(TvShowList.getInstance().getTvShows());
     Collections.sort(allTvShows, new TvShowComparator());
     for (TvShow tvShow : allTvShows) {
       TvShowPreviewContainer container = new TvShowPreviewContainer();

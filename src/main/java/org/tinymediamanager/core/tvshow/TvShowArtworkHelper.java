@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -192,7 +193,7 @@ public class TvShowArtworkHelper {
         }
         is.close();
 
-        ImageCache.invalidateCachedImage(filename);
+        ImageCache.invalidateCachedImage(Paths.get(filename));
         if (tvShowSeason != null) {
           tvShowSeason.setPoster(new File(filename));
         }

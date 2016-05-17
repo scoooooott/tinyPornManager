@@ -48,7 +48,7 @@ public class TvShowChangeToAiredOrderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent arg0) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
-    List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+    List<TvShowEpisode> selectedEpisodes = new ArrayList<>();
 
     for (Object obj : selectedObjects) {
       // display tv show editor

@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * The class EmptyFileException. It is thrown when we try to work with an empty file
@@ -25,13 +25,13 @@ import java.io.File;
 public class EmptyFileException extends Exception {
   private static final long serialVersionUID = -7369038801049706860L;
 
-  private File              file;
+  private Path              file;
 
-  public EmptyFileException(File file) {
+  public EmptyFileException(Path file) {
     this.file = file;
   }
 
-  public File getFile() {
+  public Path getFile() {
     return this.file;
   }
 }

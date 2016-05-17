@@ -108,6 +108,22 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
   }
 
+  public enum OfflineMovie {
+    OFFLINE(BUNDLE.getString("movie.offline")), //$NON-NLS-1$
+    NOT_OFFLINE(BUNDLE.getString("movie.online")); //$NON-NLS-1$
+
+    private String title;
+
+    private OfflineMovie(String title) {
+      this.title = title;
+    }
+
+    @Override
+    public String toString() {
+      return title;
+    }
+  }
+
   public MovieExtendedComparator(SortColumn sortColumn, boolean sortAscending) {
     this.sortColumn = sortColumn;
     this.sortAscending = sortAscending;
@@ -139,8 +155,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case WATCHED:
-          Boolean watched1 = Boolean.valueOf(movie1.isWatched());
-          Boolean watched2 = Boolean.valueOf(movie2.isWatched());
+          Boolean watched1 = movie1.isWatched();
+          Boolean watched2 = movie2.isWatched();
           sortOrder = watched1.compareTo(watched2);
           break;
 
@@ -149,14 +165,14 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case RUNTIME:
-          Integer runtime1 = Integer.valueOf(movie1.getRuntime());
-          Integer runtime2 = Integer.valueOf(movie2.getRuntime());
+          Integer runtime1 = movie1.getRuntime();
+          Integer runtime2 = movie2.getRuntime();
           sortOrder = runtime1.compareTo(runtime2);
           break;
 
         case VIDEO_BITRATE:
-          Integer videoBitrate1 = Integer.valueOf(movie1.getMediaInfoVideoBitrate());
-          Integer videoBitrate2 = Integer.valueOf(movie2.getMediaInfoVideoBitrate());
+          Integer videoBitrate1 = movie1.getMediaInfoVideoBitrate();
+          Integer videoBitrate2 = movie2.getMediaInfoVideoBitrate();
           sortOrder = videoBitrate1.compareTo(videoBitrate2);
           break;
       }

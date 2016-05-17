@@ -19,7 +19,8 @@ import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,8 +31,13 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -42,6 +48,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -54,8 +61,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
-
-;
 
 /**
  * The Class TvShowSettingsPanel.
@@ -76,6 +81,8 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxTraktTv;
   private final JButton               btnClearTraktTvShows;
   private JCheckBox                   cbDvdOrder;
+  private JTextField                  tfAddBadword;
+  private JList<String>               listBadWords;
   private JList<String>               listDatasources;
   private JList<String>               listExclude;
 
@@ -84,17 +91,113 @@ public class TvShowSettingsPanel extends ScrollablePanel {
    */
   public TvShowSettingsPanel() {
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("default:grow(3)"), }));
+
+    JPanel panelGeneral = new JPanel();
+    panelGeneral.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.general"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelGeneral, "2, 2, fill, fill");
+    panelGeneral.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+
+    lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport"));
+    panelGeneral.add(lblImageCache, "2, 2");
+
+    chckbxImageCache = new JCheckBox("");
+    panelGeneral.add(chckbxImageCache, "4, 2");
+
+    lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+    panelGeneral.add(lblImageCacheHint, "6, 2, 3, 1");
+    TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
+
+    final JSeparator separator = new JSeparator();
+    panelGeneral.add(separator, "2, 4, 7, 1");
+
+    JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
+    panelGeneral.add(lblTraktTv, "2, 6");
+
+    chckbxTraktTv = new JCheckBox("");
+    panelGeneral.add(chckbxTraktTv, "4, 6");
+    btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
+    btnClearTraktTvShows.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.cleartvshows.hint"),
+            BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+        if (confirm == JOptionPane.YES_OPTION) {
+          TmmTask task = new ClearTraktTvTask(false, true);
+          TmmTaskManager.getInstance().addUnnamedTask(task);
+        }
+      }
+    });
+    panelGeneral.add(btnClearTraktTvShows, "6, 6");
+
+    JPanel panelBadWords = new JPanel();
+    panelBadWords.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.tvshow.badwords"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelBadWords, "4, 2, fill, fill");
+    panelBadWords.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), }));
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JTextPane txtpntBadWordsHint = new JTextPane();
+    txtpntBadWordsHint.setBackground(UIManager.getColor("Panel.background"));
+    txtpntBadWordsHint.setText(BUNDLE.getString("Settings.tvshow.badwords.hint")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(txtpntBadWordsHint, 0.833);
+    panelBadWords.add(txtpntBadWordsHint, "2, 2, 3, 1, fill, default");
+
+    JScrollPane scpBadWords = new JScrollPane();
+    panelBadWords.add(scpBadWords, "2, 4, fill, fill");
+
+    listBadWords = new JList<>();
+    scpBadWords.setViewportView(listBadWords);
+
+    JButton btnRemoveBadWord = new JButton(IconManager.LIST_REMOVE);
+    btnRemoveBadWord.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemoveBadWord.setMargin(new Insets(2, 2, 2, 2));
+    btnRemoveBadWord.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listBadWords.getSelectedIndex();
+        if (row != -1) {
+          String badWord = TvShowModuleManager.TV_SHOW_SETTINGS.getBadWords().get(row);
+          TvShowModuleManager.TV_SHOW_SETTINGS.removeBadWord(badWord);
+        }
+      }
+    });
+    panelBadWords.add(btnRemoveBadWord, "4, 4, default, bottom");
+
+    tfAddBadword = new JTextField();
+    tfAddBadword.setColumns(10);
+    panelBadWords.add(tfAddBadword, "2, 6, fill, default");
+
+    JButton btnAddBadWord = new JButton(IconManager.LIST_ADD);
+    btnAddBadWord.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAddBadWord.setMargin(new Insets(2, 2, 2, 2));
+    btnAddBadWord.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfAddBadword.getText())) {
+          TvShowModuleManager.TV_SHOW_SETTINGS.addBadWord(tfAddBadword.getText());
+          tfAddBadword.setText("");
+        }
+      }
+    });
+    panelBadWords.add(btnAddBadWord, "4, 6");
 
     {
       JPanel panelTvShowDataSources = new JPanel();
 
       panelTvShowDataSources
           .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.tvshowdatasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-      add(panelTvShowDataSources, "2, 2, fill, top");
+      add(panelTvShowDataSources, "2, 4, 3, 1, fill, top");
       panelTvShowDataSources.setLayout(new FormLayout(
           new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
               FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
@@ -102,8 +205,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
               FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
               FormSpecs.RELATED_GAP_COLSPEC, },
           new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("160px:grow"),
-              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, }));
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblDataSource = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
       panelTvShowDataSources.add(lblDataSource, "2, 2, 5, 1");
@@ -127,9 +229,9 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAdd.setMargin(new Insets(2, 2, 2, 2));
       btnAdd.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
-          File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
-          if (file != null && file.exists() && file.isDirectory()) {
-            settings.getTvShowSettings().addTvShowDataSources(file.getAbsolutePath());
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+          if (file != null && Files.isDirectory(file)) {
+            settings.getTvShowSettings().addTvShowDataSources(file.toAbsolutePath().toString());
           }
         }
       });
@@ -176,9 +278,9 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAddSkipFolder.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
-          if (file != null && file.exists() && file.isDirectory()) {
-            settings.getTvShowSettings().addTvShowSkipFolder(file.getAbsolutePath());
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+          if (file != null && Files.isDirectory(file)) {
+            settings.getTvShowSettings().addTvShowSkipFolder(file.toAbsolutePath().toString());
           }
         }
       });
@@ -204,43 +306,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
 
       cbDvdOrder = new JCheckBox("");
       panelTvShowDataSources.add(cbDvdOrder, "4, 6");
-
-      lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      panelTvShowDataSources.add(lblImageCache, "2, 8, right, default");
-
-      chckbxImageCache = new JCheckBox("");
-      panelTvShowDataSources.add(chckbxImageCache, "4, 8");
-
-      lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
-      panelTvShowDataSources.add(lblImageCacheHint, "6, 8, 9, 1");
     }
-
-    JPanel panel = new JPanel();
-    add(panel, "2, 4, fill, fill");
-    panel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-    panel.add(lblTraktTv, "2, 2");
-
-    chckbxTraktTv = new JCheckBox("");
-    panel.add(chckbxTraktTv, "4, 2");
-    btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
-    btnClearTraktTvShows.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.cleartvshows.hint"),
-            BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
-        if (confirm == JOptionPane.YES_OPTION) {
-          TmmTask task = new ClearTraktTvTask(false, true);
-          TmmTaskManager.getInstance().addUnnamedTask(task);
-        }
-      }
-    });
-    panel.add(btnClearTraktTvShows, "6, 2");
 
     initDataBindings();
 
@@ -272,5 +338,10 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, listExclude);
     jListBinding_1.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowSettings.badWords");
+    JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, listBadWords);
+    jListBinding_2.bind();
   }
 }

@@ -33,7 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 
 /**
  * The class TvShowExtendedMatcher. For search&filter TV shows
@@ -333,11 +333,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterText(TvShow tvShow, String filterText) {
-    return matchesText(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), filterText);
+    return matchesText(tvShow, new ArrayList<>(tvShow.getEpisodes()), filterText);
   }
 
   private boolean filterText(TvShowSeason season, String filterText) {
-    return matchesText(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), filterText);
+    return matchesText(season.getTvShow(), new ArrayList<>(season.getEpisodes()), filterText);
   }
 
   private boolean filterText(TvShowEpisode episode, String filterText) {
@@ -352,11 +352,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterMediaSource(TvShow tvShow, MediaSource mediaSource) {
-    return matchesMediaSource(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), mediaSource);
+    return matchesMediaSource(tvShow, new ArrayList<>(tvShow.getEpisodes()), mediaSource);
   }
 
   private boolean filterMediaSource(TvShowSeason season, MediaSource mediaSource) {
-    return matchesMediaSource(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), mediaSource);
+    return matchesMediaSource(season.getTvShow(), new ArrayList<>(season.getEpisodes()), mediaSource);
   }
 
   private boolean filterMediaSource(TvShowEpisode episode, MediaSource mediaSource) {
@@ -364,11 +364,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterCrew(TvShow tvShow, String filterText) {
-    return matchesCrew(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), filterText);
+    return matchesCrew(tvShow, new ArrayList<>(tvShow.getEpisodes()), filterText);
   }
 
   private boolean filterCrew(TvShowSeason season, String filterText) {
-    return matchesCrew(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), filterText);
+    return matchesCrew(season.getTvShow(), new ArrayList<>(season.getEpisodes()), filterText);
   }
 
   private boolean filterCrew(TvShowEpisode episode, String filterText) {
@@ -376,11 +376,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterMissingMetadata(TvShow tvShow) {
-    return matchesMissingMetadata(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+    return matchesMissingMetadata(tvShow, new ArrayList<>(tvShow.getEpisodes()));
   }
 
   private boolean filterMissingMetadata(TvShowSeason season) {
-    return matchesMissingMetadata(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()));
+    return matchesMissingMetadata(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
   }
 
   private boolean filterMissingMetadata(TvShowEpisode episode) {
@@ -388,11 +388,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterMissingArtwork(TvShow tvShow) {
-    return matchesMissingArtwork(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+    return matchesMissingArtwork(tvShow, new ArrayList<>(tvShow.getEpisodes()));
   }
 
   private boolean filterMissingArtwork(TvShowSeason season) {
-    return matchesMissingArtwork(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()));
+    return matchesMissingArtwork(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
   }
 
   private boolean filterMissingArtwork(TvShowEpisode episode) {
@@ -400,11 +400,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterMissingSubtitles(TvShow tvShow) {
-    return matchesMissingSubtitles(new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+    return matchesMissingSubtitles(new ArrayList<>(tvShow.getEpisodes()));
   }
 
   private boolean filterMissingSubtitles(TvShowSeason season) {
-    return matchesMissingSubtitles(new ArrayList<TvShowEpisode>(season.getEpisodes()));
+    return matchesMissingSubtitles(new ArrayList<>(season.getEpisodes()));
   }
 
   private boolean filterMissingSubtitles(TvShowEpisode episode) {
@@ -424,11 +424,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterWatched(TvShow tvShow, Boolean watched) {
-    return matchesWatched(new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), watched);
+    return matchesWatched(new ArrayList<>(tvShow.getEpisodes()), watched);
   }
 
   private boolean filterWatched(TvShowSeason season, Boolean watched) {
-    return matchesWatched(new ArrayList<TvShowEpisode>(season.getEpisodes()), watched);
+    return matchesWatched(new ArrayList<>(season.getEpisodes()), watched);
   }
 
   private boolean filterWatched(TvShowEpisode episode, Boolean watched) {
@@ -448,11 +448,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterTag(TvShow tvShow, String tag) {
-    return matchesTag(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), tag);
+    return matchesTag(tvShow, new ArrayList<>(tvShow.getEpisodes()), tag);
   }
 
   private boolean filterTag(TvShowSeason season, String tag) {
-    return matchesTag(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), tag);
+    return matchesTag(season.getTvShow(), new ArrayList<>(season.getEpisodes()), tag);
   }
 
   private boolean filterTag(TvShowEpisode episode, String tag) {
@@ -460,11 +460,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterVideoCodec(TvShow tvShow, String codec) {
-    return matchesVideoCodec(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), codec);
+    return matchesVideoCodec(tvShow, new ArrayList<>(tvShow.getEpisodes()), codec);
   }
 
   private boolean filterVideoCodec(TvShowSeason season, String codec) {
-    return matchesVideoCodec(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), codec);
+    return matchesVideoCodec(season.getTvShow(), new ArrayList<>(season.getEpisodes()), codec);
   }
 
   private boolean filterVideoCodec(TvShowEpisode episode, String codec) {
@@ -472,11 +472,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterAudioCodec(TvShow tvShow, String codec) {
-    return matchesAudioCodec(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), codec);
+    return matchesAudioCodec(tvShow, new ArrayList<>(tvShow.getEpisodes()), codec);
   }
 
   private boolean filterAudioCodec(TvShowSeason season, String codec) {
-    return matchesAudioCodec(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), codec);
+    return matchesAudioCodec(season.getTvShow(), new ArrayList<>(season.getEpisodes()), codec);
   }
 
   private boolean filterAudioCodec(TvShowEpisode episode, String codec) {
@@ -484,11 +484,11 @@ public class TvShowExtendedMatcher {
   }
 
   private boolean filterVideoFormat(TvShow tvShow, String format) {
-    return matchesVideoFormat(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), format);
+    return matchesVideoFormat(tvShow, new ArrayList<>(tvShow.getEpisodes()), format);
   }
 
   private boolean filterVideoFormat(TvShowSeason season, String format) {
-    return matchesVideoFormat(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), format);
+    return matchesVideoFormat(season.getTvShow(), new ArrayList<>(season.getEpisodes()), format);
   }
 
   private boolean filterVideoFormat(TvShowEpisode episode, String format) {

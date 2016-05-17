@@ -66,10 +66,10 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -270,7 +270,7 @@ public class TvShowEditorDialog extends TmmDialog {
       spRuntime = new JSpinner();
       details1Panel.add(spRuntime, "16, 6, fill, default");
     }
-    spRuntime.setValue(Integer.valueOf(tvShow.getRuntime()));
+    spRuntime.setValue(tvShow.getRuntime());
 
     {
       JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$

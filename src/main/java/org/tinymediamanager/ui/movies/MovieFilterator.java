@@ -28,11 +28,6 @@ import ca.odell.glazedlists.TextFilterator;
  */
 public class MovieFilterator implements TextFilterator<Movie> {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.TextFilterator#getFilterStrings(java.util.List, java.lang.Object)
-   */
   @Override
   public void getFilterStrings(List<String> baseList, Movie movie) {
     baseList.add(movie.getTitle());

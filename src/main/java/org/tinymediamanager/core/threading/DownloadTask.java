@@ -16,9 +16,9 @@
 package org.tinymediamanager.core.threading;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,7 +37,7 @@ import org.tinymediamanager.scraper.http.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.squareup.okhttp.Headers;
+import okhttp3.Headers;
 
 /**
  * DownloadTask for bigger downloads with status updates
@@ -48,11 +48,11 @@ public class DownloadTask extends TmmTask {
   private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
   private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      url;
-  private File                        file;
-  private MediaEntity                 media;
-  private MediaFileType               fileType;
-  private String                      userAgent = "";
+  protected String                    url;
+  protected Path                      file;
+  protected MediaEntity               media;
+  protected MediaFileType             fileType;
+  protected String                    userAgent = "";
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -63,7 +63,7 @@ public class DownloadTask extends TmmTask {
    * @param toFile
    *          the file to save to
    */
-  public DownloadTask(String url, File toFile) {
+  public DownloadTask(String url, Path toFile) {
     this(url, toFile, null, null);
   }
 
@@ -81,21 +81,22 @@ public class DownloadTask extends TmmTask {
    * @param expectedFiletype
    *          the MediaFileType what we expect (video, trailer, graphic), so we can react on it
    */
-  public DownloadTask(String url, File toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
-    super(BUNDLE.getString("task.download") + " " + toFile.getName(), 100, TaskType.BACKGROUND_TASK);
+  public DownloadTask(String url, Path toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
+    super(BUNDLE.getString("task.download") + " " + toFile, 100, TaskType.BACKGROUND_TASK);
 
     this.url = url;
     this.file = toFile;
     this.media = addToMe;
     this.fileType = expectedFiletype;
 
-    setTaskDescription(file.getName());
+    setTaskDescription(file.getFileName().toString());
   }
 
   /**
    * Set a special user agent which is needed for the download
    * 
    * @param userAgent
+   *          the user agent
    */
   public void setSpecialUserAgent(String userAgent) {
     this.userAgent = userAgent;
@@ -110,7 +111,7 @@ public class DownloadTask extends TmmTask {
       }
 
       // if file extension is empty, detect from url, or content type
-      String ext = FilenameUtils.getExtension(file.getName());
+      String ext = FilenameUtils.getExtension(file.getFileName().toString());
       if (ext != null && ext.length() > 4) {
         ext = ""; // no extension when longer than 4 chars!
       }
@@ -118,7 +119,7 @@ public class DownloadTask extends TmmTask {
         ext = UrlUtil.getExtension(url);
         if (!ext.isEmpty()) {
           if (Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
-            file = new File(file.getParent(), file.getName() + "." + ext);
+            file = file.getParent().resolve(file.getFileName() + "." + ext);
           }
           else {
             // unsupported filetype, eg php/asp/cgi script
@@ -154,15 +155,25 @@ public class DownloadTask extends TmmTask {
         if (type.startsWith("video/") || type.startsWith("audio/") || type.startsWith("image/")) {
           ext = type.split("/")[1];
           ext = ext.replaceAll("x-", ""); // x-wmf and others
-          file = new File(file.getParent(), file.getName() + "." + ext);
+          file = file.getParent().resolve(file.getFileName() + "." + ext);
         }
+        if ("application/zip".equals(type)) {
+          ext = "zip";
+          file = file.getParent().resolve(file.getFileName() + "." + ext);
+        }
+      }
+
+      // ext still empty?
+      if (ext.isEmpty()) {
+        // fallback!
+        ext = "dat";
       }
 
       LOGGER.info("Downloading to " + file);
 
-      File tempFile = new File(file.getAbsolutePath() + ".part");
+      Path tempFile = file.resolveSibling(file.getFileName() + ".part");
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-      FileOutputStream outputStream = new FileOutputStream(tempFile);
+      FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
       int count = 0;
       byte buffer[] = new byte[2048];
       Long timestamp1 = System.nanoTime();
@@ -222,7 +233,7 @@ public class DownloadTask extends TmmTask {
           mf.setContainerFormatDirect(); // force direct read of mediainfo - regardless of filename!!!
           ext = mf.getContainerFormat();
           if (!ext.isEmpty()) {
-            file = new File(file.getParent(), file.getName() + "." + ext);
+            file = file.getParent().resolve(file.getFileName() + "." + ext);
           }
         }
 

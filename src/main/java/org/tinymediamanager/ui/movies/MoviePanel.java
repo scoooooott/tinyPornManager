@@ -75,6 +75,7 @@ import org.tinymediamanager.ui.movies.actions.DebugDumpMovie;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
+import org.tinymediamanager.ui.movies.actions.MovieCreateOfflineAction;
 import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
@@ -88,6 +89,8 @@ import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
 import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleDownloadAction;
+import org.tinymediamanager.ui.movies.actions.MovieSubtitleSearchAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
@@ -138,6 +141,8 @@ public class MoviePanel extends JPanel {
   private final Action                  actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
   private final Action                  actionSyncSelectedTrakt      = new MovieSyncSelectedTraktTvAction();
   private final Action                  actionTrailerDownload        = new MovieTrailerDownloadAction();
+  private final Action                  actionSearchSubtitle         = new MovieSubtitleSearchAction();
+  private final Action                  actionDownloadSubtitle       = new MovieSubtitleDownloadAction();
   private final Action                  actionRename                 = new MovieRenameAction(false);
   private final Action                  actionRename2                = new MovieRenameAction(true);
   private final Action                  actionRemove2                = new MovieRemoveAction();
@@ -179,7 +184,7 @@ public class MoviePanel extends JPanel {
     // load movielist
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
-    sortedMovies = new SortedList<Movie>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
+    sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
@@ -279,6 +284,10 @@ public class MoviePanel extends JPanel {
     btnMediaInformation.setAction(actionMediaInformation);
     toolBar.add(btnMediaInformation);
 
+    JButton btnCreateOflline = new JButton();
+    btnCreateOflline.setAction(new MovieCreateOfflineAction(false));
+    toolBar.add(btnCreateOflline);
+
     textField = EnhancedTextField.createSearchTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(13);
@@ -286,12 +295,12 @@ public class MoviePanel extends JPanel {
     // table = new JTable();
     // build JTable
 
-    MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<Movie>(textField, new MovieFilterator());
+    MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<>(textField, new MovieFilterator());
     MovieMatcherEditor movieMatcherEditor = new MovieMatcherEditor();
-    FilterList<Movie> extendedFilteredMovies = new FilterList<Movie>(sortedMovies, movieMatcherEditor);
-    textFilteredMovies = new FilterList<Movie>(extendedFilteredMovies, textMatcherEditor);
+    FilterList<Movie> extendedFilteredMovies = new FilterList<>(sortedMovies, movieMatcherEditor);
+    textFilteredMovies = new FilterList<>(extendedFilteredMovies, textMatcherEditor);
     movieSelectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(textFilteredMovies), new MovieTableFormat());
+    movieTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(textFilteredMovies), new MovieTableFormat());
     table = new ZebraJTable(movieTableModel);
 
     movieTableModel.addTableModelListener(new TableModelListener() {
@@ -456,6 +465,7 @@ public class MoviePanel extends JPanel {
 
     menu.add(new MovieFindMissingAction());
     menu.add(menuFindMissingMovies);
+    menu.add(new MovieCreateOfflineAction(true));
 
     menu.addSeparator();
 
@@ -496,6 +506,8 @@ public class MoviePanel extends JPanel {
     menuItem = menu.add(actionRewriteNfo);
     menuItem.setMnemonic(KeyEvent.VK_N);
     menuItem = menu.add(actionTrailerDownload);
+    menuItem = menu.add(actionSearchSubtitle);
+    menuItem = menu.add(actionDownloadSubtitle);
 
     menu.addSeparator();
     menuItem = menu.add(actionMediaInformation2);
@@ -538,6 +550,8 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
     popupMenu.add(actionTrailerDownload);
+    popupMenu.add(actionSearchSubtitle);
+    popupMenu.add(actionDownloadSubtitle);
     popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);

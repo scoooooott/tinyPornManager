@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 
 /**
  * The Class MovieGenresPanel.
@@ -70,7 +70,7 @@ public class MovieGenresPanel extends JPanel {
    */
   private void buildImages() {
     removeAll();
-    List<MediaGenres> genres = new ArrayList<MediaGenres>(movieSelectionModel.getSelectedMovie().getGenres());
+    List<MediaGenres> genres = new ArrayList<>(movieSelectionModel.getSelectedMovie().getGenres());
     // first look for 3d
     if (movieSelectionModel.getSelectedMovie().isVideoIn3D()) {
       if (!genres.contains(MediaGenres.getGenre("3D"))) {

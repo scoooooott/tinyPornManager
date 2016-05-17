@@ -55,8 +55,8 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
@@ -117,11 +117,11 @@ public class TvShowToXbmcNfoConnector {
    * Instantiates a new tv show to xbmc nfo connector.
    */
   public TvShowToXbmcNfoConnector() {
-    genres = new ArrayList<String>();
-    actors = new ArrayList<Object>();
-    tags = new ArrayList<String>();
+    genres = new ArrayList<>();
+    actors = new ArrayList<>();
+    tags = new ArrayList<>();
     episodeguide = new EpisodeGuide();
-    unsupportedElements = new ArrayList<Object>();
+    unsupportedElements = new ArrayList<>();
   }
 
   public static void setData(TvShow tvShow) {
@@ -131,7 +131,7 @@ public class TvShowToXbmcNfoConnector {
     }
 
     TvShowToXbmcNfoConnector xbmc = null;
-    List<Object> unsupportedTags = new ArrayList<Object>();
+    List<Object> unsupportedTags = new ArrayList<>();
 
     String nfoFilename = "tvshow.nfo";
     File nfoFile = new File(tvShow.getPath(), nfoFilename);
@@ -442,7 +442,7 @@ public class TvShowToXbmcNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;

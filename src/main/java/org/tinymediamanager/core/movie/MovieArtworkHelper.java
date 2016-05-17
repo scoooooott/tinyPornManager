@@ -27,8 +27,8 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 /**
  * The class MovieArtworkHelper. A helper class for managing movie artwork
@@ -159,7 +159,7 @@ public class MovieArtworkHelper {
     }
 
     int i = 0;
-    List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+    List<MovieFanartNaming> fanartnames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
@@ -205,7 +205,7 @@ public class MovieArtworkHelper {
     String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
 
     int i = 0;
-    List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+    List<MoviePosterNaming> posternames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
@@ -412,7 +412,9 @@ public class MovieArtworkHelper {
    * set the found artwork for the given movie
    * 
    * @param movie
+   *          the movie to set the artwork for
    * @param artwork
+   *          a list of all artworks to be set
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
@@ -432,7 +434,7 @@ public class MovieArtworkHelper {
     setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
 
     // extrathumbs
-    List<String> extrathumbs = new ArrayList<String>();
+    List<String> extrathumbs = new ArrayList<>();
     if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
@@ -452,7 +454,7 @@ public class MovieArtworkHelper {
     }
 
     // extrafanarts
-    List<String> extrafanarts = new ArrayList<String>();
+    List<String> extrafanarts = new ArrayList<>();
     if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution

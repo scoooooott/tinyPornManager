@@ -39,14 +39,14 @@ import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
@@ -80,7 +80,7 @@ public class MovieScrapeTask extends TmmThreadPool {
     initThreadPool(3, "scrape");
     start();
 
-    smartScrapeList = new ArrayList<Movie>(0);
+    smartScrapeList = new ArrayList<>(0);
 
     for (int i = 0; i < moviesToScrape.size(); i++) {
       Movie movie = moviesToScrape.get(i);
@@ -252,7 +252,7 @@ public class MovieScrapeTask extends TmmThreadPool {
     }
 
     private List<MediaArtwork> getArtwork(Movie movie, MediaMetadata metadata, List<MediaScraper> artworkScrapers) {
-      List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+      List<MediaArtwork> artwork = new ArrayList<>();
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setArtworkType(MediaArtworkType.ALL);
@@ -280,7 +280,7 @@ public class MovieScrapeTask extends TmmThreadPool {
     }
 
     private List<MovieTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<MediaScraper> trailerScrapers) {
-      List<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
+      List<MovieTrailer> trailers = new ArrayList<>();
 
       // add local trailers!
       for (MediaFile mf : movie.getMediaFiles(MediaFileType.TRAILER)) {

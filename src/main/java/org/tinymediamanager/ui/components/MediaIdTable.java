@@ -57,7 +57,7 @@ public class MediaIdTable extends JTable {
     this.idMap = ids;
     this.editable = false;
     this.idList = convertIdMapToEventList(idMap);
-    setModel(new DefaultEventTableModel<MediaId>(idList, new MediaIdTableFormat()));
+    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat()));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
   }
@@ -66,7 +66,7 @@ public class MediaIdTable extends JTable {
     this.idMap = null;
     this.editable = true;
     this.idList = ids;
-    setModel(new DefaultEventTableModel<MediaId>(idList, new MediaIdTableFormat()));
+    setModel(new DefaultEventTableModel<>(idList, new MediaIdTableFormat()));
     setTableHeader(null);
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 

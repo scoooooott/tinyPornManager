@@ -21,7 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -84,7 +85,6 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   cbMovieNfoFilename1;
   private JCheckBox                   cbMovieNfoFilename2;
   private JCheckBox                   cbMovieNfoFilename3;
-  private JCheckBox                   chckbxMultipleMoviesPerFolder;
   private JCheckBox                   chckbxImageCache;
   private JTextField                  tfAddBadword;
   private JList<String>               listBadWords;
@@ -101,6 +101,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxDateAdded;
   private JCheckBox                   chckbxSaveUiFilter;
   private JList<String>               listIgnore;
+  private JCheckBox                   chckbxRename;
 
   /**
    * Instantiates a new movie settings panel.
@@ -123,7 +124,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
             FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblVisiblecolumns = new JLabel(BUNDLE.getString("Settings.movie.visiblecolumns")); //$NON-NLS-1$
     panelGeneral.add(lblVisiblecolumns, "2, 2, right, default");
@@ -177,11 +178,17 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JSeparator separator = new JSeparator();
     panelGeneral.add(separator, "2, 14, 9, 1");
 
+    final JLabel lblAutomaticRename = new JLabel(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
+    panelGeneral.add(lblAutomaticRename, "2, 16, right, default");
+
+    chckbxRename = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
+    panelGeneral.add(chckbxRename, "4, 16, 7, 1");
+
     JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-    panelGeneral.add(lblTraktTv, "2, 16");
+    panelGeneral.add(lblTraktTv, "2, 18");
 
     chckbxTraktTv = new JCheckBox("");
-    panelGeneral.add(chckbxTraktTv, "4, 16");
+    panelGeneral.add(chckbxTraktTv, "4, 18");
 
     JButton btnClearTraktTvMovies = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));//$NON-NLS-1$
     btnClearTraktTvMovies.addActionListener(new ActionListener() {
@@ -195,7 +202,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panelGeneral.add(btnClearTraktTvMovies, "6, 16, 3, 1, left, default");
+    panelGeneral.add(btnClearTraktTvMovies, "6, 18, 3, 1, left, default");
 
     JPanel panelMovieDataSources = new JPanel();
 
@@ -204,12 +211,12 @@ public class MovieSettingsPanel extends ScrollablePanel {
     add(panelMovieDataSources, "2, 4, 3, 1, fill, fill");
     panelMovieDataSources.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow(2)"),
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150dlu:grow(2)"),
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
-            FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblDataSource = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
     panelMovieDataSources.add(lblDataSource, "2, 2, 5, 1");
@@ -234,9 +241,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.getMovieSettings().addMovieDataSources(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          settings.getMovieSettings().addMovieDataSources(file.toAbsolutePath().toString());
         }
       }
     });
@@ -283,9 +290,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAddIgnore.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.getMovieSettings().addMovieSkipFolder(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          settings.getMovieSettings().addMovieSkipFolder(file.toAbsolutePath().toString());
         }
       }
     });
@@ -306,24 +313,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
     });
     panelIgnoreButtons.add(btnRemoveIgnore, "1, 3");
 
-    JLabel lblAllowMultipleMoviesPerFolder = new JLabel(BUNDLE.getString("Settings.multipleMovies")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblAllowMultipleMoviesPerFolder, "2, 6, right, default");
-
-    chckbxMultipleMoviesPerFolder = new JCheckBox("");
-    panelMovieDataSources.add(chckbxMultipleMoviesPerFolder, "4, 6");
-
-    JTextPane tpMultipleMoviesHint = new JTextPane();
-    TmmFontHelper.changeFont(tpMultipleMoviesHint, 0.833);
-    tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
-    tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
-    tpMultipleMoviesHint.setEditable(false);
-    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 6, 9, 1, fill, fill");
-
-    JSeparator separator_1 = new JSeparator();
-    panelMovieDataSources.add(separator_1, "2, 8, 13, 1");
-
     JPanel panel = new JPanel();
-    panelMovieDataSources.add(panel, "2, 10, 13, 1, fill, fill");
+    panelMovieDataSources.add(panel, "2, 8, 13, 1, fill, fill");
     panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
@@ -461,10 +452,6 @@ public class MovieSettingsPanel extends ScrollablePanel {
     }
   }
 
-  /*
-   * inti data bindings
-   */
-  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieSettings.movieConnector");
     BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -472,13 +459,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
         settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.detectMovieMultiDir");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
-    //
     BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.buildImageCacheOnImport");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_3.bind();
@@ -552,5 +534,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.movieRenameAfterScrape");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, chckbxRename, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

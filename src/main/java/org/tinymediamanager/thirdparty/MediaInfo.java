@@ -16,8 +16,8 @@
 package org.tinymediamanager.thirdparty;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -68,7 +68,7 @@ public class MediaInfo implements Closeable {
    *          the file
    * @return true, if successful
    */
-  public boolean open(File file) throws MediaInfoException {
+  public boolean open(Path file) throws MediaInfoException {
     // create handle
     try {
       if (handle == null) {
@@ -80,7 +80,7 @@ public class MediaInfo implements Closeable {
     }
 
     if (file != null && isLoaded()) {
-      return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
+      return MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.toAbsolutePath().toString())) > 0;
     }
     else {
       return false;
@@ -138,8 +138,6 @@ public class MediaInfo implements Closeable {
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
    * @param infoKind
    *          Kind of information you want about the parameter (the text, the measure, the help...)
-   * @param searchKind
-   *          Where to look for the parameter
    */
   public String Get(StreamKind StreamKind, int StreamNumber, String parameter, InfoKind infoKind) {
     return Get(StreamKind, StreamNumber, parameter, infoKind, InfoKind.Name);
@@ -177,7 +175,7 @@ public class MediaInfo implements Closeable {
    *          Kind of Stream (general, video, audio...)
    * @param StreamNumber
    *          Stream number in Kind of Stream (first, second...)
-   * @param parameter
+   * @param parameterIndex
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
    * @return a string about information you search, an empty string if there is a problem
    */
@@ -192,7 +190,7 @@ public class MediaInfo implements Closeable {
    *          Kind of Stream (general, video, audio...)
    * @param StreamNumber
    *          Stream number in Kind of Stream (first, second...)
-   * @param parameter
+   * @param parameterIndex
    *          Parameter you are looking for in the Stream (Codec, width, bitrate...), in integer format (first parameter, second parameter...)
    * @param infoKind
    *          Kind of information you want about the parameter (the text, the measure, the help...)
@@ -357,13 +355,13 @@ public class MediaInfo implements Closeable {
    * @return the map
    */
   public Map<StreamKind, List<Map<String, String>>> snapshot() {
-    Map<StreamKind, List<Map<String, String>>> mediaInfo = new EnumMap<StreamKind, List<Map<String, String>>>(StreamKind.class);
+    Map<StreamKind, List<Map<String, String>>> mediaInfo = new EnumMap<>(StreamKind.class);
 
     for (StreamKind streamKind : StreamKind.values()) {
       int streamCount = streamCount(streamKind);
 
       if (streamCount > 0) {
-        List<Map<String, String>> streamInfoList = new ArrayList<Map<String, String>>(streamCount);
+        List<Map<String, String>> streamInfoList = new ArrayList<>(streamCount);
 
         for (int i = 0; i < streamCount; i++) {
           streamInfoList.add(snapshot(streamKind, i));
@@ -386,7 +384,7 @@ public class MediaInfo implements Closeable {
    * @return the map
    */
   public Map<String, String> snapshot(StreamKind streamKind, int streamNumber) {
-    Map<String, String> streamInfo = new LinkedHashMap<String, String>();
+    Map<String, String> streamInfo = new LinkedHashMap<>();
 
     for (int i = 0, count = parameterCount(streamKind, streamNumber); i < count; i++) {
       String value = get(streamKind, streamNumber, i, InfoKind.Text);
@@ -567,7 +565,7 @@ public class MediaInfo implements Closeable {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static Map<StreamKind, List<Map<String, String>>> snapshot(File file) throws IOException {
+  public static Map<StreamKind, List<Map<String, String>>> snapshot(Path file) throws IOException {
     MediaInfo mi = new MediaInfo();
     try {
       if (mi.open(file)) {

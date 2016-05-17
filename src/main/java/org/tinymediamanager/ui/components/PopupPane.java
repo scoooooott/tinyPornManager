@@ -50,7 +50,7 @@ public class PopupPane extends JScrollPane {
     setFocusable(true);
     setRequestFocusEnabled(true);
 
-    listComponents = new HashSet<TaskListComponent>();
+    listComponents = new HashSet<>();
     view = new JPanel();
     setViewportView(view);
 

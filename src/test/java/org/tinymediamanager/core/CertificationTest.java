@@ -1,7 +1,7 @@
 package org.tinymediamanager.core;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 
 public class CertificationTest {
 

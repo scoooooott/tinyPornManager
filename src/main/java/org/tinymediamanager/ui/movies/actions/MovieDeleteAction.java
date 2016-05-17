@@ -47,7 +47,7 @@ public class MovieDeleteAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // display warning and ask the user again
     int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movie.delete.desc"),

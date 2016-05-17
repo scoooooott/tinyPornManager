@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * The Enum MovieConnectors.
@@ -23,7 +23,8 @@ import java.io.File;
  * @author Manuel Laggner
  */
 public enum MovieConnectors {
-  XBMC("Kodi / XBMC"), MP("MediaPortal");
+  XBMC("Kodi / XBMC"),
+  MP("MediaPortal");
 
   private String title;
 
@@ -41,9 +42,10 @@ public enum MovieConnectors {
    * (by casting to all known XML formats)
    * 
    * @param nfo
-   * @return
+   *          the path to the NFO
+   * @return true/false
    */
-  public static boolean isValidNFO(File nfo) {
+  public static boolean isValidNFO(Path nfo) {
     MovieToXbmcNfoConnector tmp = null;
     try {
       tmp = MovieToXbmcNfoConnector.parseNFO(nfo);

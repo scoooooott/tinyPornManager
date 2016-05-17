@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author Manuel Laggner
  */
 public abstract class TmmTask implements Runnable, TmmTaskHandle {
-  private final Set<TmmTaskListener> listeners = new CopyOnWriteArraySet<TmmTaskListener>();
+  private final Set<TmmTaskListener> listeners = new CopyOnWriteArraySet<>();
   private TaskType                   type;
   protected TaskState                state     = TaskState.CREATED;
 

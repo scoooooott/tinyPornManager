@@ -24,7 +24,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

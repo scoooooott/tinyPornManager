@@ -63,7 +63,7 @@ public abstract class TmmThreadPool extends TmmTask {
         new TmmThreadFactory(name) // our thread settings
     );
     pool.allowCoreThreadTimeOut(true);
-    this.service = new ExecutorCompletionService<Object>(pool);
+    this.service = new ExecutorCompletionService<>(pool);
   }
 
   /**
@@ -72,7 +72,7 @@ public abstract class TmmThreadPool extends TmmTask {
    * @param task
    *          the callable
    */
-  protected void submitTask(Callable<Object> task) {
+  protected synchronized void submitTask(Callable<Object> task) {
     if (!cancel) {
       workUnits++;
       service.submit(task);
@@ -85,7 +85,7 @@ public abstract class TmmThreadPool extends TmmTask {
    * @param task
    *          the runnable
    */
-  protected void submitTask(Runnable task) {
+  protected synchronized void submitTask(Runnable task) {
     if (!cancel) {
       workUnits++;
       service.submit(task, "");

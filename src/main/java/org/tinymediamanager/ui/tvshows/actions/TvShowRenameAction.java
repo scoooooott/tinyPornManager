@@ -54,7 +54,7 @@ public class TvShowRenameAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
-    Set<TvShowEpisode> selectedEpisodes = new HashSet<TvShowEpisode>();
+    Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 
     // add all episodes which are not part of a selected tv show
     for (Object obj : TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects()) {
@@ -73,7 +73,7 @@ public class TvShowRenameAction extends AbstractAction {
     }
 
     // rename
-    TmmThreadPool renameTask = new TvShowRenameTask(selectedTvShows, new ArrayList<TvShowEpisode>(selectedEpisodes), true);
+    TmmThreadPool renameTask = new TvShowRenameTask(selectedTvShows, new ArrayList<>(selectedEpisodes), true);
     if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

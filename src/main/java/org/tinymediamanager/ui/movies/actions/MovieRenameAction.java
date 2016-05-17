@@ -51,7 +51,7 @@ public class MovieRenameAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rename
     TmmThreadPool renameTask = new MovieRenameTask(selectedMovies);

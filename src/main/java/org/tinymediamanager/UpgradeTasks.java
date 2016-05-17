@@ -17,13 +17,18 @@ package org.tinymediamanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -60,10 +65,10 @@ public class UpgradeTasks {
     if (StrgUtils.compareVersion(v, "2.7") < 0) {
       LOGGER.info("Performing upgrade tasks to version 2.7");
       // migrate to config dir
-      moveToConfigFolder(new File("movies.db"));
-      moveToConfigFolder(new File("tvshows.db"));
-      moveToConfigFolder(new File("scraper_imdb.conf"));
-      moveToConfigFolder(new File("tmm_ui.prop"));
+      moveToConfigFolder(Paths.get("movies.db"));
+      moveToConfigFolder(Paths.get("tvshows.db"));
+      moveToConfigFolder(Paths.get("scraper_imdb.conf"));
+      moveToConfigFolder(Paths.get("tmm_ui.prop"));
 
       // cleaup of native folder
       cleanupNativeFolder();
@@ -86,14 +91,14 @@ public class UpgradeTasks {
     }
   }
 
-  private static void moveToConfigFolder(File f) {
-    if (f.exists()) {
-      File fnew = new File(Settings.getInstance().getSettingsFolder(), f.getName());
+  private static void moveToConfigFolder(Path file) {
+    if (Files.exists(file)) {
+      Path fnew = Paths.get(Settings.getInstance().getSettingsFolder(), file.getFileName().toString());
       try {
-        Utils.moveFileSafe(f, fnew);
+        Utils.moveFileSafe(file, fnew);
       }
       catch (IOException e) {
-        LOGGER.warn("error moving " + f);
+        LOGGER.warn("error moving " + file);
       }
     }
   }
@@ -186,6 +191,23 @@ public class UpgradeTasks {
           episode.saveToDb();
         }
         tvShow.saveToDb();
+      }
+    }
+
+    // upgrade to v2.8
+    if (StrgUtils.compareVersion(v, "2.8") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8");
+      // reevaluate movie stacking and offline stubs (without the need for UDS) and save
+      for (Movie movie : movieList.getMovies()) {
+        movie.reEvaluateStacking();
+        boolean isOffline = false;
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          if ("disc".equalsIgnoreCase(mf.getExtension())) {
+            isOffline = true;
+          }
+        }
+        movie.setOffline(isOffline);
+        movie.saveToDb();
       }
     }
   }

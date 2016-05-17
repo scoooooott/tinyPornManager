@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -43,7 +46,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -277,7 +280,7 @@ public class TvShowInformationPanel extends JPanel {
     panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaInformation, null); //$NON-NLS-1$
 
-    final List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
+    final List<MediaFile> mediaFiles = new ArrayList<>();
     final ImagePanel panelArtwork = new ImagePanel(mediaFiles);
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.artwork"), null, panelArtwork, null); //$NON-NLS-1$
 
@@ -297,7 +300,7 @@ public class TvShowInformationPanel extends JPanel {
           setBanner(model.getSelectedTvShow());
           synchronized (mediaFiles) {
             mediaFiles.clear();
-            for (MediaFile mediafile : new ArrayList<MediaFile>(model.getSelectedTvShow().getMediaFiles())) {
+            for (MediaFile mediafile : new ArrayList<>(model.getSelectedTvShow().getMediaFiles())) {
               if (mediafile.isGraphic()) {
                 mediaFiles.add(mediafile);
               }
@@ -309,7 +312,7 @@ public class TvShowInformationPanel extends JPanel {
           TvShow show = (TvShow) source;
           synchronized (mediaFiles) {
             mediaFiles.clear();
-            for (MediaFile mediafile : new ArrayList<MediaFile>(show.getMediaFiles())) {
+            for (MediaFile mediafile : new ArrayList<>(show.getMediaFiles())) {
               if (mediafile.isGraphic()) {
                 mediaFiles.add(mediafile);
               }

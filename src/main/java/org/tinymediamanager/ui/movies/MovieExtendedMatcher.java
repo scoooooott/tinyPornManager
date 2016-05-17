@@ -29,8 +29,8 @@ import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 
 import ca.odell.glazedlists.matchers.Matcher;
 
@@ -204,6 +204,14 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     // check against 3D
     if (searchOptions.containsKey(MovieSearchOptions.VIDEO_3D)) {
       if (!movie.isVideoIn3D()) {
+        return false;
+      }
+    }
+
+    // check offline
+    if (searchOptions.containsKey(MovieSearchOptions.OFFLINE)) {
+      Boolean offline = (Boolean) searchOptions.get(MovieSearchOptions.OFFLINE);
+      if (movie.isOffline() != offline) {
         return false;
       }
     }

@@ -15,10 +15,43 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.EDITION;
+import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
+import static org.tinymediamanager.core.Constants.TOP250;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,8 +63,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -48,10 +79,12 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
@@ -61,16 +94,16 @@ import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -127,27 +160,32 @@ public class Movie extends MediaEntity {
   private Certification                         certification              = Certification.NOT_RATED;
   @JsonProperty
   private UUID                                  movieSetId;
+  @JsonProperty
+  private MovieEdition                          edition                    = MovieEdition.NONE;
+  @JsonProperty
+  private boolean                               stacked                    = false;
+  @JsonProperty
+  private boolean                               offline                    = false;
 
   @JsonProperty
-  private List<String>                          genres                     = new ArrayList<String>(1);
+  private List<String>                          genres                     = new ArrayList<>(1);
   @JsonProperty
-  private List<String>                          tags                       = new ArrayList<String>(0);
+  private List<String>                          tags                       = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraThumbs                = new ArrayList<String>(0);
+  private List<String>                          extraThumbs                = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraFanarts               = new ArrayList<String>(0);
+  private List<String>                          extraFanarts               = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieActor>                      actors                     = new ArrayList<MovieActor>();
+  private List<MovieActor>                      actors                     = new ArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer>                   producers                  = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieTrailer>                    trailer                    = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer>                    trailer                    = new ArrayList<>(0);
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
-  private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
-  private boolean                               stacked                    = false;
+  private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -278,13 +316,11 @@ public class Movie extends MediaEntity {
    * @return the title for ui
    */
   public String getTitleForUi() {
-    StringBuffer titleForUi = new StringBuffer(title);
-    if (year != null && !year.isEmpty()) {
-      titleForUi.append(" (");
-      titleForUi.append(year);
-      titleForUi.append(")");
+    String titleForUi = title;
+    if (StringUtils.isNotBlank(year)) {
+      titleForUi += " (" + year + ")";
     }
-    return titleForUi.toString();
+    return titleForUi;
   }
 
   /**
@@ -298,7 +334,7 @@ public class Movie extends MediaEntity {
     Utils.removeEmptyStringsFromList(genres);
 
     // load genres
-    for (String genre : new ArrayList<String>(genres)) {
+    for (String genre : new ArrayList<>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
 
@@ -463,6 +499,10 @@ public class Movie extends MediaEntity {
       return true; // local ones found
     }
 
+    if (getMediaFiles(MediaFileType.SUBTITLE).size() > 0) {
+      return true;
+    }
+
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
       if (mf.hasSubtitles()) {
         return true;
@@ -478,29 +518,29 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Find actor images.
+   * Searches for actor images, and matches them to our "actors", updating the thumb url
    */
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
-      File[] actorImages = new File(getPath(), MovieActor.ACTOR_DIR).listFiles();
-      if (actorImages != null && actorImages.length > 0) {
-        // search all local actor images
-        for (MovieActor actor : getActors()) {
-          if (StringUtils.isNotBlank(actor.getThumbPath())) {
-            continue;
-          }
+      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
+        for (Path path : directoryStream) {
+          if (Files.isRegularFile(path)) {
 
-          String actorName = actor.getNameForStorage();
-
-          Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(actorName) + "\\.(tbn|jpg|png)");
-          for (File file : actorImages) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.matches()) {
-              actor.setThumbPath(file.getAbsolutePath());
+            for (MovieActor actor : getActors()) {
+              if (StringUtils.isBlank(actor.getThumbPath())) {
+                // yay, actor with empty image
+                String name = actor.getNameForStorage();
+                if (name.equals(path.getFileName().toString())) {
+                  actor.setThumbPath(path.toAbsolutePath().toString());
+                }
+              }
             }
+
           }
         }
+      }
+      catch (IOException ex) {
       }
     }
   }
@@ -635,7 +675,7 @@ public class Movie extends MediaEntity {
       return false;
     }
 
-    for (MediaFile file : new ArrayList<MediaFile>(getMediaFiles())) {
+    for (MediaFile file : new ArrayList<>(getMediaFiles())) {
       if (filename.compareTo(file.getFilename()) == 0) {
         return true;
       }
@@ -716,9 +756,6 @@ public class Movie extends MediaEntity {
    * @param config
    *          the config
    */
-  /**
-   * @param metadata
-   */
   public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
     if (metadata == null) {
       LOGGER.error("metadata was null");
@@ -726,7 +763,7 @@ public class Movie extends MediaEntity {
     }
 
     // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
+    if (StringUtils.isEmpty(metadata.getTitle())) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
@@ -735,38 +772,43 @@ public class Movie extends MediaEntity {
 
     // set chosen metadata
     if (config.isTitle()) {
-      setTitle(metadata.getStringValue(MediaMetadata.TITLE));
+      setTitle(metadata.getTitle());
     }
 
     if (config.isOriginalTitle()) {
-      setOriginalTitle(metadata.getStringValue(MediaMetadata.ORIGINAL_TITLE));
+      setOriginalTitle(metadata.getOriginalTitle());
     }
 
     if (config.isTagline()) {
-      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
+      setTagline(metadata.getTagline());
     }
 
     if (config.isPlot()) {
-      setPlot(metadata.getStringValue(MediaMetadata.PLOT));
+      setPlot(metadata.getPlot());
     }
 
     if (config.isYear()) {
-      setYear(metadata.getStringValue(MediaMetadata.YEAR));
-      setReleaseDate(metadata.getDateValue(MediaMetadata.RELEASE_DATE));
+      if (metadata.getYear() != 0) {
+        setYear(Integer.toString(metadata.getYear()));
+      }
+      else {
+        setYear("");
+      }
+      setReleaseDate(metadata.getReleaseDate());
     }
 
     if (config.isRating()) {
-      setRating(metadata.getFloatValue(MediaMetadata.RATING));
-      setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
-      setTop250(metadata.getIntegerValue(MediaMetadata.TOP_250));
+      setRating(metadata.getRating());
+      setVotes(metadata.getVoteCount());
+      setTop250(metadata.getTop250());
     }
 
     if (config.isRuntime()) {
-      setRuntime(metadata.getIntegerValue(MediaMetadata.RUNTIME));
+      setRuntime(metadata.getRuntime());
     }
 
-    setSpokenLanguages(metadata.getStringValue(MediaMetadata.SPOKEN_LANGUAGES));
-    setCountry(metadata.getStringValue(MediaMetadata.COUNTRY));
+    setSpokenLanguages(StringUtils.join(metadata.getSpokenLanguages(), ", "));
+    setCountry(StringUtils.join(metadata.getCountries(), ", "));
 
     // certifications
     if (config.isCertification()) {
@@ -777,9 +819,9 @@ public class Movie extends MediaEntity {
 
     // cast
     if (config.isCast()) {
-      setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
-      List<MovieActor> actors = new ArrayList<MovieActor>();
-      List<MovieProducer> producers = new ArrayList<MovieProducer>();
+      setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
+      List<MovieActor> actors = new ArrayList<>();
+      List<MovieProducer> producers = new ArrayList<>();
       String director = "";
       String writer = "";
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -830,14 +872,26 @@ public class Movie extends MediaEntity {
       setGenres(metadata.getGenres());
     }
 
+    // tags
+    if (config.isTags()) {
+      for (String tag : metadata.getTags()) {
+        addToTags(tag);
+      }
+    }
+
     // set scraped
     setScraped(true);
 
     // create MovieSet
     if (config.isCollection()) {
-      int col = metadata.getIntegerValue(MediaMetadata.TMDB_SET);
+      int col = 0;
+      try {
+        col = (int) metadata.getId(MediaMetadata.TMDB_SET);
+      }
+      catch (Exception ignored) {
+      }
       if (col != 0) {
-        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getStringValue(MediaMetadata.COLLECTION_NAME), col);
+        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName(), col);
         if (movieSet != null && movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
           // get movieset metadata
@@ -852,11 +906,16 @@ public class Movie extends MediaEntity {
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);
-              if (info != null && StringUtils.isNotBlank(info.getStringValue(MediaMetadata.TITLE))) {
-                movieSet.setTitle(info.getStringValue(MediaMetadata.TITLE));
-                movieSet.setPlot(info.getStringValue(MediaMetadata.PLOT));
-                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.POSTER_URL), MediaFileType.POSTER);
-                movieSet.setArtworkUrl(info.getStringValue(MediaMetadata.BACKGROUND_URL), MediaFileType.FANART);
+              if (info != null && StringUtils.isNotBlank(info.getTitle())) {
+                movieSet.setTitle(info.getTitle());
+                movieSet.setPlot(info.getPlot());
+
+                if (!info.getMediaArt(MediaArtworkType.POSTER).isEmpty()) {
+                  movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.POSTER).get(0).getDefaultUrl(), MediaFileType.POSTER);
+                }
+                if (!info.getMediaArt(MediaArtworkType.BACKGROUND).isEmpty()) {
+                  movieSet.setArtworkUrl(info.getMediaArt(MediaArtworkType.BACKGROUND).get(0).getDefaultUrl(), MediaFileType.FANART);
+                }
               }
             }
           }
@@ -882,6 +941,11 @@ public class Movie extends MediaEntity {
     // update DB
     writeNFO();
     saveToDb();
+
+    // rename the movie if that has been chosen in the settings
+    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenameAfterScrape()) {
+      MovieRenamer.renameMovie(this);
+    }
   }
 
   /**
@@ -983,14 +1047,18 @@ public class Movie extends MediaEntity {
       md.setId(entry.getKey(), entry.getValue());
     }
 
-    md.storeMetadata(MediaMetadata.TITLE, title);
-    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, originalTitle);
-    md.storeMetadata(MediaMetadata.TAGLINE, tagline);
-    md.storeMetadata(MediaMetadata.PLOT, plot);
-    md.storeMetadata(MediaMetadata.YEAR, year);
-    md.storeMetadata(MediaMetadata.RATING, rating);
-    md.storeMetadata(MediaMetadata.VOTE_COUNT, votes);
-    md.storeMetadata(MediaMetadata.RUNTIME, runtime);
+    md.setTitle(title);
+    md.setOriginalTitle(originalTitle);
+    md.setTagline(tagline);
+    md.setPlot(plot);
+    try {
+      md.setYear(Integer.parseInt(year));
+    }
+    catch (Exception ignored) {
+    }
+    md.setRating(rating);
+    md.setVoteCount(votes);
+    md.setRuntime(runtime);
     md.addCertification(certification);
 
     return md;
@@ -1066,13 +1134,14 @@ public class Movie extends MediaEntity {
 
     // third - rename thumbs if needed
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+      Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+
       for (MovieActor actor : actors) {
         if (StringUtils.isNotBlank(actor.getThumbPath())) {
           try {
             // build expected filename
-            File actorName = new File(getPath() + File.separator + MovieActor.ACTOR_DIR,
-                actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-            File oldFile = new File(actor.getThumbPath());
+            Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+            Path oldFile = Paths.get(actor.getThumbPath());
             Utils.moveFileSafe(oldFile, actorName);
           }
           catch (IOException e) {
@@ -1145,7 +1214,12 @@ public class Movie extends MediaEntity {
   public String getNfoFilename(MovieNfoNaming nfo) {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getNfoFilename(nfo, mfs.get(0).getFilename());
+      String name = mfs.get(0).getFilename();
+      if (isStacked()) {
+        // when movie IS stacked, remove stacking marker, else keep it!
+        name = Utils.cleanStackingMarkers(name);
+      }
+      return getNfoFilename(nfo, name);
     }
     else {
       return getNfoFilename(nfo, ""); // no video files
@@ -1158,7 +1232,7 @@ public class Movie extends MediaEntity {
    * @param nfo
    *          the nfo filenaming
    * @param newMovieFilename
-   *          the new/desired movie filename
+   *          the new/desired movie filename (stacking marker should already be set correct here!)
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo, String newMovieFilename) {
@@ -1167,20 +1241,20 @@ public class Movie extends MediaEntity {
       case FILENAME_NFO:
         if (isDisc()) {
           // if filename is activated, we generate them accordingly MF(1)
-          // but if disc, fixtate this
-          if (new File(path, "VIDEO_TS.ifo").exists() || new File(path, "VIDEO_TS").exists()) {
+          // but if disc, fixate this
+          if (Files.exists(getPathNIO().resolve("VIDEO_TS.ifo")) || Files.exists(getPathNIO().resolve("VIDEO_TS"))) {
             filename = "VIDEO_TS.nfo";
           }
-          else if (new File(path, "index.bdmv").exists()) {
+          else if (Files.exists(getPathNIO().resolve("index.bdmv"))) {
             filename = "index.nfo";
           }
-          else if (new File(path, "BDMV").exists()) {
+          else if (Files.exists(getPathNIO().resolve("BDMV"))) {
             filename = "BDMV.nfo";
           }
         }
         else {
-          String movieFilename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(newMovieFilename));
-          filename += movieFilename + ".nfo"; // w/o stacking information
+          String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
+          filename += movieFilename + ".nfo";
         }
         break;
       case MOVIE_NFO:
@@ -1188,13 +1262,13 @@ public class Movie extends MediaEntity {
         break;
       case DISC_NFO:
         if (isDisc()) {
-          File dir = new File(path, "VIDEO_TS");
-          if (dir.exists() && dir.isDirectory()) {
-            filename = "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
+          Path dir = getPathNIO().resolve("VIDEO_TS");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("VIDEO_TS.nfo").toString();
           }
-          dir = new File(path, "BDMV");
-          if (dir.exists() && dir.isDirectory()) {
-            filename = "BDMV" + File.separator + "index.nfo";
+          dir = getPathNIO().resolve("BDMV");
+          if (Files.isDirectory(dir)) {
+            filename = dir.resolve("index.nfo").toString();
           }
         }
         break;
@@ -1618,12 +1692,12 @@ public class Movie extends MediaEntity {
   /**
    * Gets the images to cache.
    */
-  public List<File> getImagesToCache() {
+  public List<Path> getImagesToCache() {
     // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
-    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+    List<Path> filesToCache = new ArrayList<>();
+    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
-        filesToCache.add(mf.getFile());
+        filesToCache.add(mf.getFileAsPath());
       }
     }
 
@@ -1631,7 +1705,7 @@ public class Movie extends MediaEntity {
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {
-    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<>(1);
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -1649,7 +1723,7 @@ public class Movie extends MediaEntity {
   }
 
   public List<MediaFile> getMediaFilesContainingSubtitles() {
-    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
     // look in the first media file if it has subtitles
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -1864,8 +1938,8 @@ public class Movie extends MediaEntity {
    */
   public void reEvaluateStacking() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs.size() > 1) {
-      // ok, more video files means stacking
+    if (mfs.size() > 1 && !isDisc()) {
+      // ok, more video files means stacking (if not a disc folder)
       this.setStacked(true);
       for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
         mf.detectStackingInformation();
@@ -1896,7 +1970,32 @@ public class Movie extends MediaEntity {
       return ok;
     }
     else {
-      return Utils.deleteDirectorySafely(new File(getPath()), getDataSource());
+      return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
     }
+  }
+
+  public MovieEdition getEdition() {
+    return edition;
+  }
+
+  public String getEditionAsString() {
+    return edition.toString();
+  }
+
+  public void setOffline(boolean newValue) {
+    boolean oldValue = this.offline;
+    this.offline = newValue;
+    firePropertyChange("offline", oldValue, newValue);
+  }
+
+  public boolean isOffline() {
+    return offline;
+  }
+
+  public void setEdition(MovieEdition newValue) {
+    MovieEdition oldValue = this.edition;
+    this.edition = newValue;
+    firePropertyChange(EDITION, oldValue, newValue);
+    firePropertyChange(EDITION_AS_STRING, oldValue, newValue);
   }
 }

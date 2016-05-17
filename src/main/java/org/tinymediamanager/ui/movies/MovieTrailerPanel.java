@@ -93,8 +93,8 @@ public class MovieTrailerPanel extends JPanel {
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     trailerEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<MovieTrailer>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class)));
-    trailerTableModel = new DefaultEventTableModel<MovieTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class)));
+    trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());

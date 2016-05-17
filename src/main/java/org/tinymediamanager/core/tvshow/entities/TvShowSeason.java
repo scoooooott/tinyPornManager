@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.POSTER_URL;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +44,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 public class TvShowSeason extends AbstractModelObject {
   private int                    season      = -1;
   private TvShow                 tvShow;
-  private List<TvShowEpisode>    episodes    = new ArrayList<TvShowEpisode>();
+  private List<TvShowEpisode>    episodes    = new ArrayList<>();
   private Date                   lastWatched = null;
   private PropertyChangeListener listener;
 
@@ -115,18 +119,18 @@ public class TvShowSeason extends AbstractModelObject {
   }
 
   public List<MediaFile> getMediaFiles() {
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
-    Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
+    ArrayList<MediaFile> mfs = new ArrayList<>();
+    Set<MediaFile> unique = new LinkedHashSet<>(mfs);
     for (int i = 0; i < episodes.size(); i++) {
-      unique.addAll(new ArrayList<MediaFile>(episodes.get(i).getMediaFiles()));
+      unique.addAll(new ArrayList<>(episodes.get(i).getMediaFiles()));
     }
     mfs.addAll(unique);
     return mfs;
   }
 
   public List<MediaFile> getMediaFiles(MediaFileType type) {
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
-    Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
+    ArrayList<MediaFile> mfs = new ArrayList<>();
+    Set<MediaFile> unique = new LinkedHashSet<>(mfs);
     for (int i = 0; i < episodes.size(); i++) {
       unique.addAll(episodes.get(i).getMediaFiles(type));
     }

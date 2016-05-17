@@ -15,11 +15,11 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
@@ -81,12 +81,12 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void startUp() throws Exception {
     // do a DB backup, and keep last 15 copies
-    File db = new File(Settings.getInstance().getSettingsFolder(), MOVIE_DB);
+    Path db = Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB);
     Utils.createBackupFile(db);
     Utils.deleteOldBackupFile(db, 15);
 
     // configure database
-    mvStore = new MVStore.Builder().fileName(Settings.getInstance().getSettingsFolder() + File.separatorChar + MOVIE_DB).compressHigh()
+    mvStore = new MVStore.Builder().fileName(Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB).toString()).compressHigh()
         .backgroundExceptionHandler(new Thread.UncaughtExceptionHandler() {
           @Override
           public void uncaughtException(Thread t, Throwable e) {
@@ -127,8 +127,8 @@ public class MovieModuleManager implements ITmmModule {
 
     if (Globals.settings.isDeleteTrashOnExit()) {
       for (String ds : MOVIE_SETTINGS.getMovieDataSource()) {
-        File file = new File(ds, Constants.BACKUP_FOLDER);
-        FileUtils.deleteQuietly(file);
+        Path file = Paths.get(ds, Constants.BACKUP_FOLDER);
+        Utils.deleteDirectoryRecursive(file);
       }
     }
   }
@@ -142,6 +142,7 @@ public class MovieModuleManager implements ITmmModule {
    * dumps a whole movie to logfile
    * 
    * @param movie
+   *          the movie to make the dump for
    */
   public void dump(Movie movie) {
     try {
@@ -181,6 +182,6 @@ public class MovieModuleManager implements ITmmModule {
 
   @Override
   public void initializeDatabase() throws Exception {
-    FileUtils.deleteQuietly(new File(Settings.getInstance().getSettingsFolder(), MOVIE_DB));
+    Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB));
   }
 }

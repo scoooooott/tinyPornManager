@@ -15,15 +15,23 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -41,15 +49,15 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -448,9 +456,9 @@ public class TvShowList extends AbstractModelObject {
         provider = (ITvShowMetadataProvider) mediaScraper.getMediaProvider();
       }
 
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
-      options.set(SearchParam.LANGUAGE, language.name());
-      options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
+      options.setLanguage(Locale.forLanguageTag(language.name()));
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());
@@ -634,12 +642,25 @@ public class TvShowList extends AbstractModelObject {
    * @param path
    *          the path
    * @return the TV show by path
+   * @deprecated use getTvShowByPath(Path path)
    */
+  @Deprecated
   public TvShow getTvShowByPath(File path) {
-    ArrayList<TvShow> tvShows = new ArrayList<TvShow>(tvShowList);
+    return getTvShowByPath(path.toPath());
+  }
+
+  /**
+   * Gets the TV show by path.
+   * 
+   * @param path
+   *          path
+   * @return the TV show by path
+   */
+  public TvShow getTvShowByPath(Path path) {
+    ArrayList<TvShow> tvShows = new ArrayList<>(tvShowList);
     // iterate over all tv shows and check whether this path is being owned by one
     for (TvShow tvShow : tvShows) {
-      if (new File(tvShow.getPath()).compareTo(path) == 0) {
+      if (tvShow.getPathNIO().compareTo(path.toAbsolutePath()) == 0) {
         return tvShow;
       }
     }
@@ -655,15 +676,15 @@ public class TvShowList extends AbstractModelObject {
    * @return the tv episodes by file
    */
   public List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, File file) {
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+    List<TvShowEpisode> episodes = new ArrayList<>(1);
     // validy check
     if (file == null) {
       return episodes;
     }
 
     // check if that file is in this tv show/episode (iterating thread safe)
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
-      for (MediaFile mediaFile : new ArrayList<MediaFile>(episode.getMediaFiles())) {
+    for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
+      for (MediaFile mediaFile : new ArrayList<>(episode.getMediaFiles())) {
         if (file.equals(mediaFile.getFile())) {
           episodes.add(episode);
         }
@@ -685,7 +706,7 @@ public class TvShowList extends AbstractModelObject {
    * invalidate the title sortable upon changes to the sortable prefixes
    */
   public void invalidateTitleSortable() {
-    for (TvShow tvShow : new ArrayList<TvShow>(tvShowList)) {
+    for (TvShow tvShow : new ArrayList<>(tvShowList)) {
       tvShow.clearTitleSortable();
     }
   }
@@ -696,7 +717,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the new TvShows
    */
   public List<TvShow> getNewTvShows() {
-    List<TvShow> newShows = new ArrayList<TvShow>();
+    List<TvShow> newShows = new ArrayList<>();
     for (TvShow show : tvShowList) {
       if (show.isNewlyAdded()) {
         newShows.add(show);
@@ -711,7 +732,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the new episodes
    */
   public List<TvShowEpisode> getNewEpisodes() {
-    List<TvShowEpisode> newEp = new ArrayList<TvShowEpisode>();
+    List<TvShowEpisode> newEp = new ArrayList<>();
     for (TvShow show : tvShowList) {
       for (TvShowEpisode ep : show.getEpisodes()) {
         if (ep.isNewlyAdded()) {
@@ -728,7 +749,7 @@ public class TvShowList extends AbstractModelObject {
   private void checkAndCleanupMediaFiles() {
     boolean problemsDetected = false;
     for (TvShow tvShow : tvShowList) {
-      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+      for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
         List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
         if (mfs.isEmpty()) {
           tvShow.removeEpisode(episode);
@@ -756,6 +777,49 @@ public class TvShowList extends AbstractModelObject {
       });
       thread.start();
     }
+  }
+
+  /**
+   * all available subtitle scrapers.
+   *
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getAvailableSubtitleScrapers() {
+    List<MediaScraper> availableScrapers = MediaScraper.getMediaScrapers(ScraperType.SUBTITLE);
+    Collections.sort(availableScrapers, new TvShowMediaScraperComparator());
+    return availableScrapers;
+  }
+
+  /**
+   * get all default (specified via settings) subtitle scrapers
+   *
+   * @return the specified subtitle scrapers
+   */
+  public List<MediaScraper> getDefaultSubtitleScrapers() {
+    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+  }
+
+  /**
+   * get all specified subtitle scrapers.
+   *
+   * @param providerIds
+   *          the scrapers
+   * @return the subtitle scrapers
+   */
+  public List<MediaScraper> getSubtitleScrapers(List<String> providerIds) {
+    List<MediaScraper> subtitleScrapers = new ArrayList<>();
+
+    for (String providerId : providerIds) {
+      if (StringUtils.isBlank(providerId)) {
+        continue;
+      }
+      MediaScraper subtitleScraper = MediaScraper.getMediaScraperById(providerId, ScraperType.SUBTITLE);
+      if (subtitleScraper != null) {
+        subtitleScrapers.add(subtitleScraper);
+      }
+    }
+
+    return subtitleScrapers;
   }
 
   private class TvShowMediaScraperComparator implements Comparator<MediaScraper> {

@@ -113,6 +113,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * Sets the JPopupMenu to be displayed, when the split part of the button is clicked.
    * 
    * @param popupMenu
+   *          the popup menu for the button
    */
   public void setPopupMenu(JPopupMenu popupMenu) {
     this.popupMenu = popupMenu;
@@ -134,6 +135,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * part of the button).
    * 
    * @param separatorSpacing
+   *          the separator spacing in pixels
    */
   public void setSeparatorSpacing(int separatorSpacing) {
     this.separatorSpacing = separatorSpacing;
@@ -171,6 +173,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * Set the arrow color.
    * 
    * @param arrowColor
+   *          the arrow color
    */
   public void setArrowColor(Color arrowColor) {
     this.arrowColor = arrowColor;
@@ -210,6 +213,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * Splitwidth is the width of the split part of the button.
    * 
    * @param splitWidth
+   *          the splitter with in pixels
    */
   public void setSplitWidth(int splitWidth) {
     this.splitWidth = splitWidth;
@@ -228,6 +232,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * sets the size of the arrow
    * 
    * @param arrowSize
+   *          the arrow size in pixels
    */
   public void setArrowSize(int arrowSize) {
     this.arrowSize = arrowSize;
@@ -277,15 +282,12 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
    * Sets the image to draw instead of the triangle.
    * 
    * @param image
+   *          the image to be drawn insead of the triangle
    */
   public void setImage(Image image) {
     this.image = image;
   }
 
-  /**
-   * 
-   * @param g
-   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -350,10 +352,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     }
   }
 
-  /**
-   * 
-   * @param e
-   */
+  @Override
   public void mouseMoved(MouseEvent e) {
     if (splitRectangle.contains(e.getPoint())) {
       onSplit = true;
@@ -364,10 +363,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     repaint(splitRectangle);
   }
 
-  /**
-   * 
-   * @param e
-   */
+  @Override
   public void actionPerformed(ActionEvent e) {
     if (popupMenu == null) {
       fireButtonClicked(e);
@@ -385,10 +381,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     }
   }
 
-  /**
-   * 
-   * @param e
-   */
+  @Override
   public void mouseExited(MouseEvent e) {
     onSplit = false;
     repaint(splitRectangle);

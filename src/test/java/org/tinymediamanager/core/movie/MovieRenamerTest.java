@@ -1,6 +1,6 @@
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import org.junit.AfterClass;
@@ -59,7 +59,7 @@ public class MovieRenamerTest {
     Movie m = new Movie();
     m.setTitle("The Dish");
     m.setYear("2000");
-    MediaFile mf = new MediaFile(new File("target/test-classes/samples", "thx_scarface-DWEU.vob"));
+    MediaFile mf = new MediaFile(Paths.get("target/test-classes/samples", "thx_scarface-DWEU.vob"));
     mf.gatherMediaInformation();
     m.addToMediaFiles(mf);
 

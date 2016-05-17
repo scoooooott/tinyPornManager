@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -59,10 +60,9 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -308,9 +308,8 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
-          MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET);
-          options.set(SearchParam.QUERY, searchTerm);
-          options.set(SearchParam.LANGUAGE, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name());
+          MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET, searchTerm);
+          options.setLanguage(Locale.forLanguageTag(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
           List<MediaSearchResult> movieSets = mp.search(options);
           movieSetsFound.clear();
           if (movieSets.size() == 0) {

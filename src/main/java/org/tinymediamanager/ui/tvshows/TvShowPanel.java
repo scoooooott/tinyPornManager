@@ -67,7 +67,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.PopupListener;
+import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -94,6 +94,8 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleDownloadAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSubtitleSearchAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncSelectedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
@@ -114,17 +116,17 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TvShowPanel extends JPanel {
-  private static final long           serialVersionUID              = -1923811385292825136L;
+  private static final long           serialVersionUID                 = -1923811385292825136L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   TvShowSelectionModel                tvShowSelectionModel;
   TvShowSeasonSelectionModel          tvShowSeasonSelectionModel;
   TvShowEpisodeSelectionModel         tvShowEpisodeSelectionModel;
   private TvShowTreeModel             treeModel;
-  private TvShowList                  tvShowList                    = TvShowList.getInstance();
+  private TvShowList                  tvShowList                       = TvShowList.getInstance();
 
   private JTree                       tree;
   private JPanel                      panelRight;
@@ -132,37 +134,39 @@ public class TvShowPanel extends JPanel {
   private JLabel                      lblTvShows;
   private JLabel                      lblEpisodes;
 
-  private final Action                actionUpdateDatasources       = new TvShowUpdateDatasourcesAction(false);
-  private final Action                actionUpdateDatasources2      = new TvShowUpdateDatasourcesAction(true);
-  private final Action                actionUpdateTvShow            = new TvShowUpdateAction();
-  private final Action                actionScrape                  = new TvShowSingleScrapeAction(false);
-  private final Action                actionScrape2                 = new TvShowSingleScrapeAction(true);
-  private final Action                actionScrapeSelected          = new TvShowSelectedScrapeAction();
-  private final Action                actionScrapeNewItems          = new TvShowScrapeNewItemsAction();
-  private final Action                actionEdit                    = new TvShowEditAction(false);
-  private final Action                actionEdit2                   = new TvShowEditAction(true);
-  private final Action                actionRemove2                 = new TvShowRemoveAction(true);
-  private final Action                actionDelete2                 = new TvShowDeleteAction(true);
-  private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
-  private final Action                actionBatchEdit               = new TvShowBulkEditAction();
-  private final Action                actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
-  private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction(true);
-  private final Action                actionScrapeEpisodes2         = new TvShowScrapeEpisodesAction(false);
-  private final Action                actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
-  private final Action                actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
-  private final Action                actionRename                  = new TvShowRenameAction();
-  private final Action                actionMediaInformation        = new TvShowMediaInformationAction(false);
-  private final Action                actionMediaInformation2       = new TvShowMediaInformationAction(true);
-  private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
-  private final Action                actionExport                  = new TvShowExportAction();
-  private final Action                actionSyncTrakt               = new TvShowSyncTraktTvAction();
-  private final Action                actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
-  private final Action                actionSyncSelectedTrakt       = new TvShowSyncSelectedTraktTvAction();
-  private final Action                actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
-  private final Action                actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
-  private final Action                debugDumpShow                 = new DebugDumpShow();
+  private final Action                actionUpdateDatasources          = new TvShowUpdateDatasourcesAction(false);
+  private final Action                actionUpdateDatasources2         = new TvShowUpdateDatasourcesAction(true);
+  private final Action                actionUpdateTvShow               = new TvShowUpdateAction();
+  private final Action                actionScrape                     = new TvShowSingleScrapeAction(false);
+  private final Action                actionScrape2                    = new TvShowSingleScrapeAction(true);
+  private final Action                actionScrapeSelected             = new TvShowSelectedScrapeAction();
+  private final Action                actionScrapeNewItems             = new TvShowScrapeNewItemsAction();
+  private final Action                actionEdit                       = new TvShowEditAction(false);
+  private final Action                actionEdit2                      = new TvShowEditAction(true);
+  private final Action                actionRemove2                    = new TvShowRemoveAction(true);
+  private final Action                actionDelete2                    = new TvShowDeleteAction(true);
+  private final Action                actionChangeSeasonPoster2        = new TvShowChangeSeasonPosterAction(true);
+  private final Action                actionBatchEdit                  = new TvShowBulkEditAction();
+  private final Action                actionSetWatchedFlag             = new TvShowSetWatchedFlagAction();
+  private final Action                actionScrapeEpisodes             = new TvShowScrapeEpisodesAction(true);
+  private final Action                actionScrapeEpisodes2            = new TvShowScrapeEpisodesAction(false);
+  private final Action                actionRewriteTvShowNfo           = new TvShowRewriteNfoAction();
+  private final Action                actionRewriteTvShowEpisodeNfo    = new TvShowRewriteEpisodeNfoAction();
+  private final Action                actionRename                     = new TvShowRenameAction();
+  private final Action                actionMediaInformation           = new TvShowMediaInformationAction(false);
+  private final Action                actionMediaInformation2          = new TvShowMediaInformationAction(true);
+  private final Action                actionClearImageCache            = new TvShowClearImageCacheAction();
+  private final Action                actionExport                     = new TvShowExportAction();
+  private final Action                actionSyncTrakt                  = new TvShowSyncTraktTvAction();
+  private final Action                actionSyncWatchedTrakt           = new TvShowSyncWatchedTraktTvAction();
+  private final Action                actionSyncSelectedTrakt          = new TvShowSyncSelectedTraktTvAction();
+  private final Action                actionChangeToDvdOrder           = new TvShowChangeToDvdOrderAction();
+  private final Action                actionChangeToAiredOrder         = new TvShowChangeToAiredOrderAction();
+  private final Action                actionDownloadSubtitles          = new TvShowSubtitleDownloadAction();
+  private final Action                actionSearchAndDownloadSubtitles = new TvShowSubtitleSearchAction();
+  private final Action                debugDumpShow                    = new DebugDumpShow();
 
-  private int                         width                         = 0;
+  private int                         width                            = 0;
   private JTextField                  textField;
 
   /**
@@ -615,6 +619,9 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionExport);
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
+    popupMenu.add(actionDownloadSubtitles);
+    popupMenu.add(actionSearchAndDownloadSubtitles);
+    popupMenu.addSeparator();
     popupMenu.add(actionSyncTrakt);
     popupMenu.add(actionSyncWatchedTrakt);
     popupMenu.add(actionSyncSelectedTrakt);
@@ -632,7 +639,7 @@ public class TvShowPanel extends JPanel {
       popupMenu.add(menuDebug);
     }
 
-    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 

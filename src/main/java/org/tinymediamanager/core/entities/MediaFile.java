@@ -17,9 +17,11 @@ package org.tinymediamanager.core.entities;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -73,7 +75,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static Pattern                             seasonPattern      = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
   private static Pattern                             logoPattern        = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
   // be careful: disc.avi would be valid!
-  private static Pattern                             discartPattern     = Pattern.compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|png|tbn)");
+  private static Pattern                             discartPattern     = Pattern
+      .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
   private static Pattern                             clearartPattern    = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_480P  = "480p";
@@ -127,13 +130,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     stackingMarker     = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
+  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<>(0);
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<>(0);
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
-  private File                                       file               = null;
+  private Path                                       file               = null;
 
   /**
    * "clones" a new media file.
@@ -169,11 +172,37 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * Instantiates a new media file.
    * 
+   * @deprecated use Java 7 Path() instead of File()
    * @param f
    *          the file
    */
+  @Deprecated
   public MediaFile(File f) {
+    this(f.toPath(), null);
+  }
+
+  /**
+   * Instantiates a new media file.
+   * 
+   * @param f
+   *          the file
+   */
+  public MediaFile(Path f) {
     this(f, null);
+  }
+
+  /**
+   * Instantiates a new media file.
+   * 
+   * @deprecated use Java 7 Path() instead of File()
+   * @param f
+   *          the file
+   * @param type
+   *          the MediaFileType
+   */
+  @Deprecated
+  public MediaFile(File f, MediaFileType type) {
+    this(f.toPath(), type);
   }
 
   /**
@@ -184,10 +213,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @param type
    *          the MediaFileType
    */
-  public MediaFile(File f, MediaFileType type) {
-    this.path = f.getParent(); // just path w/o filename
-    this.filename = f.getName();
-    this.file = f;
+  public MediaFile(Path f, MediaFileType type) {
+    this.path = f.getParent().toString(); // just path w/o filename
+    this.filename = f.getFileName().toString();
+    this.file = f.toAbsolutePath();
     if (type == null) {
       this.type = parseType();
     }
@@ -233,9 +262,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
         br.close();
       }
-      catch (FileNotFoundException e) {
-        // ignore
-      }
       catch (IOException e) {
         // ignore
       }
@@ -259,7 +285,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.NFO;
     }
 
-    if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
+    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn")) {
       return parseImageType();
     }
 
@@ -434,18 +460,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
   }
 
+  @Deprecated
   public File getFile() {
     if (file == null) {
-      File f = new File(this.path, this.filename);
-      file = f;
+      file = getFileAsPath();
+    }
+    return file.toFile();
+  }
+
+  public Path getFileAsPath() {
+    if (file == null) {
+      Path f = Paths.get(this.path, this.filename);
+      file = f.toAbsolutePath();
     }
     return file;
   }
 
-  public void setFile(File file) {
-    setFilename(file.getName());
-    setPath(file.getParent());
-    this.file = file;
+  public void setFile(Path file) {
+    setFilename(file.getFileName().toString());
+    setPath(file.toAbsolutePath().getParent().toString());
+    this.file = file.toAbsolutePath();
   }
 
   /**
@@ -494,9 +528,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @param newPath
    *          the new path
    */
-  public void replacePathForRenamedFolder(File oldPath, File newPath) {
+  public void replacePathForRenamedFolder(Path oldPath, Path newPath) {
     String p = getPath();
-    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
+    p = p.replace(oldPath.toAbsolutePath().toString(), newPath.toAbsolutePath().toString());
     setPath(p);
   }
 
@@ -508,19 +542,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * it might be, that there "seems" to be a stacking marker in filename,<br>
    * but the file is not stacked itself. Just return correct string.
    * 
-   * @return
+   * @return the file name without the stacking info
    */
   public String getFilenameWithoutStacking() {
-    String fname = "";
     if (stackingMarker.isEmpty()) {
-      // no stacking, remove all occurences
-      fname = Utils.cleanStackingMarkers(filename);
+      // no stacking, remove all occurrences
+      // fname = Utils.cleanStackingMarkers(filename);
+      // NOO, keep em!!! "mockingjay part1" might be unstacked, so keep the part1 !!!
+      return filename;
     }
     else {
-      // stacking, so just remove knwon marker
-      fname = filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
+      // stacking, so just remove known marker
+      return filename.replaceAll("[ _.-]*" + stackingMarker, ""); // optional delimiter
     }
-    return fname;
   }
 
   public void setFilename(String newValue) {
@@ -599,12 +633,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * detect stacking information for this media file
    */
   public void detectStackingInformation() {
-    this.stacking = Utils.getStackingNumber(file.getName());
+    this.stacking = Utils.getStackingNumber(this.filename);
     if (this.stacking == 0) {
       // try to parse from parent directory
       this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
     }
-    this.stackingMarker = Utils.getStackingMarker(file.getName());
+    this.stackingMarker = Utils.getStackingMarker(this.filename);
     if (this.stackingMarker.isEmpty()) {
       // try to parse from parent directory
       this.stackingMarker = Utils.getFolderStackingMarker(FilenameUtils.getBaseName(getPath()));
@@ -617,7 +651,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getSubtitlesAsString() {
     StringBuilder sb = new StringBuilder();
-    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<MediaFileSubtitle>(subtitles);
+    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<>(subtitles);
 
     for (MediaFileSubtitle sub : cleansub) {
       if (sb.length() > 0) {
@@ -673,17 +707,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       mediaInfo = new MediaInfo();
 
       try {
-        if (!mediaInfo.open(this.getFile())) {
-          LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
+        if (!mediaInfo.open(this.getFileAsPath())) {
+          LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
         }
       }
-      catch (Exception e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
+      catch (Exception | Error e) {
+        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
-      catch (Error e) {
-        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename() + "; " + e.getMessage());
-      }
 
       miSnapshot = mediaInfo.snapshot();
     }
@@ -1154,6 +1185,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * explicit set the 3D format
    * 
    * @param video3DFormat
+   *          the 3D format
    */
   public void setVideo3DFormat(String video3DFormat) {
     this.video3DFormat = video3DFormat;
@@ -1189,7 +1221,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
 
-    LOGGER.debug("start MediaInfo for " + this.getFile().getAbsolutePath());
+    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
 
     mediaInfo = getMediaInfo();
     try {
@@ -1197,6 +1229,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
     catch (Exception e) {
       LOGGER.error("error getting MediaInfo for " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
       closeMediaInfo();
       return;
     }
@@ -1205,6 +1239,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
       LOGGER.warn("0 Byte file detected: " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
       closeMediaInfo();
       return;
     }
@@ -1553,7 +1589,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean exists() {
-    return getFile().exists();
+    return Files.exists(getFileAsPath());
   }
 
   /**
@@ -1562,10 +1598,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * maintaining its orginating directory
    * 
    * @param datasource
+   *          the data source (for the location of the backup folder)
    * @return true/false if successful
    */
   public boolean deleteSafely(String datasource) {
-    return Utils.deleteFileWithBackup(getFile(), datasource);
+    return Utils.deleteFileWithBackup(getFileAsPath(), datasource);
   }
 
   @Override
@@ -1578,11 +1615,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   @Override
   public int compareTo(MediaFile mf2) {
-    return this.getFile().compareTo(mf2.getFile());
+    return this.getFileAsPath().compareTo(mf2.getFileAsPath());
   }
 
   @Override
   public int hashCode() {
-    return this.getFile().hashCode();
+    return this.getFileAsPath().hashCode();
   }
 }

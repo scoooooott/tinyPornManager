@@ -37,12 +37,7 @@ public class TreeUI extends BaseTreeUI {
 
   // private Color backgroundSelectionColor = UIManager.getColor("Tree.selectionBackground");
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.plaf.basic.BasicTreeUI#paintRow(java.awt.Graphics, java.awt.Rectangle, java.awt.Insets, java.awt.Rectangle,
-   * javax.swing.tree.TreePath, int, boolean, boolean, boolean)
-   */
+  @Override
   protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
       boolean hasBeenExpanded, boolean isLeaf) {
     // Don't paint the renderer if editing this row.
@@ -57,21 +52,13 @@ public class TreeUI extends BaseTreeUI {
     super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.plaf.basic.BasicTreeUI#installListeners()
-   */
+  @Override
   protected void installListeners() {
     super.installListeners();
     tree.addMouseListener(sf);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.plaf.basic.BasicTreeUI#uninstallListeners()
-   */
+  @Override
   protected void uninstallListeners() {
     tree.removeMouseListener(sf);
     super.uninstallListeners();
@@ -81,8 +68,6 @@ public class TreeUI extends BaseTreeUI {
    * The listener interface for receiving rowSelection events. The class that is interested in processing a rowSelection event implements this
    * interface, and the object created with that class is registered with a component using the component's <code>addRowSelectionListener
    * <code> method. When the rowSelection event occurs, that object's appropriate method is invoked.
-   * 
-   * @see RowSelectionEvent
    */
   private class RowSelectionListener extends MouseAdapter {
 

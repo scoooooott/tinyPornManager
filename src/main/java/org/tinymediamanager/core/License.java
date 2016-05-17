@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -34,7 +35,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.http.TmmHttpClient;
+
+import okhttp3.OkUrlFactory;
 
 /**
  * The class License. Used for the generation/validation of the license file (for the donator version)
@@ -108,7 +111,7 @@ public class License {
    * @return MAC or empty string
    */
   private static List<String> getAllMacAddresses() {
-    List<String> m = new ArrayList<String>();
+    List<String> m = new ArrayList<>();
     m.add(UNKNOWN_MAC); // lic generated with empty mac, but java cannot handle this :/ use fake mac for further checks
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
@@ -179,7 +182,7 @@ public class License {
   /**
    * gets the license file (from possible locations)
    * 
-   * @return
+   * @return the file containing the license or null
    */
   private static File getLicenseFile() {
     File f = new File(LICENSE_FILE); // app dir
@@ -247,9 +250,8 @@ public class License {
         String value = props.getProperty(key);
         urlParameters += "&" + key + "=" + URLEncoder.encode(value, "UTF-8");
       }
-      Url url = new Url(request);
 
-      HttpURLConnection connection = (HttpURLConnection) url.getUrl().openConnection();
+      HttpURLConnection connection = new OkUrlFactory(TmmHttpClient.getHttpClient()).open(new URL(request));
       connection.setDoOutput(true);
       connection.setDoInput(true);
       connection.setInstanceFollowRedirects(true);

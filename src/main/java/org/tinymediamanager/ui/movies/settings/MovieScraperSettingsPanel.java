@@ -64,9 +64,9 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -258,12 +258,12 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     sliderThreshold.setPaintLabels(true);
     sliderThreshold.setValue((int) (settings.getMovieSettings().getScraperThreshold() * 100));
 
-    Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
-    labelTable.put(Integer.valueOf(100), new JLabel("1.0"));
-    labelTable.put(Integer.valueOf(75), new JLabel("0.75"));
-    labelTable.put(Integer.valueOf(50), new JLabel("0.50"));
-    labelTable.put(Integer.valueOf(25), new JLabel("0.25"));
-    labelTable.put(Integer.valueOf(0), new JLabel("0.0"));
+    Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<>();
+    labelTable.put(100, new JLabel("1.0"));
+    labelTable.put(75, new JLabel("0.75"));
+    labelTable.put(50, new JLabel("0.50"));
+    labelTable.put(25, new JLabel("0.25"));
+    labelTable.put(0, new JLabel("0.0"));
     sliderThreshold.setLabelTable(labelTable);
     sliderThreshold.addChangeListener(new ChangeListener() {
       @Override

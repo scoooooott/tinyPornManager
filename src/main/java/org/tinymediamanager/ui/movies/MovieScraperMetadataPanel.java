@@ -62,6 +62,7 @@ public class MovieScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxArtwork;
   private JCheckBox                   chckbxTrailer;
   private JCheckBox                   chckbxCollection;
+  private JCheckBox                   chckbxTags;
 
   /**
    * Instantiates a new movie scraper metadata panel.
@@ -71,6 +72,10 @@ public class MovieScraperMetadataPanel extends JPanel {
    */
   public MovieScraperMetadataPanel(MovieScraperMetadataConfig config) {
     this.config = config;
+    initComponents();
+  }
+
+  private void initComponents() {
     setLayout(new FormLayout(
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC,
             ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormFactory.DEFAULT_COLSPEC,
@@ -118,12 +123,12 @@ public class MovieScraperMetadataPanel extends JPanel {
     chckbxCollection = new JCheckBox(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
     add(chckbxCollection, "2, 8");
 
+    chckbxTags = new JCheckBox(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+    add(chckbxTags, "4, 8");
+
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<MovieScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty = BeanProperty.create("title");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
@@ -190,5 +195,10 @@ public class MovieScraperMetadataPanel extends JPanel {
     AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         config, scraperMetadataConfigBeanProperty_12, chckbxCollection, jCheckBoxBeanProperty);
     autoBinding_12.bind();
+    //
+    BeanProperty<MovieScraperMetadataConfig, Boolean> movieScraperMetadataConfigBeanProperty = BeanProperty.create("tags");
+    AutoBinding<MovieScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        config, movieScraperMetadataConfigBeanProperty, chckbxTags, jCheckBoxBeanProperty);
+    autoBinding_13.bind();
   }
 }

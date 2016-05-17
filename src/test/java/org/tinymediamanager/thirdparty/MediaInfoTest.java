@@ -1,13 +1,11 @@
 package org.tinymediamanager.thirdparty;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.tinymediamanager.core.entities.MediaFile;
-
-import com.sun.jna.Platform;
 
 public class MediaInfoTest {
 
@@ -15,23 +13,7 @@ public class MediaInfoTest {
 
   @Before
   public void setUp() throws Exception {
-    // set native dir (needs to be absolute)
-    String path = "native/";
-    if (Platform.isWindows()) {
-      path += "windows-";
-    }
-    else if (Platform.isLinux()) {
-      path += "linux-";
-    }
-    else if (Platform.isMac()) {
-      path += "mac-";
-    }
-    path += System.getProperty("os.arch");
-    System.setProperty("jna.library.path", path);
-    System.setProperty("jna.nosys", "true");
-    System.out.println("Try to load mediainfo from: " + path);
-
-    System.out.println(MediaInfo.version());
+    MediaInfoUtils.loadMediaInfo();
 
     mi = new MediaInfo();
   }
@@ -103,7 +85,7 @@ public class MediaInfoTest {
     MediaInfo MI = new MediaInfo();
 
     To_Display += "\r\n\r\nOpen\r\n";
-    if (MI.open(new File(FileName)))
+    if (MI.open(Paths.get(FileName)))
       To_Display += "is OK\r\n";
     else
       To_Display += "has a problem\r\n";

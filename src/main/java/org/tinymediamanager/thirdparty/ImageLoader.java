@@ -78,6 +78,7 @@ public class ImageLoader {
    * Note that if <code>i</code> is already an ARGB BufferedImage, then it is immediately returned and this method does NOT duplicate it.
    * 
    * @param i
+   *          the source image to create the buffered image of
    * @return an ARGB BufferedImage identical to the argument.
    */
   public static BufferedImage createImage(Image i) {
@@ -159,7 +160,7 @@ public class ImageLoader {
       return;
 
     if (listeners == null)
-      listeners = new ArrayList<ChangeListener>();
+      listeners = new ArrayList<>();
     if (listeners.contains(l))
       return;
     listeners.add(l);
@@ -258,7 +259,7 @@ public class ImageLoader {
           waitingThread = t;
         }
         else {
-          waitingThreads = new ArrayList<Thread>();
+          waitingThreads = new ArrayList<>();
           waitingThreads.add(waitingThread);
           waitingThreads.add(t);
           i = 1;
@@ -361,12 +362,7 @@ public class ImageLoader {
           }
         }
       }
-      catch (RuntimeException e) {
-        System.err.println("setColorModel( " + cm + " )");
-        System.err.println(description);
-        throw e;
-      }
-      catch (Error e) {
+      catch (RuntimeException | Error e) {
         System.err.println("setColorModel( " + cm + " )");
         System.err.println(description);
         throw e;
@@ -397,12 +393,7 @@ public class ImageLoader {
         row = new int[w];
         fireChangeListeners();
       }
-      catch (RuntimeException e) {
-        System.err.println("setDimensions( " + w + ", " + h + " )");
-        System.err.println(description);
-        throw e;
-      }
-      catch (Error e) {
+      catch (RuntimeException | Error e) {
         System.err.println("setDimensions( " + w + ", " + h + " )");
         System.err.println(description);
         throw e;
@@ -475,12 +466,7 @@ public class ImageLoader {
         }
         setProgress(x + w, y + h);
       }
-      catch (RuntimeException e) {
-        System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (byte[])");
-        System.err.println(description);
-        throw e;
-      }
-      catch (Error e) {
+      catch (RuntimeException | Error e) {
         System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (byte[])");
         System.err.println(description);
         throw e;
@@ -552,12 +538,7 @@ public class ImageLoader {
 
         setProgress(x + w, y + h);
       }
-      catch (RuntimeException e) {
-        System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (int[])");
-        System.err.println(description);
-        throw e;
-      }
-      catch (Error e) {
+      catch (RuntimeException | Error e) {
         System.err.println("setPixels(" + x + " ," + y + " ," + w + " ," + h + ", " + cm + ", ..., " + offset + ", " + scanSize + ") (int[])");
         System.err.println(description);
         throw e;
@@ -579,13 +560,7 @@ public class ImageLoader {
           properties.list(System.err);
         }
       }
-      catch (RuntimeException e) {
-        System.err.println("setProperties():");
-        properties.list(System.err);
-        System.err.println(description);
-        throw e;
-      }
-      catch (Error e) {
+      catch (RuntimeException | Error e) {
         System.err.println("setProperties():");
         properties.list(System.err);
         System.err.println(description);

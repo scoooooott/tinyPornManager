@@ -16,7 +16,7 @@
 
 package org.tinymediamanager.core;
 
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 /**
  * various MediaFileTypes

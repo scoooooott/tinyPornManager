@@ -25,7 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -68,9 +69,9 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -227,8 +228,10 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelMovieImages.add(panelFileNaming, "2, 11, 5, 1, fill, fill");
     panelFileNaming.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
             FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, }));
 
     JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));
     panelFileNaming.add(lblPosterFilename, "1, 1");
@@ -243,10 +246,10 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelFileNaming.add(cbMoviePosterFilename2, "7, 1");
 
     cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
-    panelFileNaming.add(cbMoviePosterFilename8, "3, 2");
+    panelFileNaming.add(cbMoviePosterFilename8, "9, 1");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.ext");
-    panelFileNaming.add(cbMoviePosterFilename6, "5, 2");
+    panelFileNaming.add(cbMoviePosterFilename6, "11, 1");
 
     JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));
     panelFileNaming.add(lblFanartFileNaming, "1, 3");
@@ -261,7 +264,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelFileNaming.add(cbMovieFanartFilename2, "7, 3");
 
     tpFileNamingHint = new JTextPane();
-    panelFileNaming.add(tpFileNamingHint, "1, 4, 5, 1, fill, fill");
+    panelFileNaming.add(tpFileNamingHint, "1, 5, 11, 1, fill, fill");
     tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
     tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
     TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
@@ -353,9 +356,9 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelExtraArtwork.add(btnSelectFolder, "10, 24");
     btnSelectFolder.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          tfMovieSetArtworkFolder.setText(file.getAbsolutePath());
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
+        if (file != null && Files.isDirectory(file)) {
+          tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
         }
       }
     });
@@ -402,11 +405,11 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     cbMovieFanartFilename3.addItemListener(listener);
 
     cbMovieFanartFilename1.addItemListener(listener);
-    cbMoviePosterFilename6.addItemListener(listener);
-    cbMoviePosterFilename8.addItemListener(listener);
     cbMoviePosterFilename2.addItemListener(listener);
     cbMoviePosterFilename4.addItemListener(listener);
     cbMoviePosterFilename7.addItemListener(listener);
+    cbMoviePosterFilename8.addItemListener(listener);
+    cbMoviePosterFilename6.addItemListener(listener);
 
     // adjust table columns
     // Checkbox and Logo shall have minimal width

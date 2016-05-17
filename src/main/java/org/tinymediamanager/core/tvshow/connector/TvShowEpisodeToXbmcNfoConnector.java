@@ -131,11 +131,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
    * Instantiates a new tv show episode to xbmc nfo connector.
    */
   public TvShowEpisodeToXbmcNfoConnector() {
-    actors = new ArrayList<Object>();
-    director = new ArrayList<String>();
-    credits = new ArrayList<String>();
-    tags = new ArrayList<String>();
-    unsupportedElements = new ArrayList<Object>();
+    actors = new ArrayList<>();
+    director = new ArrayList<>();
+    credits = new ArrayList<>();
+    tags = new ArrayList<>();
+    unsupportedElements = new ArrayList<>();
   }
 
   /**
@@ -172,7 +172,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
     StringBuilder outputXml = new StringBuilder();
     for (int i = 0; i < tvShowEpisodes.size(); i++) {
       episode = tvShowEpisodes.get(i);
-      List<Object> unsupportedTags = new ArrayList<Object>();
+      List<Object> unsupportedTags = new ArrayList<>();
 
       // look in all parsed NFOs for this episode
       TvShowEpisodeToXbmcNfoConnector xbmc = null;
@@ -371,7 +371,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
    */
   public static List<TvShowEpisode> getData(File nfo) {
     // try to parse XML
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+    List<TvShowEpisode> episodes = new ArrayList<>(1);
 
     if (context == null) {
       return episodes;
@@ -582,7 +582,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;
@@ -653,7 +653,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   private static List<TvShowEpisodeToXbmcNfoConnector> parseNfo(File nfoFile) {
-    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<TvShowEpisodeToXbmcNfoConnector>(1);
+    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<>(1);
 
     // tv show episode NFO is a bit weird. There can be stored multiple
     // episodes inside one XML (in a non valid manner); so we have
@@ -679,10 +679,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
           try {
             TvShowEpisodeToXbmcNfoConnector xbmc = parseNfoPart(sb.toString());
             xbmcConnectors.add(xbmc);
-          }
-          catch (UnmarshalException e) {
-            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
-            // clean and retry to parse
           }
           catch (Exception e) {
             LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
@@ -745,8 +741,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
     public Streamdetails() {
       video = new Video();
-      audio = new ArrayList<Audio>();
-      subtitle = new ArrayList<Subtitle>();
+      audio = new ArrayList<>();
+      subtitle = new ArrayList<>();
     }
   }
 

@@ -44,7 +44,7 @@ public class MessageSummaryDialog extends TmmDialog {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<String>                messageList      = new ArrayList<String>();
+  private List<String>                messageList      = new ArrayList<>();
   private JList                       listMessages;
 
   public MessageSummaryDialog(List<String> messages) {
