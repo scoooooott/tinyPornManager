@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -360,16 +361,13 @@ public class MainWindow extends JFrame {
     // do nothing, we have our own windowClosing() listener
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-    getContentPane().setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(500px;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+    getContentPane().setLayout(new BorderLayout(0, 0));
 
     JLayeredPane content = new JLayeredPane();
     content.setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:270px"), },
             new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
-    getContentPane().add(content, "1, 2, fill, fill");
+    getContentPane().add(content, BorderLayout.CENTER);
 
     JPanel mainPanel = new JPanel();
     mainPanel.setLayout(
@@ -383,7 +381,7 @@ public class MainWindow extends JFrame {
     // getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
     panelStatusBar = new StatusBar();
-    getContentPane().add(panelStatusBar, "1, 4");
+    getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
 
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.movies"), panelMovies); //$NON-NLS-1$
