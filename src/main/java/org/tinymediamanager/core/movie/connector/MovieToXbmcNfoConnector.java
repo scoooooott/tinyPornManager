@@ -56,6 +56,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -303,21 +304,16 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
+      xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
+          MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
-        // if we have US verts, write correct "Rated XX" String
+        // if we have US certs, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        xbmc.mpaa = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
+        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       }
-      xbmc.certification = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
     }
-
-    // // filename and path
-    // if (movie.getMediaFiles().size() > 0) {
-    // xbmc.setFilenameandpath(movie.getPath() + File.separator +
-    // movie.getMediaFiles().get(0).getFilename());
-    // }
 
     // support of frodo director tags
     xbmc.director.clear();

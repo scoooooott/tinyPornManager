@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -138,6 +139,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                         detectMovieMultiDir                      = false;
   private boolean                         buildImageCacheOnImport                  = false;
   private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
+  private CertificationStyle              movieCertificationStyle                  = CertificationStyle.LARGE;
 
   // renamer
   private boolean                         movieRenameAfterScrape                   = false;
@@ -918,5 +920,15 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.imageLanguagePriority;
     this.imageLanguagePriority = newValue;
     firePropertyChange("imageLanguagePriority", oldValue, newValue);
+  }
+
+  public CertificationStyle getMovieCertificationStyle() {
+    return movieCertificationStyle;
+  }
+
+  public void setMovieCertificationStyle(CertificationStyle newValue) {
+    CertificationStyle oldValue = this.movieCertificationStyle;
+    this.movieCertificationStyle = newValue;
+    firePropertyChange("movieCertificationStyle", oldValue, newValue);
   }
 }

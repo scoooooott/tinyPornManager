@@ -1,5 +1,10 @@
 Version 2.8
 =======================
+IMPORTANT: changed certification output (in NFO files) from a fixed string to a set of templates.
+           ! Please check your movie settings after upgrade !
+           Default for Kodi NFOs: LARGE (e.g. DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16)
+           Default for MP NFOs: TECHNICAL (e.g. DE_FSK16)
+
 + added subtitle scraping (via OpenSubtitles.org)
 + complete rewrite of "update datasource" for movies - massive performance boost!!!
 + complete rewrite of "update datasource" for TV shows - massive performance boost!!!
