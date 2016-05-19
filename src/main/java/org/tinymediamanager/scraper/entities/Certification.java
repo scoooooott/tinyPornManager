@@ -225,8 +225,8 @@ public enum Certification {
   // @formatter:on
 
   private CountryCode country;
-  private String name;
-  private String[] possibleNotations;
+  private String      name;
+  private String[]    possibleNotations;
 
   /**
    * Instantiates a new certification.
@@ -238,7 +238,7 @@ public enum Certification {
    * @param possibleNotations
    *          the possible notations
    */
-  private Certification(CountryCode country, String name, String[] possibleNotations) {
+  Certification(CountryCode country, String name, String[] possibleNotations) {
     this.country = country;
     this.name = name;
     this.possibleNotations = possibleNotations;
@@ -347,6 +347,21 @@ public enum Certification {
    * @return certification string like "US:R / UK:15 / SW:15"
    */
   public static String generateCertificationStringWithAlternateNames(Certification cert) {
+    return generateCertificationStringWithAlternateNames(cert, false);
+  }
+
+  /**
+   * generates a certification string for country alpha2 or country name (including all different variants); so skins parsing with substr will find
+   * them :)<br>
+   * eg: "DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16". eg: "Germany:FSK 16 / Germany:FSK16 / Germany:16 / Germany:ab 16".
+   *
+   * @param cert
+   *          the cert
+   * @param withCountryName
+   *          true/false
+   * @return certification string like "US:R / UK:15 / SW:15"
+   */
+  public static String generateCertificationStringWithAlternateNames(Certification cert, boolean withCountryName) {
     if (cert == null) {
       return "";
     }
@@ -355,12 +370,16 @@ public enum Certification {
     }
     String certstring = "";
     for (String notation : cert.getPossibleNotations()) {
-      if (cert.getCountry() == CountryCode.GB) {
-        certstring += " / UK:" + notation;
+      if (withCountryName) {
+        certstring += " / " + cert.getCountry().getName() + ":" + notation;
       }
       else {
-        certstring += " / " + cert.getCountry().getAlpha2() + ":" + notation;
-        certstring += " / " + cert.getCountry().getName() + ":" + notation;
+        if (cert.getCountry() == CountryCode.GB) {
+          certstring += " / UK:" + notation;
+        }
+        else {
+          certstring += " / " + cert.getCountry().getAlpha2() + ":" + notation;
+        }
       }
     }
     return certstring.substring(3).trim(); // strip off first slash
