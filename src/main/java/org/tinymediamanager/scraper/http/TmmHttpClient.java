@@ -18,8 +18,6 @@ package org.tinymediamanager.scraper.http;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +26,6 @@ import okhttp3.Authenticator;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
@@ -57,14 +54,6 @@ public class TmmHttpClient {
     builder.connectTimeout(10, TimeUnit.SECONDS);
     builder.writeTimeout(10, TimeUnit.SECONDS);
     builder.readTimeout(30, TimeUnit.SECONDS);
-
-    // Create a custom set of protocols that excludes HTTP/2, since OkHttp doesn't play
-    // nicely with nginx over HTTP/2.
-    // FIXME: Remove when https://github.com/square/okhttp/issues/2543 is fixed.
-    List<Protocol> protocolList = new ArrayList<>();
-    protocolList.add(Protocol.SPDY_3);
-    protocolList.add(Protocol.HTTP_1_1);
-    builder.protocols(protocolList);
 
     // proxy
     if ((ProxySettings.INSTANCE.useProxy())) {
