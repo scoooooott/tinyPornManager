@@ -36,6 +36,7 @@ public class MediaEpisode {
   public String                        title       = "";
   public String                        plot        = "";
   public float                         rating      = 0.0f;
+  public int                           voteCount   = 0;
   public String                        firstAired  = "";
 
   public final List<MediaCastMember>   castMembers = new ArrayList<>();
