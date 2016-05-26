@@ -171,6 +171,7 @@ class TmdbTvShowMetadataProvider {
               ep.season = episode.season_number;
               ep.title = episode.name;
               ep.rating = episode.vote_average.floatValue();
+              ep.voteCount = episode.vote_count;
               ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
               episodes.add(ep);
             }
