@@ -27,7 +27,6 @@ import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class ImdbMetadataProviderTest {
 
@@ -239,8 +238,6 @@ public class ImdbMetadataProviderTest {
     MediaMetadata md = null;
     SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.US);
 
-    ProxySettings.setProxySettings("localhost", 3128, "", "");
-
     /*
      * test on akas.imdb.com - Psych (tt0491738)
      */
@@ -262,6 +259,8 @@ public class ImdbMetadataProviderTest {
       assertEquals("The police department in Santa Barbara hires someone they think is a psychic detective.", md.getPlot());
       assertEquals("7 July 2006", sdf.format(md.getReleaseDate()));
       assertEquals(34, md.getCastMembers(CastType.ACTOR).size());
+      assertThat(md.getRating()).isGreaterThan(0);
+      assertThat(md.getVoteCount()).isGreaterThan(0);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -284,6 +283,8 @@ public class ImdbMetadataProviderTest {
       assertEquals("Earth, Wind and... Wait for It", md.getTitle());
       assertEquals("An arson inspector reluctantly teams up with Shawn and Gus to find the perpetrator of a string of fires.", md.getPlot());
       assertEquals("23 January 2009", sdf.format(md.getReleaseDate()));
+      assertThat(md.getRating()).isGreaterThan(0);
+      assertThat(md.getVoteCount()).isGreaterThan(0);
     }
     catch (Exception e) {
       e.printStackTrace();

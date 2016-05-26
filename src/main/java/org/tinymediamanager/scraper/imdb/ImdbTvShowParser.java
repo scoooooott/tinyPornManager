@@ -214,7 +214,8 @@ public class ImdbTvShowParser extends ImdbParser {
         md.setEpisodeNumber(wantedEpisode.episode);
         md.setSeasonNumber(wantedEpisode.season);
         md.setTitle(wantedEpisode.title);
-        md.setRating((float) wantedEpisode.rating);
+        md.setRating(wantedEpisode.rating);
+        md.setVoteCount(wantedEpisode.voteCount);
         md.setPlot("");
 
         // parse release date
@@ -323,10 +324,12 @@ public class ImdbTvShowParser extends ImdbParser {
             }
 
             Elements cols = row.getElementsByTag("td");
-            if (cols != null && cols.size() >= 3) {
+            if (cols != null && cols.size() >= 4) {
               try {
                 // rating is the third column
                 ep.rating = Float.parseFloat(cols.get(2).ownText());
+                // rating count is the fourth column
+                ep.voteCount = Integer.parseInt(cols.get(3).ownText());
               }
               catch (Exception ignored) {
               }
