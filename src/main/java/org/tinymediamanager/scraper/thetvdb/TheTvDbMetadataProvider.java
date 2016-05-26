@@ -629,7 +629,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       return episodes;
     }
 
-    List<Episode> eps = new ArrayList<Episode>();
+    List<Episode> eps = new ArrayList<>();
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for
       // scraping multiple episodes of one tv show
@@ -654,9 +654,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       try {
         episode.rating = Float.parseFloat(ep.getRating());
+        episode.voteCount = Integer.parseInt(ep.getRatingCount());
       }
       catch (NumberFormatException e) {
         episode.rating = 0f;
+        episode.voteCount = 0;
       }
 
       episode.firstAired = ep.getFirstAired();
