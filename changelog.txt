@@ -16,6 +16,7 @@ IMPORTANT: changed certification output (in NFO files) from a fixed string to a 
 + added option to opt-out our internal statistics
 + moved scraping of artwork/trailers in a separate task after searching for a movie
 + added option to automatically rename a movie after scraping
++ added option to set the subtitle language style (for better Plex support)
 x fixed plugin loading from paths containing a +
 x fix #22 "search episode" scrollbar
 x fix stacking marker detection for movies

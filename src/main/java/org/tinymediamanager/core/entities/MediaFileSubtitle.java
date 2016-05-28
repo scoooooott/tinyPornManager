@@ -59,11 +59,6 @@ public class MediaFileSubtitle extends AbstractModelObject implements Comparable
     this.forced = forced;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object mf2) {
     if ((mf2 != null) && (mf2 instanceof MediaFileSubtitle)) {
@@ -72,11 +67,6 @@ public class MediaFileSubtitle extends AbstractModelObject implements Comparable
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Comparable#compareTo(java.lang.Object)
-   */
   @Override
   public int compareTo(MediaFileSubtitle mf2) {
     return this.getLanguage().compareTo(mf2.getLanguage());

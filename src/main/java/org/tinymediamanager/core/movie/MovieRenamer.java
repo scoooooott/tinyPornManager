@@ -35,6 +35,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -63,6 +64,7 @@ public class MovieRenamer {
     Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
 
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
+      String originalLang = "";
       String lang = "";
       String forced = "";
       List<MediaFileSubtitle> mfsl = sub.getSubtitles();
@@ -70,7 +72,7 @@ public class MovieRenamer {
       if (mfsl != null && mfsl.size() > 0) {
         // use internal values
         MediaFileSubtitle mfs = mfsl.get(0);
-        lang = mfs.getLanguage();
+        originalLang = mfs.getLanguage();
         if (mfs.isForced()) {
           forced = ".forced";
         }
@@ -95,11 +97,17 @@ public class MovieRenamer {
 
         for (String s : langArray) {
           if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
-            lang = Utils.getIso3LanguageFromLocalizedString(s);
-            LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+            originalLang = s;
+            // lang = Utils.getIso3LanguageFromLocalizedString(s);
+            // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
             break;
           }
         }
+      }
+
+      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+      if (StringUtils.isBlank(lang)) {
+        lang = originalLang;
       }
 
       // rebuild new filename

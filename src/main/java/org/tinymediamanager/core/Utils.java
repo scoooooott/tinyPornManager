@@ -68,6 +68,7 @@ import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
@@ -81,7 +82,7 @@ public class Utils {
   private static final Pattern                      localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
       Pattern.CASE_INSENSITIVE);
   // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
-  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP     = generateSubtitleLanguageArray();
+  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP     = generateLanguageArray();
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern                      stackingPattern1      = Pattern
@@ -103,7 +104,7 @@ public class Utils {
   private static final Pattern                      folderStackingPattern = Pattern
       .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
 
-  private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
+  private static LinkedHashMap<String, Locale> generateLanguageArray() {
     Map<String, Locale> langArray = new HashMap<>();
 
     Locale intl = Locale.ENGLISH;
@@ -119,7 +120,11 @@ public class Utils {
       catch (Exception e) {
         // ignore
       }
+      // ISO-639-2/T
       langArray.put(base.getISO3Language(), base);
+      // ISO-639-2/B
+      langArray.put(LanguageUtils.getISO3BLanguage(base), base);
+
       langArray.put(base.getCountry(), base);
       try {
         String c = base.getISO3Country();
@@ -179,6 +184,36 @@ public class Utils {
     Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
     if (l != null) {
       return l.getISO3Language();
+    }
+    return "";
+  }
+
+  /**
+   * uses our localized language mapping table, to get the iso3B code
+   * 
+   * @param text
+   *          the language (as string) to get the iso3B code for
+   * @return 3 chars or empty string
+   */
+  public static String getIso3BLanguageFromLocalizedString(String text) {
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    if (l != null) {
+      return LanguageUtils.getISO3BLanguage(l);
+    }
+    return "";
+  }
+
+  /**
+   * uses our localized language mapping table, to get the iso2 code
+   * 
+   * @param text
+   *          the language (as string) to get the iso2 code for
+   * @return 2 chars or empty string
+   */
+  public static String getIso2LanguageFromLocalizedString(String text) {
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    if (l != null) {
+      return l.getLanguage();
     }
     return "";
   }
