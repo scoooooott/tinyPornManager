@@ -33,6 +33,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -458,7 +459,12 @@ public class TvShowRenamer {
           MediaFileSubtitle mfs = mf.getSubtitles().get(0);
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {
-              filename = filename + "." + mfs.getLanguage();
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(),
+                  TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+              if (StringUtils.isBlank(lang)) {
+                lang = mfs.getLanguage();
+              }
+              filename = filename + "." + lang;
             }
             if (mfs.isForced()) {
               filename = filename + ".forced";

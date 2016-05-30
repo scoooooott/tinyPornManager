@@ -116,19 +116,21 @@ public class MovieRenamer {
       if (sub.getStacking() == 0) {
         // fine, so match to first movie file
         MediaFile mf = m.getMediaFiles(MediaFileType.VIDEO).get(0);
-        newSubName = mf.getBasename() + forced;
+        newSubName = mf.getBasename();
         if (!lang.isEmpty()) {
           newSubName += "." + lang;
         }
+        newSubName += forced;
       }
       else {
         // with stacking info; try to match
         for (MediaFile mf : m.getMediaFiles(MediaFileType.VIDEO)) {
           if (mf.getStacking() == sub.getStacking()) {
-            newSubName = mf.getBasename() + forced;
+            newSubName = mf.getBasename();
             if (!lang.isEmpty()) {
               newSubName += "." + lang;
             }
+            newSubName += forced;
           }
         }
       }
@@ -674,11 +676,15 @@ public class MovieRenamer {
         if (mfsl != null && mfsl.size() > 0) {
           // internal values
           MediaFileSubtitle mfs = mfsl.get(0);
+          if (!mfs.getLanguage().isEmpty()) {
+            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+            if (StringUtils.isBlank(lang)) {
+              lang = mfs.getLanguage();
+            }
+            newFilename += "." + lang;
+          }
           if (mfs.isForced()) {
             newFilename += ".forced";
-          }
-          if (!mfs.getLanguage().isEmpty()) {
-            newFilename += "." + mfs.getLanguage();
           }
         }
         newFilename += "." + mf.getExtension();
