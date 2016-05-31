@@ -41,6 +41,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -470,9 +471,37 @@ public class TvShowRenamer {
               filename = filename + ".forced";
             }
           }
-          else {
-            // TODO: meh, we didn't have an actual MF yet - need to parse filename ourselves (like movie). But with a recent scan of files/DB this
-            // should not occur.
+        }
+        else {
+          // detect from filename, if we don't have a MediaFileSubtitle entry!
+          // remove the filename of movie from subtitle, to ease parsing
+          String shortname = mf.getBasename().toLowerCase().replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
+          String originalLang = "";
+          String lang = "";
+          String forced = "";
+
+          if (mf.getFilename().toLowerCase().contains("forced")) {
+            // add "forced" prior language
+            forced = ".forced";
+            shortname = shortname.replaceAll("\\p{Punct}*forced", "");
+          }
+          // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
+
+          for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
+            if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
+              originalLang = s;
+              // lang = Utils.getIso3LanguageFromLocalizedString(s);
+              // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+              break;
+            }
+          }
+          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+          if (StringUtils.isBlank(lang)) {
+            lang = originalLang;
+          }
+          filename = filename + "." + lang;
+          if (StringUtils.isNotBlank(forced)) {
+            filename += forced;
           }
         }
       }

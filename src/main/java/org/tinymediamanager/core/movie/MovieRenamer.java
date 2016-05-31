@@ -79,8 +79,6 @@ public class MovieRenamer {
       }
       else {
         // detect from filename, if we don't have a MediaFileSubtitle entry!
-
-        // FIXME: DOES NOT WORK, movie already renamed!!! - execute before movie rename?!
         // remove the filename of movie from subtitle, to ease parsing
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase();

@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.entities;
 
+import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -294,7 +296,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
-      return MediaFileType.SUBTITLE;
+      return SUBTITLE;
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
@@ -1223,6 +1225,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
 
+    // gather subtitle infos independent of MI
+    if (getType() == SUBTITLE) {
+      gatherSubtitleInformation();
+    }
+
     mediaInfo = getMediaInfo();
     try {
       setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
@@ -1396,12 +1403,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         break;
 
-      case SUBTITLE:
-        if (subtitles == null || subtitles.size() == 0 || getContainerFormat().isEmpty() || force) {
-          gatherSubtitleInformation();
-        }
-        break;
-
       case AUDIO:
         MediaFileAudioStream stream = new MediaFileAudioStream();
         String audioCodec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
@@ -1459,7 +1460,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
     // container format for all except subtitles (subtitle container format is handled another way)
-    if (type == MediaFileType.SUBTITLE) {
+    if (type == SUBTITLE) {
       setContainerFormat(getExtension());
     }
     else {
@@ -1575,8 +1576,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO)
-        || type.equals(MediaFileType.NFO) || isGraphic()) {
+        || type.equals(MediaFileType.SAMPLE) || type.equals(SUBTITLE) || type.equals(MediaFileType.AUDIO) || type.equals(MediaFileType.NFO)
+        || isGraphic()) {
       return true;
     }
 
