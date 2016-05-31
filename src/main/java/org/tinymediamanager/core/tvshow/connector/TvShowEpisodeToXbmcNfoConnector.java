@@ -199,6 +199,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setTitle(episode.getTitle());
       xbmc.setShowtitle(episode.getTvShow().getTitle());
       xbmc.setRating(episode.getRating());
+      xbmc.setVotes(episode.getVotes());
       xbmc.setSeason(String.valueOf(episode.getSeason()));
       xbmc.setEpisode(String.valueOf(episode.getEpisode()));
       xbmc.setDisplayseason(String.valueOf(episode.getDisplaySeason()));
@@ -390,6 +391,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       episode.setTitle(xbmc.getTitle());
       episode.setPlot(xbmc.getPlot());
       episode.setRating(xbmc.getRating());
+      episode.setVotes(xbmc.getVotes());
 
       try {
         episode.setEpisode(Integer.parseInt(xbmc.getEpisode()));
