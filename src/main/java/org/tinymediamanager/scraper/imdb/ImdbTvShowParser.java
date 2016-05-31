@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TV;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -328,8 +329,10 @@ public class ImdbTvShowParser extends ImdbParser {
               try {
                 // rating is the third column
                 ep.rating = Float.parseFloat(cols.get(2).ownText());
-                // rating count is the fourth column
-                ep.voteCount = Integer.parseInt(cols.get(3).ownText());
+                // vote count is the fourth column
+                // cleanup notation
+                String voteCount = cols.get(3).ownText().replace(".", "").replace(",", "");
+                ep.voteCount = Integer.parseInt(voteCount);
               }
               catch (Exception ignored) {
               }
