@@ -516,7 +516,7 @@ public class TvShowPanel extends JPanel {
     MouseListener mouseListener = new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
           actionEdit2.actionPerformed(new ActionEvent(e, 0, ""));
         }
       }

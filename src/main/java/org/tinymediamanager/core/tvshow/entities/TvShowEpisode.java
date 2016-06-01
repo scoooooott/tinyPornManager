@@ -1119,6 +1119,16 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * gets the basename (without stacking)
+   *
+   * @return the video base name (without stacking)
+   */
+  public String getVideoBasenameWithoutStacking() {
+    MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
+    return FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
+  }
+
+  /**
    * <b>PHYSICALLY</b> deletes a complete episode by moving it to datasource backup folder<br>
    * DS\.backup\&lt;moviename&gt;
    */

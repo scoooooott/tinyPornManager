@@ -52,6 +52,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -258,17 +259,13 @@ public class MovieToMpNfoConnector {
 
     // certification
     if (movie.getCertification() != null) {
-      mp.mpaa = movie.getCertification().name();
+      // mp.mpaa = movie.getCertification().name();
+      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
     }
 
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       mp.source = movie.getMediaSource().name();
     }
-
-    // // filename and path
-    // if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-    // mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-    // }
 
     mp.director = movie.getDirector();
     mp.credits = movie.getWriter();

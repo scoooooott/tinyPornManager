@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,12 +48,14 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -74,34 +75,35 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSettingsPanel extends ScrollablePanel {
-  private static final long           serialVersionUID = -7580437046944123496L;
+  private static final long                    serialVersionUID = -7580437046944123496L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
-  private JComboBox<MovieConnectors>  cbNfoFormat;
-  private JCheckBox                   cbMovieNfoFilename1;
-  private JCheckBox                   cbMovieNfoFilename2;
-  private JCheckBox                   cbMovieNfoFilename3;
-  private JCheckBox                   chckbxImageCache;
-  private JTextField                  tfAddBadword;
-  private JList<String>               listBadWords;
-  private JList<String>               listDataSources;
-  private JCheckBox                   chckbxYear;
-  private JCheckBox                   chckbxTrailer;
-  private JCheckBox                   chckbxSubtitles;
-  private JCheckBox                   chckbxImages;
-  private JCheckBox                   chckbxNfo;
-  private JCheckBox                   chckbxRuntimeFromMf;
-  private JCheckBox                   chckbxTraktTv;
-  private JCheckBox                   chckbxWatched;
-  private JCheckBox                   chckbxRating;
-  private JCheckBox                   chckbxDateAdded;
-  private JCheckBox                   chckbxSaveUiFilter;
-  private JList<String>               listIgnore;
-  private JCheckBox                   chckbxRename;
+  private Settings                             settings         = Settings.getInstance();
+  private JComboBox<MovieConnectors>           cbNfoFormat;
+  private JCheckBox                            cbMovieNfoFilename1;
+  private JCheckBox                            cbMovieNfoFilename2;
+  private JCheckBox                            cbMovieNfoFilename3;
+  private JCheckBox                            chckbxImageCache;
+  private JTextField                           tfAddBadword;
+  private JList<String>                        listBadWords;
+  private JList<String>                        listDataSources;
+  private JCheckBox                            chckbxYear;
+  private JCheckBox                            chckbxTrailer;
+  private JCheckBox                            chckbxSubtitles;
+  private JCheckBox                            chckbxImages;
+  private JCheckBox                            chckbxNfo;
+  private JCheckBox                            chckbxRuntimeFromMf;
+  private JCheckBox                            chckbxTraktTv;
+  private JCheckBox                            chckbxWatched;
+  private JCheckBox                            chckbxRating;
+  private JCheckBox                            chckbxDateAdded;
+  private JCheckBox                            chckbxSaveUiFilter;
+  private JList<String>                        listIgnore;
+  private JCheckBox                            chckbxRename;
+  private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
 
   /**
    * Instantiates a new movie settings panel.
@@ -317,34 +319,26 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieDataSources.add(panel, "2, 8, 13, 1, fill, fill");
     panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            ColumnSpec.decode("20dlu"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
             FormSpecs.DEFAULT_ROWSPEC, }));
 
     JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat"));
     panel.add(lblNfoFormat, "1, 1, right, default");
 
-    cbNfoFormat = new JComboBox<>();
+    cbNfoFormat = new JComboBox(MovieConnectors.values());
     panel.add(cbNfoFormat, "3, 1, fill, default");
-    cbNfoFormat.setModel(new DefaultComboBoxModel<>(MovieConnectors.values()));
 
     JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
-    panel.add(lblNfoFileNaming, "1, 3, right, default");
+    panel.add(lblNfoFileNaming, "7, 1, right, default");
 
     cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
-    panel.add(cbMovieNfoFilename1, "3, 3");
+    panel.add(cbMovieNfoFilename1, "9, 1");
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
-    panel.add(cbMovieNfoFilename2, "3, 4");
-
-    cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle")); //$NON-NLS-1$
-    panel.add(cbMovieNfoFilename3, "3, 5");
-    cbMovieNfoFilename3.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
+    panel.add(cbMovieNfoFilename2, "9, 2");
     cbMovieNfoFilename2.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
@@ -352,13 +346,20 @@ public class MovieSettingsPanel extends ScrollablePanel {
       }
     });
 
-    // item listener
-    cbMovieNfoFilename1.addItemListener(new ItemListener() {
+    cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle")); //$NON-NLS-1$
+    panel.add(cbMovieNfoFilename3, "9, 3");
+    cbMovieNfoFilename3.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
     });
+
+    final JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
+    panel.add(lblCertificationStyle, "1, 5, right, default");
+
+    cbCertificationStyle = new JComboBox();
+    panel.add(cbCertificationStyle, "3, 5, 7, 1, fill, default");
 
     JPanel panelBadWords = new JPanel();
     panelBadWords.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.movie.badwords"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -416,23 +417,75 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     initDataBindings();
 
-    // NFO filenames
-    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieSettings().getMovieNfoFilenames();
-    if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
-      cbMovieNfoFilename1.setSelected(true);
-    }
-    if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
-      cbMovieNfoFilename2.setSelected(true);
-    }
-    if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
-      cbMovieNfoFilename3.setSelected(true);
+    {
+      // NFO filenames
+      List<MovieNfoNaming> movieNfoFilenames = settings.getMovieSettings().getMovieNfoFilenames();
+      if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
+        cbMovieNfoFilename1.setSelected(true);
+      }
+      if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
+        cbMovieNfoFilename2.setSelected(true);
+      }
+      if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
+        cbMovieNfoFilename3.setSelected(true);
+      }
+
+      if (!Globals.isDonator()) {
+        chckbxTraktTv.setSelected(false);
+        chckbxTraktTv.setEnabled(false);
+        btnClearTraktTvMovies.setEnabled(false);
+      }
+
+      // set default certification style
+      cbNfoFormat.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          if (cbNfoFormat.getSelectedItem() == MovieConnectors.MP) {
+            for (int i = 0; i < cbCertificationStyle.getItemCount(); i++) {
+              CertificationStyleWrapper wrapper = cbCertificationStyle.getItemAt(i);
+              if (wrapper.style == CertificationStyle.TECHNICAL) {
+                cbCertificationStyle.setSelectedItem(wrapper);
+                break;
+              }
+            }
+          }
+          else if (cbNfoFormat.getSelectedItem() == MovieConnectors.XBMC) {
+            for (int i = 0; i < cbCertificationStyle.getItemCount(); i++) {
+              CertificationStyleWrapper wrapper = cbCertificationStyle.getItemAt(i);
+              if (wrapper.style == CertificationStyle.LARGE) {
+                cbCertificationStyle.setSelectedItem(wrapper);
+                break;
+              }
+            }
+          }
+        }
+      });
+      cbCertificationStyle.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          checkChanges();
+        }
+      });
+
+      // item listener
+      cbMovieNfoFilename1.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          checkChanges();
+        }
+      });
+
+      // certification examples
+      for (CertificationStyle style : CertificationStyle.values()) {
+        CertificationStyleWrapper wrapper = new CertificationStyleWrapper();
+        wrapper.style = style;
+        cbCertificationStyle.addItem(wrapper);
+        if (style == settings.getMovieSettings().getMovieCertificationStyle()) {
+          cbCertificationStyle.setSelectedItem(wrapper);
+        }
+      }
     }
 
-    if (!Globals.isDonator()) {
-      chckbxTraktTv.setSelected(false);
-      chckbxTraktTv.setEnabled(false);
-      btnClearTraktTvMovies.setEnabled(false);
-    }
   }
 
   /**
@@ -449,6 +502,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     }
     if (cbMovieNfoFilename3.isSelected()) {
       settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
+    }
+
+    CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();
+    if (wrapper != null && settings.getMovieSettings().getMovieCertificationStyle() != wrapper.style) {
+      settings.getMovieSettings().setMovieCertificationStyle(wrapper.style);
     }
   }
 
@@ -539,5 +597,18 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, chckbxRename, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+  }
+
+  /*
+   * helper for displaying the combobox with an example
+   */
+  private class CertificationStyleWrapper {
+    private CertificationStyle style;
+
+    @Override
+    public String toString() {
+      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase());
+      return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
+    }
   }
 }

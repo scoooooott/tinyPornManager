@@ -49,6 +49,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -80,9 +81,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  */
 public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long              serialVersionUID           = 5039498266207230875L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSettings                  settings                   = Settings.getInstance().getMovieSettings();
@@ -117,6 +116,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private JLabel                         lblDefaultFolderPattern;
   private JLabel                         lblDefault2T;
   private JLabel                         lblDefaultFilePattern;
+  private JLabel                         lblSubtitleLanguage;
+  private JComboBox<LanguageStyle>       cbSubtitleLanguage;
 
   public MovieRenamerSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("250dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
@@ -130,7 +131,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     panelRenamer.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("75dlu:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(3)"),
+            FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(3)"),
             FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
@@ -245,6 +246,12 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     chckbxRemoveOtherNfos = new JCheckBox(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
     panelRenamer.add(chckbxRemoveOtherNfos, "8, 14, 5, 1");
 
+    lblSubtitleLanguage = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
+    panelRenamer.add(lblSubtitleLanguage, "8, 16, right, default");
+
+    cbSubtitleLanguage = new JComboBox(LanguageStyle.values());
+    panelRenamer.add(cbSubtitleLanguage, "10, 16, 3, 1, fill, default");
+
     exampleEventList = GlazedLists
         .threadSafeList(new ObservableElementList<>(new BasicEventList<MovieRenamerExample>(), GlazedLists.beanConnector(MovieRenamerExample.class)));
     DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
@@ -291,6 +298,9 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     if (index >= 0) {
       cbSeparator.setSelectedIndex(index);
     }
+
+    // language style
+    cbSubtitleLanguage.setSelectedItem(settings.getMovieRenamerLanguageStyle());
 
     // examples
     exampleEventList.add(new MovieRenamerExample("$T"));
@@ -407,41 +417,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     super.removeNotify();
   }
 
-  protected void initDataBindings() {
-    BeanProperty<MovieSettings, String> settingsBeanProperty_11 = BeanProperty.create("movieRenamerPathname");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
-    AutoBinding<MovieSettings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_11, tfMoviePath, jTextFieldBeanProperty_3);
-    autoBinding_10.bind();
-    //
-    BeanProperty<MovieSettings, String> settingsBeanProperty_12 = BeanProperty.create("movieRenamerFilename");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
-    AutoBinding<MovieSettings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
-    autoBinding_11.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("movieRenamerSpaceSubstitution");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty, chckbxSpaceSubstitution, jCheckBoxBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieRenamerNfoCleanup");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieRenamerCreateMoviesetForSingleMovie");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_5, chckbxMoviesetSingleMovie, jCheckBoxBeanProperty);
-    autoBinding_4.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("asciiReplacement");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_7, chckbxAsciiReplacement, jCheckBoxBeanProperty);
-    autoBinding_5.bind();
-  }
-
   /*****************************************************************************
    * helper classes
    *****************************************************************************/
@@ -544,5 +519,46 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       }
       return null;
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieSettings, String> settingsBeanProperty_11 = BeanProperty.create("movieRenamerPathname");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
+    AutoBinding<MovieSettings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_11, tfMoviePath, jTextFieldBeanProperty_3);
+    autoBinding_10.bind();
+    //
+    BeanProperty<MovieSettings, String> settingsBeanProperty_12 = BeanProperty.create("movieRenamerFilename");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
+    AutoBinding<MovieSettings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
+    autoBinding_11.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("movieRenamerSpaceSubstitution");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxSpaceSubstitution, jCheckBoxBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieRenamerNfoCleanup");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieRenamerCreateMoviesetForSingleMovie");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxMoviesetSingleMovie, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("asciiReplacement");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, chckbxAsciiReplacement, jCheckBoxBeanProperty);
+    autoBinding_5.bind();
+    //
+    BeanProperty<MovieSettings, LanguageStyle> movieSettingsBeanProperty = BeanProperty.create("movieRenamerLanguageStyle");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<MovieSettings, LanguageStyle, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty, cbSubtitleLanguage, jComboBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

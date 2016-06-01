@@ -44,14 +44,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,8 +76,6 @@ public class Utils {
   private static final Logger                       LOGGER                = LoggerFactory.getLogger(Utils.class);
   private static final Pattern                      localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
       Pattern.CASE_INSENSITIVE);
-  // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
-  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP     = generateSubtitleLanguageArray();
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern                      stackingPattern1      = Pattern
@@ -103,54 +97,6 @@ public class Utils {
   private static final Pattern                      folderStackingPattern = Pattern
       .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
 
-  private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
-    Map<String, Locale> langArray = new HashMap<>();
-
-    Locale intl = Locale.ENGLISH;
-    Locale locales[] = Locale.getAvailableLocales();
-    // all possible variants of language/country/prefixes/non-iso style
-    for (Locale locale : locales) {
-      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
-      langArray.put(base.getDisplayLanguage(intl), base);
-      langArray.put(base.getDisplayLanguage(), base);
-      try {
-        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
-      }
-      catch (Exception e) {
-        // ignore
-      }
-      langArray.put(base.getISO3Language(), base);
-      langArray.put(base.getCountry(), base);
-      try {
-        String c = base.getISO3Country();
-        langArray.put(c, base);
-      }
-      catch (MissingResourceException e) {
-        // tjo... not available, see javadoc
-      }
-    }
-    for (String l : Locale.getISOLanguages()) {
-      langArray.put(l, new Locale(l));
-    }
-
-    // sort
-    List<String> keys = new LinkedList<>(langArray.keySet());
-    Collections.sort(keys, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        return s2.length() - s1.length();
-      }
-    });
-    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<>();
-    for (String key : keys) {
-      if (!key.isEmpty()) {
-        sortedMap.put(key.toLowerCase(), langArray.get(key));
-      }
-    }
-
-    return sortedMap;
-  }
-
   /**
    * gets the filename part, and returns last extension
    * 
@@ -166,21 +112,6 @@ public class Utils {
       ext = fn.substring(i + 1);
     }
     return ext;
-  }
-
-  /**
-   * uses our localized language mapping table, to get the iso3 code
-   * 
-   * @param text
-   *          the language (as string) to get the iso3 code for
-   * @return 3 chars or empty string
-   */
-  public static String getIso3LanguageFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
-    if (l != null) {
-      return l.getISO3Language();
-    }
-    return "";
   }
 
   /**

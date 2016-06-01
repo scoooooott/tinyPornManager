@@ -393,8 +393,16 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
 
       lblTitle.setText(selectedResult.getMovie().getTitleSortable());
       lblDatasource.setText(selectedResult.getMovie().getDataSource());
-      lblFolderOld.setText(selectedResult.getOldPath().toString());
-      lblFolderNew.setText(selectedResult.getNewPath().toString());
+
+      // the empty result does not have any valid Path
+      if (selectedResult != emptyResult) {
+        lblFolderOld.setText(selectedResult.getOldPath().toString());
+        lblFolderNew.setText(selectedResult.getNewPath().toString());
+      }
+      else {
+        lblFolderOld.setText("");
+        lblFolderNew.setText("");
+      }
 
       // set Mfs
       try {

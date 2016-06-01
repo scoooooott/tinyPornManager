@@ -33,6 +33,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -40,8 +41,10 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -458,15 +461,48 @@ public class TvShowRenamer {
           MediaFileSubtitle mfs = mf.getSubtitles().get(0);
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {
-              filename = filename + "." + mfs.getLanguage();
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(),
+                  TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+              if (StringUtils.isBlank(lang)) {
+                lang = mfs.getLanguage();
+              }
+              filename = filename + "." + lang;
             }
             if (mfs.isForced()) {
               filename = filename + ".forced";
             }
           }
-          else {
-            // TODO: meh, we didn't have an actual MF yet - need to parse filename ourselves (like movie). But with a recent scan of files/DB this
-            // should not occur.
+        }
+        else {
+          // detect from filename, if we don't have a MediaFileSubtitle entry!
+          // remove the filename of movie from subtitle, to ease parsing
+          String shortname = mf.getBasename().toLowerCase().replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
+          String originalLang = "";
+          String lang = "";
+          String forced = "";
+
+          if (mf.getFilename().toLowerCase().contains("forced")) {
+            // add "forced" prior language
+            forced = ".forced";
+            shortname = shortname.replaceAll("\\p{Punct}*forced", "");
+          }
+          // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
+
+          for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
+            if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
+              originalLang = s;
+              // lang = Utils.getIso3LanguageFromLocalizedString(s);
+              // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+              break;
+            }
+          }
+          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+          if (StringUtils.isBlank(lang)) {
+            lang = originalLang;
+          }
+          filename = filename + "." + lang;
+          if (StringUtils.isNotBlank(forced)) {
+            filename += forced;
           }
         }
       }

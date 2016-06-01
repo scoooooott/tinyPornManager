@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 
@@ -84,6 +85,7 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean                  asciiReplacement            = false;
   private boolean                  renamerSpaceSubstitution    = false;
   private String                   renamerSpaceReplacement     = "_";
+  private LanguageStyle            tvShowRenamerLanguageStyle  = LanguageStyle.ISO3T;
   private boolean                  syncTrakt                   = false;
   private boolean                  dvdOrder                    = false;
 
@@ -324,5 +326,15 @@ public class TvShowSettings extends AbstractModelObject {
 
   public List<String> getTvShowSubtitleScrapers() {
     return tvShowSubtitleScrapers;
+  }
+
+  public LanguageStyle getTvShowRenamerLanguageStyle() {
+    return tvShowRenamerLanguageStyle;
+  }
+
+  public void setTvShowRenamerLanguageStyle(LanguageStyle newValue) {
+    LanguageStyle oldValue = this.tvShowRenamerLanguageStyle;
+    this.tvShowRenamerLanguageStyle = newValue;
+    firePropertyChange("tvShowRenamerLanguageStyle", oldValue, newValue);
   }
 }
