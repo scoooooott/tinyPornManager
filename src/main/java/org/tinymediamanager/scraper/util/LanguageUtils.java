@@ -72,59 +72,50 @@ public class LanguageUtils {
     Map<String, Locale> langArray = new HashMap<>();
     LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<>();
 
-    try {
-
-      Locale intl = Locale.ENGLISH;
-      Locale locales[] = Locale.getAvailableLocales();
-      // all possible variants of language/country/prefixes/non-iso style
-      for (Locale locale : locales) {
-        Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
-        langArray.put(base.getDisplayLanguage(intl), base);
-        langArray.put(base.getDisplayLanguage(), base);
-        try {
-          langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
-        }
-        catch (Exception e) {
-          // ignore
-        }
-        // ISO-639-2/T
-        langArray.put(base.getISO3Language(), base);
-        // ISO-639-2/B
-        langArray.put(LanguageUtils.getISO3BLanguage(base), base);
-
-        langArray.put(base.getCountry(), base);
-        try {
-          String c = base.getISO3Country();
-          langArray.put(c, base);
-        }
-        catch (MissingResourceException e) {
-          // tjo... not available, see javadoc
-        }
+    Locale intl = Locale.ENGLISH;
+    Locale locales[] = Locale.getAvailableLocales();
+    // all possible variants of language/country/prefixes/non-iso style
+    for (Locale locale : locales) {
+      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
+      langArray.put(base.getDisplayLanguage(intl), base);
+      langArray.put(base.getDisplayLanguage(), base);
+      try {
+        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
       }
-      for (String l : Locale.getISOLanguages()) {
-        langArray.put(l, new Locale(l));
+      catch (Exception e) {
+        // ignore
       }
+      // ISO-639-2/T
+      langArray.put(base.getISO3Language(), base);
+      // ISO-639-2/B
+      langArray.put(LanguageUtils.getISO3BLanguage(base), base);
 
-      // sort
-      List<String> keys = new LinkedList<>(langArray.keySet());
-      Collections.sort(keys, new Comparator<String>() {
-        @Override
-        public int compare(String s1, String s2) {
-          return s2.length() - s1.length();
-        }
-      });
-
-      for (String key : keys) {
-        if (!key.isEmpty()) {
-          sortedMap.put(key.toLowerCase(), langArray.get(key));
-        }
+      langArray.put(base.getCountry(), base);
+      try {
+        String c = base.getISO3Country();
+        langArray.put(c, base);
+      }
+      catch (MissingResourceException e) {
+        // tjo... not available, see javadoc
       }
     }
-    catch (Exception e) {
-      e.printStackTrace();
+    for (String l : Locale.getISOLanguages()) {
+      langArray.put(l, new Locale(l));
     }
-    catch (Error e) {
-      e.printStackTrace();
+
+    // sort
+    List<String> keys = new LinkedList<>(langArray.keySet());
+    Collections.sort(keys, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        return s2.length() - s1.length();
+      }
+    });
+
+    for (String key : keys) {
+      if (!key.isEmpty()) {
+        sortedMap.put(key.toLowerCase(), langArray.get(key));
+      }
     }
 
     return sortedMap;
