@@ -5,12 +5,12 @@ IMPORTANT: changed certification output (in NFO files) from a fixed string to a 
            Default for Kodi NFOs: LARGE (e.g. DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16)
            Default for MP NFOs: TECHNICAL (e.g. DE_FSK16)
 
-+ added subtitle scraping (via OpenSubtitles.org) (goo.gl/oRnXnr)
++ added subtitle scraping (via OpenSubtitles.org) (http://goo.gl/oRnXnr)
 + complete rewrite of "update datasource" for movies - massive performance boost!!!
 + complete rewrite of "update datasource" for TV shows - massive performance boost!!!
 + added edition field for movies (now you can have the same movie in multiple versions without problems) (
-goo.gl/aSWQt8)
-+ added support for offline media (media stubs) (goo.gl/UR1VY7)
+http://goo.gl/aSWQt8)
++ added support for offline media (media stubs) (http://goo.gl/UR1VY7)
 + added .tbn support for episode thumbs (Boxee box support)
 + added a field for movie editions (Extended, Director's cut, ..)
 + added bad words for TV shows
