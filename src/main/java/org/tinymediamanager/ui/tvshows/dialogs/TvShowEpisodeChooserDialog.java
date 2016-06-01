@@ -226,7 +226,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() >= 2) {
+        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
           actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
         }
       }

@@ -25,7 +25,7 @@ public class MovieTableMouseListener extends MouseAdapter {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    if (e.getClickCount() >= 2) {
+    if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
       Action editAction = new MovieEditAction(false);
       editAction.actionPerformed(null);
     }
