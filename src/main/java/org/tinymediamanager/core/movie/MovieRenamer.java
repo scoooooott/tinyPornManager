@@ -49,6 +49,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -61,7 +62,7 @@ public class MovieRenamer {
 
   private static void renameSubtitles(Movie m) {
     // build language lists
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
 
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
       String originalLang = "";

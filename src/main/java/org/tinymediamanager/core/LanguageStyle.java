@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -27,7 +28,9 @@ import org.tinymediamanager.ui.UTF8Control;
 public enum LanguageStyle {
   ISO2,
   ISO3T,
-  ISO3B;
+  ISO3B,
+  LANG_EN,
+  LANG_LOCALIZED;
 
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -53,13 +56,19 @@ public enum LanguageStyle {
   public static String getLanguageCodeForStyle(String language, LanguageStyle style) {
     switch (style) {
       case ISO2:
-        return Utils.getIso2LanguageFromLocalizedString(language);
+        return LanguageUtils.getIso2LanguageFromLocalizedString(language);
 
       case ISO3T:
-        return Utils.getIso3LanguageFromLocalizedString(language);
+        return LanguageUtils.getIso3LanguageFromLocalizedString(language);
 
       case ISO3B:
-        return Utils.getIso3BLanguageFromLocalizedString(language);
+        return LanguageUtils.getIso3BLanguageFromLocalizedString(language);
+
+      case LANG_EN:
+        return LanguageUtils.getEnglishLanguageNameFromLocalizedString(language);
+
+      case LANG_LOCALIZED:
+        return LanguageUtils.getLocalizedLanguageNameFromLocalizedString(language);
 
       default:
         return language;

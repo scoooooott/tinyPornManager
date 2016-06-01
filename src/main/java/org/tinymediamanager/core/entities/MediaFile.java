@@ -49,6 +49,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
@@ -258,7 +259,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             lang = StrgUtils.substr(line, "^# alt: (.*?)$");
           }
           if (!lang.isEmpty()) {
-            sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
+            sub.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(lang));
             break;
           }
         }
@@ -1338,7 +1339,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             }
           }
           else {
-            stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
+            stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
           }
           audioStreams.add(stream);
         }
@@ -1374,7 +1375,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String codec = getMediaInfo(StreamKind.Text, i, "CodecID/Hint", "Format");
           stream.setCodec(codec.replaceAll("\\p{Punct}", ""));
           String lang = getMediaInfo(StreamKind.Text, i, "Language/String");
-          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
+          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(lang));
 
           String forced = getMediaInfo(StreamKind.Text, i, "Forced");
           boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
@@ -1422,7 +1423,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           stream.setLanguage(parseLanguageFromString(shortname));
         }
         else {
-          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
+          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
         }
         audioStreams.clear();
         audioStreams.add(stream);
@@ -1545,12 +1546,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private String parseLanguageFromString(String shortname) {
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
     for (String s : langArray) {
       try {
         if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
           LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
-          return Utils.getIso3LanguageFromLocalizedString(s);
+          return LanguageUtils.getIso3LanguageFromLocalizedString(s);
         }
       }
       catch (Exception e) {

@@ -14,6 +14,7 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class UtilsTest {
@@ -236,8 +237,8 @@ public class UtilsTest {
       System.out.println(l.getISO3Language());
     }
     System.out.println();
-    for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
-      System.out.println(s + " - " + Utils.KEY_TO_LOCALE_MAP.get(s));
+    for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
+      System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
     }
   }
 

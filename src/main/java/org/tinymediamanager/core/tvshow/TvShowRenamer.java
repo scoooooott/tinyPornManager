@@ -44,6 +44,7 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -487,7 +488,7 @@ public class TvShowRenamer {
           }
           // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
 
-          for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
+          for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
             if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
               originalLang = s;
               // lang = Utils.getIso3LanguageFromLocalizedString(s);
