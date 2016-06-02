@@ -500,7 +500,9 @@ public class TvShowRenamer {
           if (StringUtils.isBlank(lang)) {
             lang = originalLang;
           }
-          filename = filename + "." + lang;
+          if (StringUtils.isNotBlank(lang)) {
+            filename = filename + "." + lang;
+          }
           if (StringUtils.isNotBlank(forced)) {
             filename += forced;
           }
