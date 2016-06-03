@@ -64,7 +64,7 @@ public class MovieSingleScrapeAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     for (Movie movie : selectedMovies) {
       MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, selectedMovies.size() > 1 ? true : false);

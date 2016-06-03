@@ -126,7 +126,7 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
         MessageManager.instance.pushMessage(
-            new Message(MessageLevel.ERROR, "MovieScraper", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
+            new Message(MessageLevel.ERROR, "SubtitleDownloader", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 

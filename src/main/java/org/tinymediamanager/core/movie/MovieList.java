@@ -22,11 +22,14 @@ import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -61,12 +65,12 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  * The Class MovieList.
@@ -77,6 +81,7 @@ public class MovieList extends AbstractModelObject {
   private static final Logger          LOGGER             = LoggerFactory.getLogger(MovieList.class);
   private static MovieList             instance;
 
+  private final MovieSettings          movieSettings;
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;
   private PropertyChangeListener       tagListener;
@@ -115,6 +120,8 @@ public class MovieList extends AbstractModelObject {
         }
       }
     };
+
+    movieSettings = MovieModuleManager.MOVIE_SETTINGS;
   }
 
   /**
@@ -158,7 +165,7 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
-    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    List<Movie> moviesToRemove = new ArrayList<>();
     for (int i = movieList.size() - 1; i >= 0; i--) {
       Movie movie = movieList.get(i);
       if (new File(path).equals(new File(movie.getDataSource()))) {
@@ -175,7 +182,7 @@ public class MovieList extends AbstractModelObject {
    * @return the unscraped movies
    */
   public List<Movie> getUnscrapedMovies() {
-    List<Movie> unscrapedMovies = new ArrayList<Movie>();
+    List<Movie> unscrapedMovies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (!movie.isScraped()) {
         unscrapedMovies.add(movie);
@@ -190,7 +197,7 @@ public class MovieList extends AbstractModelObject {
    * @return the new movies
    */
   public List<Movie> getNewMovies() {
-    List<Movie> newMovies = new ArrayList<Movie>();
+    List<Movie> newMovies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (movie.isNewlyAdded()) {
         newMovies.add(movie);
@@ -209,7 +216,7 @@ public class MovieList extends AbstractModelObject {
     if (movies == null || movies.size() == 0) {
       return;
     }
-    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
+    Set<MovieSet> modifiedMovieSets = new HashSet<>();
     int oldValue = movieList.size();
 
     // remove in inverse order => performance
@@ -252,7 +259,7 @@ public class MovieList extends AbstractModelObject {
     if (movies == null || movies.size() == 0) {
       return;
     }
-    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
+    Set<MovieSet> modifiedMovieSets = new HashSet<>();
     int oldValue = movieList.size();
 
     // remove in inverse order => performance
@@ -290,7 +297,7 @@ public class MovieList extends AbstractModelObject {
    */
   public ObservableElementList<Movie> getMovies() {
     if (movieList == null) {
-      movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+      movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     }
     return movieList;
   }
@@ -300,7 +307,7 @@ public class MovieList extends AbstractModelObject {
    */
   void loadMoviesFromDatabase(MVMap<UUID, String> movieMap, ObjectMapper objectMapper) {
     // load movies
-    movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+    movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     ObjectReader movieObjectReader = objectMapper.readerFor(Movie.class);
 
     for (UUID uuid : movieMap.keyList()) {
@@ -468,7 +475,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie list
    */
   public synchronized List<Movie> getMoviesByPath(Path path) {
-    ArrayList<Movie> movies = new ArrayList<Movie>();
+    ArrayList<Movie> movies = new ArrayList<>();
     for (Movie movie : movieList) {
       if (Paths.get(movie.getPath()).compareTo(path) == 0) {
         movies.add(movie);
@@ -489,7 +496,7 @@ public class MovieList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, MediaScraper metadataScraper) {
-    return searchMovie(searchTerm, movie, metadataScraper, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    return searchMovie(searchTerm, movie, metadataScraper, movieSettings.getScraperLanguage());
   }
 
   /**
@@ -520,7 +527,7 @@ public class MovieList extends AbstractModelObject {
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
       options.setLanguage(Locale.forLanguageTag(langu.name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setCountry(movieSettings.getCertificationCountry());
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
           options.setImdbId(movie.getImdbId());
@@ -558,7 +565,7 @@ public class MovieList extends AbstractModelObject {
       LOGGER.info("=====================================================");
       sr = provider.search(options);
       // if result is empty, try all scrapers
-      if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
+      if (sr.isEmpty() && movieSettings.isScraperFallback()) {
         for (MediaScraper ms : getAvailableMediaScrapers()) {
           if (!ms.isEnabled() || provider.getProviderInfo().equals(ms.getMediaProvider().getProviderInfo())
               || ms.getMediaProvider().getProviderInfo().getName().startsWith("Kodi")) {
@@ -600,7 +607,7 @@ public class MovieList extends AbstractModelObject {
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(movieSettings.getMovieScraper(), ScraperType.MOVIE);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TMDB, ScraperType.MOVIE);
     }
@@ -652,7 +659,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getDefaultArtworkScrapers() {
-    return getArtworkScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers());
+    return getArtworkScrapers(movieSettings.getMovieArtworkScrapers());
   }
 
   /**
@@ -673,7 +680,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified trailer scrapers
    */
   public List<MediaScraper> getDefaultTrailerScrapers() {
-    return getTrailerScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers());
+    return getTrailerScrapers(movieSettings.getMovieTrailerScrapers());
   }
 
   /**
@@ -716,7 +723,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+    return getSubtitleScrapers(movieSettings.getMovieSubtitleScrapers());
   }
 
   /**
@@ -926,8 +933,8 @@ public class MovieList extends AbstractModelObject {
    * Search duplicates.
    */
   public void searchDuplicates() {
-    Map<String, Movie> imdbDuplicates = new HashMap<String, Movie>();
-    Map<Integer, Movie> tmdbDuplicates = new HashMap<Integer, Movie>();
+    Map<String, Movie> imdbDuplicates = new HashMap<>();
+    Map<Integer, Movie> tmdbDuplicates = new HashMap<>();
 
     for (Movie movie : movieList) {
       movie.clearDuplicate();
@@ -982,7 +989,7 @@ public class MovieList extends AbstractModelObject {
    * @return the movie set list (sorted)
    */
   public List<MovieSet> getSortedMovieSetList() {
-    List<MovieSet> sortedMovieSets = new ArrayList<MovieSet>(getMovieSetList());
+    List<MovieSet> sortedMovieSets = new ArrayList<>(getMovieSetList());
     Collections.sort(sortedMovieSets, movieSetComparator);
     return sortedMovieSets;
   }
@@ -1081,7 +1088,7 @@ public class MovieList extends AbstractModelObject {
    * check if there are movies without (at least) one VIDEO mf
    */
   private void checkAndCleanupMediaFiles() {
-    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    List<Movie> moviesToRemove = new ArrayList<>();
     for (Movie movie : movieList) {
       List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
       if (mfs.isEmpty()) {
@@ -1116,9 +1123,73 @@ public class MovieList extends AbstractModelObject {
    * invalidate the title sortable upon changes to the sortable prefixes
    */
   public void invalidateTitleSortable() {
-    for (Movie movie : new ArrayList<Movie>(movieList)) {
+    for (Movie movie : new ArrayList<>(movieList)) {
       movie.clearTitleSortable();
     }
+  }
+
+  /**
+   * create a new offline movie with the given title in the specified data source
+   * 
+   * @param title
+   *          the given title
+   * @param datasource
+   *          the data source to create the offline movie in
+   */
+  public void addOfflineMovie(String title, String datasource) {
+    addOfflineMovie(title, datasource, MediaSource.UNKNOWN);
+  }
+
+  /**
+   * create a new offline movie with the given title in the specified data source
+   * 
+   * @param title
+   *          the given title
+   * @param datasource
+   *          the data source to create the offline movie in
+   * @param mediaSource
+   *          the media source to be set for the offline movie
+   */
+  public void addOfflineMovie(String title, String datasource, MediaSource mediaSource) {
+    // first crosscheck if the data source is in our settings
+    if (!movieSettings.getMovieDataSource().contains(datasource)) {
+      return;
+    }
+
+    // check if there is already an identical stub folder
+    int i = 1;
+    Path stubFolder = Paths.get(datasource, title);
+    while (Files.exists(stubFolder)) {
+      stubFolder = Paths.get(datasource, title + "(" + i++ + ")");
+    }
+
+    Path stubFile = stubFolder.resolve(title + ".disc");
+
+    // create the stub file
+    try {
+      Files.createDirectory(stubFolder);
+      Files.createFile(stubFile);
+    }
+    catch (IOException e) {
+      LOGGER.error("could not create stub file: " + e.getMessage());
+      return;
+    }
+
+    // create a movie and set it as MF
+    MediaFile mf = new MediaFile(stubFile);
+    mf.gatherMediaInformation();
+    Movie movie = new Movie();
+
+    movie.setTitle(title);
+    movie.setPath(stubFolder.toAbsolutePath().toString());
+    movie.setDataSource(datasource);
+    movie.setMediaSource(mediaSource);
+    movie.setDateAdded(new Date());
+    movie.addToMediaFiles(mf);
+    movie.setOffline(true);
+    movie.setNewlyAdded(true);
+    addMovie(movie);
+    movie.saveToDb();
   }
 
   private class MovieSetComparator implements Comparator<MovieSet> {

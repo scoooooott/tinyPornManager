@@ -142,7 +142,8 @@ public class TvShowModuleManager implements ITmmModule {
   /**
    * dumps a whole tvshow to logfile
    * 
-   * @param movie
+   * @param tvshow
+   *          the TV show to dump the data for
    */
   public void dump(TvShow tvshow) {
     try {

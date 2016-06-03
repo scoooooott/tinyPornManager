@@ -31,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
@@ -90,24 +91,39 @@ public class TvShowSettingsPanel extends ScrollablePanel {
    */
   public TvShowSettingsPanel() {
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("default:grow(3)"), }));
 
     JPanel panelGeneral = new JPanel();
     panelGeneral.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.general"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelGeneral, "2, 2, fill, fill");
     panelGeneral.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+
+    lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport"));
+    panelGeneral.add(lblImageCache, "2, 2");
+
+    chckbxImageCache = new JCheckBox("");
+    panelGeneral.add(chckbxImageCache, "4, 2");
+
+    lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+    panelGeneral.add(lblImageCacheHint, "6, 2, 3, 1");
+    TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
+
+    final JSeparator separator = new JSeparator();
+    panelGeneral.add(separator, "2, 4, 7, 1");
 
     JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-    panelGeneral.add(lblTraktTv, "2, 2");
+    panelGeneral.add(lblTraktTv, "2, 6");
 
     chckbxTraktTv = new JCheckBox("");
-    panelGeneral.add(chckbxTraktTv, "4, 2");
+    panelGeneral.add(chckbxTraktTv, "4, 6");
     btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
     btnClearTraktTvShows.addActionListener(new ActionListener() {
       @Override
@@ -120,7 +136,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panelGeneral.add(btnClearTraktTvShows, "6, 2");
+    panelGeneral.add(btnClearTraktTvShows, "6, 6");
 
     JPanel panelBadWords = new JPanel();
     panelBadWords.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.tvshow.badwords"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -189,8 +205,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
               FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
               FormSpecs.RELATED_GAP_COLSPEC, },
           new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("160px:grow"),
-              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-              FormSpecs.RELATED_GAP_ROWSPEC, }));
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblDataSource = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
       panelTvShowDataSources.add(lblDataSource, "2, 2, 5, 1");
@@ -291,16 +306,6 @@ public class TvShowSettingsPanel extends ScrollablePanel {
 
       cbDvdOrder = new JCheckBox("");
       panelTvShowDataSources.add(cbDvdOrder, "4, 6");
-
-      lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      panelTvShowDataSources.add(lblImageCache, "2, 8, right, default");
-
-      chckbxImageCache = new JCheckBox("");
-      panelTvShowDataSources.add(chckbxImageCache, "4, 8");
-
-      lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
-      panelTvShowDataSources.add(lblImageCacheHint, "6, 8, 9, 1");
     }
 
     initDataBindings();

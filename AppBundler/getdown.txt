@@ -47,8 +47,7 @@ resource = changelog.txt
 %LOCALES%
 
 # mediainfo native libs
-resource = [mac os x-x86_64] native/mac-x64/libmediainfo.dylib
-resource = [mac os x-i386] native/mac-x86/libmediainfo.dylib
+resource = [mac os x] native/mac/libmediainfo.dylib
 resource = [windows-amd64] native/windows-x64/MediaInfo.dll
 resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll

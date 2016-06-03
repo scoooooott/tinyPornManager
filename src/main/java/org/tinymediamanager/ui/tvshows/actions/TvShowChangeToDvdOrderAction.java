@@ -49,7 +49,7 @@ public class TvShowChangeToDvdOrderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent arg0) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
-    Set<TvShowEpisode> selectedEpisodes = new HashSet<TvShowEpisode>();
+    Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 
     for (Object obj : selectedObjects) {
       // display tv show editor

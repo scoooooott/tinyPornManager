@@ -1,14 +1,23 @@
 Version 2.8
 =======================
-+ added subtitle scraping (via OpenSubtitles.org)
+IMPORTANT: changed certification output (in NFO files) from a fixed string to a set of templates.
+           ! Please check your movie settings after upgrade !
+           Default for Kodi NFOs: LARGE (e.g. DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16)
+           Default for MP NFOs: TECHNICAL (e.g. DE_FSK16)
+
++ added subtitle scraping (via OpenSubtitles.org) (http://goo.gl/oRnXnr)
 + complete rewrite of "update datasource" for movies - massive performance boost!!!
 + complete rewrite of "update datasource" for TV shows - massive performance boost!!!
-+ added edition field for movies (now you can have the same movie in multiple versions without problems)
++ added edition field for movies (now you can have the same movie in multiple versions without problems) (
+http://goo.gl/aSWQt8)
++ added support for offline media (media stubs) (http://goo.gl/UR1VY7)
 + added .tbn support for episode thumbs (Boxee box support)
 + added a field for movie editions (Extended, Director's cut, ..)
 + added bad words for TV shows
 + added option to opt-out our internal statistics
 + moved scraping of artwork/trailers in a separate task after searching for a movie
++ added option to automatically rename a movie after scraping
++ added option to set the subtitle language style (for better Plex support)
 x fixed plugin loading from paths containing a +
 x fix #22 "search episode" scrollbar
 x fix stacking marker detection for movies
@@ -19,146 +28,3 @@ x fixed an optical glitch, where sometimes seasons end episodes appeared twice
 x detect Blu-Ray as BluRay source
 x some fixes in the renamers (movie & TV show)
 x some smaller fixes
-
-
-Version 2.7.4
-=======================
-+ added vote count for Tv shows and episodes
-x fixed TvShow renamer when having duplicate tokens or multi episodes
-x fixed MovieRenamerPreview when using a sorted list
-x fixed TMM restart (when resetting database)
-x Display information, why plugins could not be loaded.
-x fixed copy/paste hotkeys for several UI field on OSX
-x fixed exporter file name creation
-x fixed writing set info for MediaPortal NFO files
-x fixed movie import with folder stacking
-
-
-Version 2.7.3.1
-=======================
-x fixed register donation version dialog
-
-
-Version 2.7.3
-=======================
-+ bug reports are now solved via GitHub issues
-+ added image exporting in the export templates (see http://goo.gl/kuSYlH or in the wiki)
-+ added media source to the TV show section
-+/x moved fanart.tv client key to the scraper settings (and released it for everyone)
-x Kodi scraper: fix some invalid XML headers
-x OFDB scraper: fix actor/cast parsing
-x Zelluloid.de: fix actor/cast parsing, and fallback for broken web search
-x Trakt.tv: fix writing correct watched state to NFO
-x CMD: update TvShows only scrapes new episodes, not all
-x improved data source update; parse new entries first
-x improved TV show renamer for multi episode files
-x finally fixed the NEW indicator behavior
-  it will now work as in versions before 2.7 (NEW stays for the whole tmm session)
-x improved performance in the update data sources for TV shows
-x fixed searching for movie set artwork in movie folders
-x only write guests into episode NFO
-x fixed error in movie set editor when no movie was selected
-x remember last opened directory in the new chooser
-x TvShows: fix studio writing
-x fix loading of the movie-duplicate filter at startup
-
-
-Version 2.7.2
-=======================
-LINUX: We've removed the shipped mediainfo library due to massive problems between
-       different distributions. Please install the libmediainfo directly from
-       your package manager or from https://mediaarea.net/
-       
-+ Kodi scrapers are now configurable
-+ Movie renamer preview: dropped donator-only status, now FREE FOR ALL
-+ added web-dl to media sources
-+ add writing of imdb id in TV show NFO
-+ added $# rating movie renamer option
-+ pimp scraper UI; add version s to all plugins
-x some performance fixes on updating datasources
-x remove bundled mediainfo for Linux (using system default)
-x fix movie renamer when having access problems
-x fix IMDB title fallback to TMDB
-x TvShow episode parser: fix common word replacement
-x rework scraper fallback logic, do not stop on plugin errors
-x fix the "new" marker never being cleared in special cases
-x MediaPortal NFO: parse multiple genres styles
-x NTFS: renaming to same name but other cASE now works
-x Movie actors: replace invalid file system characters when saving thumb
-x MacOS: save database on terminating with command-q
-x fixed error in movie set editor when no movies are assigned to the set
-x fixed error in movie editor where sorttitle has been lost
-
-
-Version 2.7.1
-=======================
-+ added episode tags to the TV show bulk editor
-x fix startup problems
-x fix poster & fanart sizes
-x fix parsing of the year in the movie editor
-x fix filter in the episode chooser
-x rework "extras" detection 
-
-
-Version 2.7
-=======================
-IMPORTANT: with the update to version 2.7 the internal database will be deleted due to
-           internal changes. You only need to re-import (update data sources) your movies
-           and TV shows
-
-With the update to 2.7 there are massive changes under the hood of tinyMediaManager:
-- moved source code management to GitHub and changed the build system to maven
-- changed the internal database engine from ObjectDB to H2-MVStore + JSON
-  this change makes tinyMediaManager more robust and faster
-- introduced a new infrastructure for scrapers which makes developing new 
-  scrapers less complex and opens the scraper interface to other developers
-
-+ added a basic setup wizard for new installations
-+ better detection of "stacking" markers (CD1, part1, ...)
-+ added support excluding folder from scan (via a file .tmmignore or tmmignore and settings)
-+ rewrote all scrapers from scratch (including optimizations and bug fixes)
-+ added a very special scraper for all that who have Kodi installed ;) (donator only) (http://goo.gl/FEBIht)
-+ assign movie sets feature is now free for all (dropped donator only status)
-+ added automatic trailer download at scrape (dropped donator only status for trailer download)
-+ added "date added" to the columns of the movie list
-+ enhanced UI language to enable country specific translations (e.g. pt_BR)
-+ changed trakt.tv login mode to PIN auth (you may re-check your settings)
-+ added media info editor (some fields from media info are now maintain able)
-+ added title sortable to TV shows section
-+ added displayepisode and displayseason for TV shows
-+ added option to persist UI filter settings
-+ added native file- and directory-open dialogs
-+ updated mediainfo to 0.7.78 and generalized folder structure
-+ added <streamdetails> tag for episodes
-+ refactored episode chooser (search for episode is now available)
-+ take the date added from the video file where possible
-+ changed behavior of the _new_ state: it will now be dropped at the next update data source  
-  the new indicator changed from the green font to an icon
-+ added media source to NFO
-x fixed invoking the specified media player on OSX
-x included mediainfo fix for all platforms
-x changed the style of notifications to be less intrusive 
-x changed NFO rewriting behavior to be less aggressive
-x prevent setting incomplete meta data when scraping was not successful
-x adding special characters to the sort title prefixes is now possible
-x several fixes in the movie renamer               
-x reworked internal representation of artwork file names/url
-  (high performance boost for movie sets)  
-x changed bug reporting system 
-x reworked movie name detection  
-x reworked episode number detection
-x enhanced detection of extras (samples, trailers, ..)
-x updated all templates to our actual data model and JMTE 3.2
-x tweaked "best-trailer" detection
-x fixed auto complete combox
-x fixed scraping episodes with DVD ordering
-x fixed special character handling of sort titles
-x fixed real offline startup
-x fixed cleanup on artwork scraping
-x fixed NFO importing issue when having multiple tags
-x fixed display of "never ending" tasks
-x fixed file name generation of movie/tv show export templates
-x fixed finding of additional files for episodes
-x fixed writing of watched state in MediaPortal NFO
-x fixed/improved trakt.tv episode sync   
-x many smaller fixes and enhancements

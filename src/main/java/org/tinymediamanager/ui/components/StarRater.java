@@ -44,7 +44,7 @@ public class StarRater extends JPanel {
     void handleSelection(int selection);
   }
 
-  private List<StarListener> listeners = new ArrayList<StarListener>();
+  private List<StarListener> listeners = new ArrayList<>();
 
   /** The number of stars n. */
   private int                stars;

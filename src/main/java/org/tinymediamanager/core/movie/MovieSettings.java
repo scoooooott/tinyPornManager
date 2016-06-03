@@ -29,7 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.entities.CountryCode;
@@ -102,15 +104,15 @@ public class MovieSettings extends AbstractModelObject {
 
   @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<MovieNfoNaming>();
+  private final List<MovieNfoNaming>      movieNfoFilenames                        = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<MoviePosterNaming>();
+  private final List<MoviePosterNaming>   moviePosterFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<MovieFanartNaming>();
+  private final List<MovieFanartNaming>   movieFanartFilenames                     = new ArrayList<>();
 
   @XmlElementWrapper(name = BAD_WORDS)
   @XmlElement(name = ENTRY)
@@ -138,8 +140,10 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                         detectMovieMultiDir                      = false;
   private boolean                         buildImageCacheOnImport                  = false;
   private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
+  private CertificationStyle              movieCertificationStyle                  = CertificationStyle.LARGE;
 
   // renamer
+  private boolean                         movieRenameAfterScrape                   = false;
   private String                          movieRenamerPathname                     = DEFAULT_RENAMER_FOLDER_PATTERN;
   private String                          movieRenamerFilename                     = DEFAULT_RENAMER_FILE_PATTERN;
   private boolean                         movieRenamerSpaceSubstitution            = false;
@@ -147,6 +151,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                         movieRenamerNfoCleanup                   = false;
   private boolean                         movieRenamerCreateMoviesetForSingleMovie = false;
   private boolean                         asciiReplacement                         = false;
+  private LanguageStyle                   movieRenamerLanguageStyle                = LanguageStyle.ISO3T;
 
   // meta data scraper
   private String                          movieScraper                             = Constants.TMDB;
@@ -238,7 +243,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieNfoNaming> getMovieNfoFilenames() {
-    return new ArrayList<MovieNfoNaming>(this.movieNfoFilenames);
+    return new ArrayList<>(this.movieNfoFilenames);
   }
 
   public void addMoviePosterFilename(MoviePosterNaming filename) {
@@ -261,7 +266,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MoviePosterNaming> getMoviePosterFilenames() {
-    return new ArrayList<MoviePosterNaming>(this.moviePosterFilenames);
+    return new ArrayList<>(this.moviePosterFilenames);
   }
 
   public void addMovieFanartFilename(MovieFanartNaming filename) {
@@ -284,7 +289,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieFanartNaming> getMovieFanartFilenames() {
-    return new ArrayList<MovieFanartNaming>(this.movieFanartFilenames);
+    return new ArrayList<>(this.movieFanartFilenames);
   }
 
   @XmlElement(name = IMAGE_POSTER_SIZE)
@@ -441,6 +446,16 @@ public class MovieSettings extends AbstractModelObject {
     this.movieRenamerSpaceSubstitution = movieRenamerSpaceSubstitution;
   }
 
+  public void setMovieRenameAfterScrape(boolean newValue) {
+    boolean oldValue = this.movieRenameAfterScrape;
+    this.movieRenameAfterScrape = newValue;
+    firePropertyChange("movieRenameAfterScrape", oldValue, newValue);
+  }
+
+  public boolean isMovieRenameAfterScrape() {
+    return this.movieRenameAfterScrape;
+  }
+
   @XmlElement(name = MOVIE_RENAMER_SPACE_REPLACEMENT)
   public String getMovieRenamerSpaceReplacement() {
     return movieRenamerSpaceReplacement;
@@ -556,7 +571,7 @@ public class MovieSettings extends AbstractModelObject {
     if (storeUiFilters) {
       return uiFilters;
     }
-    return new HashMap<MovieSearchOptions, Object>();
+    return new HashMap<>();
   }
 
   public void setStoreUiFilters(boolean newValue) {
@@ -907,5 +922,25 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.imageLanguagePriority;
     this.imageLanguagePriority = newValue;
     firePropertyChange("imageLanguagePriority", oldValue, newValue);
+  }
+
+  public CertificationStyle getMovieCertificationStyle() {
+    return movieCertificationStyle;
+  }
+
+  public void setMovieCertificationStyle(CertificationStyle newValue) {
+    CertificationStyle oldValue = this.movieCertificationStyle;
+    this.movieCertificationStyle = newValue;
+    firePropertyChange("movieCertificationStyle", oldValue, newValue);
+  }
+
+  public LanguageStyle getMovieRenamerLanguageStyle() {
+    return movieRenamerLanguageStyle;
+  }
+
+  public void setMovieRenamerLanguageStyle(LanguageStyle newValue) {
+    LanguageStyle oldValue = this.movieRenamerLanguageStyle;
+    this.movieRenamerLanguageStyle = newValue;
+    firePropertyChange("movieRenamerLanguageStyle", oldValue, newValue);
   }
 }

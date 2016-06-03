@@ -15,9 +15,10 @@
  */
 package org.tinymediamanager.core.entities;
 
+import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,6 +49,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
@@ -131,9 +133,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     stackingMarker     = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
+  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<>(0);
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<>(0);
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
@@ -257,14 +259,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             lang = StrgUtils.substr(line, "^# alt: (.*?)$");
           }
           if (!lang.isEmpty()) {
-            sub.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
+            sub.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(lang));
             break;
           }
         }
         br.close();
-      }
-      catch (FileNotFoundException e) {
-        // ignore
       }
       catch (IOException e) {
         // ignore
@@ -298,7 +297,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
-      return MediaFileType.SUBTITLE;
+      return SUBTITLE;
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
@@ -546,7 +545,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * it might be, that there "seems" to be a stacking marker in filename,<br>
    * but the file is not stacked itself. Just return correct string.
    * 
-   * @return
+   * @return the file name without the stacking info
    */
   public String getFilenameWithoutStacking() {
     if (stackingMarker.isEmpty()) {
@@ -655,7 +654,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getSubtitlesAsString() {
     StringBuilder sb = new StringBuilder();
-    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<MediaFileSubtitle>(subtitles);
+    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<>(subtitles);
 
     for (MediaFileSubtitle sub : cleansub) {
       if (sb.length() > 0) {
@@ -715,13 +714,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
         }
       }
-      catch (Exception e) {
+      catch (Exception | Error e) {
         LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
       }
       // sometimes also an error is thrown
-      catch (Error e) {
-        LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
-      }
 
       miSnapshot = mediaInfo.snapshot();
     }
@@ -1192,6 +1188,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * explicit set the 3D format
    * 
    * @param video3DFormat
+   *          the 3D format
    */
   public void setVideo3DFormat(String video3DFormat) {
     this.video3DFormat = video3DFormat;
@@ -1228,6 +1225,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+
+    // gather subtitle infos independent of MI
+    if (getType() == SUBTITLE) {
+      gatherSubtitleInformation();
+    }
 
     mediaInfo = getMediaInfo();
     try {
@@ -1337,7 +1339,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             }
           }
           else {
-            stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
+            stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
           }
           audioStreams.add(stream);
         }
@@ -1373,7 +1375,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String codec = getMediaInfo(StreamKind.Text, i, "CodecID/Hint", "Format");
           stream.setCodec(codec.replaceAll("\\p{Punct}", ""));
           String lang = getMediaInfo(StreamKind.Text, i, "Language/String");
-          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(lang));
+          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(lang));
 
           String forced = getMediaInfo(StreamKind.Text, i, "Forced");
           boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
@@ -1402,12 +1404,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         break;
 
-      case SUBTITLE:
-        if (subtitles == null || subtitles.size() == 0 || getContainerFormat().isEmpty() || force) {
-          gatherSubtitleInformation();
-        }
-        break;
-
       case AUDIO:
         MediaFileAudioStream stream = new MediaFileAudioStream();
         String audioCodec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
@@ -1427,7 +1423,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           stream.setLanguage(parseLanguageFromString(shortname));
         }
         else {
-          stream.setLanguage(Utils.getIso3LanguageFromLocalizedString(language));
+          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
         }
         audioStreams.clear();
         audioStreams.add(stream);
@@ -1465,7 +1461,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
     // container format for all except subtitles (subtitle container format is handled another way)
-    if (type == MediaFileType.SUBTITLE) {
+    if (type == SUBTITLE) {
       setContainerFormat(getExtension());
     }
     else {
@@ -1550,12 +1546,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private String parseLanguageFromString(String shortname) {
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
     for (String s : langArray) {
       try {
         if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
           LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
-          return Utils.getIso3LanguageFromLocalizedString(s);
+          return LanguageUtils.getIso3LanguageFromLocalizedString(s);
         }
       }
       catch (Exception e) {
@@ -1581,8 +1577,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO)
-        || type.equals(MediaFileType.NFO) || isGraphic()) {
+        || type.equals(MediaFileType.SAMPLE) || type.equals(SUBTITLE) || type.equals(MediaFileType.AUDIO) || type.equals(MediaFileType.NFO)
+        || isGraphic()) {
       return true;
     }
 
@@ -1604,6 +1600,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * maintaining its orginating directory
    * 
    * @param datasource
+   *          the data source (for the location of the backup folder)
    * @return true/false if successful
    */
   public boolean deleteSafely(String datasource) {

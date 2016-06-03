@@ -56,6 +56,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -196,7 +197,7 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = createInstanceFromMovie(movie);
 
     // and marshall it
-    List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+    List<MovieNfoNaming> nfonames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
@@ -216,7 +217,7 @@ public class MovieToXbmcNfoConnector {
    */
   static MovieToXbmcNfoConnector createInstanceFromMovie(Movie movie) {
     MovieToXbmcNfoConnector xbmc = null;
-    List<Object> unsupportedTags = new ArrayList<Object>();
+    List<Object> unsupportedTags = new ArrayList<>();
 
     // load existing NFO if possible
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
@@ -303,21 +304,16 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
+      xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
+          MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
-        // if we have US verts, write correct "Rated XX" String
+        // if we have US certs, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        xbmc.mpaa = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
+        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       }
-      xbmc.certification = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
     }
-
-    // // filename and path
-    // if (movie.getMediaFiles().size() > 0) {
-    // xbmc.setFilenameandpath(movie.getPath() + File.separator +
-    // movie.getMediaFiles().get(0).getFilename());
-    // }
 
     // support of frodo director tags
     xbmc.director.clear();
@@ -338,22 +334,22 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.actors.clear();
-    for (MovieActor cast : new ArrayList<MovieActor>(movie.getActors())) {
+    for (MovieActor cast : new ArrayList<>(movie.getActors())) {
       xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
     xbmc.producers.clear();
-    for (MovieProducer producer : new ArrayList<MovieProducer>(movie.getProducers())) {
+    for (MovieProducer producer : new ArrayList<>(movie.getProducers())) {
       xbmc.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
     xbmc.genres.clear();
-    for (MediaGenres genre : new ArrayList<MediaGenres>(movie.getGenres())) {
+    for (MediaGenres genre : new ArrayList<>(movie.getGenres())) {
       xbmc.genres.add(genre.toString());
     }
 
     xbmc.trailer = "";
-    for (MovieTrailer trailer : new ArrayList<MovieTrailer>(movie.getTrailer())) {
+    for (MovieTrailer trailer : new ArrayList<>(movie.getTrailer())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
         xbmc.trailer = prepareTrailerForXbmc(trailer);
@@ -366,7 +362,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.tags.clear();
-    for (String tag : new ArrayList<String>(movie.getTags())) {
+    for (String tag : new ArrayList<>(movie.getTags())) {
       xbmc.tags.add(tag);
     }
 
@@ -442,7 +438,7 @@ public class MovieToXbmcNfoConnector {
 
   static void writeNfoFiles(Movie movie, MovieToXbmcNfoConnector xbmc, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
-    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
+    List<MediaFile> newNfos = new ArrayList<>(1);
 
     for (MovieNfoNaming name : nfoNames) {
       try {
@@ -715,9 +711,7 @@ public class MovieToXbmcNfoConnector {
       in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
     }
-    catch (UnmarshalException e) {
-    }
-    catch (IllegalArgumentException e) {
+    catch (UnmarshalException | IllegalArgumentException e) {
     }
     finally {
       if (in != null) {
@@ -754,7 +748,7 @@ public class MovieToXbmcNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;
@@ -772,7 +766,7 @@ public class MovieToXbmcNfoConnector {
   public List<Producer> getProducers() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in producers;
     // filter producers out
-    List<Producer> pureProducers = new ArrayList<Producer>();
+    List<Producer> pureProducers = new ArrayList<>();
     // for (Object obj : producers) {
     for (Object obj : actors) { // ugly hack for invalid xml structure
       if (obj instanceof Producer) {
@@ -888,8 +882,8 @@ public class MovieToXbmcNfoConnector {
 
     public Streamdetails() {
       video = new Video();
-      audio = new ArrayList<Audio>();
-      subtitle = new ArrayList<Subtitle>();
+      audio = new ArrayList<>();
+      subtitle = new ArrayList<>();
     }
   }
 

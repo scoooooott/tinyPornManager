@@ -40,8 +40,8 @@ public class TvShowRenameTask extends TmmThreadPool {
   private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowRenameTask.class);
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<TvShow>                tvShowsToRename  = new ArrayList<TvShow>();
-  private List<TvShowEpisode>         episodesToRename = new ArrayList<TvShowEpisode>();
+  private List<TvShow>                tvShowsToRename  = new ArrayList<>();
+  private List<TvShowEpisode>         episodesToRename = new ArrayList<>();
   private boolean                     renameRoot       = true;
 
   /**
@@ -73,7 +73,7 @@ public class TvShowRenameTask extends TmmThreadPool {
           break;
         }
         TvShow show = tvShowsToRename.get(i);
-        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+        for (TvShowEpisode episode : new ArrayList<>(show.getEpisodes())) {
           submitTask(new RenameEpisodeTask(episode));
         }
       }

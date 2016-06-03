@@ -37,7 +37,7 @@ import org.tinymediamanager.scraper.http.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.squareup.okhttp.Headers;
+import okhttp3.Headers;
 
 /**
  * DownloadTask for bigger downloads with status updates
@@ -96,6 +96,7 @@ public class DownloadTask extends TmmTask {
    * Set a special user agent which is needed for the download
    * 
    * @param userAgent
+   *          the user agent
    */
   public void setSpecialUserAgent(String userAgent) {
     this.userAgent = userAgent;

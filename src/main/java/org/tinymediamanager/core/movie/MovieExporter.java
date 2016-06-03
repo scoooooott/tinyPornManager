@@ -60,7 +60,7 @@ public class MovieExporter extends MediaEntityExporter {
    * 
    * @param moviesToExport
    *          list of movies
-   * @param pathToExport
+   * @param exportDir
    *          the path to export
    * @throws Exception
    *           the exception
@@ -102,8 +102,8 @@ public class MovieExporter extends MediaEntityExporter {
     LOGGER.info("generating movie list");
     Utils.deleteFileSafely(listExportFile);
 
-    Map<String, Object> root = new HashMap<String, Object>();
-    root.put("movies", new ArrayList<T>(moviesToExport));
+    Map<String, Object> root = new HashMap<>();
+    root.put("movies", new ArrayList<>(moviesToExport));
 
     String output = engine.transform(listTemplate, root);
 
@@ -129,7 +129,7 @@ public class MovieExporter extends MediaEntityExporter {
         }
         Path detailsExportFile = detailsDir.resolve(detailFilename + "." + fileExtension);
 
-        root = new HashMap<String, Object>();
+        root = new HashMap<>();
         root.put("movie", movie);
 
         output = engine.transform(detailTemplate, root);

@@ -109,7 +109,8 @@ public class TvShowEpisodeAndSeasonParser {
    * @param name
    *          the RELATIVE filename (like /dir2/seas1/fname.ext) from the TvShowRoot
    * @param showname
-   * @return result
+   *          the show name
+   * @return result the calculated result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
     LOGGER.debug("parsing '" + name + "'");
@@ -350,11 +351,8 @@ public class TvShowEpisodeAndSeasonParser {
           s = Integer.parseInt(m.group(1));
           result.date = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException | ParseException nfe) {
           // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        catch (ParseException e) {
-          // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s);
@@ -370,11 +368,8 @@ public class TvShowEpisodeAndSeasonParser {
           s = Integer.parseInt(m.group(3));
           result.date = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException | ParseException nfe) {
           // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        catch (ParseException e) {
-          // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s);
@@ -640,7 +635,7 @@ public class TvShowEpisodeAndSeasonParser {
   public static class EpisodeMatchingResult {
 
     public int           season              = -1;
-    public List<Integer> episodes            = new ArrayList<Integer>();
+    public List<Integer> episodes            = new ArrayList<>();
     public String        name                = "";
     public Date          date                = null;
     public boolean       stackingMarkerFound = false;

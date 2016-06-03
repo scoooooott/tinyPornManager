@@ -79,7 +79,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public MovieSelectionModel(SortedList<Movie> sortedList, EventList<Movie> source, MovieMatcherEditor matcher) {
     this.sortedList = sortedList;
-    this.selectionModel = new DefaultEventSelectionModel<Movie>(source);
+    this.selectionModel = new DefaultEventSelectionModel<>(source);
     this.selectionModel.addListSelectionListener(this);
     this.matcherEditor = matcher;
     this.selectedMovies = selectionModel.getSelected();

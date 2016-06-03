@@ -101,7 +101,7 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    * @return the selected movie sets
    */
   public List<MovieSet> getSelectedMovieSets() {
-    List<MovieSet> selectedMovieSets = new ArrayList<MovieSet>();
+    List<MovieSet> selectedMovieSets = new ArrayList<>();
     TreePath[] paths = tree.getSelectionPaths();
     // tree.clearSelection();
 
@@ -127,7 +127,7 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    * @return list of all selected movies
    */
   public List<Movie> getSelectedMovies() {
-    List<Movie> selectedMovies = new ArrayList<Movie>();
+    List<Movie> selectedMovies = new ArrayList<>();
     TreePath[] paths = tree.getSelectionPaths();
 
     // filter out all movie sets from the selection
@@ -152,7 +152,7 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    * @return list of all selected movies
    */
   public List<Movie> getSelectedMoviesRecursive() {
-    List<Movie> selectedMovies = new ArrayList<Movie>();
+    List<Movie> selectedMovies = new ArrayList<>();
 
     TreePath[] paths = tree.getSelectionPaths();
 

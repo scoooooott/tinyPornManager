@@ -15,7 +15,31 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.ADDED_SEASON;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SEASON_COUNT;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.STATUS;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.TVDB;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
@@ -57,9 +81,9 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -97,18 +121,18 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private Certification                      certification         = Certification.NOT_RATED;
 
   @JsonProperty
-  private List<String>                       genres                = new ArrayList<String>(1);
+  private List<String>                       genres                = new ArrayList<>(1);
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<String>(0);
+  private List<String>                       tags                  = new ArrayList<>(0);
   @JsonProperty
-  private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<Integer, String>(0);
+  private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
   @JsonProperty
-  private List<TvShowActor>                  actors                = new ArrayList<TvShowActor>();
+  private List<TvShowActor>                  actors                = new ArrayList<>();
 
-  private List<TvShowEpisode>                episodes              = new ArrayList<TvShowEpisode>();
-  private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<Integer, MediaFile>(0);
-  private List<TvShowSeason>                 seasons               = new ArrayList<TvShowSeason>(1);
-  private List<MediaGenres>                  genresForAccess       = new ArrayList<MediaGenres>(1);
+  private List<TvShowEpisode>                episodes              = new ArrayList<>();
+  private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
+  private List<TvShowSeason>                 seasons               = new ArrayList<>(1);
+  private List<MediaGenres>                  genresForAccess       = new ArrayList<>(1);
   private String                             titleSortable         = "";
   private Date                               lastWatched           = null;
 
@@ -149,7 +173,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     Utils.removeEmptyStringsFromList(genres);
 
     // load genres
-    for (String genre : new ArrayList<String>(genres)) {
+    for (String genre : new ArrayList<>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
 
@@ -540,7 +564,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      List<TvShowActor> actors = new ArrayList<TvShowActor>();
+      List<TvShowActor> actors = new ArrayList<>();
       String director = "";
       String writer = "";
 
@@ -674,7 +698,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
 
       // season poster
-      HashMap<Integer, String> seasonPosters = new HashMap<Integer, String>();
+      HashMap<Integer, String> seasonPosters = new HashMap<>();
       for (MediaArtwork art : artwork) {
         if (art.getType() == MediaArtworkType.SEASON && art.getSeason() >= 0) {
           // check if there is already an artwork for this season
@@ -1193,8 +1217,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return a list of all episodes to scrape
    */
   public List<TvShowEpisode> getEpisodesToScrape() {
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
+    List<TvShowEpisode> episodes = new ArrayList<>();
+    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
       if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
         episodes.add(episode);
       }
@@ -1335,8 +1359,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the media files
    */
   public List<MediaFile> getEpisodesMediaFiles() {
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
+    List<MediaFile> mediaFiles = new ArrayList<>();
+    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
       for (MediaFile mf : episode.getMediaFiles()) {
 
         if (!mediaFiles.contains(mf)) {
@@ -1354,15 +1378,15 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public List<Path> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<Path>();
+    List<Path> filesToCache = new ArrayList<>();
 
-    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
       }
     }
 
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
+    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
       filesToCache.addAll(episode.getImagesToCache());
     }
 
@@ -1388,7 +1412,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public TvShowEpisode getEpisode(int season, int episode) {
     TvShowEpisode ep = null;
 
-    for (TvShowEpisode e : new ArrayList<TvShowEpisode>(this.episodes)) {
+    for (TvShowEpisode e : new ArrayList<>(this.episodes)) {
       if (e.getSeason() == season && e.getEpisode() == episode) {
         ep = e;
         break;
@@ -1403,7 +1427,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return true/false
    */
   public boolean hasNewlyAddedEpisodes() {
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
+    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
       if (episode.isNewlyAdded()) {
         return true;
       }

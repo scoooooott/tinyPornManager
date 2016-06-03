@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.ui.panels;
 
-import static org.tinymediamanager.core.MediaFileType.*;
+import static org.tinymediamanager.core.MediaFileType.NFO;
+import static org.tinymediamanager.core.MediaFileType.SAMPLE;
+import static org.tinymediamanager.core.MediaFileType.TRAILER;
+import static org.tinymediamanager.core.MediaFileType.VIDEO;
+import static org.tinymediamanager.core.MediaFileType.VIDEO_EXTRA;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -170,7 +174,7 @@ public class MediaFileEditorPanel extends JPanel {
           panelDetails.add(lbld, "2, 8, right, default");
         }
         {
-          cb3dFormat = new JComboBox<String>();
+          cb3dFormat = new JComboBox<>();
           cb3dFormat.addItem("");
           cb3dFormat.addItem(MediaFile.VIDEO_3D);
           cb3dFormat.addItem(MediaFile.VIDEO_3D_SBS);

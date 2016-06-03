@@ -35,6 +35,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -48,6 +49,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -60,9 +62,10 @@ public class MovieRenamer {
 
   private static void renameSubtitles(Movie m) {
     // build language lists
-    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
 
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
+      String originalLang = "";
       String lang = "";
       String forced = "";
       List<MediaFileSubtitle> mfsl = sub.getSubtitles();
@@ -70,15 +73,13 @@ public class MovieRenamer {
       if (mfsl != null && mfsl.size() > 0) {
         // use internal values
         MediaFileSubtitle mfs = mfsl.get(0);
-        lang = mfs.getLanguage();
+        originalLang = mfs.getLanguage();
         if (mfs.isForced()) {
           forced = ".forced";
         }
       }
       else {
         // detect from filename, if we don't have a MediaFileSubtitle entry!
-
-        // FIXME: DOES NOT WORK, movie already renamed!!! - execute before movie rename?!
         // remove the filename of movie from subtitle, to ease parsing
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
         String shortname = sub.getBasename().toLowerCase();
@@ -95,11 +96,17 @@ public class MovieRenamer {
 
         for (String s : langArray) {
           if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {
-            lang = Utils.getIso3LanguageFromLocalizedString(s);
-            LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
+            originalLang = s;
+            // lang = Utils.getIso3LanguageFromLocalizedString(s);
+            // LOGGER.debug("found language '" + s + "' in subtitle; displaying it as '" + lang + "'");
             break;
           }
         }
+      }
+
+      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+      if (StringUtils.isBlank(lang)) {
+        lang = originalLang;
       }
 
       // rebuild new filename
@@ -108,19 +115,21 @@ public class MovieRenamer {
       if (sub.getStacking() == 0) {
         // fine, so match to first movie file
         MediaFile mf = m.getMediaFiles(MediaFileType.VIDEO).get(0);
-        newSubName = mf.getBasename() + forced;
+        newSubName = mf.getBasename();
         if (!lang.isEmpty()) {
           newSubName += "." + lang;
         }
+        newSubName += forced;
       }
       else {
         // with stacking info; try to match
         for (MediaFile mf : m.getMediaFiles(MediaFileType.VIDEO)) {
           if (mf.getStacking() == sub.getStacking()) {
-            newSubName = mf.getBasename() + forced;
+            newSubName = mf.getBasename();
             if (!lang.isEmpty()) {
               newSubName += "." + lang;
             }
+            newSubName += forced;
           }
         }
       }
@@ -193,8 +202,8 @@ public class MovieRenamer {
     }
 
     // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
-    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> needed = new ArrayList<>();
+    ArrayList<MediaFile> cleanup = new ArrayList<>();
 
     LOGGER.info("Renaming movie: " + movie.getTitle());
     LOGGER.debug("movie year: " + movie.getYear());
@@ -396,7 +405,7 @@ public class MovieRenamer {
     // ## rename POSTER, FANART (copy 1:N)
     // ######################################################################
     // we can have multiple ones, just get the newest one and copy(overwrite) them to all needed
-    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> mfs = new ArrayList<>();
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.FANART));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.POSTER));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -462,7 +471,7 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename all other types (copy 1:1)
     // ######################################################################
-    mfs = new ArrayList<MediaFile>();
+    mfs = new ArrayList<>();
     mfs.addAll(
         movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
@@ -498,7 +507,7 @@ public class MovieRenamer {
     }
 
     // remove duplicate MediaFiles
-    Set<MediaFile> newMFs = new LinkedHashSet<MediaFile>(needed);
+    Set<MediaFile> newMFs = new LinkedHashSet<>(needed);
     needed.clear();
     needed.addAll(newMFs);
 
@@ -582,7 +591,7 @@ public class MovieRenamer {
    */
   public static ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
     // return list of all generated MFs
-    ArrayList<MediaFile> newFiles = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> newFiles = new ArrayList<>();
     boolean newDestIsMultiMovieDir = movie.isMultiMovieDir();
     String newPathname = "";
 
@@ -666,11 +675,15 @@ public class MovieRenamer {
         if (mfsl != null && mfsl.size() > 0) {
           // internal values
           MediaFileSubtitle mfs = mfsl.get(0);
+          if (!mfs.getLanguage().isEmpty()) {
+            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+            if (StringUtils.isBlank(lang)) {
+              lang = mfs.getLanguage();
+            }
+            newFilename += "." + lang;
+          }
           if (mfs.isForced()) {
             newFilename += ".forced";
-          }
-          if (!mfs.getLanguage().isEmpty()) {
-            newFilename += "." + mfs.getLanguage();
           }
         }
         newFilename += "." + mf.getExtension();
@@ -682,7 +695,7 @@ public class MovieRenamer {
 
       case NFO:
         if (MovieConnectors.isValidNFO(mf.getFileAsPath())) {
-          List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+          List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
             nfonames.add(MovieNfoNaming.FILENAME_NFO);
@@ -710,7 +723,7 @@ public class MovieRenamer {
         break;
 
       case POSTER:
-        List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+        List<MoviePosterNaming> posternames = new ArrayList<>();
         if (newDestIsMultiMovieDir) {
           // Fixate the name regardless of setting
           posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
@@ -746,7 +759,7 @@ public class MovieRenamer {
         break;
 
       case FANART:
-        List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+        List<MovieFanartNaming> fanartnames = new ArrayList<>();
         if (newDestIsMultiMovieDir) {
           // Fixate the name regardless of setting
           fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
@@ -758,7 +771,7 @@ public class MovieRenamer {
         for (MovieFanartNaming name : fanartnames) {
           String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
           if (newFanartName != null && !newFanartName.isEmpty()) {
-            String curExt = mf.getExtension();
+            String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
             if (curExt.equalsIgnoreCase("tbn")) {
               String cont = mf.getContainerFormat();
               if (cont.equalsIgnoreCase("PNG")) {
@@ -785,6 +798,7 @@ public class MovieRenamer {
       // *************
       case BANNER:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -797,6 +811,7 @@ public class MovieRenamer {
         break;
       case CLEARART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -809,6 +824,7 @@ public class MovieRenamer {
         break;
       case DISCART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-disc" + defaultMFext);
@@ -821,6 +837,7 @@ public class MovieRenamer {
         break;
       case LOGO:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -833,6 +850,7 @@ public class MovieRenamer {
         break;
       case THUMB:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
+          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
@@ -935,9 +953,12 @@ public class MovieRenamer {
    * if $Y replacement was empty, the complete optional tag will be empty.
    * 
    * @param s
+   *          the string to replace the optional variable for
    * @param movie
+   *          the movie holding all needed meta data
    * @param forFilename
-   * @return
+   *          do the logic for file or for folder names?
+   * @return the resulting string
    */
   private static String replaceOptionalVariable(String s, Movie movie, boolean forFilename) {
     Pattern regex = Pattern.compile("\\$.{1}");
@@ -1232,6 +1253,7 @@ public class MovieRenamer {
    * Unique true, when having at least a $T/$E-$Y combo or $I imdbId<br>
    * 
    * @param pattern
+   *          the pattern to check the uniqueness for
    * @return true/false
    */
   public static boolean isFolderPatternUnique(String pattern) {

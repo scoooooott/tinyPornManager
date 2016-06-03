@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,8 +46,8 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.panels.MediaFilesPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -102,9 +105,9 @@ public class TvShowSeasonInformationPanel extends JPanel {
    */
   public TvShowSeasonInformationPanel(TvShowSeasonSelectionModel tvShowSeasonSelectionModel) {
     this.tvShowSeasonSelectionModel = tvShowSeasonSelectionModel;
-    episodeEventList = new ObservableElementList<TvShowEpisode>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisode>()),
+    episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisode>()),
         GlazedLists.beanConnector(TvShowEpisode.class));
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(
@@ -177,7 +180,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
     lblEpisodelistT = new JLabel(BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
     panelTop.add(lblEpisodelistT, "2, 7, 3, 1");
 
-    episodeTableModel = new DefaultEventTableModel<TvShowEpisode>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeTableFormat());
+    episodeTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeTableFormat());
     tableEpisodes = new ZebraJTable(episodeTableModel);
     scrollPaneEpisodes = ZebraJTable.createStripedJScrollPane(tableEpisodes);
     panelTop.add(scrollPaneEpisodes, "2, 9, 3, 1, fill, fill");

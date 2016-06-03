@@ -209,6 +209,14 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
       }
     }
 
+    // check offline
+    if (searchOptions.containsKey(MovieSearchOptions.OFFLINE)) {
+      Boolean offline = (Boolean) searchOptions.get(MovieSearchOptions.OFFLINE);
+      if (movie.isOffline() != offline) {
+        return false;
+      }
+    }
+
     return true;
   }
 

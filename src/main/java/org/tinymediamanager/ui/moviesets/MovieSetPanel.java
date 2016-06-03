@@ -267,7 +267,7 @@ public class MovieSetPanel extends JPanel {
     MouseListener mouseListener = new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
           actionEditMovieSet.actionPerformed(new ActionEvent(e, 0, ""));
         }
       }

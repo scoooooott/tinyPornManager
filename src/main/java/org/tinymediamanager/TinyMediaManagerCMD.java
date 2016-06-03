@@ -60,13 +60,14 @@ public class TinyMediaManagerCMD {
   private static boolean          checkFiles      = false;
 
   // datasource IDs
-  private static HashSet<Integer> updateMovieDs   = new HashSet<Integer>();
-  private static HashSet<Integer> updateTvDs      = new HashSet<Integer>();
+  private static HashSet<Integer> updateMovieDs   = new HashSet<>();
+  private static HashSet<Integer> updateTvDs      = new HashSet<>();
 
   /**
    * parse command line params
    * 
    * @param args
+   *          an array of params to parse
    */
   static void parseParams(String[] args) {
     for (String cmd : args) {
@@ -177,7 +178,7 @@ public class TinyMediaManagerCMD {
           task.run(); // blocking
         }
         else {
-          List<String> dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+          List<String> dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
           for (Integer i : updateMovieDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new MovieUpdateDatasourceTask2(dataSources.get(i - 1));
@@ -244,7 +245,7 @@ public class TinyMediaManagerCMD {
           task.run(); // blocking
         }
         else {
-          List<String> dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+          List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
           for (Integer i : updateTvDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
@@ -320,7 +321,7 @@ public class TinyMediaManagerCMD {
               allOk = false;
             }
           }
-          for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(s.getEpisodes())) {
+          for (TvShowEpisode episode : new ArrayList<>(s.getEpisodes())) {
             for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
               if (!mf.exists()) {
                 System.out.println();

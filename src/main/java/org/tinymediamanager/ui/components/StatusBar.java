@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.components;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
@@ -37,6 +38,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -70,9 +72,7 @@ import com.jgoodies.forms.layout.RowSpec;
 @Deprecated
 public class StatusBar extends JPanel implements TmmTaskListener {
   private static final long                     serialVersionUID = -6375900257553323558L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Map<TmmTaskHandle, TaskListComponent> taskMap;
@@ -81,24 +81,23 @@ public class StatusBar extends JPanel implements TmmTaskListener {
   private JProgressBar                          bar;
   private JLabel                                label;
   private JButton                               closeButton;
-  // private JWindow popupWindow;
   private JPopupMenu                            popup;
   private PopupPane                             pane;
 
-  private int                                   preferredHeight;
   private JButton                               btnNotifications;
+  private Component                             verticalStrut;
 
   public StatusBar() {
     initComponents();
   }
 
   private void initComponents() {
-    taskMap = new HashMap<TmmTaskHandle, TaskListComponent>();
+    taskMap = new HashMap<>();
     setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
             ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, }));
+        new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
     label = new JLabel();
     bar = new JProgressBar();
@@ -113,7 +112,8 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     // start figure out height
     label.setText("XYZ");
     bar.setString("XYZ");
-    preferredHeight = Math.max(Math.max(label.getPreferredSize().height, bar.getPreferredSize().height), closeButton.getPreferredSize().height) + 2;
+    verticalStrut = Box.createVerticalStrut(
+        Math.max(Math.max(label.getPreferredSize().height, bar.getPreferredSize().height), closeButton.getPreferredSize().height));
     bar.setString(null);
     label.setText(null);
     // end figure out height
@@ -131,9 +131,10 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     pane.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "HidePopup");
     pane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "HidePopup");
 
-    add(label, "3, 1, default, default");
-    add(bar, "5, 1");
-    add(closeButton, "7, 1");
+    add(verticalStrut, "2, 2");
+    add(label, "3, 2");
+    add(bar, "5, 2");
+    add(closeButton, "7, 2");
 
     label.setVisible(false);
     bar.setVisible(false);
@@ -172,7 +173,7 @@ public class StatusBar extends JPanel implements TmmTaskListener {
         dialog.setVisible(true);
       }
     });
-    add(btnNotifications, "9, 1");
+    add(btnNotifications, "9, 2");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -250,30 +251,6 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     catch (Exception ex) {
     }
     return bounds;
-  }
-
-  @Override
-  public Dimension getPreferredSize() {
-    Dimension retValue;
-    retValue = super.getPreferredSize();
-    retValue.height = preferredHeight;
-    return retValue;
-  }
-
-  @Override
-  public Dimension getMinimumSize() {
-    Dimension retValue;
-    retValue = super.getMinimumSize();
-    retValue.height = preferredHeight;
-    return retValue;
-  }
-
-  @Override
-  public Dimension getMaximumSize() {
-    Dimension retValue;
-    retValue = super.getMaximumSize();
-    retValue.height = preferredHeight;
-    return retValue;
   }
 
   @Override

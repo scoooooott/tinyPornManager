@@ -109,7 +109,7 @@ public class TvShowMediaInformationPanel extends JPanel {
    */
   public TvShowMediaInformationPanel(TvShowSelectionModel model) {
     this.selectionModel = model;
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(

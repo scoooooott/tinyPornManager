@@ -52,6 +52,8 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -73,9 +75,10 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -112,8 +115,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private TvShowEpisode                                         episodeToEdit;
   private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
   private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private List<MediaFile>                                       mediaFiles       = new ArrayList<MediaFile>();
+  private List<MediaFile>                                       mediaFiles       = new ArrayList<>();
   private boolean                                               continueQueue    = true;
+  private int                                                   voteCount        = 0;
 
   private JTextField                                            tfTitle;
   private JLabel                                                lblFilename;
@@ -471,6 +475,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       }
       lblThumb.setImagePath(episodeToEdit.getArtworkFilename(MediaFileType.THUMB));
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
+      spRating.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+          voteCount = 1;
+        }
+      });
+      voteCount = episodeToEdit.getVotes();
       chckbxWatched.setSelected(episodeToEdit.isWatched());
       taPlot.setText(episodeToEdit.getPlot());
       taPlot.setCaretPosition(0);
@@ -530,7 +541,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       float rating = (float) tempRating;
       if (episodeToEdit.getRating() != rating) {
         episodeToEdit.setRating(rating);
-        episodeToEdit.setVotes(1);
+        episodeToEdit.setVotes(voteCount);
       }
 
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
@@ -605,6 +616,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
     @Override
     protected Void doInBackground() throws Exception {
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
@@ -634,13 +646,56 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           tfTitle.setText(metadata.getTitle());
           taPlot.setText(metadata.getPlot());
           spFirstAired.setValue(metadata.getReleaseDate());
+          spRating.setValue(new Double(metadata.getRating()));
+          // buffer votes not visible
+          voteCount = metadata.getVoteCount();
 
-          // set aireed or dvd ep/season
+          // set aired or dvd ep/season
           spSeason.setValue(metadata.getSeasonNumber());
           spEpisode.setValue(metadata.getEpisodeNumber());
           spDvdSeason.setValue(metadata.getDvdSeasonNumber());
           spDvdEpisode.setValue(metadata.getDvdEpisodeNumber());
+          spDisplayEpisode.setValue(metadata.getDisplayEpisodeNumber());
+          spDisplaySeason.setValue(metadata.getDisplaySeasonNumber());
 
+          // cast
+          List<TvShowActor> actors = new ArrayList<>();
+          String director = "";
+          String writer = "";
+          for (MediaCastMember member : metadata.getCastMembers()) {
+            switch (member.getType()) {
+              case ACTOR:
+                TvShowActor actor = new TvShowActor();
+                actor.setName(member.getName());
+                actor.setCharacter(member.getCharacter());
+                actor.setThumb(member.getImageUrl());
+                actors.add(actor);
+                break;
+
+              case DIRECTOR:
+                if (!StringUtils.isEmpty(director)) {
+                  director += ", ";
+                }
+                director += member.getName();
+                break;
+
+              case WRITER:
+                if (!StringUtils.isEmpty(writer)) {
+                  writer += ", ";
+                }
+                writer += member.getName();
+                break;
+
+              default:
+                break;
+            }
+          }
+          cast.clear();
+          cast.addAll(actors);
+          tfDirector.setText(director);
+          tfWriter.setText(writer);
+
+          // artwork
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.THUMB) {
               lblThumb.setImageUrl(ma.getDefaultUrl());
@@ -653,6 +708,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         LOGGER.warn("Error getting metadata " + e.getMessage());
       }
 
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       return null;
     }
   }

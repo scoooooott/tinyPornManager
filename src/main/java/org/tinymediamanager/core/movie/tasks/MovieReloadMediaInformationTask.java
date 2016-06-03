@@ -43,7 +43,7 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
 
   public MovieReloadMediaInformationTask(List<Movie> movies) {
     super(BUNDLE.getString("movie.updatemediainfo"));
-    moviesToReload = new ArrayList<Movie>(movies);
+    moviesToReload = new ArrayList<>(movies);
     initThreadPool(1, "reloadMI");
   }
 

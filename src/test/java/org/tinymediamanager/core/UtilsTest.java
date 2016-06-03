@@ -14,6 +14,7 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class UtilsTest {
@@ -87,7 +88,7 @@ public class UtilsTest {
 
   @Test
   public void map() {
-    HashMap<String, Object> ids = new HashMap<String, Object>(0);
+    HashMap<String, Object> ids = new HashMap<>(0);
     ids.put("STR1", "str1");
     ids.put("STR2", "1000");
     ids.put("INT1", Integer.parseInt("1000"));
@@ -236,8 +237,8 @@ public class UtilsTest {
       System.out.println(l.getISO3Language());
     }
     System.out.println();
-    for (String s : Utils.KEY_TO_LOCALE_MAP.keySet()) {
-      System.out.println(s + " - " + Utils.KEY_TO_LOCALE_MAP.get(s));
+    for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
+      System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
     }
   }
 

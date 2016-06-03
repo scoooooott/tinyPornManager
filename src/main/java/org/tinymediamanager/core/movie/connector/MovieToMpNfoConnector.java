@@ -52,6 +52,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -171,7 +172,7 @@ public class MovieToMpNfoConnector {
     MovieToMpNfoConnector mp = createInstanceFromMovie(movie);
 
     // and marshall it
-    List<MovieNfoNaming> nfoNames = new ArrayList<MovieNfoNaming>();
+    List<MovieNfoNaming> nfoNames = new ArrayList<>();
     if (movie.isMultiMovieDir()) {
       // Fixate the name regardless of setting
       nfoNames.add(MovieNfoNaming.FILENAME_NFO);
@@ -258,17 +259,13 @@ public class MovieToMpNfoConnector {
 
     // certification
     if (movie.getCertification() != null) {
-      mp.mpaa = movie.getCertification().name();
+      // mp.mpaa = movie.getCertification().name();
+      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
     }
 
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       mp.source = movie.getMediaSource().name();
     }
-
-    // // filename and path
-    // if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-    // mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-    // }
 
     mp.director = movie.getDirector();
     mp.credits = movie.getWriter();
@@ -300,7 +297,7 @@ public class MovieToMpNfoConnector {
 
   static void writeNfoFiles(Movie movie, MovieToMpNfoConnector mp, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
-    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
+    List<MediaFile> newNfos = new ArrayList<>(1);
 
     for (MovieNfoNaming name : nfoNames) {
       try {
@@ -523,9 +520,7 @@ public class MovieToMpNfoConnector {
       in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       mp = (MovieToMpNfoConnector) um.unmarshal(in);
     }
-    catch (UnmarshalException e) {
-    }
-    catch (IllegalArgumentException e) {
+    catch (UnmarshalException | IllegalArgumentException e) {
     }
     finally {
       if (in != null) {
@@ -575,7 +570,7 @@ public class MovieToMpNfoConnector {
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
-    List<Actor> pureActors = new ArrayList<Actor>();
+    List<Actor> pureActors = new ArrayList<>();
     for (Object obj : actors) {
       if (obj instanceof Actor) {
         Actor actor = (Actor) obj;
@@ -593,7 +588,7 @@ public class MovieToMpNfoConnector {
   public List<Producer> getProducers() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in producers;
     // filter producers out
-    List<Producer> pureProducers = new ArrayList<Producer>();
+    List<Producer> pureProducers = new ArrayList<>();
     // for (Object obj : producers) {
     for (Object obj : actors) { // ugly hack for invalid xml structure
       if (obj instanceof Producer) {

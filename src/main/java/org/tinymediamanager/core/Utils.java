@@ -44,14 +44,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,8 +76,6 @@ public class Utils {
   private static final Logger                       LOGGER                = LoggerFactory.getLogger(Utils.class);
   private static final Pattern                      localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
       Pattern.CASE_INSENSITIVE);
-  // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
-  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP     = generateSubtitleLanguageArray();
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
   private static final Pattern                      stackingPattern1      = Pattern
@@ -103,59 +97,12 @@ public class Utils {
   private static final Pattern                      folderStackingPattern = Pattern
       .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
 
-  private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
-    Map<String, Locale> langArray = new HashMap<String, Locale>();
-
-    Locale intl = Locale.ENGLISH;
-    Locale locales[] = Locale.getAvailableLocales();
-    // all possible variants of language/country/prefixes/non-iso style
-    for (Locale locale : locales) {
-      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
-      langArray.put(base.getDisplayLanguage(intl), base);
-      langArray.put(base.getDisplayLanguage(), base);
-      try {
-        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
-      }
-      catch (Exception e) {
-        // ignore
-      }
-      langArray.put(base.getISO3Language(), base);
-      langArray.put(base.getCountry(), base);
-      try {
-        String c = base.getISO3Country();
-        langArray.put(c, base);
-      }
-      catch (MissingResourceException e) {
-        // tjo... not available, see javadoc
-      }
-    }
-    for (String l : Locale.getISOLanguages()) {
-      langArray.put(l, new Locale(l));
-    }
-
-    // sort
-    List<String> keys = new LinkedList<String>(langArray.keySet());
-    Collections.sort(keys, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        return s2.length() - s1.length();
-      }
-    });
-    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<String, Locale>();
-    for (String key : keys) {
-      if (!key.isEmpty()) {
-        sortedMap.put(key.toLowerCase(), langArray.get(key));
-      }
-    }
-
-    return sortedMap;
-  }
-
   /**
    * gets the filename part, and returns last extension
    * 
    * @param path
-   * @return
+   *          the path to get the last extension for
+   * @return the last extension found
    */
   public static String getExtension(Path path) {
     String ext = "";
@@ -165,20 +112,6 @@ public class Utils {
       ext = fn.substring(i + 1);
     }
     return ext;
-  }
-
-  /**
-   * uses our localized language mapping table, to get the iso3 code
-   * 
-   * @param text
-   * @return 3 chars or empty string
-   */
-  public static String getIso3LanguageFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
-    if (l != null) {
-      return l.getISO3Language();
-    }
-    return "";
   }
 
   /**
@@ -569,11 +502,16 @@ public class Utils {
    */
   @SuppressWarnings("deprecation")
   private static String getEncProp(String prop) {
+    String property = System.getProperty(prop);
+    if (StringUtils.isBlank(property)) {
+      return "";
+    }
+
     try {
-      return URLEncoder.encode(System.getProperty(prop), "UTF-8");
+      return URLEncoder.encode(property, "UTF-8");
     }
     catch (UnsupportedEncodingException e) {
-      return URLEncoder.encode(System.getProperty(prop));
+      return URLEncoder.encode(property);
     }
   }
 
@@ -870,6 +808,9 @@ public class Utils {
    * maintaining its originating directory
    * 
    * @param file
+   *          the file to be deleted
+   * @param datasource
+   *          the data source (for the location of the backup folder)
    * @return true/false if successful
    */
   public static boolean deleteFileWithBackup(Path file, String datasource) {
@@ -908,6 +849,7 @@ public class Utils {
    * only doing a check if it is not a directory
    * 
    * @param file
+   *          the file to be deleted
    * @return true/false if successful
    */
   public static boolean deleteFileSafely(Path file) {
@@ -932,6 +874,7 @@ public class Utils {
    * maintaining its originating directory
    * 
    * @param folder
+   *          the folder to be deleted
    * @param datasource
    *          the datasource of this folder
    * @return true/false if successful
@@ -974,7 +917,7 @@ public class Utils {
    * @return List of Locales
    */
   public static List<Locale> getLanguages() {
-    ArrayList<Locale> loc = new ArrayList<Locale>();
+    ArrayList<Locale> loc = new ArrayList<>();
     loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(Constants.LOCALE_FOLDER))) {
@@ -1102,13 +1045,13 @@ public class Utils {
   /**
    * Deletes old backup files in backup folder; keep only last X files
    * 
-   * @param f
+   * @param file
    *          the file of backup to be deleted
    * @param keep
    *          keep last X versions
    */
   public static final void deleteOldBackupFile(Path file, int keep) {
-    ArrayList<Path> al = new ArrayList<Path>();
+    ArrayList<Path> al = new ArrayList<>();
     String fname = file.getFileName().toString();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
       for (Path path : directoryStream) {
@@ -1220,7 +1163,7 @@ public class Utils {
    */
   private static List<String> getJVMArguments() {
     RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-    List<String> arguments = new ArrayList<String>(runtimeMxBean.getInputArguments());
+    List<String> arguments = new ArrayList<>(runtimeMxBean.getInputArguments());
     // fixtate some
     if (!arguments.contains("-Djava.net.preferIPv4Stack=true")) {
       arguments.add("-Djava.net.preferIPv4Stack=true");
@@ -1235,6 +1178,7 @@ public class Utils {
    * Deletes a complete directory recursively, using Java NIO
    * 
    * @param dir
+   *          directory to delete
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
@@ -1276,10 +1220,9 @@ public class Utils {
    *          Path to be added
    * @param internalPath
    *          the location inside the ZIP like /aa/a.txt
-   * @throws Throwable
    */
   public static void createZip(Path zipFile, Path toBeAdded, String internalPath) {
-    Map<String, String> env = new HashMap<String, String>();
+    Map<String, String> env = new HashMap<>();
     try {
       // check if file exists
       env.put("create", String.valueOf(Files.notExists(zipFile)));
@@ -1310,7 +1253,9 @@ public class Utils {
    * Java NIO replacement of commons-io
    * 
    * @param file
+   *          the file to write the string to
    * @param text
+   *          the text to be written into the file
    * @throws IOException
    */
   public static void writeStringToFile(Path file, String text) throws IOException {
@@ -1322,7 +1267,8 @@ public class Utils {
    * Java NIO replacement of commons-io
    * 
    * @param file
-   * @return
+   *          the file to read the string from
+   * @return the read string
    * @throws IOException
    */
   public static String readFileToString(Path file) throws IOException {
@@ -1334,7 +1280,9 @@ public class Utils {
    * Copies a complete directory recursively, using Java NIO
    * 
    * @param from
+   *          source
    * @param to
+   *          destination
    * @throws IOException
    */
   public static void copyDirectoryRecursive(Path from, Path to) throws IOException {
@@ -1342,12 +1290,8 @@ public class Utils {
     Files.walkFileTree(from, new CopyFileVisitor(to));
   }
 
-  /**
-   * Visitor for copying a directory recursively<br>
-   * Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
-   * 
-   * @author Myron Boyle
-   *
+  /*
+   * Visitor for copying a directory recursively<br> Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
    */
   public static class CopyFileVisitor extends SimpleFileVisitor<Path> {
     private final Path targetPath;

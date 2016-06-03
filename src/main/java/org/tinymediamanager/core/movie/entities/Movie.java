@@ -15,7 +15,37 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.EDITION;
+import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
+import static org.tinymediamanager.core.Constants.TOP250;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -55,6 +85,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
@@ -132,28 +163,30 @@ public class Movie extends MediaEntity implements IMediaInformation {
   private UUID                                  movieSetId;
   @JsonProperty
   private MovieEdition                          edition                    = MovieEdition.NONE;
+  @JsonProperty
+  private boolean                               stacked                    = false;
+  @JsonProperty
+  private boolean                               offline                    = false;
 
   @JsonProperty
-  private List<String>                          genres                     = new ArrayList<String>(1);
+  private List<String>                          genres                     = new ArrayList<>(1);
   @JsonProperty
-  private List<String>                          tags                       = new ArrayList<String>(0);
+  private List<String>                          tags                       = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraThumbs                = new ArrayList<String>(0);
+  private List<String>                          extraThumbs                = new ArrayList<>(0);
   @JsonProperty
-  private List<String>                          extraFanarts               = new ArrayList<String>(0);
+  private List<String>                          extraFanarts               = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieActor>                      actors                     = new ArrayList<MovieActor>();
+  private List<MovieActor>                      actors                     = new ArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer>                   producers                  = new ArrayList<>(0);
   @JsonProperty
-  private List<MovieTrailer>                    trailer                    = new ArrayList<MovieTrailer>(0);
+  private List<MovieTrailer>                    trailer                    = new ArrayList<>(0);
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
-  private List<MediaGenres>                     genresForAccess            = new ArrayList<MediaGenres>(0);
-  @JsonProperty
-  private boolean                               stacked                    = false;
+  private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -284,13 +317,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the title for ui
    */
   public String getTitleForUi() {
-    StringBuffer titleForUi = new StringBuffer(title);
-    if (year != null && !year.isEmpty()) {
-      titleForUi.append(" (");
-      titleForUi.append(year);
-      titleForUi.append(")");
+    String titleForUi = title;
+    if (StringUtils.isNotBlank(year)) {
+      titleForUi += " (" + year + ")";
     }
-    return titleForUi.toString();
+    return titleForUi;
   }
 
   /**
@@ -304,7 +335,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     Utils.removeEmptyStringsFromList(genres);
 
     // load genres
-    for (String genre : new ArrayList<String>(genres)) {
+    for (String genre : new ArrayList<>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
 
@@ -645,7 +676,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return false;
     }
 
-    for (MediaFile file : new ArrayList<MediaFile>(getMediaFiles())) {
+    for (MediaFile file : new ArrayList<>(getMediaFiles())) {
       if (filename.compareTo(file.getFilename()) == 0) {
         return true;
       }
@@ -726,9 +757,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param config
    *          the config
    */
-  /**
-   * @param metadata
-   */
   public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
     if (metadata == null) {
       LOGGER.error("metadata was null");
@@ -793,8 +821,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // cast
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      List<MovieActor> actors = new ArrayList<MovieActor>();
-      List<MovieProducer> producers = new ArrayList<MovieProducer>();
+      List<MovieActor> actors = new ArrayList<>();
+      List<MovieProducer> producers = new ArrayList<>();
       String director = "";
       String writer = "";
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -914,6 +942,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // update DB
     writeNFO();
     saveToDb();
+
+    // rename the movie if that has been chosen in the settings
+    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenameAfterScrape()) {
+      MovieRenamer.renameMovie(this);
+    }
   }
 
   /**
@@ -1636,8 +1669,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public List<Path> getImagesToCache() {
     // get files to cache
-    List<Path> filesToCache = new ArrayList<Path>();
-    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+    List<Path> filesToCache = new ArrayList<>();
+    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
       }
@@ -1647,7 +1680,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public List<MediaFile> getMediaFilesContainingAudioStreams() {
-    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<>(1);
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -1665,7 +1698,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public List<MediaFile> getMediaFilesContainingSubtitles() {
-    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<MediaFile>(1);
+    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
     // look in the first media file if it has subtitles
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
@@ -1982,6 +2015,16 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   public String getEditionAsString() {
     return edition.toString();
+  }
+
+  public void setOffline(boolean newValue) {
+    boolean oldValue = this.offline;
+    this.offline = newValue;
+    firePropertyChange("offline", oldValue, newValue);
+  }
+
+  public boolean isOffline() {
+    return offline;
   }
 
   public void setEdition(MovieEdition newValue) {

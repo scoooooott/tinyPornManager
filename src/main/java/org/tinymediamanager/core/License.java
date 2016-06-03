@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 
-import com.squareup.okhttp.OkUrlFactory;
+import okhttp3.OkUrlFactory;
 
 /**
  * The class License. Used for the generation/validation of the license file (for the donator version)
@@ -111,7 +111,7 @@ public class License {
    * @return MAC or empty string
    */
   private static List<String> getAllMacAddresses() {
-    List<String> m = new ArrayList<String>();
+    List<String> m = new ArrayList<>();
     m.add(UNKNOWN_MAC); // lic generated with empty mac, but java cannot handle this :/ use fake mac for further checks
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
@@ -182,7 +182,7 @@ public class License {
   /**
    * gets the license file (from possible locations)
    * 
-   * @return
+   * @return the file containing the license or null
    */
   private static File getLicenseFile() {
     File f = new File(LICENSE_FILE); // app dir

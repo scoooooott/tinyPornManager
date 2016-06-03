@@ -388,12 +388,12 @@ public class TvShowBatchEditorDialog extends TmmDialog {
           }
 
           if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
-            Set<TvShow> tvShows = new HashSet<TvShow>();
+            Set<TvShow> tvShows = new HashSet<>();
             for (TvShowEpisode episode : tvShowEpisodesToEdit) {
               tvShows.add(episode.getTvShow());
             }
             tvShows.addAll(tvShowsToEdit);
-            TmmTask task = new SyncTraktTvTask(null, new ArrayList<TvShow>(tvShows));
+            TmmTask task = new SyncTraktTvTask(null, new ArrayList<>(tvShows));
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 

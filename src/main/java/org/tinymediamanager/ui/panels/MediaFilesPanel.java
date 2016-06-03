@@ -40,7 +40,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.ZebraJTable;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -71,15 +71,15 @@ public class MediaFilesPanel extends JPanel {
     this.mediaFileEventList = mediaFiles;
     setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("default:grow"), }));
 
-    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
-    tableFiles = new TmmTable(mediaFileTableModel);
+    mediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
+    tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
     LinkListener linkListener = new LinkListener();
     tableFiles.addMouseListener(linkListener);
     tableFiles.addMouseMotionListener(linkListener);
 
-    scrollPaneFiles = TmmTable.createJScrollPane(tableFiles);
+    scrollPaneFiles = ZebraJTable.createStripedJScrollPane(tableFiles);
     add(scrollPaneFiles, "1, 1, fill, fill");
 
     scrollPaneFiles.setViewportView(tableFiles);

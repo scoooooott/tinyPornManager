@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 
@@ -50,6 +51,7 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String      BAD_WORDS                   = "badWords";
   private final static String      ENTRY                       = "entry";
   private final static String      TV_SHOW_SKIP_FOLDERS        = "tvShowSkipFolders";
+  private final static String      TV_SHOW_SUBTITLE_SCRAPERS   = "tvShowSubtitleScrapers";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -67,6 +69,10 @@ public class TvShowSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String>       tvShowSkipFolders           = ObservableCollections.observableList(new ArrayList<String>());
 
+  @XmlElementWrapper(name = TV_SHOW_SUBTITLE_SCRAPERS)
+  @XmlElement(name = ENTRY)
+  private final List<String>       tvShowSubtitleScrapers      = ObservableCollections.observableList(new ArrayList<String>());
+
   private String                   tvShowScraper               = Constants.TVDB;
   private boolean                  scrapeBestImage             = true;
   private MediaLanguages           scraperLanguage             = MediaLanguages.en;
@@ -79,6 +85,7 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean                  asciiReplacement            = false;
   private boolean                  renamerSpaceSubstitution    = false;
   private String                   renamerSpaceReplacement     = "_";
+  private LanguageStyle            tvShowRenamerLanguageStyle  = LanguageStyle.ISO3T;
   private boolean                  syncTrakt                   = false;
   private boolean                  dvdOrder                    = false;
 
@@ -301,5 +308,33 @@ public class TvShowSettings extends AbstractModelObject {
     TvShowEpisodeThumbNaming oldValue = this.tvShowEpisodeThumbFilename;
     this.tvShowEpisodeThumbFilename = newValue;
     firePropertyChange("tvShowEpisodeThumbFilename", oldValue, newValue);
+  }
+
+  public void addTvShowSubtitleScraper(String newValue) {
+    if (!tvShowSubtitleScrapers.contains(newValue)) {
+      tvShowSubtitleScrapers.add(newValue);
+      firePropertyChange(TV_SHOW_SUBTITLE_SCRAPERS, null, tvShowSubtitleScrapers);
+    }
+  }
+
+  public void removeTvShowSubtitleScraper(String newValue) {
+    if (tvShowSubtitleScrapers.contains(newValue)) {
+      tvShowSubtitleScrapers.remove(newValue);
+      firePropertyChange(TV_SHOW_SUBTITLE_SCRAPERS, null, tvShowSubtitleScrapers);
+    }
+  }
+
+  public List<String> getTvShowSubtitleScrapers() {
+    return tvShowSubtitleScrapers;
+  }
+
+  public LanguageStyle getTvShowRenamerLanguageStyle() {
+    return tvShowRenamerLanguageStyle;
+  }
+
+  public void setTvShowRenamerLanguageStyle(LanguageStyle newValue) {
+    LanguageStyle oldValue = this.tvShowRenamerLanguageStyle;
+    this.tvShowRenamerLanguageStyle = newValue;
+    firePropertyChange("tvShowRenamerLanguageStyle", oldValue, newValue);
   }
 }

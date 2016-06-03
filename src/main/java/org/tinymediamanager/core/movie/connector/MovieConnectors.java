@@ -23,7 +23,8 @@ import java.nio.file.Path;
  * @author Manuel Laggner
  */
 public enum MovieConnectors {
-  XBMC("Kodi / XBMC"), MP("MediaPortal");
+  XBMC("Kodi / XBMC"),
+  MP("MediaPortal");
 
   private String title;
 
@@ -41,7 +42,8 @@ public enum MovieConnectors {
    * (by casting to all known XML formats)
    * 
    * @param nfo
-   * @return
+   *          the path to the NFO
+   * @return true/false
    */
   public static boolean isValidNFO(Path nfo) {
     MovieToXbmcNfoConnector tmp = null;

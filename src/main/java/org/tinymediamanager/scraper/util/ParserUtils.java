@@ -206,6 +206,7 @@ public class ParserUtils {
    * removes some weird number-stopwords like 1080, 720 etc.. to ease the regex parsing for season/episode
    * 
    * @param filename
+   *          the file name to remove the stop- and bad words for
    * @return the cleaned one
    */
   public static String removeStopwordsAndBadwordsFromTvEpisodeName(String filename) {
@@ -270,15 +271,15 @@ public class ParserUtils {
    */
   public static Pair<String, String> parseTitleAndDateInBrackets(String title) {
     if (title == null)
-      return new Pair<String, String>(null, null);
+      return new Pair<>(null, null);
 
     Pattern p = Pattern.compile("(.*)\\s+\\(?([0-9]{4})\\)?", Pattern.CASE_INSENSITIVE);
     Matcher m = p.matcher(title);
     if (m.find()) {
-      return new Pair<String, String>(m.group(1), m.group(2));
+      return new Pair<>(m.group(1), m.group(2));
     }
 
-    return new Pair<String, String>(title, null);
+    return new Pair<>(title, null);
   }
 
   /**
@@ -320,7 +321,7 @@ public class ParserUtils {
    * @return cleanest one
    */
   public static ParserInfo getCleanerString(String... names) {
-    ArrayList<ParserInfo> info = new ArrayList<ParserInfo>(1);
+    ArrayList<ParserInfo> info = new ArrayList<>(1);
     ParserInfo ret = null;
     int rate = -10000;
 

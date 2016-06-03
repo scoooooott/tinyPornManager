@@ -124,9 +124,9 @@ public class MovieEditorDialog extends TmmDialog {
       .observableList(new ArrayList<MovieTrailer>());
   private List<String>                                              tags             = ObservableCollections.observableList(new ArrayList<String>());
   private EventList<MediaId>                                        ids              = new BasicEventList<>();
-  private List<MediaFile>                                           mediaFiles       = new ArrayList<MediaFile>();
-  private List<String>                                              extrathumbs      = new ArrayList<String>();
-  private List<String>                                              extrafanarts     = new ArrayList<String>();
+  private List<MediaFile>                                           mediaFiles       = new ArrayList<>();
+  private List<String>                                              extrathumbs      = new ArrayList<>();
+  private List<String>                                              extrafanarts     = new ArrayList<>();
   private boolean                                                   continueQueue    = true;
 
   private final JPanel                                              details1Panel    = new JPanel();
@@ -345,7 +345,7 @@ public class MovieEditorDialog extends TmmDialog {
         spTop250 = new JSpinner();
         details1Panel.add(spTop250, "18, 14");
       }
-      spTop250.setValue(Integer.valueOf(movie.getTop250()));
+      spTop250.setValue(movie.getTop250());
       {
         JLabel lblIds = new JLabel("Ids");
         details1Panel.add(lblIds, "2, 16, right, bottom");
@@ -865,7 +865,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfWriter.setText(movieToEdit.getWriter());
       lblPoster.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.POSTER));
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
-      spRuntime.setValue(Integer.valueOf(movieToEdit.getRuntime()));
+      spRuntime.setValue(movieToEdit.getRuntime());
       cbEdition.setSelectedItem(movieToEdit.getEdition());
 
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());

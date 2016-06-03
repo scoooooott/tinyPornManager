@@ -98,10 +98,10 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     this.episode = ep;
     this.mediaScraper = mediaScraper;
     this.metadata = new MediaEpisode(mediaScraper.getId());
-    episodeEventList = new ObservableElementList<TvShowEpisodeChooserModel>(
-        GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()), GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
-    SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<TvShowEpisodeChooserModel>(
-        GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
+    episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()),
+        GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
+    SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList),
+        new EpisodeComparator());
 
     getContentPane()
         .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
@@ -126,13 +126,12 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       panelLeft.add(scrollPane, "2, 4, fill, fill");
       splitPane.setLeftComponent(panelLeft);
 
-      MatcherEditor<TvShowEpisodeChooserModel> textMatcherEditor = new TextComponentMatcherEditor<TvShowEpisodeChooserModel>(textField,
+      MatcherEditor<TvShowEpisodeChooserModel> textMatcherEditor = new TextComponentMatcherEditor<>(textField,
           new TvShowEpisodeChooserModelFilterator());
-      FilterList<TvShowEpisodeChooserModel> textFilteredEpisodes = new FilterList<TvShowEpisodeChooserModel>(sortedEpisodes, textMatcherEditor);
+      FilterList<TvShowEpisodeChooserModel> textFilteredEpisodes = new FilterList<>(sortedEpisodes, textMatcherEditor);
       AdvancedTableModel<TvShowEpisodeChooserModel> episodeTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredEpisodes,
           new EpisodeTableFormat());
-      DefaultEventSelectionModel<TvShowEpisodeChooserModel> selectionModel = new DefaultEventSelectionModel<TvShowEpisodeChooserModel>(
-          textFilteredEpisodes);
+      DefaultEventSelectionModel<TvShowEpisodeChooserModel> selectionModel = new DefaultEventSelectionModel<>(textFilteredEpisodes);
       selectedEpisodes = selectionModel.getSelected();
 
       selectionModel.addListSelectionListener(new ListSelectionListener() {
@@ -227,7 +226,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() >= 2) {
+        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
           actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
         }
       }

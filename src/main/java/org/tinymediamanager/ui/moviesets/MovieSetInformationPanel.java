@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -123,7 +124,7 @@ public class MovieSetInformationPanel extends JPanel {
    */
   public MovieSetInformationPanel(MovieSetSelectionModel model) {
     this.selectionModel = model;
-    movieEventList = new ObservableElementList<Movie>(GlazedListsSwing.swingThreadProxyList(new BasicEventList<Movie>()),
+    movieEventList = new ObservableElementList<>(GlazedListsSwing.swingThreadProxyList(new BasicEventList<Movie>()),
         GlazedLists.beanConnector(Movie.class));
 
     setLayout(new BorderLayout(0, 0));
@@ -179,7 +180,7 @@ public class MovieSetInformationPanel extends JPanel {
     panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow(3)"), },
         new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("203px:grow"), }));
 
-    movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(movieEventList), new MovieInMovieSetTableFormat());
+    movieTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(movieEventList), new MovieInMovieSetTableFormat());
     // tableAssignedMovies = new JTable(movieTableModel);
     tableAssignedMovies = new ZebraJTable(movieTableModel);
     // JScrollPane scrollPaneMovies = new JScrollPane();

@@ -132,12 +132,12 @@ public class MediaScraper {
    * 
    * @param type
    *          Movie or Tv
-   * @return
+   * @return a list of all found media scrapers
    */
   public static List<MediaScraper> getMediaScrapers(ScraperType type) {
-    ArrayList<MediaScraper> scraper = new ArrayList<MediaScraper>();
+    ArrayList<MediaScraper> scraper = new ArrayList<>();
 
-    ArrayList<IMediaProvider> plugins = new ArrayList<IMediaProvider>();
+    ArrayList<IMediaProvider> plugins = new ArrayList<>();
     switch (type) {
       case MOVIE:
         plugins.addAll(PluginManager.getInstance().getPluginsForInterface(IMovieMetadataProvider.class));

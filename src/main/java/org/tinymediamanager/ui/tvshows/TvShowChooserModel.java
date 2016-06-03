@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -177,11 +176,6 @@ public class TvShowChooserModel extends AbstractModelObject {
       scraped = true;
 
     }
-    catch (IOException e) {
-      LOGGER.error("scrapeMedia", e);
-      MessageManager.instance.pushMessage(
-          new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
-    }
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
       MessageManager.instance.pushMessage(
@@ -230,7 +224,7 @@ public class TvShowChooserModel extends AbstractModelObject {
         return;
       }
 
-      List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+      List<MediaArtwork> artwork = new ArrayList<>();
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);

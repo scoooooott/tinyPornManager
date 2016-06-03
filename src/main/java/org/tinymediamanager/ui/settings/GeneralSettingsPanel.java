@@ -92,7 +92,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
   private Settings                    settings           = Settings.getInstance();
-  private List<LocaleComboBox>        locales            = new ArrayList<LocaleComboBox>();
+  private List<LocaleComboBox>        locales            = new ArrayList<>();
 
   private JTextField                  tfProxyHost;
   private JTextField                  tfProxyPort;

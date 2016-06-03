@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.CHARACTER;
+import static org.tinymediamanager.core.Constants.NAME;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.THUMB_PATH;
 
 import java.io.File;
 
@@ -70,7 +73,7 @@ public class MovieActor extends AbstractModelObject {
   /**
    * Gets the actor name in a storageable format (without special characters)
    * 
-   * @return
+   * @return the <i>cleaned</i> name for storing
    */
   public String getNameForStorage() {
     return name.replace(" ", "_").replaceAll("([\"\\\\:<>|/?*])", "");

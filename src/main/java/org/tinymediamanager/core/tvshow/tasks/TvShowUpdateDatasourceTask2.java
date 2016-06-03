@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -54,6 +55,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -84,9 +86,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   private static long                 visFile       = 0;
 
   private List<String>                dataSources;
-  private List<Path>                  tvShowFolders = new ArrayList<Path>();
+  private List<Path>                  tvShowFolders = new ArrayList<>();
   private TvShowList                  tvShowList;
-  private HashSet<Path>               filesFound    = new HashSet<Path>();
+  private HashSet<Path>               filesFound    = new HashSet<>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -95,18 +97,19 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   public TvShowUpdateDatasourceTask2() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+    dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
   }
 
   /**
    * Instantiates a new scrape task - to update a single datasource
    * 
    * @param datasource
+   *          the data source to start the task for
    */
   public TvShowUpdateDatasourceTask2(String datasource) {
     super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(1);
+    dataSources = new ArrayList<>(1);
     dataSources.add(datasource);
   }
 
@@ -114,11 +117,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * Instantiates a new scrape task - to update given tv shows
    * 
    * @param tvShowFolders
+   *          a list of TV show folders to start the task for
    */
   public TvShowUpdateDatasourceTask2(List<Path> tvShowFolders) {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<String>(0);
+    dataSources = new ArrayList<>(0);
     this.tvShowFolders.addAll(tvShowFolders);
   }
 
@@ -138,7 +142,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       start();
 
       // get existing show folders
-      List<Path> existing = new ArrayList<Path>();
+      List<Path> existing = new ArrayList<>();
       for (TvShow show : tvShowList.getTvShows()) {
         existing.add(show.getPathNIO());
       }
@@ -150,8 +154,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
         for (String ds : dataSources) {
           initThreadPool(3, "update"); // FIXME: more threads result in duplicate tree entries :/
-          List<Path> newTvShowDirs = new ArrayList<Path>();
-          List<Path> existingTvShowDirs = new ArrayList<Path>();
+          List<Path> newTvShowDirs = new ArrayList<>();
+          List<Path> existingTvShowDirs = new ArrayList<>();
           List<Path> rootList = listFilesAndDirs(Paths.get(ds));
           for (Path path : rootList) {
             if (Files.isDirectory(path)) {
@@ -295,7 +299,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     boolean dirty = false;
     if (!tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes()) {
       // check and delete all not found MediaFiles
-      List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+      List<MediaFile> mediaFiles = new ArrayList<>(tvShow.getMediaFiles());
       for (MediaFile mf : mediaFiles) {
         if (!filesFound.contains(mf.getFileAsPath())) {
           if (!mf.exists()) {
@@ -308,9 +312,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
         }
       }
-      List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tvShow.getEpisodes());
+      List<TvShowEpisode> episodes = new ArrayList<>(tvShow.getEpisodes());
       for (TvShowEpisode episode : episodes) {
-        mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
+        mediaFiles = new ArrayList<>(episode.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
           if (!filesFound.contains(mf.getFileAsPath())) {
             if (!mf.exists()) {
@@ -343,7 +347,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
     int cnt = 0;
     // get mediainfo for tv show (fanart/poster..)
-    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
       if (StringUtils.isBlank(mf.getContainerFormat())) {
         ungatheredMediaFiles.add(mf);
@@ -356,8 +360,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     // get mediainfo for all episodes within this tv show
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
-      ungatheredMediaFiles = new ArrayList<MediaFile>();
+    for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
+      ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           if (!ungatheredMediaFiles.contains(mf)) {
@@ -411,7 +415,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       filesFound.addAll(allFiles); // our global cache
 
       // convert to MFs (we need it anyways at the end)
-      ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+      ArrayList<MediaFile> mfs = new ArrayList<>();
       for (Path file : allFiles) {
         if (!file.getFileName().toString().matches(skipRegex)) {
           mfs.add(new MediaFile(file));
@@ -452,11 +456,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // ******************************
       // STEP 2 - get all video MFs and get or create episodes
       // ******************************
-      HashSet<Path> discFolders = new HashSet<Path>();
+      HashSet<Path> discFolders = new HashSet<>();
       for (MediaFile mf : getMediaFiles(mfs, MediaFileType.VIDEO)) {
 
         // build an array of MFs, which might be in same episode
-        List<MediaFile> epFiles = new ArrayList<MediaFile>();
+        List<MediaFile> epFiles = new ArrayList<>();
 
         if (mf.isDiscFile()) {
           // find EP root folder, and do not walk lower than showDir!
@@ -697,7 +701,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @return list of matching MFs
    */
   private List<MediaFile> getMediaFiles(List<MediaFile> mfs, MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     for (MediaFile mediaFile : mfs) {
       boolean match = false;
       for (MediaFileType type : types) {
@@ -722,7 +726,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * @return list of matching MFs
    */
   private List<MediaFile> getMediaFilesExceptType(List<MediaFile> mfs, MediaFileType... types) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
+    List<MediaFile> mf = new ArrayList<>();
     for (MediaFile mediaFile : mfs) {
       boolean match = false;
       for (MediaFileType type : types) {
@@ -748,6 +752,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
    * 
    * @param directory
+   *          the folder to list the files for
    * @return list of files&folders
    */
   public static List<Path> listFilesOnly(Path directory) {
@@ -756,7 +761,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
-          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+          if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
+              && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -775,6 +781,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * returns all files & folders in specified dir (NOT recursive)
    * 
    * @param directory
+   *          the folder to list the items for
    * @return list of files&folders
    */
   public static List<Path> listFilesAndDirs(Path directory) {
@@ -782,7 +789,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
-        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)) {
+        if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
+            && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -811,7 +819,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   private static class AllFilesRecursive extends SimpleFileVisitor<Path> {
-    private HashSet<Path> fFound = new HashSet<Path>();
+    private HashSet<Path> fFound = new HashSet<>();
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
@@ -828,8 +836,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir++;
       // getFilename returns null on DS root!
-      if (dir.getFileName() != null && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
-          || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))) {
+      if (dir.getFileName() != null
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+              || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
+          || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

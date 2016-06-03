@@ -448,7 +448,7 @@ public class Settings extends AbstractModelObject {
    * @return list
    */
   public List<String> getAllSupportedFileTypes() {
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     list.addAll(getAudioFileType());
     list.addAll(getVideoFileType());
     list.addAll(getSubtitleFileType());
@@ -661,6 +661,7 @@ public class Settings extends AbstractModelObject {
     }
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
       movieSettings.addMovieSubtitleScraper(ms.getId());
+      tvShowSettings.addTvShowSubtitleScraper(ms.getId());
     }
     for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
       tvShowSettings.addTvShowArtworkScraper(ms.getId());
@@ -824,7 +825,7 @@ public class Settings extends AbstractModelObject {
       // System.setProperty("java.net.useSystemProxies", "true");
     }
     try {
-      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort()), getProxyUsername(),
+      ProxySettings.setProxySettings(getProxyHost(), getProxyPort() == null ? 0 : Integer.parseInt(getProxyPort().trim()), getProxyUsername(),
           getProxyPassword());
     }
     catch (NumberFormatException e) {
@@ -838,7 +839,7 @@ public class Settings extends AbstractModelObject {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (StringUtils.isNotEmpty(getProxyHost())) {
+    if (StringUtils.isNotBlank(getProxyHost())) {
       return true;
     }
     return false;
@@ -983,6 +984,7 @@ public class Settings extends AbstractModelObject {
    * set Locale.toString() 5 char into settings
    * 
    * @param language
+   *          the language to be set
    */
   public void setLanguage(String language) {
     String oldValue = this.language;

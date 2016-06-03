@@ -29,7 +29,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 public class TvShowSearchAndScrapeOptions {
   private TvShowScraperMetadataConfig scraperMetadataConfig;
   private MediaScraper                metadataScraper;
-  private List<MediaScraper>          artworkScrapers = new ArrayList<MediaScraper>();
+  private List<MediaScraper>          artworkScrapers = new ArrayList<>();
 
   /**
    * Instantiates a new movie search and scrape config.

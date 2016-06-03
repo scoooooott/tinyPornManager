@@ -36,8 +36,8 @@ public class SyncTraktTvTask extends TmmTask {
   private boolean                     syncMoviesWatched  = false;
   private boolean                     syncTvShows        = false;
   private boolean                     syncTvShowsWatched = false;
-  private List<Movie>                 movies             = new ArrayList<Movie>();
-  private List<TvShow>                tvShows            = new ArrayList<TvShow>();
+  private List<Movie>                 movies             = new ArrayList<>();
+  private List<TvShow>                tvShows            = new ArrayList<>();
 
   public SyncTraktTvTask(boolean syncMovies, boolean syncMoviesWatched, boolean syncTvShow, boolean syncTvShowWatched) {
     super(BUNDLE.getString("trakt.sync"), 0, TaskType.BACKGROUND_TASK);

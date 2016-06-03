@@ -25,10 +25,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
+import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -195,9 +199,23 @@ public class UpgradeTasks {
     // upgrade to v2.8
     if (StrgUtils.compareVersion(v, "2.8") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 2.8");
-      // reevaluate movie stacking (without the need for UDS) and save
+
+      // upgrade certification settings
+      // if MP NFO style is chosen, set the certification style to TECHNICAL
+      if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
+        Globals.settings.getMovieSettings().setMovieCertificationStyle(CertificationStyle.TECHNICAL);
+      }
+
+      // reevaluate movie stacking and offline stubs (without the need for UDS) and save
       for (Movie movie : movieList.getMovies()) {
         movie.reEvaluateStacking();
+        boolean isOffline = false;
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          if ("disc".equalsIgnoreCase(mf.getExtension())) {
+            isOffline = true;
+          }
+        }
+        movie.setOffline(isOffline);
         movie.saveToDb();
       }
     }

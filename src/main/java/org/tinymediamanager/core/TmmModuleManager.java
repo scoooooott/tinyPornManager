@@ -33,7 +33,7 @@ public class TmmModuleManager {
   private Set<ITmmModule>         modules;
 
   private TmmModuleManager() {
-    modules = new LinkedHashSet<ITmmModule>();
+    modules = new LinkedHashSet<>();
   }
 
   public static TmmModuleManager getInstance() {
