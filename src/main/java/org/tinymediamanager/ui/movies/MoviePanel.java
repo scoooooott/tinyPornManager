@@ -62,9 +62,9 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.BorderCellRenderer;
+import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.IconRenderer;
+import org.tinymediamanager.ui.IconTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -340,7 +340,7 @@ public class MoviePanel extends JPanel {
         public void propertyChange(PropertyChangeEvent evt) {
           if ("filterChanged".equals(evt.getPropertyName())) {
             if (Boolean.TRUE.equals(evt.getNewValue())) {
-              filterButton.setIcon(IconManager.FILTER_ACTIVE);
+              filterButton.setIcon(IconManager.FILTER);
               filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options.active")); //$NON-NLS-1$
             }
             else {
@@ -580,7 +580,7 @@ public class MoviePanel extends JPanel {
     buildMenu();
 
     // moviename column
-    table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
+    table.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
     table.getColumnModel().getColumn(0).setIdentifier("title"); //$NON-NLS-1$
 
     // year column
@@ -617,31 +617,31 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(3).setIdentifier("dateadded"); //$NON-NLS-1$
 
     // NFO column
-    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconTableCellRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
     table.getColumnModel().getColumn(4).setHeaderValue(IconManager.INFO);
     table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("nfo"); //$NON-NLS-1$
 
     // Images column
-    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconTableCellRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
     table.getColumnModel().getColumn(5).setHeaderValue(IconManager.IMAGE);
     table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("images"); //$NON-NLS-1$
 
     // trailer column
-    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconTableCellRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
     table.getColumnModel().getColumn(6).setHeaderValue(IconManager.CLAPBOARD);
     table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("trailer"); //$NON-NLS-1$
 
     // subtitles column
-    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconTableCellRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(7).setMaxWidth(20);
     table.getColumnModel().getColumn(7).setHeaderValue(IconManager.SUBTITLE);
     table.getTableHeader().getColumnModel().getColumn(7).setIdentifier("subtitle"); //$NON-NLS-1$
 
     // watched column
-    table.getTableHeader().getColumnModel().getColumn(8).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(8).setHeaderRenderer(new IconTableCellRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(8).setMaxWidth(20);
     table.getColumnModel().getColumn(8).setHeaderValue(IconManager.PLAY_SMALL);
     table.getTableHeader().getColumnModel().getColumn(8).setIdentifier("watched"); //$NON-NLS-1$

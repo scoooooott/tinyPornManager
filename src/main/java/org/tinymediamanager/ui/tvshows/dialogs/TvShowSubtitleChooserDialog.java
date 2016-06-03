@@ -45,9 +45,8 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.japura.gui.CheckComboBox;
-import org.japura.gui.model.ListCheckModel;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.threading.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -64,7 +63,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowSubtitleChooserModel;
 
@@ -106,7 +105,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
   // UI components
   private JTable                                             tableSubs;
   private JComboBox<MediaLanguages>                          cbLanguage;
-  private CheckComboBox                                      cbScraper;
+  private MediaScraperCheckComboBox                          cbScraper;
   private JLabel                                             lblProgressAction;
   private JProgressBar                                       progressBar;
 
@@ -131,17 +130,15 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     tableSubs.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     TableColumnResizer.adjustColumnPreferredWidths(tableSubs, 7);
 
-    cbScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
-    cbScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
-    cbScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
-
-    ListCheckModel model = cbScraper.getModel();
-    for (MediaScraper scraper : tvShowList.getAvailableSubtitleScrapers()) {
-      model.addElement(scraper);
-
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(scraper.getId())) {
-        model.addCheck(scraper);
+    // Subtitle scraper
+    List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
+    for (MediaScraper subtitleScraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
+      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
+        selectedSubtitleScrapers.add(subtitleScraper);
       }
+    }
+    if (!selectedSubtitleScrapers.isEmpty()) {
+      cbScraper.setSelectedItems(selectedSubtitleScrapers);
     }
 
     for (MediaLanguages language : MediaLanguages.values()) {
@@ -195,7 +192,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
     panelContent.add(lblScraperT, "2, 10, right, default");
 
-    cbScraper = new MediaScraperCheckComboBox();
+    cbScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
     panelContent.add(cbScraper, "4, 10, fill, default");
 
     final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
@@ -242,7 +239,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
         panelBottom.add(panelButtons, "5, 2, fill, fill");
 
         JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
-        btnDone.setIcon(IconManager.APPLY);
+        btnDone.setIcon(IconManager.APPLY_INV);
         btnDone.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -274,11 +271,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
     // scrapers
     List<MediaScraper> scrapers = new ArrayList<>();
-    ListCheckModel model = cbScraper.getModel();
-    for (Object checked : model.getCheckeds()) {
-      if (checked != null && checked instanceof MediaScraper) {
-        scrapers.add((MediaScraper) checked);
-      }
+    for (MediaScraper scraper : cbScraper.getSelectedItems()) {
+      scrapers.add(scraper);
     }
 
     activeSearchTask = new SearchTask(file, imdbId, season, episode, scrapers);

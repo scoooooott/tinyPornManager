@@ -37,8 +37,8 @@ public class MovieCreateOfflineAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, IconManager.LIST_ADD);
-    putValue(SMALL_ICON, IconManager.LIST_ADD);
+    putValue(LARGE_ICON_KEY, IconManager.ADD_INV);
+    putValue(SMALL_ICON, IconManager.ADD_INV);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.createoffline")); //$NON-NLS-1$
   }
 

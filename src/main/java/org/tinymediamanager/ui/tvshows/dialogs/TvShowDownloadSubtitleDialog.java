@@ -30,8 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import org.japura.gui.CheckComboBox;
-import org.japura.gui.model.ListCheckModel;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -39,7 +38,7 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MediaScraperCheckComboBox;
+import org.tinymediamanager.ui.components.combobox.MediaScraperCheckComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -56,6 +55,8 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
   private static final long           serialVersionUID = 3826984454317879241L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private final TvShowList            tvShowList       = TvShowList.getInstance();
 
   private MediaScraperCheckComboBox   cbSubtitleScraper;
   private JComboBox<MediaLanguages>   cbLanguage;
@@ -82,10 +83,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
     JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
     panelScraper.add(lblScraper, "2, 2, right, default");
 
-    cbSubtitleScraper = new MediaScraperCheckComboBox();
-    cbSubtitleScraper.setTextFor(CheckComboBox.NONE, BUNDLE.getString("scraper.selected.none")); //$NON-NLS-1$
-    cbSubtitleScraper.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("scraper.selected.multiple")); //$NON-NLS-1$
-    cbSubtitleScraper.setTextFor(CheckComboBox.ALL, BUNDLE.getString("scraper.selected.all")); //$NON-NLS-1$
+    cbSubtitleScraper = new MediaScraperCheckComboBox(tvShowList.getAvailableSubtitleScrapers());
     panelScraper.add(cbSubtitleScraper, "4, 2");
 
     JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
@@ -107,7 +105,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
     getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
-    btnStart.setIcon(IconManager.APPLY);
+    btnStart.setIcon(IconManager.APPLY_INV);
     btnStart.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -130,14 +128,15 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
 
     // set data
 
-    // scraper
-    ListCheckModel model = cbSubtitleScraper.getModel();
-    for (MediaScraper subtitleScraper : TvShowList.getInstance().getAvailableSubtitleScrapers()) {
-      model.addElement(subtitleScraper);
-
+    // Subtitle scraper
+    List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
+    for (MediaScraper subtitleScraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
       if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
-        model.addCheck(subtitleScraper);
+        selectedSubtitleScrapers.add(subtitleScraper);
       }
+    }
+    if (!selectedSubtitleScrapers.isEmpty()) {
+      cbSubtitleScraper.setSelectedItems(selectedSubtitleScrapers);
     }
 
     cbLanguage.setSelectedItem(TvShowModuleManager.TV_SHOW_SETTINGS.getScraperLanguage());
@@ -145,18 +144,15 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
 
   /**
    * Get the selected scrapers
-   * 
+   *
    * @return the selected subtitle scrapers
    */
   public List<MediaScraper> getSubtitleScrapers() {
     List<MediaScraper> scrapers = new ArrayList<>();
 
-    // artwork scrapers
-    ListCheckModel model = cbSubtitleScraper.getModel();
-    for (Object checked : model.getCheckeds()) {
-      if (checked != null && checked instanceof MediaScraper) {
-        scrapers.add((MediaScraper) checked);
-      }
+    // scrapers
+    for (MediaScraper scraper : cbSubtitleScraper.getSelectedItems()) {
+      scrapers.add(scraper);
     }
 
     return scrapers;

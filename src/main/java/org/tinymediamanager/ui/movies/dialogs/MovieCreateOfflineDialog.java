@@ -89,7 +89,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     final JComboBox<String> cbDatasource = new JComboBox();
     panelContent.add(cbDatasource, "4, 6, fill, default");
 
-    JButton btnAdd = new JButton(IconManager.LIST_ADD);
+    JButton btnAdd = new JButton(IconManager.ADD_INV);
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
