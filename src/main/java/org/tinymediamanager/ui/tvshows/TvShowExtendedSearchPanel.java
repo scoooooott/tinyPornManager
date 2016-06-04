@@ -108,7 +108,6 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
     setOpaque(false);
-    shadowAlpha = 100;
     arcs = new Dimension(10, 10);
 
     this.tvShowTreeModel = model;

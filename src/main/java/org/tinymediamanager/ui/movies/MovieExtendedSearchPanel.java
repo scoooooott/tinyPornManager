@@ -89,7 +89,6 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   public MovieExtendedSearchPanel(MovieSelectionModel model) {
     super();
     setOpaque(false);
-    shadowAlpha = 100;
     arcs = new Dimension(10, 10);
 
     this.movieSelectionModel = model;

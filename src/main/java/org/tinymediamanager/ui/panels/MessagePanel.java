@@ -98,7 +98,7 @@ public class MessagePanel extends JPanel {
 
       {
         arcs = new Dimension(10, 10);
-        shady = false;
+        drawShadow = false;
       }
     };
     add(innerPanel, "2, 2, fill, default");

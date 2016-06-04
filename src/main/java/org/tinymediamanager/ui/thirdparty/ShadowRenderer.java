@@ -21,7 +21,7 @@ package org.tinymediamanager.ui.thirdparty;
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-import static org.tinymediamanager.ui.thirdparty.GraphicsUtilities.*;
+import static org.tinymediamanager.ui.thirdparty.GraphicsUtilities.createCompatibleTranslucentImage;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -339,7 +339,7 @@ public class ShadowRenderer {
    * @return the picture containing the shadow of <code>image</code>
    */
   public BufferedImage createShadow(final BufferedImage image) {
-    // Written by Sesbastien Petrucci
+    // Written by Sebastien Petrucci
     int shadowSize = size * 2;
 
     int srcWidth = image.getWidth();
