@@ -41,7 +41,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.LanguageUtils;
@@ -475,7 +474,7 @@ public class TvShowRenamer {
         }
         else {
           // detect from filename, if we don't have a MediaFileSubtitle entry!
-          // remove the filename of movie from subtitle, to ease parsing
+          // remove the filename of episode from subtitle, to ease parsing
           String shortname = mf.getBasename().toLowerCase().replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
           String originalLang = "";
           String lang = "";
@@ -496,7 +495,7 @@ public class TvShowRenamer {
               break;
             }
           }
-          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = originalLang;
           }
@@ -562,7 +561,7 @@ public class TvShowRenamer {
   }
 
   /**
-   * gets the token value ($x) from specified movie object
+   * gets the token value ($x) from specified object
    * 
    * @param show
    *          our show
