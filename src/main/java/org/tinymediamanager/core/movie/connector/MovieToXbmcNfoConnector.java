@@ -592,7 +592,13 @@ public class MovieToXbmcNfoConnector {
       }
       movie.setWriter(writer);
 
-      movie.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+      String studio = StringUtils.join(xbmc.studio, " / ");
+      if (studio == null) {
+        movie.setProductionCompany("");
+      }
+      else {
+        movie.setProductionCompany(studio);
+      }
       movie.setProductionCompany(movie.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
 
       movie.setCountry(xbmc.country);
