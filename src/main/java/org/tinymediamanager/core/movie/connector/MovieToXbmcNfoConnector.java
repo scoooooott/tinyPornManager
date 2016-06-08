@@ -279,8 +279,24 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.tagline = movie.getTagline();
     xbmc.runtime = String.valueOf(movie.getRuntime());
-    xbmc.thumb = movie.getArtworkUrl(MediaFileType.POSTER);
-    xbmc.fanart = movie.getArtworkUrl(MediaFileType.FANART);
+
+    String artworkUrl = movie.getArtworkUrl(MediaFileType.POSTER);
+    if (artworkUrl.matches("https?://.*")) {
+      xbmc.thumb = artworkUrl;
+    }
+    else {
+      // clean old invalid entries
+      xbmc.thumb = "";
+    }
+
+    artworkUrl = movie.getArtworkUrl(MediaFileType.FANART);
+    if (artworkUrl.matches("https?://.*")) {
+      xbmc.fanart = artworkUrl;
+    }
+    else {
+      // clean old invalid entries
+      xbmc.fanart = "";
+    }
 
     xbmc.id = movie.getImdbId();
     xbmc.tmdbId = movie.getTmdbId();
