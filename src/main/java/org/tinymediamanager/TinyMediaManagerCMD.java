@@ -170,7 +170,14 @@ public class TinyMediaManagerCMD {
         }
       }
 
-      // update movies //////////////////////////////////////////////
+      // @formatter:off
+      // ███╗   ███╗ ██████╗ ██╗   ██╗██╗███████╗███████╗
+      // ████╗ ████║██╔═══██╗██║   ██║██║██╔════╝██╔════╝
+      // ██╔████╔██║██║   ██║██║   ██║██║█████╗  ███████╗
+      // ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██║██╔══╝  ╚════██║
+      // ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ██║███████╗███████║
+      // ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚═╝╚══════╝╚══════╝
+      // @formatter:on
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
         if (updateMovieDs.isEmpty()) {
@@ -237,7 +244,14 @@ public class TinyMediaManagerCMD {
         }
       }
 
-      // update TvShows //////////////////////////////////////////////
+      // @formatter:off
+      //  ████████╗██╗   ██╗███████╗██╗  ██╗ ██████╗ ██╗    ██╗███████╗
+      //  ╚══██╔══╝██║   ██║██╔════╝██║  ██║██╔═══██╗██║    ██║██╔════╝
+      //     ██║   ██║   ██║███████╗███████║██║   ██║██║ █╗ ██║███████╗
+      //     ██║   ╚██╗ ██╔╝╚════██║██╔══██║██║   ██║██║███╗██║╚════██║
+      //     ██║    ╚████╔╝ ███████║██║  ██║╚██████╔╝╚███╔███╔╝███████║
+      //     ╚═╝     ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝
+      // @formatter:on
       if (updateTv) {
         LOGGER.info("Commandline - updating TvShows and episodes...");
         if (updateTvDs.isEmpty()) {
@@ -265,6 +279,11 @@ public class TinyMediaManagerCMD {
             task = new TvShowScrapeTask(newTv, true, options);
             task.run(); // blocking
 
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
+
             for (int i = newEp.size() - 1; i >= 0; i--) {
               // we scraped the whole show - no need to scrape dedicated episodes for it
               TvShowEpisode ep = newEp.get(i);
@@ -283,6 +302,11 @@ public class TinyMediaManagerCMD {
             options.loadDefaults();
             task = new TvShowEpisodeScrapeTask(newEp, options.getMetadataScraper());
             task.run(); // blocking
+
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
           }
           else {
             LOGGER.info("No new episodes found to scrape - skipping");
