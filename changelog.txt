@@ -20,11 +20,13 @@ http://goo.gl/aSWQt8)
 + added option to set the subtitle language style (for better Plex support)
 x fixed plugin loading from paths containing a +
 x fix #22 "search episode" scrollbar
+x fixed TV show image renaming (command line)
 x fix stacking marker detection for movies
 x added setting for our internal statistics
 x fix: use creation/modification date from file to specify dateAdded
 x fixed sorting of movies (respecting white spaces now)
 x fixed an optical glitch, where sometimes seasons end episodes appeared twice
 x detect Blu-Ray as BluRay source
+x fix: do not write local artwork urls to NFO files
 x some fixes in the renamers (movie & TV show)
 x some smaller fixes
