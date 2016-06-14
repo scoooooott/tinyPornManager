@@ -345,7 +345,6 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * detect which mediafiles has to be parsed and start a thread to do that
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
-    int cnt = 0;
     // get mediainfo for tv show (fanart/poster..)
     ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
@@ -353,7 +352,6 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         ungatheredMediaFiles.add(mf);
       }
     }
-    cnt += ungatheredMediaFiles.size();
 
     if (ungatheredMediaFiles.size() > 0) {
       submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, tvShow, false));
@@ -369,15 +367,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
         }
       }
-      cnt += ungatheredMediaFiles.size();
 
       if (ungatheredMediaFiles.size() > 0) {
         submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, episode, false));
       }
     }
-
-    setWorkUnits(cnt);
-    publishState();
   }
 
   /**
