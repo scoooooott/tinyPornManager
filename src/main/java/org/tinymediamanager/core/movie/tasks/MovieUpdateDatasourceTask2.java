@@ -880,7 +880,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               }
             }
           }
-          movie.saveToDb();
+          if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+            LOGGER.debug("movie (" + movie.getTitle() + ") without VIDEO files detected, removing...");
+            moviesToRemove.add(movie);
+          }
+          else {
+            movie.saveToDb();
+          }
         }
       }
     }
@@ -1042,7 +1048,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     AllFilesRecursive visitor = new AllFilesRecursive();
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we overrided visitFileFailed, which throws no exception ;)
@@ -1102,7 +1108,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     SearchAndParseVisitor visitor = new SearchAndParseVisitor(datasource);
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we override visitFileFailed, which throws no exception ;)

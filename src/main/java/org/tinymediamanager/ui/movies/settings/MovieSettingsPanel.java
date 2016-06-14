@@ -460,6 +460,17 @@ public class MovieSettingsPanel extends ScrollablePanel {
           }
         }
       });
+
+      // certification examples
+      for (CertificationStyle style : CertificationStyle.values()) {
+        CertificationStyleWrapper wrapper = new CertificationStyleWrapper();
+        wrapper.style = style;
+        cbCertificationStyle.addItem(wrapper);
+        if (style == settings.getMovieSettings().getMovieCertificationStyle()) {
+          cbCertificationStyle.setSelectedItem(wrapper);
+        }
+      }
+
       cbCertificationStyle.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -474,16 +485,6 @@ public class MovieSettingsPanel extends ScrollablePanel {
           checkChanges();
         }
       });
-
-      // certification examples
-      for (CertificationStyle style : CertificationStyle.values()) {
-        CertificationStyleWrapper wrapper = new CertificationStyleWrapper();
-        wrapper.style = style;
-        cbCertificationStyle.addItem(wrapper);
-        if (style == settings.getMovieSettings().getMovieCertificationStyle()) {
-          cbCertificationStyle.setSelectedItem(wrapper);
-        }
-      }
     }
 
   }

@@ -180,7 +180,7 @@ public class TvShow extends MediaEntity {
     Pattern pattern = Pattern.compile("(?i)season([0-9]{1,4})-poster\\..{2,4}");
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER)) {
       if (mf.getFilename().startsWith("season-special-poster")) {
-        seasonPosters.put(-1, mf);
+        seasonPosters.put(0, mf);
       }
       else {
         // parse out the season from the name

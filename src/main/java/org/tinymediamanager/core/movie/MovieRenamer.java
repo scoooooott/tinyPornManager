@@ -318,11 +318,13 @@ public class MovieRenamer {
       cleanup.add(del);
     }
     for (MoviePosterNaming s : MoviePosterNaming.values()) {
-      MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getPosterFilename(s, movie)), MediaFileType.POSTER);
+      MediaFile del = new MediaFile(movie.getPathNIO().resolve(replaceInvalidCharacters(MovieArtworkHelper.getPosterFilename(s, movie))),
+          MediaFileType.POSTER);
       cleanup.add(del);
     }
     for (MovieFanartNaming s : MovieFanartNaming.values()) {
-      MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getFanartFilename(s, movie)), MediaFileType.FANART);
+      MediaFile del = new MediaFile(movie.getPathNIO().resolve(replaceInvalidCharacters(MovieArtworkHelper.getFanartFilename(s, movie))),
+          MediaFileType.FANART);
       cleanup.add(del);
     }
     // cleanup ALL MFs
