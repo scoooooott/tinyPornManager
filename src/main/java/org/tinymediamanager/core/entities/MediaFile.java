@@ -702,26 +702,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   /**
    * instantiates and gets new mediainfo object.
-   * 
-   * @return MediaInfo object
    */
-  private MediaInfo getMediaInfo() {
+  private void getMediaInfo() {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
 
       try {
         if (!mediaInfo.open(this.getFileAsPath())) {
           LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
+
+          // clear references
+          closeMediaInfo();
+        }
+        else {
+          miSnapshot = mediaInfo.snapshot();
         }
       }
+      // sometimes also an error is thrown
       catch (Exception | Error e) {
         LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
-      }
-      // sometimes also an error is thrown
 
-      miSnapshot = mediaInfo.snapshot();
+        // clear references
+        closeMediaInfo();
+      }
     }
-    return mediaInfo;
   }
 
   /**
@@ -751,29 +755,21 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (miSnapshot == null) {
       getMediaInfo(); // load snapshot
     }
-    for (String key : keys) {
-      List<Map<String, String>> stream = miSnapshot.get(streamKind);
-      if (stream != null) {
-        LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
-        if (info != null) {
-          String value = info.get(key);
-          // System.out.println(" " + streamKind + " " + key + " = " + value);
-          if (value != null && value.length() > 0) {
-            return value;
+    if (miSnapshot != null) {
+      for (String key : keys) {
+        List<Map<String, String>> stream = miSnapshot.get(streamKind);
+        if (stream != null) {
+          LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
+          if (info != null) {
+            String value = info.get(key);
+            // System.out.println(" " + streamKind + " " + key + " = " + value);
+            if (value != null && value.length() > 0) {
+              return value;
+            }
           }
         }
       }
     }
-
-    // fallback to the "old" logic
-    // not needed anylonger, since we fixed the streamCount() in MI
-    // for (String key : keys) {
-    // String value = mediaInfo.get(streamKind, streamNumber, key);
-    // System.out.println("OLD " + streamKind + " " + key + " = " + value);
-    // if (value.length() > 0) {
-    // return value;
-    // }
-    // }
 
     return "";
   }
@@ -1231,7 +1227,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       gatherSubtitleInformation();
     }
 
-    mediaInfo = getMediaInfo();
+    getMediaInfo();
+
+    if (miSnapshot == null) {
+      // MI could not be opened
+      LOGGER.error("error getting MediaInfo for " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
+      closeMediaInfo();
+      return;
+    }
+
     try {
       setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
     }
