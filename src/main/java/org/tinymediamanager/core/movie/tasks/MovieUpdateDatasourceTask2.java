@@ -880,7 +880,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               }
             }
           }
-          movie.saveToDb();
+          if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+            LOGGER.debug("movie (" + movie.getTitle() + ") without VIDEO files detected, removing...");
+            moviesToRemove.add(movie);
+          }
+          else {
+            movie.saveToDb();
+          }
         }
       }
     }
