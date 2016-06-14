@@ -29,7 +29,7 @@ public enum MediaSource {
   VHS("VHS"), 
   DVD("DVD"), 
   HDDVD("HDDVD"), 
-  BLURAY("Bluray"), 
+  BLURAY("Blu-ray"),
   // other sources
   CAM("Cam"),
   TS("Telesync"),
