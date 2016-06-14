@@ -804,7 +804,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     AllFilesRecursive visitor = new AllFilesRecursive();
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we overrided visitFileFailed, which throws no exception ;)
