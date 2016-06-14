@@ -1284,6 +1284,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         width = getMediaInfo(StreamKind.Video, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Video, 0, "CodecID/Hint", "Format");
 
+        // fix for Microsoft VC-1
+        if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
+          videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
+        }
+
         // get audio streams
         // int streams = getMediaInfo().streamCount(StreamKind.Audio);
         int streams = 0;
