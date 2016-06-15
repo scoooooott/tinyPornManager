@@ -179,7 +179,7 @@ public class TvShow extends MediaEntity {
     // create season poster map
     Pattern pattern = Pattern.compile("(?i)season([0-9]{1,4})-poster\\..{2,4}");
     for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER)) {
-      if (mf.getFilename().startsWith("season-special-poster")) {
+      if (mf.getFilename().startsWith("season-specials-poster")) {
         seasonPosters.put(0, mf);
       }
       else {
