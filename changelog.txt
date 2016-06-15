@@ -7,7 +7,7 @@ x fixed loading of TV show special season posters
 x fixed reading codec of Microsoft VC-1 via MediaInfo
 x fixed update single datasource for movies
 x fixed renaming movies with colon
-x prefer MI data from common video types over image types
+x prefer MI data from common video types over disc image types
 
 
 Version 2.8
