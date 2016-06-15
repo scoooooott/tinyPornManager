@@ -1581,7 +1581,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
+    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension)
         || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
     }

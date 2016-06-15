@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.tinymediamanager.core.entities.MediaFile;
 
@@ -25,15 +27,22 @@ import org.tinymediamanager.core.entities.MediaFile;
  * @author Manuel Laggner
  */
 public class TvShowMediaFileComparator implements Comparator<MediaFile> {
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-   */
+
+  private List<String> discImageTypes = Arrays.asList("iso", "bin", "dat", "img", "nrg", "disc");
+
   @Override
   public int compare(MediaFile mf1, MediaFile mf2) {
     if (mf1.getType().ordinal() != mf2.getType().ordinal()) {
       return mf1.getType().ordinal() - mf2.getType().ordinal();
+    }
+
+    // sort disc image types to the end
+    if (discImageTypes.contains(mf1.getExtension()) && !discImageTypes.contains(mf2.getExtension())) {
+      return 1;
+    }
+
+    if (!discImageTypes.contains(mf1.getExtension()) && discImageTypes.contains(mf2.getExtension())) {
+      return -1;
     }
 
     return mf1.getFilename().compareTo(mf2.getFilename());
