@@ -7,7 +7,8 @@ x fixed loading of TV show special season posters
 x fixed reading codec of Microsoft VC-1 via MediaInfo
 x fixed update single datasource for movies
 x fixed renaming movies with colon
-
+x prefer MI data from common video types over disc image types
+x fixed a bug in the renamer where renaming did not work
 
 Version 2.8
 =======================

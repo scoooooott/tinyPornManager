@@ -595,7 +595,7 @@ public class Utils {
       if (Files.notExists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
         try {
-          Files.createDirectories(destDir);
+          Files.createDirectories(destDir.getParent());
         }
         catch (Exception e) {
           LOGGER.error("could not create directory structure " + destDir.getParent());
