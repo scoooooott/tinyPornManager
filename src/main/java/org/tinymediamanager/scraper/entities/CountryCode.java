@@ -722,8 +722,8 @@ public enum CountryCode {
   // */
   // PS("Occupied Palestinian Territory", "PSE", 275),
   //
-  // /** <a href="http://en.wikipedia.org/wiki/Portugal">Portugal</a> */
-  // PT("Portugal", "PRT", 620),
+  /** <a href="http://en.wikipedia.org/wiki/Portugal">Portugal</a> */
+  PT("Portugal", "PRT", 620),
   //
   // /** <a href="http://en.wikipedia.org/wiki/Palau">Palau</a> */
   // PW("Palau", "PLW", 585),
