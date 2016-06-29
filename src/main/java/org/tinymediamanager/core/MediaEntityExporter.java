@@ -45,12 +45,14 @@ public abstract class MediaEntityExporter {
   }
 
   protected MediaEntityExporter(Path templatePath, TemplateType type) throws Exception {
+    templateDir = templatePath;
+
     // check if template exists and is valid
-    if (!Files.isDirectory(templatePath)) {
+    if (!Files.isDirectory(templateDir)) {
       throw new Exception("illegal template path");
     }
 
-    Path configFile = templatePath.resolve("template.conf");
+    Path configFile = templateDir.resolve("template.conf");
     if (Files.notExists(configFile)) {
       throw new Exception("illegal template config");
     }
@@ -90,9 +92,9 @@ public abstract class MediaEntityExporter {
     }
 
     // load list template from File
-    listTemplate = Utils.readFileToString(templatePath.resolve(listTemplateFile));
+    listTemplate = Utils.readFileToString(templateDir.resolve(listTemplateFile));
     if (StringUtils.isNotBlank(detailTemplateFile)) {
-      detailTemplate = Utils.readFileToString(templatePath.resolve(detailTemplateFile));
+      detailTemplate = Utils.readFileToString(templateDir.resolve(detailTemplateFile));
     }
   }
 

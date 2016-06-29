@@ -144,10 +144,10 @@ public class MovieExporter extends MediaEntityExporter {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
-          if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
+          if (path.getFileName().toString().endsWith(".jmte") || path.getFileName().toString().endsWith("template.conf")) {
             continue;
           }
-          Files.copy(path, exportDir, StandardCopyOption.REPLACE_EXISTING);
+          Files.copy(path, exportDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
         }
         else if (Files.isDirectory(path)) {
           Utils.copyDirectoryRecursive(path, exportDir);
@@ -155,6 +155,7 @@ public class MovieExporter extends MediaEntityExporter {
       }
     }
     catch (IOException ex) {
+      LOGGER.error("could not copy resources: " + ex.getMessage());
     }
   }
 
