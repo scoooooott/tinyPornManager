@@ -1,3 +1,9 @@
+Version 2.8.2
+=======================
+x TMDB crash when scraping of several TV shows without artwork
+x fixed exporting of movies/TV shows
+x fixed TV show multi-file episode detection
+
 Version 2.8.1
 =======================
 x do not reset certification style to SHORT
