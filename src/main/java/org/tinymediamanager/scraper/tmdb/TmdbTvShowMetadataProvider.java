@@ -249,12 +249,14 @@ class TmdbTvShowMetadataProvider {
     md.setPlot(complete.overview);
 
     // Poster
-    MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
-    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + complete.poster_path);
-    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
-    ma.setLanguage(options.getLanguage().name());
-    ma.setTmdbId(complete.id);
-    md.addMediaArt(ma);
+    if (StringUtils.isNotBlank(complete.poster_path)) {
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + complete.poster_path);
+      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
+      ma.setLanguage(options.getLanguage().name());
+      ma.setTmdbId(complete.id);
+      md.addMediaArt(ma);
+    }
 
     for (ProductionCompany company : ListUtils.nullSafe(complete.production_companies)) {
       md.addProductionCompany(company.name.trim());
@@ -367,7 +369,8 @@ class TmdbTvShowMetadataProvider {
     }
 
     // Thumb
-    if (options.getArtworkType() == MediaArtwork.MediaArtworkType.ALL || options.getArtworkType() == MediaArtwork.MediaArtworkType.THUMB) {
+    if (StringUtils.isNotBlank(episode.still_path)
+        && (options.getArtworkType() == MediaArtwork.MediaArtworkType.ALL || options.getArtworkType() == MediaArtwork.MediaArtworkType.THUMB)) {
       MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtworkType.THUMB);
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "original" + episode.still_path);
