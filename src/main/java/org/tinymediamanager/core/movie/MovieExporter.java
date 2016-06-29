@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -72,6 +71,7 @@ public class MovieExporter extends MediaEntityExporter {
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
     engine.registerNamedRenderer(new MovieFilenameRenderer());
+    engine.registerNamedRenderer(new ArtworkCopyRenderer(exportDir));
 
     // prepare export destination
     if (Files.notExists(exportDir)) {
@@ -242,8 +242,21 @@ public class MovieExporter extends MediaEntityExporter {
           return null;
         }
 
-        String filename = parameters.get("destination") + File.separator + getMovieFilename(movie) + "-" + mf.getType();
+        String filename = getMovieFilename(movie) + "-" + mf.getType();
+
+        Path imageDir;
+        if (StringUtils.isNotBlank((String) parameters.get("destination"))) {
+          imageDir = pathToExport.resolve((String) parameters.get("destination"));
+        }
+        else {
+          imageDir = pathToExport;
+        }
         try {
+          // create the image dir
+          if (Files.notExists(imageDir)) {
+            Files.createDirectory(imageDir);
+          }
+
           // we need to rescale the image; scale factor is fixed to
           if (parameters.get("thumb") == Boolean.TRUE) {
             filename += ".thumb." + FilenameUtils.getExtension(mf.getFilename());
@@ -252,11 +265,11 @@ public class MovieExporter extends MediaEntityExporter {
               width = (int) parameters.get("width");
             }
             InputStream is = ImageCache.scaleImage(mf.getFileAsPath(), width);
-            Files.copy(is, pathToExport.resolve(filename));
+            Files.copy(is, imageDir.resolve(filename));
           }
           else {
             filename += "." + FilenameUtils.getExtension(mf.getFilename());
-            Files.copy(mf.getFileAsPath(), pathToExport.resolve(filename));
+            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename));
           }
         }
         catch (Exception e) {
