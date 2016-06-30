@@ -222,12 +222,12 @@ public enum Certification {
     TH_Banned(CountryCode.TH, "Banned", new String[] { "Banned" }),
 
     PT_0(CountryCode.PT, "Para todos os públicos", new String[] { "Para todos os públicos" }),
-    PT_M3(CountryCode.PT, "M/3", new String[] { "M/3" }),
-    PT_M6(CountryCode.PT, "M/6", new String[] { "M/6" }),
-    PT_M12(CountryCode.PT, "M/12", new String[] { "M/12" }),
-    PT_M14(CountryCode.PT, "M/14", new String[] { "M/14" }),
-    PT_M16(CountryCode.PT, "M/16", new String[] { "M/16" }),
-    PT_M18(CountryCode.PT, "M/18", new String[] { "M/18" }),
+    PT_M3(CountryCode.PT, "M/3", new String[] { "M/3", "M_3" }),
+    PT_M6(CountryCode.PT, "M/6", new String[] { "M/6", "M_6" }),
+    PT_M12(CountryCode.PT, "M/12", new String[] { "M/12", "M_12" }),
+    PT_M14(CountryCode.PT, "M/14", new String[] { "M/14", "M_14" }),
+    PT_M16(CountryCode.PT, "M/16", new String[] { "M/16", "M_16" }),
+    PT_M18(CountryCode.PT, "M/18", new String[] { "M/18", "M_18" }),
     PT_P(CountryCode.PT, "P", new String[] { "P" }),
 
     NOT_RATED(CountryCode.US, "not rated", new String[] { "not rated" }); 
