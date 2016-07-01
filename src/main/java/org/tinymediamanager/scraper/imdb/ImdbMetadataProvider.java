@@ -29,9 +29,9 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 
@@ -65,7 +65,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     // configure/load settings
     providerInfo.getConfig().addBoolean("filterUnwantedCategories", true);
     providerInfo.getConfig().addBoolean("useTmdb", false);
-    providerInfo.getConfig().addBoolean("scrapeCollectionInfo", false);
+    providerInfo.getConfig().addBoolean("scrapeCollectionInfo", true);
 
     providerInfo.getConfig().load();
   }
