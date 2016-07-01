@@ -3,6 +3,8 @@ Version 2.8.2
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
 x fixed TV show multi-file episode detection
+x fixed updating of tags in the UI
+
 
 Version 2.8.1
 =======================
@@ -15,6 +17,7 @@ x fixed update single datasource for movies
 x fixed renaming movies with colon
 x prefer MI data from common video types over disc image types
 x fixed a bug in the renamer where renaming did not work
+
 
 Version 2.8
 =======================

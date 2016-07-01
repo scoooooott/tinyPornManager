@@ -970,7 +970,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     tags.add(newTag);
-    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAG, null, newTag);
     firePropertyChange(TAGS_AS_STRING, null, newTag);
   }
 
@@ -982,7 +982,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void removeFromTags(String removeTag) {
     tags.remove(removeTag);
-    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAG, null, removeTag);
     firePropertyChange(TAGS_AS_STRING, null, removeTag);
   }
 
@@ -1010,8 +1010,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
 
-    firePropertyChange(TAG, null, tags);
-    firePropertyChange(TAGS_AS_STRING, null, tags);
+    firePropertyChange(TAG, null, newTags);
+    firePropertyChange(TAGS_AS_STRING, null, newTags);
   }
 
   /**
