@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.entities;
 
+import static org.tinymediamanager.core.MediaFileType.NFO;
 import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
 
 import java.io.BufferedReader;
@@ -24,11 +25,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1220,13 +1219,40 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
 
-    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
-
     // gather subtitle infos independent of MI
     if (getType() == SUBTITLE) {
       gatherSubtitleInformation();
     }
 
+    // file size and last modified
+    try {
+      setFilesize(Files.size(file));
+      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+      filedate = attrs.lastModifiedTime().toMillis();
+    }
+    catch (IOException e) {
+      LOGGER.error("could not get file information (size/date): " + e.getMessage());
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // do not work further on 0 byte files
+    if (getFilesize() == 0) {
+      LOGGER.warn("0 Byte file detected: " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // do not work further on subtitles/NFO files
+    if (type == SUBTITLE || type == NFO) {
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // get media info
+    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
     getMediaInfo();
 
     if (miSnapshot == null) {
@@ -1237,37 +1263,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       closeMediaInfo();
       return;
     }
-
-    try {
-      setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
-    }
-    catch (Exception e) {
-      LOGGER.error("error getting MediaInfo for " + this.filename);
-      // set container format to do not trigger it again
-      setContainerFormat(getExtension());
-      closeMediaInfo();
-      return;
-    }
     LOGGER.trace("got MI");
-
-    // do not work further on 0 byte files
-    if (getFilesize() == 0) {
-      LOGGER.warn("0 Byte file detected: " + this.filename);
-      // set container format to do not trigger it again
-      setContainerFormat(getExtension());
-      closeMediaInfo();
-      return;
-    }
-
-    // parse lastmodified
-    try {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      Date date = dateFormat.parse(getMediaInfo(StreamKind.General, 0, "File_Modified_Date_Local"));
-      filedate = date.getTime();
-    }
-    catch (Exception e) {
-      filedate = 0;
-    }
 
     String height = "";
     String scanType = "";
@@ -1581,8 +1577,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension)
-        || "nrg".equals(extension) || "disc".equals(extension)) {
+    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
+        || "disc".equals(extension)) {
       return false;
     }
 

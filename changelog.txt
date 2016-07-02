@@ -6,7 +6,7 @@ x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
 x fixed TV show multi-file episode detection
 x fixed updating of tags in the UI
-
+x improved writing/reading speed for subtitles and NFO files
 
 Version 2.8.1
 =======================
