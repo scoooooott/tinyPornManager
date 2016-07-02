@@ -1,5 +1,6 @@
 Version 2.8.2
 =======================
++ added select all/deselect all buttons for metadata scrape options
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
 x fixed TV show multi-file episode detection

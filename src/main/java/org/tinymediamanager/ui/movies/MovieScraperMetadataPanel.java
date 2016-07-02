@@ -15,9 +15,16 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -67,6 +74,7 @@ public class MovieScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxCollection;
   private JCheckBox                   chckbxTags;
   private JLabel                      lblMovieSetHint;
+  private JPanel                      panelSelectButtons;
 
   /**
    * Instantiates a new movie scraper metadata panel.
@@ -86,7 +94,7 @@ public class MovieScraperMetadataPanel extends JPanel {
             FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
@@ -137,7 +145,51 @@ public class MovieScraperMetadataPanel extends JPanel {
     chckbxTags = new JCheckBox(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     add(chckbxTags, "4, 8");
 
+    panelSelectButtons = new JPanel();
+    add(panelSelectButtons, "2, 10, 3, 1, fill, fill");
+    panelSelectButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+
+    JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
+    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
+    btnSelectAll.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setCheckBoxState(true);
+      }
+    });
+    panelSelectButtons.add(btnSelectAll);
+
+    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setCheckBoxState(false);
+      }
+    });
+    panelSelectButtons.add(btnDeSelectAll);
+
     initDataBindings();
+  }
+
+  private void setCheckBoxState(boolean state) {
+    for (JCheckBox checkBox : getAllCheckBoxes(MovieScraperMetadataPanel.this)) {
+      checkBox.setSelected(state);
+    }
+  }
+
+  private List<JCheckBox> getAllCheckBoxes(final Container container) {
+    Component[] comps = container.getComponents();
+    List<JCheckBox> compList = new ArrayList<>();
+    for (Component comp : comps) {
+      if (comp instanceof JCheckBox) {
+        compList.add((JCheckBox) comp);
+      }
+      if (comp instanceof Container) {
+        compList.addAll(getAllCheckBoxes((Container) comp));
+      }
+    }
+    return compList;
   }
 
   protected void initDataBindings() {
