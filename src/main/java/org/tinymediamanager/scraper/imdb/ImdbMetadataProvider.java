@@ -65,7 +65,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     // configure/load settings
     providerInfo.getConfig().addBoolean("filterUnwantedCategories", true);
     providerInfo.getConfig().addBoolean("useTmdb", false);
-    providerInfo.getConfig().addBoolean("scrapeCollectionInfo", true);
+    providerInfo.getConfig().addBoolean("scrapeCollectionInfo", false);
 
     providerInfo.getConfig().load();
   }
