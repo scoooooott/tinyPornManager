@@ -30,6 +30,7 @@ public enum MediaLanguages {
   da("Dansk"),
   en("English"),
   es("Español"),
+  fa("Persian"),
   fi("Suomi"),
   fr("Française"),
   hu("Magyar"),
