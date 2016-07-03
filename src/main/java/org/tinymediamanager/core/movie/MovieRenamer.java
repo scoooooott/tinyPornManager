@@ -310,7 +310,7 @@ public class MovieRenamer {
     // ######################################################################
     for (MovieNfoNaming s : MovieNfoNaming.values()) {
       String nfoFilename = movie.getNfoFilename(s);
-      if (nfoFilename.isEmpty()) {
+      if (StringUtils.isBlank(nfoFilename)) {
         continue;
       }
       // mark all known variants for cleanup
@@ -1238,7 +1238,7 @@ public class MovieRenamer {
         return moveFile(oldFilename, newFilename);
       }
       try {
-        Utils.copyFileSafe(oldFilename, newFilename);
+        Utils.copyFileSafe(oldFilename, newFilename, true);
         return true;
       }
       catch (Exception e) {
