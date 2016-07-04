@@ -142,8 +142,8 @@ public class MovieRenamer {
           if (sub.getFilename().endsWith(".sub")) {
             // when having a .sub, also rename .idx (don't care if error)
             try {
-              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename() + ".idx");
-              Path newidx = newFile.resolveSibling(newFile.getFileName() + ".idx");
+              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+              Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
               Utils.moveFileSafe(oldidx, newidx);
             }
             catch (Exception e) {
