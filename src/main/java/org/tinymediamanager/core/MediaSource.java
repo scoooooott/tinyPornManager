@@ -33,9 +33,12 @@ public enum MediaSource {
   // other sources
   CAM("Cam"),
   TS("Telesync"),
+  TC("Telecine"),
   DVDSCR("DVD Screener"),
+  R5("R5"),
   WEBRIP("Webrip"),
   WEB_DL("Web-DL"),
+  STREAM("Stream"),
   // and our fallback
   UNKNOWN("Unknown");  // @formatter:on
 
@@ -47,14 +50,16 @@ public enum MediaSource {
   private static Pattern tvPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern vhsPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](vhs)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern camPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](cam)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern tsPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](ts|telesync|hdts)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern tsPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](ts|telesync|hdts|ht\\-ts)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern tcPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](tc|telecine|hdtc|ht\\-tc)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern dvdscrPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvdscr)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern r5Pattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](r5)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern webripPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](webrip)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern webdlPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](web-dl|webdl)[ .\\-_/\\\\\\]\\)]?");
 
   private String         title;
 
-  private MediaSource(String title) {
+  MediaSource(String title) {
     this.title = title;
   }
 
@@ -103,6 +108,12 @@ public enum MediaSource {
     }
     else if (vhsPattern.matcher(fn).find()) {
       return MediaSource.VHS;
+    }
+    else if (tcPattern.matcher(fn).find()) {
+      return MediaSource.TC;
+    }
+    else if (r5Pattern.matcher(fn).find()) {
+      return MediaSource.R5;
     }
 
     return MediaSource.UNKNOWN;
