@@ -15,13 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
-import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
-import static org.tinymediamanager.core.Constants.TV_SHOWS;
-import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -135,6 +129,21 @@ public class TvShowList extends AbstractModelObject {
    */
   public List<TvShow> getTvShows() {
     return tvShowList;
+  }
+
+  /**
+   * Gets the unscraped TvShows
+   * 
+   * @return the unscraped TvShows
+   */
+  public List<TvShow> getUnscrapedTvShows() {
+    List<TvShow> unscrapedShows = new ArrayList<>();
+    for (TvShow show : tvShowList) {
+      if (!show.isScraped()) {
+        unscrapedShows.add(show);
+      }
+    }
+    return unscrapedShows;
   }
 
   /**
@@ -736,6 +745,23 @@ public class TvShowList extends AbstractModelObject {
     for (TvShow show : tvShowList) {
       for (TvShowEpisode ep : show.getEpisodes()) {
         if (ep.isNewlyAdded()) {
+          newEp.add(ep);
+        }
+      }
+    }
+    return newEp;
+  }
+
+  /**
+   * Gets the unscraped episodes
+   * 
+   * @return the unscraped episodes
+   */
+  public List<TvShowEpisode> getUnscrapedEpisodes() {
+    List<TvShowEpisode> newEp = new ArrayList<>();
+    for (TvShow show : tvShowList) {
+      for (TvShowEpisode ep : show.getEpisodes()) {
+        if (!ep.isScraped()) {
           newEp.add(ep);
         }
       }

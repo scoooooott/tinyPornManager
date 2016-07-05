@@ -1221,6 +1221,10 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
+    if (Files.notExists(dir)) {
+      return;
+    }
+
     LOGGER.info("Deleting complete directory: " + dir);
     Files.walkFileTree(dir, new FileVisitor<Path>() {
 
