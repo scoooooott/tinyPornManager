@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -18,6 +20,7 @@ import org.xml.sax.SAXException;
  * @author Myron Boyle
  */
 public class Upnp {
+  private static final Logger LOGGER           = LoggerFactory.getLogger(Upnp.class);
 
   // @formatter:off
   // http://upnp.org/sdcps-and-certification/standards/sdcps/
@@ -70,7 +73,7 @@ public class Upnp {
       byte[] txbuf = DISCOVER_MESSAGE.getBytes("UTF-8");
       DatagramPacket hi = new DatagramPacket(txbuf, txbuf.length, multicastAddress, port);
       socket.send(hi);
-      System.out.println("SSDP discover sent");
+      LOGGER.debug("SSDP discover sent");
 
       do {
         byte[] rxbuf = new byte[8192];
@@ -84,7 +87,7 @@ public class Upnp {
           dev.loadDescription();
         }
         catch (SAXException e) {
-          System.out.println("Error loading description");
+          LOGGER.error("Error loading description");
         }
         if (!upnpDevices.contains(dev)) {
           upnpDevices.add(dev);
@@ -93,7 +96,7 @@ public class Upnp {
 
     }
     catch (SocketTimeoutException e) {
-      System.out.println("Timeout");
+      LOGGER.error("Timeout");
       if (!socket.isClosed()) {
         socket.close();
       }
