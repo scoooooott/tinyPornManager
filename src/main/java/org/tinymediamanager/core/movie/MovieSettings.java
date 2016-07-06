@@ -97,6 +97,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String             UI_FILTERS                               = "uiFilters";
   private final static String             STORE_UI_FILTERS                         = "storeUiFilters";
   private final static String             MOVIE_SKIP_FOLDERS                       = "movieSkipFolders";
+  private final static String             MOVIE_TABLE_HIDDEN_COLUMNS               = "movieTableHiddenColumns";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -135,6 +136,8 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElementWrapper(name = MOVIE_SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
   private final List<String>              movieSkipFolders                         = ObservableCollections.observableList(new ArrayList<String>());
+
+  private final List<String>              movieTableHiddenColumns                  = ObservableCollections.observableList(new ArrayList<>());
 
   // data sources / NFO settings
   private boolean                         detectMovieMultiDir                      = false;
@@ -560,6 +563,18 @@ public class MovieSettings extends AbstractModelObject {
     return movieSkipFolders;
   }
 
+  public void setMovieTableHiddenColumns(List<String> hiddenColumns) {
+    movieTableHiddenColumns.clear();
+    movieTableHiddenColumns.addAll(hiddenColumns);
+    firePropertyChange(MOVIE_TABLE_HIDDEN_COLUMNS, null, movieTableHiddenColumns);
+  }
+
+  @XmlElementWrapper(name = MOVIE_TABLE_HIDDEN_COLUMNS)
+  @XmlElement(name = ENTRY)
+  public List<String> getMovieTableHiddenColumns() {
+    return movieTableHiddenColumns;
+  }
+
   public void setUiFilters(Map<MovieSearchOptions, Object> filters) {
     uiFilters = filters;
     firePropertyChange(UI_FILTERS, null, uiFilters);
@@ -640,7 +655,7 @@ public class MovieSettings extends AbstractModelObject {
 
   /**
    * Should we detect (and create) movies from directories containing more than one movie?
-   * 
+   *
    * @return true/false
    * @Deprecated obsolete with UDS2
    */
@@ -651,7 +666,7 @@ public class MovieSettings extends AbstractModelObject {
 
   /**
    * Should we detect (and create) movies from directories containing more than one movie?
-   * 
+   *
    * @param newValue
    *          true/false
    * @Deprecated obsolete with UDS2

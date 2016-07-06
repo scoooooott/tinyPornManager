@@ -1,12 +1,12 @@
 package org.tinymediamanager.ui.components.table;
 
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
 /**
  * The abstract TmmTableFormat is a convenience wrapper for the @see com.glazedlists.AdvancedTableFormat
@@ -61,7 +61,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
     return columns.get(i).columnValue.apply(e);
   }
 
-  public String getColumnIdentifier(int i){
+  public String getColumnIdentifier(int i) {
     return columns.get(i).columnIdentifier;
   }
 
@@ -73,7 +73,7 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       return this;
     }
 
-    public ColumnBuilder setIdentifier(String identifier){
+    public ColumnBuilder setIdentifier(String identifier) {
       column.columnIdentifier = identifier;
       return this;
     }
@@ -84,21 +84,21 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       return this;
     }
 
-    public ColumnBuilder setColumnComparator(Comparator comparator){
+    public ColumnBuilder setColumnComparator(Comparator comparator) {
       column.columnComparator = comparator;
       return this;
     }
 
-    public Column build(){
+    public Column build() {
       return column;
     }
   }
 
   protected class Column {
-    String columnTitle;
-    String columnIdentifier;
+    String         columnTitle;
+    String         columnIdentifier;
     Function<E, ?> columnValue;
-    Class columnClass;
-    Comparator<?> columnComparator;
+    Class          columnClass;
+    Comparator<?>  columnComparator;
   }
 }

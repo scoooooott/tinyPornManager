@@ -15,11 +15,6 @@
  */
 package org.tinymediamanager.ui.components.table;
 
-import javafx.scene.control.ScrollPane;
-import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -27,11 +22,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -39,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
@@ -47,7 +38,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -60,22 +50,26 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.UTF8Control;
+
 /**
  * The Class TmmTable. It's being used to draw the tables like our designer designed it ;)
  *
  * @author Manuel Laggner
  */
 public class TmmTable extends JTable {
-  private static final long serialVersionUID = 6150939811851709115L;
-  private static final ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());
+  private static final long             serialVersionUID  = 6150939811851709115L;
+  private static final ResourceBundle   BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());
 
-  static final Color TABLE_GRID_COLOR = new Color(211, 211, 211);
-  static final Color TABLE_GRID_COLOR2 = new Color(248, 248, 248);
+  static final Color                    TABLE_GRID_COLOR  = new Color(211, 211, 211);
+  static final Color                    TABLE_GRID_COLOR2 = new Color(248, 248, 248);
 
-  private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
+  private static final CellRendererPane CELL_RENDER_PANE  = new CellRendererPane();
 
-  private ArrayList<TableColumn> indexedColumns = new ArrayList<>();
-  private Map<Object, TableColumn> hiddenColumns = new HashMap<>();
+  private ArrayList<TableColumn>        indexedColumns    = new ArrayList<>();
+  private Map<Object, TableColumn>      hiddenColumns     = new HashMap<>();
 
   public TmmTable() {
     super();
@@ -152,7 +146,7 @@ public class TmmTable extends JTable {
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // if this JTableHeader is parented in a JViewport, then paint the
-        // table header background to the right of the last column if neccessary.
+        // table header background to the right of the last column if necessary.
         JViewport viewport = (JViewport) table.getParent();
         if (viewport != null && table.getWidth() < viewport.getWidth()) {
           int x = table.getWidth();
@@ -273,7 +267,7 @@ public class TmmTable extends JTable {
     scrollPane.setViewport(new TmmViewport(table, columnsWithoutRightVerticalGrid));
     scrollPane.getViewport().setView(table);
     scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, TABLE_GRID_COLOR));
-    //scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
+    // scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     return scrollPane;
   }
@@ -283,16 +277,16 @@ public class TmmTable extends JTable {
     return createJScrollPane(table, columnsWithoutRightVerticalGrid);
   }
 
-  //private static JComponent createCornerComponent(final JTable table) {
-  //  return new JComponent() {
-  //    private static final long serialVersionUID = 3350437839386102803L;
+  // private static JComponent createCornerComponent(final JTable table) {
+  // return new JComponent() {
+  // private static final long serialVersionUID = 3350437839386102803L;
   //
-  //    @Override
-  //    protected void paintComponent(Graphics g) {
-  //      paintHeader(g, table, 0, getWidth());
-  //    }
-  //  };
-  //}
+  // @Override
+  // protected void paintComponent(Graphics g) {
+  // paintHeader(g, table, 0, getWidth());
+  // }
+  // };
+  // }
 
   private static class BottomBorderHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 7963585655106103415L;
@@ -323,7 +317,8 @@ public class TmmTable extends JTable {
         setForeground(h.getForeground());
         setBackground(h.getBackground());
         setFont(h.getFont());
-      } else {
+      }
+      else {
         /* Use sensible values instead of random leftover values from the last call */
         setEnabled(true);
         setComponentOrientation(ComponentOrientation.UNKNOWN);
@@ -336,7 +331,8 @@ public class TmmTable extends JTable {
       if (value instanceof ImageIcon) {
         setIcon((ImageIcon) value);
         setText("");
-      } else {
+      }
+      else {
         setText((value == null) ? "" : value.toString());
         setIcon(null);
         setHorizontalAlignment(JLabel.CENTER);

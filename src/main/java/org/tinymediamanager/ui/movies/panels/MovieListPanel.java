@@ -24,25 +24,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.movies.MovieComparator;
 import org.tinymediamanager.ui.movies.MovieFilterator;
 import org.tinymediamanager.ui.movies.MovieMatcherEditor;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieTableFormat;
+import org.tinymediamanager.ui.movies.MovieTableFormat2;
 import org.tinymediamanager.ui.movies.MovieTableMouseListener;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
@@ -61,7 +68,7 @@ import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 /**
  * @author Manuel Laggner
- * 
+ *
  */
 public class MovieListPanel extends JPanel implements ITmmTabItem {
   private static final long           serialVersionUID = -1681460428331929420L;
@@ -71,7 +78,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   MovieSelectionModel                 selectionModel;
 
   private JTextField                  searchField;
-  private JTable                      movieTable;
+  private TmmTable                    movieTable;
   private JLabel                      lblMovieCountFiltered;
 
   public MovieListPanel() {
@@ -96,12 +103,12 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     searchField = EnhancedTextField.createSearchTextField();
     add(searchField, "2, 1, fill, fill");
 
-    MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<Movie>(searchField, new MovieFilterator());
+    MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<>(searchField, new MovieFilterator());
     MovieMatcherEditor movieMatcherEditor = new MovieMatcherEditor();
-    FilterList<Movie> extendedFilteredMovies = new FilterList<Movie>(sortedMovies, movieMatcherEditor);
-    FilterList<Movie> textFilteredMovies = new FilterList<Movie>(extendedFilteredMovies, textMatcherEditor);
+    FilterList<Movie> extendedFilteredMovies = new FilterList<>(sortedMovies, movieMatcherEditor);
+    FilterList<Movie> textFilteredMovies = new FilterList<>(extendedFilteredMovies, textMatcherEditor);
     selectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    final DefaultEventTableModel<Movie> movieTableModel = new DefaultEventTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
+    final DefaultEventTableModel<Movie> movieTableModel = new TmmTableModel<>(textFilteredMovies, new MovieTableFormat2());
 
     // build the table
     movieTable = new TmmTable(movieTableModel);
@@ -123,6 +130,40 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
     // configure columns
     MovieTableFormat.configureColumns(movieTable);
+
+    // restore hidden columns
+    movieTable.readHiddenColumns(MovieModuleManager.MOVIE_SETTINGS.getMovieTableHiddenColumns());
+    movieTable.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
+      @Override
+      public void columnAdded(TableColumnModelEvent e) {
+        writeSettings();
+      }
+
+      @Override
+      public void columnRemoved(TableColumnModelEvent e) {
+        writeSettings();
+      }
+
+      @Override
+      public void columnMoved(TableColumnModelEvent e) {
+      }
+
+      @Override
+      public void columnMarginChanged(ChangeEvent e) {
+
+      }
+
+      @Override
+      public void columnSelectionChanged(ListSelectionEvent e) {
+      }
+
+      private void writeSettings() {
+        movieTable.writeHiddenColumns(cols -> {
+          MovieModuleManager.MOVIE_SETTINGS.setMovieTableHiddenColumns(cols);
+          Globals.settings.saveSettings();
+        });
+      }
+    });
 
     JScrollPane scrollPane = TmmTable.createJScrollPane(movieTable, new int[] { 0 });
     add(scrollPane, "1, 3, 5, 1, fill, fill");

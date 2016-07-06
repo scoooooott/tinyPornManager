@@ -40,6 +40,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TmmTree extends JTree {
   private static final long       serialVersionUID = 6080373740630696814L;
   private static Color            BACKGROUND_COLOR = new Color(235, 235, 235);

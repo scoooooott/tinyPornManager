@@ -26,6 +26,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class ZebraJTree extends JTree {
 
   /** The Constant serialVersionUID. */

@@ -1,7 +1,5 @@
 package org.tinymediamanager.ui.components.table;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,11 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This popup allows to select columns to be shown/hidden in the TmmTable
@@ -41,13 +40,14 @@ public class TmmTableColumnSelectionPopup {
     Map<String, Object> displayNameToCheckBox = new HashMap<>();
     List<String> displayNames = new ArrayList<>();
 
-    for (Iterator<TableColumn> it = columns.iterator(); it.hasNext(); ) {
+    for (Iterator<TableColumn> it = columns.iterator(); it.hasNext();) {
       final TableColumn etc = it.next();
 
       String columnName = "";
       if (etc.getHeaderValue() instanceof String) {
         columnName = etc.getHeaderValue().toString();
-      } else {
+      }
+      else {
         if (etc.getHeaderRenderer() instanceof DefaultTableCellRenderer) {
           columnName = ((DefaultTableCellRenderer) etc.getHeaderRenderer()).getToolTipText();
         }
@@ -75,7 +75,8 @@ public class TmmTableColumnSelectionPopup {
       if (!displayNames.contains(columnName)) {
         // the expected case
         displayNameToCheckBox.put(columnName, checkBox);
-      } else {
+      }
+      else {
         // the same display name is used for more columns - fuj
         ArrayList<JCheckBoxMenuItem> al = null;
         Object theFirstOne = displayNameToCheckBox.get(columnName);
@@ -83,11 +84,13 @@ public class TmmTableColumnSelectionPopup {
           JCheckBoxMenuItem firstCheckBox = (JCheckBoxMenuItem) theFirstOne;
           al = new ArrayList<>();
           al.add(firstCheckBox);
-        } else {
+        }
+        else {
           // already a list there
           if (theFirstOne instanceof ArrayList) {
             al = (ArrayList<JCheckBoxMenuItem>) theFirstOne;
-          } else {
+          }
+          else {
             throw new IllegalStateException("Wrong object theFirstOne is " + theFirstOne);
           }
         }
@@ -99,13 +102,14 @@ public class TmmTableColumnSelectionPopup {
 
     // Collections.sort(displayNames, Collator.getInstance());
     int index = 0;
-    for (Iterator<String> it = displayNames.iterator(); it.hasNext(); ) {
+    for (Iterator<String> it = displayNames.iterator(); it.hasNext();) {
       String displayName = it.next();
       Object obj = displayNameToCheckBox.get(displayName);
       JCheckBoxMenuItem checkBox = null;
       if (obj instanceof JCheckBoxMenuItem) {
         checkBox = (JCheckBoxMenuItem) obj;
-      } else {
+      }
+      else {
         // in case there are duplicate names we store ArrayLists
         // of JCheckBoxes
         if (obj instanceof ArrayList) {
@@ -114,7 +118,8 @@ public class TmmTableColumnSelectionPopup {
             index = 0;
           }
           checkBox = al.get(index++);
-        } else {
+        }
+        else {
           throw new IllegalStateException("Wrong object obj is " + obj);
         }
       }

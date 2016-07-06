@@ -101,6 +101,7 @@ public class IconManager {
   public final static ImageIcon            ADD                    = createMaterialFontIcon('\uE145', 16);
   public final static ImageIcon            BUG                    = createMaterialFontIcon('\uE868', 16);
   public final static ImageIcon            CANCEL                 = createMaterialFontIcon('\uE14C', 16);
+  public final static ImageIcon            CONFIGURE              = createMaterialFontIcon('\uE869', 16);
   public final static ImageIcon            FEEDBACK               = createMaterialFontIcon('\uE158', 16);
   public final static ImageIcon            EDIT                   = createMaterialFontIcon('\uE150', 16);
   public final static ImageIcon            REMOVE                 = createMaterialFontIcon('\uE15B', 16);

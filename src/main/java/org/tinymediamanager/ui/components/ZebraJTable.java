@@ -43,6 +43,7 @@ import javax.swing.table.TableModel;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class ZebraJTable extends JTable {
   private static final long             serialVersionUID = -5461344983450088208L;
   private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);

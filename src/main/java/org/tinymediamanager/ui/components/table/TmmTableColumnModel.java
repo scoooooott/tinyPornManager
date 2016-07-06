@@ -19,9 +19,9 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
    * List<TableColumn>: holds list of columns that were hidden by the user. The columns contained here are not contained in the inherited tableColumns
    * list.
    */
-  protected List<TableColumn> hiddenColumns = new ArrayList<>();
+  protected List<TableColumn> hiddenColumns         = new ArrayList<>();
 
-  List<Integer> hiddenColumnsPosition = new ArrayList<>();
+  List<Integer>               hiddenColumnsPosition = new ArrayList<>();
 
   /**
    * Copy of addColumn(TableColumn) with an index specifying where to add the new column
@@ -47,10 +47,12 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
     // Shift ci1 and ci2 by hidden columns:
     for (int i = 0; i < n; i++) {
       int index = hiddenColumnsPosition.get(i);
-      if (ci1 >= index)
+      if (ci1 >= index) {
         ci1++;
-      if (ci2 >= index)
+      }
+      if (ci2 >= index) {
         ci2++;
+      }
     }
     if (ci1 < ci2) {
       for (int i = 0; i < n; i++) {
@@ -72,13 +74,21 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
 
   @Override
   public void removeColumn(TableColumn column) {
-    removeColumn(column, true);
+    int columnIndex = removeColumn(column, true);
+
+    // Post columnAdded event notification. (JTable and JTableHeader
+    // listens so they can adjust size and redraw)
+    if (columnIndex != -1) {
+      fireColumnRemoved(new TableColumnModelEvent(this, columnIndex, 0));
+    }
   }
 
-  private void removeColumn(TableColumn column, boolean doShift) {
+  private int removeColumn(TableColumn column, boolean doShift) {
     if (removeHiddenColumn(column, doShift) < 0) {
-      int columnIndex = tableColumns.indexOf(column);
-      super.removeColumn(column);
+      int origColumnIndex = tableColumns.indexOf(column);
+      int columnIndex = origColumnIndex;
+      removeColumnOrig(column);
+
       if (doShift) {
         int n = hiddenColumnsPosition.size();
         for (int i = 0; i < n; i++) {
@@ -93,6 +103,23 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
           }
         }
       }
+      return origColumnIndex;
+    }
+    return -1;
+  }
+
+  public void removeColumnOrig(TableColumn column) {
+    int columnIndex = tableColumns.indexOf(column);
+
+    if (columnIndex != -1) {
+      // Adjust for the selection
+      if (selectionModel != null) {
+        selectionModel.removeIndexInterval(columnIndex, columnIndex);
+      }
+
+      column.removePropertyChangeListener(this);
+      tableColumns.removeElementAt(columnIndex);
+      totalColumnWidth = -1;
     }
   }
 
@@ -120,7 +147,8 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
         }
       }
       return hi;
-    } else {
+    }
+    else {
       return -1;
     }
   }
@@ -128,33 +156,45 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
   /**
    * Makes the given column hidden or visible according to the parameter hidden.
    *
-   * @param column The table column to change the visibility.
-   * @param hidden <code>true</code> to make the column hidden, <code>false</code> to make it visible.
+   * @param column
+   *          The table column to change the visibility.
+   * @param hidden
+   *          <code>true</code> to make the column hidden, <code>false</code> to make it visible.
    */
   public void setColumnHidden(TableColumn column, boolean hidden) {
     if (hidden) {
       if (!hiddenColumns.contains(column)) {
-        int index = tableColumns.indexOf(column);
+        int columnIndex = tableColumns.indexOf(column);
+        int index = columnIndex;
+
         if (index >= 0) {
           removeColumn(column, false);
           hiddenColumns.add(column);
           for (Integer pos : hiddenColumnsPosition) {
-            if (pos <= index)
+            if (pos <= index) {
               index++;
+            }
           }
-          while (hiddenColumnsPosition.contains(index))
+          while (hiddenColumnsPosition.contains(index)) {
             index++;
+          }
           hiddenColumnsPosition.add(index);
+
+          // Post columnAdded event notification. (JTable and JTableHeader
+          // listens so they can adjust size and redraw)
+          fireColumnRemoved(new TableColumnModelEvent(this, columnIndex, 0));
         }
       }
-    } else {
+    }
+    else {
       if (!tableColumns.contains(column)) {
         int index = removeHiddenColumn(column, false);
         if (index >= 0) {
           int i = index;
           for (Integer pos : hiddenColumnsPosition) {
-            if (pos < index)
+            if (pos < index) {
               i--;
+            }
           }
           index = Math.min(i, tableColumns.size());
           addColumn(column, index);
@@ -180,7 +220,8 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
   /**
    * Test if the column is hidden or visible.
    *
-   * @param tc The table column to test
+   * @param tc
+   *          The table column to test
    * @return <code>true</code> when the column is hidden, <code>false</code> when it's visible.
    */
   public boolean isColumnHidden(TableColumn tc) {
@@ -195,7 +236,7 @@ public class TmmTableColumnModel extends DefaultTableColumnModel {
     }
   }
 
-  public List<TableColumn> getHiddenColumns(){
+  public List<TableColumn> getHiddenColumns() {
     return hiddenColumns;
   }
 

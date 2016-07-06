@@ -41,6 +41,7 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
