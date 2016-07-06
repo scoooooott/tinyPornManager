@@ -26,6 +26,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -55,6 +57,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.UTF8Control;
@@ -81,8 +84,13 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
   private JTable                      tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
+  private JComboBox                   cbScraperLanguage;
 
   public TvShowSubtitleSettingsPanel() {
+    initComponents();
+  }
+
+  private void initComponents() {
     // data init
     List<String> enabledSubtitleProviders = settings.getTvShowSubtitleScrapers();
     int selectedIndex = -1;
@@ -100,13 +108,16 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     }
 
     // UI init
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelSubtitleScrapers = new JPanel();
     panelSubtitleScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.subtitle"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
-    add(panelSubtitleScrapers, "2, 2, fill, fill");
+    add(panelSubtitleScrapers, "2, 2, 5, 1, fill, fill");
     panelSubtitleScrapers.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
@@ -142,6 +153,12 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     tableScraper = new JTable();
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
+
+    final JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
+    add(lblScraperLanguage, "2, 4, right, default");
+
+    cbScraperLanguage = new JComboBox(MediaLanguages.values());
+    add(cbScraperLanguage, "4, 4, fill, default");
 
     initDataBindings();
 
@@ -286,5 +303,11 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
         tpScraperDescription, jTextPaneBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<TvShowSettings, MediaLanguages> tvShowSettingsBeanProperty = BeanProperty.create("subtitleScraperLanguage");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty, cbScraperLanguage, jComboBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

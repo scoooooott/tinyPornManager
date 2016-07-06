@@ -140,7 +140,7 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
       }
     }
 
-    cbLanguage.setSelectedItem(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    cbLanguage.setSelectedItem(MovieModuleManager.MOVIE_SETTINGS.getSubtitleScraperLanguage());
   }
 
   /**
