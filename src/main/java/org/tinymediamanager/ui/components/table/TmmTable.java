@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -55,7 +52,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * The Class TmmTable. It's being used to draw the tables like our designer designed it ;)
+ * The Class TmmTable. It's being used to draw the tables like our designer designed it
  *
  * @author Manuel Laggner
  */
@@ -67,9 +64,6 @@ public class TmmTable extends JTable {
   static final Color                    TABLE_GRID_COLOR2 = new Color(248, 248, 248);
 
   private static final CellRendererPane CELL_RENDER_PANE  = new CellRendererPane();
-
-  private ArrayList<TableColumn>        indexedColumns    = new ArrayList<>();
-  private Map<Object, TableColumn>      hiddenColumns     = new HashMap<>();
 
   public TmmTable() {
     super();
@@ -94,15 +88,16 @@ public class TmmTable extends JTable {
   @Override
   public void addColumn(TableColumn aColumn) {
     if (aColumn.getIdentifier() == null && getModel() instanceof TmmTableModel) {
-      int modelColumn = aColumn.getModelIndex();
-      String columnIdentifier = ((TmmTableModel) getModel()).getColumnIdentifier(modelColumn);
-      aColumn.setIdentifier(columnIdentifier);
+      // disable grid in header
+      aColumn.setHeaderRenderer(new BottomBorderHeaderRenderer());
+
+      TmmTableModel tableModel = ((TmmTableModel) getModel());
+      tableModel.setUpColumn(aColumn);
     }
     super.addColumn(aColumn);
   }
 
   private void init() {
-    setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
     setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
     getTableHeader().setOpaque(false);
@@ -112,11 +107,6 @@ public class TmmTable extends JTable {
     setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint grid lines over the entire viewport.
     setShowGrid(false);
-
-    // disable grid in header
-    for (int i = 0; i < getColumnCount(); i++) {
-      getColumnModel().getColumn(i).setHeaderRenderer(new BottomBorderHeaderRenderer());
-    }
   }
 
   public void writeHiddenColumns(Consumer<List<String>> setting) {
@@ -135,6 +125,45 @@ public class TmmTable extends JTable {
   public void readHiddenColumns(List<String> hiddenColumns) {
     if (getColumnModel() instanceof TmmTableColumnModel) {
       ((TmmTableColumnModel) getColumnModel()).setHiddenColumns(hiddenColumns);
+    }
+  }
+
+  /**
+   * Set the preferred width of all columns according to its contents If a column is marked as non resizeable, the max-width is set
+   *
+   * @param margin
+   *          the margin left and right
+   */
+  public void adjustColumnPreferredWidths(int margin) {
+    // strategy - get max width for cells in header and column and
+    // make that the preferred width
+    TableColumnModel columnModel = getColumnModel();
+    for (int col = 0; col < getColumnCount(); col++) {
+
+      int maxwidth = 0;
+      // header
+      TableCellRenderer rend = columnModel.getColumn(col).getHeaderRenderer();
+      Object value = columnModel.getColumn(col).getHeaderValue();
+      if (rend == null) {
+        rend = getTableHeader().getDefaultRenderer();
+      }
+      Component comp = rend.getTableCellRendererComponent(this, value, false, false, -1, col);
+      maxwidth = Math.max(comp.getPreferredSize().width + 2 * margin, maxwidth);
+
+      // rows
+      for (int row = 0; row < getRowCount(); row++) {
+        rend = getCellRenderer(row, col);
+        value = getValueAt(row, col);
+        comp = rend.getTableCellRendererComponent(this, value, false, false, row, col);
+        maxwidth = Math.max(comp.getPreferredSize().width + margin, maxwidth);
+      }
+
+      TableColumn column = columnModel.getColumn(col);
+      column.setPreferredWidth(maxwidth);
+      if (!column.getResizable()) {
+        column.setMinWidth(maxwidth);
+        column.setMaxWidth(maxwidth);
+      }
     }
   }
 
@@ -161,38 +190,6 @@ public class TmmTable extends JTable {
     setFont(getFont().deriveFont(size));
     FontMetrics fm = getFontMetrics(getFont());
     setRowHeight(fm.getHeight() + 4);
-  }
-
-  public void hideColumn(Object identifier) {
-    int index = columnModel.getColumnIndex(identifier);
-    TableColumn column = columnModel.getColumn(index);
-    if (hiddenColumns.put(identifier, column) != null) {
-      throw new IllegalArgumentException("Duplicate column name.");
-    }
-    columnModel.removeColumn(column);
-  }
-
-  public void showColumn(Object identifier) {
-    TableColumn tableCloumn = hiddenColumns.remove(identifier);
-    if (tableCloumn != null) {
-      // find the new index to insert
-      int originIndex = indexedColumns.indexOf(tableCloumn);
-      int newIndex = 0;
-      Enumeration<TableColumn> enumeration = columnModel.getColumns();
-      while (enumeration.hasMoreElements()) {
-        int index = indexedColumns.indexOf((TableColumn) enumeration.nextElement());
-        if (index > originIndex) {
-          break;
-        }
-        newIndex++;
-      }
-
-      columnModel.addColumn(tableCloumn);
-      int lastColumn = columnModel.getColumnCount() - 1;
-      if (newIndex < lastColumn) {
-        columnModel.moveColumn(lastColumn, newIndex);
-      }
-    }
   }
 
   private static void paintHeader(Graphics g, JTable table, int x, int width) {
@@ -277,17 +274,6 @@ public class TmmTable extends JTable {
     return createJScrollPane(table, columnsWithoutRightVerticalGrid);
   }
 
-  // private static JComponent createCornerComponent(final JTable table) {
-  // return new JComponent() {
-  // private static final long serialVersionUID = 3350437839386102803L;
-  //
-  // @Override
-  // protected void paintComponent(Graphics g) {
-  // paintHeader(g, table, 0, getWidth());
-  // }
-  // };
-  // }
-
   private static class BottomBorderHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 7963585655106103415L;
 
@@ -341,5 +327,4 @@ public class TmmTable extends JTable {
       return this;
     }
   }
-
 }

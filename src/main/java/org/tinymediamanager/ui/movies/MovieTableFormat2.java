@@ -1,20 +1,39 @@
+/*
+ * Copyright 2012 - 2016 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.movies;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.BorderTableCellRenderer;
+import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 
 /**
- * Created by manuel on 26.06.16.
+ * The MovieTableFormat. Used as definition for the movie table in the movie module
+ *
+ * @author Manuel Laggner
  */
 public class MovieTableFormat2 extends TmmTableFormat<Movie> {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -27,97 +46,84 @@ public class MovieTableFormat2 extends TmmTableFormat<Movie> {
     Comparator<ImageIcon> imageComparator = new ImageComparator();
     Comparator<Date> dateComparator = new DateComparator();
 
-    // title
-    Column col = new ColumnBuilder().setTitle(BUNDLE.getString("metatag.title")).setIdentifier("title").setColumnValue(movie -> movie, Movie.class)
-        .setColumnComparator(movieComparator).build();
+    /*
+     * title
+     */
+    Column col = new Column(BUNDLE.getString("metatag.title"), "title", movie -> movie, Movie.class);
+    col.setColumnComparator(movieComparator);
+    col.setCellRenderer(new BorderTableCellRenderer());
     addColumn(col);
 
-    // year
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("metatag.year")).setIdentifier("year").setColumnValue(MediaEntity::getYear, Movie.class)
-        .setColumnComparator(stringComparator).build();
+    /*
+     * year
+     */
+    col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);
+    col.setColumnComparator(stringComparator);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // rating
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("metatag.rating")).setIdentifier("rating").setColumnValue(MediaEntity::getRating, Float.class)
-        .setColumnComparator(floatComparator).build();
+    /*
+     * rating
+     */
+    col = new Column(BUNDLE.getString("metatag.rating"), "rating", MediaEntity::getRating, Float.class);
+    col.setColumnComparator(floatComparator);
+    col.setHeaderIcon(IconManager.RATING);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // date added
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("metatag.dateadded")).setIdentifier("dateAdded")
-        .setColumnValue(MediaEntity::getDateAdded, Date.class).setColumnComparator(dateComparator).build();
+    /*
+     * date added
+     */
+    col = new Column(BUNDLE.getString("metatag.dateadded"), "dateAdded", MediaEntity::getDateAdded, Date.class);
+    col.setColumnComparator(dateComparator);
+    col.setHeaderIcon(IconManager.DATE_ADDED);
+    col.setCellRenderer(new DateTableCellRenderer(SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)));
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // NFO
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("tmm.nfo")).setIdentifier("nfo")
-        .setColumnValue(movie -> getCheckIcon(movie.getHasNfoFile()), ImageIcon.class).setColumnComparator(imageComparator).build();
+    /*
+     * NFO
+     */
+    col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", movie -> getCheckIcon(movie.getHasNfoFile()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.NFO);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // images
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("tmm.images")).setIdentifier("images")
-        .setColumnValue(movie -> getCheckIcon(movie.getHasImages()), ImageIcon.class).setColumnComparator(imageComparator).build();
+    /*
+     * images
+     */
+    col = new Column(BUNDLE.getString("tmm.images"), "images", movie -> getCheckIcon(movie.getHasImages()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.IMAGES);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // trailer
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("tmm.trailer")).setIdentifier("trailer")
-        .setColumnValue(movie -> getCheckIcon(movie.getHasTrailer()), ImageIcon.class).setColumnComparator(imageComparator).build();
+    /*
+     * trailer
+     */
+    col = new Column(BUNDLE.getString("tmm.trailer"), "trailer", movie -> getCheckIcon(movie.getHasTrailer()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.TRAILER);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // subtitles
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("tmm.subtitles")).setIdentifier("subtitles")
-        .setColumnValue(movie -> getCheckIcon(movie.hasSubtitles()), ImageIcon.class).setColumnComparator(imageComparator).build();
+    /*
+     * subtitles
+     */
+    col = new Column(BUNDLE.getString("tmm.subtitles"), "subtitles", movie -> getCheckIcon(movie.hasSubtitles()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.SUBTITLES);
+    col.setColumnResizeable(false);
     addColumn(col);
 
-    // watched
-    col = new ColumnBuilder().setTitle(BUNDLE.getString("metatag.watched")).setIdentifier("watched")
-        .setColumnValue(movie -> getCheckIcon(movie.isWatched()), ImageIcon.class).setColumnComparator(imageComparator).build();
+    /*
+     * watched
+     */
+    col = new Column(BUNDLE.getString("metatag.watched"), "watched", movie -> getCheckIcon(movie.isWatched()), ImageIcon.class);
+    col.setColumnComparator(imageComparator);
+    col.setHeaderIcon(IconManager.WATCHED);
+    col.setColumnResizeable(false);
     addColumn(col);
-
-  }
-
-  private ImageIcon getCheckIcon(boolean bool) {
-    if (bool) {
-      return IconManager.DOT_AVAILABLE;
-    }
-    return IconManager.DOT_UNAVAILABLE;
-  }
-
-  private static class StringComparator implements Comparator<String> {
-    @Override
-    public int compare(String arg0, String arg1) {
-      if (StringUtils.isEmpty(arg0)) {
-        return -1;
-      }
-      if (StringUtils.isEmpty(arg1)) {
-        return 1;
-      }
-      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
-    }
-  }
-
-  private static class FloatComparator implements Comparator<Float> {
-    @Override
-    public int compare(Float arg0, Float arg1) {
-      return arg0.compareTo(arg1);
-    }
-  }
-
-  private static class ImageComparator implements Comparator<ImageIcon> {
-    @Override
-    public int compare(ImageIcon arg0, ImageIcon arg1) {
-      if (arg0 == arg1) {
-        return 0;
-      }
-      if (arg0 == IconManager.DOT_AVAILABLE) {
-        return 1;
-      }
-      return -1;
-    }
-  }
-
-  private static class DateComparator implements Comparator<Date> {
-    @Override
-    public int compare(Date arg0, Date arg1) {
-      return arg0.compareTo(arg1);
-    }
   }
 }

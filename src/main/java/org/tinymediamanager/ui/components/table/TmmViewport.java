@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 - 2016 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.components.table;
 
 import static org.tinymediamanager.ui.components.table.TmmTable.TABLE_GRID_COLOR;
@@ -5,7 +20,6 @@ import static org.tinymediamanager.ui.components.table.TmmTable.TABLE_GRID_COLOR
 
 import java.awt.Graphics;
 import java.awt.Point;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +39,11 @@ class TmmViewport extends JViewport {
   private final JTable        fTable;
   private final List<Integer> colsWoRightGrid;
 
-  public TmmViewport(JTable table, int[] cols) {
+  TmmViewport(JTable table, int[] cols) {
     fTable = table;
     colsWoRightGrid = new ArrayList<>(cols.length);
     for (int i : cols) {
-      colsWoRightGrid.add(new Integer(i));
+      colsWoRightGrid.add(i);
     }
     fTable.putClientProperty("borderNotToDraw", colsWoRightGrid);
     setOpaque(false);
@@ -48,12 +62,7 @@ class TmmViewport extends JViewport {
   }
 
   private PropertyChangeListener createTableColumnWidthListener() {
-    return new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        repaint();
-      }
-    };
+    return evt -> repaint();
   }
 
   @Override

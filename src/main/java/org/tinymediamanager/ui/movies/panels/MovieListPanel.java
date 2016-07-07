@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
@@ -31,8 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
@@ -48,7 +44,6 @@ import org.tinymediamanager.ui.movies.MovieComparator;
 import org.tinymediamanager.ui.movies.MovieFilterator;
 import org.tinymediamanager.ui.movies.MovieMatcherEditor;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
-import org.tinymediamanager.ui.movies.MovieTableFormat;
 import org.tinymediamanager.ui.movies.MovieTableFormat2;
 import org.tinymediamanager.ui.movies.MovieTableMouseListener;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -97,7 +92,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   private void buildTable() {
     // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
     MovieList movieList = MovieList.getInstance();
-    SortedList<Movie> sortedMovies = new SortedList<Movie>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
+    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     searchField = EnhancedTextField.createSearchTextField();
@@ -113,23 +108,8 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     // build the table
     movieTable = new TmmTable(movieTableModel);
 
-    movieTableModel.addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent arg0) {
-        lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
-        // select first movie if nothing is selected
-        ListSelectionModel selectionModel = movieTable.getSelectionModel();
-        if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
-          selectionModel.setSelectionInterval(0, 0);
-        }
-      }
-    });
-
     // install and save the comparator on the Table
     selectionModel.setTableComparatorChooser(TableComparatorChooser.install(movieTable, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
-
-    // configure columns
-    MovieTableFormat.configureColumns(movieTable);
 
     // restore hidden columns
     movieTable.readHiddenColumns(MovieModuleManager.MOVIE_SETTINGS.getMovieTableHiddenColumns());
@@ -164,6 +144,16 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
         });
       }
     });
+    movieTable.adjustColumnPreferredWidths(3);
+
+    movieTableModel.addTableModelListener(arg0 -> {
+      lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+      // select first movie if nothing is selected
+      ListSelectionModel selectionModel1 = movieTable.getSelectionModel();
+      if (selectionModel1.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
+        selectionModel1.setSelectionInterval(0, 0);
+      }
+    });
 
     JScrollPane scrollPane = TmmTable.createJScrollPane(movieTable, new int[] { 0 });
     add(scrollPane, "1, 3, 5, 1, fill, fill");
@@ -172,12 +162,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   private void buildStatusPanel() {
     final JToggleButton btnExtendedFilter = new JToggleButton("Filter");
     btnExtendedFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
-    btnExtendedFilter.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected());
-      }
-    });
+    btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected()));
     add(btnExtendedFilter, "4, 1, fill, fill");
     JPanel panelStatus = new JPanel();
     add(panelStatus, "2, 4");

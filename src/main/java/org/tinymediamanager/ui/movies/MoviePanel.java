@@ -117,6 +117,7 @@ import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MoviePanel extends JPanel {
 
   /**

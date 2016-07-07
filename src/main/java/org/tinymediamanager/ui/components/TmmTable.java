@@ -51,6 +51,7 @@ import javax.swing.table.TableModel;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TmmTable extends JTable {
   private static final long             serialVersionUID  = 6150939811851709115L;
 
