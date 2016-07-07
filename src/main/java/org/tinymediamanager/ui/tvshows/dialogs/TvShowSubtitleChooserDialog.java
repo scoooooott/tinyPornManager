@@ -143,7 +143,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
     for (MediaLanguages language : MediaLanguages.values()) {
       cbLanguage.addItem(language);
-      if (language == TvShowModuleManager.TV_SHOW_SETTINGS.getScraperLanguage()) {
+      if (language == TvShowModuleManager.TV_SHOW_SETTINGS.getSubtitleScraperLanguage()) {
         cbLanguage.setSelectedItem(language);
       }
     }

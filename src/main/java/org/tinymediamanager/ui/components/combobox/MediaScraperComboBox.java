@@ -195,7 +195,7 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       for (int i = 0; i < list.getModel().getSize(); i++) {
         MediaScraper ms = list.getModel().getElementAt(i);
         ImageIcon logo = MediaScraperComboBox.this.getIcon(ms.getLogoURL());
-        maxWidth = Math.max(maxWidth, logo.getIconWidth());
+        maxWidth = Math.max(maxWidth, logo == null ? 0 : logo.getIconWidth());
         if (!scraper.isEnabled()) {
           setEnabled(false);
           setBackground(Color.lightGray);

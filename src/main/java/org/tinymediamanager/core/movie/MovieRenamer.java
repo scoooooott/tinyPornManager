@@ -142,8 +142,8 @@ public class MovieRenamer {
           if (sub.getFilename().endsWith(".sub")) {
             // when having a .sub, also rename .idx (don't care if error)
             try {
-              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename() + ".idx");
-              Path newidx = newFile.resolveSibling(newFile.getFileName() + ".idx");
+              Path oldidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+              Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
               Utils.moveFileSafe(oldidx, newidx);
             }
             catch (Exception e) {
@@ -310,7 +310,7 @@ public class MovieRenamer {
     // ######################################################################
     for (MovieNfoNaming s : MovieNfoNaming.values()) {
       String nfoFilename = movie.getNfoFilename(s);
-      if (nfoFilename.isEmpty()) {
+      if (StringUtils.isBlank(nfoFilename)) {
         continue;
       }
       // mark all known variants for cleanup
@@ -1236,7 +1236,7 @@ public class MovieRenamer {
         return moveFile(oldFilename, newFilename);
       }
       try {
-        Utils.copyFileSafe(oldFilename, newFilename);
+        Utils.copyFileSafe(oldFilename, newFilename, true);
         return true;
       }
       catch (Exception e) {

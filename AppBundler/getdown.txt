@@ -41,6 +41,7 @@ resource = [mac os x] Info.plist
 resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
+resource = tmm.png
 resource = changelog.txt
 
 # translations

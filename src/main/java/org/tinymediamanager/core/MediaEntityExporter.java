@@ -40,18 +40,21 @@ public abstract class MediaEntityExporter {
   protected Path                templateDir;
 
   public enum TemplateType {
-    MOVIE, TV_SHOW
+    MOVIE,
+    TV_SHOW
   }
 
   protected MediaEntityExporter(Path templatePath, TemplateType type) throws Exception {
+    templateDir = templatePath;
+
     // check if template exists and is valid
-    if (Files.isDirectory(templatePath)) {
-      throw new Exception("illegal template");
+    if (!Files.isDirectory(templateDir)) {
+      throw new Exception("illegal template path");
     }
 
-    Path configFile = templatePath.resolve("template.conf");
-    if (Files.exists(configFile)) {
-      throw new Exception("illegal template");
+    Path configFile = templateDir.resolve("template.conf");
+    if (Files.notExists(configFile)) {
+      throw new Exception("illegal template config");
     }
 
     // load settings from template
@@ -89,9 +92,9 @@ public abstract class MediaEntityExporter {
     }
 
     // load list template from File
-    listTemplate = Utils.readFileToString(templatePath.resolve(listTemplateFile));
+    listTemplate = Utils.readFileToString(templateDir.resolve(listTemplateFile));
     if (StringUtils.isNotBlank(detailTemplateFile)) {
-      detailTemplate = Utils.readFileToString(templatePath.resolve(detailTemplateFile));
+      detailTemplate = Utils.readFileToString(templateDir.resolve(detailTemplateFile));
     }
   }
 

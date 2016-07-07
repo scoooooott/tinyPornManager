@@ -89,7 +89,7 @@ public final class Constants {
   public final static String STATUS                 = "status";
   public final static String STUDIO                 = "studio";
   public final static String TAG                    = "tag";
-  public final static String TAGS_AS_STRING         = "tagAsString";
+  public final static String TAGS_AS_STRING         = "tagsAsString";
   public final static String THUMB                  = "thumb";
   public final static String THUMB_URL              = "thumbUrl";
   public final static String THUMB_PATH             = "thumbPath";

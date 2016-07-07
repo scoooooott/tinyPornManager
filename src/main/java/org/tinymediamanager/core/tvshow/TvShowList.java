@@ -132,6 +132,21 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
+   * Gets the unscraped TvShows
+   * 
+   * @return the unscraped TvShows
+   */
+  public List<TvShow> getUnscrapedTvShows() {
+    List<TvShow> unscrapedShows = new ArrayList<>();
+    for (TvShow show : tvShowList) {
+      if (!show.isScraped()) {
+        unscrapedShows.add(show);
+      }
+    }
+    return unscrapedShows;
+  }
+
+  /**
    * Adds the tv show.
    * 
    * @param newValue
@@ -730,6 +745,23 @@ public class TvShowList extends AbstractModelObject {
     for (TvShow show : tvShowList) {
       for (TvShowEpisode ep : show.getEpisodes()) {
         if (ep.isNewlyAdded()) {
+          newEp.add(ep);
+        }
+      }
+    }
+    return newEp;
+  }
+
+  /**
+   * Gets the unscraped episodes
+   * 
+   * @return the unscraped episodes
+   */
+  public List<TvShowEpisode> getUnscrapedEpisodes() {
+    List<TvShowEpisode> newEp = new ArrayList<>();
+    for (TvShow show : tvShowList) {
+      for (TvShowEpisode ep : show.getEpisodes()) {
+        if (!ep.isScraped()) {
           newEp.add(ep);
         }
       }

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.entities;
 
+import static org.tinymediamanager.core.MediaFileType.NFO;
 import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
 
 import java.io.BufferedReader;
@@ -24,11 +25,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -702,26 +701,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   /**
    * instantiates and gets new mediainfo object.
-   * 
-   * @return MediaInfo object
    */
-  private MediaInfo getMediaInfo() {
+  private void getMediaInfo() {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
 
       try {
         if (!mediaInfo.open(this.getFileAsPath())) {
           LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
+
+          // clear references
+          closeMediaInfo();
+        }
+        else {
+          miSnapshot = mediaInfo.snapshot();
         }
       }
+      // sometimes also an error is thrown
       catch (Exception | Error e) {
         LOGGER.error("Mediainfo could not open file: " + getFileAsPath() + "; " + e.getMessage());
-      }
-      // sometimes also an error is thrown
 
-      miSnapshot = mediaInfo.snapshot();
+        // clear references
+        closeMediaInfo();
+      }
     }
-    return mediaInfo;
   }
 
   /**
@@ -751,29 +754,21 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (miSnapshot == null) {
       getMediaInfo(); // load snapshot
     }
-    for (String key : keys) {
-      List<Map<String, String>> stream = miSnapshot.get(streamKind);
-      if (stream != null) {
-        LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
-        if (info != null) {
-          String value = info.get(key);
-          // System.out.println(" " + streamKind + " " + key + " = " + value);
-          if (value != null && value.length() > 0) {
-            return value;
+    if (miSnapshot != null) {
+      for (String key : keys) {
+        List<Map<String, String>> stream = miSnapshot.get(streamKind);
+        if (stream != null) {
+          LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
+          if (info != null) {
+            String value = info.get(key);
+            // System.out.println(" " + streamKind + " " + key + " = " + value);
+            if (value != null && value.length() > 0) {
+              return value;
+            }
           }
         }
       }
     }
-
-    // fallback to the "old" logic
-    // not needed anylonger, since we fixed the streamCount() in MI
-    // for (String key : keys) {
-    // String value = mediaInfo.get(streamKind, streamNumber, key);
-    // System.out.println("OLD " + streamKind + " " + key + " = " + value);
-    // if (value.length() > 0) {
-    // return value;
-    // }
-    // }
 
     return "";
   }
@@ -1224,18 +1219,44 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
 
-    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
-
     // gather subtitle infos independent of MI
     if (getType() == SUBTITLE) {
       gatherSubtitleInformation();
     }
 
-    mediaInfo = getMediaInfo();
+    // file size and last modified
     try {
-      setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
+      setFilesize(Files.size(file));
+      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+      filedate = attrs.lastModifiedTime().toMillis();
     }
-    catch (Exception e) {
+    catch (IOException e) {
+      LOGGER.error("could not get file information (size/date): " + e.getMessage());
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // do not work further on 0 byte files
+    if (getFilesize() == 0) {
+      LOGGER.warn("0 Byte file detected: " + this.filename);
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // do not work further on subtitles/NFO files
+    if (type == SUBTITLE || type == NFO) {
+      // set container format to do not trigger it again
+      setContainerFormat(getExtension());
+      return;
+    }
+
+    // get media info
+    LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    getMediaInfo();
+
+    if (miSnapshot == null) {
+      // MI could not be opened
       LOGGER.error("error getting MediaInfo for " + this.filename);
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
@@ -1243,25 +1264,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
     LOGGER.trace("got MI");
-
-    // do not work further on 0 byte files
-    if (getFilesize() == 0) {
-      LOGGER.warn("0 Byte file detected: " + this.filename);
-      // set container format to do not trigger it again
-      setContainerFormat(getExtension());
-      closeMediaInfo();
-      return;
-    }
-
-    // parse lastmodified
-    try {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      Date date = dateFormat.parse(getMediaInfo(StreamKind.General, 0, "File_Modified_Date_Local"));
-      filedate = date.getTime();
-    }
-    catch (Exception e) {
-      filedate = 0;
-    }
 
     String height = "";
     String scanType = "";
@@ -1277,6 +1279,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
         width = getMediaInfo(StreamKind.Video, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Video, 0, "CodecID/Hint", "Format");
+
+        // fix for Microsoft VC-1
+        if (StringUtils.containsIgnoreCase(videoCodec, "Microsoft")) {
+          videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
+        }
 
         // get audio streams
         // int streams = getMediaInfo().streamCount(StreamKind.Audio);
@@ -1570,8 +1577,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
-        || "nrg".equals(extension) || "disc".equals(extension)) {
+    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
+        || "disc".equals(extension)) {
       return false;
     }
 

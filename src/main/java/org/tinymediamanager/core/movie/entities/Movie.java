@@ -402,7 +402,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     tags.add(newTag);
-    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAG, null, newTag);
     firePropertyChange(TAGS_AS_STRING, null, newTag);
   }
 
@@ -414,7 +414,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void removeFromTags(String removeTag) {
     tags.remove(removeTag);
-    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAG, null, removeTag);
     firePropertyChange(TAGS_AS_STRING, null, removeTag);
   }
 
@@ -444,8 +444,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     Utils.removeEmptyStringsFromList(tags);
 
-    firePropertyChange(TAG, null, tags);
-    firePropertyChange(TAGS_AS_STRING, null, tags);
+    firePropertyChange(TAG, null, newTags);
+    firePropertyChange(TAGS_AS_STRING, null, newTags);
   }
 
   /**

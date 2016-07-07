@@ -139,7 +139,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
       cbSubtitleScraper.setSelectedItems(selectedSubtitleScrapers);
     }
 
-    cbLanguage.setSelectedItem(TvShowModuleManager.TV_SHOW_SETTINGS.getScraperLanguage());
+    cbLanguage.setSelectedItem(TvShowModuleManager.TV_SHOW_SETTINGS.getSubtitleScraperLanguage());
   }
 
   /**

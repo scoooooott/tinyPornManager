@@ -78,6 +78,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String             SCRAPE_BEST_IMAGE                        = "scrapeBestImage";
   private final static String             WRITE_ACTOR_IMAGES                       = "writeActorImages";
   private final static String             SCRAPER_LANGU                            = "scraperLanguage";
+  private final static String             SUBTITLE_SCRAPER_LANGU                   = "subtitleScraperLanguage";
   private final static String             CERTIFICATION_COUNTRY                    = "certificationCountry";
   private final static String             SCRAPER_THRESHOLD                        = "scraperThreshold";
   private final static String             DETECT_MOVIE_MULTI_DIR                   = "detectMovieMultiDir";
@@ -189,6 +190,9 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                         automaticTrailerDownload                 = false;
   private MovieTrailerQuality             trailerQuality                           = MovieTrailerQuality.HD_720;
   private MovieTrailerSources             trailerSource                            = MovieTrailerSources.YOUTUBE;
+
+  // subtitle scraper
+  private MediaLanguages                  subtitleScraperLanguage                  = MediaLanguages.en;
 
   // misc
   private boolean                         runtimeFromMediaInfo                     = false;
@@ -618,6 +622,17 @@ public class MovieSettings extends AbstractModelObject {
     MediaLanguages oldValue = this.scraperLanguage;
     this.scraperLanguage = newValue;
     firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
+  }
+
+  @XmlElement(name = SUBTITLE_SCRAPER_LANGU)
+  public MediaLanguages getSubtitleScraperLanguage() {
+    return subtitleScraperLanguage;
+  }
+
+  public void setSubtitleScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.subtitleScraperLanguage;
+    this.subtitleScraperLanguage = newValue;
+    firePropertyChange(SUBTITLE_SCRAPER_LANGU, oldValue, newValue);
   }
 
   @XmlElement(name = CERTIFICATION_COUNTRY)
