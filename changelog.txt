@@ -12,6 +12,7 @@ x fixed TV show multi-file episode detection
 x fixed updating of tags in the UI
 x rename .idx files along with with .sub files
 x improved writing/reading speed for subtitles and NFO files
+x do not overwrite external Kodi NFO streamdetails
 
 Version 2.8.1
 =======================

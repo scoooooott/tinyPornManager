@@ -397,25 +397,25 @@ public class MovieToXbmcNfoConnector {
     }
 
     // fileinfo
-    Fileinfo info = new Fileinfo();
     for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
       if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
         break;
       }
 
-      info.streamdetails.video.codec = mediaFile.getVideoCodec();
-      info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
-      info.streamdetails.video.width = mediaFile.getVideoWidth();
-      info.streamdetails.video.height = mediaFile.getVideoHeight();
-      info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
+      xbmc.fileinfo.streamdetails.video.codec = mediaFile.getVideoCodec();
+      xbmc.fileinfo.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
+      xbmc.fileinfo.streamdetails.video.width = mediaFile.getVideoWidth();
+      xbmc.fileinfo.streamdetails.video.height = mediaFile.getVideoHeight();
+      xbmc.fileinfo.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
       // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
       if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
-        info.streamdetails.video.stereomode = "left_right";
+        xbmc.fileinfo.streamdetails.video.stereomode = "left_right";
       }
       else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
-        info.streamdetails.video.stereomode = "top_bottom"; // maybe?
+        xbmc.fileinfo.streamdetails.video.stereomode = "top_bottom"; // maybe?
       }
 
+      xbmc.fileinfo.streamdetails.audio.clear();
       for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
         Audio audio = new Audio();
 
@@ -427,12 +427,14 @@ public class MovieToXbmcNfoConnector {
         }
         audio.language = as.getLanguage();
         audio.channels = String.valueOf(as.getChannelsAsInt());
-        info.streamdetails.audio.add(audio);
+        xbmc.fileinfo.streamdetails.audio.add(audio);
       }
+
+      xbmc.fileinfo.streamdetails.subtitle.clear();
       for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
         Subtitle sub = new Subtitle();
         sub.language = ss.getLanguage();
-        info.streamdetails.subtitle.add(sub);
+        xbmc.fileinfo.streamdetails.subtitle.add(sub);
       }
       break;
     }
@@ -441,10 +443,9 @@ public class MovieToXbmcNfoConnector {
       for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
         Subtitle sub = new Subtitle();
         sub.language = ss.getLanguage();
-        info.streamdetails.subtitle.add(sub);
+        xbmc.fileinfo.streamdetails.subtitle.add(sub);
       }
     }
-    xbmc.fileinfo = info;
 
     // add all unsupported tags again
     xbmc.unsupportedElements.addAll(unsupportedTags);
