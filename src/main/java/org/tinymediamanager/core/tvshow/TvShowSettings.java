@@ -44,6 +44,7 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String      PATH                        = "path";
   private final static String      SCRAPE_BEST_IMAGE           = "scrapeBestImage";
   private final static String      SCRAPER_LANGU               = "scraperLanguage";
+  private final static String      SUBTITLE_SCRAPER_LANGU      = "subtitleScraperLanguage";
   private final static String      CERTIFICATION_COUNTRY       = "certificationCountry";
   private final static String      RENAMER_SEASON_FOLDER       = "renamerSeasonFoldername";
   private final static String      BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
@@ -76,6 +77,7 @@ public class TvShowSettings extends AbstractModelObject {
   private String                   tvShowScraper               = Constants.TVDB;
   private boolean                  scrapeBestImage             = true;
   private MediaLanguages           scraperLanguage             = MediaLanguages.en;
+  private MediaLanguages           subtitleScraperLanguage     = MediaLanguages.en;
   private CountryCode              certificationCountry        = CountryCode.US;
   private String                   renamerTvShowFoldername     = "$N ($Y)";
   private String                   renamerSeasonFoldername     = "Season $1";
@@ -159,6 +161,16 @@ public class TvShowSettings extends AbstractModelObject {
     MediaLanguages oldValue = this.scraperLanguage;
     this.scraperLanguage = newValue;
     firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
+  }
+
+  public MediaLanguages getSubtitleScraperLanguage() {
+    return subtitleScraperLanguage;
+  }
+
+  public void setSubtitleScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.subtitleScraperLanguage;
+    this.subtitleScraperLanguage = newValue;
+    firePropertyChange(SUBTITLE_SCRAPER_LANGU, oldValue, newValue);
   }
 
   public CountryCode getCertificationCountry() {

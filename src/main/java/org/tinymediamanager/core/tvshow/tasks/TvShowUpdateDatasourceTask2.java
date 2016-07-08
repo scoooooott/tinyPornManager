@@ -223,12 +223,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       stopWatch.stop();
       LOGGER.info("Done updating datasource :) - took " + stopWatch);
 
-      System.out.println("FilesFound " + filesFound.size());
-      System.out.println("tvShowsFound " + tvShowList.getTvShowCount());
-      System.out.println("episodesFound " + tvShowList.getEpisodeCount());
-      System.out.println("PreDir " + preDir);
-      System.out.println("PostDir " + postDir);
-      System.out.println("VisFile " + visFile);
+      LOGGER.debug("FilesFound " + filesFound.size());
+      LOGGER.debug("tvShowsFound " + tvShowList.getTvShowCount());
+      LOGGER.debug("episodesFound " + tvShowList.getEpisodeCount());
+      LOGGER.debug("PreDir " + preDir);
+      LOGGER.debug("PostDir " + postDir);
+      LOGGER.debug("VisFile " + visFile);
       preDir = 0;
       postDir = 0;
       visFile = 0;
@@ -831,7 +831,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);

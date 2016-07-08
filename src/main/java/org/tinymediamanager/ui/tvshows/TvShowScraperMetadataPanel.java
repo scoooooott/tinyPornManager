@@ -15,8 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
@@ -25,6 +33,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -58,6 +67,9 @@ public class TvShowScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxScrapeEpisodes;
   private JCheckBox                   chckbxAired;
   private JCheckBox                   chckbxStatus;
+  private JPanel                      panelSelectButtons;
+  private JButton                     button;
+  private JButton                     button_1;
 
   /**
    * Instantiates a new tv show scraper metadata panel.
@@ -73,7 +85,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
             ColumnSpec.decode("left:default"), FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
@@ -111,7 +123,51 @@ public class TvShowScraperMetadataPanel extends JPanel {
     chckbxScrapeEpisodes = new JCheckBox(BUNDLE.getString("tvshow.scrapeepisodeseasondata")); //$NON-NLS-1$
     add(chckbxScrapeEpisodes, "2, 8, 7, 1, fill, default");
 
+    panelSelectButtons = new JPanel();
+    add(panelSelectButtons, "2, 10, 4, 1, fill, fill");
+    panelSelectButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+
+    JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
+    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
+    btnSelectAll.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setCheckBoxState(true);
+      }
+    });
+    panelSelectButtons.add(btnSelectAll);
+
+    JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setCheckBoxState(false);
+      }
+    });
+    panelSelectButtons.add(btnDeSelectAll);
+
     initDataBindings();
+  }
+
+  private void setCheckBoxState(boolean state) {
+    for (JCheckBox checkBox : getAllCheckBoxes(TvShowScraperMetadataPanel.this)) {
+      checkBox.setSelected(state);
+    }
+  }
+
+  private List<JCheckBox> getAllCheckBoxes(final Container container) {
+    Component[] comps = container.getComponents();
+    List<JCheckBox> compList = new ArrayList<>();
+    for (Component comp : comps) {
+      if (comp instanceof JCheckBox) {
+        compList.add((JCheckBox) comp);
+      }
+      if (comp instanceof Container) {
+        compList.addAll(getAllCheckBoxes((Container) comp));
+      }
+    }
+    return compList;
   }
 
   protected void initDataBindings() {

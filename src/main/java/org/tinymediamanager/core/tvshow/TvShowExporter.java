@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -159,10 +158,10 @@ public class TvShowExporter extends MediaEntityExporter {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
       for (Path path : directoryStream) {
         if (Files.isRegularFile(path)) {
-          if (path.getFileName().endsWith(".jmte") || path.getFileName().endsWith("template.conf")) {
+          if (path.getFileName().toString().endsWith(".jmte") || path.getFileName().toString().endsWith("template.conf")) {
             continue;
           }
-          Files.copy(path, exportDir, StandardCopyOption.REPLACE_EXISTING);
+          Files.copy(path, exportDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
         }
         else if (Files.isDirectory(path)) {
           Utils.copyDirectoryRecursive(path, exportDir);
@@ -170,6 +169,7 @@ public class TvShowExporter extends MediaEntityExporter {
       }
     }
     catch (IOException ex) {
+      LOGGER.error("could not copy resources: " + ex.getMessage());
     }
   }
 
@@ -252,8 +252,22 @@ public class TvShowExporter extends MediaEntityExporter {
           return null;
         }
 
-        String filename = parameters.get("destination") + File.separator + getFilename(entity) + "-" + mf.getType();
+        String filename = getFilename(entity) + "-" + mf.getType();
+
+        Path imageDir;
+        if (StringUtils.isNotBlank((String) parameters.get("destination"))) {
+          imageDir = pathToExport.resolve((String) parameters.get("destination"));
+        }
+        else {
+          imageDir = pathToExport;
+        }
+
         try {
+          // create the image dir
+          if (Files.notExists(imageDir)) {
+            Files.createDirectory(imageDir);
+          }
+
           // we need to rescale the image; scale factor is fixed to
           if (parameters.get("thumb") == Boolean.TRUE) {
             filename += ".thumb." + FilenameUtils.getExtension(mf.getFilename());
@@ -262,11 +276,11 @@ public class TvShowExporter extends MediaEntityExporter {
               width = (int) parameters.get("width");
             }
             InputStream is = ImageCache.scaleImage(mf.getFileAsPath(), width);
-            Files.copy(is, pathToExport.resolve(filename));
+            Files.copy(is, imageDir.resolve(filename));
           }
           else {
             filename += "." + FilenameUtils.getExtension(mf.getFilename());
-            Files.copy(mf.getFileAsPath(), pathToExport.resolve(filename));
+            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename));
           }
         }
         catch (Exception e) {

@@ -73,29 +73,27 @@ import org.tinymediamanager.ui.TmmWindowSaver;
  * @author Manuel Laggner / Myron Boyle
  */
 public class Utils {
-  private static final Logger                       LOGGER                = LoggerFactory.getLogger(Utils.class);
-  private static final Pattern                      localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties",
-      Pattern.CASE_INSENSITIVE);
+  private static final Logger  LOGGER                = LoggerFactory.getLogger(Utils.class);
+  private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern                      stackingPattern1      = Pattern
-      .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-
-  // <cd/dvd/part/pt/disk/disc> <a-d>
-  private static final Pattern                      stackingPattern2      = Pattern
-      .compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
-
-  // moviename-a.avi // modified mandatory delimiter (but no space), and A-D must be at end!
-  private static final Pattern                      stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$",
+  private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
+  // <cd/dvd/part/pt/disk/disc> <a-d>
+  private static final Pattern stackingPattern2      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[a-d])(\\.[^.]+)$",
+      Pattern.CASE_INSENSITIVE);
+
+  // moviename-a.avi // modified mandatory delimiter (but no space), and A-D must be at end!
+  private static final Pattern stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+
   // moviename-1of2.avi, moviename-1 of 2.avi
-  private static final Pattern                      stackingPattern4      = Pattern
-      .compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern stackingPattern4      = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$",
+      Pattern.CASE_INSENSITIVE);
 
   // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern                      folderStackingPattern = Pattern
-      .compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$",
+      Pattern.CASE_INSENSITIVE);
 
   /**
    * gets the filename part, and returns last extension
@@ -670,7 +668,6 @@ public class Utils {
    *           if source or destination is invalid
    * @throws IOException
    *           if an IO error occurs moving the file
-   * @since 1.4
    */
   public static boolean moveFileSafe(final Path srcFile, final Path destFile) throws IOException {
     if (srcFile == null) {
@@ -741,7 +738,47 @@ public class Utils {
     return true; // files are equal
   }
 
+  /**
+   * copy a file, preserving the attributes, but NOT overwrite it
+   * 
+   * @param srcFile
+   *          the file to be copied
+   * @param destFile
+   *          the target
+   * @return true/false
+   * @throws NullPointerException
+   *           if source or destination is {@code null}
+   * @throws FileExistsException
+   *           if the destination file exists
+   * @throws IOException
+   *           if source or destination is invalid
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   */
   public static boolean copyFileSafe(final Path srcFile, final Path destFile) throws IOException {
+    return copyFileSafe(srcFile, destFile, false);
+  }
+
+  /**
+   * copy a file, preserving the attributes
+   *
+   * @param srcFile
+   *          the file to be copied
+   * @param destFile
+   *          the target
+   * @param overwrite
+   *          overwrite the target?
+   * @return true/false
+   * @throws NullPointerException
+   *           if source or destination is {@code null}
+   * @throws FileExistsException
+   *           if the destination file exists
+   * @throws IOException
+   *           if source or destination is invalid
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   */
+  public static boolean copyFileSafe(final Path srcFile, final Path destFile, boolean overwrite) throws IOException {
     if (srcFile == null) {
       throw new NullPointerException("Source must not be null");
     }
@@ -757,10 +794,12 @@ public class Utils {
       if (Files.isDirectory(srcFile)) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
-        // extra check for windows, where the File.equals is case insensitive
-        // so we know now, that the File is the same, but the absolute name does not match
-        throw new FileExistsException("Destination '" + destFile + "' already exists");
+      if (!overwrite) {
+        if (Files.exists(destFile) && !srcFile.equals(destFile)) {
+          // extra check for windows, where the File.equals is case insensitive
+          // so we know now, that the File is the same, but the absolute name does not match
+          throw new FileExistsException("Destination '" + destFile + "' already exists");
+        }
       }
       if (Files.isDirectory(destFile)) {
         throw new IOException("Destination '" + destFile + "' is a directory");
@@ -771,7 +810,7 @@ public class Utils {
       for (int i = 0; i < 5; i++) {
         try {
           // replace existing for changing cASE
-          Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
+          Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
           rename = true;// no exception
         }
         catch (IOException e) {
@@ -1182,6 +1221,10 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
+    if (Files.notExists(dir)) {
+      return;
+    }
+
     LOGGER.info("Deleting complete directory: " + dir);
     Files.walkFileTree(dir, new FileVisitor<Path>() {
 

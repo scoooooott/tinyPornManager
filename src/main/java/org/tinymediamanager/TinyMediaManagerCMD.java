@@ -54,9 +54,11 @@ public class TinyMediaManagerCMD {
   private static final Logger     LOGGER          = LoggerFactory.getLogger(TinyMediaManagerCMD.class);
   private static boolean          updateMovies    = false;
   private static boolean          updateTv        = false;
+  private static boolean          scrapeAll       = false;
   private static boolean          scrapeNew       = false;
   private static boolean          scrapeUnscraped = false;
-  private static boolean          renameNew       = false;
+  private static boolean          rename          = false;
+  private static boolean          dryRun          = false;
   private static boolean          checkFiles      = false;
 
   // datasource IDs
@@ -92,14 +94,25 @@ public class TinyMediaManagerCMD {
       else if (cmd.equalsIgnoreCase("-scrapeNew")) {
         scrapeNew = true;
       }
+      else if (cmd.equalsIgnoreCase("-scrapeAll")) {
+        scrapeAll = true;
+      }
       else if (cmd.equalsIgnoreCase("-scrapeUnscraped")) {
         scrapeUnscraped = true;
+      }
+      else if (cmd.equalsIgnoreCase("-dryRun")) {
+        dryRun = true;
+        if (args.length == 1) {
+          // haahaa - we specified dryRun as only argument
+          printSyntax();
+          System.exit(0);
+        }
       }
       else if (cmd.equalsIgnoreCase("-checkFiles")) {
         checkFiles = true;
       }
-      else if (cmd.equalsIgnoreCase("-renameNew")) {
-        renameNew = true;
+      else if (cmd.equalsIgnoreCase("-rename") || cmd.equalsIgnoreCase("-renameNew")) { // "new" deprecated
+        rename = true;
       }
       else if (cmd.toLowerCase().contains("help")) { // -help, --help, help ...
         printSyntax();
@@ -123,22 +136,35 @@ public class TinyMediaManagerCMD {
         "=== tinyMediaManager (c) 2012-2016 Manuel Laggner ===\n" +
         "=====================================================\n" +
         "\n" +
-        "    SYNTAX Windows: tinyMediaManagerCMD.exe <parameters>\n" +
-        "           Linux:   ./tinyMediaManagerCMD.sh <parameters>\n" +
+        "SYNTAX:    Windows:   tinyMediaManagerCMD.exe <parameters>\n" +
+        "           Linux:   ./tinyMediaManagerCMD.sh  <parameters>\n" +
+        "\n" +
         "\n" +
         "PARAMETERS:\n" +
         "\n" +
-        "    -updateMovies        update all movie datasources and add new movies/files to DB\n" +
+        "    UPDATE: Will scan your folders, and adds all found items to database\n" +
+        "            Keeps an internal list of 'new' items (for this run only!)\n" +
+        "\n" +
+        "    -updateMovies        update all movie datasources\n" +
         "    -updateMoviesX       replace X with 1-9 - just updates a single movie datasource; ordering like GUI\n" +
-        "    -updateTv            update all TvShow datasources and add new TvShows/episodes to DB\n" +
+        "    -updateTv            update all TvShow\n" +
         "    -updateTvX           replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI\n" +
         "    -update              update all (short for '-updateMovies -updateTv')\n" +
         "\n" +
-        "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
-        "    -scrapeUnscraped     auto-scrape (force best match) all movies, which have not yet been scraped (not for TV/episodes!)\n" +
-        "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
+        "    SCRAPE: auto-scrapes (force best match) your specified items:\n" +
+        "    -scrapeNew           only NEW FOUND movies/TvShows/episodes from former update\n" +
+        "    -scrapeUnscraped     all movies/TvShows/episodes, which have not yet been scraped\n" +
+        "    -scrapeAll           ALL movies/TvShows/episodes, whether they have already been scraped or not\n" +
+        "\n" +
+        "    -rename              rename & cleanup all the movies/TvShows/episodes from former scrape command\n" +
         "\n" +
         "    -checkFiles          does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
+        "\n" +
+        "\n" +
+        "EXAMPLES:\n" +
+        "\n" +
+        "    tinyMediaManagerCMD.exe -updateMovies -updateTv3 -scrapeNew -rename\n" +
+        "    tinyMediaManagerCMD.exe -scrapeUnscraped -rename\n" +
         "\n");
     // @formatter:on
   }
@@ -151,7 +177,7 @@ public class TinyMediaManagerCMD {
       TmmTask task = null;
       boolean updateAvailable = false;
 
-      if (scrapeNew || scrapeUnscraped) {
+      if (scrapeNew || scrapeUnscraped || scrapeAll) {
         // only do an update check when we are scraping online
         // no need for a "forced" check for just updating the datasource
         Utils.trackEvent("cmd");
@@ -178,6 +204,10 @@ public class TinyMediaManagerCMD {
       // ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ██║███████╗███████║
       // ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚═╝╚══════╝╚══════╝
       // @formatter:on
+
+      // *****************
+      // UPDATE
+      // *****************
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
         if (updateMovieDs.isEmpty()) {
@@ -193,56 +223,72 @@ public class TinyMediaManagerCMD {
             }
           }
         }
-        List<Movie> newMovies = MovieList.getInstance().getNewMovies();
+        LOGGER.info("Found " + MovieList.getInstance().getNewMovies().size() + " new movies");
+      }
 
-        if (scrapeNew) {
-          LOGGER.info("Commandline - scraping new movies...");
-          if (newMovies.size() > 0) {
-            MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
-            options.loadDefaults();
-            task = new MovieScrapeTask(newMovies, true, options);
-            task.run(); // blocking
-
-            // wait for other tmm threads (artwork download et all)
-            while (TmmTaskManager.getInstance().poolRunning()) {
-              Thread.sleep(2000);
-            }
-          }
-          else {
-            LOGGER.info("No new movies found to scrape - skipping");
-          }
-        }
-
-        if (renameNew) {
-          LOGGER.info("Commandline - rename & cleanup new movies...");
-          if (newMovies.size() > 0) {
-            task = new MovieRenameTask(newMovies);
-            task.run(); // blocking
-          }
+      // *****************
+      // SCRAPE
+      // *****************
+      List<Movie> moviesToScrape = new ArrayList<>();
+      if (scrapeAll) {
+        LOGGER.info("Commandline - scraping ALL movies...");
+        if (MovieList.getInstance().getMovieCount() > 0) {
+          moviesToScrape = MovieList.getInstance().getMovies();
         }
       }
-      if (scrapeUnscraped) {
-        LOGGER.info("Commandline - scraping all unscraped movies...");
-        List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
-        if (unscrapedMovies.size() > 0) {
-          MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
-          options.loadDefaults();
-          task = new MovieScrapeTask(unscrapedMovies, true, options);
-          task.run(); // blocking
+      else {
+        HashSet<Movie> scrape = new HashSet<Movie>(); // no dupes
+        if (scrapeNew) {
+          LOGGER.info("Commandline - scraping new movies...");
+          List<Movie> newMovies = MovieList.getInstance().getNewMovies();
+          if (newMovies.size() > 0) {
+            scrape.addAll(newMovies);
+          }
+        }
+        if (scrapeUnscraped) {
+          LOGGER.info("Commandline - scraping all unscraped movies...");
+          List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
+          if (unscrapedMovies.size() > 0) {
+            scrape.addAll(unscrapedMovies);
+          }
+        }
+        moviesToScrape.addAll(new ArrayList<Movie>(scrape));
+      }
 
+      if (moviesToScrape.size() > 0) {
+        MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+        options.loadDefaults();
+        if (dryRun) {
+          for (Movie movie : moviesToScrape) {
+            LOGGER.info("DRYRUN: would have scraped " + movie.getTitle());
+          }
+        }
+        else {
+          task = new MovieScrapeTask(moviesToScrape, true, options);
+          task.run(); // blocking
           // wait for other tmm threads (artwork download et all)
           while (TmmTaskManager.getInstance().poolRunning()) {
             Thread.sleep(2000);
           }
         }
-        if (renameNew) {
-          LOGGER.info("Commandline - rename & cleanup new movies...");
-          if (unscrapedMovies.size() > 0) {
-            task = new MovieRenameTask(unscrapedMovies);
-            task.run(); // blocking
+      }
+
+      // *****************
+      // RENAME
+      // *****************
+      if (rename) {
+        LOGGER.info("Commandline - rename & cleanup movies...");
+        if (moviesToScrape.size() > 0) {
+          if (dryRun) {
+            for (Movie movie : moviesToScrape) {
+              LOGGER.info("DRYRUN: would have renamed " + movie.getTitle());
+            }
+          }
+          else {
+            task = new MovieRenameTask(moviesToScrape);
+            task.run(); // blocking}
           }
         }
-      }
 
       // @formatter:off
       //  ████████╗██╗   ██╗███████╗██╗  ██╗ ██████╗ ██╗    ██╗███████╗
@@ -252,101 +298,144 @@ public class TinyMediaManagerCMD {
       //     ██║    ╚████╔╝ ███████║██║  ██║╚██████╔╝╚███╔███╔╝███████║
       //     ╚═╝     ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝
       // @formatter:on
-      if (updateTv) {
-        LOGGER.info("Commandline - updating TvShows and episodes...");
-        if (updateTvDs.isEmpty()) {
-          task = new TvShowUpdateDatasourceTask2();
-          task.run(); // blocking
+
+        // *****************
+        // UPDATE
+        // *****************
+        if (updateTv) {
+          LOGGER.info("Commandline - updating TvShows and episodes...");
+          if (updateTvDs.isEmpty()) {
+            task = new TvShowUpdateDatasourceTask2();
+            task.run(); // blocking
+          }
+          else {
+            List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+            for (Integer i : updateTvDs) {
+              if (dataSources != null && dataSources.size() >= i - 1) {
+                task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
+                task.run(); // blocking
+              }
+            }
+          }
+          LOGGER.info("Commandline - found " + TvShowList.getInstance().getNewTvShows().size() + " TvShow(s) containing "
+              + TvShowList.getInstance().getNewEpisodes().size() + " new episode(s)");
+        }
+
+        // *****************
+        // prepare shows/episodes for scrape
+        // *****************
+        List<TvShow> showToScrape = new ArrayList<TvShow>();
+        List<TvShowEpisode> episodeToScrape = new ArrayList<TvShowEpisode>();
+        if (scrapeAll) {
+          LOGGER.info("Commandline - scraping ALL TvShows...");
+          if (TvShowList.getInstance().getTvShowCount() > 0) {
+            showToScrape = TvShowList.getInstance().getTvShows();
+            episodeToScrape.clear(); // scraping complete show
+          }
         }
         else {
-          List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
-          for (Integer i : updateTvDs) {
-            if (dataSources != null && dataSources.size() >= i - 1) {
-              task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
+          HashSet<TvShow> scrapeShow = new HashSet<TvShow>(); // no dupes
+          HashSet<TvShowEpisode> scrapeEpisode = new HashSet<TvShowEpisode>(); // no dupes
+
+          if (scrapeNew) {
+            List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
+            List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
+            LOGGER.info("Commandline - scraping new TvShows...");
+            if (newTv.size() > 0) {
+              scrapeShow.addAll(newTv);
+            }
+            LOGGER.info("Commandline - scraping new episodes...");
+            if (newEp.size() > 0) {
+              scrapeEpisode.addAll(newEp);
+            }
+          }
+
+          if (scrapeUnscraped) {
+            LOGGER.info("Commandline - scraping unscraped TvShows...");
+            List<TvShow> unscrapedShows = TvShowList.getInstance().getUnscrapedTvShows();
+            List<TvShowEpisode> unscrapedEpisodes = TvShowList.getInstance().getUnscrapedEpisodes();
+            if (unscrapedShows.size() > 0) {
+              scrapeShow.addAll(unscrapedShows);
+            }
+            LOGGER.info("Commandline - scraping unscraped episodes...");
+            if (unscrapedEpisodes.size() > 0) {
+              scrapeEpisode.addAll(unscrapedEpisodes);
+            }
+          }
+
+          // if we scrape already the whole show, no need to scrape dedicated episodes for it
+          HashSet<TvShowEpisode> removedEpisode = new HashSet<TvShowEpisode>(); // no dupes
+          for (TvShowEpisode ep : scrapeEpisode) {
+            if (scrapeShow.contains(ep.getTvShow())) {
+              removedEpisode.add(ep);
+            }
+          }
+          scrapeEpisode.removeAll(removedEpisode);
+          showToScrape = new ArrayList<TvShow>(scrapeShow);
+          episodeToScrape = new ArrayList<TvShowEpisode>(scrapeEpisode);
+        }
+
+        // *****************
+        // do the scrape
+        // *****************
+        TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+        options.loadDefaults();
+        if (showToScrape.size() > 0) {
+          if (dryRun) {
+            for (TvShow show : showToScrape) {
+              LOGGER.info("DRYRUN: would have scraped show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
+            }
+          }
+          else {
+            task = new TvShowScrapeTask(showToScrape, true, options);
+            task.run(); // blocking
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
+          }
+        }
+        if (episodeToScrape.size() > 0) {
+          if (dryRun) {
+            for (TvShowEpisode ep : episodeToScrape) {
+              LOGGER.info("DRYRUN: would have scraped episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+            }
+          }
+          else {
+            task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper());
+            task.run(); // blocking
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
+          }
+        }
+
+        // *****************
+        // RENAME
+        // *****************
+        if (rename) {
+          LOGGER.info("Commandline - rename & cleanup new episodes...");
+          if (episodeToScrape.size() > 0) {
+            if (dryRun) {
+              for (TvShowEpisode ep : episodeToScrape) {
+                LOGGER.info("DRYRUN: would have renamed episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+              }
+            }
+            else {
+              task = new TvShowRenameTask(null, episodeToScrape, true); // just rename new EPs AND root folder
               task.run(); // blocking
             }
           }
         }
-        List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
-        List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
-        LOGGER.info("Commandline - found " + newTv.size() + " TvShow(s) containing " + newEp.size() + " new episode(s)");
 
-        if (scrapeNew) {
-          LOGGER.info("Commandline - scraping new TvShows...");
-          if (newTv.size() > 0) {
-            TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
-            options.loadDefaults();
-            task = new TvShowScrapeTask(newTv, true, options);
-            task.run(); // blocking
-
-            // wait for other tmm threads (artwork download et all)
-            while (TmmTaskManager.getInstance().poolRunning()) {
-              Thread.sleep(2000);
-            }
-
-            for (int i = newEp.size() - 1; i >= 0; i--) {
-              // we scraped the whole show - no need to scrape dedicated episodes for it
-              TvShowEpisode ep = newEp.get(i);
-              if (newTv.contains(ep.getTvShow())) {
-                newEp.remove(i);
-              }
-            }
-          }
-          else {
-            LOGGER.info("No new TvShows found to scrape - skipping");
-          }
-
-          LOGGER.info("Commandline - scraping new episodes...");
-          if (newEp.size() > 0) {
-            TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
-            options.loadDefaults();
-            task = new TvShowEpisodeScrapeTask(newEp, options.getMetadataScraper());
-            task.run(); // blocking
-
-            // wait for other tmm threads (artwork download et all)
-            while (TmmTaskManager.getInstance().poolRunning()) {
-              Thread.sleep(2000);
-            }
-          }
-          else {
-            LOGGER.info("No new episodes found to scrape - skipping");
-          }
-        }
-
-        if (renameNew) {
-          LOGGER.info("Commandline - rename & cleanup new episodes...");
-          if (newEp.size() > 0) {
-            task = new TvShowRenameTask(null, newEp, true); // just rename new EPs AND root folder
-            task.run(); // blocking
-          }
-        }
-      }
-
-      if (checkFiles) {
-        boolean allOk = true;
-        // check db
-        LOGGER.info("Check all files if existing");
-        for (Movie m : MovieList.getInstance().getMovies()) {
-          System.out.print(".");
-          for (MediaFile mf : m.getMediaFiles()) {
-            if (!mf.exists()) {
-              System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
-              allOk = false;
-            }
-          }
-        }
-        for (TvShow s : TvShowList.getInstance().getTvShows()) {
-          System.out.print(".");
-          for (MediaFile mf : s.getMediaFiles()) { // show MFs
-            if (!mf.exists()) {
-              System.out.println();
-              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
-              allOk = false;
-            }
-          }
-          for (TvShowEpisode episode : new ArrayList<>(s.getEpisodes())) {
-            for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
+        if (checkFiles) {
+          boolean allOk = true;
+          // check db
+          LOGGER.info("Check all files if existing");
+          for (Movie m : MovieList.getInstance().getMovies()) {
+            System.out.print(".");
+            for (MediaFile mf : m.getMediaFiles()) {
               if (!mf.exists()) {
                 System.out.println();
                 LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
@@ -354,17 +443,36 @@ public class TinyMediaManagerCMD {
               }
             }
           }
+          for (TvShow s : TvShowList.getInstance().getTvShows()) {
+            System.out.print(".");
+            for (MediaFile mf : s.getMediaFiles()) { // show MFs
+              if (!mf.exists()) {
+                System.out.println();
+                LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+                allOk = false;
+              }
+            }
+            for (TvShowEpisode episode : new ArrayList<>(s.getEpisodes())) {
+              for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
+                if (!mf.exists()) {
+                  System.out.println();
+                  LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+                  allOk = false;
+                }
+              }
+            }
+          }
+          System.out.println();
+          if (allOk) {
+            LOGGER.info("no problems found - everything ok :)");
+          }
         }
-        System.out.println();
-        if (allOk) {
-          LOGGER.info("no problems found - everything ok :)");
-        }
-      }
 
-      if (updateAvailable) {
-        LOGGER.warn("=====================================================");
-        LOGGER.warn("There's a new TMM version available! Please update!");
-        LOGGER.warn("=====================================================");
+        if (updateAvailable) {
+          LOGGER.warn("=====================================================");
+          LOGGER.warn("There's a new TMM version available! Please update!");
+          LOGGER.warn("=====================================================");
+        }
       }
     }
     catch (Exception e) {

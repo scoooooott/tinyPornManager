@@ -213,14 +213,15 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
       stopWatch.stop();
       LOGGER.info("Done updating datasource :) - took " + stopWatch);
-      System.out.println("FilesFound " + filesFound.size());
-      System.out.println("moviesFound " + movieList.getMovieCount());
-      System.out.println("PreDir " + preDir);
-      System.out.println("PostDir " + postDir);
-      System.out.println("VisFile " + visFile);
-      System.out.println("PreDir2 " + preDir2);
-      System.out.println("PostDir2 " + postDir2);
-      System.out.println("VisFile2 " + visFile2);
+
+      LOGGER.debug("FilesFound " + filesFound.size());
+      LOGGER.debug("moviesFound " + movieList.getMovieCount());
+      LOGGER.debug("PreDir " + preDir);
+      LOGGER.debug("PostDir " + postDir);
+      LOGGER.debug("VisFile " + visFile);
+      LOGGER.debug("PreDir2 " + preDir2);
+      LOGGER.debug("PostDir2 " + postDir2);
+      LOGGER.debug("VisFile2 " + visFile2);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -1075,7 +1076,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir2++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
@@ -1144,6 +1145,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          || Files.exists(dir.resolve(".nomedia"))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
