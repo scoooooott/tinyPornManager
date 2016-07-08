@@ -15,13 +15,13 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.MediaFileType.NFO;
-import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
+import static org.tinymediamanager.core.MediaFileType.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,6 +54,8 @@ import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
 
 /**
  * The Class MediaFile.
@@ -727,6 +729,45 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
   }
 
+  public void getMediaInfoFromStream(InputStream is, long size) {
+    if (mediaInfo == null) {
+      mediaInfo = new MediaInfo();
+
+      try {
+        mediaInfo.option("File_IsSeekable", "0");
+        byte[] From_Buffer = new byte[64 * 1024];
+        int From_Buffer_Size; // The size of the read file buffer
+
+        // Preparing to fill MediaInfo with a buffer
+        mediaInfo.openBufferInit(size, 0);
+
+        // The parsing loop
+        do {
+          // Reading data somewhere, do what you want for this.
+          From_Buffer_Size = is.read(From_Buffer);
+
+          // Sending the buffer to MediaInfo
+          int Result = mediaInfo.openBufferContinue(From_Buffer, From_Buffer_Size);
+          if ((Result & 8) == 8) { // Status.Finalized
+            break;
+          }
+
+        } while (From_Buffer_Size > 0);
+
+        // Finalizing
+        mediaInfo.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
+        miSnapshot = mediaInfo.snapshot();
+      }
+      // sometimes also an error is thrown
+      catch (Exception | Error e) {
+        LOGGER.error("Mediainfo could not open STREAM");
+
+        // clear references
+        closeMediaInfo();
+      }
+    }
+  }
+
   /**
    * Closes the connection to the mediainfo lib.
    */
@@ -1189,6 +1230,60 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = video3DFormat;
   }
 
+  private void getMediaInfoFromISO() {
+    Iso9660FileSystem image;
+    try {
+      image = new Iso9660FileSystem(new File(getPath(), getFilename()), true);
+
+      for (Iso9660FileEntry entry : image) {
+        if (entry.getSize() <= 5000) { // small files and "." entries
+          continue;
+        }
+        MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
+        if (mf.getType() == MediaFileType.VIDEO) {
+          mf.setFilesize(entry.getSize());
+          InputStream is = image.getInputStream(entry);
+          mf.getMediaInfoFromStream(is, entry.getSize()); // create snapshot from stream
+          mf.gatherMediaInformation(); // normal gather from fake MF
+
+          // copy/accumulate from first MF
+          durationInSecs += mf.getDuration(); // accumulate
+          if (videoCodec.isEmpty()) {
+            videoCodec = mf.getVideoCodec();
+          }
+          if (exactVideoFormat.isEmpty()) {
+            exactVideoFormat = mf.getExactVideoFormat();
+          }
+          if (video3DFormat.isEmpty()) {
+            video3DFormat = mf.getVideo3DFormat();
+          }
+          if (videoHeight == 0) {
+            videoHeight = mf.getVideoHeight();
+          }
+          if (videoWidth == 0) {
+            videoWidth = mf.getVideoWidth();
+          }
+          if (overallBitRate == 0) {
+            overallBitRate = mf.getOverallBitRate();
+          }
+          if (audioStreams.size() == 0) {
+            audioStreams = mf.getAudioStreams();
+          }
+          if (subtitles.size() == 0) {
+            subtitles = mf.getSubtitles();
+          }
+        }
+      }
+      image.close();
+      setContainerFormat(getExtension());
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
   /**
    * Gathers the media information via the native mediainfo lib.<br>
    * If mediafile has already be scanned, it will be skipped.<br>
@@ -1226,9 +1321,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // file size and last modified
     try {
-      setFilesize(Files.size(file));
-      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-      filedate = attrs.lastModifiedTime().toMillis();
+      if (getFilesize() == 0) {
+        setFilesize(Files.size(file));
+        BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+        filedate = attrs.lastModifiedTime().toMillis();
+      }
     }
     catch (IOException e) {
       LOGGER.error("could not get file information (size/date): " + e.getMessage());
@@ -1253,6 +1350,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // get media info
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    if (getExtension().toLowerCase().equals("iso")) {
+      getMediaInfoFromISO();
+      return;
+    }
     getMediaInfo();
 
     if (miSnapshot == null) {
@@ -1577,9 +1678,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
-        || "disc".equals(extension)) {
+    if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
+    }
+    else if ("iso".equals(extension)) {
+      return true;
     }
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
