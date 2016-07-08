@@ -831,7 +831,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);

@@ -1076,7 +1076,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir2++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
@@ -1145,6 +1145,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          || Files.exists(dir.resolve(".nomedia"))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
