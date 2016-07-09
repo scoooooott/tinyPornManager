@@ -179,6 +179,7 @@ public class MovieToXbmcNfoConnector {
     producers = new ArrayList<>();
     ids = new HashMap<>();
     unsupportedElements = new ArrayList<>();
+    fileinfo = new Fileinfo();
   }
 
   /**
@@ -397,9 +398,6 @@ public class MovieToXbmcNfoConnector {
     }
 
     // fileinfo
-    if (xbmc.fileinfo == null) {
-      xbmc.fileinfo = new Fileinfo();
-    }
     for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
       if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
         break;
