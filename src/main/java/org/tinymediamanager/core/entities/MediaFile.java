@@ -729,12 +729,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
   }
 
+  /**
+   * Open MediaInfo from an input stream
+   * 
+   * @param is
+   * @param size
+   */
   public void getMediaInfoFromStream(InputStream is, long size) {
+    // https://mediaarea.net/nn/MediaInfo/Support/SDK/Buffers
+    // https://sourceforge.net/p/mediainfo/code/HEAD/tree/MediaInfoLib/trunk/Source/MediaInfoDLL/MediaInfoDLL.JNA.java
+    // https://sourceforge.net/p/mediainfo/code/HEAD/tree/MediaInfoLib/trunk/Source/Example/HowToUse_Dll.JNA.java
+
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
 
       try {
-        mediaInfo.option("File_IsSeekable", "0");
+        mediaInfo.option("File_IsSeekable", "0"); // SEEKABLE?
         byte[] From_Buffer = new byte[64 * 1024];
         int From_Buffer_Size; // The size of the read file buffer
 
@@ -751,6 +761,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if ((Result & 8) == 8) { // Status.Finalized
             break;
           }
+
+          // TODO: SEEKABLE!!!
+          // Testing if MediaInfo request to go elsewhere
+          // if (mediaInfo.openBufferContinueGoToGet() != -1) {
+          // long newPos = mediaInfo.openBufferContinueGoToGet();
+          // is.From.seek(newPos); // Position the file
+          // mediaInfo.openBufferInit(size, newPos); // Informing MediaInfo we have seek
+          // }
 
         } while (From_Buffer_Size > 0);
 
@@ -1233,7 +1251,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private void getMediaInfoFromISO() {
     Iso9660FileSystem image;
     try {
-      image = new Iso9660FileSystem(new File(getPath(), getFilename()), true);
+      image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
 
       for (Iso9660FileEntry entry : image) {
         if (entry.getSize() <= 5000) { // small files and "." entries
@@ -1243,6 +1261,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (mf.getType() == MediaFileType.VIDEO) {
           mf.setFilesize(entry.getSize());
           InputStream is = image.getInputStream(entry);
+
           mf.getMediaInfoFromStream(is, entry.getSize()); // create snapshot from stream
           mf.gatherMediaInformation(); // normal gather from fake MF
 
@@ -1321,7 +1340,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // file size and last modified
     try {
-      if (getFilesize() == 0) {
+      // workaround for our dummy MFs - if inside iso path is detected do not get filesize
+      if (!getFileAsPath().toString().toLowerCase().contains(".iso" + File.separator)) {
         setFilesize(Files.size(file));
         BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
         filedate = attrs.lastModifiedTime().toMillis();
@@ -1678,11 +1698,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
+    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
+        || "disc".equals(extension)) {
       return false;
-    }
-    else if ("iso".equals(extension)) {
-      return true;
     }
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
