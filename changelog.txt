@@ -1,11 +1,13 @@
 Version 2.8.2
 =======================
++ MediaInfo for ISO files - yay!
 + reworked command line scraping, please check syntax (add scrapeAll, reworked logic for TvShows)
 + added select all/deselect all buttons for metadata scrape options
 + added persian to the scraper languages
 + added telecine, R5 and stream to media sources
 + added extra language setting for subtitle scraping
 + support folder excluding in Kodi style (.nomedia file in folder to exclude)
++ added media source renamer token for TV shows
 x fixed movie renamer dropping several image/NFO files
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
@@ -14,6 +16,8 @@ x fixed updating of tags in the UI
 x rename .idx files along with with .sub files
 x improved writing/reading speed for subtitles and NFO files
 x do not overwrite external Kodi NFO streamdetails
+x overwrite existing images in the exporter
+
 
 Version 2.8.1
 =======================

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.MediaFileType.NFO;
-import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
+import static org.tinymediamanager.core.MediaFileType.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,6 +53,7 @@ import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.stephenc.javaisotools.loopfs.iso9660.ISO;
 
 /**
  * The Class MediaFile.
@@ -1189,6 +1189,42 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = video3DFormat;
   }
 
+  private void getMediaInfoFromISO() {
+    if (mediaInfo == null) {
+      mediaInfo = new MediaInfo();
+    }
+    MediaFile mf = ISO.getMediaInfoFromISO(this, mediaInfo);
+    if (mf != null) {
+      // copy temp values
+      durationInSecs = mf.getDuration();
+      videoCodec = mf.getVideoCodec();
+      exactVideoFormat = mf.getExactVideoFormat();
+      video3DFormat = mf.getVideo3DFormat();
+      videoHeight = mf.getVideoHeight();
+      videoWidth = mf.getVideoWidth();
+      overallBitRate = mf.getOverallBitRate();
+      audioStreams = mf.getAudioStreams();
+      subtitles = mf.getSubtitles();
+    }
+    setContainerFormat(getExtension());
+  }
+
+  /**
+   * DO NOT USE - only for ISO!!!
+   */
+  @Deprecated
+  public void setMediaInfo(MediaInfo mediaInfo) {
+    this.mediaInfo = mediaInfo;
+  }
+
+  /**
+   * DO NOT USE - only for ISO!!!
+   */
+  @Deprecated
+  public void setMiSnapshot(Map<StreamKind, List<Map<String, String>>> miSnapshot) {
+    this.miSnapshot = miSnapshot;
+  }
+
   /**
    * Gathers the media information via the native mediainfo lib.<br>
    * If mediafile has already be scanned, it will be skipped.<br>
@@ -1226,9 +1262,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // file size and last modified
     try {
-      setFilesize(Files.size(file));
-      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-      filedate = attrs.lastModifiedTime().toMillis();
+      // workaround for our dummy MFs - if inside iso path is detected do not get filesize
+      if (!getFileAsPath().toString().toLowerCase().contains(".iso" + File.separator)) {
+        setFilesize(Files.size(file));
+        BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+        filedate = attrs.lastModifiedTime().toMillis();
+      }
     }
     catch (IOException e) {
       LOGGER.error("could not get file information (size/date): " + e.getMessage());
@@ -1253,6 +1292,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // get media info
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    if (getExtension().toLowerCase().equals("iso")) {
+      getMediaInfoFromISO();
+      return;
+    }
     getMediaInfo();
 
     if (miSnapshot == null) {
@@ -1577,8 +1620,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
-        || "disc".equals(extension)) {
+    if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
     }
 

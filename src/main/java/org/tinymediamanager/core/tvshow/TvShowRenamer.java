@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -616,6 +617,11 @@ public class TvShowRenamer {
         break;
       case "$T":
         ret = episode.getTitle();
+        break;
+      case "$S":
+        if (episode.getMediaSource() != MediaSource.UNKNOWN) {
+          ret = episode.getMediaSource().toString();
+        }
         break;
 
       // MEDIAFILE

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

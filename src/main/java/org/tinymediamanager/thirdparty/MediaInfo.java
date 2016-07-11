@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,53 @@ public class MediaInfo implements Closeable {
     else {
       return false;
     }
+  }
+
+  /**
+   * STREAM handling
+   * 
+   * @param length
+   * @param offset
+   * @return
+   */
+  public boolean openBufferInit(long length, long offset) {
+    try {
+      if (handle == null) {
+        handle = MediaInfoLibrary.INSTANCE.New();
+      }
+    }
+    catch (LinkageError e) {
+      return false;
+    }
+    if (isLoaded()) {
+      return MediaInfoLibrary.INSTANCE.Open_Buffer_Init(handle, length, offset) > 0;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * Open a stream and collect information about it (technical information and tags) (By buffer, Continue)
+   * 
+   * @param buffer
+   *          pointer to the stream
+   * @param size
+   *          Count of bytes to read
+   * @return a bitfield bit 0: Is Accepted (format is known) bit 1: Is Filled (main data is collected) bit 2: Is Updated (some data have beed updated,
+   *         example: duration for a real time MPEG-TS stream) bit 3: Is Finalized (No more data is needed, will not use further data) bit 4-15:
+   *         Reserved bit 16-31: User defined
+   */
+  public int openBufferContinue(byte[] buffer, int size) {
+    return MediaInfoLibrary.INSTANCE.Open_Buffer_Continue(handle, buffer, size);
+  }
+
+  public long openBufferContinueGoToGet() {
+    return MediaInfoLibrary.INSTANCE.Open_Buffer_Continue_GoTo_Get(handle);
+  }
+
+  public int openBufferFinalize() {
+    return MediaInfoLibrary.INSTANCE.Open_Buffer_Finalize(handle);
   }
 
   /**
@@ -435,7 +482,14 @@ public class MediaInfo implements Closeable {
    * @author Manuel Laggner
    */
   public enum StreamKind {
-    General, Video, Audio, Text, Other, Image, Menu, @Deprecated Chapters; // replaced by 'other'
+    General,
+    Video,
+    Audio,
+    Text,
+    Other,
+    Image,
+    Menu,
+    @Deprecated Chapters; // replaced by 'other'
     ;
   }
 
@@ -487,6 +541,24 @@ public class MediaInfo implements Closeable {
      * Domain of this piece of information.
      */
     Domain;
+  }
+
+  public enum Status {
+    None(0x00),
+    Accepted(0x01),
+    Filled(0x02),
+    Updated(0x04),
+    Finalized(0x08);
+
+    private int value;
+
+    private Status(int value) {
+      this.value = value;
+    }
+
+    public int getValue(int value) {
+      return value;
+    }
   }
 
   /**
