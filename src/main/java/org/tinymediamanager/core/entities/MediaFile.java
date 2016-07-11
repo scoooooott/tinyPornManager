@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,8 +53,7 @@ import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
-import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
+import com.github.stephenc.javaisotools.loopfs.iso9660.ISO;
 
 /**
  * The Class MediaFile.
@@ -730,63 +728,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * Open MediaInfo from an input stream
-   * 
-   * @param is
-   * @param size
-   */
-  public void getMediaInfoFromStream(InputStream is, long size) {
-    // https://mediaarea.net/nn/MediaInfo/Support/SDK/Buffers
-    // https://sourceforge.net/p/mediainfo/code/HEAD/tree/MediaInfoLib/trunk/Source/MediaInfoDLL/MediaInfoDLL.JNA.java
-    // https://sourceforge.net/p/mediainfo/code/HEAD/tree/MediaInfoLib/trunk/Source/Example/HowToUse_Dll.JNA.java
-
-    if (mediaInfo == null) {
-      mediaInfo = new MediaInfo();
-
-      try {
-        mediaInfo.option("File_IsSeekable", "0"); // SEEKABLE?
-        byte[] From_Buffer = new byte[64 * 1024];
-        int From_Buffer_Size; // The size of the read file buffer
-
-        // Preparing to fill MediaInfo with a buffer
-        mediaInfo.openBufferInit(size, 0);
-
-        // The parsing loop
-        do {
-          // Reading data somewhere, do what you want for this.
-          From_Buffer_Size = is.read(From_Buffer);
-
-          // Sending the buffer to MediaInfo
-          int Result = mediaInfo.openBufferContinue(From_Buffer, From_Buffer_Size);
-          if ((Result & 8) == 8) { // Status.Finalized
-            break;
-          }
-
-          // TODO: SEEKABLE!!!
-          // Testing if MediaInfo request to go elsewhere
-          // if (mediaInfo.openBufferContinueGoToGet() != -1) {
-          // long newPos = mediaInfo.openBufferContinueGoToGet();
-          // is.From.seek(newPos); // Position the file
-          // mediaInfo.openBufferInit(size, newPos); // Informing MediaInfo we have seek
-          // }
-
-        } while (From_Buffer_Size > 0);
-
-        // Finalizing
-        mediaInfo.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
-        miSnapshot = mediaInfo.snapshot();
-      }
-      // sometimes also an error is thrown
-      catch (Exception | Error e) {
-        LOGGER.error("Mediainfo could not open STREAM");
-
-        // clear references
-        closeMediaInfo();
-      }
-    }
-  }
-
-  /**
    * Closes the connection to the mediainfo lib.
    */
   private void closeMediaInfo() {
@@ -1249,58 +1190,39 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private void getMediaInfoFromISO() {
-    Iso9660FileSystem image;
-    try {
-      image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
-
-      for (Iso9660FileEntry entry : image) {
-        if (entry.getSize() <= 5000) { // small files and "." entries
-          continue;
-        }
-        MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
-        if (mf.getType() == MediaFileType.VIDEO) {
-          mf.setFilesize(entry.getSize());
-          InputStream is = image.getInputStream(entry);
-
-          mf.getMediaInfoFromStream(is, entry.getSize()); // create snapshot from stream
-          mf.gatherMediaInformation(); // normal gather from fake MF
-
-          // copy/accumulate from first MF
-          durationInSecs += mf.getDuration(); // accumulate
-          if (videoCodec.isEmpty()) {
-            videoCodec = mf.getVideoCodec();
-          }
-          if (exactVideoFormat.isEmpty()) {
-            exactVideoFormat = mf.getExactVideoFormat();
-          }
-          if (video3DFormat.isEmpty()) {
-            video3DFormat = mf.getVideo3DFormat();
-          }
-          if (videoHeight == 0) {
-            videoHeight = mf.getVideoHeight();
-          }
-          if (videoWidth == 0) {
-            videoWidth = mf.getVideoWidth();
-          }
-          if (overallBitRate == 0) {
-            overallBitRate = mf.getOverallBitRate();
-          }
-          if (audioStreams.size() == 0) {
-            audioStreams = mf.getAudioStreams();
-          }
-          if (subtitles.size() == 0) {
-            subtitles = mf.getSubtitles();
-          }
-        }
-      }
-      image.close();
-      setContainerFormat(getExtension());
+    if (mediaInfo == null) {
+      mediaInfo = new MediaInfo();
     }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    MediaFile mf = ISO.getMediaInfoFromISO(this, mediaInfo);
+    if (mf != null) {
+      // copy temp values
+      durationInSecs = mf.getDuration();
+      videoCodec = mf.getVideoCodec();
+      exactVideoFormat = mf.getExactVideoFormat();
+      video3DFormat = mf.getVideo3DFormat();
+      videoHeight = mf.getVideoHeight();
+      videoWidth = mf.getVideoWidth();
+      overallBitRate = mf.getOverallBitRate();
+      audioStreams = mf.getAudioStreams();
+      subtitles = mf.getSubtitles();
     }
+    setContainerFormat(getExtension());
+  }
 
+  /**
+   * DO NOT USE - only for ISO!!!
+   */
+  @Deprecated
+  public void setMediaInfo(MediaInfo mediaInfo) {
+    this.mediaInfo = mediaInfo;
+  }
+
+  /**
+   * DO NOT USE - only for ISO!!!
+   */
+  @Deprecated
+  public void setMiSnapshot(Map<StreamKind, List<Map<String, String>>> miSnapshot) {
+    this.miSnapshot = miSnapshot;
   }
 
   /**
@@ -1698,8 +1620,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
-    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension)
-        || "disc".equals(extension)) {
+    if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
     }
 
