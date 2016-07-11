@@ -7,6 +7,7 @@ Version 2.8.2
 + added telecine, R5 and stream to media sources
 + added extra language setting for subtitle scraping
 + support folder excluding in Kodi style (.nomedia file in folder to exclude)
++ added media source renamer token for TV shows
 x fixed movie renamer dropping several image/NFO files
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows

@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -616,6 +617,11 @@ public class TvShowRenamer {
         break;
       case "$T":
         ret = episode.getTitle();
+        break;
+      case "$S":
+        if (episode.getMediaSource() != MediaSource.UNKNOWN) {
+          ret = episode.getMediaSource().toString();
+        }
         break;
 
       // MEDIAFILE
