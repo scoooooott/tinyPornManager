@@ -265,16 +265,16 @@ public class MovieExporter extends MediaEntityExporter {
               width = (int) parameters.get("width");
             }
             InputStream is = ImageCache.scaleImage(mf.getFileAsPath(), width);
-            Files.copy(is, imageDir.resolve(filename));
+            Files.copy(is, imageDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
           }
           else {
             filename += "." + FilenameUtils.getExtension(mf.getFilename());
-            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename));
+            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
           }
         }
         catch (Exception e) {
-          LOGGER.warn("could not copy artwork file: " + e.getMessage());
-          return null;
+          LOGGER.error("could not copy artwork file: " + e.getMessage());
+          return "";
         }
 
         return filename;
