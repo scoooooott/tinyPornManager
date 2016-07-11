@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.util.List;
 import java.util.concurrent.Callable;

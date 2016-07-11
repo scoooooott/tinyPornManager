@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.NAME;
+import static org.tinymediamanager.core.Constants.ROLE;
+import static org.tinymediamanager.core.Constants.THUMB_PATH;
+import static org.tinymediamanager.core.Constants.THUMB_URL;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
