@@ -45,6 +45,15 @@ public class TmmHttpClient {
    * @return OkHttpClient
    */
   public static OkHttpClient createHttpClient() {
+    return newBuilder().build();
+  }
+
+  /**
+   * create a new OkHttpClient.Builder along with all our settings set
+   *
+   * @return the newly created builder
+   */
+  public static OkHttpClient.Builder newBuilder() {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
     // pool
@@ -60,7 +69,7 @@ public class TmmHttpClient {
       setProxy(builder);
     }
 
-    return builder.build();
+    return builder;
   }
 
   /**
