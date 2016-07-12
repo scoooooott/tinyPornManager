@@ -1203,6 +1203,10 @@ public class MovieRenamer {
    */
   private static boolean moveFile(Path oldFilename, Path newFilename) {
     try {
+      // create parent if needed
+      if (Files.notExists(newFilename.getParent())) {
+        Files.createDirectory(newFilename.getParent());
+      }
       boolean ok = Utils.moveFileSafe(oldFilename, newFilename);
       if (ok) {
         return true;
@@ -1238,6 +1242,10 @@ public class MovieRenamer {
         return moveFile(oldFilename, newFilename);
       }
       try {
+        // create parent if needed
+        if (Files.notExists(newFilename.getParent())) {
+          Files.createDirectory(newFilename.getParent());
+        }
         Utils.copyFileSafe(oldFilename, newFilename, true);
         return true;
       }

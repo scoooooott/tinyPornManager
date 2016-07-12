@@ -97,6 +97,10 @@ public class TvShowRenamer {
       if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
+          // create parent if needed
+          if (Files.notExists(destDir.getParent())) {
+            Files.createDirectory(destDir.getParent());
+          }
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
           if (ok) {
             show.updateMediaFilePath(srcDir, destDir); // TvShow MFs
@@ -249,6 +253,10 @@ public class TvShowRenamer {
           if (!epFolder.toAbsolutePath().toString().equals(newEpFolder.toAbsolutePath().toString())) {
             boolean ok = false;
             try {
+              // create parent if needed
+              if (Files.notExists(newEpFolder.getParent())) {
+                Files.createDirectory(newEpFolder.getParent());
+              }
               ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
             }
             catch (Exception e) {
@@ -304,6 +312,10 @@ public class TvShowRenamer {
             Path oldMfFile = mf.getFileAsPath();
             boolean ok = false;
             try {
+              // create parent if needed
+              if (Files.notExists(newFile.getParent())) {
+                Files.createDirectory(newFile.getParent());
+              }
               ok = Utils.moveFileSafe(oldMfFile, newFile);
             }
             catch (Exception e) {
