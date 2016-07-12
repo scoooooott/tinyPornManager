@@ -324,6 +324,17 @@ public class TvShowRenamer {
                   new Message(MessageLevel.ERROR, oldMfFile, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
             }
             if (ok) {
+              if (mf.getFilename().endsWith(".sub")) {
+                // when having a .sub, also rename .idx (don't care if error)
+                try {
+                  Path oldidx = mf.getFileAsPath().resolveSibling(mf.getFilename().toString().replaceFirst("sub$", "idx"));
+                  Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
+                  Utils.moveFileSafe(oldidx, newidx);
+                }
+                catch (Exception e) {
+                  // no idx found or error - ignore
+                }
+              }
               newMF.setPath(seasonDir.toString());
               newMF.setFilename(filename);
               // iterate over all EPs and delete old / set new MF
