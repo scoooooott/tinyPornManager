@@ -37,13 +37,13 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import com.jakewharton.retrofit.Ok3Client;
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Configuration;
-import com.uwetrottmann.tmdb.entities.Genre;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.TmdbInterceptor;
+import com.uwetrottmann.tmdb2.entities.Configuration;
+import com.uwetrottmann.tmdb2.entities.Genre;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import retrofit.RestAdapter;
+import okhttp3.OkHttpClient;
 
 /**
  * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
@@ -72,15 +72,18 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   private static synchronized void initAPI() throws Exception {
     // create a new instance of the tmdb api
     if (api == null) {
-      api = new Tmdb() {
+      api = new Tmdb(ApiKey.decryptApikey("8XAdwmcn1zEWLdbc30Kco2ZvOIKyxNxGeiL5kpQlEbXMHwhWBCWKzbNZQ/LINTKb")) {
         // tell the tmdb api to use our OkHttp client
+
         @Override
-        protected RestAdapter.Builder newRestAdapterBuilder() {
-          return new RestAdapter.Builder().setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
+        protected synchronized OkHttpClient okHttpClient() {
+          OkHttpClient.Builder builder = TmmHttpClient.newBuilder();
+          builder.addInterceptor(new TmdbInterceptor(this));
+          return builder.build();
         }
       };
-      api.setApiKey(ApiKey.decryptApikey("8XAdwmcn1zEWLdbc30Kco2ZvOIKyxNxGeiL5kpQlEbXMHwhWBCWKzbNZQ/LINTKb"));
-      configuration = api.configurationService().configuration();
+
+      configuration = api.configurationService().configuration().execute().body();
       if (configuration == null) {
         throw new Exception("Invalid TMDB API key");
       }

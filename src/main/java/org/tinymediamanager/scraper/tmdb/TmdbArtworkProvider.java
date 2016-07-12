@@ -29,9 +29,9 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Image;
-import com.uwetrottmann.tmdb.entities.Images;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Image;
+import com.uwetrottmann.tmdb2.entities.Images;
 
 /**
  * The class TmdbArtworkProvider. For managing all artwork provided tasks with tmdb
@@ -77,15 +77,15 @@ class TmdbArtworkProvider {
       // posters and fanart
       switch (options.getType()) {
         case MOVIE:
-          images = api.moviesService().images(tmdbId, null);
+          images = api.moviesService().images(tmdbId, null).execute().body();
           break;
 
         case MOVIE_SET:
-          images = api.collectionService().images(tmdbId, null);
+          images = api.collectionService().images(tmdbId, null).execute().body();
           break;
 
         case TV_SHOW:
-          images = api.tvService().images(tmdbId, null);
+          images = api.tvService().images(tmdbId, null).execute().body();
           break;
 
         case TV_EPISODE:
@@ -96,7 +96,7 @@ class TmdbArtworkProvider {
             seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
             episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
             if (seasonNr > -1 && episodeNr > -1) {
-              images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr);
+              images = api.tvEpisodesService().images(tmdbId, seasonNr, episodeNr).execute().body();
             }
           }
           catch (Exception e) {

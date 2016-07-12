@@ -30,10 +30,10 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Collection;
-import com.uwetrottmann.tmdb.entities.CollectionResultsPage;
-import com.uwetrottmann.tmdb.entities.Part;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Collection;
+import com.uwetrottmann.tmdb2.entities.CollectionResultsPage;
+import com.uwetrottmann.tmdb2.entities.Part;
 
 /**
  * The class TmdbMovieSetMetadataProvider is used to provide metadata for moviesets from tmdb
@@ -74,7 +74,7 @@ class TmdbMovieSetMetadataProvider {
     CollectionResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().collection(searchString, 1, query.getLanguage().getLanguage());
+      resultsPage = api.searchService().collection(searchString, 1, query.getLanguage().getLanguage()).execute().body();
     }
 
     if (resultsPage == null) {
@@ -131,12 +131,12 @@ class TmdbMovieSetMetadataProvider {
     Collection collection = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      collection = api.collectionService().summary(tmdbId, language, null);
+      collection = api.collectionService().summary(tmdbId, language, null).execute().body();
 
       // if collection title/overview is not availbale, rescrape in en
       if (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) {
         TmdbConnectionCounter.trackConnections();
-        Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null);
+        Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null).execute().body();
 
         if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInEn.name)) {
           collection.name = collectionInEn.name;

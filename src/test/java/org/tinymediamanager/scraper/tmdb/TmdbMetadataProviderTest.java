@@ -2,9 +2,7 @@ package org.tinymediamanager.scraper.tmdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -135,12 +133,12 @@ public class TmdbMetadataProviderTest {
       assertEquals("Twelve Monkeys", md.getTitle());
       assertEquals(1995, md.getYear());
       assertEquals(
-          "In the year 2035, convict James Cole (Bruce Willis) reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly (Madeleine Stowe), and patient Jeffrey Goines (Brad Pitt), the son of a famous virus expert, who may hold the key to the mysterious rogue group, the Army of the 12 Monkeys, thought to be responsible for unleashing the killer disease.",
+          "In the year 2035, convict James Cole reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly, and patient Jeffrey Goines, the son of a famous virus expert, who may hold the key to the mysterious rogue group, the Army of the 12 Monkeys, thought to be responsible for unleashing the killer disease.",
           md.getPlot());
       assertEquals("The future is history", md.getTagline());
 
       assertNotNull(md.getCastMembers(CastType.ACTOR));
-      assertEquals(14, md.getCastMembers(CastType.ACTOR).size());
+      assertEquals(65, md.getCastMembers(CastType.ACTOR).size());
     }
     catch (Exception e) {
       fail(e.getMessage());
@@ -380,13 +378,13 @@ public class TmdbMetadataProviderTest {
 
       assertEquals("Psych", md.getTitle());
       assertEquals(
-          "Psych is an American detective comedy-drama television series created by Steve Franks and broadcast on USA Network. The series stars James Roday as Shawn Spencer, a young crime consultant for the Santa Barbara Police Department whose \"heightened observational skills\" and impressive detective instincts allow him to convince people that he solves cases with psychic abilities. The program also stars Dulé Hill as Shawn's best friend and reluctant partner Burton \"Gus\" Guster, as well as Corbin Bernsen as Shawn's father, Henry, a former officer of the Santa Barbara Police Department.",
+          "Thanks to his police officer father's efforts, Shawn Spencer spent his childhood developing a keen eye for detail (and a lasting dislike of his dad). Years later, Shawn's frequent tips to the police lead to him being falsely accused of a crime he solved. Now, Shawn has no choice but to use his abilities to perpetuate his cover story: psychic crime-solving powers, all the while dragging his best friend, his dad, and the police along for the ride.",
           md.getPlot());
       assertEquals(2006, md.getYear());
       assertNotEquals(0d, md.getRating());
       assertNotEquals(0, (int) md.getVoteCount());
       assertEquals("Ended", md.getStatus());
-      assertThat(md.getProductionCompanies()).isEmpty();
+      assertThat(md.getProductionCompanies()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();

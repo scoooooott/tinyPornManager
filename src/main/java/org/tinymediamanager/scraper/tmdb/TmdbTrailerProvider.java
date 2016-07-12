@@ -25,9 +25,9 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.Videos;
-import com.uwetrottmann.tmdb.entities.Videos.Video;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.Videos;
+import com.uwetrottmann.tmdb2.entities.Videos.Video;
 
 /**
  * The class TmdbTrailerProvider. For managing all trailer provided tasks with tmdb
@@ -72,9 +72,9 @@ class TmdbTrailerProvider {
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name());
+      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name()).execute().body();
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "");
+      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "").execute().body();
 
       List<Video> videos = new ArrayList<>();
       videos.addAll(tmdbVideos.results);

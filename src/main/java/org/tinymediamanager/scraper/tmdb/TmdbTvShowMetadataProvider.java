@@ -34,16 +34,16 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.AppendToResponse;
-import com.uwetrottmann.tmdb.entities.CastMember;
-import com.uwetrottmann.tmdb.entities.ProductionCompany;
-import com.uwetrottmann.tmdb.entities.TvEpisode;
-import com.uwetrottmann.tmdb.entities.TvResultsPage;
-import com.uwetrottmann.tmdb.entities.TvSeason;
-import com.uwetrottmann.tmdb.entities.TvShow;
-import com.uwetrottmann.tmdb.entities.TvShowComplete;
-import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.AppendToResponse;
+import com.uwetrottmann.tmdb2.entities.CastMember;
+import com.uwetrottmann.tmdb2.entities.ProductionCompany;
+import com.uwetrottmann.tmdb2.entities.TvEpisode;
+import com.uwetrottmann.tmdb2.entities.TvResultsPage;
+import com.uwetrottmann.tmdb2.entities.TvSeason;
+import com.uwetrottmann.tmdb2.entities.TvShow;
+import com.uwetrottmann.tmdb2.entities.TvShowComplete;
+import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 
 class TmdbTvShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmdbTvShowMetadataProvider.class);
@@ -92,7 +92,7 @@ class TmdbTvShowMetadataProvider {
     TvResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().tv(searchString, 1, language, null, "phrase");
+      resultsPage = api.searchService().tv(searchString, 1, language, null, "phrase").execute().body();
     }
 
     if (resultsPage == null || resultsPage.results == null) {
@@ -159,11 +159,11 @@ class TmdbTvShowMetadataProvider {
     // fetch the show summary first and every season afterwards..
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      TvShowComplete complete = api.tvService().tv(tmdbId, language, null);
+      TvShowComplete complete = api.tvService().tv(tmdbId, language, null).execute().body();
       if (complete != null) {
         for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
           TmdbConnectionCounter.trackConnections();
-          TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, season.season_number, language, null);
+          TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, season.season_number, language, null).execute().body();
           if (fullSeason != null) {
             for (TvEpisode episode : ListUtils.nullSafe(fullSeason.episodes)) {
               MediaEpisode ep = new MediaEpisode(TmdbMetadataProvider.providerInfo.getId());
@@ -231,7 +231,8 @@ class TmdbTvShowMetadataProvider {
     TvShowComplete complete = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      complete = api.tvService().tv(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS));
+      complete = api.tvService().tv(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS)).execute()
+          .body();
     }
 
     if (complete == null) {
@@ -334,7 +335,7 @@ class TmdbTvShowMetadataProvider {
     synchronized (api) {
       // get episode via season listing -> improves caching performance
       TmdbConnectionCounter.trackConnections();
-      TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null);
+      TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null).execute().body();
       if (fullSeason != null) {
         for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
           if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {

@@ -36,23 +36,24 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
-import com.uwetrottmann.tmdb.Tmdb;
-import com.uwetrottmann.tmdb.entities.AppendToResponse;
-import com.uwetrottmann.tmdb.entities.CastMember;
-import com.uwetrottmann.tmdb.entities.CountryRelease;
-import com.uwetrottmann.tmdb.entities.CrewMember;
-import com.uwetrottmann.tmdb.entities.FindResults;
-import com.uwetrottmann.tmdb.entities.Genre;
-import com.uwetrottmann.tmdb.entities.Keyword;
-import com.uwetrottmann.tmdb.entities.Movie;
-import com.uwetrottmann.tmdb.entities.MovieKeywords;
-import com.uwetrottmann.tmdb.entities.MovieResultsPage;
-import com.uwetrottmann.tmdb.entities.ProductionCompany;
-import com.uwetrottmann.tmdb.entities.ProductionCountry;
-import com.uwetrottmann.tmdb.entities.SpokenLanguage;
-import com.uwetrottmann.tmdb.entities.Videos;
-import com.uwetrottmann.tmdb.enumerations.AppendToResponseItem;
-import com.uwetrottmann.tmdb.enumerations.ExternalSource;
+import com.uwetrottmann.tmdb2.Tmdb;
+import com.uwetrottmann.tmdb2.entities.AppendToResponse;
+import com.uwetrottmann.tmdb2.entities.CastMember;
+import com.uwetrottmann.tmdb2.entities.CrewMember;
+import com.uwetrottmann.tmdb2.entities.FindResults;
+import com.uwetrottmann.tmdb2.entities.Genre;
+import com.uwetrottmann.tmdb2.entities.Keyword;
+import com.uwetrottmann.tmdb2.entities.Movie;
+import com.uwetrottmann.tmdb2.entities.MovieKeywords;
+import com.uwetrottmann.tmdb2.entities.MovieResultsPage;
+import com.uwetrottmann.tmdb2.entities.ProductionCompany;
+import com.uwetrottmann.tmdb2.entities.ProductionCountry;
+import com.uwetrottmann.tmdb2.entities.ReleaseDate;
+import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
+import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
+import com.uwetrottmann.tmdb2.entities.Videos;
+import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
+import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
 /**
  * The class TmdbMovieMetadataProvider is used to provide metadata for movies from tmdb
@@ -116,7 +117,7 @@ class TmdbMovieMetadataProvider {
         tmdbId = query.getTmdbId();
         try {
           // /movie/{id}
-          Movie movie = api.moviesService().summary(tmdbId, language, null);
+          Movie movie = api.moviesService().summary(tmdbId, language, null).execute().body();
           MediaSearchResult result = morphMovieToSearchResult(movie);
           resultList.add(result);
         }
@@ -132,7 +133,7 @@ class TmdbMovieMetadataProvider {
         imdbId = query.getImdbId();
         try {
           // /find/{id}
-          FindResults findResults = api.findService().find(imdbId, null, language);
+          FindResults findResults = api.findService().find(imdbId, null, language).execute().body();
           if (findResults != null && findResults.movie_results != null) {
             for (Movie movie : findResults.movie_results) {
               resultList.add(morphMovieToSearchResult(movie));
@@ -152,7 +153,7 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year, "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
@@ -176,7 +177,7 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year, "phrase");
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
@@ -268,7 +269,7 @@ class TmdbMovieMetadataProvider {
             // and now get the full data
             TmdbConnectionCounter.trackConnections();
             movie = api.moviesService().summary(tempTmdbId, options.getLanguage().name(),
-                new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASES));
+                new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
           }
           // movie = tmdb.getMovieInfoImdb(imdbId,
           // options.getLanguage().name());
@@ -280,8 +281,9 @@ class TmdbMovieMetadataProvider {
       if (movie == null && tmdbId != 0) {
         try {
           TmdbConnectionCounter.trackConnections();
-          movie = api.moviesService().summary(tmdbId, options.getLanguage().name(),
-              new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASES));
+          movie = api.moviesService()
+              .summary(tmdbId, options.getLanguage().name(), new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES))
+              .execute().body();
           // movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
         }
         catch (Exception e) {
@@ -300,7 +302,7 @@ class TmdbMovieMetadataProvider {
     // see http://forum.kodi.tv/showthread.php?tid=254004
     try {
       TmdbConnectionCounter.trackConnections();
-      MovieKeywords mk = api.moviesService().keywords(tmdbId);
+      MovieKeywords mk = api.moviesService().keywords(tmdbId).execute().body();
       for (Keyword kw : mk.keywords) {
         switch (kw.name) {
           case "aftercreditsstinger":
@@ -359,7 +361,7 @@ class TmdbMovieMetadataProvider {
    */
   int getTmdbIdFromImdbId(String imdbId) throws Exception {
     TmdbConnectionCounter.trackConnections();
-    FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null);
+    FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
     if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
       // and now get the full data
       return findResults.movie_results.get(0).id;
@@ -402,7 +404,7 @@ class TmdbMovieMetadataProvider {
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name());
+      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name()).execute().body();
       if (tmdbVideos != null) {
         for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
           if ("Trailer".equals(video.type)) {
@@ -412,7 +414,7 @@ class TmdbMovieMetadataProvider {
       }
 
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, null);
+      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, null).execute().body();
       if (tmdbVideosWoLang != null) {
         for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
           if ("Trailer".equals(video.type)) {
@@ -522,17 +524,22 @@ class TmdbMovieMetadataProvider {
     md.setReleaseDate(releaseDate);
 
     // releases & certification
-    if (movie.releases != null) {
-      for (CountryRelease info : ListUtils.nullSafe(movie.releases.countries)) {
-        // do not use any empty certifications
-        if (StringUtils.isEmpty(info.certification)) {
-          continue;
-        }
+    if (movie.release_dates != null) {
+      for (ReleaseDatesResult countries : ListUtils.nullSafe(movie.release_dates.results)) {
 
         // only use the certification of the desired country (if any country has
         // been chosen)
-        if (options.getCountry() == null || options.getCountry().getAlpha2().compareToIgnoreCase(info.iso_3166_1) == 0) {
-          md.addCertification(Certification.getCertification(info.iso_3166_1, info.certification));
+        if (options.getCountry() == null || options.getCountry().getAlpha2().compareToIgnoreCase(countries.iso_3166_1) == 0) {
+          // Any release from the desired country will do
+          for (ReleaseDate countryReleaseDate : ListUtils.nullSafe(countries.release_dates)) {
+            // do not use any empty certifications
+            if (StringUtils.isEmpty(countryReleaseDate.certification)) {
+              continue;
+            }
+
+            md.addCertification(Certification.getCertification(countries.iso_3166_1, countryReleaseDate.certification));
+
+          }
         }
       }
     }
