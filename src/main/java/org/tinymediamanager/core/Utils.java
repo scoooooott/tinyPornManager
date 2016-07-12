@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -709,9 +709,11 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
+            LOGGER.warn("rename problem: " + e.getMessage());
           }
         }
         catch (IOException e) {
+          LOGGER.warn("rename problem: " + e.getMessage());
         }
         if (rename) {
           break; // ok it worked, step out
