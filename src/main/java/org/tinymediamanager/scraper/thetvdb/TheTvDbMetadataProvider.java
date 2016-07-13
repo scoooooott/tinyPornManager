@@ -43,7 +43,6 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
@@ -177,7 +176,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     if (results.isEmpty() && searchString.matches("^[0-9]+$")) {
       MediaScrapeOptions scrapeOptions = new MediaScrapeOptions(MediaType.TV_SHOW);
       scrapeOptions.setId(providerInfo.getId(), searchString);
-      scrapeOptions.setLanguage(MediaLanguages.valueOf(language));
+      scrapeOptions.setLanguage(options.getLanguage());
       scrapeOptions.setCountry(CountryCode.valueOf(country));
 
       MediaMetadata md = getTvShowMetadata(scrapeOptions);
@@ -248,7 +247,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     Series show = null;
     synchronized (tvdb) {
-      show = tvdb.getSeries(id, options.getLanguage().name());
+      show = tvdb.getSeries(id, options.getLanguage().getLanguage());
     }
 
     if (show == null) {
@@ -272,7 +271,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
     ma.setPreviewUrl(show.getPoster());
     ma.setDefaultUrl(show.getPoster());
-    ma.setLanguage(options.getLanguage().name());
+    ma.setLanguage(options.getLanguage().getLanguage());
     md.addMediaArt(ma);
 
     try {
@@ -379,7 +378,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for
       // scraping multiple episodes of one tv show
-      episodes.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
+      episodes.addAll(tvdb.getAllEpisodes(id, options.getLanguage().getLanguage()));
     }
 
     Episode episode = null;
@@ -542,7 +541,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // sort bannerlist
-    Collections.sort(bannerList, new BannerComparator(options.getLanguage().name()));
+    Collections.sort(bannerList, new BannerComparator(options.getLanguage().getLanguage()));
 
     // build output
     for (Banner banner : bannerList) {
@@ -633,7 +632,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for
       // scraping multiple episodes of one tv show
-      eps.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
+      eps.addAll(tvdb.getAllEpisodes(id, options.getLanguage().getLanguage()));
     }
 
     for (Episode ep : eps) {
