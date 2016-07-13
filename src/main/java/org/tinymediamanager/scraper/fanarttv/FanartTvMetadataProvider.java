@@ -26,7 +26,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
@@ -115,7 +114,10 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   // http://webservice.fanart.tv/v3/movies/559
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
-    MediaLanguages language = options.getLanguage();
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
 
     List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
 
@@ -149,7 +151,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   // http://webservice.fanart.tv/v3/tv/79349
   private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
-    MediaLanguages language = options.getLanguage();
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
+
     List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
 
     Images images = null;
