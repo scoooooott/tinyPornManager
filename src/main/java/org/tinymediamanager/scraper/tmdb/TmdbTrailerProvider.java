@@ -67,12 +67,17 @@ class TmdbTrailerProvider {
       return trailers;
     }
 
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
+
     LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
 
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name()).execute().body();
+      Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
       TmdbConnectionCounter.trackConnections();
       Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "").execute().body();
 

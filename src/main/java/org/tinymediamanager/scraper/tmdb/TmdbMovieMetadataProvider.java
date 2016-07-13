@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -104,6 +104,9 @@ class TmdbMovieMetadataProvider {
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     String language = query.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(query.getLanguage().getCountry())) {
+      language += "-" + query.getLanguage().getCountry();
+    }
     String imdbId = "";
     int tmdbId = 0;
 
@@ -257,6 +260,11 @@ class TmdbMovieMetadataProvider {
       return md;
     }
 
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
+
     // scrape
     LOGGER.debug("TMDB: getMetadata: tmdbId = " + tmdbId + "; imdbId = " + imdbId);
     Movie movie = null;
@@ -268,8 +276,9 @@ class TmdbMovieMetadataProvider {
           if (tempTmdbId > 0) {
             // and now get the full data
             TmdbConnectionCounter.trackConnections();
-            movie = api.moviesService().summary(tempTmdbId, options.getLanguage().name(),
-                new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
+            movie = api.moviesService()
+                .summary(tempTmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute()
+                .body();
           }
           // movie = tmdb.getMovieInfoImdb(imdbId,
           // options.getLanguage().name());
@@ -282,8 +291,7 @@ class TmdbMovieMetadataProvider {
         try {
           TmdbConnectionCounter.trackConnections();
           movie = api.moviesService()
-              .summary(tmdbId, options.getLanguage().name(), new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES))
-              .execute().body();
+              .summary(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.RELEASE_DATES)).execute().body();
           // movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
         }
         catch (Exception e) {
@@ -320,11 +328,11 @@ class TmdbMovieMetadataProvider {
     }
 
     // check if there was translatable content
-    if (StringUtils.isBlank(movie.overview) && options.getLanguage() != MediaLanguages.en) {
+    if (StringUtils.isBlank(movie.overview) && !"en".equalsIgnoreCase(options.getLanguage().getLanguage())) {
       // plot was empty - scrape in english
-      MediaLanguages oldLang = options.getLanguage();
+      Locale oldLang = options.getLanguage();
       try {
-        options.setLanguage(MediaLanguages.en);
+        options.setLanguage(new Locale("en"));
         MediaMetadata englishMd = getMetadata(options);
 
         if (StringUtils.isBlank(movie.overview) && !StringUtils.isBlank(englishMd.getPlot())) {
@@ -397,6 +405,11 @@ class TmdbMovieMetadataProvider {
       return trailers;
     }
 
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
+
     LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
 
     List<Videos.Video> tmdbTrailers = new ArrayList<Videos.Video>();
@@ -404,7 +417,7 @@ class TmdbMovieMetadataProvider {
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, options.getLanguage().name()).execute().body();
+      Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
       if (tmdbVideos != null) {
         for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
           if ("Trailer".equals(video.type)) {
@@ -493,7 +506,7 @@ class TmdbMovieMetadataProvider {
     MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
     ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + movie.poster_path);
     ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
-    ma.setLanguage(options.getLanguage().name());
+    ma.setLanguage(options.getLanguage().getLanguage());
     ma.setTmdbId(movie.id);
     md.addMediaArt(ma);
 

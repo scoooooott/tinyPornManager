@@ -71,10 +71,15 @@ class TmdbMovieSetMetadataProvider {
       return movieSetsFound;
     }
 
+    String language = query.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(query.getLanguage().getCountry())) {
+      language += "-" + query.getLanguage().getCountry();
+    }
+
     CollectionResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().collection(searchString, 1, query.getLanguage().getLanguage()).execute().body();
+      resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
     }
 
     if (resultsPage == null) {
@@ -126,7 +131,10 @@ class TmdbMovieSetMetadataProvider {
       return md;
     }
 
-    String language = options.getLanguage().name();
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
 
     Collection collection = null;
     synchronized (api) {
@@ -156,7 +164,7 @@ class TmdbMovieSetMetadataProvider {
     MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
     ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + collection.poster_path);
     ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
-    ma.setLanguage(options.getLanguage().name());
+    ma.setLanguage(options.getLanguage().getLanguage());
     ma.setTmdbId(tmdbId);
     md.addMediaArt(ma);
 
@@ -164,7 +172,7 @@ class TmdbMovieSetMetadataProvider {
     ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
     ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + collection.backdrop_path);
     ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
-    ma.setLanguage(options.getLanguage().name());
+    ma.setLanguage(options.getLanguage().getLanguage());
     ma.setTmdbId(tmdbId);
     md.addMediaArt(ma);
 
@@ -178,7 +186,7 @@ class TmdbMovieSetMetadataProvider {
       ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + part.poster_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
-      ma.setLanguage(options.getLanguage().name());
+      ma.setLanguage(options.getLanguage().getLanguage());
       ma.setTmdbId(part.id);
       mdSubItem.addMediaArt(ma);
 
@@ -186,7 +194,7 @@ class TmdbMovieSetMetadataProvider {
       ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + part.backdrop_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
-      ma.setLanguage(options.getLanguage().name());
+      ma.setLanguage(options.getLanguage().getLanguage());
       ma.setTmdbId(part.id);
       mdSubItem.addMediaArt(ma);
 

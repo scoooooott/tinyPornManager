@@ -132,10 +132,10 @@ class TmdbArtworkProvider {
 
     // first sort the artwork
     if (tmdbArtwork.posters != null) {
-      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage().name()));
+      Collections.sort(tmdbArtwork.posters, new ImageComparator(options.getLanguage().getLanguage()));
     }
     if (tmdbArtwork.backdrops != null) {
-      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage().name()));
+      Collections.sort(tmdbArtwork.backdrops, new ImageComparator(options.getLanguage().getLanguage()));
     }
 
     // prepare posters

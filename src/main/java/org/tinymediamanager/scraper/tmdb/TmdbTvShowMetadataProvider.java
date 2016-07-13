@@ -86,6 +86,9 @@ class TmdbTvShowMetadataProvider {
 
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     String language = query.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(query.getLanguage().getCountry())) {
+      language += "-" + query.getLanguage().getCountry();
+    }
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
@@ -153,7 +156,10 @@ class TmdbTvShowMetadataProvider {
       return episodes;
     }
 
-    String language = options.getLanguage().name();
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
 
     // the API does not provide a complete access to all episodes, so we have to
     // fetch the show summary first and every season afterwards..
@@ -225,8 +231,10 @@ class TmdbTvShowMetadataProvider {
       return md;
     }
 
-    String language = options.getLanguage().name();
-
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
     // get the data from tmdb
     TvShowComplete complete = null;
     synchronized (api) {
@@ -254,7 +262,7 @@ class TmdbTvShowMetadataProvider {
       MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
       ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + complete.poster_path);
       ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + complete.poster_path);
-      ma.setLanguage(options.getLanguage().name());
+      ma.setLanguage(options.getLanguage().getLanguage());
       ma.setTmdbId(complete.id);
       md.addMediaArt(ma);
     }
@@ -328,8 +336,10 @@ class TmdbTvShowMetadataProvider {
       return md;
     }
 
-    String language = options.getLanguage().name();
-
+    String language = options.getLanguage().getLanguage();
+    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
+      language += "-" + options.getLanguage().getCountry();
+    }
     // get the data from tmdb
     TvEpisode episode = null;
     synchronized (api) {
