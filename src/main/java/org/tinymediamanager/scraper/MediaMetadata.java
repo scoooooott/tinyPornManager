@@ -52,11 +52,6 @@ public class MediaMetadata {
   public static final String      EPISODE_NR_DVD       = "dvdEpisodeNr";
   public static final String      SEASON_NR_DVD        = "dvdSeasonNr";
 
-  /**
-   * the initial date to indicate that no date has been set
-   */
-  public static final Date        INITIAL_DATE         = new Date(0);
-
   private final String            providerId;
 
   // this map contains all set ids
@@ -66,7 +61,7 @@ public class MediaMetadata {
   private String                  title                = "";
   private String                  originalTitle        = "";
   private int                     year                 = 0;
-  private Date                    releaseDate          = INITIAL_DATE;
+  private Date                    releaseDate          = null;
   private String                  plot                 = "";
   private String                  tagline              = "";
   private int                     runtime              = 0;
@@ -187,7 +182,7 @@ public class MediaMetadata {
   }
 
   private Date merge(Date val1, Date val2) {
-    return val1 == INITIAL_DATE ? val2 : val1;
+    return val1 == null ? val2 : val1;
   }
 
   private float merge(float val1, float val2) {
