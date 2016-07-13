@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.CertificationStyle;
@@ -219,6 +221,33 @@ public class UpgradeTasks {
         movie.saveToDb();
       }
     }
+    // upgrade to v2.8.2
+    if (StrgUtils.compareVersion(v, "2.8.2") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8.2");
+
+      Date initialDate = new Date(0);
+
+      for (Movie movie : movieList.getMovies()) {
+        if (movie.getReleaseDate() != null && DateUtils.isSameDay(initialDate, movie.getReleaseDate())) {
+          movie.setReleaseDate((Date) null);
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        if (tvShow.getFirstAired() != null && DateUtils.isSameDay(initialDate, tvShow.getFirstAired())) {
+          tvShow.setFirstAired((Date) null);
+          tvShow.saveToDb();
+        }
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (episode.getFirstAired() != null && DateUtils.isSameDay(initialDate, episode.getFirstAired())) {
+            episode.setFirstAired((Date) null);
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
   }
 
   /**

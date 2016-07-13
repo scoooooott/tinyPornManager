@@ -57,6 +57,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -545,7 +546,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       Date firstAiredDate = (Date) spFirstAired.getValue();
-      if (!firstAiredDate.equals(INITIAL_DATE)) {
+      if (DateUtils.isSameDay(firstAiredDate, INITIAL_DATE)) {
         episodeToEdit.setFirstAired(firstAiredDate);
       }
 
