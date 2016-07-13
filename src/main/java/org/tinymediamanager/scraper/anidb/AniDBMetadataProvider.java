@@ -28,8 +28,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -56,6 +54,8 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.RingBuffer;
 import org.tinymediamanager.scraper.util.Similarity;
 import org.tinymediamanager.scraper.util.StrgUtils;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB)
@@ -104,7 +104,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
-    String langu = options.getLanguage().name();
+    String langu = options.getLanguage().getLanguage();
 
     // id from result
     if (options.getResult() != null) {
@@ -172,7 +172,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
         ma.setPreviewUrl(IMAGE_SERVER + e.text());
         ma.setDefaultUrl(IMAGE_SERVER + e.text());
-        ma.setLanguage(options.getLanguage().name());
+        ma.setLanguage(options.getLanguage().getLanguage());
         md.addMediaArt(ma);
       }
 
@@ -259,7 +259,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     String id = "";
-    String langu = options.getLanguage().name();
+    String langu = options.getLanguage().getLanguage();
 
     // id from result
     if (options.getResult() != null) {
@@ -492,7 +492,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
 
     String id = "";
-    String langu = options.getLanguage().name();
+    String langu = options.getLanguage().getLanguage();
 
     // id from result
     if (options.getResult() != null) {
