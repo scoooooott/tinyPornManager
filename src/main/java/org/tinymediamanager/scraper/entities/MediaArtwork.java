@@ -441,9 +441,9 @@ public class MediaArtwork {
   }
 
   public static class MediaArtworkComparator implements Comparator<MediaArtwork> {
-    private MediaLanguages preferredLangu = MediaLanguages.en;
+    private String preferredLangu = "en";
 
-    public MediaArtworkComparator(MediaLanguages language) {
+    public MediaArtworkComparator(String language) {
       preferredLangu = language;
     }
 
@@ -452,8 +452,6 @@ public class MediaArtwork {
      */
     @Override
     public int compare(MediaArtwork arg0, MediaArtwork arg1) {
-      String preferredLangu = this.preferredLangu.name();
-
       // check first if is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
         return -1;

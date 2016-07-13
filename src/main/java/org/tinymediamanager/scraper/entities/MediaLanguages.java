@@ -39,6 +39,7 @@ public enum MediaLanguages {
   no("Norsk"),
   pl("Język polski"),
   pt("Portuguese"),
+  pt_BR("Portuguese (Brazil)"),
   ru("русский язык"),
   sl("Slovenščina"),
   sk("Slovenčina"),
@@ -49,7 +50,7 @@ public enum MediaLanguages {
 
   private String title;
 
-  private MediaLanguages(String title) {
+  MediaLanguages(String title) {
     this.title = title;
   }
 

@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -24,14 +25,13 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 /**
  * This class is used to set the scrape options for scraping.
  * 
  * @author Manuel Laggner
- * @since 1.0
+ * @since 2.1
  * 
  */
 public class MediaScrapeOptions {
@@ -40,7 +40,7 @@ public class MediaScrapeOptions {
   private HashMap<String, String> ids         = new HashMap<>();
   private MediaType               type;
   private MediaArtworkType        artworkType = MediaArtworkType.ALL;
-  private MediaLanguages          language    = MediaLanguages.en;
+  private Locale                  language    = Locale.getDefault();
   private CountryCode             country     = CountryCode.US;
   private FanartSizes             fanartSize  = FanartSizes.MEDIUM;  // default; will be overwritten by tmm
                                                                      // settings
@@ -51,22 +51,53 @@ public class MediaScrapeOptions {
     this.type = type;
   }
 
+  /**
+   * Get a previous found search result
+   * 
+   * @return the search result if available or null
+   */
   public MediaSearchResult getResult() {
     return result;
   }
 
+  /**
+   * Set a search result if available
+   * 
+   * @param result
+   *          the search result
+   */
   public void setResult(MediaSearchResult result) {
     this.result = result;
   }
 
-  public String getId(String key) {
-    return ids.get(key);
+  /**
+   * Get the id for the given provider id
+   * 
+   * @param providerId
+   *          the provider Id
+   * @return the id or null
+   */
+  public String getId(String providerId) {
+    return ids.get(providerId);
   }
 
-  public void setId(String key, String id) {
-    ids.put(key, id);
+  /**
+   * Set an media id for a provider id
+   * 
+   * @param providerId
+   *          the provider id
+   * @param id
+   *          the media id
+   */
+  public void setId(String providerId, String id) {
+    ids.put(providerId, id);
   }
 
+  /**
+   * Get the imdb id - just a convenience method to get the Id for the provider imdb
+   * 
+   * @return the imdbid or an empty string
+   */
   public String getImdbId() {
     Object obj = ids.get(MediaMetadata.IMDB);
     if (obj == null) {
@@ -79,6 +110,11 @@ public class MediaScrapeOptions {
     return obj.toString();
   }
 
+  /**
+   * Get the tmdb id - just a convenience method to get the Id for the provider tmdb
+   * 
+   * @return the tmdbid or 0
+   */
   public int getTmdbId() {
     int id = 0;
     try {
@@ -97,62 +133,145 @@ public class MediaScrapeOptions {
     return id;
   }
 
+  /**
+   * Set the imdb id - just a convenience method to set the Id for the provider imdb
+   *
+   * @param imdbId
+   *          the imdb id
+   */
   public void setImdbId(String imdbId) {
     ids.put(MediaMetadata.IMDB, imdbId);
   }
 
+  /**
+   * Set the itdb id - just a convenience method to set the Id for the provider tmdb
+   *
+   * @param tmdbId
+   *          the tmdb id
+   */
   public void setTmdbId(int tmdbId) {
     ids.put(MediaMetadata.TMDB, String.valueOf(tmdbId));
   }
 
+  /**
+   * Get the preferred artwork type
+   *
+   * @return the artwork type
+   */
   public MediaArtworkType getArtworkType() {
     return artworkType;
   }
 
+  /**
+   * Set the preferred artwork type
+   * 
+   * @param artworkType
+   *          the artwork type
+   */
   public void setArtworkType(MediaArtworkType artworkType) {
     this.artworkType = artworkType;
   }
 
+  /**
+   * Get any previous scraped meta data
+   * 
+   * @return the meta data or null
+   */
   public MediaMetadata getMetadata() {
     return metadata;
   }
 
+  /**
+   * Set any existing meta data
+   *
+   * @param metadata
+   *          the meta data
+   */
   public void setMetadata(MediaMetadata metadata) {
     this.metadata = metadata;
   }
 
+  /**
+   * Get the media type
+   *
+   * @return the media type
+   */
   public MediaType getType() {
     return type;
   }
 
-  public MediaLanguages getLanguage() {
+  /**
+   * Get the desired language for the scrape
+   * 
+   * @return the language
+   */
+  public Locale getLanguage() {
     return language;
   }
 
-  public void setLanguage(MediaLanguages language) {
+  /**
+   * Set the desired language for the scrape
+   * 
+   * @param language
+   *          language
+   */
+  public void setLanguage(Locale language) {
     this.language = language;
   }
 
+  /**
+   * Get the desired country for scraping
+   *
+   * @return the country
+   */
   public CountryCode getCountry() {
     return country;
   }
 
+  /**
+   * Set the desired country for scraping
+   *
+   * @param country
+   *          the country
+   */
   public void setCountry(CountryCode country) {
     this.country = country;
   }
 
+  /**
+   * Get the desired fanart size for scraping
+   *
+   * @return the desired fanart size
+   */
   public FanartSizes getFanartSize() {
     return fanartSize;
   }
 
+  /**
+   * Get the desired poster size for scraping
+   * 
+   * @return the desired poster size
+   */
   public PosterSizes getPosterSize() {
     return posterSize;
   }
 
+  /**
+   * Set the desired fanart size for scraping
+   * 
+   * @param fanartSize
+   *          the desired fanart size
+   */
   public void setFanartSize(FanartSizes fanartSize) {
     this.fanartSize = fanartSize;
   }
 
+  /**
+   * Set the desired poster size for scraping
+   * 
+   * @param posterSize
+   *          the desired poster size
+   */
   public void setPosterSize(PosterSizes posterSize) {
     this.posterSize = posterSize;
   }
