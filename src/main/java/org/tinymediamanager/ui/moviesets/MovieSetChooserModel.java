@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
@@ -34,8 +35,8 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -144,7 +145,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
           if (scraper.getMediaProvider() != null) {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setTmdbId(mis.tmdbId);
-            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
             options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
@@ -178,7 +179,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       if (scraper.getMediaProvider() != null) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
         options.setTmdbId(Integer.parseInt(result.getId()));
-        options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+        options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
         options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
         MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);

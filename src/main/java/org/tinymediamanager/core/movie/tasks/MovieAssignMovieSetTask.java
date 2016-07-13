@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,8 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -85,7 +86,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-          options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
           options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
           for (Entry<String, Object> entry : movie.getIds().entrySet()) {
             options.setId(entry.getKey(), entry.getValue().toString());
@@ -102,7 +103,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
               try {
                 options = new MediaScrapeOptions(MediaType.MOVIE_SET);
                 options.setTmdbId(collectionId);
-                options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+                options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
                 options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
                 MediaMetadata info = mp.getMetadata(options);
