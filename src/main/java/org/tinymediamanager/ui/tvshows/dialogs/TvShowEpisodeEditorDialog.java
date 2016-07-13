@@ -110,7 +110,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Date                                     INITIAL_DATE     = new Date(0);
 
   private TvShowList                                            tvShowList       = TvShowList.getInstance();
