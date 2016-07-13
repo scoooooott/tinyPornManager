@@ -128,14 +128,14 @@ public class ImdbTvShowParser extends ImdbParser {
 
     // get combined data
     CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/combined");
-    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().name(), options.getCountry().getAlpha2()));
+    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
     parseCombinedPage(doc, options, md);
 
     // get plot
     url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/plotsummary");
-    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().name(), options.getCountry().getAlpha2()));
+    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
     parsePlotsummaryPage(doc, options, md);
 
@@ -196,7 +196,7 @@ public class ImdbTvShowParser extends ImdbParser {
 
     // then parse the actors page to get the rest
     CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epcast");
-    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().name(), options.getCountry().getAlpha2()));
+    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
     // the base content of this page starts here
@@ -289,7 +289,7 @@ public class ImdbTvShowParser extends ImdbParser {
     }
 
     CachedUrl url = new CachedUrl(imdbSite.getSite() + "/title/" + imdbId + "/epdate");
-    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().name(), options.getCountry().getAlpha2()));
+    url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), options.getCountry().getAlpha2()));
     Document doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
 
     Pattern rowPattern = Pattern.compile("([0-9]*)\\.([0-9]*)");

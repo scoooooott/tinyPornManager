@@ -47,7 +47,6 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -168,7 +167,7 @@ public abstract class ImdbParser {
       if (!StringUtils.isEmpty(movieId)) {
         MediaScrapeOptions options = new MediaScrapeOptions(type);
         options.setImdbId(movieId);
-        options.setLanguage(MediaLanguages.valueOf(language));
+        options.setLanguage(query.getLanguage());
         options.setCountry(CountryCode.valueOf(country));
         md = getMetadata(options);
         if (!StringUtils.isEmpty(md.getTitle())) {
@@ -911,10 +910,10 @@ public abstract class ImdbParser {
 
   static class TmdbWorker implements Callable<MediaMetadata> {
     private String         imdbId;
-    private MediaLanguages language;
+    private Locale      language;
     private CountryCode    certificationCountry;
 
-    public TmdbWorker(String imdbId, MediaLanguages language, CountryCode certificationCountry) {
+    public TmdbWorker(String imdbId, Locale language, CountryCode certificationCountry) {
       this.imdbId = imdbId;
       this.language = language;
       this.certificationCountry = certificationCountry;

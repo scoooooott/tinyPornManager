@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.CAT_TITLE;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.executor;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.providerInfo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -118,7 +121,7 @@ public class ImdbMovieParser extends ImdbParser {
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
-    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
+    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     Future<Document> futureCombined = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
@@ -128,7 +131,7 @@ public class ImdbMovieParser extends ImdbParser {
     sb.append(imdbId);
     sb.append("/plotsummary");
 
-    worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
+    worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
     futurePlotsummary = compSvcImdb.submit(worker);
 
     // worker for tmdb request
@@ -174,7 +177,7 @@ public class ImdbMovieParser extends ImdbParser {
       sb.append(imdbId);
       sb.append("/releaseinfo");
 
-      worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2(), imdbSite);
+      worker = new ImdbWorker(sb.toString(), options.getLanguage().getLanguage(), options.getCountry().getAlpha2(), imdbSite);
       futureReleaseinfo = compSvcImdb.submit(worker);
       doc = futureReleaseinfo.get();
       parseReleaseinfoPage(doc, options, md);
