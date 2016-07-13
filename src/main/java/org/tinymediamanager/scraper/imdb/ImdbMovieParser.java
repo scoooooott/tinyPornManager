@@ -169,7 +169,7 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // did we get a release date?
-    if (md.getReleaseDate() == null || md.getReleaseDate() == MediaMetadata.INITIAL_DATE) {
+    if (md.getReleaseDate() == null) {
       // get the date from the releaseinfo page
       Future<Document> futureReleaseinfo;
       sb = new StringBuilder(imdbSite.getSite());
