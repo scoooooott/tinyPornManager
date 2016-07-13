@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,7 @@ import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import retrofit.RetrofitError;
 
 /**
@@ -177,7 +176,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
     ma.setPreviewUrl(fd.posters.small);
     ma.setDefaultUrl(fd.posters.large);
-    ma.setLanguage(options.getLanguage().name());
+    ma.setLanguage(options.getLanguage().getLanguage());
     md.addMediaArt(ma);
 
     for (String country : fd.countries) {
