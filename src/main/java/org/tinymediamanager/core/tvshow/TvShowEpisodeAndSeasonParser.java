@@ -121,6 +121,13 @@ public class TvShowEpisodeAndSeasonParser {
     // remove problematic strings from name
     String filename = FilenameUtils.getName(name);
     String extension = FilenameUtils.getExtension(name);
+
+    // check for disc files and remove!!
+    if (filename.toLowerCase().matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
+        filename.toLowerCase().matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")) { // bluray
+      name = FilenameUtils.getPath(name);
+    }
+
     String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(name);
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {

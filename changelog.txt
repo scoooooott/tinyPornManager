@@ -21,6 +21,7 @@ x do not overwrite external Kodi NFO streamdetails
 x overwrite existing images in the exporter
 x fix for renaming into subfolders
 x fixed wrong scraped release dates (where no release date has been found)
+x fixed TV episode detection for extracted disc files
 
 
 Version 2.8.1
