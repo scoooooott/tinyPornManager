@@ -87,7 +87,10 @@ public class Upnp {
           dev.loadDescription();
         }
         catch (SAXException e) {
-          LOGGER.error("Error loading description");
+          LOGGER.warn("Error parsing description" + e.getMessage());
+        }
+        catch (IOException ioe) {
+          LOGGER.warn("Error loading description" + ioe.getMessage());
         }
         if (!upnpDevices.contains(dev)) {
           upnpDevices.add(dev);
@@ -96,7 +99,7 @@ public class Upnp {
 
     }
     catch (SocketTimeoutException e) {
-      LOGGER.error("Timeout");
+      LOGGER.warn("Timeout");
       if (!socket.isClosed()) {
         socket.close();
       }
