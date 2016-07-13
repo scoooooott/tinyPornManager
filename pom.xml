@@ -109,7 +109,7 @@
 					<reference>
 						<groupId>org.tinymediamanager</groupId>
 						<artifactId>api-scraper</artifactId>
-						<version>2.0</version>
+						<version>2.1-SNAPSHOT</version>
 					</reference>
 					<rules>
 						<rule>com.googlecode.japi.checker.rules.AllRules</rule>
