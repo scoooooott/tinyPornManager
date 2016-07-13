@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,6 +68,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final String                        FILENAME           = "filename";
   private static final String                        FILESIZE           = "filesize";
   private static final String                        FILESIZE_IN_MB     = "filesizeInMegabytes";
+  private static final List<String>                  PLEX_EXTRA_FOLDERS = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
+      "deletedscenes", "featurettes", "interviews", "scenes", "shorts", "trailers");
 
   private static Pattern                             moviesetPattern    = Pattern.compile("(?i)(movieset-poster|movieset-fanart)\\..{2,4}");
   private static Pattern                             posterPattern      = Pattern
@@ -308,7 +311,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           || basename.matches("(?i).*[_.-]+extra[s]?$") // end with "-extra[s]"
           || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
           || foldername.equalsIgnoreCase("extras") // preferred folder name
-          || foldername.equalsIgnoreCase("extra")) // preferred folder name
+          || foldername.equalsIgnoreCase("extra") // preferred folder name
+          || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short)$") // Plex (w/o trailer)
+          || PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
       {
         return MediaFileType.VIDEO_EXTRA;
       }

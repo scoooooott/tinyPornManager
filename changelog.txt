@@ -9,6 +9,7 @@ Version 2.8.2
 + support folder excluding in Kodi style (.nomedia file in folder to exclude)
 + added media source renamer token for TV shows
 + updated tmdb scraper (thanks to @davidsben)
++ updated extras detection to Plex naming scheme 
 x fixed movie renamer dropping several image/NFO files
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
