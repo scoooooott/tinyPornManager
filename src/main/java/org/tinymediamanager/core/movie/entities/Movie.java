@@ -15,37 +15,7 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.COUNTRY;
-import static org.tinymediamanager.core.Constants.DATA_SOURCE;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
-import static org.tinymediamanager.core.Constants.EDITION;
-import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
-import static org.tinymediamanager.core.Constants.GENRE;
-import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
-import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
-import static org.tinymediamanager.core.Constants.IMDB;
-import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
-import static org.tinymediamanager.core.Constants.MOVIESET;
-import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
-import static org.tinymediamanager.core.Constants.PRODUCERS;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
-import static org.tinymediamanager.core.Constants.RUNTIME;
-import static org.tinymediamanager.core.Constants.SORT_TITLE;
-import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
-import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
-import static org.tinymediamanager.core.Constants.TMDB;
-import static org.tinymediamanager.core.Constants.TOP250;
-import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.TRAKT;
-import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
-import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -1726,17 +1696,7 @@ public class Movie extends MediaEntity {
   public List<MediaFile> getMediaFilesContainingSubtitles() {
     List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
-    // look in the first media file if it has subtitles
-    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
-      MediaFile videoFile = videoFiles.get(0);
-      if (videoFile.hasSubtitles()) {
-        mediaFilesWithSubtitles.add(videoFile);
-      }
-    }
-
-    // look for all other types
-    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.VIDEO, MediaFileType.SUBTITLE)) {
       if (mediaFile.hasSubtitles()) {
         mediaFilesWithSubtitles.add(mediaFile);
       }

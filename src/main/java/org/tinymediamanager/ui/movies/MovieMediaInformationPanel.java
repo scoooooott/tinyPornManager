@@ -20,6 +20,7 @@ import static org.tinymediamanager.core.Constants.*;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -187,7 +188,7 @@ public class MovieMediaInformationPanel extends JPanel {
       lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
     }
 
-    MediaFile mediaFile = mediaFiles.get(0);
+    MediaFile mediaFile = movieSelectionModel.getSelectedMovie().getBiggestMediaFile();
     chckbxWatched.setSelected(movieSelectionModel.getSelectedMovie().isWatched());
     lblVideoCodec.setText(mediaFile.getVideoCodec());
     lblVideoResolution.setText(mediaFile.getVideoResolution());
@@ -227,23 +228,25 @@ public class MovieMediaInformationPanel extends JPanel {
     panelSubtitleT.removeAll();
     panelSubtitleDetails.removeAll();
 
-    List<MediaFile> mediaFiles = movieSelectionModel.getSelectedMovie().getMediaFilesContainingSubtitles();
-
-    for (MediaFile mediaFile : mediaFiles) {
+    HashSet<MediaFileSubtitle> subs = new HashSet<MediaFileSubtitle>(); // no dupes
+    for (MediaFile mediaFile : movieSelectionModel.getSelectedMovie().getMediaFilesContainingSubtitles()) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
-
-        if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
-          String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
-          panelSubtitleDetails.add(new JLabel(info));
-        }
-        else {
+        if (mediaFile.getType() == MediaFileType.SUBTITLE) {
           panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
           panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
         }
+        else {
+          subs.add(subtitle);
+        }
       }
     }
+    for (MediaFileSubtitle sub : subs) {
+      panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
+      String info = sub.getLanguage() + (sub.isForced() ? " forced" : "") + " (" + sub.getCodec() + ")";
+      panelSubtitleDetails.add(new JLabel(info));
+    }
+
     panelSubtitleDetails.revalidate();
     panelSubtitleT.revalidate();
   }
