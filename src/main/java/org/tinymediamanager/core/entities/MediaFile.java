@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1117,10 +1118,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.durationInSecs == 0) {
       return "";
     }
-
-    int minutes = (int) (this.durationInSecs / 60) % 60;
-    int hours = (int) (this.durationInSecs / (60 * 60)) % 24;
-    return hours + "h " + String.format("%02d", minutes) + "m";
+    long h = TimeUnit.SECONDS.toHours(this.durationInSecs);
+    long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
+    long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+    if (s > 30) {
+      m += 1; // round seconds
+    }
+    return h + "h " + String.format("%02d", m) + "m";
   }
 
   /**
@@ -1133,11 +1137,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (this.durationInSecs == 0) {
       return "";
     }
-
-    int seconds = (int) this.durationInSecs % 60;
-    int minutes = (int) (this.durationInSecs / 60) % 60;
-    int hours = (int) (this.durationInSecs / (60 * 60)) % 24;
-    return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+    long h = TimeUnit.SECONDS.toHours(this.durationInSecs);
+    long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
+    long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+    return String.format("%02d:%02d:%02d", h, m, s);
   }
 
   /**

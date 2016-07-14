@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -157,12 +158,9 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
 
   private void fillVideoStreamDetails() {
     List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO);
-
     if (mediaFiles.size() == 0) {
       return;
     }
-
-    MediaFile mediaFile = mediaFiles.get(0);
 
     int runtime = 0;
     for (MediaFile mf : mediaFiles) {
@@ -173,13 +171,17 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       lblRuntime.setText("");
     }
     else {
-      int minutes = (int) (runtime / 60) % 60;
-      int hours = (int) (runtime / (60 * 60)) % 24;
-      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
+      long h = TimeUnit.SECONDS.toHours(runtime);
+      long m = TimeUnit.SECONDS.toMinutes(runtime - TimeUnit.HOURS.toSeconds(h));
+      long s = TimeUnit.SECONDS.toSeconds(runtime - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+      if (s > 30) {
+        m += 1; // round seconds
+      }
+      lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
     }
 
+    MediaFile mediaFile = mediaFiles.get(0);
     chckbxWatched.setSelected(selectionModel.getSelectedTvShowEpisode().isWatched());
-
     lblVideoCodec.setText(mediaFile.getVideoCodec());
     lblVideoResolution.setText(mediaFile.getVideoResolution());
     lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
