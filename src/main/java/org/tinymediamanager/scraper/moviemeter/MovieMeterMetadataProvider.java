@@ -206,7 +206,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     initAPI();
 
     LOGGER.debug("search() " + query.toString());
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> resultList = new ArrayList<>();
     String imdb = query.getImdbId();
     String searchString = "";
     int myear = query.getYear();
@@ -232,7 +232,7 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
       imdb = searchString;
     }
 
-    List<MMFilm> moviesFound = new ArrayList<MMFilm>();
+    List<MMFilm> moviesFound = new ArrayList<>();
     MMFilm fd = null;
 
     synchronized (api) {
