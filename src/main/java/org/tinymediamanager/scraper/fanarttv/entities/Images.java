@@ -27,27 +27,27 @@ public class Images {
   public String      imdbId;
 
   // movies
-  public List<Image> hdmovielogo     = new ArrayList<Image>();    //hd clearlogo in HP
-  public List<Image> moviedisc       = new ArrayList<Image>();
-  public List<Image> movielogo       = new ArrayList<Image>();
-  public List<Image> movieposter     = new ArrayList<Image>();
-  public List<Image> hdmovieclearart = new ArrayList<Image>();
-  public List<Image> movieart        = new ArrayList<Image>();
-  public List<Image> moviebackground = new ArrayList<Image>();
-  public List<Image> moviebanner     = new ArrayList<Image>();
-  public List<Image> moviethumb      = new ArrayList<Image>();
+  public List<Image> hdmovielogo     = new ArrayList<>(); // hd clearlogo in HP
+  public List<Image> moviedisc       = new ArrayList<>();
+  public List<Image> movielogo       = new ArrayList<>();
+  public List<Image> movieposter     = new ArrayList<>();
+  public List<Image> hdmovieclearart = new ArrayList<>();
+  public List<Image> movieart        = new ArrayList<>();
+  public List<Image> moviebackground = new ArrayList<>();
+  public List<Image> moviebanner     = new ArrayList<>();
+  public List<Image> moviethumb      = new ArrayList<>();
 
   // tv shows
-  public List<Image> clearlogo       = new ArrayList<Image>();
-  public List<Image> hdtvlogo        = new ArrayList<Image>(); // hd clearlogo in HP
-  public List<Image> clearart        = new ArrayList<Image>();
-  public List<Image> showbackground  = new ArrayList<Image>();
-  public List<Image> tvthumb         = new ArrayList<Image>();
-  public List<Image> hdclearart      = new ArrayList<Image>();
-  public List<Image> tvbanner        = new ArrayList<Image>();
-  public List<Image> tvposter        = new ArrayList<Image>();
-  public List<Image> seasonposter    = new ArrayList<Image>();
-  public List<Image> seasonthumb     = new ArrayList<Image>();
-  public List<Image> seasonbanner    = new ArrayList<Image>();
-  public List<Image> characterart    = new ArrayList<Image>();
+  public List<Image> clearlogo       = new ArrayList<>();
+  public List<Image> hdtvlogo        = new ArrayList<>(); // hd clearlogo in HP
+  public List<Image> clearart        = new ArrayList<>();
+  public List<Image> showbackground  = new ArrayList<>();
+  public List<Image> tvthumb         = new ArrayList<>();
+  public List<Image> hdclearart      = new ArrayList<>();
+  public List<Image> tvbanner        = new ArrayList<>();
+  public List<Image> tvposter        = new ArrayList<>();
+  public List<Image> seasonposter    = new ArrayList<>();
+  public List<Image> seasonthumb     = new ArrayList<>();
+  public List<Image> seasonbanner    = new ArrayList<>();
+  public List<Image> characterart    = new ArrayList<>();
 }

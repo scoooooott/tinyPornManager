@@ -99,7 +99,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         break;
 
       default:
-        artwork = new ArrayList<MediaArtwork>(1);
+        artwork = new ArrayList<>(1);
     }
 
     // buffer the artwork
@@ -119,7 +119,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       language += "-" + options.getLanguage().getCountry();
     }
 
-    List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> returnArtwork = new ArrayList<>();
 
     Images images = null;
     String imdbId = options.getImdbId();
@@ -156,7 +156,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
       language += "-" + options.getLanguage().getCountry();
     }
 
-    List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> returnArtwork = new ArrayList<>();
 
     Images images = null;
     int tvdbId = 0;
@@ -195,7 +195,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   private List<MediaArtwork> getArtwork(Images images, MediaArtworkType artworkType) {
-    List<MediaArtwork> artworks = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> artworks = new ArrayList<>();
 
     switch (artworkType) {
       case POSTER:
@@ -280,7 +280,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
   }
 
   private List<MediaArtwork> prepareArtwork(List<Image> images, ImageType type) {
-    List<MediaArtwork> artworks = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> artworks = new ArrayList<>();
 
     for (Image image : ListUtils.nullSafe(images)) {
       MediaArtwork ma = new MediaArtwork(providerInfo.getId(), type.type);
