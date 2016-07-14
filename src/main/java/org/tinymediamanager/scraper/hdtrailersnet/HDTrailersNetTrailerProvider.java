@@ -60,7 +60,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    List<MediaTrailer> trailers = new ArrayList<>();
     MediaMetadata md = options.getMetadata();
 
     if (md == null || StringUtils.isEmpty(md.getOriginalTitle())) {
