@@ -66,7 +66,7 @@ class TmdbTvShowMetadataProvider {
   List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
     LOGGER.debug("search() " + query.toString());
 
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> resultList = new ArrayList<>();
 
     String searchString = "";
 
@@ -138,7 +138,7 @@ class TmdbTvShowMetadataProvider {
    */
   List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getEpisodeList() " + options.toString());
-    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+    List<MediaEpisode> episodes = new ArrayList<>();
 
     int tmdbId = 0;
     // tmdbId from searchResult

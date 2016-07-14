@@ -79,7 +79,7 @@ class TmdbMovieMetadataProvider {
   List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
     LOGGER.debug("search() " + query.toString());
 
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> resultList = new ArrayList<>();
 
     String searchString = "";
     Integer year = null;
@@ -390,7 +390,7 @@ class TmdbMovieMetadataProvider {
   List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
 
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    List<MediaTrailer> trailers = new ArrayList<>();
 
     int tmdbId = options.getTmdbId();
     String imdbId = options.getImdbId();
@@ -412,7 +412,7 @@ class TmdbMovieMetadataProvider {
 
     LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
 
-    List<Videos.Video> tmdbTrailers = new ArrayList<Videos.Video>();
+    List<Videos.Video> tmdbTrailers = new ArrayList<>();
 
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)

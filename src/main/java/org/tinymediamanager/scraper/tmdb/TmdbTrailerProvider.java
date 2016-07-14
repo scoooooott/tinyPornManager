@@ -52,7 +52,7 @@ class TmdbTrailerProvider {
    */
   List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    List<MediaTrailer> trailers = new ArrayList<>();
 
     int tmdbId = options.getTmdbId();
     String imdbId = options.getImdbId();

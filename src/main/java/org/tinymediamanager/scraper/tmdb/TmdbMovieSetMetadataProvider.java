@@ -59,7 +59,7 @@ class TmdbMovieSetMetadataProvider {
   List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
     LOGGER.debug("search() " + query.toString());
 
-    List<MediaSearchResult> movieSetsFound = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> movieSetsFound = new ArrayList<>();
 
     String searchString = "";
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.getQuery())) {

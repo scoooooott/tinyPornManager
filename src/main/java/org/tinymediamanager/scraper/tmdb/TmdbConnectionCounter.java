@@ -26,7 +26,7 @@ import org.tinymediamanager.scraper.util.RingBuffer;
  */
 public class TmdbConnectionCounter {
   private static final Logger           LOGGER             = LoggerFactory.getLogger(TmdbConnectionCounter.class);
-  private static final RingBuffer<Long> CONNECTION_COUNTER = new RingBuffer<Long>(29);
+  private static final RingBuffer<Long> CONNECTION_COUNTER = new RingBuffer<>(29);
 
   public static void trackConnections() {
     Long currentTime = System.currentTimeMillis();

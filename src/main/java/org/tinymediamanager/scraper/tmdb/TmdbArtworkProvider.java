@@ -68,7 +68,7 @@ class TmdbArtworkProvider {
 
     if (tmdbId == 0) {
       LOGGER.debug("Cannot get artwork - neither imdb/tmdb set");
-      return new ArrayList<MediaArtwork>(0);
+      return new ArrayList<>(0);
     }
 
     Images images = null;
@@ -108,7 +108,7 @@ class TmdbArtworkProvider {
     }
 
     if (images == null) {
-      return new ArrayList<MediaArtwork>(0);
+      return new ArrayList<>(0);
     }
 
     List<MediaArtwork> artwork = prepareArtwork(images, artworkType, tmdbId, options);
@@ -123,7 +123,7 @@ class TmdbArtworkProvider {
   }
 
   private List<MediaArtwork> prepareArtwork(Images tmdbArtwork, MediaArtwork.MediaArtworkType artworkType, int tmdbId, MediaScrapeOptions options) {
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> artwork = new ArrayList<>();
     String baseUrl = TmdbMetadataProvider.configuration.images.base_url;
 
     if (tmdbArtwork == null) {
