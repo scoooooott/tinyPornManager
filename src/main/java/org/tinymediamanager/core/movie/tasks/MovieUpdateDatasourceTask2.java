@@ -15,9 +15,7 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static java.nio.file.FileVisitResult.TERMINATE;
+import static java.nio.file.FileVisitResult.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -92,7 +90,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders    = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+      "AUDIO_TS", "JAR", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipRegex      = "^[.][\\w@]+.*";
@@ -381,7 +379,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     Movie movie = movieList.getMovieByPath(movieDir);
-    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 2); // TODO: just this and next level? TBD!
+    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 3); // need 3 (was 2) because extracted BD
     filesFound.add(movieDir.toAbsolutePath()); // our global cache
     filesFound.addAll(allFiles); // our global cache
 
