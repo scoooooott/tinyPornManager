@@ -331,7 +331,7 @@ public class ImdbMetadataProviderTest {
       // md);
 
       // check genres
-      List<MediaGenres> genres = new ArrayList<MediaGenres>();
+      List<MediaGenres> genres = new ArrayList<>();
       genres.add(MediaGenres.ANIMATION);
       genres.add(MediaGenres.ACTION);
       genres.add(MediaGenres.ADVENTURE);
@@ -347,7 +347,7 @@ public class ImdbMetadataProviderTest {
           md);
 
       // check cast
-      List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+      List<MediaCastMember> castMembers = new ArrayList<>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Christopher Plummer");
       cm.setCharacter("#1");
@@ -398,7 +398,7 @@ public class ImdbMetadataProviderTest {
       // md);
 
       // check genres
-      List<MediaGenres> genres = new ArrayList<MediaGenres>();
+      List<MediaGenres> genres = new ArrayList<>();
       genres.add(MediaGenres.MYSTERY);
       genres.add(MediaGenres.SCIENCE_FICTION);
       genres.add(MediaGenres.THRILLER);
@@ -410,7 +410,7 @@ public class ImdbMetadataProviderTest {
           md);
 
       // check cast
-      List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+      List<MediaCastMember> castMembers = new ArrayList<>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Joseph Melito");
       cm.setCharacter("Young Cole");
@@ -459,7 +459,7 @@ public class ImdbMetadataProviderTest {
       // md);
 
       // check genres
-      List<MediaGenres> genres = new ArrayList<MediaGenres>();
+      List<MediaGenres> genres = new ArrayList<>();
       genres.add(MediaGenres.ANIMATION);
       genres.add(MediaGenres.ADVENTURE);
       genres.add(MediaGenres.COMEDY);
@@ -473,7 +473,7 @@ public class ImdbMetadataProviderTest {
           md);
 
       // check cast
-      List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+      List<MediaCastMember> castMembers = new ArrayList<>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Kelly Macdonald");
       cm.setCharacter("Merida");
@@ -547,7 +547,7 @@ public class ImdbMetadataProviderTest {
       // md);
 
       // check genres
-      List<MediaGenres> genres = new ArrayList<MediaGenres>();
+      List<MediaGenres> genres = new ArrayList<>();
       genres.add(MediaGenres.DOCUMENTARY);
       genres.add(MediaGenres.BIOGRAPHY);
       genres.add(MediaGenres.COMEDY);
@@ -560,7 +560,7 @@ public class ImdbMetadataProviderTest {
           md);
 
       // check cast
-      List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+      List<MediaCastMember> castMembers = new ArrayList<>();
       MediaCastMember cm = new MediaCastMember();
       cm.setName("Jack Rebney");
       cm.setCharacter("Himself");
