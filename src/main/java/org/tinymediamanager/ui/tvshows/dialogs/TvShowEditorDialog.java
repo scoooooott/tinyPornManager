@@ -828,7 +828,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       Date premieredDate = (Date) spPremiered.getValue();
-      if (DateUtils.isSameDay(premieredDate, INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(premieredDate, INITIAL_DATE)) {
         tvShowToEdit.setFirstAired(premieredDate);
       }
 

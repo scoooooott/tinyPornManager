@@ -1002,7 +1002,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setYear(spYear.getValue().equals(0) ? "" : String.valueOf(spYear.getValue())); // set empty on 0
 
       Date releaseDate = (Date) spReleaseDate.getValue();
-      if (DateUtils.isSameDay(releaseDate, INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(releaseDate, INITIAL_DATE)) {
         movieToEdit.setReleaseDate(releaseDate);
       }
       movieToEdit.setRuntime((Integer) spRuntime.getValue());

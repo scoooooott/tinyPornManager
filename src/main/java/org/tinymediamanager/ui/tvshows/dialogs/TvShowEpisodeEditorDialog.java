@@ -546,7 +546,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       Date firstAiredDate = (Date) spFirstAired.getValue();
-      if (DateUtils.isSameDay(firstAiredDate, INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(firstAiredDate, INITIAL_DATE)) {
         episodeToEdit.setFirstAired(firstAiredDate);
       }
 
