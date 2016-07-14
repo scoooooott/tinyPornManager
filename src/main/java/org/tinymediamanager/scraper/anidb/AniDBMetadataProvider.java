@@ -66,10 +66,10 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
   private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<Long>(30);
+  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<>(30);
   private static MediaProviderInfo         providerInfo      = createMediaProviderInfo();
 
-  private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<String, List<AniDBShow>>();
+  private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<>();
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("anidb", "aniDB",
@@ -344,7 +344,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   private List<Episode> parseEpisodes(Document doc) {
-    List<Episode> episodes = new ArrayList<Episode>();
+    List<Episode> episodes = new ArrayList<>();
 
     Element anime = doc.child(0);
     Element eps = null;
@@ -449,7 +449,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       }
     }
 
-    List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> results = new ArrayList<>();
 
     // detect the string to search
     String searchString = "";
@@ -462,7 +462,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       return results;
     }
 
-    List<Integer> foundIds = new ArrayList<Integer>();
+    List<Integer> foundIds = new ArrayList<>();
     for (Entry<String, List<AniDBShow>> entry : showsForLookup.entrySet()) {
       String title = entry.getKey();
       float score = Similarity.compareStrings(title, searchString);
@@ -489,7 +489,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+    List<MediaEpisode> episodes = new ArrayList<>();
 
     String id = "";
     String langu = options.getLanguage().getLanguage();
@@ -574,7 +574,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
           List<AniDBShow> shows = showsForLookup.get(show.title);
           if (shows == null) {
-            shows = new ArrayList<AniDBShow>();
+            shows = new ArrayList<>();
             showsForLookup.put(show.title, shows);
           }
 
@@ -623,7 +623,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> artwork = new ArrayList<>();
     String id = "";
 
     // check if there is a metadata containing an id
@@ -683,6 +683,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     String                  airdate = "";
     float                   rating  = 0;
     String                  summary = "";
-    HashMap<String, String> titles  = new HashMap<String, String>();
+    HashMap<String, String> titles  = new HashMap<>();
   }
 }
