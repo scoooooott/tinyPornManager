@@ -186,7 +186,7 @@
 		<dependency>
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
 			<artifactId>loop-fs-iso-impl</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.1-TMM</version>
 		</dependency>
 	</dependencies>
 

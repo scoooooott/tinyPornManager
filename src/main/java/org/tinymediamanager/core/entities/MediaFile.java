@@ -55,7 +55,8 @@ import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.stephenc.javaisotools.loopfs.iso9660.ISO;
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
 
 /**
  * The Class MediaFile.
@@ -143,6 +144,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
   private Path                                       file               = null;
+  private boolean                                    isISO              = false;
 
   /**
    * "clones" a new media file.
@@ -708,10 +710,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * instantiates and gets new mediainfo object.
    */
-  private void getMediaInfo() {
+  private void getMediaInfoSnapshot() {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
+    }
 
+    if (miSnapshot == null) {
       try {
         if (!mediaInfo.open(this.getFileAsPath())) {
           LOGGER.error("Mediainfo could not open file: " + getFileAsPath());
@@ -758,7 +762,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
     if (miSnapshot == null) {
-      getMediaInfo(); // load snapshot
+      getMediaInfoSnapshot(); // load snapshot
     }
     if (miSnapshot != null) {
       for (String key : keys) {
@@ -1197,24 +1201,86 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = video3DFormat;
   }
 
-  private void getMediaInfoFromISO() {
-    if (mediaInfo == null) {
-      mediaInfo = new MediaInfo();
+  private void getMediaInfoSnapshotFromISO() {
+    int BUFFER_SIZE = 64 * 1024;
+    Iso9660FileSystem image;
+    try {
+      image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
+      int dur = 0;
+
+      for (Iso9660FileEntry entry : image) {
+        if (entry.getSize() <= 5000) { // small files and "." entries
+          continue;
+        }
+
+        MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
+        MediaInfo fileMI = new MediaInfo();
+        // mf.setMediaInfo(fileMI); // we need set the inner MI
+        if (mf.getType() == MediaFileType.VIDEO) {
+          mf.setFilesize(entry.getSize());
+
+          try {
+            // mediaInfo.option("File_IsSeekable", "0");
+            byte[] From_Buffer = new byte[BUFFER_SIZE];
+            int From_Buffer_Size; // The size of the read file buffer
+
+            // Preparing to fill MediaInfo with a buffer
+            fileMI.openBufferInit(entry.getSize(), 0);
+
+            long pos = 0L;
+            // The parsing loop
+            do {
+              // Reading data somewhere, do what you want for this.
+              // From_Buffer_Size = is.read(From_Buffer);
+              From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
+              pos += From_Buffer_Size; // add bytes read to file position
+
+              // Sending the buffer to MediaInfo
+              int Result = fileMI.openBufferContinue(From_Buffer, From_Buffer_Size);
+              if ((Result & 8) == 8) { // Status.Finalized
+                break;
+              }
+
+              // Testing if MediaInfo request to go elsewhere
+              if (fileMI.openBufferContinueGoToGet() != -1) {
+                long newPos = fileMI.openBufferContinueGoToGet();
+                // System.out.println("seek to " + newPos);
+                From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
+                pos = newPos + From_Buffer_Size; // add bytes read to file position
+                fileMI.openBufferInit(entry.getSize(), newPos); // Informing MediaInfo we have seek
+              }
+
+            } while (From_Buffer_Size > 0);
+
+            // Finalizing
+            fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
+            Map<StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
+            fileMI.close();
+            fileMI = null;
+            mf.setMiSnapshot(tempSnapshot); // set ours to MI for standard gathering
+            mf.gatherMediaInformation(); // normal gather from snapshots
+
+            // set ISO snapshot ONCE from first video >10 min, so we copy all the resolutions & co
+            if (mf.getDuration() > 60 * 10) {
+              miSnapshot = tempSnapshot;
+            }
+
+            // accumulate durations from every MF
+            dur += mf.getDuration();
+          }
+          // sometimes also an error is thrown
+          catch (Exception | Error e) {
+            LOGGER.error("Mediainfo could not open file STREAM");
+          }
+        } // end VIDEO
+      } // end entry
+      setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
+      image.close();
     }
-    MediaFile mf = ISO.getMediaInfoFromISO(this, mediaInfo);
-    if (mf != null) {
-      // copy temp values
-      durationInSecs = mf.getDuration();
-      videoCodec = mf.getVideoCodec();
-      exactVideoFormat = mf.getExactVideoFormat();
-      video3DFormat = mf.getVideo3DFormat();
-      videoHeight = mf.getVideoHeight();
-      videoWidth = mf.getVideoWidth();
-      overallBitRate = mf.getOverallBitRate();
-      audioStreams = mf.getAudioStreams();
-      subtitles = mf.getSubtitles();
+    catch (IOException e) {
+      LOGGER.error("Mediainfo could not open STREAM");
+      closeMediaInfo();
     }
-    setContainerFormat(getExtension());
   }
 
   /**
@@ -1300,11 +1366,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // get media info
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
-    if (getExtension().toLowerCase().equals("iso")) {
-      getMediaInfoFromISO();
-      return;
+    if (isISO) {
+      getMediaInfoSnapshotFromISO();
     }
-    getMediaInfo();
+    else {
+      getMediaInfoSnapshot();
+    }
 
     if (miSnapshot == null) {
       // MI could not be opened
@@ -1580,13 +1647,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         // Duration/String1;Play time in format : HHh MMmn SSs MMMms, XX om.if.z.
         // Duration/String2;Play time in format : XXx YYy only, YYy omited if zero
         // Duration/String3;Play time in format : HH:MM:SS.MMM
-        String dur = getMediaInfo(StreamKind.General, 0, "Duration");
-        if (!dur.isEmpty()) {
-          try {
-            setDuration(Integer.parseInt(dur) / 1000);
-          }
-          catch (NumberFormatException e) {
-            setDuration(0);
+        if (!isISO) {
+          // ISO files get duration accumulated with snapshot
+          String dur = getMediaInfo(StreamKind.General, 0, "Duration");
+          if (!dur.isEmpty()) {
+            try {
+              setDuration(Integer.parseInt(dur) / 1000);
+            }
+            catch (NumberFormatException e) {
+              setDuration(0);
+            }
           }
         }
         /*
@@ -1630,6 +1700,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // check unsupported extensions
     if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
+    }
+    else if ("iso".equals(extension)) {
+      isISO = true;
+      return true;
     }
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
