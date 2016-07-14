@@ -43,11 +43,11 @@ public class Series implements Serializable {
     private String firstAired;
     private String imdbId;
     private String zap2ItId;
-    private List<String> actors = new ArrayList<String>();
+  private List<String>      actors           = new ArrayList<>();
     private String airsDayOfWeek;
     private String airsTime;
     private String contentRating;
-    private List<String> genres = new ArrayList<String>();
+  private List<String>      genres           = new ArrayList<>();
     private String network;
     private String rating;
     private String ratingCount;

@@ -98,7 +98,7 @@ public class TvdbParser {
      * @throws com.omertron.thetvdbapi.TvDbException
      */
     public static List<Actor> getActors(String urlString, String bannerMirror) throws TvDbException {
-        List<Actor> results = new ArrayList<Actor>();
+    List<Actor> results = new ArrayList<>();
         Actor actor;
         Document doc;
         NodeList nlActor;
@@ -152,7 +152,7 @@ public class TvdbParser {
      * @throws com.omertron.thetvdbapi.TvDbException
      */
     public static List<Episode> getAllEpisodes(String urlString, int season, String bannerMirror) throws TvDbException {
-        List<Episode> episodeList = new ArrayList<Episode>();
+    List<Episode> episodeList = new ArrayList<>();
         Episode episode;
         NodeList nlEpisode;
         Node nEpisode;
@@ -254,7 +254,7 @@ public class TvdbParser {
      * @throws com.omertron.thetvdbapi.TvDbException
      */
     public static List<Series> getSeriesList(String urlString, String bannerMirror) throws TvDbException {
-        List<Series> seriesList = new ArrayList<Series>();
+    List<Series> seriesList = new ArrayList<>();
         Series series;
         NodeList nlSeries;
         Node nSeries;
@@ -293,9 +293,9 @@ public class TvdbParser {
 
         if (doc != null) {
             Node root = doc.getChildNodes().item(0);
-            List<SeriesUpdate> seriesUpdates = new ArrayList<SeriesUpdate>();
-            List<EpisodeUpdate> episodeUpdates = new ArrayList<EpisodeUpdate>();
-            List<BannerUpdate> bannerUpdates = new ArrayList<BannerUpdate>();
+      List<SeriesUpdate> seriesUpdates = new ArrayList<>();
+      List<EpisodeUpdate> episodeUpdates = new ArrayList<>();
+      List<BannerUpdate> bannerUpdates = new ArrayList<>();
 
             NodeList updateNodes = root.getChildNodes();
             Node updateNode;
@@ -376,7 +376,7 @@ public class TvdbParser {
      * @param delim
      */
     private static List<String> parseList(String input, String delim) {
-        List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
 
         StringTokenizer st = new StringTokenizer(input, delim);
         while (st.hasMoreTokens()) {
@@ -434,11 +434,12 @@ public class TvdbParser {
     }
 
     /**
-     * Parse the document for episode information
-     *
-     * @param doc
-     * @throws Throwable
-     */
+   * Parse the document for episode information
+   *
+   * @param eEpisode
+   * @param bannerMirror
+   * @throws Throwable
+   */
     private static Episode parseNextEpisode(Element eEpisode, String bannerMirror) {
         Episode episode = new Episode();
 

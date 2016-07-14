@@ -118,7 +118,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
-    List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> results = new ArrayList<>();
 
     if (options.getMediaType() != MediaType.TV_SHOW) {
       throw new UnsupportedMediaTypeException(options.getMediaType());
@@ -149,7 +149,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // first add all tv shows in the preferred language
-    HashMap<String, MediaSearchResult> storedResults = new HashMap<String, MediaSearchResult>();
+    HashMap<String, MediaSearchResult> storedResults = new HashMap<>();
     for (Series show : series) {
       if (show.getLanguage().equalsIgnoreCase(language) && !storedResults.containsKey(show.getId())) {
         MediaSearchResult sr = createSearchResult(show, options, searchString);
@@ -301,7 +301,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     md.addProductionCompany(show.getNetwork());
 
     // actors
-    List<Actor> actors = new ArrayList<Actor>();
+    List<Actor> actors = new ArrayList<>();
     synchronized (tvdb) {
       actors.addAll(tvdb.getActors(id));
     }
@@ -374,7 +374,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       return md;
     }
 
-    List<Episode> episodes = new ArrayList<Episode>();
+    List<Episode> episodes = new ArrayList<>();
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for
       // scraping multiple episodes of one tv show
@@ -477,7 +477,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getting artwork: " + options);
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> artwork = new ArrayList<>();
     String id = "";
 
     // check if there is a metadata containing an id
@@ -508,7 +508,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     List<Banner> bannerList = null;
     switch (options.getArtworkType()) {
       case ALL:
-        bannerList = new ArrayList<Banner>(banners.getSeasonList());
+        bannerList = new ArrayList<>(banners.getSeasonList());
         bannerList.addAll(banners.getSeriesList());
         bannerList.addAll(banners.getPosterList());
         bannerList.addAll(banners.getFanartList());
@@ -606,7 +606,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getting episode list: " + options);
-    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+    List<MediaEpisode> episodes = new ArrayList<>();
     String id = "";
 
     // id from result

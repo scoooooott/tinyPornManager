@@ -132,13 +132,7 @@ public class DOMHelper {
     catch (UnsupportedEncodingException ex) {
       throw new TvDbException(ApiExceptionType.INVALID_URL, "Unable to encode URL", url, ex);
     }
-    catch (ParserConfigurationException error) {
-      throw new TvDbException(ApiExceptionType.MAPPING_FAILED, ERROR_UNABLE_TO_PARSE, url, error);
-    }
-    catch (SAXException error) {
-      throw new TvDbException(ApiExceptionType.MAPPING_FAILED, ERROR_UNABLE_TO_PARSE, url, error);
-    }
-    catch (IOException error) {
+    catch (ParserConfigurationException | IOException | SAXException error) {
       throw new TvDbException(ApiExceptionType.MAPPING_FAILED, ERROR_UNABLE_TO_PARSE, url, error);
     }
     finally {

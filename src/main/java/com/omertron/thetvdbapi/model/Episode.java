@@ -41,12 +41,12 @@ public class Episode implements Serializable {
     private String dvdDiscId;
     private String dvdEpisodeNumber;
     private String dvdSeason;
-    private List<String> directors = new ArrayList<String>();
+  private List<String>      directors        = new ArrayList<>();
     private String epImgFlag;
     private String episodeName;
     private int episodeNumber;
     private String firstAired;
-    private List<String> guestStars = new ArrayList<String>();
+  private List<String>      guestStars       = new ArrayList<>();
     private String imdbId;
     private String language;
     private String overview;
@@ -54,7 +54,7 @@ public class Episode implements Serializable {
     private String rating;
     private String ratingCount;
     private int seasonNumber;
-    private List<String> writers = new ArrayList<String>();
+  private List<String>      writers          = new ArrayList<>();
     private String absoluteNumber;
     private int airsAfterSeason;
     private int airsBeforeSeason;

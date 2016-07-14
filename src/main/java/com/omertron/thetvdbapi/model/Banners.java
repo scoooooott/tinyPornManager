@@ -22,6 +22,7 @@ package com.omertron.thetvdbapi.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -34,10 +35,10 @@ public class Banners implements Serializable {
     // Default serial UID
     private static final long serialVersionUID = 1L;
     private int seriesId = 0;
-    private List<Banner> seriesList = new ArrayList<Banner>();
-    private List<Banner> seasonList = new ArrayList<Banner>();
-    private List<Banner> posterList = new ArrayList<Banner>();
-    private List<Banner> fanartList = new ArrayList<Banner>();
+  private List<Banner>      seriesList       = new ArrayList<>();
+  private List<Banner>      seasonList       = new ArrayList<>();
+  private List<Banner>      posterList       = new ArrayList<>();
+  private List<Banner>      fanartList       = new ArrayList<>();
 
     public int getSeriesId() {
         return seriesId;
