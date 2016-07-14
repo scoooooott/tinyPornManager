@@ -124,7 +124,7 @@ public class MediaProviderInfo {
 
   /**
    * just a convenient method to set version as String<br>
-   * Better use {@link #setVersion(Class<?> clazz)}
+   * Better use {@link #setVersion(Class<?>)}
    * 
    * @param version
    */

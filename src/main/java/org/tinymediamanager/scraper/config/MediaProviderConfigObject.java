@@ -55,8 +55,6 @@ public class MediaProviderConfigObject {
   /**
    * short description for key, to display in GUI<br>
    * if empty, we are returning the key (as before)
-   * 
-   * @param keyDescription
    */
   public String getKeyDescription() {
     return keyDescription.isEmpty() ? key : keyDescription;
