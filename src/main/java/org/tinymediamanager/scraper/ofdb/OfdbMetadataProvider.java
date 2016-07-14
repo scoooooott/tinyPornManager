@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -50,6 +48,8 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
+
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 /**
  * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
@@ -495,7 +495,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       throw new UnsupportedMediaTypeException(options.getMediaType());
     }
 
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> resultList = new ArrayList<>();
     String searchString = "";
     String searchQuery = "";
     String imdb = "";
@@ -557,7 +557,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
     // onmouseover="Tip('<img src=&quot;images/film/22/22523.jpg&quot;
     // width=&quot;120&quot; height=&quot;170&quot;>',SHADOW,true)">Bourne
     // Identität, Die<font size="1"> / Bourne Identity, The</font> (2002)</a>
-    HashSet<String> foundResultUrls = new HashSet<String>();
+    HashSet<String> foundResultUrls = new HashSet<>();
     for (Element a : filme) {
       try {
         MediaSearchResult sr = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
@@ -618,7 +618,7 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    List<MediaTrailer> trailers = new ArrayList<>();
     if (!MetadataUtil.isValidImdbId(options.getImdbId())) {
       LOGGER.debug("IMDB id not found");
       return trailers;
