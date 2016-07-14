@@ -146,7 +146,7 @@ class KodiUtil {
   private static List<KodiScraper> getKodiAddons(IOFileFilter dirFilter, IOFileFilter fileFilter) {
     List<KodiScraper> scrapers = new ArrayList<>();
     List<File> foundAddonFiles = new ArrayList<>();
-    Map<String, KodiScraper> tmp = new LinkedHashMap<String, KodiScraper>(); // tmp
+    Map<String, KodiScraper> tmp = new LinkedHashMap<>(); // tmp
                                                                              // sorted
                                                                              // map
                                                                              // for
@@ -213,7 +213,7 @@ class KodiUtil {
   private static List<AbstractKodiMetadataProvider> getAllScrapers() {
     LOGGER.debug("searching for Kodi scrapers");
 
-    List<KodiScraper> scrapers = new ArrayList<KodiScraper>();
+    List<KodiScraper> scrapers = new ArrayList<>();
 
     IOFileFilter dirFilter = new IOFileFilter() {
       @Override
@@ -283,7 +283,7 @@ class KodiUtil {
   private static List<KodiScraper> getAllCommon() {
     LOGGER.debug("searching for Kodi commons");
 
-    List<KodiScraper> common = new ArrayList<KodiScraper>();
+    List<KodiScraper> common = new ArrayList<>();
 
     IOFileFilter dirFilter = new IOFileFilter() {
       @Override
@@ -327,7 +327,7 @@ class KodiUtil {
    * @return
    */
   private static ArrayList<File> getAllCommonXMLs() {
-    ArrayList<File> common = new ArrayList<File>();
+    ArrayList<File> common = new ArrayList<>();
 
     IOFileFilter dirFilter = new IOFileFilter() {
       @Override

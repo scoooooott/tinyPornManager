@@ -38,7 +38,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 
 public class KodiScraper implements IMediaProvider {
   private static final Logger          LOGGER    = LoggerFactory.getLogger(KodiScraper.class);
-  private Map<String, ScraperFunction> functions = new TreeMap<String, ScraperFunction>();
+  private Map<String, ScraperFunction> functions = new TreeMap<>();
 
   MediaType                            type;
   String                               language;
@@ -134,7 +134,7 @@ public class KodiScraper implements IMediaProvider {
       // =====================================================
       // parse language files, if found
       // =====================================================
-      HashMap<String, String> labelmap = new HashMap<String, String>();
+      HashMap<String, String> labelmap = new HashMap<>();
 
       String lang = Locale.getDefault().getDisplayLanguage(Locale.ENGLISH);
       File langFolder = new File(scraperFolder, "resources/language/" + lang);

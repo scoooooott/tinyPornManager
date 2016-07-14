@@ -31,7 +31,7 @@ class ScraperFunction implements RegExpContainer {
   private int          dest         = 0;
   private boolean      appendBuffer = false;
   private String       name;
-  private List<RegExp> regexps      = new ArrayList<RegExp>();
+  private List<RegExp> regexps      = new ArrayList<>();
 
   public ScraperFunction() {
   }

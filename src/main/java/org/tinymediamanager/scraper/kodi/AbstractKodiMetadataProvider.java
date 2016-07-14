@@ -76,7 +76,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
   }
 
   protected List<MediaSearchResult> _search(MediaSearchOptions options) throws Exception {
-    List<MediaSearchResult> l = new ArrayList<MediaSearchResult>();
+    List<MediaSearchResult> l = new ArrayList<>();
     String arg = options.getQuery();
 
     // cannot search without any title/query
@@ -119,7 +119,7 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         sr.setUrl(u.toExternalForm());
         sr.setProviderId(scraper.getProviderInfo().getId());
 
-        if (u.toExternalForm().indexOf("imdb") != -1) {
+        if (u.toExternalForm().contains("imdb")) {
           sr.setIMDBId(id);
         }
 

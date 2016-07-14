@@ -32,7 +32,7 @@ class RegExp implements RegExpContainer {
   private int          dest;
   private String       conditional;
   private boolean      appendBuffer = false;
-  private List<RegExp> children     = new ArrayList<RegExp>();
+  private List<RegExp> children     = new ArrayList<>();
   private Expression   expression;
 
   public RegExp() {

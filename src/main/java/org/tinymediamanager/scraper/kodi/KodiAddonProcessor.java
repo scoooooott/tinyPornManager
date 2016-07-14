@@ -133,7 +133,8 @@ class KodiAddonProcessor {
    * $$3 is the movie url
    * </pre>
    * 
-   * @param u2
+   * @param url
+   * @param id
    * @return
    * @throws Exception
    */
