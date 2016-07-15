@@ -26,6 +26,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
@@ -37,6 +38,7 @@ import org.tinymediamanager.scraper.util.MetadataUtil;
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.AppendToResponse;
 import com.uwetrottmann.tmdb2.entities.CastMember;
+import com.uwetrottmann.tmdb2.entities.ContentRating;
 import com.uwetrottmann.tmdb2.entities.ProductionCompany;
 import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import com.uwetrottmann.tmdb2.entities.TvResultsPage;
@@ -239,8 +241,10 @@ class TmdbTvShowMetadataProvider {
     TvShowComplete complete = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      complete = api.tvService().tv(tmdbId, language, new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS)).execute()
-          .body();
+      complete = api.tvService()
+          .tv(tmdbId, language,
+              new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS, AppendToResponseItem.CONTENT_RATINGS))
+          .execute().body();
     }
 
     if (complete == null) {
@@ -295,6 +299,21 @@ class TmdbTvShowMetadataProvider {
     // if (complete.external_ids != null && complete.external_ids.tvrage_id!= null) {
     // md.setId(MediaMetadata.TV_RAGE, complete.external_ids.tvdb_id);
     // }
+
+    // content ratings
+    if (complete.content_ratings != null) {
+      for (ContentRating country : ListUtils.nullSafe(complete.content_ratings.results)) {
+        if (options.getCountry() == null || options.getCountry().getAlpha2().compareToIgnoreCase(country.iso_3166_1) == 0) {
+          // do not use any empty certifications
+          if (StringUtils.isEmpty(country.rating)) {
+            continue;
+          }
+
+          md.addCertification(Certification.getCertification(country.iso_3166_1, country.rating));
+
+        }
+      }
+    }
 
     return md;
   }

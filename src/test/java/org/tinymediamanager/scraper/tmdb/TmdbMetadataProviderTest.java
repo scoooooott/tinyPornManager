@@ -16,6 +16,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
@@ -435,6 +436,7 @@ public class TmdbMetadataProviderTest {
       assertNotEquals(0, (int) md.getVoteCount());
       assertEquals("Ended", md.getStatus());
       assertThat(md.getProductionCompanies()).isNotEmpty();
+      assertEquals(Certification.US_TVPG, md.getCertifications().get(0));
     }
     catch (Exception e) {
       e.printStackTrace();
