@@ -252,6 +252,20 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * doe we have basic metadata filled?<br>
+   * like plot, year, geners, actors
+   * 
+   * @return true/false
+   */
+  public Boolean getHasMetadata() {
+    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+        && !(actors == null || actors.size() == 0)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Gets the checks for images.
    * 
    * @return the checks for images
