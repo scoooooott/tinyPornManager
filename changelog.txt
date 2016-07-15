@@ -22,6 +22,7 @@ x overwrite existing images in the exporter
 x fix for renaming into subfolders
 x fixed wrong scraped release dates (where no release date has been found)
 x fixed TV episode detection for extracted disc files
+x changed the NFO column to better indicate scraped/unscraped movies
 
 
 Version 2.8.1
