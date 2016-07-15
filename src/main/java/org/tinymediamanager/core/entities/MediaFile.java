@@ -1652,7 +1652,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String dur = getMediaInfo(StreamKind.General, 0, "Duration");
           if (!dur.isEmpty()) {
             try {
-              setDuration(Integer.parseInt(dur) / 1000);
+              Double d = Double.parseDouble(dur);
+              setDuration(d.intValue() / 1000);
             }
             catch (NumberFormatException e) {
               setDuration(0);
