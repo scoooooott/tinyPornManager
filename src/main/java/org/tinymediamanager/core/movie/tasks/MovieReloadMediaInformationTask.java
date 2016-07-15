@@ -26,6 +26,7 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
@@ -59,7 +60,9 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m, true));
+        for (MediaFile mf : m.getMediaFiles()) {
+          submitTask(new MediaFileInformationFetcherTask(mf, m, true));
+        }
       }
 
       waitForCompletionOrCancel();

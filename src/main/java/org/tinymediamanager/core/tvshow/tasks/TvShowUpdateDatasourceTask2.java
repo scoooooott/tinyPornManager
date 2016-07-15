@@ -15,8 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.FileVisitResult.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -346,30 +345,18 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
     // get mediainfo for tv show (fanart/poster..)
-    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
       if (StringUtils.isBlank(mf.getContainerFormat())) {
-        ungatheredMediaFiles.add(mf);
+        submitTask(new MediaFileInformationFetcherTask(mf, tvShow, false));
       }
-    }
-
-    if (ungatheredMediaFiles.size() > 0) {
-      submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, tvShow, false));
     }
 
     // get mediainfo for all episodes within this tv show
     for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
-      ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
-          if (!ungatheredMediaFiles.contains(mf)) {
-            ungatheredMediaFiles.add(mf);
-          }
+          submitTask(new MediaFileInformationFetcherTask(mf, episode, false));
         }
-      }
-
-      if (ungatheredMediaFiles.size() > 0) {
-        submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, episode, false));
       }
     }
   }

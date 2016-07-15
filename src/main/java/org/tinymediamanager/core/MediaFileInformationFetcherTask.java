@@ -15,8 +15,9 @@
  */
 package org.tinymediamanager.core;
 
-import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -43,6 +44,24 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
   /**
    * Instantiates a new media file information fetcher task.
    * 
+   * @param mediaFile
+   *          the media files
+   * @param mediaEntity
+   *          the media entity
+   * @param forceUpdate
+   *          force an update
+   */
+  public MediaFileInformationFetcherTask(MediaFile mediaFile, MediaEntity mediaEntity, boolean forceUpdate) {
+    this.mediaFiles = new ArrayList<MediaFile>();
+    this.mediaFiles.add(mediaFile);
+    this.mediaEntity = mediaEntity;
+    this.forceUpdate = forceUpdate;
+  }
+
+  /**
+   * Instantiates ONE new media file information fetcher task for ALL files<br>
+   * better to submit one file after another.. for status bar et all
+   * 
    * @param mediaFiles
    *          the media files
    * @param mediaEntity
@@ -50,6 +69,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
    * @param forceUpdate
    *          force an update
    */
+  @Deprecated
   public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity, boolean forceUpdate) {
     this.mediaFiles = mediaFiles;
     this.mediaEntity = mediaEntity;

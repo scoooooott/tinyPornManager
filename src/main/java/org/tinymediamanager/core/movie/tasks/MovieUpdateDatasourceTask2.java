@@ -914,15 +914,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
-          ungatheredMediaFiles.add(mf);
+          submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
-      }
-
-      if (ungatheredMediaFiles.size() > 0) {
-        submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, movie, false));
       }
     }
     waitForCompletionOrCancel();
