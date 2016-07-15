@@ -116,8 +116,7 @@ public class ParserUtilsTest {
   }
 
   private String detectTY(String filename) {
-    // String[] s = ParserUtils.detectCleanMovienameAndYear(filename);
-    String[] s = ParserUtils.detectCleanMovienameAndYearWithOptionals(filename);
+    String[] s = ParserUtils.detectCleanMovienameAndYear(filename);
     String ret = s[0];
     if (!s[1].isEmpty()) {
       ret = ret + " | " + s[1];

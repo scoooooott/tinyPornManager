@@ -84,7 +84,8 @@ public class ParserUtils {
    *          the filename to get the title from
    * @return title/year string (year can be empty)
    */
-  public static String[] detectCleanMovienameAndYear(String filename) {
+  @Deprecated
+  public static String[] detectCleanMovienameAndYearOLD(String filename) {
     String[] ret = { "", "" };
     // use trace to not remove logging completely (function called way to often on multi movie dir parsing)
     LOGGER.trace("Parse filename for movie title: \"" + filename + "\"");
@@ -184,7 +185,18 @@ public class ParserUtils {
     return ret;
   }
 
-  public static String[] detectCleanMovienameAndYearWithOptionals(String filename) {
+  /**
+   * Tries to get movie name and year from filename<br>
+   * 1. splits string using common delimiters ".- ()"<br>
+   * 2. searches for first occurrence of common stopwords<br>
+   * 3. if last token is 4 digits, assume year and set [1]<br>
+   * 4. everything before the first stopword must be the movie name :p
+   * 
+   * @param filename
+   *          the filename to get the title from
+   * @return title/year string (year can be empty)
+   */
+  public static String[] detectCleanMovienameAndYear(String filename) {
     String[] ret = { "", "" };
     // use trace to not remove logging completely (function called way to often on multi movie dir parsing)
     LOGGER.trace("Parse filename for movie title: \"" + filename + "\"");

@@ -23,6 +23,7 @@ x fix for renaming into subfolders
 x fixed wrong scraped release dates (where no release date has been found)
 x fixed TV episode detection for extracted disc files
 x changed the NFO column to better indicate scraped/unscraped movies
+x better detection of movie name out of filename 
 
 
 Version 2.8.1
