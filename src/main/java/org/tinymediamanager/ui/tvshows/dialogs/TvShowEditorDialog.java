@@ -51,6 +51,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -827,7 +828,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       Date premieredDate = (Date) spPremiered.getValue();
-      if (!premieredDate.equals(INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(premieredDate, INITIAL_DATE)) {
         tvShowToEdit.setFirstAired(premieredDate);
       }
 

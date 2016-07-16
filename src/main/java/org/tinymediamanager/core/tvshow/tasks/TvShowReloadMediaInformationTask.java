@@ -26,6 +26,7 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -72,14 +73,18 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(show.getMediaFiles(), show, true));
+        for (MediaFile mf : show.getMediaFiles()) {
+          submitTask(new MediaFileInformationFetcherTask(mf, show, true));
+        }
       }
 
       for (TvShowEpisode episode : episodes) {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(episode.getMediaFiles(), episode, true));
+        for (MediaFile mf : episode.getMediaFiles()) {
+          submitTask(new MediaFileInformationFetcherTask(mf, episode, true));
+        }
       }
 
       waitForCompletionOrCancel();

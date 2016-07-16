@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,7 @@ public class MovieChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setResult(result);
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId() + ", "
@@ -244,7 +245,7 @@ public class MovieChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
@@ -295,7 +296,7 @@ public class MovieChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
       // scrape trailers

@@ -52,6 +52,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -221,31 +222,24 @@ public class MovieEditorDialog extends TmmDialog {
      */
     {
       details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-      details1Panel
-          .setLayout(
-              new FormLayout(
-                  new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
-                      FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-                      FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-                      ColumnSpec.decode("24dlu"),
-                      FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec
-                          .decode("7dlu:grow"),
-                      FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-                      FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-                      FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
-                  new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-                      RowSpec.decode("15dlu"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      RowSpec.decode("fill:default:grow"), }));
+      details1Panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu"),
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -1008,7 +1002,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setYear(spYear.getValue().equals(0) ? "" : String.valueOf(spYear.getValue())); // set empty on 0
 
       Date releaseDate = (Date) spReleaseDate.getValue();
-      if (!releaseDate.equals(INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(releaseDate, INITIAL_DATE)) {
         movieToEdit.setReleaseDate(releaseDate);
       }
       movieToEdit.setRuntime((Integer) spRuntime.getValue());

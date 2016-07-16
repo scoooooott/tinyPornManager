@@ -418,7 +418,7 @@ public class MovieArtworkHelper {
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage()));
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
 
     // poster
     setBestPoster(movie, artwork);

@@ -97,7 +97,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return movie.getDateAdded();
 
       case 4:
-        if (movie.getHasNfoFile()) {
+        if (movie.getHasMetadata()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;

@@ -55,7 +55,9 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -108,7 +110,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Date                                     INITIAL_DATE     = new Date(0);
 
   private TvShowList                                            tvShowList       = TvShowList.getInstance();
@@ -544,7 +546,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       Date firstAiredDate = (Date) spFirstAired.getValue();
-      if (!firstAiredDate.equals(INITIAL_DATE)) {
+      if (!DateUtils.isSameDay(firstAiredDate, INITIAL_DATE)) {
         episodeToEdit.setFirstAired(firstAiredDate);
       }
 
@@ -615,7 +617,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     protected Void doInBackground() throws Exception {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());

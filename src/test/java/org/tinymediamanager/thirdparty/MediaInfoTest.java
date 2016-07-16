@@ -1,6 +1,7 @@
 package org.tinymediamanager.thirdparty;
 
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,25 +52,34 @@ public class MediaInfoTest {
 
   @Test
   public void mediaFile() {
-    MediaFile mf = new MediaFile();
-    mf.setPath("");
-    mf.setFilename("");
+    MediaFile mf = new MediaFile(Paths.get(""));
 
     mf.gatherMediaInformation();
 
-    System.out.println("res: " + mf.getVideoResolution());
-    System.out.println("chan: " + mf.getAudioChannels());
-    System.out.println("codec: " + mf.getAudioCodec());
-    System.out.println("cont: " + mf.getContainerFormat());
+    System.out.println("----------------------");
+    System.out.println("filesize: " + mf.getFilesize());
+    System.out.println("filedate: " + new Date(mf.getFiledate()));
+    System.out.println("container: " + mf.getContainerFormat());
+    System.out.println("runtime: " + mf.getDurationHHMMSS());
+
+    System.out.println("----------------------");
+    System.out.println("vres: " + mf.getVideoResolution());
+    System.out.println("vwidth: " + mf.getVideoWidth());
+    System.out.println("vheight: " + mf.getVideoHeight());
+    System.out.println("vformat: " + mf.getVideoFormat());
     System.out.println("vid: " + mf.getExactVideoFormat());
-    System.out.println("codec: " + mf.getVideoCodec());
-    System.out.println("def: " + mf.getVideoDefinitionCategory());
-    System.out.println("form: " + mf.getVideoFormat());
+    System.out.println("vcodec: " + mf.getVideoCodec());
+    System.out.println("vdef: " + mf.getVideoDefinitionCategory());
+    System.out.println("var: " + mf.getAspectRatio());
     System.out.println("ws?: " + mf.isWidescreen());
-    System.out.println("ar: " + mf.getAspectRatio());
-    System.out.println("width: " + mf.getVideoWidth());
-    System.out.println("height: " + mf.getVideoHeight());
-    // Map<String, String> i = getMediaInfo().snapshot(StreamKind.Video, 0);
+
+    System.out.println("----------------------");
+    System.out.println("acodec: " + mf.getAudioCodec());
+    System.out.println("alang: " + mf.getAudioLanguage());
+    System.out.println("achan: " + mf.getAudioChannels());
+
+    System.out.println("----------------------");
+    System.out.println("subs: " + mf.getSubtitlesAsString());
   }
 
   /**

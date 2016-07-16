@@ -49,7 +49,7 @@ import org.tinymediamanager.ui.movies.MoviePanel;
  * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
-  private final static Logger   LOGGER          = LoggerFactory.getLogger(MainWindow.class);
+  private final static Logger   LOGGER          = LoggerFactory.getLogger(TmmWindowSaver.class);
   private final static String   PROPERTIES_FILE = "tmm_ui.prop";
   private static TmmWindowSaver instance;
 

@@ -15,28 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.AIRED_EPISODE;
-import static org.tinymediamanager.core.Constants.AIRED_SEASON;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
-import static org.tinymediamanager.core.Constants.DISPLAY_EPISODE;
-import static org.tinymediamanager.core.Constants.DISPLAY_SEASON;
-import static org.tinymediamanager.core.Constants.DVD_EPISODE;
-import static org.tinymediamanager.core.Constants.DVD_ORDER;
-import static org.tinymediamanager.core.Constants.DVD_SEASON;
-import static org.tinymediamanager.core.Constants.EPISODE;
-import static org.tinymediamanager.core.Constants.FIRST_AIRED;
-import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
-import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
-import static org.tinymediamanager.core.Constants.SEASON;
-import static org.tinymediamanager.core.Constants.SEASON_POSTER;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
-import static org.tinymediamanager.core.Constants.TVDB;
-import static org.tinymediamanager.core.Constants.TV_SHOW;
-import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -873,17 +852,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public List<MediaFile> getMediaFilesContainingSubtitles() {
     List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
-    // look in the first media file if it has subtitles
-    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
-      MediaFile videoFile = videoFiles.get(0);
-      if (videoFile.hasSubtitles()) {
-        mediaFilesWithSubtitles.add(videoFile);
-      }
-    }
-
-    // look for all other types
-    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.VIDEO, MediaFileType.SUBTITLE)) {
       if (mediaFile.hasSubtitles()) {
         mediaFilesWithSubtitles.add(mediaFile);
       }
@@ -912,6 +881,18 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setSubtitles(boolean sub) {
     this.subtitles = sub;
+  }
+
+  public int getRuntimeFromMediaFiles() {
+    int runtime = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      runtime += mf.getDuration();
+    }
+    return runtime;
+  }
+
+  public int getRuntimeFromMediaFilesInMinutes() {
+    return getRuntimeFromMediaFiles() / 60;
   }
 
   @Override

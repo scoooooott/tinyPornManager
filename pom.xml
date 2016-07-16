@@ -49,13 +49,13 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-anidb</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-fanarttv</artifactId>
-			<version>1.3</version>
+			<version>1.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-moviemeter</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -113,13 +113,13 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-tvdb</artifactId>
-			<version>1.4</version>
+			<version>1.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-zelluloid</artifactId>
-			<version>1.4</version>
+			<version>1.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -186,7 +186,7 @@
 		<dependency>
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
 			<artifactId>loop-fs-iso-impl</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.1-TMM</version>
 		</dependency>
 	</dependencies>
 
@@ -263,8 +263,22 @@
 						</goals>
 						<configuration>
 							<excludeGroupIds>org.tinymediamanager.plugins</excludeGroupIds>
+							<excludeArtifactIds>retrofit</excludeArtifactIds>
 							<includeScope>runtime</includeScope>
 							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- workaround for 2 same named retrofit dependencies -->
+						<id>copy-retrofit</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>retrofit</includeArtifactIds>
+							<includeScope>runtime</includeScope>
+							<stripVersion>false</stripVersion>
 						</configuration>
 					</execution>
 					<execution>

@@ -15,37 +15,7 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.COUNTRY;
-import static org.tinymediamanager.core.Constants.DATA_SOURCE;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
-import static org.tinymediamanager.core.Constants.EDITION;
-import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
-import static org.tinymediamanager.core.Constants.GENRE;
-import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
-import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
-import static org.tinymediamanager.core.Constants.IMDB;
-import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
-import static org.tinymediamanager.core.Constants.MOVIESET;
-import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
-import static org.tinymediamanager.core.Constants.PRODUCERS;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE;
-import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
-import static org.tinymediamanager.core.Constants.RUNTIME;
-import static org.tinymediamanager.core.Constants.SORT_TITLE;
-import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
-import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
-import static org.tinymediamanager.core.Constants.TMDB;
-import static org.tinymediamanager.core.Constants.TOP250;
-import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.TRAKT;
-import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
-import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -67,6 +37,7 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -277,6 +248,20 @@ public class Movie extends MediaEntity {
       return true;
     }
 
+    return false;
+  }
+
+  /**
+   * doe we have basic metadata filled?<br>
+   * like plot, year, geners, actors
+   * 
+   * @return true/false
+   */
+  public Boolean getHasMetadata() {
+    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+        && !(actors == null || actors.size() == 0)) {
+      return true;
+    }
     return false;
   }
 
@@ -902,7 +887,7 @@ public class Movie extends MediaEntity {
               IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
-              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);
@@ -1725,17 +1710,7 @@ public class Movie extends MediaEntity {
   public List<MediaFile> getMediaFilesContainingSubtitles() {
     List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
-    // look in the first media file if it has subtitles
-    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
-      MediaFile videoFile = videoFiles.get(0);
-      if (videoFile.hasSubtitles()) {
-        mediaFilesWithSubtitles.add(videoFile);
-      }
-    }
-
-    // look for all other types
-    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.VIDEO, MediaFileType.SUBTITLE)) {
       if (mediaFile.hasSubtitles()) {
         mediaFilesWithSubtitles.add(mediaFile);
       }

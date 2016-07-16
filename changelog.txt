@@ -8,6 +8,8 @@ Version 2.8.2
 + added extra language setting for subtitle scraping
 + support folder excluding in Kodi style (.nomedia file in folder to exclude)
 + added media source renamer token for TV shows
++ updated tmdb scraper (thanks to @davidsben)
++ updated extras detection to Plex naming scheme 
 x fixed movie renamer dropping several image/NFO files
 x TMDB crash when scraping of several TV shows without artwork
 x fixed exporting of movies/TV shows
@@ -17,6 +19,11 @@ x rename .idx files along with with .sub files
 x improved writing/reading speed for subtitles and NFO files
 x do not overwrite external Kodi NFO streamdetails
 x overwrite existing images in the exporter
+x fix for renaming into subfolders
+x fixed wrong scraped release dates (where no release date has been found)
+x fixed TV episode detection for extracted disc files
+x changed the NFO column to better indicate scraped/unscraped movies
+x better detection of movie name out of filename 
 
 
 Version 2.8.1

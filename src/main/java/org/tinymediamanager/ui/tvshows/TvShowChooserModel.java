@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +160,7 @@ public class TvShowChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setResult(result);
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
@@ -233,7 +234,7 @@ public class TvShowChooserModel extends AbstractModelObject {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
 
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
       // scrape providers till one artwork has been found
