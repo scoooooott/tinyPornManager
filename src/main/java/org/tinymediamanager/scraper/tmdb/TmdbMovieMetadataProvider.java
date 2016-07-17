@@ -172,15 +172,13 @@ class TmdbMovieMetadataProvider {
         LOGGER.debug("found " + resultList.size() + " results with search string");
       }
 
-      // 4. if the last token in search string seems to be a year, try without
-      // :)
-      if (searchString.matches(".*\\s\\d{4}$") && (resultList == null || resultList.size() == 0)) {
-        // nada found & last part seems to be date; strip off and try again
+      // 4. if the last token in search string seems to be a year, try without :)
+      if (resultList.size() == 0) {
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 10, language, false, year, year, "phrase").execute().body();
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, null, null, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
