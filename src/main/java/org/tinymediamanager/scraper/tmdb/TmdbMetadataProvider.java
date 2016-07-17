@@ -65,6 +65,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
         "<html><h3>The Movie Database (TMDb)</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
         TmdbMetadataProvider.class.getResource("/themoviedb_org.png"));
     providerInfo.setVersion(TmdbMetadataProvider.class);
+
+    providerInfo.getConfig().addBoolean("includeAdult", false);
+    providerInfo.getConfig().load();
     return providerInfo;
   }
 

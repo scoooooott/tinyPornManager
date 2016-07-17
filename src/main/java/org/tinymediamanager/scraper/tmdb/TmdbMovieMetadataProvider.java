@@ -102,6 +102,8 @@ class TmdbMovieMetadataProvider {
       return resultList;
     }
 
+    boolean adult = TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("includeAdult");
+
     searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     String language = query.getLanguage().getLanguage();
     if (StringUtils.isNotBlank(query.getLanguage().getCountry())) {
@@ -156,7 +158,7 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, year, year, "phrase").execute().body();
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, year, year, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
@@ -178,7 +180,7 @@ class TmdbMovieMetadataProvider {
         TmdbConnectionCounter.trackConnections();
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, false, null, null, "phrase").execute().body();
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (Movie movie : resultsPage.results) {
               resultList.add(morphMovieToSearchResult(movie));
