@@ -333,9 +333,9 @@ public class MovieRenamer {
     }
     cleanup.removeAll(Collections.singleton(null)); // remove all NULL ones!
 
-    // after we cleanup our old MFs, update to new path now
-    movie.setPath(newPathname);
-    // movie.saveToDb(); // FIXME: TBD?!
+    // update movie path at end of renaming - we need the old one here!!
+    // movie.setPath(newPathname);
+    // movie.saveToDb();
 
     // BASENAME
     String newVideoBasename = "";
