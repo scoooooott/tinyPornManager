@@ -17,8 +17,7 @@
 package org.tinymediamanager.scraper.ofdb;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -31,7 +30,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
@@ -102,7 +100,7 @@ public class OfdbMetadataProviderTest {
     try {
       mp = new OfdbMetadataProvider();
       options = new MediaScrapeOptions(MediaType.MOVIE);
-      options.setLanguage(MediaLanguages.de);
+      options.setLanguage(Locale.GERMAN);
       options.setId(mp.getProviderInfo().getId(), "226045");
 
       md = mp.getMetadata(options);
