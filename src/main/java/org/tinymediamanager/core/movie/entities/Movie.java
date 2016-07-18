@@ -15,7 +15,37 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.COUNTRY;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.EDITION;
+import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.MOVIESET_TITLE;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE;
+import static org.tinymediamanager.core.Constants.RELEASE_DATE_AS_STRING;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
+import static org.tinymediamanager.core.Constants.TOP250;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
+import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -31,8 +61,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -71,10 +101,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -180,13 +210,7 @@ public class Movie extends MediaEntity {
    */
   @Override
   public boolean isScraped() {
-    if (!scraped) {
-      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
-          && !(actors == null || actors.size() == 0)) {
-        return true;
-      }
-    }
-    return scraped;
+    return scraped || getHasMetadata();
   }
 
   /**
@@ -253,13 +277,13 @@ public class Movie extends MediaEntity {
 
   /**
    * doe we have basic metadata filled?<br>
-   * like plot, year, geners, actors
+   * like plot, year, genres, actors or producers
    * 
    * @return true/false
    */
   public Boolean getHasMetadata() {
-    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
-        && !(actors == null || actors.size() == 0)) {
+    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.isEmpty())
+        && (!(actors == null || actors.isEmpty()) || !(producers == null || producers.isEmpty()))) {
       return true;
     }
     return false;
