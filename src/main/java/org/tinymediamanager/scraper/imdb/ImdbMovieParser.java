@@ -169,7 +169,7 @@ public class ImdbMovieParser extends ImdbParser {
     }
 
     // did we get a release date?
-    if (md.getReleaseDate() == null) {
+    if (md.getReleaseDate() == null || !ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("localReleaseDate")) {
       // get the date from the releaseinfo page
       Future<Document> futureReleaseinfo;
       sb = new StringBuilder(imdbSite.getSite());
@@ -246,7 +246,6 @@ public class ImdbMovieParser extends ImdbParser {
         }
       }
     }
-
     return md;
   }
 }
