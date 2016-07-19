@@ -1279,9 +1279,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
       image.close();
     }
-    catch (IOException e) {
-      LOGGER.error("Mediainfo could not open STREAM");
+    catch (Exception e) {
+      LOGGER.error("Mediainfo could not open STREAM - trying fallback");
       closeMediaInfo();
+      getMediaInfoSnapshot();
     }
   }
 
