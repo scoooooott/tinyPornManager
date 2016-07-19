@@ -1,6 +1,6 @@
 Version 2.8.2
 =======================
-+ MediaInfo for ISO files - yay!
++ MediaInfo for DVD ISO files - yay!
 + reworked command line scraping, please check syntax (add scrapeAll, reworked logic for TvShows)
 + added select all/deselect all buttons for metadata scrape options
 + added persian to the scraper languages
