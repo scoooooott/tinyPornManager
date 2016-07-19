@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-moviemeter</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 
 	<name>MovieMeter.nl scraper</name>
 	<description>A MovieMeter.nl scraper for tinyMediaManager</description>
@@ -20,7 +20,7 @@
 		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
 		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>scraper-moviemeter-1.3</tag>
   </scm>
 
 	<dependencies>
