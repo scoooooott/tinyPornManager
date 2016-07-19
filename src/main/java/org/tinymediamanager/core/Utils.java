@@ -170,7 +170,12 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
         delim = "";
       }
-      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
+
+      // only move the first found prefix
+      if (title.matches("(?i)^" + Pattern.quote(prfx) + delim + "(.*)")) {
+        title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
+        break;
+      }
     }
     return title.trim();
   }

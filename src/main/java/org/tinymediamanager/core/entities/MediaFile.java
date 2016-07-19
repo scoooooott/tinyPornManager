@@ -1207,6 +1207,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     try {
       image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
       int dur = 0;
+      long biggest = 0L;
 
       for (Iso9660FileEntry entry : image) {
         if (entry.getSize() <= 5000) { // small files and "." entries
@@ -1260,8 +1261,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             mf.setMiSnapshot(tempSnapshot); // set ours to MI for standard gathering
             mf.gatherMediaInformation(); // normal gather from snapshots
 
-            // set ISO snapshot ONCE from first video >10 min, so we copy all the resolutions & co
-            if (mf.getDuration() > 60 * 10) {
+            // set ISO snapshot ONCE from biggest video file, so we copy all the resolutions & co
+            if (entry.getSize() > biggest) {
+              biggest = entry.getSize();
               miSnapshot = tempSnapshot;
             }
 
@@ -1277,9 +1279,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
       image.close();
     }
-    catch (IOException e) {
-      LOGGER.error("Mediainfo could not open STREAM");
+    catch (Exception e) {
+      LOGGER.error("Mediainfo could not open STREAM - trying fallback");
       closeMediaInfo();
+      getMediaInfoSnapshot();
     }
   }
 
