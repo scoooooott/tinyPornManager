@@ -87,13 +87,13 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     // Kodi wants title and year separated, so let's do that
     String args[] = parseTitle(arg);
     String title = args[0];
-    String year = "";
+    int year = 0;
     if (options.getYear() != 0) {
-      year = "" + options.getYear();
+      year = options.getYear();
     }
 
     KodiAddonProcessor processor = new KodiAddonProcessor(scraper);
-    KodiUrl url = processor.getSearchUrl(title, year);
+    KodiUrl url = processor.getSearchUrl(title, String.valueOf(year));
     String xmlString = processor.getSearchResults(url);
 
     LOGGER.trace("========= BEGIN Kodi Scraper Search Xml Results: Url: " + url);
@@ -132,7 +132,14 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
         }
         catch (Exception ignored) {
         }
-        sr.setScore(MetadataUtil.calculateScore(arg, t));
+        float score = MetadataUtil.calculateScore(arg, t);
+        if (yearDiffers(sr.getYear(), year)) {
+          float diff = (float) Math.abs(year - sr.getYear()) / 100;
+          LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+          score -= diff;
+        }
+        sr.setScore(score);
+
         l.add(sr);
       }
       catch (Exception e) {
@@ -144,6 +151,13 @@ public abstract class AbstractKodiMetadataProvider implements IKodiMetadataProvi
     Collections.reverse(l);
 
     return l;
+  }
+
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(Integer i1, Integer i2) {
+    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
   }
 
   protected MediaMetadata _getMetadata(MediaScrapeOptions options) throws Exception {
