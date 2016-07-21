@@ -193,7 +193,7 @@ class TmdbMovieMetadataProvider {
         catch (Exception e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
         }
-        LOGGER.debug("found " + resultList.size() + " results with search string removed year");
+        LOGGER.debug("found " + resultList.size() + " results with search string without year");
       }
     }
 
@@ -211,8 +211,13 @@ class TmdbMovieMetadataProvider {
         result.setScore(1);
       }
       else {
-        // compare score based on names
-        result.setScore(MetadataUtil.calculateScore(searchString, result.getTitle()));
+        float score = MetadataUtil.calculateScore(searchString, result.getTitle());
+        if (yearDiffers(year, result.getYear())) {
+          float diff = (float) Math.abs(year - result.getYear()) / 100;
+          LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+          score -= diff;
+        }
+        result.setScore(score);
       }
     }
 
@@ -609,5 +614,12 @@ class TmdbMovieMetadataProvider {
     }
 
     return md;
+  }
+
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(Integer i1, Integer i2) {
+    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
   }
 }
