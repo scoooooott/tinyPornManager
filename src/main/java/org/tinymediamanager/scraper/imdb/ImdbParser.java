@@ -15,9 +15,7 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre;
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -316,9 +314,10 @@ public abstract class ImdbParser {
           getLogger().debug("no poster - downgrading score by 0.01");
           score = score - 0.01f;
         }
-        if (myear != 0 && myear != year) {
-          getLogger().debug("parsed year does not match search result year - downgrading score by 0.01");
-          score = score - 0.01f;
+        if (yearDiffers(myear, year)) {
+          float diff = (float) Math.abs(year - myear) / 100;
+          getLogger().debug("parsed year does not match search result year - downgrading score by " + diff);
+          score -= diff;
         }
         sr.setScore(score);
       }
@@ -876,6 +875,13 @@ public abstract class ImdbParser {
     return cm;
   }
 
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(Integer i1, Integer i2) {
+    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
+  }
+
   /****************************************************************************
    * local helper classes
    ****************************************************************************/
@@ -909,9 +915,9 @@ public abstract class ImdbParser {
   }
 
   static class TmdbWorker implements Callable<MediaMetadata> {
-    private String         imdbId;
+    private String      imdbId;
     private Locale      language;
-    private CountryCode    certificationCountry;
+    private CountryCode certificationCountry;
 
     public TmdbWorker(String imdbId, Locale language, CountryCode certificationCountry) {
       this.imdbId = imdbId;
