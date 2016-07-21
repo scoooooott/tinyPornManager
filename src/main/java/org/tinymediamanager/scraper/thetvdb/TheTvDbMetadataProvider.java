@@ -217,7 +217,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
     }
 
-    sr.setScore(MetadataUtil.calculateScore(searchString, show.getSeriesName()));
+    float score = MetadataUtil.calculateScore(searchString, show.getSeriesName());
+    if (yearDiffers(options.getYear(), sr.getYear())) {
+      float diff = (float) Math.abs(options.getYear() - sr.getYear()) / 100;
+      LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+      score -= diff;
+    }
+    sr.setScore(score);
 
     return sr;
   }
@@ -787,6 +793,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       g = MediaGenres.getGenre(genre);
     }
     return g;
+  }
+
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(Integer i1, Integer i2) {
+    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
   }
 
   /**********************************************************************
