@@ -596,9 +596,10 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
           // compare score based on names
           float score = MetadataUtil.calculateScore(searchQuery, sr.getTitle());
 
-          if (myear != 0 && myear != sr.getYear()) {
-            LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
-            score = score - 0.01f;
+          if (yearDiffers(myear, sr.getYear())) {
+            float diff = (float) Math.abs(myear - sr.getYear()) / 100;
+            LOGGER.debug("parsed year does not match search result year - downgrading score by " + diff);
+            score -= diff;
           }
           sr.setScore(score);
 
@@ -839,5 +840,12 @@ public class OfdbMetadataProvider implements IMovieMetadataProvider, IMovieTrail
       v[0] = title;
     }
     return v;
+  }
+
+  /**
+   * Is i1 != i2 (when >0)
+   */
+  private boolean yearDiffers(Integer i1, Integer i2) {
+    return i1 != null && i1 != 0 && i2 != null && i2 != 0 && i1 != i2;
   }
 }
