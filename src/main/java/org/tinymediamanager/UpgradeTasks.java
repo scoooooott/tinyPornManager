@@ -248,6 +248,52 @@ public class UpgradeTasks {
       }
     }
 
+    // upgrade to v2.8.3
+    if (StrgUtils.compareVersion(v, "2.8.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8.3");
+
+      // reset "container format" for MFs, so that MI tries them again on next UDS (ISOs and others)
+      // (but only if we do not have some video information yet, like "width")
+      for (Movie movie : movieList.getMovies()) {
+        boolean changed = false;
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          if (mf.getVideoResolution().isEmpty()) {
+            mf.setContainerFormat("");
+            changed = true;
+          }
+        }
+        if (changed) {
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          boolean changed = false;
+          for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+            if (mf.getVideoResolution().isEmpty()) {
+              mf.setContainerFormat("");
+              changed = true;
+            }
+          }
+          if (episode.isDisc()) {
+            // correct episode path when extracted disc folder
+            Path discRoot = episode.getPathNIO().toAbsolutePath(); // folder
+            String folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // relative
+            while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+              discRoot = discRoot.getParent();
+              folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // reevaluate
+              episode.setPath(discRoot.toAbsolutePath().toString());
+              changed = true;
+            }
+          }
+          if (changed) {
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
   }
 
   /**

@@ -1,3 +1,8 @@
+Version 2.8.3
+=======================
+x fix episode root path for extracted disc folders
+
+
 Version 2.8.2
 =======================
 + MediaInfo for ISO files - yay!
