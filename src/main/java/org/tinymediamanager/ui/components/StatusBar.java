@@ -47,6 +47,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
@@ -85,6 +86,7 @@ public class StatusBar extends JPanel implements TmmTaskListener {
 
   private JButton                               btnNotifications;
   private Component                             verticalStrut;
+  private JLabel                                memory;
 
   public StatusBar() {
     initComponents();
@@ -93,9 +95,9 @@ public class StatusBar extends JPanel implements TmmTaskListener {
   private void initComponents() {
     taskMap = new HashMap<>();
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC, FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
 
     label = new JLabel();
@@ -130,10 +132,13 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     pane.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "HidePopup");
     pane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "HidePopup");
 
-    add(verticalStrut, "2, 2");
-    add(label, "3, 2");
-    add(bar, "5, 2");
-    add(closeButton, "7, 2");
+    memory = new JLabel(printMemory());
+    add(memory, "2, 2");
+
+    add(verticalStrut, "4, 2");
+    add(label, "5, 2");
+    add(bar, "7, 2");
+    add(closeButton, "9, 2");
 
     label.setVisible(false);
     bar.setVisible(false);
@@ -172,7 +177,7 @@ public class StatusBar extends JPanel implements TmmTaskListener {
         dialog.setVisible(true);
       }
     });
-    add(btnNotifications, "9, 2");
+    add(btnNotifications, "11, 2");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -192,6 +197,16 @@ public class StatusBar extends JPanel implements TmmTaskListener {
       }
     };
     TmmUIMessageCollector.instance.addPropertyChangeListener(propertyChangeListener);
+
+    final Timer m = new Timer(2000, null);
+    ActionListener listener = new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        memory.setText(printMemory());
+      }
+    };
+    m.addActionListener(listener);
+    m.start();
   }
 
   public void showPopup() {
@@ -356,6 +371,31 @@ public class StatusBar extends JPanel implements TmmTaskListener {
     else if (popup.isShowing()) {
       resizePopup();
     }
+  }
+
+  private String printMemory() {
+    Runtime rt = Runtime.getRuntime();
+    long totalMem = rt.totalMemory();
+    long maxMem = rt.maxMemory(); // = Xmx
+    long freeMem = rt.freeMemory();
+    long megs = 1048576;
+
+    // see http://stackoverflow.com/a/18375641
+    long used = totalMem - freeMem;
+    long free = maxMem - used;
+
+    String phys = "";
+    // try {
+    // long physical = 0L;
+    // MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+    // Object attribute = mBeanServer.getAttribute(new ObjectName("java.lang", "type", "OperatingSystem"), "TotalPhysicalMemorySize");
+    // physical = (long) attribute;
+    // phys = " / phys: " + physical / megs + " MiB";
+    // }
+    // catch (Exception e) {
+    // }
+
+    return "Memory used: " + used / megs + " MiB  /  free: " + free / megs + " MiB  /  max: " + maxMem / megs + " MiB" + phys;
   }
 
   /****************************************************************************************
