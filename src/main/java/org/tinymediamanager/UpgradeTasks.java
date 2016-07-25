@@ -252,30 +252,31 @@ public class UpgradeTasks {
     if (StrgUtils.compareVersion(v, "2.8.3") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 2.8.3");
 
+      // TODO: since MI often crashes, no need for that
       // reset "container format" for MFs, so that MI tries them again on next UDS (ISOs and others)
       // (but only if we do not have some video information yet, like "width")
-      for (Movie movie : movieList.getMovies()) {
-        boolean changed = false;
-        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-          if (mf.getVideoResolution().isEmpty()) {
-            mf.setContainerFormat("");
-            changed = true;
-          }
-        }
-        if (changed) {
-          movie.saveToDb();
-        }
-      }
+      // for (Movie movie : movieList.getMovies()) {
+      // boolean changed = false;
+      // for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      // if (mf.getVideoResolution().isEmpty()) {
+      // mf.setContainerFormat("");
+      // changed = true;
+      // }
+      // }
+      // if (changed) {
+      // movie.saveToDb();
+      // }
+      // }
 
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           boolean changed = false;
-          for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
-            if (mf.getVideoResolution().isEmpty()) {
-              mf.setContainerFormat("");
-              changed = true;
-            }
-          }
+          // for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+          // if (mf.getVideoResolution().isEmpty()) {
+          // mf.setContainerFormat("");
+          // changed = true;
+          // }
+          // }
           if (episode.isDisc()) {
             // correct episode path when extracted disc folder
             Path discRoot = episode.getPathNIO().toAbsolutePath(); // folder
