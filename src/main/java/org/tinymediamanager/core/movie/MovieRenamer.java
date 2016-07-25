@@ -726,13 +726,15 @@ public class MovieRenamer {
 
       case POSTER:
         List<MoviePosterNaming> posternames = new ArrayList<>();
-        if (newDestIsMultiMovieDir) {
-          // Fixate the name regardless of setting
-          posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-          posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
-        }
-        else {
-          posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
+        if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
+          if (newDestIsMultiMovieDir) {
+            // Fixate the name regardless of setting
+            posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
+            posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+          }
+          else {
+            posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
+          }
         }
         for (MoviePosterNaming name : posternames) {
           String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
@@ -762,13 +764,15 @@ public class MovieRenamer {
 
       case FANART:
         List<MovieFanartNaming> fanartnames = new ArrayList<>();
-        if (newDestIsMultiMovieDir) {
-          // Fixate the name regardless of setting
-          fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-          fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
-        }
-        else {
-          fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
+        if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
+          if (newDestIsMultiMovieDir) {
+            // Fixate the name regardless of setting
+            fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
+            fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+          }
+          else {
+            fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
+          }
         }
         for (MovieFanartNaming name : fanartnames) {
           String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);

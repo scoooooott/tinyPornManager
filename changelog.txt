@@ -1,6 +1,7 @@
 Version 2.8.3
 =======================
 + Take year differences more into account, when comparing scraper search results
++ Do not download default movie poster/fanart, if none selected. 
 x fix CMD line updating of TV shows
 x fix episode root path for extracted disc folders
 
