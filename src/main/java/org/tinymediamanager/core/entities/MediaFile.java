@@ -1205,22 +1205,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int BUFFER_SIZE = 64 * 1024;
     Iso9660FileSystem image;
     try {
+      LOGGER.debug("ISO: Open");
       image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
       int dur = 0;
       long biggest = 0L;
 
       for (Iso9660FileEntry entry : image) {
+        LOGGER.debug("ISO: got entry " + entry.getName());
+
         if (entry.getSize() <= 5000) { // small files and "." entries
           continue;
         }
 
         MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
-        MediaInfo fileMI = new MediaInfo();
         // mf.setMediaInfo(fileMI); // we need set the inner MI
         if (mf.getType() == MediaFileType.VIDEO) {
           mf.setFilesize(entry.getSize());
 
           try {
+            MediaInfo fileMI = new MediaInfo();
             // mediaInfo.option("File_IsSeekable", "0");
             byte[] From_Buffer = new byte[BUFFER_SIZE];
             int From_Buffer_Size; // The size of the read file buffer
@@ -1245,6 +1248,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               // Testing if MediaInfo request to go elsewhere
               if (fileMI.openBufferContinueGoToGet() != -1) {
                 long newPos = fileMI.openBufferContinueGoToGet();
+                LOGGER.debug("ISO: Seek to " + newPos);
                 // System.out.println("seek to " + newPos);
                 From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
                 pos = newPos + From_Buffer_Size; // add bytes read to file position
@@ -1253,11 +1257,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
             } while (From_Buffer_Size > 0);
 
+            LOGGER.debug("ISO: finalize");
             // Finalizing
             fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
             Map<StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
             fileMI.close();
-            fileMI = null;
+
             mf.setMiSnapshot(tempSnapshot); // set ours to MI for standard gathering
             mf.gatherMediaInformation(); // normal gather from snapshots
 
@@ -1272,7 +1277,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
           // sometimes also an error is thrown
           catch (Exception | Error e) {
-            LOGGER.error("Mediainfo could not open file STREAM");
+            LOGGER.error("Mediainfo could not open file STREAM", e);
           }
         } // end VIDEO
       } // end entry
@@ -1280,7 +1285,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       image.close();
     }
     catch (Exception e) {
-      LOGGER.error("Mediainfo could not open STREAM - trying fallback");
+      LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
       closeMediaInfo();
       getMediaInfoSnapshot();
     }
