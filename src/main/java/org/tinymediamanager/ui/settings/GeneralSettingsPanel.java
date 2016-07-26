@@ -248,7 +248,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     sliderMemory.setMajorTickSpacing(512);
     sliderMemory.setMinorTickSpacing(128);
     sliderMemory.setMinimum(256);
-    sliderMemory.setMaximum(2048);
+    sliderMemory.setMaximum(1536);
     sliderMemory.setValue(512);
     panelMemory.add(sliderMemory, "4, 1, fill, default");
 
