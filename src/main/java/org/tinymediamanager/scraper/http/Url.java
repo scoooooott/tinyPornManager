@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.http;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -25,6 +26,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -307,6 +310,20 @@ public class Url {
     byte[] bytes = IOUtils.toByteArray(is);
     is.close();
     return bytes;
+  }
+
+  /**
+   * Download an Url to a file via NIO FileChannel
+   * 
+   * @param file
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  public void download(File file) throws IOException, InterruptedException {
+    InputStream is = getInputStream();
+    ReadableByteChannel rbc = Channels.newChannel(is);
+    FileOutputStream fos = new FileOutputStream(file);
+    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
   }
 
   /**
