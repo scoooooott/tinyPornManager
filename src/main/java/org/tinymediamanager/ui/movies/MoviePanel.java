@@ -62,6 +62,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.testing.FakeTmmTaskAction;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.IconRenderer;
@@ -561,10 +562,17 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.add(actionDelete2);
+
     if (Globals.isDebug()) {
       JMenu menuDebug = new JMenu("Debug"); //$NON-NLS-1$
       menuDebug.add(debugDumpMovie);
-      popupMenu.addSeparator();
+      menuDebug.addSeparator();
+      menuDebug.add(new FakeTmmTaskAction("download", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("download", 10, 10));
+      menuDebug.add(new FakeTmmTaskAction("image", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("image", 10, 10));
+      menuDebug.add(new FakeTmmTaskAction("unnamed", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("unnamed", 10, 10));
       popupMenu.add(menuDebug);
     }
 
