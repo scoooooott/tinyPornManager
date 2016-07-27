@@ -5,6 +5,7 @@ Version 2.8.3
 x fix CMD line updating of TV shows
 x fix episode root path for extracted disc folders
 x fix adding/removing manual subtitle to media files
+x fix certification on rereading NFO
 
 
 Version 2.8.2

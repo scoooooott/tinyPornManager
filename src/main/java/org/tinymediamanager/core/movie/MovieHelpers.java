@@ -62,11 +62,11 @@ public class MovieHelpers {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
-        cert = Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), cs[1]);
+        cert = Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), cs[1].trim());
       }
       else {
         // no country? try to find only by name
-        cert = Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), name);
+        cert = Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), name.trim());
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate
