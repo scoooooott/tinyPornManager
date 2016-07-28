@@ -9,6 +9,7 @@ x fix episode root path for extracted disc folders
 x fix adding/removing manual subtitle to media files
 x fix certification on rereading NFO
 x fix extracting export templates
+x fix TvShow NFO import when empty production company
 x able to handle windows "junction" linked files (deduplication)
 
 

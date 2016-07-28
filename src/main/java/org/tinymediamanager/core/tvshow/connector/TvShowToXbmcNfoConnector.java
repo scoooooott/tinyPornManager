@@ -261,7 +261,14 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setPlot(xbmc.getPlot());
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
       tvShow.setFirstAired(xbmc.getPremiered());
-      tvShow.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+
+      String studio = StringUtils.join(xbmc.studio, " / ");
+      if (studio == null) {
+        tvShow.setProductionCompany("");
+      }
+      else {
+        tvShow.setProductionCompany(studio);
+      }
       tvShow.setProductionCompany(tvShow.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
 
       tvShow.setStatus(xbmc.getStatus());
