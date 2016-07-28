@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -69,6 +68,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -304,7 +304,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         @Override
         public void mouseClicked(MouseEvent e) {
           Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-          if (file != null && Files.isRegularFile(file)) {
+          if (file != null && Utils.isRegularFile(file)) {
             String fileName = file.toAbsolutePath().toString();
             lblThumb.setImageUrl("file:/" + fileName);
           }

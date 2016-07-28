@@ -76,7 +76,6 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Myron Boyle
  */
-
 public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieUpdateDatasourceTask2.class);
   private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
@@ -287,7 +286,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     Path movieRoot = movieDir; // root set to current dir - might be adjusted by disc folders
 
     for (Path path : movieDirList) {
-      if (Files.isRegularFile(path)) {
+      if (Utils.isRegularFile(path)) {
         files.add(path.toAbsolutePath());
 
         // do not construct a fully MF yet
@@ -991,7 +990,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
               && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
@@ -1056,7 +1055,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile2++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");
@@ -1121,7 +1120,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
           if (file.getParent().getFileName().toString().equals("STREAM")) {

@@ -329,7 +329,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && Files.isRegularFile(file) || Platform.isMac()) {
+        if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
           tfMediaPlayer.setText(file.toAbsolutePath().toString());
         }
       }

@@ -157,7 +157,7 @@ public class TvShowExporter extends MediaEntityExporter {
     // copy all non .jtme/template.conf files to destination dir
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           if (path.getFileName().toString().endsWith(".jmte") || path.getFileName().toString().endsWith("template.conf")) {
             continue;
           }

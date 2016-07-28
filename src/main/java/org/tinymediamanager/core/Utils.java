@@ -113,6 +113,40 @@ public class Utils {
   }
 
   /**
+   * this is the TMM variant of isRegularFiles()<br>
+   * because deduplication creates windows junction points, we check here if it is<br>
+   * not a directory, and either a regular file or "other" one.<br>
+   * see http://serverfault.com/a/667220
+   * 
+   * @param file
+   * @return
+   */
+  public static boolean isRegularFile(Path file) {
+    // see windows impl http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/nio/fs/WindowsFileAttributes.java#451
+    try {
+      BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+      return (attr.isRegularFile() || attr.isOther()) && !attr.isDirectory();
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  /**
+   * this is the TMM variant of isRegularFiles()<br>
+   * because deduplication creates windows junction points, we check here if it is<br>
+   * not a directory, and either a regular file or "other" one.<br>
+   * see http://serverfault.com/a/667220
+   * 
+   * @param file
+   * @return
+   */
+  public static boolean isRegularFile(BasicFileAttributes attr) {
+    // see windows impl http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/nio/fs/WindowsFileAttributes.java#451
+    return (attr.isRegularFile() || attr.isOther()) && !attr.isDirectory();
+  }
+
+  /**
    * dumps a complete Object (incl sub-classes 5 levels deep) to System.out
    * 
    * @param o

@@ -510,7 +510,7 @@ public class Movie extends MediaEntity {
       // get all files from the actors path
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
         for (Path path : directoryStream) {
-          if (Files.isRegularFile(path)) {
+          if (Utils.isRegularFile(path)) {
 
             for (MovieActor actor : getActors()) {
               if (StringUtils.isBlank(actor.getThumbPath())) {

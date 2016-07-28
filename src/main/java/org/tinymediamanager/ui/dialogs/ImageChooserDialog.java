@@ -26,7 +26,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -100,7 +100,14 @@ public class ImageChooserDialog extends TmmDialog {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
   public enum ImageType {
-    POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
+    POSTER,
+    FANART,
+    BANNER,
+    SEASON,
+    LOGO,
+    CLEARART,
+    DISC,
+    THUMB;
   }
 
   private DownloadTask         task;
@@ -897,7 +904,7 @@ public class ImageChooserDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-      if (file != null && Files.isRegularFile(file)) {
+      if (file != null && Utils.isRegularFile(file)) {
         String fileName = file.toAbsolutePath().toString();
         imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);
