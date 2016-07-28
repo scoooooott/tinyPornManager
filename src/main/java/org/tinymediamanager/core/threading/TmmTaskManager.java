@@ -408,6 +408,7 @@ public class TmmTaskManager implements TmmTaskListener {
     @Override
     public void cancel() {
       cancelImageDownloads();
+      processTaskEvent(imageQueueHandle);
     }
   }
 
@@ -464,6 +465,7 @@ public class TmmTaskManager implements TmmTaskListener {
     @Override
     public void cancel() {
       cancelUnnamedTasks();
+      processTaskEvent(unnamedQueueHandle);
     }
   }
 }
