@@ -182,18 +182,6 @@ public class TmmTaskManager implements TmmTaskListener {
   }
 
   /**
-   * get the count of all open and running unnamed tasks
-   * 
-   * @return the count of all running and open unnamed tasks
-   */
-  public int getUnnamedOpenTaskCount() {
-    if (unnamedTaskExecutor == null) {
-      return 0;
-    }
-    return unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
-  }
-
-  /**
    * cancel all open and running image downloads
    */
   public void cancelImageDownloads() {
@@ -375,12 +363,20 @@ public class TmmTaskManager implements TmmTaskListener {
 
     @Override
     public int getWorkUnits() {
-      return 0;
+      int unit = 0;
+      if (imageDownloadExecutor != null) {
+        unit = (int) imageDownloadExecutor.getTaskCount();
+      }
+      return unit;
     }
 
     @Override
     public int getProgressDone() {
-      return 0;
+      int done = 0;
+      if (imageDownloadExecutor != null) {
+        done = (int) imageDownloadExecutor.getCompletedTaskCount();
+      }
+      return done;
     }
 
     @Override
@@ -423,12 +419,20 @@ public class TmmTaskManager implements TmmTaskListener {
 
     @Override
     public int getWorkUnits() {
-      return 0;
+      int unit = 0;
+      if (unnamedTaskExecutor != null) {
+        unit = (int) unnamedTaskExecutor.getTaskCount();
+      }
+      return unit;
     }
 
     @Override
     public int getProgressDone() {
-      return 0;
+      int done = 0;
+      if (unnamedTaskExecutor != null) {
+        done = (int) unnamedTaskExecutor.getCompletedTaskCount();
+      }
+      return done;
     }
 
     @Override
@@ -459,7 +463,7 @@ public class TmmTaskManager implements TmmTaskListener {
 
     @Override
     public void cancel() {
-      cancelImageDownloads();
+      cancelUnnamedTasks();
     }
   }
 }
