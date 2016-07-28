@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
@@ -44,14 +46,20 @@ public class TvShowRewriteEpisodeNfoAction extends AbstractAction {
     final List<TvShowEpisode> selectedEpisodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     // rewrite selected NFOs
-    TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {
-      @Override
-      public void run() {
-        for (TvShowEpisode episode : selectedEpisodes) {
-          episode.writeNFO();
-          episode.saveToDb();
-        }
-      }
-    });
+    TmmTaskManager.getInstance()
+        .addUnnamedTask(new TmmTask(BUNDLE.getString("tvshowepisode.rewritenfo"), selectedEpisodes.size(), TaskType.BACKGROUND_TASK) {
+          @Override
+          protected void doInBackground() {
+            int i = 0;
+            for (TvShowEpisode episode : selectedEpisodes) {
+              episode.writeNFO();
+              episode.saveToDb();
+              publishState(++i);
+              if (cancel) {
+                break;
+              }
+            }
+          }
+        });
   }
 }

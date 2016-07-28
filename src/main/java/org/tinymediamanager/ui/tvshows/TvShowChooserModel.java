@@ -29,6 +29,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -210,17 +211,18 @@ public class TvShowChooserModel extends AbstractModelObject {
     TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(tvShow, config));
   }
 
-  private class ArtworkScrapeTask implements Runnable {
+  private class ArtworkScrapeTask extends TmmTask {
     private TvShow                      tvShowToScrape;
     private TvShowScraperMetadataConfig config;
 
     public ArtworkScrapeTask(TvShow tvShow, TvShowScraperMetadataConfig config) {
+      super(BUNDLE.getString("message.scrape.artwork") + " " + tvShow.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.tvShowToScrape = tvShow;
       this.config = config;
     }
 
     @Override
-    public void run() {
+    protected void doInBackground() {
       if (!scraped) {
         return;
       }

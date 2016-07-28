@@ -2,7 +2,8 @@ Version 2.8.3
 =======================
 + movies: created an own column for available meta data (reverted logic for NFO column)
 + Take year differences more into account, when comparing scraper search results
-+ Do not download default movie poster/fanart, if none selected. 
++ Do not download default movie poster/fanart, if none selected.
++ better visualize running tasks 
 x fix CMD line updating of TV shows
 x fix episode root path for extracted disc folders
 x fix adding/removing manual subtitle to media files
