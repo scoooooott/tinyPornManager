@@ -12,6 +12,7 @@ x fix extracting export templates
 x fix TvShow NFO import when empty production company
 x fix manual sort title (reseted to empty on every save)
 x able to handle windows "junction" linked files (deduplication)
+x better visualize WakeOnLan menu item (disable when none found)
 
 
 Version 2.8.2

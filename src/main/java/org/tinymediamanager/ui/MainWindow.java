@@ -241,6 +241,27 @@ public class MainWindow extends JFrame {
     });
     tools.add(menuWakeOnLan);
 
+    // activate/deactivate WakeOnLan menu item
+    tools.addMenuListener(new MenuListener() {
+      @Override
+      public void menuSelected(MenuEvent e) {
+        if (Globals.settings.getWolDevices().size() > 0) {
+          menuWakeOnLan.setEnabled(true);
+        }
+        else {
+          menuWakeOnLan.setEnabled(false);
+        }
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    });
+
     menuBar.add(tools);
 
     mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
