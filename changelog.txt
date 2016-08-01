@@ -10,6 +10,7 @@ x fix adding/removing manual subtitle to media files
 x fix certification on rereading NFO
 x fix extracting export templates
 x fix TvShow NFO import when empty production company
+x fix manual sort title (reseted to empty on every save)
 x able to handle windows "junction" linked files (deduplication)
 
 

@@ -976,7 +976,7 @@ public class MovieEditorDialog extends TmmDialog {
     Object obj = cbMovieSet.getSelectedItem();
     if (obj instanceof String) {
       tfSorttitle.setEnabled(true);
-      tfSorttitle.setText("");
+      // tfSorttitle.setText(""); // NOO - else we couldn't specify on our own!
     }
     else {
       tfSorttitle.setEnabled(false);
