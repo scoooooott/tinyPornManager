@@ -1219,7 +1219,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
         // mf.setMediaInfo(fileMI); // we need set the inner MI
-        if (mf.getType() == MediaFileType.VIDEO) {
+        if (mf.isDiscFile()) { // not video only, just check explicit disc files
           mf.setFilesize(entry.getSize());
 
           try {
