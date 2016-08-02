@@ -1272,7 +1272,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
             // accumulate durations from every MF
             dur += mf.getDuration();
-            LOGGER.debug("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
+            LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
           }
           // sometimes also an error is thrown
           catch (Exception | Error e) {
@@ -1282,7 +1282,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         } // end VIDEO
       } // end entry
       setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
-      LOGGER.debug("ISO: final duration:" + getDurationHHMMSS());
+      LOGGER.trace("ISO: final duration:" + getDurationHHMMSS());
       image.close();
     }
     catch (Exception e) {
