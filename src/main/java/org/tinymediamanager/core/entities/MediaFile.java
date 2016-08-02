@@ -1201,17 +1201,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = video3DFormat;
   }
 
-  private void getMediaInfoSnapshotFromISO() {
+  private long getMediaInfoSnapshotFromISO() {
     int BUFFER_SIZE = 64 * 1024;
     Iso9660FileSystem image;
     try {
       LOGGER.trace("ISO: Open");
       image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
       int dur = 0;
+      long siz = 0L; // accumulated filesize
       long biggest = 0L;
 
       for (Iso9660FileEntry entry : image) {
         LOGGER.trace("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
+        siz += entry.getSize();
 
         if (entry.getSize() <= 5000) { // small files and "." entries
           continue;
@@ -1284,12 +1286,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
       LOGGER.trace("ISO: final duration:" + getDurationHHMMSS());
       image.close();
+      return siz;
     }
     catch (Exception e) {
       LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
       closeMediaInfo();
       getMediaInfoSnapshot();
     }
+    return 0;
   }
 
   /**
@@ -1347,9 +1351,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     try {
       // workaround for our dummy MFs - if inside iso path is detected do not get filesize
       if (!getFileAsPath().toString().toLowerCase().contains(".iso" + File.separator)) {
-        setFilesize(Files.size(file));
         BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
         filedate = attrs.lastModifiedTime().toMillis();
+        setFilesize(attrs.size());
       }
     }
     catch (IOException e) {
@@ -1375,8 +1379,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // get media info
     LOGGER.debug("start MediaInfo for " + this.getFileAsPath());
+    long discFilesSizes = 0L;
     if (isISO) {
-      getMediaInfoSnapshotFromISO();
+      discFilesSizes = getMediaInfoSnapshotFromISO();
     }
     else {
       getMediaInfoSnapshot();
@@ -1665,6 +1670,20 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               setDuration(d.intValue() / 1000);
             }
             catch (NumberFormatException e) {
+              setDuration(0);
+            }
+          }
+        }
+        else {
+          // do some sanity check, to see, if we have an invalid DVD structure
+          // eg when the sum(filesize) way higher than ISO size
+          LOGGER.trace("ISO size:" + filesize + "  dataSize:" + discFilesSizes + "  = diff:" + Math.abs(discFilesSizes - filesize));
+          if (discFilesSizes > 0 && filesize > 0) {
+            long gig = 1024 * 1024 * 1024;
+            if (Math.abs(discFilesSizes - filesize) > gig) {
+              LOGGER.error("ISO file seems to have an invalid structure - ignore duration");
+              // we set the ISO duration to zero,
+              // so the standard getDuration() will always get the scraped duration
               setDuration(0);
             }
           }
