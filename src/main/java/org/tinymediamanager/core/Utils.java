@@ -199,6 +199,9 @@ public class Utils {
     if (title.toLowerCase().matches("^die hard$") || title.toLowerCase().matches("^die hard[:\\s].*")) {
       return title;
     }
+    if (title.toLowerCase().matches("^die another day$") || title.toLowerCase().matches("^die another day[:\\s].*")) {
+      return title;
+    }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
       String delim = "\\s+"; // one or more spaces needed
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
@@ -231,7 +234,7 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space between prefix and title
         delim = "";
       }
-      title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");
+      title = title.replaceAll("(?i)(.*), " + prfx + "$", prfx + delim + "$1");
     }
     return title.trim();
   }
