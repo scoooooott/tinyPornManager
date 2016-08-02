@@ -1205,13 +1205,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int BUFFER_SIZE = 64 * 1024;
     Iso9660FileSystem image;
     try {
-      LOGGER.debug("ISO: Open");
+      LOGGER.trace("ISO: Open");
       image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
       int dur = 0;
       long biggest = 0L;
 
       for (Iso9660FileEntry entry : image) {
-        LOGGER.debug("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
+        LOGGER.trace("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
 
         if (entry.getSize() <= 5000) { // small files and "." entries
           continue;
@@ -1247,7 +1247,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               // Testing if MediaInfo request to go elsewhere
               if (fileMI.openBufferContinueGoToGet() != -1) {
                 pos = fileMI.openBufferContinueGoToGet();
-                LOGGER.debug("ISO: Seek to " + pos);
+                LOGGER.trace("ISO: Seek to " + pos);
                 // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
                 // pos = newPos + From_Buffer_Size; // add bytes read to file position
                 fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
@@ -1255,7 +1255,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
             } while (From_Buffer_Size > 0);
 
-            LOGGER.debug("ISO: finalize");
+            LOGGER.trace("ISO: finalize");
             // Finalizing
             fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
             Map<StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
@@ -1272,6 +1272,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
             // accumulate durations from every MF
             dur += mf.getDuration();
+            LOGGER.debug("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
           }
           // sometimes also an error is thrown
           catch (Exception | Error e) {
@@ -1281,6 +1282,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         } // end VIDEO
       } // end entry
       setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
+      LOGGER.debug("ISO: final duration:" + getDurationHHMMSS());
       image.close();
     }
     catch (Exception e) {
@@ -1667,10 +1669,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             }
           }
         }
-        /*
-         * String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
-         * TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-         */
       default:
         break;
     }
