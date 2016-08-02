@@ -274,7 +274,7 @@ public class MainWindow extends JFrame {
         public void actionPerformed(ActionEvent arg0) {
           LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
           lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
-          MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
+          MessageManager.instance.pushMessage(new Message("Trace levels set!", ""));
           LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
         }
       });

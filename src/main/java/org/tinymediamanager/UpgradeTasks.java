@@ -254,30 +254,25 @@ public class UpgradeTasks {
 
       // reset "container format" for MFs, so that MI tries them again on next UDS (ISOs and others)
       // (but only if we do not have some video information yet, like "width")
-      // since we do not want this to always run on snapshot, just execute this once for releases
-      if (ReleaseInfo.isReleaseBuild()) {
-        for (Movie movie : movieList.getMovies()) {
-          boolean changed = false;
-          for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-            if (mf.getVideoResolution().isEmpty()) {
-              mf.setContainerFormat("");
-              changed = true;
-            }
+      for (Movie movie : movieList.getMovies()) {
+        boolean changed = false;
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          if (mf.getVideoResolution().isEmpty()) {
+            mf.setContainerFormat("");
+            changed = true;
           }
-          if (changed) {
-            movie.saveToDb();
-          }
+        }
+        if (changed) {
+          movie.saveToDb();
         }
       }
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           boolean changed = false;
-          if (ReleaseInfo.isReleaseBuild()) {
-            for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
-              if (mf.getVideoResolution().isEmpty()) {
-                mf.setContainerFormat("");
-                changed = true;
-              }
+          for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+            if (mf.getVideoResolution().isEmpty()) {
+              mf.setContainerFormat("");
+              changed = true;
             }
           }
           if (episode.isDisc()) {
