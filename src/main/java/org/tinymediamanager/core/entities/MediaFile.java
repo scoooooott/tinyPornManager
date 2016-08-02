@@ -1211,7 +1211,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       long biggest = 0L;
 
       for (Iso9660FileEntry entry : image) {
-        LOGGER.debug("ISO: got entry " + entry.getName());
+        LOGGER.debug("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
 
         if (entry.getSize() <= 5000) { // small files and "." entries
           continue;
@@ -1222,8 +1222,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         if (mf.isDiscFile()) { // not video only, just check explicit disc files
           mf.setFilesize(entry.getSize());
 
+          MediaInfo fileMI = new MediaInfo();
           try {
-            MediaInfo fileMI = new MediaInfo();
             // mediaInfo.option("File_IsSeekable", "0");
             byte[] From_Buffer = new byte[BUFFER_SIZE];
             int From_Buffer_Size; // The size of the read file buffer
@@ -1235,7 +1235,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             // The parsing loop
             do {
               // Reading data somewhere, do what you want for this.
-              // From_Buffer_Size = is.read(From_Buffer);
               From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
               pos += From_Buffer_Size; // add bytes read to file position
 
@@ -1247,12 +1246,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
               // Testing if MediaInfo request to go elsewhere
               if (fileMI.openBufferContinueGoToGet() != -1) {
-                long newPos = fileMI.openBufferContinueGoToGet();
-                LOGGER.debug("ISO: Seek to " + newPos);
-                // System.out.println("seek to " + newPos);
-                From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
-                pos = newPos + From_Buffer_Size; // add bytes read to file position
-                fileMI.openBufferInit(entry.getSize(), newPos); // Informing MediaInfo we have seek
+                pos = fileMI.openBufferContinueGoToGet();
+                LOGGER.debug("ISO: Seek to " + pos);
+                // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
+                // pos = newPos + From_Buffer_Size; // add bytes read to file position
+                fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
               }
 
             } while (From_Buffer_Size > 0);
@@ -1278,6 +1276,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           // sometimes also an error is thrown
           catch (Exception | Error e) {
             LOGGER.error("Mediainfo could not open file STREAM", e);
+            fileMI.close();
           }
         } // end VIDEO
       } // end entry

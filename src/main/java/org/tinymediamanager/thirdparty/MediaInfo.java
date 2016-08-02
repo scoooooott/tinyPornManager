@@ -118,9 +118,13 @@ public class MediaInfo implements Closeable {
    *          pointer to the stream
    * @param size
    *          Count of bytes to read
-   * @return a bitfield bit 0: Is Accepted (format is known) bit 1: Is Filled (main data is collected) bit 2: Is Updated (some data have beed updated,
-   *         example: duration for a real time MPEG-TS stream) bit 3: Is Finalized (No more data is needed, will not use further data) bit 4-15:
-   *         Reserved bit 16-31: User defined
+   * @return a bitfield<br>
+   *         bit 0: Is Accepted (format is known)<br>
+   *         bit 1: Is Filled (main data is collected)<br>
+   *         bit 2: Is Updated (some data have beed updated, example: duration for a real time MPEG-TS stream)<br>
+   *         bit 3: Is Finalized (No more data is needed, will not use further data)<br>
+   *         bit 4-15: Reserved<br>
+   *         bit 16-31: User defined
    */
   public int openBufferContinue(byte[] buffer, int size) {
     return MediaInfoLibrary.INSTANCE.Open_Buffer_Continue(handle, buffer, size);
