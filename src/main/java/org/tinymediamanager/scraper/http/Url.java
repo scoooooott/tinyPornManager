@@ -324,6 +324,7 @@ public class Url {
     ReadableByteChannel rbc = Channels.newChannel(is);
     FileOutputStream fos = new FileOutputStream(file);
     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+    fos.close();
   }
 
   /**
