@@ -18,6 +18,9 @@ package org.tinymediamanager.core.threading;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * The class TmmTask. The main class representing tasks in tmm
  * 
@@ -40,6 +43,11 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
     this.taskDescription = "";
     this.progressDone = 0;
     this.type = type;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
   @Override

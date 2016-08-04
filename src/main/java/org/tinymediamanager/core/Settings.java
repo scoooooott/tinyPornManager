@@ -224,7 +224,7 @@ public class Settings extends AbstractModelObject {
       }
 
       Path oldCfg = Paths.get(CONFIG_FILE);
-      if (Files.isRegularFile(oldCfg)) {
+      if (Utils.isRegularFile(oldCfg)) {
         try {
           Utils.moveFileSafe(oldCfg, cfgFolder.resolve(CONFIG_FILE));
         }

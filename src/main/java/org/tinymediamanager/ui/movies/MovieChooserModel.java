@@ -33,6 +33,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -218,17 +219,18 @@ public class MovieChooserModel extends AbstractModelObject {
     TmmTaskManager.getInstance().addUnnamedTask(new TrailerScrapeTask(movie));
   }
 
-  private class ArtworkScrapeTask implements Runnable {
+  private class ArtworkScrapeTask extends TmmTask {
     private Movie                      movieToScrape;
     private MovieScraperMetadataConfig config;
 
     public ArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+      super(BUNDLE.getString("message.scrape.artwork") + " " + movie.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieToScrape = movie;
       this.config = config;
     }
 
     @Override
-    public void run() {
+    protected void doInBackground() {
       if (!scraped) {
         return;
       }
@@ -270,17 +272,19 @@ public class MovieChooserModel extends AbstractModelObject {
 
       movieToScrape.setArtwork(artwork, config);
     }
+
   }
 
-  private class TrailerScrapeTask implements Runnable {
+  private class TrailerScrapeTask extends TmmTask {
     private Movie movieToScrape;
 
     public TrailerScrapeTask(Movie movie) {
+      super(BUNDLE.getString("message.scrape.trailer") + " " + movie.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieToScrape = movie;
     }
 
     @Override
-    public void run() {
+    protected void doInBackground() {
       if (!scraped) {
         return;
       }

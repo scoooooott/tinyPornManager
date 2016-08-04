@@ -52,9 +52,9 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -62,6 +62,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.testing.FakeTmmTaskAction;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.IconRenderer;
@@ -69,8 +70,8 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
-import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.movies.actions.DebugDumpMovie;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
@@ -561,10 +562,17 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.add(actionDelete2);
+
     if (Globals.isDebug()) {
       JMenu menuDebug = new JMenu("Debug"); //$NON-NLS-1$
       menuDebug.add(debugDumpMovie);
-      popupMenu.addSeparator();
+      menuDebug.addSeparator();
+      menuDebug.add(new FakeTmmTaskAction("download", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("download", 10, 10));
+      menuDebug.add(new FakeTmmTaskAction("image", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("image", 10, 10));
+      menuDebug.add(new FakeTmmTaskAction("unnamed", 1, 10));
+      menuDebug.add(new FakeTmmTaskAction("unnamed", 10, 10));
       popupMenu.add(menuDebug);
     }
 
@@ -622,29 +630,35 @@ public class MoviePanel extends JPanel {
     table.getColumnModel().getColumn(4).setHeaderValue(IconManager.INFO);
     table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("nfo"); //$NON-NLS-1$
 
-    // Images column
-    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
+    // Meta data column
+    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.metadata"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
-    table.getColumnModel().getColumn(5).setHeaderValue(IconManager.IMAGE);
-    table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("images"); //$NON-NLS-1$
+    table.getColumnModel().getColumn(5).setHeaderValue(IconManager.SEARCH);
+    table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("metadata"); //$NON-NLS-1$
+
+    // Images column
+    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
+    table.getColumnModel().getColumn(6).setHeaderValue(IconManager.IMAGE);
+    table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("images"); //$NON-NLS-1$
 
     // trailer column
-    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
-    table.getColumnModel().getColumn(6).setHeaderValue(IconManager.CLAPBOARD);
-    table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("trailer"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(7).setMaxWidth(20);
+    table.getColumnModel().getColumn(7).setHeaderValue(IconManager.CLAPBOARD);
+    table.getTableHeader().getColumnModel().getColumn(7).setIdentifier("trailer"); //$NON-NLS-1$
 
     // subtitles column
-    table.getTableHeader().getColumnModel().getColumn(7).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(7).setMaxWidth(20);
-    table.getColumnModel().getColumn(7).setHeaderValue(IconManager.SUBTITLE);
-    table.getTableHeader().getColumnModel().getColumn(7).setIdentifier("subtitle"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(8).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(8).setMaxWidth(20);
+    table.getColumnModel().getColumn(8).setHeaderValue(IconManager.SUBTITLE);
+    table.getTableHeader().getColumnModel().getColumn(8).setIdentifier("subtitle"); //$NON-NLS-1$
 
     // watched column
-    table.getTableHeader().getColumnModel().getColumn(8).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
-    table.getTableHeader().getColumnModel().getColumn(8).setMaxWidth(20);
-    table.getColumnModel().getColumn(8).setHeaderValue(IconManager.PLAY_SMALL);
-    table.getTableHeader().getColumnModel().getColumn(8).setIdentifier("watched"); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(9).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(9).setMaxWidth(20);
+    table.getColumnModel().getColumn(9).setHeaderValue(IconManager.PLAY_SMALL);
+    table.getTableHeader().getColumnModel().getColumn(9).setIdentifier("watched"); //$NON-NLS-1$
 
     table.setSelectionModel(movieSelectionModel.getSelectionModel());
     // selecting first movie at startup
@@ -667,6 +681,9 @@ public class MoviePanel extends JPanel {
     }
     if (!MovieModuleManager.MOVIE_SETTINGS.isNfoColumnVisible()) {
       table.hideColumn("nfo"); //$NON-NLS-1$
+    }
+    if (!MovieModuleManager.MOVIE_SETTINGS.isMetadataColumnVisible()) {
+      table.hideColumn("metadata"); //$NON-NLS-1$
     }
     if (!MovieModuleManager.MOVIE_SETTINGS.isImageColumnVisible()) {
       table.hideColumn("images"); //$NON-NLS-1$
@@ -694,6 +711,9 @@ public class MoviePanel extends JPanel {
           }
           if ("nfoColumnVisible".equals(evt.getPropertyName())) {
             setColumnVisibility("nfo", (Boolean) evt.getNewValue());
+          }
+          if ("metadataColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("metadata", (Boolean) evt.getNewValue());
           }
           if ("dateAddedColumnVisible".equals(evt.getPropertyName())) {
             setColumnVisibility("dateadded", (Boolean) evt.getNewValue());

@@ -15,11 +15,7 @@
  */
 package org.tinymediamanager.ui.panels;
 
-import static org.tinymediamanager.core.MediaFileType.NFO;
-import static org.tinymediamanager.core.MediaFileType.SAMPLE;
-import static org.tinymediamanager.core.MediaFileType.TRAILER;
-import static org.tinymediamanager.core.MediaFileType.VIDEO;
-import static org.tinymediamanager.core.MediaFileType.VIDEO_EXTRA;
+import static org.tinymediamanager.core.MediaFileType.*;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -71,7 +67,7 @@ public class MediaFileEditorPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle                                         BUNDLE           = ResourceBundle.getBundle("messages",  //$NON-NLS-1$
+  private static final ResourceBundle                                         BUNDLE           = ResourceBundle.getBundle("messages",              //$NON-NLS-1$
       new UTF8Control());
 
   private List<MediaFileContainer>                                            mediaFiles;
@@ -338,9 +334,9 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int row = tableAudioStreams.getSelectedRow();
+      int row = tableSubtitles.getSelectedRow();
       if (row > -1) {
-        row = tableAudioStreams.convertRowIndexToModel(row);
+        row = tableSubtitles.convertRowIndexToModel(row);
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);

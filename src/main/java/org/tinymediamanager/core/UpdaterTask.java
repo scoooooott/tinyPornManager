@@ -54,7 +54,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
 
   @Override
   public Boolean doInBackground() {
-    if (ReleaseInfo.getVersion().equals("SVN")) {
+    if (ReleaseInfo.isSvnBuild()) {
       return false;
     }
 

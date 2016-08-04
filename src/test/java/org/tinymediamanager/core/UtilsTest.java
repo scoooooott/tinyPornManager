@@ -102,12 +102,14 @@ public class UtilsTest {
 
   @Test
   public void getSortableName() {
+    // http://www.imdb.com/find?q=die&s=tt&ref_=fn_al_tt_mr
     assertEqual("Dark Knight, The", Utils.getSortableName("The Dark Knight"));
     assertEqual("Dark Knight, The", Utils.getSortableName("tHE Dark Knight"));
     assertEqual("hard days night, A", Utils.getSortableName("a hard days night"));
     assertEqual("Die Hard", Utils.getSortableName("Die Hard")); // wohoo
     assertEqual("Die Hard 2", Utils.getSortableName("Die Hard 2")); // wohoo
-    assertEqual("Die Hard: with a", Utils.getSortableName("Die Hard: with a")); // wohoo
+    assertEqual("Die Hard Year One", Utils.getSortableName("Die Hard Year One")); // wohoo
+    assertEqual("Die Hard: with a Vengeance", Utils.getSortableName("Die Hard: with a Vengeance")); // wohoo
     assertEqual("Good Day to Die Hard, A", Utils.getSortableName("A Good Day to Die Hard")); // wohoo
     assertEqual("Hardyboys, Die", Utils.getSortableName("Die Hardyboys"));
     assertEqual("Team, A", Utils.getSortableName("A Team"));
@@ -120,6 +122,14 @@ public class UtilsTest {
     assertEqual("Âge de Glace, L`", Utils.getSortableName("L` Âge de Glace"));
     assertEqual("Âge de Glace, L´", Utils.getSortableName("L´Âge de Glace"));
     assertEqual("Âge de Glace, L`", Utils.getSortableName("L`Âge de Glace"));
+    assertEqual("Die Another Day", Utils.getSortableName("Die Another Day"));
+    assertEqual("Die Another Day 2", Utils.getSortableName("Die Another Day 2"));
+    assertEqual("Die, Monster, Die!", Utils.getSortableName("Die, Monster, Die!"));
+    assertEqual("Lonely Place to Die, A", Utils.getSortableName("A Lonely Place to Die"));
+    assertEqual("Die! Die! My Darling!", Utils.getSortableName("Die! Die! My Darling!"));
+    assertEqual("", Utils.getSortableName(""));
+    assertEqual("", Utils.getSortableName(""));
+
   }
 
   @Test
@@ -131,6 +141,13 @@ public class UtilsTest {
     assertEqual("L'Âge de Glace", Utils.removeSortableName("Âge de Glace, L'"));
     assertEqual("L`Âge de Glace", Utils.removeSortableName("Âge de Glace, L`"));
     assertEqual("L´Âge de Glace", Utils.removeSortableName("Âge de Glace, L´"));
+    assertEqual("Die Another Day", Utils.removeSortableName("Die Another Day"));
+    assertEqual("Live and Let Die", Utils.removeSortableName("Live and Let Die"));
+    assertEqual("Truth or Die", Utils.removeSortableName("Truth or Die"));
+    assertEqual("Die, Monster, Die!", Utils.removeSortableName("Die, Monster, Die!"));
+    assertEqual("Die! Die! My Darling!", Utils.removeSortableName("Die! Die! My Darling!"));
+    assertEqual("", Utils.removeSortableName(""));
+    assertEqual("", Utils.removeSortableName(""));
   }
 
   @Test

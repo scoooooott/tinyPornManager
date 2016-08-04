@@ -502,7 +502,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 }
                 episode.setNewlyAdded(true);
                 episode.addToMediaFiles(epFiles); // all found EP MFs
-                episode.setDisc(mf.isDiscFile());
+
+                if (mf.isDiscFile()) {
+                  episode.setDisc(true);
+
+                  // set correct EP path in case of disc files
+                  Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+                  String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+                  while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                    discRoot = discRoot.getParent();
+                    folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+                  }
+                  episode.setPath(discRoot.toAbsolutePath().toString());
+                }
+
                 if (episodesInNfo.size() > 1) {
                   episode.setMultiEpisode(true);
                 }
@@ -564,7 +577,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
               }
               episode.setNewlyAdded(true);
-              episode.setDisc(mf.isDiscFile());
+
+              if (mf.isDiscFile()) {
+                episode.setDisc(true);
+
+                // set correct EP path in case of disc files
+                Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+                String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+                while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                  discRoot = discRoot.getParent();
+                  folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+                }
+                episode.setPath(discRoot.toAbsolutePath().toString());
+              }
+
               if (result.episodes.size() > 1) {
                 episode.setMultiEpisode(true);
               }
@@ -584,6 +610,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             episode.setEpisode(-1);
             episode.setSeason(-1);
             episode.setPath(mf.getPath());
+
+            if (mf.isDiscFile()) {
+              episode.setDisc(true);
+
+              // set correct EP path in case of disc files
+              Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+              String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+              while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                discRoot = discRoot.getParent();
+                folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+              }
+              episode.setPath(discRoot.toAbsolutePath().toString());
+            }
+
             episode.setTitle(FilenameUtils.getBaseName(mf.getFilename()));
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date); // maybe found
@@ -740,7 +780,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
               && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
@@ -805,7 +845,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");

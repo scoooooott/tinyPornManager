@@ -277,13 +277,13 @@ public class Movie extends MediaEntity {
 
   /**
    * doe we have basic metadata filled?<br>
-   * like plot, year, genres, actors or producers
+   * like plot and year to take another fields into account always produces false positives (there are documentaries out there, which do not have
+   * actors or either a producer in the meta data DBs..)
    * 
    * @return true/false
    */
   public Boolean getHasMetadata() {
-    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.isEmpty())
-        && (!(actors == null || actors.isEmpty()) || !(producers == null || producers.isEmpty()))) {
+    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0"))) {
       return true;
     }
     return false;
@@ -534,7 +534,7 @@ public class Movie extends MediaEntity {
       // get all files from the actors path
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
         for (Path path : directoryStream) {
-          if (Files.isRegularFile(path)) {
+          if (Utils.isRegularFile(path)) {
 
             for (MovieActor actor : getActors()) {
               if (StringUtils.isBlank(actor.getThumbPath())) {
@@ -1330,6 +1330,10 @@ public class Movie extends MediaEntity {
    * Write nfo.
    */
   public void writeNFO() {
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().isEmpty()) {
+      LOGGER.info("Not writing any NFO file, because NFO filename preferences were empty...");
+      return;
+    }
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       MovieToMpNfoConnector.setData(this);
     }

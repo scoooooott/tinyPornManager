@@ -100,6 +100,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.sun.jna.Platform;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+
 /**
  * The Class MainWindow.
  * 
@@ -240,6 +243,45 @@ public class MainWindow extends JFrame {
       }
     });
     tools.add(menuWakeOnLan);
+
+    // activate/deactivate WakeOnLan menu item
+    tools.addMenuListener(new MenuListener() {
+      @Override
+      public void menuSelected(MenuEvent e) {
+        if (Globals.settings.getWolDevices().size() > 0) {
+          menuWakeOnLan.setEnabled(true);
+        }
+        else {
+          menuWakeOnLan.setEnabled(false);
+        }
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    });
+
+    if (Globals.isDebug()) {
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+
+      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
+      trace.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+          lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+          MessageManager.instance.pushMessage(new Message("Trace levels set!", ""));
+          LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
+        }
+      });
+
+      debugMenu.add(trace);
+      tools.add(debugMenu);
+    }
 
     menuBar.add(tools);
 

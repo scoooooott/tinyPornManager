@@ -44,7 +44,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   @Override
   public int getColumnCount() {
-    return 9;
+    return 10;
   }
 
   @Override
@@ -66,15 +66,18 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
       case 5:
-        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
+        return BUNDLE.getString("tmm.metadata"); //$NON-NLS-1$
 
       case 6:
-        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
 
       case 7:
-        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
 
       case 8:
+        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+
+      case 9:
         return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
     }
 
@@ -97,30 +100,36 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return movie.getDateAdded();
 
       case 4:
-        if (movie.getHasMetadata()) {
+        if (movie.getHasNfoFile()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
       case 5:
-        if (movie.getHasImages()) {
+        if (movie.getHasMetadata()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
       case 6:
-        if (movie.getHasTrailer()) {
+        if (movie.getHasImages()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
       case 7:
-        if (movie.hasSubtitles()) {
+        if (movie.getHasTrailer()) {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
 
       case 8:
+        if (movie.hasSubtitles()) {
+          return IconManager.CHECKMARK;
+        }
+        return IconManager.CROSS;
+
+      case 9:
         if (movie.isWatched()) {
           return IconManager.CHECKMARK;
         }
@@ -151,6 +160,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 6:
       case 7:
       case 8:
+      case 9:
         return ImageIcon.class;
     }
 
@@ -178,6 +188,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 6:
       case 7:
       case 8:
+      case 9:
         return imageComparator;
     }
 

@@ -42,9 +42,9 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -95,6 +95,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                            chckbxSubtitles;
   private JCheckBox                            chckbxImages;
   private JCheckBox                            chckbxNfo;
+  private JCheckBox                            chckbxMetadata;
   private JCheckBox                            chckbxRuntimeFromMf;
   private JCheckBox                            chckbxTraktTv;
   private JCheckBox                            chckbxWatched;
@@ -121,7 +122,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelGeneral.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
@@ -140,8 +142,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     chckbxNfo = new JCheckBox(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
     panelGeneral.add(chckbxNfo, "8, 2");
 
+    chckbxMetadata = new JCheckBox(BUNDLE.getString("tmm.metadata")); //$NON-NLS-1$
+    panelGeneral.add(chckbxMetadata, "10, 2");
+
     chckbxDateAdded = new JCheckBox(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-    panelGeneral.add(chckbxDateAdded, "10, 2");
+    panelGeneral.add(chckbxDateAdded, "12, 2");
 
     chckbxImages = new JCheckBox(BUNDLE.getString("metatag.images")); //$NON-NLS-1$
     panelGeneral.add(chckbxImages, "4, 4");
@@ -162,7 +167,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelGeneral.add(chckbxSaveUiFilter, "4, 6");
 
     JSeparator separator_4 = new JSeparator();
-    panelGeneral.add(separator_4, "2, 8, 9, 1");
+    panelGeneral.add(separator_4, "2, 8, 11, 1");
 
     JLabel lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport"));
     panelGeneral.add(lblImageCache, "2, 10, right, default");
@@ -178,7 +183,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelGeneral.add(chckbxRuntimeFromMf, "4, 12");
 
     JSeparator separator = new JSeparator();
-    panelGeneral.add(separator, "2, 14, 9, 1");
+    panelGeneral.add(separator, "2, 14, 11, 1");
 
     final JLabel lblAutomaticRename = new JLabel(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
     panelGeneral.add(lblAutomaticRename, "2, 16, right, default");
@@ -558,6 +563,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_16, chckbxNfo, jCheckBoxBeanProperty);
     autoBinding_14.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_17 = BeanProperty.create("movieSettings.metadataColumnVisible");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_17, chckbxMetadata, jCheckBoxBeanProperty);
+    autoBinding_15.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.syncTrakt");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,

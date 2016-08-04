@@ -55,6 +55,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
 
   @Override
   public void run() {
+    long timestamp = System.currentTimeMillis(); // multi episode same file
     try {
       if (StringUtils.isBlank(filename)) {
         return;
@@ -89,7 +90,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         // debug message
         LOGGER.debug("writing " + type + " " + filename);
         Path destFile = entity.getPathNIO().resolve(filename);
-        Path tempFile = entity.getPathNIO().resolve(filename + ".part");
+        Path tempFile = entity.getPathNIO().resolve(filename + "." + timestamp + ".part"); // multi episode same file
 
         // check if old and new file are the same (possible if you select it in the imagechooser)
         boolean sameFile = false;
@@ -177,7 +178,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         }
 
         // remove temp file
-        Path tempFile = entity.getPathNIO().resolve(filename + ".part");
+        Path tempFile = entity.getPathNIO().resolve(filename + "." + timestamp + ".part"); // multi episode same file
         if (Files.exists(tempFile)) {
           Utils.deleteFileSafely(tempFile);
         }

@@ -477,6 +477,9 @@ public class TinyMediaManager {
         // rename downloaded files
         UpgradeTasks.renameDownloadedFiles();
 
+        // extract templates, if GD has not already done
+        Utils.extractTemplates();
+
         // check if a .desktop file exists
         if (Platform.isLinux()) {
           File desktop = new File(TmmOsUtils.DESKTOP_FILE);
