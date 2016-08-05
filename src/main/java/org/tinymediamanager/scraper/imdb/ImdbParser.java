@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.scraper.imdb;
 
-import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.*;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.cleanString;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.getTmmGenre;
+import static org.tinymediamanager.scraper.imdb.ImdbMetadataProvider.processMediaArt;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

@@ -14,9 +14,9 @@ package org.tinymediamanager.scraper.imdb;/*
  * limitations under the License.
  */
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.nio.charset.Charset;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The Enum org.tinymediamanager.scraper.imdb.ImdbSiteDefinition.
