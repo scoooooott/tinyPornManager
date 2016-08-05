@@ -1,6 +1,6 @@
 package org.tinymediamanager.core.tvshow;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.Collections;

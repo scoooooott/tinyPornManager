@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

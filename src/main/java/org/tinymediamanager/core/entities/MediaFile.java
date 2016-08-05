@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.MediaFileType.*;
+import static org.tinymediamanager.core.MediaFileType.NFO;
+import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
 
 import java.io.BufferedReader;
 import java.io.File;

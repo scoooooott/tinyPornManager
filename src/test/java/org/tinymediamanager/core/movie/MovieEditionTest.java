@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.tinymediamanager.core.movie.MovieEdition.DIRECTORS_CUT;
 import static org.tinymediamanager.core.movie.MovieEdition.EXTENDED_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.IMAX;
-import static org.tinymediamanager.core.movie.MovieEdition.UNCUT;
 import static org.tinymediamanager.core.movie.MovieEdition.NONE;
+import static org.tinymediamanager.core.movie.MovieEdition.UNCUT;
 import static org.tinymediamanager.core.movie.MovieEdition.UNRATED;
 
 import org.junit.Test;

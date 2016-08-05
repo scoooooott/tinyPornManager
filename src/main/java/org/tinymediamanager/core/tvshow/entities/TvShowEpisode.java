@@ -15,7 +15,28 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.AIRED_EPISODE;
+import static org.tinymediamanager.core.Constants.AIRED_SEASON;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.DISPLAY_EPISODE;
+import static org.tinymediamanager.core.Constants.DISPLAY_SEASON;
+import static org.tinymediamanager.core.Constants.DVD_EPISODE;
+import static org.tinymediamanager.core.Constants.DVD_ORDER;
+import static org.tinymediamanager.core.Constants.DVD_SEASON;
+import static org.tinymediamanager.core.Constants.EPISODE;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED;
+import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TVDB;
+import static org.tinymediamanager.core.Constants.TV_SHOW;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.File;
 import java.nio.file.Path;

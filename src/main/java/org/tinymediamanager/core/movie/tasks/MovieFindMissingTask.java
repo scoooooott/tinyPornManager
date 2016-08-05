@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
