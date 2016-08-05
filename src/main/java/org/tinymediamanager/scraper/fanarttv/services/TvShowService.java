@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.fanarttv.services;
 
 import org.tinymediamanager.scraper.fanarttv.entities.Images;
+
 import retrofit.http.GET;
 import retrofit.http.Path;
 
