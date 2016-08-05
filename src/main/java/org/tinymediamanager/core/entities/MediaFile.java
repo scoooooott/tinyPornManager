@@ -15,9 +15,6 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.MediaFileType.NFO;
-import static org.tinymediamanager.core.MediaFileType.SUBTITLE;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -303,7 +300,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
-      return SUBTITLE;
+      return MediaFileType.SUBTITLE;
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
@@ -1222,7 +1219,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
         // mf.setMediaInfo(fileMI); // we need set the inner MI
-        if (mf.isDiscFile()) { // not video only, just check explicit disc files
+        if (mf.getType() == MediaFileType.VIDEO && mf.isDiscFile()) { // would not count video_ts.bup for ex (and not .dat files or other types)
           mf.setFilesize(entry.getSize());
 
           MediaInfo fileMI = new MediaInfo();
@@ -1344,23 +1341,21 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // gather subtitle infos independent of MI
-    if (getType() == SUBTITLE) {
+    if (getType() == MediaFileType.SUBTITLE) {
       gatherSubtitleInformation();
     }
 
     // file size and last modified
     try {
-      // workaround for our dummy MFs - if inside iso path is detected do not get filesize
-      if (!getFileAsPath().toString().toLowerCase().contains(".iso" + File.separator)) {
-        BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-        filedate = attrs.lastModifiedTime().toMillis();
-        setFilesize(attrs.size());
-      }
+      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+      filedate = attrs.lastModifiedTime().toMillis();
+      setFilesize(attrs.size());
     }
     catch (IOException e) {
       LOGGER.error("could not get file information (size/date): " + e.getMessage());
-      setContainerFormat(getExtension());
-      return;
+      // do not set/return here - we might have set it already... and the next check does check for a 0-byte file
+      // setContainerFormat(getExtension());
+      // return;
     }
 
     // do not work further on 0 byte files
@@ -1372,7 +1367,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // do not work further on subtitles/NFO files
-    if (type == SUBTITLE || type == NFO) {
+    if (type == MediaFileType.SUBTITLE || type == MediaFileType.NFO) {
       // set container format to do not trigger it again
       setContainerFormat(getExtension());
       return;
@@ -1601,7 +1596,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
     // container format for all except subtitles (subtitle container format is handled another way)
-    if (type == SUBTITLE) {
+    if (type == MediaFileType.SUBTITLE) {
       setContainerFormat(getExtension());
     }
     else {
@@ -1734,8 +1729,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // parse audio, video and graphic files (NFO only for getting the filedate)
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SAMPLE) || type.equals(SUBTITLE) || type.equals(MediaFileType.AUDIO) || type.equals(MediaFileType.NFO)
-        || isGraphic()) {
+        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO)
+        || type.equals(MediaFileType.NFO) || isGraphic()) {
       return true;
     }
 
