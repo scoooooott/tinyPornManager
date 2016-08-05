@@ -19,13 +19,6 @@
  */
 package com.omertron.thetvdbapi;
 
-import com.omertron.thetvdbapi.model.*;
-import com.omertron.thetvdbapi.tools.TvdbParser;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -34,6 +27,18 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.omertron.thetvdbapi.model.Actor;
+import com.omertron.thetvdbapi.model.Banners;
+import com.omertron.thetvdbapi.model.Episode;
+import com.omertron.thetvdbapi.model.Series;
+import com.omertron.thetvdbapi.model.TVDBUpdates;
+import com.omertron.thetvdbapi.tools.TvdbParser;
 
 /**
  * @author altman.matthew
