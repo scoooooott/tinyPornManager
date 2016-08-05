@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.scraper.moviemeter;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
