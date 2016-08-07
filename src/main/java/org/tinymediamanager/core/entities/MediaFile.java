@@ -1347,7 +1347,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // file size and last modified
     try {
-      BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+      BasicFileAttributes attrs = Files.readAttributes(getFileAsPath(), BasicFileAttributes.class);
       filedate = attrs.lastModifiedTime().toMillis();
       setFilesize(attrs.size());
     }
