@@ -427,17 +427,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename;
+      String basename = FilenameUtils.getBaseName(mf.getFilename());
+      if (isDisc()) {
+        basename = "VIDEO_TS"; // FIXME: BluRay?
+      }
+
       switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
         case FILENAME_THUMB_POSTFIX:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
+          filename = basename + "-thumb." + FilenameUtils.getExtension(thumbUrl);
           break;
 
         case FILENAME_THUMB:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+          filename = basename + "." + FilenameUtils.getExtension(thumbUrl);
           break;
 
         case FILENAME_THUMB_TBN:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + ".tbn";
+          filename = basename + ".tbn";
           break;
 
         default:

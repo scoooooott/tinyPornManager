@@ -159,15 +159,6 @@ public class TvShowRenamer {
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
     if (eps == null || eps.size() == 0) {
-      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
-      try {
-        Thread.sleep(250);
-      }
-      catch (Exception e) {
-      }
-      eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
-    }
-    if (eps == null || eps.size() == 0) {
       // FIXME: workaround for r1972
       // when moving video file, all NFOs get deleted and a new gets created.
       // so this OLD NFO is not found anylonger - just delete it
@@ -427,15 +418,6 @@ public class TvShowRenamer {
     String filename = "";
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
     if (eps == null || eps.size() == 0) {
-      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
-      try {
-        Thread.sleep(250);
-      }
-      catch (Exception ex) {
-      }
-      eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
-    }
-    if (eps == null || eps.size() == 0) {
       return "";
     }
 
@@ -458,6 +440,7 @@ public class TvShowRenamer {
             forcedExtension = "tbn";
             break;
 
+          case FILENAME_THUMB: // filename as is
           default:
             break;
         }

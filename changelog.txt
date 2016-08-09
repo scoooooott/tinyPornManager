@@ -5,7 +5,9 @@ Version 2.8.3
 + Do not download default movie poster/fanart, if none selected.
 + Do not write NFO, if none selected.
 + better visualize running tasks
++ Added some memory stats to status bar
 x fix MediaInfo crash on some DVD ISOs
+x fix TV Episode NFOs for extracted DVDs
 x fix CMD line updating of TV shows
 x fix episode root path for extracted disc folders
 x fix adding/removing manual subtitle to media files
