@@ -857,37 +857,39 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
         if (Files.notExists(movieDir)) {
-          LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
+          LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
           moviesToRemove.add(movie);
         }
         else {
-          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
+          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!"); // can be; MMD and/or dir=DS root
+        }
+      }
+
+      // have a look if that movie has just been added -> so we don't need any cleanup
+      if (!movie.isNewlyAdded()) {
+        // check and delete all not found MediaFiles
+        List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
+        for (MediaFile mf : mediaFiles) {
+          if (!filesFound.contains(mf.getFileAsPath())) {
+            if (!mf.exists()) {
+              LOGGER.debug("removing orphaned file from DB: " + mf.getFileAsPath());
+              movie.removeFromMediaFiles(mf);
+            }
+            else {
+              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!"); // hmm... this should not happen
+            }
+          }
+        }
+        if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          LOGGER.debug("Movie (" + movie.getTitle() + ") without VIDEO files detected, removing from DB...");
+          moviesToRemove.add(movie);
+        }
+        else {
+          movie.saveToDb();
         }
       }
       else {
-        // have a look if that movie has just been added -> so we don't need any cleanup
-        if (!movie.isNewlyAdded()) {
-          // check and delete all not found MediaFiles
-          List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
-          for (MediaFile mf : mediaFiles) {
-            if (!filesFound.contains(mf.getFileAsPath())) {
-              if (!mf.exists()) {
-                LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
-                movie.removeFromMediaFiles(mf);
-              }
-              else {
-                LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
-              }
-            }
-          }
-          if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
-            LOGGER.debug("movie (" + movie.getTitle() + ") without VIDEO files detected, removing...");
-            moviesToRemove.add(movie);
-          }
-          else {
-            movie.saveToDb();
-          }
-        }
+        LOGGER.info("Movie (" + movie.getTitle() + ") is new - no need for cleanup");
       }
     }
     movieList.removeMovies(moviesToRemove);
