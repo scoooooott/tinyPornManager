@@ -163,6 +163,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
       return; // no video file?
     }
     String nfoFilename = mfs.get(0).getBasename() + ".nfo";
+    if (episode.isDisc()) {
+      nfoFilename = "VIDEO_TS.nfo"; // FIXME: BluRay?
+    }
+
     File nfoFile = new File(episode.getPath(), nfoFilename);
 
     // parse out all episodes from the nfo

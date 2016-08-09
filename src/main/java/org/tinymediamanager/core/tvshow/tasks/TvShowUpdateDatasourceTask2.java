@@ -457,10 +457,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             continue;
           }
           discFolders.add(discRoot);
-          // add all files starting with same discRootDir
+          // add all known files starting with same discRootDir
           for (MediaFile em : mfs) {
             if (em.getFileAsPath().startsWith(discRoot)) {
-              epFiles.add(em);
+              if (em.getType() != MediaFileType.UNKNOWN) {
+                epFiles.add(em);
+              }
             }
           }
         }
