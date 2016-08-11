@@ -1352,7 +1352,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       setFilesize(attrs.size());
     }
     catch (IOException e) {
-      LOGGER.error("could not get file information (size/date): " + e.getMessage());
+      if (miSnapshot == null) { // maybe we set it already (from ISO) so only display message when empty
+        LOGGER.warn("could not get file information (size/date): " + e.getMessage());
+      }
       // do not set/return here - we might have set it already... and the next check does check for a 0-byte file
       // setContainerFormat(getExtension());
       // return;
@@ -1696,10 +1698,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private String parseLanguageFromString(String shortname) {
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
+    shortname = shortname.replaceAll("(?i)Part [Ii]+", ""); // hardcoded; remove Part II which is no stacking marker; b/c II is a valid iso code :p
     for (String s : langArray) {
       try {
         if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
-          LOGGER.debug("found language '" + s + "' in audiofile '" + this.getFilename());
+          LOGGER.debug("found language '" + s + "' in '" + this.getFilename());
           return LanguageUtils.getIso3LanguageFromLocalizedString(s);
         }
       }
