@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.util.ArrayList;
 import java.util.List;

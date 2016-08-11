@@ -15,7 +15,25 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.DATE_ADDED;
+import static org.tinymediamanager.core.Constants.DATE_ADDED_AS_STRING;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.NEWLY_ADDED;
+import static org.tinymediamanager.core.Constants.ORIGINAL_TITLE;
+import static org.tinymediamanager.core.Constants.PATH;
+import static org.tinymediamanager.core.Constants.PLOT;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.PRODUCTION_COMPANY;
+import static org.tinymediamanager.core.Constants.RATING;
+import static org.tinymediamanager.core.Constants.SCRAPED;
+import static org.tinymediamanager.core.Constants.THUMB;
+import static org.tinymediamanager.core.Constants.TITLE;
+import static org.tinymediamanager.core.Constants.VOTES;
+import static org.tinymediamanager.core.Constants.YEAR;
 
 import java.awt.Dimension;
 import java.nio.file.Files;

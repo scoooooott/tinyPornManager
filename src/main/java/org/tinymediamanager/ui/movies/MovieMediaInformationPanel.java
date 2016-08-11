@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;

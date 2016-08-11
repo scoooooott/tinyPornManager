@@ -20,9 +20,9 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.beansbinding.Converter;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.movies.MovieGenresPanel;
 

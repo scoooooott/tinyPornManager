@@ -15,7 +15,11 @@
  */
 package org.tinymediamanager.ui.panels;
 
-import static org.tinymediamanager.core.MediaFileType.*;
+import static org.tinymediamanager.core.MediaFileType.NFO;
+import static org.tinymediamanager.core.MediaFileType.SAMPLE;
+import static org.tinymediamanager.core.MediaFileType.TRAILER;
+import static org.tinymediamanager.core.MediaFileType.VIDEO;
+import static org.tinymediamanager.core.MediaFileType.VIDEO_EXTRA;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;

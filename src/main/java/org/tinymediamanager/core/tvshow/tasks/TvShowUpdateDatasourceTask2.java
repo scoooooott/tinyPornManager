@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -456,10 +457,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             continue;
           }
           discFolders.add(discRoot);
-          // add all files starting with same discRootDir
+          // add all known files starting with same discRootDir
           for (MediaFile em : mfs) {
             if (em.getFileAsPath().startsWith(discRoot)) {
-              epFiles.add(em);
+              if (em.getType() != MediaFileType.UNKNOWN) {
+                epFiles.add(em);
+              }
             }
           }
         }
