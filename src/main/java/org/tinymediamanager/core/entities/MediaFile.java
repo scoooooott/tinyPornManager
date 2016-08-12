@@ -1415,7 +1415,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           videoCodec = getMediaInfo(StreamKind.Video, 0, "Format");
         }
 
+        // *****************
         // get audio streams
+        // *****************
         // int streams = getMediaInfo().streamCount(StreamKind.Audio);
         int streams = 0;
         if (streams == 0) {
@@ -1467,7 +1469,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
           catch (Exception ignored) {
           }
-          String language = getMediaInfo(StreamKind.Audio, i, "Language");
+          String language = getMediaInfo(StreamKind.Audio, i, "Language/String", "Language");
           if (language.isEmpty()) {
             if (!isDiscFile()) { // video_ts parsed 'ts' as Tsonga
               // try to parse from filename
@@ -1476,12 +1478,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             }
           }
           else {
-            stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
+            stream.setLanguage(parseLanguageFromString(language));
           }
           audioStreams.add(stream);
         }
 
+        // ********************
         // get subtitle streams
+        // ********************
         // streams = getMediaInfo().streamCount(StreamKind.Text);
         streams = 0;
         if (streams == 0) {
@@ -1511,8 +1515,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
           String codec = getMediaInfo(StreamKind.Text, i, "CodecID/Hint", "Format");
           stream.setCodec(codec.replaceAll("\\p{Punct}", ""));
-          String lang = getMediaInfo(StreamKind.Text, i, "Language/String");
-          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(lang));
+          String lang = getMediaInfo(StreamKind.Text, i, "Language/String", "Language");
+          stream.setLanguage(parseLanguageFromString(lang));
 
           String forced = getMediaInfo(StreamKind.Text, i, "Forced");
           boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
@@ -1553,14 +1557,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
         catch (Exception e) {
         }
-        String language = getMediaInfo(StreamKind.Audio, 0, "Language");
+        String language = getMediaInfo(StreamKind.Audio, 0, "Language/String", "Language");
         if (language.isEmpty()) {
           // try to parse from filename
           String shortname = getBasename().toLowerCase();
           stream.setLanguage(parseLanguageFromString(shortname));
         }
         else {
-          stream.setLanguage(LanguageUtils.getIso3LanguageFromLocalizedString(language));
+          stream.setLanguage(parseLanguageFromString(language));
         }
         audioStreams.clear();
         audioStreams.add(stream);
@@ -1699,6 +1703,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String parseLanguageFromString(String shortname) {
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
     shortname = shortname.replaceAll("(?i)Part [Ii]+", ""); // hardcoded; remove Part II which is no stacking marker; b/c II is a valid iso code :p
+    shortname = StringUtils.split(shortname, '/')[0].trim(); // possibly "de / de" - just take first
     for (String s : langArray) {
       try {
         if (shortname.equalsIgnoreCase(s) || shortname.matches("(?i).*[ _.-]+" + s + "$")) {// ends with lang + delimiter prefix
