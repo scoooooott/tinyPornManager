@@ -91,7 +91,7 @@ class KodiUtil {
   public static File detectKodiFolder() {
     String[] appFolder = { "Kodi", "kodi", "xbmc", "XMBC" };
     String[] installFolder = { System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"), System.getenv("ProgramData"), "/usr/share/",
-        "/usr/lib/", "/Applications/XBMC.app/Contents/Resources" };
+        "/usr/lib/", "/Applications/Kodi.app/Contents/Resources", "/Applications/XBMC.app/Contents/Resources" };
 
     for (String i : installFolder) {
       if (StringUtils.isEmpty(i)) {
@@ -147,11 +147,11 @@ class KodiUtil {
     List<KodiScraper> scrapers = new ArrayList<>();
     List<File> foundAddonFiles = new ArrayList<>();
     Map<String, KodiScraper> tmp = new LinkedHashMap<>(); // tmp
-                                                                             // sorted
-                                                                             // map
-                                                                             // for
-                                                                             // version
-                                                                             // comparison
+                                                          // sorted
+                                                          // map
+                                                          // for
+                                                          // version
+                                                          // comparison
 
     // detect manually added addons
     File addons = new File("kodi_scraper");
