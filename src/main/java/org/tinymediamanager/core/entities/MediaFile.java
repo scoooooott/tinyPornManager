@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,6 +38,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -51,6 +56,7 @@ import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
+import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
@@ -1200,96 +1206,123 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private long getMediaInfoSnapshotFromISO() {
-    int BUFFER_SIZE = 64 * 1024;
-    Iso9660FileSystem image;
-    try {
-      LOGGER.trace("ISO: Open");
-      image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
-      int dur = 0;
-      long siz = 0L; // accumulated filesize
-      long biggest = 0L;
+    // check if we have a snapshot xml
+    Path xmlFile = Paths.get(this.path, this.filename.replaceFirst("\\.iso$", "-mediainfo.xml"));
+    if (Files.exists(xmlFile)) {
+      try {
+        LOGGER.info("ISO: try to parse " + xmlFile);
 
-      for (Iso9660FileEntry entry : image) {
-        LOGGER.trace("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
-        siz += entry.getSize();
+        JAXBContext context = JAXBContext.newInstance(MediaInfoXMLParser.class);
+        Unmarshaller um = context.createUnmarshaller();
+        MediaInfoXMLParser xml = new MediaInfoXMLParser();
 
-        if (entry.getSize() <= 5000) { // small files and "." entries
-          continue;
-        }
+        Reader in = Files.newBufferedReader(xmlFile, StandardCharsets.UTF_8);
+        xml = (MediaInfoXMLParser) um.unmarshal(in);
+        in.close();
+        xml.snapshot();
 
-        MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
-        // mf.setMediaInfo(fileMI); // we need set the inner MI
-        if (mf.getType() == MediaFileType.VIDEO && mf.isDiscFile()) { // would not count video_ts.bup for ex (and not .dat files or other types)
-          mf.setFilesize(entry.getSize());
-
-          MediaInfo fileMI = new MediaInfo();
-          try {
-            // mediaInfo.option("File_IsSeekable", "0");
-            byte[] From_Buffer = new byte[BUFFER_SIZE];
-            int From_Buffer_Size; // The size of the read file buffer
-
-            // Preparing to fill MediaInfo with a buffer
-            fileMI.openBufferInit(entry.getSize(), 0);
-
-            long pos = 0L;
-            // The parsing loop
-            do {
-              // Reading data somewhere, do what you want for this.
-              From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
-              pos += From_Buffer_Size; // add bytes read to file position
-
-              // Sending the buffer to MediaInfo
-              int Result = fileMI.openBufferContinue(From_Buffer, From_Buffer_Size);
-              if ((Result & 8) == 8) { // Status.Finalized
-                break;
-              }
-
-              // Testing if MediaInfo request to go elsewhere
-              if (fileMI.openBufferContinueGoToGet() != -1) {
-                pos = fileMI.openBufferContinueGoToGet();
-                LOGGER.trace("ISO: Seek to " + pos);
-                // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
-                // pos = newPos + From_Buffer_Size; // add bytes read to file position
-                fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
-              }
-
-            } while (From_Buffer_Size > 0);
-
-            LOGGER.trace("ISO: finalize");
-            // Finalizing
-            fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
-            Map<StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
-            fileMI.close();
-
-            mf.setMiSnapshot(tempSnapshot); // set ours to MI for standard gathering
-            mf.gatherMediaInformation(); // normal gather from snapshots
-
-            // set ISO snapshot ONCE from biggest video file, so we copy all the resolutions & co
-            if (entry.getSize() > biggest) {
-              biggest = entry.getSize();
-              miSnapshot = tempSnapshot;
-            }
-
-            // accumulate durations from every MF
-            dur += mf.getDuration();
-            LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
-          }
-          // sometimes also an error is thrown
-          catch (Exception | Error e) {
-            LOGGER.error("Mediainfo could not open file STREAM", e);
-            fileMI.close();
-          }
-        } // end VIDEO
-      } // end entry
-      setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
-      LOGGER.trace("ISO: final duration:" + getDurationHHMMSS());
-      image.close();
-      return siz;
+        // get snapshot from biggest file
+        setMiSnapshot(xml.getBiggestFile().snapshot);
+        setDuration(xml.getDuration()); // accumulated duration
+        return xml.getFilesize();
+      }
+      catch (Exception e) {
+        LOGGER.warn("ISO: Unable to parse " + xmlFile, e);
+      }
     }
-    catch (Exception e) {
-      LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
-      closeMediaInfo();
-      getMediaInfoSnapshot();
+
+    if (miSnapshot == null) {
+      int BUFFER_SIZE = 64 * 1024;
+      Iso9660FileSystem image;
+      try {
+        LOGGER.trace("ISO: Open");
+        image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
+        int dur = 0;
+        long siz = 0L; // accumulated filesize
+        long biggest = 0L;
+
+        for (Iso9660FileEntry entry : image) {
+          LOGGER.trace("ISO: got entry " + entry.getName() + " size:" + entry.getSize());
+          siz += entry.getSize();
+
+          if (entry.getSize() <= 5000) { // small files and "." entries
+            continue;
+          }
+
+          MediaFile mf = new MediaFile(Paths.get(getFileAsPath().toString(), entry.getPath())); // set ISO as MF path
+          // mf.setMediaInfo(fileMI); // we need set the inner MI
+          if (mf.getType() == MediaFileType.VIDEO && mf.isDiscFile()) { // would not count video_ts.bup for ex (and not .dat files or other types)
+            mf.setFilesize(entry.getSize());
+
+            MediaInfo fileMI = new MediaInfo();
+            try {
+              // mediaInfo.option("File_IsSeekable", "0");
+              byte[] From_Buffer = new byte[BUFFER_SIZE];
+              int From_Buffer_Size; // The size of the read file buffer
+
+              // Preparing to fill MediaInfo with a buffer
+              fileMI.openBufferInit(entry.getSize(), 0);
+
+              long pos = 0L;
+              // The parsing loop
+              do {
+                // Reading data somewhere, do what you want for this.
+                From_Buffer_Size = image.readBytes(entry, pos, From_Buffer, 0, BUFFER_SIZE);
+                pos += From_Buffer_Size; // add bytes read to file position
+
+                // Sending the buffer to MediaInfo
+                int Result = fileMI.openBufferContinue(From_Buffer, From_Buffer_Size);
+                if ((Result & 8) == 8) { // Status.Finalized
+                  break;
+                }
+
+                // Testing if MediaInfo request to go elsewhere
+                if (fileMI.openBufferContinueGoToGet() != -1) {
+                  pos = fileMI.openBufferContinueGoToGet();
+                  LOGGER.trace("ISO: Seek to " + pos);
+                  // From_Buffer_Size = image.readBytes(entry, newPos, From_Buffer, 0, BUFFER_SIZE);
+                  // pos = newPos + From_Buffer_Size; // add bytes read to file position
+                  fileMI.openBufferInit(entry.getSize(), pos); // Informing MediaInfo we have seek
+                }
+
+              } while (From_Buffer_Size > 0);
+
+              LOGGER.trace("ISO: finalize");
+              // Finalizing
+              fileMI.openBufferFinalize(); // This is the end of the stream, MediaInfo must finish some work
+              Map<StreamKind, List<Map<String, String>>> tempSnapshot = fileMI.snapshot();
+              fileMI.close();
+
+              mf.setMiSnapshot(tempSnapshot); // set ours to MI for standard gathering
+              mf.gatherMediaInformation(); // normal gather from snapshots
+
+              // set ISO snapshot ONCE from biggest video file, so we copy all the resolutions & co
+              if (entry.getSize() > biggest) {
+                biggest = entry.getSize();
+                miSnapshot = tempSnapshot;
+              }
+
+              // accumulate durations from every MF
+              dur += mf.getDuration();
+              LOGGER.trace("ISO: file duration:" + mf.getDurationHHMMSS() + "  accumulated min:" + dur / 60);
+            }
+            // sometimes also an error is thrown
+            catch (Exception | Error e) {
+              LOGGER.error("Mediainfo could not open file STREAM", e);
+              fileMI.close();
+            }
+          } // end VIDEO
+        } // end entry
+        setDuration(dur); // set it here, and ignore duration parsing for ISO in gatherMI method...
+        LOGGER.trace("ISO: final duration:" + getDurationHHMMSS());
+        image.close();
+        return siz;
+      }
+      catch (Exception e) {
+        LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
+        closeMediaInfo();
+        getMediaInfoSnapshot();
+      }
     }
     return 0;
   }
@@ -1701,6 +1734,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private String parseLanguageFromString(String shortname) {
+    if (StringUtils.isBlank(shortname)) {
+      return "";
+    }
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
     shortname = shortname.replaceAll("(?i)Part [Ii]+", ""); // hardcoded; remove Part II which is no stacking marker; b/c II is a valid iso code :p
     shortname = StringUtils.split(shortname, '/')[0].trim(); // possibly "de / de" - just take first
