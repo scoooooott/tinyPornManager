@@ -1734,7 +1734,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private String parseLanguageFromString(String shortname) {
-    if (shortname == null || shortname.isEmpty()) {
+    if (StringUtils.isBlank(shortname)) {
       return "";
     }
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
