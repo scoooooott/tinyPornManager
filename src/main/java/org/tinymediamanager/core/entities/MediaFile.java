@@ -1734,6 +1734,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   private String parseLanguageFromString(String shortname) {
+    if (shortname == null || shortname.isEmpty()) {
+      return "";
+    }
     Set<String> langArray = LanguageUtils.KEY_TO_LOCALE_MAP.keySet();
     shortname = shortname.replaceAll("(?i)Part [Ii]+", ""); // hardcoded; remove Part II which is no stacking marker; b/c II is a valid iso code :p
     shortname = StringUtils.split(shortname, '/')[0].trim(); // possibly "de / de" - just take first
