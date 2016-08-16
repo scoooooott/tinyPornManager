@@ -37,6 +37,8 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
@@ -46,7 +48,6 @@ import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
@@ -105,7 +106,7 @@ public class TinyMediaManager {
     try {
       RandomAccessFile f = new RandomAccessFile("access.test", "rw");
       f.close();
-      FileUtils.deleteQuietly(new File("access.test"));
+      Files.deleteIfExists(Paths.get("access.test"));
     }
     catch (Exception e2) {
       String msg = "Cannot write to TMM directory, have no rights - exiting.";
@@ -160,8 +161,12 @@ public class TinyMediaManager {
     LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
     LOGGER.trace("network.id       : " + License.getMac());
     LOGGER.info("java.version     : " + System.getProperty("java.version"));
+
     if (Globals.isRunningJavaWebStart()) {
       LOGGER.info("java.webstart    : true");
+    }
+    if (Globals.isRunningWebSwing()) {
+      LOGGER.info("java.webswing    : true");
     }
 
     // START character encoding debug
@@ -215,6 +220,7 @@ public class TinyMediaManager {
           // init ui logger
           TmmUILogCollector.init();
 
+          LOGGER.info("=====================================================");
           // init splash
           SplashScreen splash = null;
           if (!GraphicsEnvironment.isHeadless()) {
@@ -235,7 +241,6 @@ public class TinyMediaManager {
             LOGGER.debug("no splash found");
           }
 
-          LOGGER.info("=====================================================");
           if (g2 != null) {
             updateProgress(g2, "starting tinyMediaManager", 0);
             splash.update();
@@ -492,7 +497,7 @@ public class TinyMediaManager {
       private void showChangelog() {
         // read the changelog
         try {
-          final String changelog = FileUtils.readFileToString(new File("changelog.txt"));
+          final String changelog = Utils.readFileToString(Paths.get("changelog.txt"));
           if (StringUtils.isNotBlank(changelog)) {
             EventQueue.invokeLater(new Runnable() {
               @Override

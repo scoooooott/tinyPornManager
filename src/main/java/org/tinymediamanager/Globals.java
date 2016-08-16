@@ -26,13 +26,7 @@ import org.tinymediamanager.core.Settings;
 public class Globals {
   public static final Settings settings = Settings.getInstance();
 
-  // // see weird logic: http://www.kimchy.org/juc-executorservice-gotcha/
-  // /** The Constant executor. */
-  // public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
-  // 2, TimeUnit.SECONDS, // time to wait before closing idle workers
-  // new LinkedBlockingQueue<Runnable>(), // our queue
-  // new TmmThreadFactory("global"));
-
+  @SuppressWarnings("deprecation")
   private static final boolean DONATOR  = License.isValid();
 
   private static final boolean DEBUG    = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
@@ -70,5 +64,14 @@ public class Globals {
       hasJNLP = false;
     }
     return hasJNLP;
+  }
+
+  /**
+   * Are we running on a jetty webswing instance?
+   * 
+   * @return true/false
+   */
+  public static boolean isRunningWebSwing() {
+    return System.getProperty("webswing.classPath") != null;
   }
 }
