@@ -178,7 +178,7 @@ public class MovieExporterDialog extends TmmDialog {
             exporter.export(movies, Paths.get(tfExportDir.getText()));
           }
           catch (Exception e) {
-            LOGGER.error("Error exporting movies: " + e.getMessage());
+            LOGGER.error("Error exporting movies: ", e);
           }
           setVisible(false);
         }

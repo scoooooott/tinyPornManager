@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -1482,15 +1483,24 @@ public class Utils {
       if (sourcePath == null) {
         sourcePath = dir;
       }
-      else {
-        Files.createDirectories(targetPath.resolve(sourcePath.relativize(dir)));
+      Path target = targetPath.resolve(sourcePath.relativize(dir));
+      if (Files.notExists(target)) {
+        try {
+          Files.createDirectories(target);
+        }
+        catch (FileAlreadyExistsException e) {
+          // ignore
+        }
+        catch (IOException x) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
       }
       return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
       return FileVisitResult.CONTINUE;
     }
   }

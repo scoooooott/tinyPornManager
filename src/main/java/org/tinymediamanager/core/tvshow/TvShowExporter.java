@@ -164,12 +164,12 @@ public class TvShowExporter extends MediaEntityExporter {
           Files.copy(path, exportDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
         }
         else if (Files.isDirectory(path)) {
-          Utils.copyDirectoryRecursive(path, exportDir);
+          Utils.copyDirectoryRecursive(path, exportDir.resolve(path.getFileName()));
         }
       }
     }
     catch (IOException ex) {
-      LOGGER.error("could not copy resources: " + ex.getMessage());
+      LOGGER.error("could not copy resources: ", ex);
     }
   }
 
@@ -284,7 +284,7 @@ public class TvShowExporter extends MediaEntityExporter {
           }
         }
         catch (Exception e) {
-          LOGGER.error("could not copy artwork file: " + e.getMessage());
+          LOGGER.error("could not copy artwork file: ", e);
           return "";
         }
 
