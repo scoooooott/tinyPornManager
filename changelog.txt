@@ -1,3 +1,9 @@
+Version 2.8.4
+=======================
++ MediaInfo: parse pre-generated XMLs (mainly needed for ISO files) 
+x fix Kodi scraper detection on MacOS
+
+
 Version 2.8.3
 =======================
 + movies: created an own column for available meta data (reverted logic for NFO column)
