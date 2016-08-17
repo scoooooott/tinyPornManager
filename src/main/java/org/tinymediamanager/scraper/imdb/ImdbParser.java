@@ -639,19 +639,20 @@ public abstract class ImdbParser {
           }
         }
 
-        /*
-         * <div class="info"><h5>Country:</h5><div class="info-content"><a href="/country/fr">France</a> | <a href="/country/es">Spain</a> | <a
-         * href="/country/it">Italy</a> | <a href="/country/hu">Hungary</a></div></div>
-         */
+        // <div class="info"><h5>Country:</h5><div class="info-content"><a href="/country/fr">France</a> | <a href="/country/es">Spain</a> | <a
+        // href="/country/it">Italy</a> | <a href="/country/hu">Hungary</a></div></div>
+        // <div class="info-content"><a href="/country/xwg">West Germany</a></div> (!!!)
+
         // country
         if (h5Title.matches("(?i)Country.*")) {
           Elements a = element.getElementsByTag("a");
-          String countries = "";
           for (Element anchor : a) {
             Pattern pattern = Pattern.compile("/country/(.*)");
             Matcher matcher = pattern.matcher(anchor.attr("href"));
             if (matcher.matches()) {
-              md.addCountry(matcher.group(1));
+              md.addCountry(anchor.text()); // set the link name, not the short code
+              // md.addCountry(matcher.group(1));
+              // System.out.println("found country: " + anchor.text() + " : " + matcher.group(1));
             }
           }
         }
