@@ -36,6 +36,7 @@ public class IconManager {
   public final static ImageIcon            CLAPBOARD         = loadImage("clapboard.png");
   public final static ImageIcon            COPY              = loadImage("copy.png");
   public final static ImageIcon            CROSS             = loadImage("cross.png");
+  public final static ImageIcon            DATE_PICKER       = loadImage("datepicker.png");
   public final static ImageIcon            DELETE            = loadImage("delete.png");
   public final static ImageIcon            DOWNLOAD          = loadImage("download.png");
   public final static ImageIcon            DOWNLOAD_DISABLED = loadImage("download-disabled.png");
