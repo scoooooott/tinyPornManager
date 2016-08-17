@@ -124,17 +124,25 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     Images images = null;
     String imdbId = options.getImdbId();
     int tmdbId = options.getTmdbId();
-    if (imdbId != null && !imdbId.isEmpty()) {
-      LOGGER.debug("getArtwork with IMDB id: " + imdbId);
-      images = api.getMovieService().getMovieImages(imdbId);
+
+    if (StringUtils.isNotBlank(imdbId)) {
+      try {
+        LOGGER.debug("getArtwork with IMDB id: " + imdbId);
+        images = api.getMovieService().getMovieImages(imdbId);
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to search artwork: " + e.getMessage());
+      }
     }
-    else if (tmdbId != 0) {
-      LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
-      images = api.getMovieService().getMovieImages(Integer.toString(tmdbId));
-    }
-    else {
-      LOGGER.warn("neither imdb/tmdb set");
-      return returnArtwork;
+
+    if (images == null && tmdbId != 0) {
+      try {
+        LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
+        images = api.getMovieService().getMovieImages(Integer.toString(tmdbId));
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to search artwork: " + e.getMessage());
+      }
     }
 
     if (images == null) {
