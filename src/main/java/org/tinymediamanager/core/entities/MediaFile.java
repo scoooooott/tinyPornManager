@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,8 +55,8 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
-import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
+import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
@@ -141,9 +141,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     stackingMarker     = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<>(0);
+  private List<MediaFileAudioStream>                 audioStreams       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new CopyOnWriteArrayList<>();
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
