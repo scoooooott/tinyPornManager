@@ -36,6 +36,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.entities.MMActor;
 import org.tinymediamanager.scraper.moviemeter.entities.MMFilm;
 import org.tinymediamanager.scraper.util.ApiKey;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -61,6 +62,10 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
         "<html><h3>Moviemeter.nl</h3><br />A dutch movie database.<br /><br />Available languages: NL</html>",
         MovieMeterMetadataProvider.class.getResource("/moviemeter_nl.png"));
     providerInfo.setVersion(MovieMeterMetadataProvider.class);
+
+    providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
+    providerInfo.getConfig().load();
+
     return providerInfo;
   }
 
@@ -180,7 +185,12 @@ public class MovieMeterMetadataProvider implements IMovieMetadataProvider {
     md.addMediaArt(ma);
 
     for (String country : fd.countries) {
-      md.addCountry(country);
+      if (providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+        md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage(), country));
+      }
+      else {
+        md.addCountry(country);
+      }
     }
 
     for (MMActor a : fd.actors) {
