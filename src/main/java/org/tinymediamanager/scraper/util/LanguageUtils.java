@@ -232,52 +232,78 @@ public class LanguageUtils {
    *
    * @param text
    *          the language (as string) to get the language name for
-   * @return the localized language name or empty string
+   * @return the localized language name or the untranslated string 1:1
    * @since 2.0
    */
   public static String getLocalizedLanguageNameFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
-    if (l != null) {
-      return l.getDisplayLanguage();
-    }
-    return "";
+    return getLocalizedLanguageNameFromLocalizedString(Locale.getDefault(), text);
   }
 
   /**
-   * tries to get local (JVM language) country name for given parameters/variants
-   * 
-   * @param country
-   *          all possible names or iso codes
-   * @return localized country name, or first country param 1:1 if we cannot translate
+   * uses our localized language mapping table, to get the localized language name in given language
+   *
+   * @param language
+   *          the locale to which we translate the language (as string) to get the language name for
+   * @param text
+   *          the language (as string) to get the language name for
+   * @return the localized language name or empty string
+   * @since 2.0
    */
-  public static String getLocalizedCountry(String... country) {
-    return getLocalizedCountryForLanguage(Locale.getDefault().getLanguage(), country);
-  }
-
-  /**
-   * tries to get localized country name (for given language) for given parameters/variants
-   * 
-   * @param country
-   *          all possible names or iso codes
-   * @return localized country name, or first country param 1:1 if we cannot translate
-   */
-  public static String getLocalizedCountryForLanguage(String language, String... country) {
-    return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase()), country);
-  }
-
-  /**
-   * tries to get localized country name (for given language) for given parameters/variants
-   * 
-   * @param country
-   *          all possible names or iso codes
-   * @return localized country name, or first country param 1:1 if we cannot translate
-   */
-  public static String getLocalizedCountryForLanguage(Locale language, String... country) {
+  public static String getLocalizedLanguageNameFromLocalizedString(Locale language, String... text) {
     String ret = "";
     if (language == null) {
       language = Locale.getDefault();
     }
-    for (String c : country) {
+    for (String s : text) {
+      Locale l = KEY_TO_LOCALE_MAP.get(s.toLowerCase());
+      if (l != null) {
+        ret = l.getDisplayLanguage(language); // auto fallback to english
+        if (!ret.isEmpty()) {
+          break;
+        }
+      }
+    }
+    if (ret.isEmpty() && text.length > 0) {
+      ret = text[0]; // cannot translate - just take first param 1:1
+    }
+    return ret;
+  }
+
+  /**
+   * tries to get local (JVM language) COUNTRY name for given parameters/variants
+   * 
+   * @param countries
+   *          all possible names or iso codes
+   * @return localized country name, or first country param 1:1 if we cannot translate
+   */
+  public static String getLocalizedCountry(String... countries) {
+    return getLocalizedCountryForLanguage(Locale.getDefault().getLanguage(), countries);
+  }
+
+  /**
+   * tries to get localized COUNTRY name (in given language) for given parameters/variants
+   * 
+   * @param countries
+   *          all possible names or iso codes
+   * @return localized country name, or first country param 1:1 if we cannot translate
+   */
+  public static String getLocalizedCountryForLanguage(String language, String... countries) {
+    return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase()), countries);
+  }
+
+  /**
+   * tries to get localized COUNTRY name (in given language) for given parameters/variants
+   * 
+   * @param countries
+   *          all possible names or iso codes
+   * @return localized country name, or first country param 1:1 if we cannot translate
+   */
+  public static String getLocalizedCountryForLanguage(Locale language, String... countries) {
+    String ret = "";
+    if (language == null) {
+      language = Locale.getDefault();
+    }
+    for (String c : countries) {
       Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase());
       if (l != null) {
         ret = l.getDisplayCountry(language); // auto fallback to english
@@ -286,8 +312,8 @@ public class LanguageUtils {
         }
       }
     }
-    if (ret.isEmpty() && country.length > 0) {
-      ret = country[0]; // cannot translate - just take first param 1:1
+    if (ret.isEmpty() && countries.length > 0) {
+      ret = countries[0]; // cannot translate - just take first param 1:1
     }
     return ret;
   }
