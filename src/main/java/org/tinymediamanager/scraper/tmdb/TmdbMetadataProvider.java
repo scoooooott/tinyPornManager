@@ -67,6 +67,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
     providerInfo.setVersion(TmdbMetadataProvider.class);
 
     providerInfo.getConfig().addBoolean("includeAdult", false);
+    providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
     providerInfo.getConfig().load();
     return providerInfo;
   }

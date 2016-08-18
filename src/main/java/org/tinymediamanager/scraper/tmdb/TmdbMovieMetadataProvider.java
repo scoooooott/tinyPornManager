@@ -33,6 +33,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 
@@ -516,11 +517,21 @@ class TmdbMovieMetadataProvider {
     md.addMediaArt(ma);
 
     for (SpokenLanguage lang : ListUtils.nullSafe(movie.spoken_languages)) {
-      md.addSpokenLanguage(lang.iso_639_1);
+      if (TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+        md.addSpokenLanguage(LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), lang.name, lang.iso_639_1));
+      }
+      else {
+        md.addSpokenLanguage(lang.iso_639_1);
+      }
     }
 
     for (ProductionCountry country : ListUtils.nullSafe(movie.production_countries)) {
-      md.addCountry(country.iso_3166_1);
+      if (TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+        md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage(), country.name, country.iso_3166_1));
+      }
+      else {
+        md.addCountry(country.iso_3166_1);
+      }
     }
 
     if (MetadataUtil.isValidImdbId(movie.imdb_id)) {
