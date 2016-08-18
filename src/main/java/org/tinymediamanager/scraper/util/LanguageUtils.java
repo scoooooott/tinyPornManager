@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * This is a helper class for language related tasks
@@ -108,7 +109,12 @@ public class LanguageUtils {
       langArray.put(l.getDisplayCountry(intl), l); // english name
       langArray.put(l.getDisplayCountry(), l); // localized name
       langArray.put(l.getCountry().toLowerCase(), l); // country code - lowercase to overwrite possible language key (!)
-      langArray.put(l.getISO3Country().toLowerCase(), l); // country code - lowercase to overwrite possible language key (!)
+      try {
+        langArray.put(l.getISO3Country().toLowerCase(), l); // country code - lowercase to overwrite possible language key (!)
+      }
+      catch (MissingResourceException e) {
+        // tjo... maybe not available, see javadoc
+      }
     }
 
     // sort from long to short
