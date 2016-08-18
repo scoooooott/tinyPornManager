@@ -244,18 +244,33 @@ public class LanguageUtils {
   }
 
   /**
-   * tries to get local country name for given parameters/variants
+   * tries to get local (JVM language) country name for given parameters/variants
    * 
    * @param country
    *          all possible names or iso codes
    * @return string (possibly empty), never null
    */
   public static String getLocalizedCountry(String... country) {
+    return getLocalizedCountryForLanguage(Locale.getDefault().getLanguage(), country);
+  }
+
+  /**
+   * tries to get localized country name (for given language) for given parameters/variants
+   * 
+   * @param country
+   *          all possible names or iso codes
+   * @return string (possibly empty), never null
+   */
+  public static String getLocalizedCountryForLanguage(String language, String... country) {
     String ret = "";
+    Locale lang = KEY_TO_LOCALE_MAP.get(language.toLowerCase());
+    if (lang == null) {
+      lang = Locale.getDefault();
+    }
     for (String c : country) {
       Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase());
       if (l != null) {
-        ret = l.getDisplayCountry(); // auto fallback to english
+        ret = l.getDisplayCountry(lang); // auto fallback to english
         if (!ret.isEmpty()) {
           break;
         }
