@@ -45,11 +45,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +59,7 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +142,7 @@ public class Utils {
    * not a directory, and either a regular file or "other" one.<br>
    * see http://serverfault.com/a/667220
    * 
-   * @param file
+   * @param attr
    * @return
    */
   public static boolean isRegularFile(BasicFileAttributes attr) {
@@ -1340,9 +1343,9 @@ public class Utils {
   /**
    * Unzips the specified zip file to the specified destination directory. Replaces any files in the destination, if they already exist.
    * 
-   * @param zipFilename
+   * @param zipFile
    *          the name of the zip file to extract
-   * @param destFilename
+   * @param destDir
    *          the directory to unzip to
    * @throws IOException
    */
@@ -1465,6 +1468,44 @@ public class Utils {
   public static void copyDirectoryRecursive(Path from, Path to) throws IOException {
     LOGGER.info("Copyin complete directory from " + from + " to " + to);
     Files.walkFileTree(from, new CopyFileVisitor(to));
+  }
+
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   */
+  public static void sortList(List list) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list);
+    }
+  }
+
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   * @param comparator
+   *          the comparator used for sorting
+   */
+  public static void sortList(List list, Comparator comparator) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList, comparator);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list);
+    }
   }
 
   /*

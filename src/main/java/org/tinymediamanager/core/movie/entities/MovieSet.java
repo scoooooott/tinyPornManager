@@ -271,7 +271,7 @@ public class MovieSet extends MediaEntity {
    */
   public void sortMovies() {
     synchronized (movies) {
-      Collections.sort(movies, MOVIE_SET_COMPARATOR);
+      Utils.sortList(movies, MOVIE_SET_COMPARATOR);
       // rebuild the ID table the same way
       movieIds.clear();
       for (Movie movie : movies) {

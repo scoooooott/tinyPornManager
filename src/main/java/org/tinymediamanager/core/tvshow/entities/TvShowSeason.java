@@ -26,7 +26,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 
 /**
@@ -72,7 +72,7 @@ public class TvShowSeason extends AbstractModelObject {
 
   public void addEpisode(TvShowEpisode episode) {
     episodes.add(episode);
-    Collections.sort(episodes);
+    Utils.sortList(episodes);
     episode.addPropertyChangeListener(listener);
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
