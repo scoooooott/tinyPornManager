@@ -1,5 +1,9 @@
 Version 2.8.4
 =======================
+SCRAPER CHANGES: 
+You have now the option, if you want to scrape localized language/country names, instead of ISO codes
+check scraper config!
+
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
 + added a date picker for easier date editing
 x fix Kodi scraper detection on MacOS
