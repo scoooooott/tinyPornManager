@@ -248,7 +248,7 @@ public class LanguageUtils {
    * 
    * @param country
    *          all possible names or iso codes
-   * @return string (possibly empty), never null
+   * @return localized country name, or first country param 1:1 if we cannot translate
    */
   public static String getLocalizedCountry(String... country) {
     return getLocalizedCountryForLanguage(Locale.getDefault().getLanguage(), country);
@@ -259,22 +259,35 @@ public class LanguageUtils {
    * 
    * @param country
    *          all possible names or iso codes
-   * @return string (possibly empty), never null
+   * @return localized country name, or first country param 1:1 if we cannot translate
    */
   public static String getLocalizedCountryForLanguage(String language, String... country) {
+    return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase()), country);
+  }
+
+  /**
+   * tries to get localized country name (for given language) for given parameters/variants
+   * 
+   * @param country
+   *          all possible names or iso codes
+   * @return localized country name, or first country param 1:1 if we cannot translate
+   */
+  public static String getLocalizedCountryForLanguage(Locale language, String... country) {
     String ret = "";
-    Locale lang = KEY_TO_LOCALE_MAP.get(language.toLowerCase());
-    if (lang == null) {
-      lang = Locale.getDefault();
+    if (language == null) {
+      language = Locale.getDefault();
     }
     for (String c : country) {
       Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase());
       if (l != null) {
-        ret = l.getDisplayCountry(lang); // auto fallback to english
+        ret = l.getDisplayCountry(language); // auto fallback to english
         if (!ret.isEmpty()) {
           break;
         }
       }
+    }
+    if (ret.isEmpty() && country.length > 0) {
+      ret = country[0]; // cannot translate - just take first param 1:1
     }
     return ret;
   }
