@@ -50,6 +50,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -650,9 +651,12 @@ public abstract class ImdbParser {
             Pattern pattern = Pattern.compile("/country/(.*)");
             Matcher matcher = pattern.matcher(anchor.attr("href"));
             if (matcher.matches()) {
-              md.addCountry(anchor.text()); // set the link name, not the short code
-              // md.addCountry(matcher.group(1));
-              // System.out.println("found country: " + anchor.text() + " : " + matcher.group(1));
+              if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+                md.addCountry(LanguageUtils.getLocalizedCountryForLanguage(options.getLanguage().getLanguage(), anchor.text(), matcher.group(1)));
+              }
+              else {
+                md.addCountry(matcher.group(1));
+              }
             }
           }
         }
@@ -668,7 +672,13 @@ public abstract class ImdbParser {
             Pattern pattern = Pattern.compile("/language/(.*)");
             Matcher matcher = pattern.matcher(anchor.attr("href"));
             if (matcher.matches()) {
-              md.addSpokenLanguage(matcher.group(1));
+              if (ImdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
+                md.addSpokenLanguage(
+                    LanguageUtils.getLocalizedLanguageNameFromLocalizedString(options.getLanguage(), anchor.text(), matcher.group(1)));
+              }
+              else {
+                md.addSpokenLanguage(matcher.group(1));
+              }
             }
           }
         }
