@@ -1,10 +1,18 @@
 package org.tinymediamanager.scraper.util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+
+import info.debatty.java.stringsimilarity.Cosine;
+import info.debatty.java.stringsimilarity.Jaccard;
+import info.debatty.java.stringsimilarity.JaroWinkler;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
+import info.debatty.java.stringsimilarity.SorensenDice;
 
 public class SimilarityTest {
 
@@ -15,6 +23,7 @@ public class SimilarityTest {
 
   @Test
   public void testSimilarity() {
+    System.out.println(padRight("", 50) + "Ours\t\tAlt1\t\tAlt2\t\tNorm. Lev\tJaro Winkler\tCosine\t\tJaccard\t\tSorensen Dice\tCosine2");
     compareAlgs("revenant", "The Revenant - Der Rückkehrer");
     compareAlgs("revenant", "A World Unseen: The Revenant");
     // OUTCOME:
@@ -30,13 +39,34 @@ public class SimilarityTest {
     compareAlgs("rEVENANT", "Revenant"); // 1.0
     compareAlgs("RRR", "RRRRRRR"); // not 1.0 (a1 fails - can this happen?)
     compareAlgs("R", "RRRRRRR"); // 0.0
+
+    compareAlgs("Godfather", "The Godfather");
   }
 
   private void compareAlgs(String s1, String s2) {
     float f = Similarity.compareStrings(s1, s2);
     double a1 = SimilarityTest.diceCoefficient(s1.toLowerCase(), s2.toLowerCase());
     double a2 = SimilarityTest.diceCoefficientOptimized(s1.toLowerCase(), s2.toLowerCase());
-    System.out.println(padRight(s1 + " | " + s2, 50) + padRight("Ours:" + f, 20) + padRight("Alt1:" + a1, 25) + "  Alt2:" + a2);
+
+    NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
+    double a3 = levenshtein.similarity(s1.toLowerCase(), s2.toLowerCase());
+
+    JaroWinkler jaroWinkler = new JaroWinkler();
+    double a4 = jaroWinkler.similarity(s1.toLowerCase(), s2.toLowerCase());
+
+    Cosine cosine = new Cosine();
+    double a5 = cosine.similarity(s1.toLowerCase(), s2.toLowerCase());
+
+    Jaccard jaccard = new Jaccard();
+    double a6 = jaccard.similarity(s1.toLowerCase(), s2.toLowerCase());
+
+    SorensenDice sorensenDice = new SorensenDice();
+    double a7 = sorensenDice.similarity(s1.toLowerCase(), s2.toLowerCase());
+
+    double a8 = cosineSimilarity(s1.toLowerCase(), s2.toLowerCase());
+
+    System.out.println(padRight(s1 + " | " + s2, 50)
+        + String.format("%.2f\t\t%.2f\t\t%.2f\t\t%.2f\t\t%.2f\t\t\t%.2f\t\t%.2f\t\t%.2f\t\t\t%.2f", f, a1, a2, a3, a4, a5, a6, a7, a8));
   }
 
   // Note that this implementation is case-sensitive!
@@ -133,6 +163,56 @@ public class SimilarityTest {
         j++;
     }
     return (double) matches / (n + m);
+  }
+
+  /**
+   * @param terms
+   *          values to analyze
+   * @return a map containing unique terms and their frequency
+   */
+  public static Map<String, Integer> getTermFrequencyMap(String[] terms) {
+    Map<String, Integer> termFrequencyMap = new HashMap<>();
+    for (String term : terms) {
+      Integer n = termFrequencyMap.get(term);
+      n = (n == null) ? 1 : ++n;
+      termFrequencyMap.put(term, n);
+    }
+    return termFrequencyMap;
+  }
+
+  /**
+   * @param text1
+   * @param text2
+   * @return cosine similarity of text1 and text2
+   */
+  public static double cosineSimilarity(String text1, String text2) {
+    // Get vectors
+    Map<String, Integer> a = getTermFrequencyMap(text1.split("\\W+"));
+    Map<String, Integer> b = getTermFrequencyMap(text2.split("\\W+"));
+
+    // Get unique words from both sequences
+    HashSet<String> intersection = new HashSet<>(a.keySet());
+    intersection.retainAll(b.keySet());
+
+    double dotProduct = 0, magnitudeA = 0, magnitudeB = 0;
+
+    // Calculate dot product
+    for (String item : intersection) {
+      dotProduct += a.get(item) * b.get(item);
+    }
+
+    // Calculate magnitude a
+    for (String k : a.keySet()) {
+      magnitudeA += Math.pow(a.get(k), 2);
+    }
+
+    // Calculate magnitude b
+    for (String k : b.keySet()) {
+      magnitudeB += Math.pow(b.get(k), 2);
+    }
+
+    // return cosine similarity
+    return dotProduct / Math.sqrt(magnitudeA * magnitudeB);
   }
 
   public static String padRight(String s, int n) {
