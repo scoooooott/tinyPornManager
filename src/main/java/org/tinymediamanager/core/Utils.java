@@ -1504,7 +1504,7 @@ public class Utils {
       list.addAll(tempList);
     }
     else {
-      Collections.sort(list);
+      Collections.sort(list, comparator);
     }
   }
 
