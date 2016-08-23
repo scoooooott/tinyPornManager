@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -57,9 +60,20 @@ public class ReleaseInfo {
       buildDate = releaseInfoProp.getProperty("date");
     }
     catch (IOException e) {
-      version = "";
-      build = "svn"; // no file - we must be in SVN
-      buildDate = "";
+      try {
+        fileInputStream = new FileInputStream("target/classes/eclipse.properties");
+        Properties releaseInfoProp = new Properties();
+        releaseInfoProp.load(fileInputStream);
+        version = releaseInfoProp.getProperty("version");
+        build = "svn";
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        buildDate = formatter.format(new Date());
+      }
+      catch (IOException e2) {
+        version = "";
+        build = "svn"; // no file - we must be in SVN
+        buildDate = "";
+      }
     }
     finally {
       try {
@@ -191,8 +205,8 @@ public class ReleaseInfo {
   public static String getRealVersion() {
     String v = getManifestEntry(ReleaseInfo.class, "Implementation-Version");
     if (v.isEmpty()) {
-      // no manifest? only happens on svn builds
-      v = "SVN";
+      // no manifest? only happens on svn builds - get the version from special file
+      v = getVersion() + " - SVN";
     }
     if (isNightly()) {
       v += " - NIGHTLY";
@@ -212,7 +226,7 @@ public class ReleaseInfo {
   public static String getRealBuildDate() {
     String b = getManifestEntry(ReleaseInfo.class, "Build-Date");
     if (b.isEmpty()) {
-      b = "SVN";
+      b = getBuildDate(); // SVN, actual date
     }
     return b;
   }

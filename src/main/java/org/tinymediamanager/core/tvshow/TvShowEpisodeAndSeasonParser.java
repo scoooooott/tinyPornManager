@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,6 +121,13 @@ public class TvShowEpisodeAndSeasonParser {
     // remove problematic strings from name
     String filename = FilenameUtils.getName(name);
     String extension = FilenameUtils.getExtension(name);
+
+    // check for disc files and remove!!
+    if (filename.toLowerCase().matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
+        filename.toLowerCase().matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")) { // bluray
+      name = FilenameUtils.getPath(name);
+    }
+
     String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(name);
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {

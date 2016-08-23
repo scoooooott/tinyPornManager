@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -97,6 +98,10 @@ public class TvShowRenamer {
       if (!srcDir.toAbsolutePath().toString().equals(destDir.toAbsolutePath().toString())) {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
+          // create parent if needed
+          if (Files.notExists(destDir.getParent())) {
+            Files.createDirectory(destDir.getParent());
+          }
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
           if (ok) {
             show.updateMediaFilePath(srcDir, destDir); // TvShow MFs
@@ -154,15 +159,6 @@ public class TvShowRenamer {
     // #######################################################
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
-    if (eps == null || eps.size() == 0) {
-      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
-      try {
-        Thread.sleep(250);
-      }
-      catch (Exception e) {
-      }
-      eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
-    }
     if (eps == null || eps.size() == 0) {
       // FIXME: workaround for r1972
       // when moving video file, all NFOs get deleted and a new gets created.
@@ -249,6 +245,10 @@ public class TvShowRenamer {
           if (!epFolder.toAbsolutePath().toString().equals(newEpFolder.toAbsolutePath().toString())) {
             boolean ok = false;
             try {
+              // create parent if needed
+              if (Files.notExists(newEpFolder.getParent())) {
+                Files.createDirectory(newEpFolder.getParent());
+              }
               ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
             }
             catch (Exception e) {
@@ -304,6 +304,10 @@ public class TvShowRenamer {
             Path oldMfFile = mf.getFileAsPath();
             boolean ok = false;
             try {
+              // create parent if needed
+              if (Files.notExists(newFile.getParent())) {
+                Files.createDirectory(newFile.getParent());
+              }
               ok = Utils.moveFileSafe(oldMfFile, newFile);
             }
             catch (Exception e) {
@@ -312,6 +316,17 @@ public class TvShowRenamer {
                   new Message(MessageLevel.ERROR, oldMfFile, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
             }
             if (ok) {
+              if (mf.getFilename().endsWith(".sub")) {
+                // when having a .sub, also rename .idx (don't care if error)
+                try {
+                  Path oldidx = mf.getFileAsPath().resolveSibling(mf.getFilename().toString().replaceFirst("sub$", "idx"));
+                  Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
+                  Utils.moveFileSafe(oldidx, newidx);
+                }
+                catch (Exception e) {
+                  // no idx found or error - ignore
+                }
+              }
               newMF.setPath(seasonDir.toString());
               newMF.setFilename(filename);
               // iterate over all EPs and delete old / set new MF
@@ -404,15 +419,6 @@ public class TvShowRenamer {
     String filename = "";
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
     if (eps == null || eps.size() == 0) {
-      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
-      try {
-        Thread.sleep(250);
-      }
-      catch (Exception ex) {
-      }
-      eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
-    }
-    if (eps == null || eps.size() == 0) {
       return "";
     }
 
@@ -435,6 +441,7 @@ public class TvShowRenamer {
             forcedExtension = "tbn";
             break;
 
+          case FILENAME_THUMB: // filename as is
           default:
             break;
         }
@@ -617,6 +624,11 @@ public class TvShowRenamer {
         break;
       case "$T":
         ret = episode.getTitle();
+        break;
+      case "$S":
+        if (episode.getMediaSource() != MediaSource.UNKNOWN) {
+          ret = episode.getMediaSource().toString();
+        }
         break;
 
       // MEDIAFILE

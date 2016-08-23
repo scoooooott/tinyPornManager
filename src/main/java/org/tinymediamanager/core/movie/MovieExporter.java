@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,19 +143,19 @@ public class MovieExporter extends MediaEntityExporter {
     // copy all non .jtme/template.conf files to destination dir
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDir)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           if (path.getFileName().toString().endsWith(".jmte") || path.getFileName().toString().endsWith("template.conf")) {
             continue;
           }
           Files.copy(path, exportDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
         }
         else if (Files.isDirectory(path)) {
-          Utils.copyDirectoryRecursive(path, exportDir);
+          Utils.copyDirectoryRecursive(path, exportDir.resolve(path.getFileName()));
         }
       }
     }
     catch (IOException ex) {
-      LOGGER.error("could not copy resources: " + ex.getMessage());
+      LOGGER.error("could not copy resources: ", ex);
     }
   }
 
@@ -265,16 +265,16 @@ public class MovieExporter extends MediaEntityExporter {
               width = (int) parameters.get("width");
             }
             InputStream is = ImageCache.scaleImage(mf.getFileAsPath(), width);
-            Files.copy(is, imageDir.resolve(filename));
+            Files.copy(is, imageDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
           }
           else {
             filename += "." + FilenameUtils.getExtension(mf.getFilename());
-            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename));
+            Files.copy(mf.getFileAsPath(), imageDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
           }
         }
         catch (Exception e) {
-          LOGGER.warn("could not copy artwork file: " + e.getMessage());
-          return null;
+          LOGGER.error("could not copy artwork file: ", e);
+          return "";
         }
 
         return filename;

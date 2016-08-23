@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     scraperMetadataConfig.setArtwork(settings.isArtwork());
     scraperMetadataConfig.setTrailer(settings.isTrailer());
     scraperMetadataConfig.setCollection(settings.isCollection());
+    scraperMetadataConfig.setTags(settings.isTags());
 
     movieSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
 

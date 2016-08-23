@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String             ASCII_REPLACEMENT                        = "asciiReplacement";
   private final static String             YEAR_COLUMN_VISIBLE                      = "yearColumnVisible";
   private final static String             NFO_COLUMN_VISIBLE                       = "nfoColumnVisible";
+  private final static String             METADATA_COLUMN_VISIBLE                  = "metadataColumnVisible";
   private final static String             DATE_ADDED_COLUMN_VISIBLE                = "dateAddedColumnVisible";
   private final static String             IMAGE_COLUMN_VISIBLE                     = "imageColumnVisible";
   private final static String             TRAILER_COLUMN_VISIBLE                   = "trailerColumnVisible";
@@ -202,6 +203,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                         yearColumnVisible                        = true;
   private boolean                         ratingColumnVisible                      = false;
   private boolean                         nfoColumnVisible                         = true;
+  private boolean                         metadataColumnVisible                    = true;
   private boolean                         dateAddedColumnVisible                   = false;
   private boolean                         imageColumnVisible                       = true;
   private boolean                         trailerColumnVisible                     = true;
@@ -782,6 +784,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.nfoColumnVisible;
     this.nfoColumnVisible = newValue;
     firePropertyChange(NFO_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isMetadataColumnVisible() {
+    return metadataColumnVisible;
+  }
+
+  public void setMetadataColumnVisible(boolean newValue) {
+    boolean oldValue = this.metadataColumnVisible;
+    this.metadataColumnVisible = newValue;
+    firePropertyChange(METADATA_COLUMN_VISIBLE, oldValue, newValue);
   }
 
   public boolean isDateAddedColumnVisible() {

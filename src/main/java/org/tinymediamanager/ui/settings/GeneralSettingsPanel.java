@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,7 +248,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     sliderMemory.setMajorTickSpacing(512);
     sliderMemory.setMinorTickSpacing(128);
     sliderMemory.setMinimum(256);
-    sliderMemory.setMaximum(2048);
+    sliderMemory.setMaximum(1536);
     sliderMemory.setValue(512);
     panelMemory.add(sliderMemory, "4, 1, fill, default");
 
@@ -329,7 +329,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && Files.isRegularFile(file) || Platform.isMac()) {
+        if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
           tfMediaPlayer.setText(file.toAbsolutePath().toString());
         }
       }

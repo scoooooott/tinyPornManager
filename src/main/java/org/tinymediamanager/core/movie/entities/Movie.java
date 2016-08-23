@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,12 +61,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -101,16 +103,17 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The main class for movies.
@@ -169,24 +172,24 @@ public class Movie extends MediaEntity implements IMediaInformation {
   private boolean                               offline                    = false;
 
   @JsonProperty
-  private List<String>                          genres                     = new ArrayList<>(1);
+  private List<String>                          genres                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          tags                       = new ArrayList<>(0);
+  private List<String>                          tags                       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          extraThumbs                = new ArrayList<>(0);
+  private List<String>                          extraThumbs                = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          extraFanarts               = new ArrayList<>(0);
+  private List<String>                          extraFanarts               = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieActor>                      actors                     = new ArrayList<>();
+  private List<MovieActor>                      actors                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new ArrayList<>(0);
+  private List<MovieProducer>                   producers                  = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieTrailer>                    trailer                    = new ArrayList<>(0);
+  private List<MovieTrailer>                    trailer                    = new CopyOnWriteArrayList<>();
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
-  private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
+  private List<MediaGenres>                     genresForAccess            = new CopyOnWriteArrayList<>();
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -210,13 +213,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   @Override
   public boolean isScraped() {
-    if (!scraped) {
-      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
-          && !(actors == null || actors.size() == 0)) {
-        return true;
-      }
-    }
-    return scraped;
+    return scraped || getHasMetadata();
   }
 
   /**
@@ -282,6 +279,20 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * doe we have basic metadata filled?<br>
+   * like plot and year to take another fields into account always produces false positives (there are documentaries out there, which do not have
+   * actors or either a producer in the meta data DBs..)
+   * 
+   * @return true/false
+   */
+  public Boolean getHasMetadata() {
+    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0"))) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Gets the checks for images.
    * 
    * @return the checks for images
@@ -327,6 +338,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * Initialize after loading.
    */
+  @Override
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
 
@@ -424,6 +436,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param newTags
    *          the new tags
    */
+  @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
 
@@ -526,7 +539,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       // get all files from the actors path
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
         for (Path path : directoryStream) {
-          if (Files.isRegularFile(path)) {
+          if (Utils.isRegularFile(path)) {
 
             for (MovieActor actor : getActors()) {
               if (StringUtils.isBlank(actor.getThumbPath())) {
@@ -711,8 +724,10 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param extraThumbs
    *          the new extra thumbs
    */
+  @JsonSetter
   public void setExtraThumbs(List<String> extraThumbs) {
-    this.extraThumbs = extraThumbs;
+    this.extraThumbs.clear();
+    this.extraThumbs.addAll(extraThumbs);
   }
 
   /**
@@ -730,8 +745,10 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param extraFanarts
    *          the new extra fanarts
    */
+  @JsonSetter
   public void setExtraFanarts(List<String> extraFanarts) {
-    this.extraFanarts = extraFanarts;
+    this.extraFanarts.clear();
+    this.extraFanarts.addAll(extraFanarts);
   }
 
   /**
@@ -903,7 +920,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
               IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
-              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);
@@ -955,6 +972,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param trailers
    *          the new trailers
    */
+  @JsonSetter
   public void setTrailers(List<MovieTrailer> trailers) {
     MovieTrailer preferredTrailer = null;
     removeAllTrailers();
@@ -1097,6 +1115,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param newActors
    *          the new actors
    */
+  @JsonSetter
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
 
@@ -1322,6 +1341,10 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Write nfo.
    */
   public void writeNFO() {
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().isEmpty()) {
+      LOGGER.info("Not writing any NFO file, because NFO filename preferences were empty...");
+      return;
+    }
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       MovieToMpNfoConnector.setData(this);
     }
@@ -1387,6 +1410,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @param genres
    *          the new genres
    */
+  @JsonSetter
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
 
@@ -1700,17 +1724,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public List<MediaFile> getMediaFilesContainingSubtitles() {
     List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
-    // look in the first media file if it has subtitles
-    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
-      MediaFile videoFile = videoFiles.get(0);
-      if (videoFile.hasSubtitles()) {
-        mediaFilesWithSubtitles.add(videoFile);
-      }
-    }
-
-    // look for all other types
-    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.VIDEO, MediaFileType.SUBTITLE)) {
       if (mediaFile.hasSubtitles()) {
         mediaFilesWithSubtitles.add(mediaFile);
       }
@@ -1849,6 +1863,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(PRODUCERS, null, producers);
   }
 
+  @JsonSetter
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
     // first remove unused

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.AUDIO_CODEC;
+import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.REMOVED_TV_SHOW;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
+import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,10 +33,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -39,8 +47,8 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -466,7 +474,7 @@ public class TvShowList extends AbstractModelObject {
       }
 
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
-      options.setLanguage(Locale.forLanguageTag(language.name()));
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,13 +52,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,9 +81,9 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -121,18 +121,18 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private Certification                      certification         = Certification.NOT_RATED;
 
   @JsonProperty
-  private List<String>                       genres                = new ArrayList<>(1);
+  private List<String>                       genres                = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<>(0);
+  private List<String>                       tags                  = new CopyOnWriteArrayList<>();
   @JsonProperty
   private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
   @JsonProperty
-  private List<TvShowActor>                  actors                = new ArrayList<>();
+  private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
 
-  private List<TvShowEpisode>                episodes              = new ArrayList<>();
+  private List<TvShowEpisode>                episodes              = new CopyOnWriteArrayList<>();
   private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
-  private List<TvShowSeason>                 seasons               = new ArrayList<>(1);
-  private List<MediaGenres>                  genresForAccess       = new ArrayList<>(1);
+  private List<TvShowSeason>                 seasons               = new CopyOnWriteArrayList<>();
+  private List<MediaGenres>                  genresForAccess       = new CopyOnWriteArrayList<>();
   private String                             titleSortable         = "";
   private Date                               lastWatched           = null;
 
@@ -260,7 +260,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     episode.addPropertyChangeListener(propertyChangeListener);
     addToSeason(episode);
 
-    Collections.sort(episodes);
+    Utils.sortList(episodes);
 
     firePropertyChange(ADDED_EPISODE, null, episode);
     firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
@@ -445,6 +445,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param genres
    *          the new genres
    */
+  @JsonSetter
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
 
@@ -962,6 +963,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param newTags
    *          the new tags
    */
+  @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
 
@@ -1111,6 +1113,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param newActors
    *          the new actors
    */
+  @JsonSetter
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
 

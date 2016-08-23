@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,12 +54,14 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -99,7 +100,14 @@ public class ImageChooserDialog extends TmmDialog {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
   public enum ImageType {
-    POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
+    POSTER,
+    FANART,
+    BANNER,
+    SEASON,
+    LOGO,
+    CLEARART,
+    DISC,
+    THUMB;
   }
 
   private DownloadTask         task;
@@ -753,13 +761,13 @@ public class ImageChooserDialog extends TmmDialog {
           IMediaArtworkProvider artworkProvider = (IMediaArtworkProvider) scraper.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(mediaType);
           if (mediaType == MediaType.MOVIE || mediaType == MediaType.MOVIE_SET) {
-            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
             options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
-            options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+            options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
             options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
           }
           else {
@@ -896,7 +904,7 @@ public class ImageChooserDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-      if (file != null && Files.isRegularFile(file)) {
+      if (file != null && Utils.isRegularFile(file)) {
         String fileName = file.toAbsolutePath().toString();
         imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);

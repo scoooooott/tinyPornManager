@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -51,8 +49,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -82,9 +80,11 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
+import org.tinymediamanager.ui.components.datepicker.DatePicker;
+import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -102,12 +102,9 @@ import ca.odell.glazedlists.EventList;
  */
 public class TvShowEditorDialog extends TmmDialog {
   private static final long                                                                       serialVersionUID = 3270218410302989845L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private final static ResourceBundle                                                             BUNDLE           = ResourceBundle
       .getBundle("messages", new UTF8Control());                                                                                              //$NON-NLS-1$
-  private static final Date                                                                       INITIAL_DATE     = new Date(0);
 
   private TvShow                                                                                  tvShowToEdit;
   private TvShowList                                                                              tvShowList       = TvShowList.getInstance();
@@ -129,7 +126,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private final JPanel                                                                            details2Panel    = new JPanel();
   private final JPanel                                                                            episodesPanel    = new JPanel();
   private JTextField                                                                              tfTitle;
-  private JSpinner                                                                                spYear;
+  private YearSpinner                                                                             spYear;
   private JTextPane                                                                               tpPlot;
   private JTable                                                                                  tableActors;
   private JLabel                                                                                  lvlTvShowPath;
@@ -147,7 +144,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private JComboBox                                                                               cbTags;
   private JList                                                                                   listTags;
   private JSpinner                                                                                spDateAdded;
-  private JSpinner                                                                                spPremiered;
+  private DatePicker                                                                              dpPremiered;
   private JTable                                                                                  tableEpisodes;
   private JTextField                                                                              tfSorttitle;
   private ImageLabel                                                                              lblLogo;
@@ -251,7 +248,7 @@ public class TvShowEditorDialog extends TmmDialog {
       details1Panel.add(lblYear, "2, 6, right, default");
     }
     {
-      spYear = new JSpinner();
+      spYear = new YearSpinner();
       details1Panel.add(spYear, "4, 6, fill, top");
     }
     {
@@ -259,8 +256,8 @@ public class TvShowEditorDialog extends TmmDialog {
       details1Panel.add(lblpremiered, "8, 6, right, default");
     }
     {
-      spPremiered = new JSpinner(new SpinnerDateModel());
-      details1Panel.add(spPremiered, "10, 6");
+      dpPremiered = new DatePicker(tvShow.getFirstAired());
+      details1Panel.add(dpPremiered, "10, 6, fill, default");
     }
     {
       JLabel lblRuntime = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
@@ -314,7 +311,7 @@ public class TvShowEditorDialog extends TmmDialog {
       spDateAdded = new JSpinner(new SpinnerDateModel());
       details1Panel.add(spDateAdded, "4, 10");
     }
-    spDateAdded.setValue(tvShow.getDateAdded());
+
     {
       JLabel lblIds = new JLabel("Ids");
       details1Panel.add(lblIds, "2, 12, right, default");
@@ -618,17 +615,7 @@ public class TvShowEditorDialog extends TmmDialog {
       catch (Exception e) {
       }
       spYear.setValue(year);
-
-      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
-      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
-      spPremiered.setEditor(new JSpinner.DateEditor(spPremiered, dateFormat.toPattern()));
-
-      if (tvShow.getFirstAired() != null) {
-        spPremiered.setValue(tvShow.getFirstAired());
-      }
-      else {
-        spPremiered.setValue(INITIAL_DATE);
-      }
+      spDateAdded.setValue(tvShow.getDateAdded());
 
       for (TvShowActor origCast : tvShow.getActors()) {
         TvShowActor actor = new TvShowActor();
@@ -825,11 +812,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tvShowToEdit.setTags(tags);
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
-
-      Date premieredDate = (Date) spPremiered.getValue();
-      if (!premieredDate.equals(INITIAL_DATE)) {
-        tvShowToEdit.setFirstAired(premieredDate);
-      }
+      tvShowToEdit.setFirstAired(dpPremiered.getDate());
 
       tvShowToEdit.setStatus(cbStatus.getSelectedItem().toString());
 
@@ -1219,6 +1202,7 @@ public class TvShowEditorDialog extends TmmDialog {
     jListBinding.unbind();
     jListBinding_1.unbind();
     jTableBinding_2.unbind();
+    dpPremiered.cleanup();
   }
 
   @Override

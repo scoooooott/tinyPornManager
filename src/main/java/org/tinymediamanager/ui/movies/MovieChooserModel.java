@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -167,7 +169,7 @@ public class MovieChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setResult(result);
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId() + ", "
@@ -217,17 +219,18 @@ public class MovieChooserModel extends AbstractModelObject {
     TmmTaskManager.getInstance().addUnnamedTask(new TrailerScrapeTask(movie));
   }
 
-  private class ArtworkScrapeTask implements Runnable {
+  private class ArtworkScrapeTask extends TmmTask {
     private Movie                      movieToScrape;
     private MovieScraperMetadataConfig config;
 
     public ArtworkScrapeTask(Movie movie, MovieScraperMetadataConfig config) {
+      super(BUNDLE.getString("message.scrape.artwork") + " " + movie.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieToScrape = movie;
       this.config = config;
     }
 
     @Override
-    public void run() {
+    protected void doInBackground() {
       if (!scraped) {
         return;
       }
@@ -244,7 +247,7 @@ public class MovieChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
@@ -269,17 +272,19 @@ public class MovieChooserModel extends AbstractModelObject {
 
       movieToScrape.setArtwork(artwork, config);
     }
+
   }
 
-  private class TrailerScrapeTask implements Runnable {
+  private class TrailerScrapeTask extends TmmTask {
     private Movie movieToScrape;
 
     public TrailerScrapeTask(Movie movie) {
+      super(BUNDLE.getString("message.scrape.trailer") + " " + movie.getTitle(), 0, TaskType.BACKGROUND_TASK);
       this.movieToScrape = movie;
     }
 
     @Override
-    public void run() {
+    protected void doInBackground() {
       if (!scraped) {
         return;
       }
@@ -295,7 +300,7 @@ public class MovieChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(language);
+      options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
       // scrape trailers

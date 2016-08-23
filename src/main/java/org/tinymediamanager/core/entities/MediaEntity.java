@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -566,6 +566,25 @@ public abstract class MediaEntity extends AbstractModelObject {
       }
       if (match) {
         mf.add(mediaFile);
+      }
+    }
+    readWriteLock.readLock().unlock();
+    return mf;
+  }
+
+  /**
+   * gets the BIGGEST MediaFiles - it must be the main movie ;)<br>
+   * useful for getting the right MF for displaying mediaInformation
+   * 
+   * @return biggest MF
+   */
+  public MediaFile getBiggestMediaFile() {
+    MediaFile mf = new MediaFile();
+
+    readWriteLock.readLock().lock();
+    for (MediaFile mediaFile : mediaFiles) {
+      if (mediaFile.getFilesize() > mf.getFilesize()) {
+        mf = mediaFile;
       }
     }
     readWriteLock.readLock().unlock();

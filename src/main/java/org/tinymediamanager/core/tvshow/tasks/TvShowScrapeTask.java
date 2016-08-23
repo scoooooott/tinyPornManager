@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -148,7 +149,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
           try {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
             options.setResult(result1);
-            options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+            options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
             options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
             // we didn't do a search - pass imdbid and tmdbid from movie
@@ -220,7 +221,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());

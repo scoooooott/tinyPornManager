@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,14 +55,14 @@ public class TmmTaskManager implements TmmTaskListener {
 
   // fake task handles to manage queues
   private TmmTaskHandle                  imageQueueHandle;
-  private TmmTaskHandle                  unnamedQueueHandle;
+                                         // private TmmTaskHandle unnamedQueueHandle;
 
   // scheduled threads
   private final ScheduledExecutorService scheduler        = Executors.newScheduledThreadPool(1);
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
-    unnamedQueueHandle = new UnnamedQueueTaskHandle();
+    // unnamedQueueHandle = new UnnamedQueueTaskHandle();
 
     // GA session keep-alive every 20 min
     scheduler.scheduleWithFixedDelay(new Runnable() {
@@ -111,21 +111,21 @@ public class TmmTaskManager implements TmmTaskListener {
   private ThreadPoolExecutor createUnnamedTaskExecutor() {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
         new TmmThreadFactory("unnamed-task")) {
-      @Override
-      protected void beforeExecute(Thread d, Runnable r) {
-        super.beforeExecute(d, r);
-        if (unnamedQueueHandle != null) {
-          processTaskEvent(unnamedQueueHandle);
-        }
-      }
-
-      @Override
-      protected void afterExecute(Runnable r, Throwable t) {
-        super.afterExecute(r, t);
-        if (unnamedQueueHandle != null) {
-          processTaskEvent(unnamedQueueHandle);
-        }
-      }
+      // @Override
+      // protected void beforeExecute(Thread d, Runnable r) {
+      // super.beforeExecute(d, r);
+      // if (unnamedQueueHandle != null) {
+      // processTaskEvent(unnamedQueueHandle);
+      // }
+      // }
+      //
+      // @Override
+      // protected void afterExecute(Runnable r, Throwable t) {
+      // super.afterExecute(r, t);
+      // if (unnamedQueueHandle != null) {
+      // processTaskEvent(unnamedQueueHandle);
+      // }
+      // }
     };
     executor.allowCoreThreadTimeOut(true);
     return executor;
@@ -150,17 +150,12 @@ public class TmmTaskManager implements TmmTaskListener {
    * @param task
    *          the task to be added
    */
-  public void addUnnamedTask(Runnable task) {
+  public void addUnnamedTask(TmmTask task) {
     if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
       unnamedTaskExecutor = createUnnamedTaskExecutor();
     }
-
-    if (task instanceof TmmTask) {
-      TmmTask t = (TmmTask) task;
-      t.addListener(this);
-      t.setState(TaskState.QUEUED);
-    }
-
+    task.addListener(this);
+    task.setState(TaskState.QUEUED);
     unnamedTaskExecutor.execute(task);
   }
 
@@ -179,18 +174,6 @@ public class TmmTaskManager implements TmmTaskListener {
     task.addListener(this);
     task.setState(TaskState.QUEUED);
     downloadExecutor.execute(task);
-  }
-
-  /**
-   * get the count of all open and running unnamed tasks
-   * 
-   * @return the count of all running and open unnamed tasks
-   */
-  public int getUnnamedOpenTaskCount() {
-    if (unnamedTaskExecutor == null) {
-      return 0;
-    }
-    return unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
   }
 
   /**
@@ -375,12 +358,20 @@ public class TmmTaskManager implements TmmTaskListener {
 
     @Override
     public int getWorkUnits() {
-      return 0;
+      int unit = 0;
+      if (imageDownloadExecutor != null) {
+        unit = (int) imageDownloadExecutor.getTaskCount();
+      }
+      return unit;
     }
 
     @Override
     public int getProgressDone() {
-      return 0;
+      int done = 0;
+      if (imageDownloadExecutor != null) {
+        done = (int) imageDownloadExecutor.getCompletedTaskCount();
+      }
+      return done;
     }
 
     @Override
@@ -412,54 +403,74 @@ public class TmmTaskManager implements TmmTaskListener {
     @Override
     public void cancel() {
       cancelImageDownloads();
+      processTaskEvent(imageQueueHandle);
+    }
+
+    @Override
+    public String toString() {
+      return getType().name() + " image " + getState().name() + " " + getProgressDone() + "/" + getWorkUnits();
     }
   }
 
-  private class UnnamedQueueTaskHandle implements TmmTaskHandle {
-    @Override
-    public String getTaskName() {
-      return BUNDLE.getString("task.othertasks");
-    }
-
-    @Override
-    public int getWorkUnits() {
-      return 0;
-    }
-
-    @Override
-    public int getProgressDone() {
-      return 0;
-    }
-
-    @Override
-    public String getTaskDescription() {
-      return getOpenTasks() + " " + BUNDLE.getString("task.remaining");
-    }
-
-    private int getOpenTasks() {
-      int openTasks = 0;
-      if (unnamedTaskExecutor != null) {
-        openTasks = unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
-      }
-      return openTasks;
-    }
-
-    @Override
-    public TaskState getState() {
-      if (unnamedTaskExecutor != null && getOpenTasks() > 0) {
-        return TaskState.STARTED;
-      }
-      return TaskState.FINISHED;
-    }
-
-    @Override
-    public TaskType getType() {
-      return TaskType.BACKGROUND_TASK;
-    }
-
-    @Override
-    public void cancel() {
-      cancelImageDownloads();
-    }
-  }
+  // private class UnnamedQueueTaskHandle implements TmmTaskHandle {
+  // @Override
+  // public String getTaskName() {
+  // return BUNDLE.getString("task.othertasks");
+  // }
+  //
+  // @Override
+  // public int getWorkUnits() {
+  // int unit = 0;
+  // if (unnamedTaskExecutor != null) {
+  // unit = (int) unnamedTaskExecutor.getTaskCount();
+  // }
+  // return unit;
+  // }
+  //
+  // @Override
+  // public int getProgressDone() {
+  // int done = 0;
+  // if (unnamedTaskExecutor != null) {
+  // done = (int) unnamedTaskExecutor.getCompletedTaskCount();
+  // }
+  // return done;
+  // }
+  //
+  // @Override
+  // public String getTaskDescription() {
+  // return getOpenTasks() + " " + BUNDLE.getString("task.remaining");
+  // }
+  //
+  // private int getOpenTasks() {
+  // int openTasks = 0;
+  // if (unnamedTaskExecutor != null) {
+  // openTasks = unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
+  // }
+  // return openTasks;
+  // }
+  //
+  // @Override
+  // public TaskState getState() {
+  // if (unnamedTaskExecutor != null && getOpenTasks() > 0) {
+  // return TaskState.STARTED;
+  // }
+  // return TaskState.FINISHED;
+  // }
+  //
+  // @Override
+  // public TaskType getType() {
+  // return TaskType.BACKGROUND_TASK;
+  // }
+  //
+  // @Override
+  // public void cancel() {
+  // cancelUnnamedTasks();
+  // processTaskEvent(unnamedQueueHandle);
+  // }
+  //
+  // @Override
+  // public String toString() {
+  // return getType().name() + " unnamed " + getState().name() + " " + getProgressDone() + "/" + getWorkUnits();
+  // }
+  // }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -603,7 +604,7 @@ public class MovieSetEditorDialog extends TmmDialog {
             if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
               options.setTmdbId(movie.getTmdbId());
               options.setImdbId(movie.getImdbId());
-              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
               options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
               MediaMetadata md = mp.getMetadata(options);
               if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {

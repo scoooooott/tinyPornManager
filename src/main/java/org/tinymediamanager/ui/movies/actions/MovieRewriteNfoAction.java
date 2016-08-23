@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskHandle.TaskType;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -45,13 +47,20 @@ public class MovieRewriteNfoAction extends AbstractAction {
     final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rewrite selected NFOs
-    TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {
+    TmmTaskManager.getInstance().addUnnamedTask(new TmmTask(BUNDLE.getString("movie.rewritenfo"), selectedMovies.size(), TaskType.BACKGROUND_TASK) {
+
       @Override
-      public void run() {
+      protected void doInBackground() {
+        int i = 0;
         for (Movie movie : selectedMovies) {
           movie.writeNFO();
           movie.saveToDb();
+          publishState(++i);
+          if (cancel) {
+            break;
+          }
         }
+
       }
     });
   }

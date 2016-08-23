@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,7 +224,7 @@ public class Settings extends AbstractModelObject {
       }
 
       Path oldCfg = Paths.get(CONFIG_FILE);
-      if (Files.isRegularFile(oldCfg)) {
+      if (Utils.isRegularFile(oldCfg)) {
         try {
           Utils.moveFileSafe(oldCfg, cfgFolder.resolve(CONFIG_FILE));
         }

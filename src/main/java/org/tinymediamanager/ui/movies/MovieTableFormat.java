@@ -53,7 +53,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   @Override
   public int getColumnCount() {
-    return 9;
+    return 10;
   }
 
   @Override
@@ -75,15 +75,18 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return BUNDLE.getString("tmm.nfo"); //$NON-NLS-1$
 
       case 5:
-        return BUNDLE.getString("tmm.images"); //$NON-NLS-1$
+        return BUNDLE.getString("tmm.metadata"); //$NON-NLS-1$
 
       case 6:
-        return BUNDLE.getString("tmm.trailer"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
 
       case 7:
-        return BUNDLE.getString("tmm.subtitles"); //$NON-NLS-1$
+        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
 
       case 8:
+        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+
+      case 9:
         return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
     }
 
@@ -130,6 +133,12 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
         return IconManager.DOT_UNAVAILABLE;
 
       case 8:
+        if (movie.hasSubtitles()) {
+          return IconManager.CHECKMARK;
+        }
+        return IconManager.CROSS;
+
+      case 9:
         if (movie.isWatched()) {
           return IconManager.DOT_AVAILABLE;
         }
@@ -160,6 +169,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 6:
       case 7:
       case 8:
+      case 9:
         return ImageIcon.class;
     }
 
@@ -187,6 +197,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 6:
       case 7:
       case 8:
+      case 9:
         return imageComparator;
     }
 
@@ -219,7 +230,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       if (arg0 == arg1) {
         return 0;
       }
-      if (arg0 == IconManager.DOT_AVAILABLE) {
+      if (arg0 == IconManager.CHECKMARK) {
         return 1;
       }
       return -1;
@@ -230,120 +241,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     @Override
     public int compare(Date arg0, Date arg1) {
       return arg0.compareTo(arg1);
-    }
-  }
-
-  /**
-   * configure columns
-   * 
-   * @param table
-   *          the table to set special header renderer
-   */
-  public static void configureColumns(JTable table) {
-    int width;
-    TableColumnModel columnModel = table.getTableHeader().getColumnModel();
-
-    for (int i = 0; i < columnModel.getColumnCount(); i++) {
-      TableColumn column = columnModel.getColumn(i);
-      switch (i) {
-        // title
-        case 0:
-          column.setCellRenderer(new BorderTableCellRenderer());
-          column.setIdentifier("title"); //$NON-NLS-1$
-          break;
-
-        // year
-        case 1:
-          // year column
-          width = table.getFontMetrics(table.getFont()).stringWidth(" 2000");
-          int titleWidth = table.getFontMetrics(table.getFont()).stringWidth(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-          if (titleWidth > width) {
-            width = titleWidth;
-          }
-          column.setPreferredWidth(width);
-          column.setMinWidth(width);
-          column.setMaxWidth((int) (width * 1.5));
-          column.setIdentifier("year"); //$NON-NLS-1$
-          break;
-
-        // rating
-        case 2:
-          width = (int) (IconManager.RATING.getIconWidth() * 1.3);
-          setHeader(column, IconManager.RATING, width, BUNDLE.getString("metatag.rating"), "rating"); //$NON-NLS-1$
-          break;
-
-        // date added
-        case 3:
-          width = (int) (table.getFontMetrics(table.getFont()).stringWidth("10/20/20") * 1.2);
-          setHeader(column, IconManager.DATE_ADDED, width, BUNDLE.getString("metatag.dateadded"), "dateadded"); //$NON-NLS-1$
-          column.setCellRenderer(new DateTableCellRenderer(SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)));
-          break;
-
-        // NFO
-        case 4:
-          setHeader(column, IconManager.NFO, BUNDLE.getString("tmm.nfo"), "nfo"); //$NON-NLS-1$
-          break;
-
-        // images
-        case 5:
-          setHeader(column, IconManager.IMAGES, BUNDLE.getString("tmm.images"), "images"); //$NON-NLS-1$
-          break;
-
-        // trailer
-        case 6:
-          setHeader(column, IconManager.TRAILER, BUNDLE.getString("tmm.trailer"), "trailer"); //$NON-NLS-1$
-          break;
-
-        // subtitle
-        case 7:
-          setHeader(column, IconManager.SUBTITLES, BUNDLE.getString("tmm.subtitles"), "subtitle"); //$NON-NLS-1$
-          break;
-
-        // watched
-        case 8:
-          setHeader(column, IconManager.WATCHED, BUNDLE.getString("metatag.watched"), "watched"); //$NON-NLS-1$
-          break;
-
-        default:
-          // do nothing; the default one is good enough
-          break;
-      }
-    }
-  }
-
-  /**
-   * set the header
-   * 
-   * @param column
-   *          the column to set the header for
-   * @param icon
-   *          the icon to be displayed
-   * @param tooltip
-   *          the tooltip for the icon
-   */
-  private static void setHeader(TableColumn column, ImageIcon icon, String tooltip, String columnId) {
-    setHeader(column, icon, TmmUIHelper.getColumnWidthForIcon(icon), tooltip, columnId);
-  }
-
-  /**
-   * set the header
-   * 
-   * @param column
-   *          the column to set the header for
-   * @param icon
-   *          the icon to be displayed
-   * @param width
-   *          the min/max width if the column
-   * @param tooltip
-   *          the tooltip for the icon
-   */
-  private static void setHeader(TableColumn column, ImageIcon icon, int width, String tooltip, String columnId) {
-    column.setHeaderValue(icon);
-    column.setMinWidth(width);
-    column.setMaxWidth(width);
-    column.setIdentifier(columnId);
-    if (column.getHeaderRenderer() instanceof DefaultTableCellRenderer) {
-      ((DefaultTableCellRenderer) column.getHeaderRenderer()).setToolTipText(tooltip);
     }
   }
 }

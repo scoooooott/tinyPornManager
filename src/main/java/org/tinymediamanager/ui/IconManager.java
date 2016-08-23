@@ -60,6 +60,7 @@ public class IconManager {
   public final static ImageIcon            CLAPBOARD              = loadImage("clapboard.png");
   public final static ImageIcon            COPY                   = loadImage("copy.png");
   public final static ImageIcon            CROSS                  = loadImage("cross.png");
+  public final static ImageIcon            DATE_PICKER            = loadImage("datepicker.png");
   public final static ImageIcon            DELETE                 = loadImage("delete.png");
   public final static ImageIcon            DOT_AVAILABLE          = loadImage("dot_available.png");
   public final static ImageIcon            DOT_UNAVAILABLE        = loadImage("dot_unavailable.png");
@@ -133,8 +134,7 @@ public class IconManager {
    *
    * @param url
    *          the url pointing to the image
-   * @return the image or an empty image (1x1 px transparent) if it is not
-   *         loadable
+   * @return the image or an empty image (1x1 px transparent) if it is not loadable
    */
   public static ImageIcon loadImageFromURL(URL url) {
     URI uri = null;

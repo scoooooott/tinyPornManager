@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,9 +338,9 @@ public class MediaFileEditorPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      int row = tableAudioStreams.getSelectedRow();
+      int row = tableSubtitles.getSelectedRow();
       if (row > -1) {
-        row = tableAudioStreams.convertRowIndexToModel(row);
+        row = tableSubtitles.convertRowIndexToModel(row);
         int mediaFileRow = tableMediaFiles.getSelectedRow();
         if (mediaFileRow > -1) {
           mediaFileRow = tableMediaFiles.convertRowIndexToModel(mediaFileRow);

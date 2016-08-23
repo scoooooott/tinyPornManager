@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -55,9 +51,10 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -67,6 +64,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -75,10 +73,10 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -88,6 +86,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
+import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
@@ -108,7 +107,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Date                                     INITIAL_DATE     = new Date(0);
 
   private TvShowList                                            tvShowList       = TvShowList.getInstance();
@@ -129,7 +128,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private JCheckBox                                             cbDvdOrder;
   private JSpinner                                              spDisplaySeason;
   private JSpinner                                              spDisplayEpisode;
-  private JSpinner                                              spFirstAired;
+  private DatePicker                                            dpFirstAired;
   private JSpinner                                              spDateAdded;
   private JCheckBox                                             chckbxWatched;
   private ImageLabel                                            lblThumb;
@@ -193,7 +192,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
               ColumnSpec.decode("40dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
               FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("20dlu"), FormSpecs.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("30dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
               FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
               FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
           new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
@@ -264,8 +263,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
       detailsPanel.add(lblFirstAired, "8, 12, right, default");
 
-      spFirstAired = new JSpinner(new SpinnerDateModel());
-      detailsPanel.add(spFirstAired, "10, 12, 5, 1, left, default");
+      dpFirstAired = new DatePicker(episode.getFirstAired());
+      detailsPanel.add(dpFirstAired, "10, 12, 3, 1, fill, default");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       detailsPanel.add(lblWatched, "2, 14, right, default");
@@ -277,15 +276,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       detailsPanel.add(lblDateAdded, "8, 14, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      detailsPanel.add(spDateAdded, "10, 14, 5, 1, left, default");
+      detailsPanel.add(spDateAdded, "10, 14, 3, 1, fill, default");
 
       JLabel lblMediasource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
       detailsPanel.add(lblMediasource, "2, 16, right, default");
 
-      cbMediaSource = new JComboBox<>();
-      for (MediaSource source : MediaSource.values()) {
-        cbMediaSource.addItem(source);
-      }
+      cbMediaSource = new JComboBox(MediaSource.values());
       detailsPanel.add(cbMediaSource, "4, 16, 4, 1, fill, default");
 
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
@@ -305,7 +301,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         @Override
         public void mouseClicked(MouseEvent e) {
           Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
-          if (file != null && Files.isRegularFile(file)) {
+          if (file != null && Utils.isRegularFile(file)) {
             String fileName = file.toAbsolutePath().toString();
             lblThumb.setImageUrl("file:/" + fileName);
           }
@@ -459,20 +455,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       spDvdEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getDvdEpisode(), -1, Integer.MAX_VALUE, 1));
       spDisplaySeason.setModel(new SpinnerNumberModel(episodeToEdit.getDisplaySeason(), -1, Integer.MAX_VALUE, 1));
       spDisplayEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getDisplayEpisode(), -1, Integer.MAX_VALUE, 1));
-
-      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
-      // spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
-      JSpinner.DateEditor editor = new JSpinner.DateEditor(spFirstAired, dateFormat.toPattern());
-      spFirstAired.setEditor(editor);
-      editor.getTextField().setHorizontalAlignment(JFormattedTextField.RIGHT);
-
       spDateAdded.setValue(episodeToEdit.getDateAdded());
-      if (episodeToEdit.getFirstAired() != null) {
-        spFirstAired.setValue(episodeToEdit.getFirstAired());
-      }
-      else {
-        spFirstAired.setValue(INITIAL_DATE);
-      }
+
       lblThumb.setImagePath(episodeToEdit.getArtworkFilename(MediaFileType.THUMB));
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
       spRating.addChangeListener(new ChangeListener() {
@@ -545,11 +529,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       }
 
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
-
-      Date firstAiredDate = (Date) spFirstAired.getValue();
-      if (!firstAiredDate.equals(INITIAL_DATE)) {
-        episodeToEdit.setFirstAired(firstAiredDate);
-      }
+      episodeToEdit.setFirstAired(dpFirstAired.getDate());
 
       episodeToEdit.setWatched(chckbxWatched.isSelected());
       episodeToEdit.setDirector(tfDirector.getText());
@@ -618,7 +598,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     protected Void doInBackground() throws Exception {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
       options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
@@ -645,7 +625,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         else {
           tfTitle.setText(metadata.getTitle());
           taPlot.setText(metadata.getPlot());
-          spFirstAired.setValue(metadata.getReleaseDate());
+          dpFirstAired.setDate(metadata.getReleaseDate());
           spRating.setValue(new Double(metadata.getRating()));
           // buffer votes not visible
           voteCount = metadata.getVoteCount();
@@ -740,6 +720,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     }
 
     mediaFilesPanel.unbindBindings();
+    dpFirstAired.cleanup();
   }
 
   @Override

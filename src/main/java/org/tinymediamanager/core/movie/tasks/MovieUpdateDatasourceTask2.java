@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,6 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Myron Boyle
  */
-
 public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieUpdateDatasourceTask2.class);
   private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
@@ -92,7 +91,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders    = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+      "AUDIO_TS", "JAR", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipRegex      = "^[.][\\w@]+.*";
@@ -289,7 +288,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     Path movieRoot = movieDir; // root set to current dir - might be adjusted by disc folders
 
     for (Path path : movieDirList) {
-      if (Files.isRegularFile(path)) {
+      if (Utils.isRegularFile(path)) {
         files.add(path.toAbsolutePath());
 
         // do not construct a fully MF yet
@@ -381,7 +380,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     Movie movie = movieList.getMovieByPath(movieDir);
-    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 2); // TODO: just this and next level? TBD!
+    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 3); // need 3 (was 2) because extracted BD
     filesFound.add(movieDir.toAbsolutePath()); // our global cache
     filesFound.addAll(allFiles); // our global cache
 
@@ -858,31 +857,39 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
         if (Files.notExists(movieDir)) {
-          LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
+          LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
           moviesToRemove.add(movie);
         }
         else {
-          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
+          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!"); // can be; MMD and/or dir=DS root
+        }
+      }
+
+      // have a look if that movie has just been added -> so we don't need any cleanup
+      if (!movie.isNewlyAdded()) {
+        // check and delete all not found MediaFiles
+        List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
+        for (MediaFile mf : mediaFiles) {
+          if (!filesFound.contains(mf.getFileAsPath())) {
+            if (!mf.exists()) {
+              LOGGER.debug("removing orphaned file from DB: " + mf.getFileAsPath());
+              movie.removeFromMediaFiles(mf);
+            }
+            else {
+              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!"); // hmm... this should not happen
+            }
+          }
+        }
+        if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          LOGGER.debug("Movie (" + movie.getTitle() + ") without VIDEO files detected, removing from DB...");
+          moviesToRemove.add(movie);
+        }
+        else {
+          movie.saveToDb();
         }
       }
       else {
-        // have a look if that movie has just been added -> so we don't need any cleanup
-        if (!movie.isNewlyAdded()) {
-          // check and delete all not found MediaFiles
-          List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
-          for (MediaFile mf : mediaFiles) {
-            if (!filesFound.contains(mf.getFileAsPath())) {
-              if (!mf.exists()) {
-                LOGGER.debug("removing orphaned file: " + mf.getFileAsPath());
-                movie.removeFromMediaFiles(mf);
-              }
-              else {
-                LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
-              }
-            }
-          }
-          movie.saveToDb();
-        }
+        LOGGER.info("Movie (" + movie.getTitle() + ") is new - no need for cleanup");
       }
     }
     movieList.removeMovies(moviesToRemove);
@@ -910,15 +917,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
-          ungatheredMediaFiles.add(mf);
+          submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
-      }
-
-      if (ungatheredMediaFiles.size() > 0) {
-        submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, movie, false));
       }
     }
     waitForCompletionOrCancel();
@@ -992,7 +994,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
               && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
@@ -1043,7 +1045,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     AllFilesRecursive visitor = new AllFilesRecursive();
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we overrided visitFileFailed, which throws no exception ;)
@@ -1057,7 +1059,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile2++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");
@@ -1070,7 +1072,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir2++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
@@ -1103,7 +1105,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     SearchAndParseVisitor visitor = new SearchAndParseVisitor(datasource);
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we override visitFileFailed, which throws no exception ;)
@@ -1122,7 +1124,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         // check for video?
         if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
           if (file.getParent().getFileName().toString().equals("STREAM")) {
@@ -1139,6 +1141,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase();
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          || Files.exists(dir.resolve(".nomedia"))
           || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;

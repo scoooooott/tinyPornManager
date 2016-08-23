@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -135,7 +136,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-      if (attr.isRegularFile() && attr.size() > 1024 * 1024 * 100) {
+      if (Utils.isRegularFile(attr) && attr.size() > 1024 * 1024 * 100) {
         fFound.add(file.toAbsolutePath());
       }
       return CONTINUE;

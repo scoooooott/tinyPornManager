@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -289,6 +289,7 @@ public class TinyMediaManagerCMD {
             task.run(); // blocking}
           }
         }
+      }
 
       // @formatter:off
       //  ████████╗██╗   ██╗███████╗██╗  ██╗ ██████╗ ██╗    ██╗███████╗
@@ -299,143 +300,161 @@ public class TinyMediaManagerCMD {
       //     ╚═╝     ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝
       // @formatter:on
 
-        // *****************
-        // UPDATE
-        // *****************
-        if (updateTv) {
-          LOGGER.info("Commandline - updating TvShows and episodes...");
-          if (updateTvDs.isEmpty()) {
-            task = new TvShowUpdateDatasourceTask2();
-            task.run(); // blocking
-          }
-          else {
-            List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
-            for (Integer i : updateTvDs) {
-              if (dataSources != null && dataSources.size() >= i - 1) {
-                task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
-                task.run(); // blocking
-              }
-            }
-          }
-          LOGGER.info("Commandline - found " + TvShowList.getInstance().getNewTvShows().size() + " TvShow(s) containing "
-              + TvShowList.getInstance().getNewEpisodes().size() + " new episode(s)");
-        }
-
-        // *****************
-        // prepare shows/episodes for scrape
-        // *****************
-        List<TvShow> showToScrape = new ArrayList<TvShow>();
-        List<TvShowEpisode> episodeToScrape = new ArrayList<TvShowEpisode>();
-        if (scrapeAll) {
-          LOGGER.info("Commandline - scraping ALL TvShows...");
-          if (TvShowList.getInstance().getTvShowCount() > 0) {
-            showToScrape = TvShowList.getInstance().getTvShows();
-            episodeToScrape.clear(); // scraping complete show
-          }
+      // *****************
+      // UPDATE
+      // *****************
+      if (updateTv) {
+        LOGGER.info("Commandline - updating TvShows and episodes...");
+        if (updateTvDs.isEmpty()) {
+          task = new TvShowUpdateDatasourceTask2();
+          task.run(); // blocking
         }
         else {
-          HashSet<TvShow> scrapeShow = new HashSet<TvShow>(); // no dupes
-          HashSet<TvShowEpisode> scrapeEpisode = new HashSet<TvShowEpisode>(); // no dupes
-
-          if (scrapeNew) {
-            List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
-            List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
-            LOGGER.info("Commandline - scraping new TvShows...");
-            if (newTv.size() > 0) {
-              scrapeShow.addAll(newTv);
-            }
-            LOGGER.info("Commandline - scraping new episodes...");
-            if (newEp.size() > 0) {
-              scrapeEpisode.addAll(newEp);
-            }
-          }
-
-          if (scrapeUnscraped) {
-            LOGGER.info("Commandline - scraping unscraped TvShows...");
-            List<TvShow> unscrapedShows = TvShowList.getInstance().getUnscrapedTvShows();
-            List<TvShowEpisode> unscrapedEpisodes = TvShowList.getInstance().getUnscrapedEpisodes();
-            if (unscrapedShows.size() > 0) {
-              scrapeShow.addAll(unscrapedShows);
-            }
-            LOGGER.info("Commandline - scraping unscraped episodes...");
-            if (unscrapedEpisodes.size() > 0) {
-              scrapeEpisode.addAll(unscrapedEpisodes);
-            }
-          }
-
-          // if we scrape already the whole show, no need to scrape dedicated episodes for it
-          HashSet<TvShowEpisode> removedEpisode = new HashSet<TvShowEpisode>(); // no dupes
-          for (TvShowEpisode ep : scrapeEpisode) {
-            if (scrapeShow.contains(ep.getTvShow())) {
-              removedEpisode.add(ep);
-            }
-          }
-          scrapeEpisode.removeAll(removedEpisode);
-          showToScrape = new ArrayList<TvShow>(scrapeShow);
-          episodeToScrape = new ArrayList<TvShowEpisode>(scrapeEpisode);
-        }
-
-        // *****************
-        // do the scrape
-        // *****************
-        TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
-        options.loadDefaults();
-        if (showToScrape.size() > 0) {
-          if (dryRun) {
-            for (TvShow show : showToScrape) {
-              LOGGER.info("DRYRUN: would have scraped show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
-            }
-          }
-          else {
-            task = new TvShowScrapeTask(showToScrape, true, options);
-            task.run(); // blocking
-            // wait for other tmm threads (artwork download et all)
-            while (TmmTaskManager.getInstance().poolRunning()) {
-              Thread.sleep(2000);
-            }
-          }
-        }
-        if (episodeToScrape.size() > 0) {
-          if (dryRun) {
-            for (TvShowEpisode ep : episodeToScrape) {
-              LOGGER.info("DRYRUN: would have scraped episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
-            }
-          }
-          else {
-            task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper());
-            task.run(); // blocking
-            // wait for other tmm threads (artwork download et all)
-            while (TmmTaskManager.getInstance().poolRunning()) {
-              Thread.sleep(2000);
-            }
-          }
-        }
-
-        // *****************
-        // RENAME
-        // *****************
-        if (rename) {
-          LOGGER.info("Commandline - rename & cleanup new episodes...");
-          if (episodeToScrape.size() > 0) {
-            if (dryRun) {
-              for (TvShowEpisode ep : episodeToScrape) {
-                LOGGER.info("DRYRUN: would have renamed episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
-              }
-            }
-            else {
-              task = new TvShowRenameTask(null, episodeToScrape, true); // just rename new EPs AND root folder
+          List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+          for (Integer i : updateTvDs) {
+            if (dataSources != null && dataSources.size() >= i - 1) {
+              task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
               task.run(); // blocking
             }
           }
         }
+        LOGGER.info("Commandline - found " + TvShowList.getInstance().getNewTvShows().size() + " TvShow(s) containing "
+            + TvShowList.getInstance().getNewEpisodes().size() + " new episode(s)");
+      }
 
-        if (checkFiles) {
-          boolean allOk = true;
-          // check db
-          LOGGER.info("Check all files if existing");
-          for (Movie m : MovieList.getInstance().getMovies()) {
-            System.out.print(".");
-            for (MediaFile mf : m.getMediaFiles()) {
+      // *****************
+      // prepare shows/episodes for scrape
+      // *****************
+      List<TvShow> showToScrape = new ArrayList<TvShow>();
+      List<TvShowEpisode> episodeToScrape = new ArrayList<TvShowEpisode>();
+      if (scrapeAll) {
+        LOGGER.info("Commandline - scraping ALL TvShows...");
+        if (TvShowList.getInstance().getTvShowCount() > 0) {
+          showToScrape = TvShowList.getInstance().getTvShows();
+          episodeToScrape.clear(); // scraping complete show
+        }
+      }
+      else {
+        HashSet<TvShow> scrapeShow = new HashSet<TvShow>(); // no dupes
+        HashSet<TvShowEpisode> scrapeEpisode = new HashSet<TvShowEpisode>(); // no dupes
+
+        if (scrapeNew) {
+          List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
+          List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
+          LOGGER.info("Commandline - scraping new TvShows...");
+          if (newTv.size() > 0) {
+            scrapeShow.addAll(newTv);
+          }
+          LOGGER.info("Commandline - scraping new episodes...");
+          if (newEp.size() > 0) {
+            scrapeEpisode.addAll(newEp);
+          }
+        }
+
+        if (scrapeUnscraped) {
+          LOGGER.info("Commandline - scraping unscraped TvShows...");
+          List<TvShow> unscrapedShows = TvShowList.getInstance().getUnscrapedTvShows();
+          List<TvShowEpisode> unscrapedEpisodes = TvShowList.getInstance().getUnscrapedEpisodes();
+          if (unscrapedShows.size() > 0) {
+            scrapeShow.addAll(unscrapedShows);
+          }
+          LOGGER.info("Commandline - scraping unscraped episodes...");
+          if (unscrapedEpisodes.size() > 0) {
+            scrapeEpisode.addAll(unscrapedEpisodes);
+          }
+        }
+
+        // if we scrape already the whole show, no need to scrape dedicated episodes for it
+        HashSet<TvShowEpisode> removedEpisode = new HashSet<TvShowEpisode>(); // no dupes
+        for (TvShowEpisode ep : scrapeEpisode) {
+          if (scrapeShow.contains(ep.getTvShow())) {
+            removedEpisode.add(ep);
+          }
+        }
+        scrapeEpisode.removeAll(removedEpisode);
+        showToScrape = new ArrayList<TvShow>(scrapeShow);
+        episodeToScrape = new ArrayList<TvShowEpisode>(scrapeEpisode);
+      }
+
+      // *****************
+      // do the scrape
+      // *****************
+      TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+      options.loadDefaults();
+      if (showToScrape.size() > 0) {
+        if (dryRun) {
+          for (TvShow show : showToScrape) {
+            LOGGER.info("DRYRUN: would have scraped show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
+          }
+        }
+        else {
+          task = new TvShowScrapeTask(showToScrape, true, options);
+          task.run(); // blocking
+          // wait for other tmm threads (artwork download et all)
+          while (TmmTaskManager.getInstance().poolRunning()) {
+            Thread.sleep(2000);
+          }
+        }
+      }
+      if (episodeToScrape.size() > 0) {
+        if (dryRun) {
+          for (TvShowEpisode ep : episodeToScrape) {
+            LOGGER.info("DRYRUN: would have scraped episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+          }
+        }
+        else {
+          task = new TvShowEpisodeScrapeTask(episodeToScrape, options.getMetadataScraper());
+          task.run(); // blocking
+          // wait for other tmm threads (artwork download et all)
+          while (TmmTaskManager.getInstance().poolRunning()) {
+            Thread.sleep(2000);
+          }
+        }
+      }
+
+      // *****************
+      // RENAME
+      // *****************
+      if (rename) {
+        LOGGER.info("Commandline - rename & cleanup new episodes...");
+        if (episodeToScrape.size() > 0) {
+          if (dryRun) {
+            for (TvShowEpisode ep : episodeToScrape) {
+              LOGGER.info("DRYRUN: would have renamed episode " + ep.getTvShow().getTitle() + " S:" + ep.getSeason() + " E:" + ep.getEpisode());
+            }
+          }
+          else {
+            task = new TvShowRenameTask(null, episodeToScrape, true); // just rename new EPs AND root folder
+            task.run(); // blocking
+          }
+        }
+      }
+
+      if (checkFiles) {
+        boolean allOk = true;
+        // check db
+        LOGGER.info("Check all files if existing");
+        for (Movie m : MovieList.getInstance().getMovies()) {
+          System.out.print(".");
+          for (MediaFile mf : m.getMediaFiles()) {
+            if (!mf.exists()) {
+              System.out.println();
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+              allOk = false;
+            }
+          }
+        }
+        for (TvShow s : TvShowList.getInstance().getTvShows()) {
+          System.out.print(".");
+          for (MediaFile mf : s.getMediaFiles()) { // show MFs
+            if (!mf.exists()) {
+              System.out.println();
+              LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
+              allOk = false;
+            }
+          }
+          for (TvShowEpisode episode : new ArrayList<>(s.getEpisodes())) {
+            for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
               if (!mf.exists()) {
                 System.out.println();
                 LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
@@ -443,36 +462,17 @@ public class TinyMediaManagerCMD {
               }
             }
           }
-          for (TvShow s : TvShowList.getInstance().getTvShows()) {
-            System.out.print(".");
-            for (MediaFile mf : s.getMediaFiles()) { // show MFs
-              if (!mf.exists()) {
-                System.out.println();
-                LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
-                allOk = false;
-              }
-            }
-            for (TvShowEpisode episode : new ArrayList<>(s.getEpisodes())) {
-              for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
-                if (!mf.exists()) {
-                  System.out.println();
-                  LOGGER.warn("MediaFile not found! " + mf.getFileAsPath());
-                  allOk = false;
-                }
-              }
-            }
-          }
-          System.out.println();
-          if (allOk) {
-            LOGGER.info("no problems found - everything ok :)");
-          }
         }
+        System.out.println();
+        if (allOk) {
+          LOGGER.info("no problems found - everything ok :)");
+        }
+      }
 
-        if (updateAvailable) {
-          LOGGER.warn("=====================================================");
-          LOGGER.warn("There's a new TMM version available! Please update!");
-          LOGGER.warn("=====================================================");
-        }
+      if (updateAvailable) {
+        LOGGER.warn("=====================================================");
+        LOGGER.warn("There's a new TMM version available! Please update!");
+        LOGGER.warn("=====================================================");
       }
     }
     catch (Exception e) {

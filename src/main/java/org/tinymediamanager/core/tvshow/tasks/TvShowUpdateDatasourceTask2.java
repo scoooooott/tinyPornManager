@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -345,39 +345,21 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
    * detect which mediafiles has to be parsed and start a thread to do that
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
-    int cnt = 0;
     // get mediainfo for tv show (fanart/poster..)
-    ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<>();
     for (MediaFile mf : tvShow.getMediaFiles()) {
       if (StringUtils.isBlank(mf.getContainerFormat())) {
-        ungatheredMediaFiles.add(mf);
+        submitTask(new MediaFileInformationFetcherTask(mf, tvShow, false));
       }
-    }
-    cnt += ungatheredMediaFiles.size();
-
-    if (ungatheredMediaFiles.size() > 0) {
-      submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, tvShow, false));
     }
 
     // get mediainfo for all episodes within this tv show
     for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
-      ungatheredMediaFiles = new ArrayList<>();
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
-          if (!ungatheredMediaFiles.contains(mf)) {
-            ungatheredMediaFiles.add(mf);
-          }
+          submitTask(new MediaFileInformationFetcherTask(mf, episode, false));
         }
       }
-      cnt += ungatheredMediaFiles.size();
-
-      if (ungatheredMediaFiles.size() > 0) {
-        submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, episode, false));
-      }
     }
-
-    setWorkUnits(cnt);
-    publishState();
   }
 
   /**
@@ -475,10 +457,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             continue;
           }
           discFolders.add(discRoot);
-          // add all files starting with same discRootDir
+          // add all known files starting with same discRootDir
           for (MediaFile em : mfs) {
             if (em.getFileAsPath().startsWith(discRoot)) {
-              epFiles.add(em);
+              if (em.getType() != MediaFileType.UNKNOWN) {
+                epFiles.add(em);
+              }
             }
           }
         }
@@ -521,7 +505,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 }
                 episode.setNewlyAdded(true);
                 episode.addToMediaFiles(epFiles); // all found EP MFs
-                episode.setDisc(mf.isDiscFile());
+
+                if (mf.isDiscFile()) {
+                  episode.setDisc(true);
+
+                  // set correct EP path in case of disc files
+                  Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+                  String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+                  while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                    discRoot = discRoot.getParent();
+                    folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+                  }
+                  episode.setPath(discRoot.toAbsolutePath().toString());
+                }
+
                 if (episodesInNfo.size() > 1) {
                   episode.setMultiEpisode(true);
                 }
@@ -583,7 +580,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
               }
               episode.setNewlyAdded(true);
-              episode.setDisc(mf.isDiscFile());
+
+              if (mf.isDiscFile()) {
+                episode.setDisc(true);
+
+                // set correct EP path in case of disc files
+                Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+                String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+                while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                  discRoot = discRoot.getParent();
+                  folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+                }
+                episode.setPath(discRoot.toAbsolutePath().toString());
+              }
+
               if (result.episodes.size() > 1) {
                 episode.setMultiEpisode(true);
               }
@@ -603,6 +613,20 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             episode.setEpisode(-1);
             episode.setSeason(-1);
             episode.setPath(mf.getPath());
+
+            if (mf.isDiscFile()) {
+              episode.setDisc(true);
+
+              // set correct EP path in case of disc files
+              Path discRoot = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+              String folder = showDir.relativize(discRoot).toString().toUpperCase(); // relative
+              while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+                discRoot = discRoot.getParent();
+                folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
+              }
+              episode.setPath(discRoot.toAbsolutePath().toString());
+            }
+
             episode.setTitle(FilenameUtils.getBaseName(mf.getFilename()));
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date); // maybe found
@@ -759,7 +783,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        if (Files.isRegularFile(path)) {
+        if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
               && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
@@ -810,7 +834,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     folder = folder.toAbsolutePath();
     AllFilesRecursive visitor = new AllFilesRecursive();
     try {
-      Files.walkFileTree(folder, EnumSet.noneOf(FileVisitOption.class), deep, visitor);
+      Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
       // can not happen, since we overrided visitFileFailed, which throws no exception ;)
@@ -824,7 +848,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
       visFile++;
-      if (attr.isRegularFile() && !file.getFileName().toString().matches(skipRegex)) {
+      if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
       // System.out.println("(" + attr.size() + "bytes)");
@@ -837,7 +861,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
-          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
+          && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
           || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);

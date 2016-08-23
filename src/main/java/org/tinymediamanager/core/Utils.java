@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -44,11 +45,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +59,7 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +117,40 @@ public class Utils {
   }
 
   /**
+   * this is the TMM variant of isRegularFiles()<br>
+   * because deduplication creates windows junction points, we check here if it is<br>
+   * not a directory, and either a regular file or "other" one.<br>
+   * see http://serverfault.com/a/667220
+   * 
+   * @param file
+   * @return
+   */
+  public static boolean isRegularFile(Path file) {
+    // see windows impl http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/nio/fs/WindowsFileAttributes.java#451
+    try {
+      BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+      return (attr.isRegularFile() || attr.isOther()) && !attr.isDirectory();
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  /**
+   * this is the TMM variant of isRegularFiles()<br>
+   * because deduplication creates windows junction points, we check here if it is<br>
+   * not a directory, and either a regular file or "other" one.<br>
+   * see http://serverfault.com/a/667220
+   * 
+   * @param attr
+   * @return
+   */
+  public static boolean isRegularFile(BasicFileAttributes attr) {
+    // see windows impl http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/nio/fs/WindowsFileAttributes.java#451
+    return (attr.isRegularFile() || attr.isOther()) && !attr.isDirectory();
+  }
+
+  /**
    * dumps a complete Object (incl sub-classes 5 levels deep) to System.out
    * 
    * @param o
@@ -165,12 +203,20 @@ public class Utils {
     if (title.toLowerCase().matches("^die hard$") || title.toLowerCase().matches("^die hard[:\\s].*")) {
       return title;
     }
+    if (title.toLowerCase().matches("^die another day$") || title.toLowerCase().matches("^die another day[:\\s].*")) {
+      return title;
+    }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
       String delim = "\\s+"; // one or more spaces needed
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
         delim = "";
       }
-      title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
+
+      // only move the first found prefix
+      if (title.matches("(?i)^" + Pattern.quote(prfx) + delim + "(.*)")) {
+        title = title.replaceAll("(?i)^" + Pattern.quote(prfx) + delim + "(.*)", "$1, " + prfx);
+        break;
+      }
     }
     return title.trim();
   }
@@ -192,7 +238,7 @@ public class Utils {
       if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space between prefix and title
         delim = "";
       }
-      title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");
+      title = title.replaceAll("(?i)(.*), " + prfx + "$", prfx + delim + "$1");
     }
     return title.trim();
   }
@@ -709,9 +755,11 @@ public class Utils {
             rename = true; // no exception
           }
           catch (IOException e) {
+            LOGGER.warn("rename problem: " + e.getMessage());
           }
         }
         catch (IOException e) {
+          LOGGER.warn("rename problem: " + e.getMessage());
         }
         if (rename) {
           break; // ok it worked, step out
@@ -1293,6 +1341,95 @@ public class Utils {
   }
 
   /**
+   * Unzips the specified zip file to the specified destination directory. Replaces any files in the destination, if they already exist.
+   * 
+   * @param zipFile
+   *          the name of the zip file to extract
+   * @param destDir
+   *          the directory to unzip to
+   * @throws IOException
+   */
+  public static void unzip(Path zipFile, final Path destDir) {
+    Map<String, String> env = new HashMap<>();
+
+    try {
+      // if the destination doesn't exist, create it
+      if (Files.notExists(destDir)) {
+        Files.createDirectories(destDir);
+      }
+
+      // check if file exists
+      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      // use a Zip filesystem URI
+      URI fileUri = zipFile.toUri(); // here
+      URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
+
+      try (FileSystem zipfs = FileSystems.newFileSystem(zipUri, env)) {
+        final Path root = zipfs.getPath("/");
+
+        // walk the zip file tree and copy files to the destination
+        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            final Path destFile = Paths.get(destDir.toString(), file.toString());
+            LOGGER.debug("Extracting file {} to {}", file, destFile);
+            Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
+            return FileVisitResult.CONTINUE;
+          }
+
+          @Override
+          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
+            if (Files.notExists(dirToCreate)) {
+              LOGGER.debug("Creating directory {}", dirToCreate);
+              Files.createDirectory(dirToCreate);
+            }
+            return FileVisitResult.CONTINUE;
+          }
+        });
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Failed to create zip file!" + e.getMessage());
+    }
+  }
+
+  /**
+   * extract our templates (only if non existing)
+   */
+  public static final void extractTemplates() {
+    extractTemplates(false);
+  }
+
+  /**
+   * extract our templates (use force to overwrite)
+   */
+  public static final void extractTemplates(boolean force) {
+    Path dest = Paths.get("templates");
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dest)) {
+      for (Path path : directoryStream) {
+        if (!Files.isDirectory(path)) {
+          String fn = path.getFileName().toString();
+          if (fn.endsWith(".jar")) {
+            // always extract when dir not existing
+            if (Files.notExists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
+              Utils.unzip(path, dest);
+            }
+            else {
+              if (force) {
+                Utils.unzip(path, dest);
+              }
+            }
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("failed to extract templates: " + e.getMessage());
+    }
+  }
+
+  /**
    * Java NIO replacement of commons-io
    * 
    * @param file
@@ -1333,6 +1470,44 @@ public class Utils {
     Files.walkFileTree(from, new CopyFileVisitor(to));
   }
 
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   */
+  public static void sortList(List list) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list);
+    }
+  }
+
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   * @param comparator
+   *          the comparator used for sorting
+   */
+  public static void sortList(List list, Comparator comparator) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList, comparator);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list, comparator);
+    }
+  }
+
   /*
    * Visitor for copying a directory recursively<br> Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
    */
@@ -1349,15 +1524,24 @@ public class Utils {
       if (sourcePath == null) {
         sourcePath = dir;
       }
-      else {
-        Files.createDirectories(targetPath.resolve(sourcePath.relativize(dir)));
+      Path target = targetPath.resolve(sourcePath.relativize(dir));
+      if (Files.notExists(target)) {
+        try {
+          Files.createDirectories(target);
+        }
+        catch (FileAlreadyExistsException e) {
+          // ignore
+        }
+        catch (IOException x) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
       }
       return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
       return FileVisitResult.CONTINUE;
     }
   }

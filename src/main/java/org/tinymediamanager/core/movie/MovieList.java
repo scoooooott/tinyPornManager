@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVMap;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -526,7 +526,7 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-      options.setLanguage(Locale.forLanguageTag(langu.name()));
+      options.setLanguage(LocaleUtils.toLocale(langu.name()));
       options.setCountry(movieSettings.getCertificationCountry());
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.thirdparty;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singletonMap;
 
 import java.lang.reflect.Method;
 
@@ -42,12 +42,12 @@ interface MediaInfoLibrary extends Library {
   MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
       singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
 
-        @Override
-        public String getFunctionName(NativeLibrary lib, Method method) {
-          // MediaInfo_New(), MediaInfo_Open() ...
-          return "MediaInfo_" + method.getName();
-        }
-      }));
+                                  @Override
+                                  public String getFunctionName(NativeLibrary lib, Method method) {
+                                    // MediaInfo_New(), MediaInfo_Open() ...
+                                    return "MediaInfo_" + method.getName();
+                                  }
+                                }));
 
   /**
    * Create a new handle.
@@ -66,6 +66,14 @@ interface MediaInfoLibrary extends Library {
    * @return 1 if file was opened, 0 if file was not not opened
    */
   int Open(Pointer handle, WString file);
+
+  int Open_Buffer_Init(Pointer handle, long length, long offset);
+
+  int Open_Buffer_Continue(Pointer handle, byte[] buffer, int size);
+
+  long Open_Buffer_Continue_GoTo_Get(Pointer handle);
+
+  int Open_Buffer_Finalize(Pointer handle);
 
   /**
    * Configure or get information about MediaInfo.

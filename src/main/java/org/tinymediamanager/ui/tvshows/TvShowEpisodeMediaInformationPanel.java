@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -157,29 +159,26 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
 
   private void fillVideoStreamDetails() {
     List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO);
-
     if (mediaFiles.size() == 0) {
       return;
     }
 
-    MediaFile mediaFile = mediaFiles.get(0);
-
-    int runtime = 0;
-    for (MediaFile mf : mediaFiles) {
-      runtime += mf.getDuration();
-    }
-
+    int runtime = selectionModel.getSelectedTvShowEpisode().getRuntimeFromMediaFiles();
     if (runtime == 0) {
       lblRuntime.setText("");
     }
     else {
-      int minutes = (int) (runtime / 60) % 60;
-      int hours = (int) (runtime / (60 * 60)) % 24;
-      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
+      long h = TimeUnit.SECONDS.toHours(runtime);
+      long m = TimeUnit.SECONDS.toMinutes(runtime - TimeUnit.HOURS.toSeconds(h));
+      long s = TimeUnit.SECONDS.toSeconds(runtime - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+      if (s > 30) {
+        m += 1; // round seconds
+      }
+      lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
     }
 
+    MediaFile mediaFile = selectionModel.getSelectedTvShowEpisode().getBiggestMediaFile();
     chckbxWatched.setSelected(selectionModel.getSelectedTvShowEpisode().isWatched());
-
     lblVideoCodec.setText(mediaFile.getVideoCodec());
     lblVideoResolution.setText(mediaFile.getVideoResolution());
     lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
@@ -217,23 +216,25 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     panelSubtitleT.removeAll();
     panelSubtitleDetails.removeAll();
 
-    List<MediaFile> mediaFiles = selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingSubtitles();
-
-    for (MediaFile mediaFile : mediaFiles) {
+    HashSet<MediaFileSubtitle> subs = new HashSet<MediaFileSubtitle>(); // no dupes
+    for (MediaFile mediaFile : selectionModel.getSelectedTvShowEpisode().getMediaFilesContainingSubtitles()) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
-
-        if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
-          String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
-          panelSubtitleDetails.add(new JLabel(info));
-        }
-        else {
+        if (mediaFile.getType() == MediaFileType.SUBTITLE) {
           panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
           panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
         }
+        else {
+          subs.add(subtitle);
+        }
       }
     }
+    for (MediaFileSubtitle sub : subs) {
+      panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
+      String info = sub.getLanguage() + (sub.isForced() ? " forced" : "") + " (" + sub.getCodec() + ")";
+      panelSubtitleDetails.add(new JLabel(info));
+    }
+
     panelSubtitleDetails.revalidate();
     panelSubtitleT.revalidate();
   }

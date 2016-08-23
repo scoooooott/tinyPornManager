@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,7 +261,14 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setPlot(xbmc.getPlot());
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
       tvShow.setFirstAired(xbmc.getPremiered());
-      tvShow.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+
+      String studio = StringUtils.join(xbmc.studio, " / ");
+      if (studio == null) {
+        tvShow.setProductionCompany("");
+      }
+      else {
+        tvShow.setProductionCompany(studio);
+      }
       tvShow.setProductionCompany(tvShow.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
 
       tvShow.setStatus(xbmc.getStatus());

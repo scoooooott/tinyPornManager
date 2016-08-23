@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -45,6 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
@@ -344,7 +344,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
           IMediaSubtitleProvider subtitleProvider = (IMediaSubtitleProvider) scraper.getMediaProvider();
           SubtitleSearchOptions options = new SubtitleSearchOptions(file, searchTerm);
           options.setImdbId(imdbId);
-          options.setLanguage(Locale.forLanguageTag(language.name()));
+          options.setLanguage(LocaleUtils.toLocale(language.name()));
           searchResults.addAll(subtitleProvider.search(options));
         }
         catch (Exception e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
@@ -56,12 +56,13 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
  * The Class MovieTrailerPanel.
@@ -78,7 +79,7 @@ public class MovieTrailerPanel extends JPanel {
 
   private MovieSelectionModel                  movieSelectionModel;
   private JTable                               table;
-  private EventList<MovieTrailer>              trailerEventList  = null;
+  private SortedList<MovieTrailer>             trailerEventList  = null;
   private DefaultEventTableModel<MovieTrailer> trailerTableModel = null;
 
   /**
@@ -92,12 +93,14 @@ public class MovieTrailerPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class)));
+    trailerEventList = new SortedList<>(
+        GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class))));
     trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
+
     table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
+    TableComparatorChooser.install(table, trailerEventList, TableComparatorChooser.SINGLE_COLUMN);
 
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     add(scrollPane, "2, 2, fill, fill");
@@ -131,6 +134,8 @@ public class MovieTrailerPanel extends JPanel {
   }
 
   private class TrailerTableFormat implements AdvancedTableFormat<MovieTrailer> {
+    private Comparator<String> stringComparator = new StringComparator();
+
     public TrailerTableFormat() {
     }
 
@@ -229,7 +234,26 @@ public class MovieTrailerPanel extends JPanel {
     @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
-      return null;
+      switch (arg0) {
+        case 0:
+        case 1:
+          return null;
+        default:
+          return stringComparator;
+      }
+    }
+
+    private class StringComparator implements Comparator<String> {
+      @Override
+      public int compare(String arg0, String arg1) {
+        if (StringUtils.isEmpty(arg0)) {
+          return -1;
+        }
+        if (StringUtils.isEmpty(arg1)) {
+          return 1;
+        }
+        return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+      }
     }
   }
 

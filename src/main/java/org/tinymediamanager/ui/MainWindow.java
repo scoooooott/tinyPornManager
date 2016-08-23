@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,8 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,6 +228,45 @@ public class MainWindow extends JFrame {
       }
     });
     tools.add(menuWakeOnLan);
+
+    // activate/deactivate WakeOnLan menu item
+    tools.addMenuListener(new MenuListener() {
+      @Override
+      public void menuSelected(MenuEvent e) {
+        if (Globals.settings.getWolDevices().size() > 0) {
+          menuWakeOnLan.setEnabled(true);
+        }
+        else {
+          menuWakeOnLan.setEnabled(false);
+        }
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    });
+
+    if (Globals.isDebug()) {
+      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+
+      JMenuItem trace = new JMenuItem("set Logger to TRACE"); //$NON-NLS-1$
+      trace.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+          lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+          MessageManager.instance.pushMessage(new Message("Trace levels set!", "asdf"));
+          LOGGER.trace("if you see that, we're now on TRACE logging level ;)");
+        }
+      });
+
+      debugMenu.add(trace);
+      tools.add(debugMenu);
+    }
 
     checkForUpdate();
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.CertificationStyle;
@@ -219,6 +221,78 @@ public class UpgradeTasks {
         movie.saveToDb();
       }
     }
+    // upgrade to v2.8.2
+    if (StrgUtils.compareVersion(v, "2.8.2") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8.2");
+
+      Date initialDate = new Date(0);
+
+      for (Movie movie : movieList.getMovies()) {
+        if (movie.getReleaseDate() != null && DateUtils.isSameDay(initialDate, movie.getReleaseDate())) {
+          movie.setReleaseDate((Date) null);
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        if (tvShow.getFirstAired() != null && DateUtils.isSameDay(initialDate, tvShow.getFirstAired())) {
+          tvShow.setFirstAired((Date) null);
+          tvShow.saveToDb();
+        }
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (episode.getFirstAired() != null && DateUtils.isSameDay(initialDate, episode.getFirstAired())) {
+            episode.setFirstAired((Date) null);
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
+    // upgrade to v2.8.3
+    if (StrgUtils.compareVersion(v, "2.8.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8.3");
+
+      // reset "container format" for MFs, so that MI tries them again on next UDS (ISOs and others)
+      // (but only if we do not have some video information yet, like "width")
+      for (Movie movie : movieList.getMovies()) {
+        boolean changed = false;
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          if (mf.getVideoResolution().isEmpty()) {
+            mf.setContainerFormat("");
+            changed = true;
+          }
+        }
+        if (changed) {
+          movie.saveToDb();
+        }
+      }
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          boolean changed = false;
+          for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+            if (mf.getVideoResolution().isEmpty()) {
+              mf.setContainerFormat("");
+              changed = true;
+            }
+          }
+          if (episode.isDisc()) {
+            // correct episode path when extracted disc folder
+            Path discRoot = episode.getPathNIO().toAbsolutePath(); // folder
+            String folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // relative
+            while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+              discRoot = discRoot.getParent();
+              folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // reevaluate
+              episode.setPath(discRoot.toAbsolutePath().toString());
+              changed = true;
+            }
+          }
+          if (changed) {
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +48,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,12 +73,13 @@ import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnecto
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShowEpisode.
@@ -123,9 +125,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private MediaSource                        mediaSource           = MediaSource.UNKNOWN;                         // DVD, Bluray, etc
 
   @JsonProperty
-  private List<TvShowActor>                  actors                = new ArrayList<>(0);
+  private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<>(0);
+  private List<String>                       tags                  = new CopyOnWriteArrayList<>();
 
   private TvShow                             tvShow                = null;
   private Date                               lastWatched           = null;
@@ -429,17 +431,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename;
+      String basename = FilenameUtils.getBaseName(mf.getFilename());
+      if (isDisc()) {
+        basename = "VIDEO_TS"; // FIXME: BluRay?
+      }
+
       switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
         case FILENAME_THUMB_POSTFIX:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(thumbUrl);
+          filename = basename + "-thumb." + FilenameUtils.getExtension(thumbUrl);
           break;
 
         case FILENAME_THUMB:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + "." + FilenameUtils.getExtension(thumbUrl);
+          filename = basename + "." + FilenameUtils.getExtension(thumbUrl);
           break;
 
         case FILENAME_THUMB_TBN:
-          filename = FilenameUtils.getBaseName(mf.getFilename()) + ".tbn";
+          filename = basename + ".tbn";
           break;
 
         default:
@@ -549,7 +556,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // worst case: multi episode in multiple files
     // e.g. warehouse13.s01e01e02.Part1.avi/warehouse13.s01e01e02.Part2.avi
     for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
-      episodesInNfo.addAll(TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile()));
+      List<TvShowEpisode> eps = new ArrayList<TvShowEpisode>(TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile()));
+      for (TvShowEpisode ep : eps) {
+        if (!episodesInNfo.contains(ep)) {
+          episodesInNfo.add(ep);
+        }
+      }
     }
 
     TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
@@ -672,6 +684,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param newActors
    *          the new actors
    */
+  @JsonSetter
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
     List<TvShowActor> tvShowActors = new ArrayList<>();
@@ -845,17 +858,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public List<MediaFile> getMediaFilesContainingSubtitles() {
     List<MediaFile> mediaFilesWithSubtitles = new ArrayList<>(1);
 
-    // look in the first media file if it has subtitles
-    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
-      MediaFile videoFile = videoFiles.get(0);
-      if (videoFile.hasSubtitles()) {
-        mediaFilesWithSubtitles.add(videoFile);
-      }
-    }
-
-    // look for all other types
-    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.VIDEO, MediaFileType.SUBTITLE)) {
       if (mediaFile.hasSubtitles()) {
         mediaFilesWithSubtitles.add(mediaFile);
       }
@@ -884,6 +887,18 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setSubtitles(boolean sub) {
     this.subtitles = sub;
+  }
+
+  public int getRuntimeFromMediaFiles() {
+    int runtime = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      runtime += mf.getDuration();
+    }
+    return runtime;
+  }
+
+  public int getRuntimeFromMediaFilesInMinutes() {
+    return getRuntimeFromMediaFiles() / 60;
   }
 
   @Override
@@ -964,6 +979,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param newTags
    *          the new tags
    */
+  @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
 

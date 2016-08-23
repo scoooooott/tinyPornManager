@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class MovieActorImageFetcher implements Runnable {
       // first check which actors images can be deleted
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(actorsDir)) {
         for (Path path : directoryStream) {
-          if (Files.isRegularFile(path) && path.getFileName().toString().matches("(?i).*\\.(tbn|png|jpg)")
+          if (Utils.isRegularFile(path) && path.getFileName().toString().matches("(?i).*\\.(tbn|png|jpg)")
               && !path.getFileName().toString().startsWith(".")) {
             boolean found = false;
             // check if there is an actor for this file

@@ -1,6 +1,7 @@
 package org.tinymediamanager.core.movie.connector;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Files;

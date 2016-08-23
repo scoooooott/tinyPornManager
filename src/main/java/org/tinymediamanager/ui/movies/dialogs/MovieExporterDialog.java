@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,7 +178,7 @@ public class MovieExporterDialog extends TmmDialog {
             exporter.export(movies, Paths.get(tfExportDir.getText()));
           }
           catch (Exception e) {
-            LOGGER.error("Error exporting movies: " + e.getMessage());
+            LOGGER.error("Error exporting movies: ", e);
           }
           setVisible(false);
         }

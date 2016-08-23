@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,6 +157,9 @@ public class MovieArtworkHelper {
     if (StringUtils.isBlank(fanartUrl)) {
       return;
     }
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
+      return;
+    }
 
     int i = 0;
     List<MovieFanartNaming> fanartnames = new ArrayList<>();
@@ -203,6 +206,12 @@ public class MovieArtworkHelper {
 
   private static void downloadPoster(Movie movie) {
     String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
+    if (StringUtils.isBlank(posterUrl)) {
+      return;
+    }
+    if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
+      return;
+    }
 
     int i = 0;
     List<MoviePosterNaming> posternames = new ArrayList<>();
@@ -418,7 +427,7 @@ public class MovieArtworkHelper {
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage()));
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
 
     // poster
     setBestPoster(movie, artwork);

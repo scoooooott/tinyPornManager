@@ -1,6 +1,6 @@
 package org.tinymediamanager.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.nio.file.Paths;

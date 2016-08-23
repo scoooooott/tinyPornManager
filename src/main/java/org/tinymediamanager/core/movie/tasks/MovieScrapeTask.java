@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
@@ -161,7 +162,7 @@ public class MovieScrapeTask extends TmmThreadPool {
           try {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setResult(result1);
-            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
             options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
             options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
             options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
@@ -259,7 +260,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
       options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
       options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
@@ -298,7 +299,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
       options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
 
       // scrape trailers
