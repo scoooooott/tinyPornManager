@@ -168,6 +168,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             }
             else {
               // File in root folder - not possible for TV datasource
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot",
+                  new String[] { path.getFileName().toString() }));
             }
           }
 
