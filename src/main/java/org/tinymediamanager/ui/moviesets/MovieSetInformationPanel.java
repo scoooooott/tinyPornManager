@@ -223,12 +223,14 @@ public class MovieSetInformationPanel extends JPanel {
             lblMovieSetPoster.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.POSTER));
           }
           else {
+            lblMovieSetPoster.setImagePath("");
             lblMovieSetPoster.setImageUrl(selectionModel.getSelectedMovieSet().getArtworkUrl(MediaFileType.POSTER));
           }
           if (StringUtils.isNotBlank(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART))) {
             lblMovieSetFanart.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART));
           }
           else {
+            lblMovieSetFanart.setImagePath("");
             lblMovieSetFanart.setImageUrl(selectionModel.getSelectedMovieSet().getArtworkUrl(MediaFileType.FANART));
           }
         }
