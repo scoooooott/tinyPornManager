@@ -154,6 +154,22 @@ public class MovieModuleManager implements ITmmModule {
     }
   }
 
+  /**
+   * dumps a whole movieset to logfile
+   * 
+   * @param movie
+   *          the movieset to make the dump for
+   */
+  public void dump(MovieSet movieSet) {
+    try {
+      JSONObject jsonObject = new JSONObject(movieSetObjectWriter.writeValueAsString(movieSet));
+      LOGGER.info("Dumping MovieSet:\n" + jsonObject.toString(4));
+    }
+    catch (JsonProcessingException e) {
+      LOGGER.error("Cannot parse JSON!", e);
+    }
+  }
+
   void persistMovie(Movie movie) throws Exception {
     String newValue = movieObjectWriter.writeValueAsString(movie);
     String oldValue = movieMap.get(movie.getDbId());
