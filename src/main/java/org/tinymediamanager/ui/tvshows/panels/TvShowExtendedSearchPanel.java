@@ -26,8 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.tree.TmmTree;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.panels.RoundedPanel;
 import org.tinymediamanager.ui.tvshows.ITvShowUIFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
@@ -58,15 +58,15 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TmmTree<TmmTreeNode>        tree;
+  private TmmTreeTable                treeTable;
   private JPanel                      panelFilter;
 
-  public TvShowExtendedSearchPanel(TmmTree<TmmTreeNode> tree) {
+  public TvShowExtendedSearchPanel(TmmTreeTable treeTable) {
     super();
     setOpaque(false);
     arcs = new Dimension(10, 10);
 
-    this.tree = tree;
+    this.treeTable = treeTable;
 
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
@@ -110,7 +110,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   /**
    * add a new filter to the panel
    * 
-   * @param tvShowWatchedFilter
+   * @param filter
    */
   private void addFilter(ITvShowUIFilter<TmmTreeNode> filter) {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -136,6 +136,6 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       panelFilter.add(Box.createGlue(), gbc);
     }
 
-    tree.addFilter(filter);
+    treeTable.addFilter(filter);
   }
 }

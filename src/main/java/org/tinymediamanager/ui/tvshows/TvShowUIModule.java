@@ -141,7 +141,7 @@ public class TvShowUIModule implements ITmmUIModule {
     layeredPane.setLayer(dataPanel, 0);
 
     // glass pane for searching/filtering
-    filterPanel = new TvShowExtendedSearchPanel(listPanel.getTree());
+    filterPanel = new TvShowExtendedSearchPanel(listPanel.getTreeTable());
     filterPanel.setVisible(false);
     layeredPane.add(filterPanel, "1, 1, fill, fill");
     layeredPane.setLayer(filterPanel, 1);

@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.tvshows;
 
 import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 
 /**
  * The interface ITvShowUIFilter just combines the interfaces ITmmUIFilter and ITmmTreeFilter
@@ -25,5 +26,5 @@ import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
  *
  * @param <E>
  */
-public interface ITvShowUIFilter<E> extends ITmmUIFilter<E>, ITmmTreeFilter<E> {
+public interface ITvShowUIFilter<E extends TmmTreeNode> extends ITmmUIFilter<E>, ITmmTreeFilter<E> {
 }

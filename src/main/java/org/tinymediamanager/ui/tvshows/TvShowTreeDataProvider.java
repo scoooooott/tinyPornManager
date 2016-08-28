@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * @author Manuel Laggner
  */
 public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
-  private TmmTreeNode                    root           = new TmmTreeNode(new Object());
+  private TmmTreeNode                    root           = new TmmTreeNode(new Object(), this);
   private RuleBasedCollator              stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   private final PropertyChangeListener   tvShowListPropertyChangeListener;
@@ -52,74 +51,65 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   private final TvShowList               tvShowList     = TvShowList.getInstance();
 
   public TvShowTreeDataProvider() {
-    tvShowListPropertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        TvShow tvShow;
+    tvShowListPropertyChangeListener = evt -> {
+      TvShow tvShow;
 
-        switch (evt.getPropertyName()) {
-          case Constants.ADDED_TV_SHOW:
-            tvShow = (TvShow) evt.getNewValue();
-            addTvShow(tvShow);
-            break;
+      switch (evt.getPropertyName()) {
+        case Constants.ADDED_TV_SHOW:
+          tvShow = (TvShow) evt.getNewValue();
+          addTvShow(tvShow);
+          break;
 
-          case Constants.REMOVED_TV_SHOW:
-            tvShow = (TvShow) evt.getNewValue();
-            removeTvShow(tvShow);
-            break;
+        case Constants.REMOVED_TV_SHOW:
+          tvShow = (TvShow) evt.getNewValue();
+          removeTvShow(tvShow);
+          break;
 
-          default:
-            break;
-        }
+        default:
+          break;
       }
     };
     tvShowList.addPropertyChangeListener(tvShowListPropertyChangeListener);
 
-    tvShowPropertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        TvShowSeason season;
-        TvShowEpisode episode;
+    tvShowPropertyChangeListener = evt -> {
+      TvShowSeason season;
+      TvShowEpisode episode;
 
-        switch (evt.getPropertyName()) {
-          case Constants.ADDED_SEASON:
-            season = (TvShowSeason) evt.getNewValue();
-            addTvShowSeason(season);
-            break;
+      switch (evt.getPropertyName()) {
+        case Constants.ADDED_SEASON:
+          season = (TvShowSeason) evt.getNewValue();
+          addTvShowSeason(season);
+          break;
 
-          case Constants.ADDED_EPISODE:
-            episode = (TvShowEpisode) evt.getNewValue();
-            addTvShowEpisode(episode);
-            break;
+        case Constants.ADDED_EPISODE:
+          episode = (TvShowEpisode) evt.getNewValue();
+          addTvShowEpisode(episode);
+          break;
 
-          case Constants.REMOVED_EPISODE:
-            episode = (TvShowEpisode) evt.getNewValue();
-            removeTvShowEpisode(episode);
-            break;
+        case Constants.REMOVED_EPISODE:
+          episode = (TvShowEpisode) evt.getNewValue();
+          removeTvShowEpisode(episode);
+          break;
 
-          default:
-            break;
-        }
+        default:
+          break;
       }
     };
 
-    episodePropertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        TvShowEpisode episode;
+    episodePropertyChangeListener = evt -> {
+      TvShowEpisode episode;
 
-        switch (evt.getPropertyName()) {
-          // changed the season/episode nr of an episode
-          case Constants.SEASON:
-          case Constants.EPISODE:
-            // simply remove it from the tree and readd it
-            episode = (TvShowEpisode) evt.getSource();
-            removeTvShowEpisode(episode);
-            addTvShowEpisode(episode);
+      switch (evt.getPropertyName()) {
+        // changed the season/episode nr of an episode
+        case Constants.SEASON:
+        case Constants.EPISODE:
+          // simply remove it from the tree and readd it
+          episode = (TvShowEpisode) evt.getSource();
+          removeTvShowEpisode(episode);
+          addTvShowEpisode(episode);
 
-          default:
-            break;
-        }
+        default:
+          break;
       }
     };
 
@@ -165,7 +155,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     if (parent == root) {
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
       for (TvShow tvShow : new ArrayList<>(tvShowList.getTvShows())) {
-        TmmTreeNode node = new TvShowTreeNode(tvShow);
+        TmmTreeNode node = new TvShowTreeNode(tvShow, this);
         putNodeToCache(tvShow, node);
         nodes.add(node);
 
@@ -177,8 +167,8 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     else if (parent.getUserObject() instanceof TvShow) {
       TvShow tvShow = (TvShow) parent.getUserObject();
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
-      for (TvShowSeason season : new ArrayList<>(tvShow.getSeasons())) {
-        TmmTreeNode node = new TvShowSeasonTreeNode(season);
+      for (TvShowSeason season : tvShow.getSeasons()) {
+        TmmTreeNode node = new TvShowSeasonTreeNode(season, this);
         putNodeToCache(season, node);
         nodes.add(node);
       }
@@ -187,8 +177,8 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     else if (parent.getUserObject() instanceof TvShowSeason) {
       TvShowSeason season = (TvShowSeason) parent.getUserObject();
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
-      for (TvShowEpisode episode : new ArrayList<>(season.getEpisodes())) {
-        TmmTreeNode node = new TvShowEpisodeTreeNode(episode);
+      for (TvShowEpisode episode : season.getEpisodes()) {
+        TmmTreeNode node = new TvShowEpisodeTreeNode(episode, this);
         putNodeToCache(episode, node);
         nodes.add(node);
 
@@ -241,7 +231,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
 
     // add a new node
-    TmmTreeNode node = new TvShowTreeNode(tvShow);
+    TmmTreeNode node = new TvShowTreeNode(tvShow, this);
     putNodeToCache(tvShow, node);
     firePropertyChange(NODE_INSERTED, null, node);
 
@@ -257,10 +247,10 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
 
     // remove all children from the map (the nodes will be removed by the treemodel)
-    for (TvShowSeason season : new ArrayList<>(tvShow.getSeasons())) {
+    for (TvShowSeason season : tvShow.getSeasons()) {
       removeNodeFromCache(season);
     }
-    for (TvShowEpisode epsiode : new ArrayList<>(tvShow.getEpisodes())) {
+    for (TvShowEpisode epsiode : tvShow.getEpisodes()) {
       removeNodeFromCache(epsiode);
     }
 
@@ -278,7 +268,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
 
     // add a new node
-    TmmTreeNode node = new TvShowSeasonTreeNode(season);
+    TmmTreeNode node = new TvShowSeasonTreeNode(season, this);
     putNodeToCache(season, node);
     firePropertyChange(NODE_INSERTED, null, node);
     return node;
@@ -292,7 +282,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
 
     // add a new node
-    TmmTreeNode node = new TvShowEpisodeTreeNode(episode);
+    TmmTreeNode node = new TvShowEpisodeTreeNode(episode, this);
     putNodeToCache(episode, node);
     firePropertyChange(NODE_INSERTED, null, node);
 
@@ -356,8 +346,8 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      * @param userObject
      *          the user object
      */
-    public TvShowTreeNode(Object userObject) {
-      super(userObject);
+    public TvShowTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+      super(userObject, dataProvider);
     }
 
     /**
@@ -387,8 +377,8 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      * @param userObject
      *          the user object
      */
-    public TvShowSeasonTreeNode(Object userObject) {
-      super(userObject);
+    public TvShowSeasonTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+      super(userObject, dataProvider);
     }
 
     /**
@@ -420,8 +410,8 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
      * @param userObject
      *          the user object
      */
-    public TvShowEpisodeTreeNode(Object userObject) {
-      super(userObject);
+    public TvShowEpisodeTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
+      super(userObject, dataProvider);
     }
 
     /**

@@ -60,8 +60,8 @@ public class TmmTable extends JTable {
   private static final long             serialVersionUID  = 6150939811851709115L;
   private static final ResourceBundle   BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());
 
-  static final Color                    TABLE_GRID_COLOR  = new Color(211, 211, 211);
-  static final Color                    TABLE_GRID_COLOR2 = new Color(248, 248, 248);
+  protected static final Color          TABLE_GRID_COLOR  = new Color(211, 211, 211);
+  protected static final Color          TABLE_GRID_COLOR2 = new Color(248, 248, 248);
 
   private static final CellRendererPane CELL_RENDER_PANE  = new CellRendererPane();
 
@@ -167,7 +167,7 @@ public class TmmTable extends JTable {
     }
   }
 
-  private JTableHeader createTableHeader() {
+  protected JTableHeader createTableHeader() {
     return new JTableHeader(getColumnModel()) {
       private static final long serialVersionUID = 1652463935117013248L;
 
@@ -192,7 +192,7 @@ public class TmmTable extends JTable {
     setRowHeight(fm.getHeight() + 4);
   }
 
-  private static void paintHeader(Graphics g, JTable table, int x, int width) {
+  protected static void paintHeader(Graphics g, JTable table, int x, int width) {
     TableCellRenderer renderer = new BottomBorderHeaderRenderer();
     Component component = renderer.getTableCellRendererComponent(table, "", false, false, -1, 2);
 
@@ -274,7 +274,7 @@ public class TmmTable extends JTable {
     return createJScrollPane(table, columnsWithoutRightVerticalGrid);
   }
 
-  private static class BottomBorderHeaderRenderer extends DefaultTableCellRenderer {
+  protected static class BottomBorderHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 7963585655106103415L;
 
     public BottomBorderHeaderRenderer() {

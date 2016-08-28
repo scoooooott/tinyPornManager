@@ -36,7 +36,7 @@ public class TvShowEpisodeTreeNode extends TmmTreeNode {
    *          the user object
    */
   public TvShowEpisodeTreeNode(Object userObject) {
-    super(userObject);
+    super(userObject, null);
   }
 
   /**

@@ -23,13 +23,20 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Manuel Laggner
  */
 public class TmmTreeNode extends DefaultMutableTreeNode {
-  private static final long serialVersionUID = 6426644541629397542L;
+  private static final long     serialVersionUID = 6426644541629397542L;
 
-  public TmmTreeNode(Object userObject) {
+  protected TmmTreeDataProvider dataProvider;
+
+  public TmmTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
     super.setUserObject(userObject);
+    this.dataProvider = dataProvider;
   }
 
   public String getId() {
     return "" + userObject.hashCode();
+  }
+
+  public TmmTreeDataProvider getDataProvider() {
+    return dataProvider;
   }
 }

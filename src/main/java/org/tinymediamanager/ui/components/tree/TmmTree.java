@@ -22,7 +22,6 @@ import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,8 +48,8 @@ import com.jgoodies.forms.layout.FormLayout;
 public class TmmTree<E extends TmmTreeNode> extends JTree {
   private static final long              serialVersionUID = 4918691644082882866L;
 
-  protected final Set<ITmmTreeFilter<E>>  treeFilters;
-  protected final PropertyChangeListener filterChangeListener;
+  protected Set<ITmmTreeFilter<E>> treeFilters;
+  protected PropertyChangeListener filterChangeListener;
 
   /**
    * create a new tree for the given data provider
@@ -61,12 +60,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
   public TmmTree(TmmTreeDataProvider<E> dataProvider) {
     super();
     treeFilters = new HashSet<>();
-    filterChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        updateFiltering();
-      }
-    };
+    filterChangeListener = evt -> updateFiltering();
     setOpaque(false);
     setDataProvider(dataProvider);
   }
@@ -97,7 +91,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
 
       // Updating model
       // Be aware that all the data will be loaded right away
-      setModel(new TmmTreeModel<E>(this, dataProvider));
+      setModel(new TmmTreeModel<>(this, dataProvider));
 
       // Informing about data provider change
       // firePropertyChange(TREE_DATA_PROVIDER_PROPERTY, oldDataProvider, dataProvider);
@@ -205,7 +199,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
 
     clearSelection();
 
-    final List<TmmTreeNode> elements = new ArrayList<TmmTreeNode>();
+    final List<TmmTreeNode> elements = new ArrayList<>();
     elements.add((TmmTreeNode) root);
     while (elements.size() > 0) {
       final TmmTreeNode element = elements.get(0);

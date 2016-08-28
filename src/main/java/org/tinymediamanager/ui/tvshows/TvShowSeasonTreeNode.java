@@ -34,7 +34,7 @@ public class TvShowSeasonTreeNode extends TmmTreeNode {
    *          the user object
    */
   public TvShowSeasonTreeNode(Object userObject) {
-    super(userObject);
+    super(userObject, null);
   }
 
   /**

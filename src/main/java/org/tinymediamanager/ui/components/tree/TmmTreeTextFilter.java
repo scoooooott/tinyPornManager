@@ -93,6 +93,24 @@ public class TmmTreeTextFilter<E extends TmmTreeNode> extends EnhancedTextField 
       }
     }
 
+    // third: check the parent(s)
+    if (checkParent(node.getDataProvider().getParent(node), pattern)) {
+      return true;
+    }
+
     return false;
+  }
+
+  private boolean checkParent(TmmTreeNode node, Pattern pattern) {
+    if (node == null) {
+      return false;
+    }
+
+    Matcher matcher = pattern.matcher(node.toString());
+    if (matcher.find()) {
+      return true;
+    }
+
+    return checkParent(node.getDataProvider().getParent(node), pattern);
   }
 }

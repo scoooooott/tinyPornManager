@@ -109,10 +109,12 @@ public class IconManager {
 
   // Material icons - column headers
   public final static ImageIcon            DATE_ADDED             = createMaterialFontIcon('\uE02E', 24);
+  public final static ImageIcon            EPISODES               = createFontIcon('E', 20);
   public final static ImageIcon            IMAGES                 = createMaterialFontIcon('\uE410', 24);
   public final static ImageIcon            MOVIE                  = createMaterialFontIcon('\uE54D', 24);
   public final static ImageIcon            NFO                    = createMaterialFontIcon('\uE873', 24);
   public final static ImageIcon            RATING                 = createMaterialFontIcon('\uE838', 24);
+  public final static ImageIcon            SEASONS                = createFontIcon('S', 20);
   public final static ImageIcon            SUBTITLES              = createMaterialFontIcon('\uE24C', 24);
   public final static ImageIcon            TRAILER                = createMaterialFontIcon('\uE02C', 24);
   public final static ImageIcon            WATCHED                = createMaterialFontIcon('\uE037', 24);
@@ -218,16 +220,31 @@ public class IconManager {
    * @return
    */
   public static ImageIcon createMaterialFontIcon(char iconId, int size, Color color) {
-    try {
-      Font materialFont = new Font("Material Icons", Font.PLAIN, size);
+    Font materialFont = new Font("Material Icons", Font.PLAIN, size);
+    return createFontIcon(materialFont, iconId, size, color);
+  }
 
+  private static ImageIcon createFontIcon(char iconId, int size) {
+    return createFontIcon(iconId, size, UIManager.getColor("Label.foreground"));
+  }
+
+  private static ImageIcon createFontIcon(char iconId, int size, Color color) {
+    Font defaultfont = (Font) UIManager.get("Label.font");
+    if (defaultfont == null) {
+      return null;
+    }
+    Font font = defaultfont.deriveFont(Font.BOLD, (float) size);
+    return createFontIcon(font, iconId, size, color);
+  }
+
+  private static ImageIcon createFontIcon(Font font, char iconId, int size, Color color) {
+    try {
       // calculate icon size
       BufferedImage tmp = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
-      g2.setFont(materialFont);
+      g2.setFont(font);
       int iconWidth = g2.getFontMetrics().charWidth(iconId);
       int iconHeight = g2.getFontMetrics().getHeight();
-      int iconOffset = g2.getFontMetrics().getDescent();
       g2.dispose();
 
       // and draw it
@@ -235,10 +252,10 @@ public class IconManager {
       g2 = (Graphics2D) buffer.getGraphics();
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      g2.setFont(materialFont);
+      g2.setFont(font);
       g2.setColor(color);
 
-      int sy = size - iconOffset;
+      int sy = size;
       g2.drawString(String.valueOf(iconId), 0, sy);
       g2.dispose();
 

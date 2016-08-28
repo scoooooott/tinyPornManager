@@ -24,7 +24,7 @@ import java.beans.PropertyChangeListener;
  *
  * @param <E>
  */
-public interface ITmmTreeFilter<E> {
+public interface ITmmTreeFilter<E extends TmmTreeNode> {
   public final static String TREE_FILTER_CHANGED = "treeFilterChanged";
 
   /**

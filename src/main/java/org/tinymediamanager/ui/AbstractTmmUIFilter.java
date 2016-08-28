@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -28,8 +26,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.SwingPropertyChangeSupport;
@@ -54,12 +50,7 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
     this.label = createLabel();
     this.filterComponent = createFilterComponent();
 
-    this.checkBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        filterChanged();
-      }
-    });
+    this.checkBox.addActionListener(e -> filterChanged());
 
     if (this.filterComponent != null && this.filterComponent instanceof JTextComponent) {
       ((JTextComponent) this.filterComponent).getDocument().addDocumentListener(new DocumentListener() {
@@ -80,28 +71,13 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
       });
     }
     else if (this.filterComponent != null && this.filterComponent instanceof AbstractButton) {
-      ((AbstractButton) this.filterComponent).addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          filterChanged();
-        }
-      });
+      ((AbstractButton) this.filterComponent).addActionListener(e -> filterChanged());
     }
     else if (this.filterComponent != null && this.filterComponent instanceof JComboBox) {
-      ((JComboBox<?>) this.filterComponent).addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          filterChanged();
-        }
-      });
+      ((JComboBox<?>) this.filterComponent).addActionListener(e -> filterChanged());
     }
     else if (this.filterComponent != null && this.filterComponent instanceof JSpinner) {
-      ((JSpinner) this.filterComponent).addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          filterChanged();
-        }
-      });
+      ((JSpinner) this.filterComponent).addChangeListener(e -> filterChanged());
     }
   }
 

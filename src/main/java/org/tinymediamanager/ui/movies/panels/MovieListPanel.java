@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
-import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -36,6 +38,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -45,8 +48,8 @@ import org.tinymediamanager.ui.movies.MovieFilterator;
 import org.tinymediamanager.ui.movies.MovieMatcherEditor;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieTableFormat2;
-import org.tinymediamanager.ui.movies.MovieTableMouseListener;
 import org.tinymediamanager.ui.movies.MovieUIModule;
+import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -207,7 +210,15 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   }
 
   public void setPopupMenu(JPopupMenu popupMenu) {
-    MouseListener mouseListener = new MovieTableMouseListener(popupMenu, movieTable);
-    movieTable.addMouseListener(mouseListener);
+    movieTable.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+          Action editAction = new MovieEditAction();
+          editAction.actionPerformed(null);
+        }
+      }
+    });
+    movieTable.addMouseListener(new TablePopupListener(popupMenu, movieTable));
   }
 }

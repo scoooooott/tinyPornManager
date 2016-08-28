@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui.components.tree;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,21 +66,44 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
     super(null);
     this.tree = tree;
     this.dataProvider = dataProvider;
-    dataProvider.addPropertyChangeListener(new PropertyChangeListener() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        // a node has been inserted
-        if (TmmTreeDataProvider.NODE_INSERTED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
-          E child = (E) evt.getNewValue();
-          E parent = dataProvider.getParent(child);
-          addChildNode(parent, child);
-        }
-        // a node has been removed
-        if (TmmTreeDataProvider.NODE_REMOVED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
-          E child = (E) evt.getNewValue();
-          removeChildNode(child);
-        }
+    dataProvider.addPropertyChangeListener(evt -> {
+      // a node has been inserted
+      if (TmmTreeDataProvider.NODE_INSERTED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
+        E child = (E) evt.getNewValue();
+        E parent = dataProvider.getParent(child);
+        addChildNode(parent, child);
+      }
+      // a node has been removed
+      if (TmmTreeDataProvider.NODE_REMOVED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
+        E child = (E) evt.getNewValue();
+        removeChildNode(child);
+      }
+    });
+    loadTreeData(getRoot());
+  }
+
+  /**
+   * Create a new instance of the TmmTreeModel for the given data provider
+   *
+   * @param dataProvider
+   *          the data provider to create the model for
+   */
+  public TmmTreeModel(final TmmTreeDataProvider<E> dataProvider) {
+    super(null);
+    this.tree = null;
+    this.dataProvider = dataProvider;
+    this.dataProvider.setTreeFilters(new HashSet<>());
+    dataProvider.addPropertyChangeListener(evt -> {
+      // a node has been inserted
+      if (TmmTreeDataProvider.NODE_INSERTED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
+        E child = (E) evt.getNewValue();
+        E parent = dataProvider.getParent(child);
+        addChildNode(parent, child);
+      }
+      // a node has been removed
+      if (TmmTreeDataProvider.NODE_REMOVED.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TmmTreeNode) {
+        E child = (E) evt.getNewValue();
+        removeChildNode(child);
       }
     });
     loadTreeData(getRoot());
@@ -203,14 +224,19 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
    */
   public void updateSortingAndFiltering(E parent) {
     // Saving tree state to restore it right after children update
-    final TmmTreeState treeState = tree.getTreeState();
+    TmmTreeState treeState = null;
+    if (this.tree != null) {
+      treeState = tree.getTreeState();
+    }
 
     // Updating root node children
     performFilteringAndSortingRecursively(parent);
     nodeStructureChanged(getRoot());
 
     // Restoring tree state including all selections and expansions
-    tree.setTreeState(treeState);
+    if (this.tree != null && treeState != null) {
+      tree.setTreeState(treeState);
+    }
   }
 
   /**
@@ -406,7 +432,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
   @Override
   public void removeNodeFromParent(MutableTreeNode node) {
     removeChildNode((E) node);
-  };
+  }
 
   /**
    * Inserts a child node into parent node.

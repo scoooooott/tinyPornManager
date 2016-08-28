@@ -94,7 +94,7 @@ public abstract class TmmTreeDataProvider<E extends TmmTreeNode> extends Abstrac
    * Get all children for the given node
    * 
    * @param node
-   *          the node to get all childen for
+   *          the node to get all children for
    * @return a list of all children
    */
   abstract public List<E> getChildren(E node);
