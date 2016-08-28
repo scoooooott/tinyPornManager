@@ -268,6 +268,36 @@ public class MainWindow extends JFrame {
       tools.add(debugMenu);
     }
 
+    menuBar.add(tools);
+
+    mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
+    mnTmm.setMnemonic(KeyEvent.VK_C);
+    mnTmm.add(new FeedbackAction()).setMnemonic(KeyEvent.VK_F);
+    mnTmm.add(new BugReportAction()).setMnemonic(KeyEvent.VK_B);
+    menuBar.add(mnTmm);
+
+    mnTmm = new JMenu(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+    mnTmm.setMnemonic(KeyEvent.VK_H);
+    menuBar.add(mnTmm);
+
+    mnTmm.add(new WikiAction()).setMnemonic(KeyEvent.VK_W);
+    mnTmm.add(new FaqAction()).setMnemonic(KeyEvent.VK_F);
+    mnTmm.add(new ForumAction()).setMnemonic(KeyEvent.VK_O);
+    mnTmm.addSeparator();
+
+    mnTmm.add(new AboutAction()).setMnemonic(KeyEvent.VK_A);
+
+    menuBar.add(Box.createGlue());
+
+    JButton btnDonate = new JButton(new DonateAction());
+    btnDonate.setBorderPainted(false);
+    btnDonate.setFocusPainted(false);
+    btnDonate.setContentAreaFilled(false);
+    menuBar.add(btnDonate);
+
+    // Globals.executor.execute(new MyStatusbarThread());
+    // use a Future to be able to cancel it
+    // statusTask.execute();
     checkForUpdate();
   }
 

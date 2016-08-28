@@ -125,12 +125,8 @@
 			<version>1.6</version>
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.tinymediamanager</groupId>
-			<artifactId>kodi-json-rpc</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> 
+			<version>1.0-SNAPSHOT</version> </dependency> -->
 		<dependency>
 			<groupId>com.uwetrottmann</groupId>
 			<artifactId>trakt-java</artifactId>
@@ -191,8 +187,18 @@
 	<build>
 		<resources>
 			<resource>
+				<includes>
+					<include>eclipse.properties</include>
+				</includes>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<excludes>
+					<exclude>eclipse.properties</exclude>
+				</excludes>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>
