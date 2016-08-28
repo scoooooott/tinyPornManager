@@ -54,27 +54,25 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
@@ -99,6 +97,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.sun.jna.Platform;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 /**
  * The Class MainWindow.
@@ -267,33 +268,6 @@ public class MainWindow extends JFrame {
       debugMenu.add(trace);
       tools.add(debugMenu);
     }
-
-    menuBar.add(tools);
-
-    mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
-    mnTmm.setMnemonic(KeyEvent.VK_C);
-    mnTmm.add(new FeedbackAction()).setMnemonic(KeyEvent.VK_F);
-    mnTmm.add(new BugReportAction()).setMnemonic(KeyEvent.VK_B);
-    menuBar.add(mnTmm);
-
-    mnTmm = new JMenu(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
-    mnTmm.setMnemonic(KeyEvent.VK_H);
-    menuBar.add(mnTmm);
-
-    mnTmm.add(new WikiAction()).setMnemonic(KeyEvent.VK_W);
-    mnTmm.add(new FaqAction()).setMnemonic(KeyEvent.VK_F);
-    mnTmm.add(new ForumAction()).setMnemonic(KeyEvent.VK_O);
-    mnTmm.addSeparator();
-
-    mnTmm.add(new AboutAction()).setMnemonic(KeyEvent.VK_A);
-
-    menuBar.add(Box.createGlue());
-
-    JButton btnDonate = new JButton(new DonateAction());
-    btnDonate.setBorderPainted(false);
-    btnDonate.setFocusPainted(false);
-    btnDonate.setContentAreaFilled(false);
-    menuBar.add(btnDonate);
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it
