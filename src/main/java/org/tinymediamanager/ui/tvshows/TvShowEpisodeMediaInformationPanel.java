@@ -177,11 +177,13 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
       lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
     }
 
-    MediaFile mediaFile = selectionModel.getSelectedTvShowEpisode().getBiggestMediaFile();
+    MediaFile mediaFile = selectionModel.getSelectedTvShowEpisode().getBiggestMediaFile(MediaFileType.VIDEO);
     chckbxWatched.setSelected(selectionModel.getSelectedTvShowEpisode().isWatched());
-    lblVideoCodec.setText(mediaFile.getVideoCodec());
-    lblVideoResolution.setText(mediaFile.getVideoResolution());
-    lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    if (mediaFile != null) {
+      lblVideoCodec.setText(mediaFile.getVideoCodec());
+      lblVideoResolution.setText(mediaFile.getVideoResolution());
+      lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    }
     lblSource.setText(selectionModel.getSelectedTvShowEpisode().getMediaSource().toString());
   }
 

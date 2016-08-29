@@ -189,11 +189,13 @@ public class MovieMediaInformationPanel extends JPanel {
       lblRuntime.setText(h + "h " + String.format("%02d", m) + "m");
     }
 
-    MediaFile mediaFile = movieSelectionModel.getSelectedMovie().getBiggestMediaFile();
+    MediaFile mediaFile = movieSelectionModel.getSelectedMovie().getBiggestMediaFile(MediaFileType.VIDEO);
     chckbxWatched.setSelected(movieSelectionModel.getSelectedMovie().isWatched());
-    lblVideoCodec.setText(mediaFile.getVideoCodec());
-    lblVideoResolution.setText(mediaFile.getVideoResolution());
-    lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    if (mediaFile != null) {
+      lblVideoCodec.setText(mediaFile.getVideoCodec());
+      lblVideoResolution.setText(mediaFile.getVideoResolution());
+      lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    }
     lblSource.setText(movieSelectionModel.getSelectedMovie().getMediaSource().toString());
   }
 
