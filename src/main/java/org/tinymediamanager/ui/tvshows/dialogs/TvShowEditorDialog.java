@@ -637,7 +637,7 @@ public class TvShowEditorDialog extends TmmDialog {
         tags.add(tag);
       }
 
-      List<TvShowEpisode> epl = tvShowToEdit.getEpisodes();
+      List<TvShowEpisode> epl = new ArrayList<>(tvShowToEdit.getEpisodes());
       // custom sort per filename (just this time)
       // for unknown EPs (-1/-1) this is extremely useful to sort like on filesystem
       // and for already renamed ones, it makes no difference
