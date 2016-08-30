@@ -57,18 +57,19 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
@@ -97,7 +98,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  private Settings                    settings         = Settings.getInstance();
+  private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
   private List<ArtworkScraper>        scrapers         = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
   private JComboBox                   cbImagePosterSize;
@@ -144,7 +145,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
    */
   public MovieImageSettingsPanel() {
     // data init
-    List<String> enabledArtworkProviders = settings.getMovieSettings().getMovieArtworkScrapers();
+    List<String> enabledArtworkProviders = settings.getMovieArtworkScrapers();
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
@@ -366,7 +367,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     initDataBindings();
 
     // poster filenames
-    List<MoviePosterNaming> moviePosterFilenames = settings.getMovieSettings().getMoviePosterFilenames();
+    List<MoviePosterNaming> moviePosterFilenames = settings.getMoviePosterFilenames();
     if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_JPG)) {
       cbMoviePosterFilename2.setSelected(true);
     }
@@ -384,7 +385,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     }
 
     // fanart filenames
-    List<MovieFanartNaming> movieFanartFilenames = settings.getMovieSettings().getMovieFanartFilenames();
+    List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
     if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
       cbMovieFanartFilename1.setSelected(true);
     }
@@ -425,10 +426,10 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
           int row = arg0.getFirstRow();
           ArtworkScraper changedScraper = scrapers.get(row);
           if (changedScraper.active) {
-            settings.getMovieSettings().addMovieArtworkScraper(changedScraper.getScraperId());
+            settings.addMovieArtworkScraper(changedScraper.getScraperId());
           }
           else {
-            settings.getMovieSettings().removeMovieArtworkScraper(changedScraper.getScraperId());
+            settings.removeMovieArtworkScraper(changedScraper.getScraperId());
           }
         }
       }
@@ -463,42 +464,42 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
    */
   public void checkChanges() {
     // set poster filenames
-    settings.getMovieSettings().clearMoviePosterFilenames();
+    settings.clearMoviePosterFilenames();
 
     if (cbMoviePosterFilename2.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
     }
     if (cbMoviePosterFilename4.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
     }
     if (cbMoviePosterFilename6.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
     }
     if (cbMoviePosterFilename7.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
     }
     if (cbMoviePosterFilename8.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
     }
 
     // set fanart filenames
-    settings.getMovieSettings().clearMovieFanartFilenames();
+    settings.clearMovieFanartFilenames();
     if (cbMovieFanartFilename1.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
     }
     if (cbMovieFanartFilename2.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
     }
     if (cbMovieFanartFilename3.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
     }
   }
 
@@ -577,51 +578,51 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("movieSettings.imagePosterSize");
+    BeanProperty<MovieSettings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("imagePosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, PosterSizes, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, PosterSizes, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, cbImagePosterSize, jComboBoxBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<Settings, FanartSizes> settingsBeanProperty_6 = BeanProperty.create("movieSettings.imageFanartSize");
-    AutoBinding<Settings, FanartSizes, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, FanartSizes> settingsBeanProperty_6 = BeanProperty.create("imageFanartSize");
+    AutoBinding<MovieSettings, FanartSizes, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, cbImageFanartSize, jComboBoxBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.writeActorImages");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("writeActorImages");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, cbActorImages, jCheckBoxBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.imageExtraFanart");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_3 = BeanProperty.create("imageExtraFanart");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, chckbxEnableExtrafanart, jCheckBoxBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("movieSettings.imageExtraThumbs");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_4 = BeanProperty.create("imageExtraThumbs");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, Integer> settingsBeanProperty_8 = BeanProperty.create("movieSettings.imageExtraThumbsSize");
+    BeanProperty<MovieSettings, Integer> settingsBeanProperty_8 = BeanProperty.create("imageExtraThumbsSize");
     BeanProperty<JSpinner, Object> jSpinnerBeanProperty_1 = BeanProperty.create("value");
-    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, Integer, JSpinner, Object> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, spExtrathumbWidth, jSpinnerBeanProperty_1);
     autoBinding_10.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_9 = BeanProperty.create("movieSettings.imageExtraThumbsResize");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_9 = BeanProperty.create("imageExtraThumbsResize");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty);
     autoBinding_11.bind();
     //
-    BeanProperty<Settings, Integer> settingsBeanProperty_10 = BeanProperty.create("movieSettings.imageExtraThumbsCount");
-    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Integer> settingsBeanProperty_10 = BeanProperty.create("imageExtraThumbsCount");
+    AutoBinding<MovieSettings, Integer, JSpinner, Object> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, spDownloadCountExtrathumbs, jSpinnerBeanProperty_1);
     autoBinding_12.bind();
     //
-    BeanProperty<Settings, Integer> settingsBeanProperty_11 = BeanProperty.create("movieSettings.imageExtraFanartCount");
-    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Integer> settingsBeanProperty_11 = BeanProperty.create("imageExtraFanartCount");
+    AutoBinding<MovieSettings, Integer, JSpinner, Object> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, spDownloadCountExtrafanart, jSpinnerBeanProperty_1);
     autoBinding_13.bind();
     //
@@ -634,14 +635,14 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         jCheckBoxBeanProperty, spDownloadCountExtrathumbs, jSpinnerBeanProperty);
     autoBinding_15.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("movieSettings.movieSetArtworkFolder");
+    BeanProperty<MovieSettings, String> settingsBeanProperty_12 = BeanProperty.create("movieSetArtworkFolder");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, String, JTextField, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieSetArtworkFolder, jTextFieldBeanProperty);
     autoBinding_16.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("movieSettings.enableMovieSetArtworkFolder");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_13 = BeanProperty.create("enableMovieSetArtworkFolder");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_13, chckbxStoreMoviesetArtwork, jCheckBoxBeanProperty);
     autoBinding_17.bind();
     //
@@ -654,33 +655,33 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         jCheckBoxBeanProperty, spExtrathumbWidth, jSpinnerBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_7 = BeanProperty.create("movieSettings.imageBanner");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("imageBanner");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, chckbxBanner, jCheckBoxBeanProperty);
     autoBinding_6.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_14 = BeanProperty.create("movieSettings.imageClearart");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_14 = BeanProperty.create("imageClearart");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_14, chckbxClearArt, jCheckBoxBeanProperty);
     autoBinding_18.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_15 = BeanProperty.create("movieSettings.imageThumb");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_15 = BeanProperty.create("imageThumb");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_15, chckbxThumb, jCheckBoxBeanProperty);
     autoBinding_19.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_16 = BeanProperty.create("movieSettings.imageLogo");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_16 = BeanProperty.create("imageLogo");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_16, chckbxLogo, jCheckBoxBeanProperty);
     autoBinding_20.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_17 = BeanProperty.create("movieSettings.imageDiscart");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_17 = BeanProperty.create("imageDiscart");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_17, chckbxDiscArt, jCheckBoxBeanProperty);
     autoBinding_21.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_18 = BeanProperty.create("movieSettings.enableMovieSetArtworkMovieFolder");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_18 = BeanProperty.create("enableMovieSetArtworkMovieFolder");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_18, chckbxMovieSetArtwork, jCheckBoxBeanProperty);
     autoBinding_22.bind();
     //

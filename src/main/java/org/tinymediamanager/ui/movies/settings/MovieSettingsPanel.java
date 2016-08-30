@@ -42,16 +42,16 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -76,12 +76,10 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSettingsPanel extends ScrollablePanel {
   private static final long                    serialVersionUID = -7580437046944123496L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                             settings         = Settings.getInstance();
+  private MovieSettings                        settings         = MovieModuleManager.MOVIE_SETTINGS;
   private JComboBox<MovieConnectors>           cbNfoFormat;
   private JCheckBox                            cbMovieNfoFilename1;
   private JCheckBox                            cbMovieNfoFilename2;
@@ -250,7 +248,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent arg0) {
         Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
-          settings.getMovieSettings().addMovieDataSources(file.toAbsolutePath().toString());
+          settings.addMovieDataSources(file.toAbsolutePath().toString());
         }
       }
     });
@@ -299,7 +297,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent e) {
         Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
-          settings.getMovieSettings().addMovieSkipFolder(file.toAbsolutePath().toString());
+          settings.addMovieSkipFolder(file.toAbsolutePath().toString());
         }
       }
     });
@@ -313,8 +311,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent e) {
         int row = listIgnore.getSelectedIndex();
         if (row != -1) { // nothing selected
-          String ingore = settings.getMovieSettings().getMovieSkipFolders().get(row);
-          settings.getMovieSettings().removeMovieSkipFolder(ingore);
+          String ingore = settings.getMovieSkipFolders().get(row);
+          settings.removeMovieSkipFolder(ingore);
         }
       }
     });
@@ -424,7 +422,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     {
       // NFO filenames
-      List<MovieNfoNaming> movieNfoFilenames = settings.getMovieSettings().getMovieNfoFilenames();
+      List<MovieNfoNaming> movieNfoFilenames = settings.getMovieNfoFilenames();
       if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
         cbMovieNfoFilename1.setSelected(true);
       }
@@ -471,7 +469,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
         CertificationStyleWrapper wrapper = new CertificationStyleWrapper();
         wrapper.style = style;
         cbCertificationStyle.addItem(wrapper);
-        if (style == settings.getMovieSettings().getMovieCertificationStyle()) {
+        if (style == settings.getMovieCertificationStyle()) {
           cbCertificationStyle.setSelectedItem(wrapper);
         }
       }
@@ -499,113 +497,113 @@ public class MovieSettingsPanel extends ScrollablePanel {
    */
   private void checkChanges() {
     // set NFO filenames
-    settings.getMovieSettings().clearMovieNfoFilenames();
+    settings.clearMovieNfoFilenames();
     if (cbMovieNfoFilename1.isSelected()) {
-      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
     }
     if (cbMovieNfoFilename2.isSelected()) {
-      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
     }
     if (cbMovieNfoFilename3.isSelected()) {
-      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
+      settings.addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
     }
 
     CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();
-    if (wrapper != null && settings.getMovieSettings().getMovieCertificationStyle() != wrapper.style) {
-      settings.getMovieSettings().setMovieCertificationStyle(wrapper.style);
+    if (wrapper != null && settings.getMovieCertificationStyle() != wrapper.style) {
+      settings.setMovieCertificationStyle(wrapper.style);
     }
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieSettings.movieConnector");
+    BeanProperty<MovieSettings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
     BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, MovieConnectors, JComboBox<MovieConnectors>, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
+    AutoBinding<MovieSettings, MovieConnectors, JComboBox<MovieConnectors>, Object> autoBinding_9 = Bindings
+        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.buildImageCacheOnImport");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_3 = BeanProperty.create("buildImageCacheOnImport");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_6 = BeanProperty.create("movieSettings.badWords");
-    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_6,
-        listBadWords);
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_6 = BeanProperty.create("badWords");
+    JListBinding<String, MovieSettings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_6, listBadWords);
     jListBinding.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_8 = BeanProperty.create("movieSettings.runtimeFromMediaInfo");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_8 = BeanProperty.create("runtimeFromMediaInfo");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, chckbxRuntimeFromMf, jCheckBoxBeanProperty);
     autoBinding_6.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_9 = BeanProperty.create("movieSettings.yearColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_9 = BeanProperty.create("yearColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxYear, jCheckBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("movieSettings.trailerColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_13 = BeanProperty.create("trailerColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_13, chckbxTrailer, jCheckBoxBeanProperty);
     autoBinding_8.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_14 = BeanProperty.create("movieSettings.subtitleColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_14 = BeanProperty.create("subtitleColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_14, chckbxSubtitles, jCheckBoxBeanProperty);
     autoBinding_12.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_15 = BeanProperty.create("movieSettings.imageColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_15 = BeanProperty.create("imageColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_15, chckbxImages, jCheckBoxBeanProperty);
     autoBinding_13.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_16 = BeanProperty.create("movieSettings.nfoColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_16 = BeanProperty.create("nfoColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_16, chckbxNfo, jCheckBoxBeanProperty);
     autoBinding_14.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_17 = BeanProperty.create("movieSettings.metadataColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_17 = BeanProperty.create("metadataColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_17, chckbxMetadata, jCheckBoxBeanProperty);
     autoBinding_15.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.syncTrakt");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("syncTrakt");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieSettings.watchedColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("watchedColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieSettings.ratingColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_5 = BeanProperty.create("ratingColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxRating, jCheckBoxBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_7 = BeanProperty.create("movieSettings.dateAddedColumnVisible");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("dateAddedColumnVisible");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, chckbxDateAdded, jCheckBoxBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_11 = BeanProperty.create("movieSettings.storeUiFilters");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_11 = BeanProperty.create("storeUiFilters");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, chckbxSaveUiFilter, jCheckBoxBeanProperty);
     autoBinding_10.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
-    JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieDataSource");
+    JListBinding<String, MovieSettings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, listDataSources);
     jListBinding_1.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_12 = BeanProperty.create("movieSettings.movieSkipFolders");
-    JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_12 = BeanProperty.create("movieSkipFolders");
+    JListBinding<String, MovieSettings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.movieRenameAfterScrape");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieRenameAfterScrape");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, chckbxRename, jCheckBoxBeanProperty);
     autoBinding_2.bind();
   }
