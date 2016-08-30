@@ -4,9 +4,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,6 +16,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
@@ -23,10 +26,13 @@ import org.w3c.dom.Element;
 public class MediaInfoXMLParser {
 
   @XmlElement(name = "File")
-  public List<MiFile> files;
+  public List<MiFile>         files;
 
-  private long        filesize = 0L;
-  private int         duration = 0;
+  private long                filesize = 0L;
+  private int                 duration = 0;
+  private Set<String>         lang     = new HashSet<String>();
+
+  private static final String LANG_ID  = "Language/String";
 
   /**
    * init mediafile snapshots
@@ -38,6 +44,7 @@ public class MediaInfoXMLParser {
       file.snapshot();
       filesize += file.getFilesize();
       duration += file.getDuration();
+      lang.addAll(file.getLang());
     }
   }
 
@@ -61,6 +68,15 @@ public class MediaInfoXMLParser {
         biggestFile = f;
       }
     }
+
+    List<Map<String, String>> stream = biggestFile.snapshot.get(StreamKind.Audio);
+    if (stream != null) {
+      LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(0);
+      if (info != null) {
+        info.put(LANG_ID, StringUtils.join(lang, " / "));
+      }
+    }
+
     return biggestFile;
   }
 
@@ -78,6 +94,11 @@ public class MediaInfoXMLParser {
     private long                                      streamsize = 0L;
     private int                                       duration   = 0;
     private String                                    filename   = "";
+    private Set<String>                               lang       = new HashSet<String>();
+
+    public Set<String> getLang() {
+      return lang;
+    }
 
     /**
      * Returns the filesize or accumulated streamsize
@@ -102,6 +123,7 @@ public class MediaInfoXMLParser {
       filesize = 0L;
       streamsize = 0L;
       duration = 0;
+      boolean addLang = false;
       if (snapshot == null) {
         snapshot = new EnumMap<>(StreamKind.class);
         StreamKind currentKind = null;
@@ -110,6 +132,11 @@ public class MediaInfoXMLParser {
           if (StreamKind.valueOf(track.type) != currentKind) {
             // reset map for each type
             streamInfoList = new ArrayList<>(tracks.size());
+
+            if (currentKind == StreamKind.Audio) {
+              // end of audiokind parsing
+              addLang = true;
+            }
           }
           currentKind = StreamKind.valueOf(track.type);
           Map<String, String> streamInfo = new LinkedHashMap<>();
@@ -129,6 +156,19 @@ public class MediaInfoXMLParser {
                 key += i;
               }
               i++;
+            }
+
+            // fix to accumulate all AUDIO languages on all files (since it might not be set on biggest file)
+            if (key.equals(LANG_ID) && StreamKind.Audio == currentKind) {
+              lang.add(elem.getTextContent());
+            }
+            if (key.equals("Audio_Language_List")) {
+              String[] l = StringUtils.split(elem.getTextContent());
+              if (l != null) {
+                for (String s : l) {
+                  lang.add(s);
+                }
+              }
             }
 
             // accumulate filesizes & duration
@@ -153,6 +193,14 @@ public class MediaInfoXMLParser {
             streamInfo.put(key, elem.getTextContent());
             if (!key.equals(getMappedKey(key))) {
               streamInfo.put(getMappedKey(key), elem.getTextContent());
+            }
+            if (addLang) {
+              addLang = false;
+              String curLang = streamInfo.get(LANG_ID);
+              // no language on stream found yet? take our global one...
+              if (StringUtils.isEmpty(curLang)) {
+                streamInfo.put(LANG_ID, StringUtils.join(lang, " / "));
+              }
             }
           }
           streamInfoList.add(streamInfo);
