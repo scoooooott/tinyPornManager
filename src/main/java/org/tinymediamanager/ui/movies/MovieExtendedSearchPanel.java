@@ -46,7 +46,6 @@ import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaSource;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -484,7 +483,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       }
     };
     movieList.addPropertyChangeListener(propertyChangeListener);
-    Settings.getInstance().getMovieSettings().addPropertyChangeListener(propertyChangeListener);
+    MovieModuleManager.MOVIE_SETTINGS.addPropertyChangeListener(propertyChangeListener);
     buildAndInstallTagsArray();
     buildAndInstallCodecArray();
     buildAndInstallDatasourceArray();
@@ -556,7 +555,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
     // build up the new cb
     cbDatasource.removeAllItems();
-    List<String> datasources = new ArrayList<>(Settings.getInstance().getMovieSettings().getMovieDataSource());
+    List<String> datasources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       cbDatasource.addItem(datasource);
