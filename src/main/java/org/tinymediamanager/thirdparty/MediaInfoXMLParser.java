@@ -73,7 +73,11 @@ public class MediaInfoXMLParser {
     if (stream != null) {
       LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(0);
       if (info != null) {
-        info.put(LANG_ID, StringUtils.join(lang, " / "));
+        String curLang = info.get(LANG_ID);
+        // no language on stream found yet? take our global one...
+        if (StringUtils.isEmpty(curLang)) {
+          info.put(LANG_ID, StringUtils.join(lang, " / "));
+        }
       }
     }
 
