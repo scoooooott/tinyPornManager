@@ -50,9 +50,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -167,7 +168,7 @@ public class TvShowToXbmcNfoConnector {
       xbmc.setId(tvdbid);
       xbmc.episodeguide.url.cache = tvdbid + ".xml";
       xbmc.episodeguide.url.url = "http://www.thetvdb.com/api/1D62F2F90030C444/series/" + tvdbid + "/all/"
-          + Globals.settings.getTvShowSettings().getScraperLanguage().name() + ".xml";
+          + TvShowModuleManager.SETTINGS.getScraperLanguage().name() + ".xml";
     }
     xbmc.setImdbid(tvShow.getIdAsString(Constants.IMDB));
     xbmc.setTitle(tvShow.getTitle());

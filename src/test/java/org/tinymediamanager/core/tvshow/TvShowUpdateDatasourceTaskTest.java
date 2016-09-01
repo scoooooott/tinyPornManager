@@ -42,7 +42,7 @@ public class TvShowUpdateDatasourceTaskTest {
   public void udsNew() throws Exception {
     // just a copy; we might have another test which uses these files
     // FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), new File(DATASOURCE_DEST));
-    TvShowModuleManager.TV_SHOW_SETTINGS.addTvShowDataSources(DATASOURCE_SOURCE);
+    TvShowModuleManager.SETTINGS.addTvShowDataSources(DATASOURCE_SOURCE);
     TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
     task.run();
   }
@@ -60,7 +60,7 @@ public class TvShowUpdateDatasourceTaskTest {
 
     // just a copy; we might have another test which uses these files
     FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), destDir);
-    TvShowModuleManager.TV_SHOW_SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
+    TvShowModuleManager.SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
 
     TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
     task.run();

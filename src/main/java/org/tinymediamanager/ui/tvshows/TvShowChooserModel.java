@@ -17,20 +17,20 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -38,9 +38,9 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -162,7 +162,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
       options.setResult(result);
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + mediaScraper.getMediaProvider().getProviderInfo().getId());
       LOGGER.info(options.toString());
@@ -237,7 +237,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       }
 
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
 
       // scrape providers till one artwork has been found
       for (MediaScraper artworkScraper : artworkScrapers) {

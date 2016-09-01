@@ -31,9 +31,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -49,7 +48,9 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;;
+import com.jgoodies.forms.layout.RowSpec;
+
+;
 
 /**
  * The Class TvShowScrapeMetadataDialog.
@@ -164,8 +165,8 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
 
     // artwork scraper
     List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
-    for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
+    for (MediaScraper artworkScraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
+      if (TvShowModuleManager.SETTINGS.getTvShowArtworkScrapers().contains(artworkScraper.getId())) {
         selectedArtworkScrapers.add(artworkScraper);
       }
     }

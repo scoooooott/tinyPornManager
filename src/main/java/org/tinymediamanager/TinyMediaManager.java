@@ -19,7 +19,6 @@ package org.tinymediamanager;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -27,6 +26,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
+import java.awt.Dialog.ModalityType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -194,7 +194,7 @@ public class TinyMediaManager {
     LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
     LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
     LOGGER.info("Scraper language : " + MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
-    LOGGER.info("TV Scraper lang  : " + Globals.settings.getTvShowSettings().getScraperLanguage());
+    LOGGER.info("TV Scraper lang  : " + TvShowModuleManager.SETTINGS.getScraperLanguage());
 
     // start EDT
     EventQueue.invokeLater(new Runnable() {

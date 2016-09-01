@@ -45,14 +45,14 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -90,7 +90,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
    */
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
+  private TvShowSettings                  settings         = TvShowModuleManager.SETTINGS;
   private List<String>                    spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
   private EventList<TvShowRenamerExample> exampleEventList = null;
 

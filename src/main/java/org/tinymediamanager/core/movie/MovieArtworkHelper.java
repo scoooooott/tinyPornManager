@@ -152,31 +152,51 @@ public class MovieArtworkHelper {
     }
   }
 
-  private static void downloadFanart(Movie movie) {
-    String fanartUrl = movie.getArtworkUrl(MediaFileType.FANART);
-    if (StringUtils.isBlank(fanartUrl)) {
-      return;
-    }
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
-      return;
-    }
-
-    int i = 0;
+  /**
+   * Fanart format is not empty, so we want at least one ;)<br>
+   * Idea is, to check whether the preferred format is set in settings<br>
+   * and if not, take some default (since we want fanarts)
+   * 
+   * @param movie
+   * @return List of MovieFanartNaming (can be ampty!)
+   */
+  public static List<MovieFanartNaming> getFanartNamesForMovie(Movie movie) {
     List<MovieFanartNaming> fanartnames = new ArrayList<>();
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
+      return fanartnames;
+    }
     if (movie.isMultiMovieDir()) {
-      // Fixate the name regardless of setting
-      fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-      fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      }
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART2_JPG);
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART2_PNG);
+      }
+      if (fanartnames.isEmpty()) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      }
     }
     else if (movie.isDisc()) {
-      // override fanart naming for disc files
       fanartnames.add(MovieFanartNaming.FANART_JPG);
       fanartnames.add(MovieFanartNaming.FANART_PNG);
     }
     else {
       fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
     }
-    for (MovieFanartNaming name : fanartnames) {
+    return fanartnames;
+  }
+
+  private static void downloadFanart(Movie movie) {
+    String fanartUrl = movie.getArtworkUrl(MediaFileType.FANART);
+    if (StringUtils.isBlank(fanartUrl)) {
+      return;
+    }
+
+    int i = 0;
+    for (MovieFanartNaming name : getFanartNamesForMovie(movie)) {
       boolean firstImage = false;
       String filename = getFanartFilename(name, movie);
 
@@ -204,39 +224,61 @@ public class MovieArtworkHelper {
     }
   }
 
-  private static void downloadPoster(Movie movie) {
-    String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
-    if (StringUtils.isBlank(posterUrl)) {
-      return;
-    }
-    if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
-      return;
-    }
-
-    int i = 0;
+  /**
+   * Poster format is not empty, so we want at least one ;)<br>
+   * Idea is, to check whether the preferred format is set in settings<br>
+   * and if not, take some default (since we want posters)
+   * 
+   * @param movie
+   * @return list of MoviePosterNaming (can be empty!)
+   */
+  public static List<MoviePosterNaming> getPosterNamesForMovie(Movie movie) {
     List<MoviePosterNaming> posternames = new ArrayList<>();
+    if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
+      return posternames;
+    }
     if (movie.isMultiMovieDir()) {
-      // Fixate the name regardless of setting
-      posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-      posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      }
+      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
+        posternames.add(MoviePosterNaming.FILENAME_JPG);
+        posternames.add(MoviePosterNaming.FILENAME_PNG);
+      }
+      if (posternames.isEmpty()) {
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      }
     }
     else if (movie.isDisc()) {
-      // override poster naming for disc files - allowed is poster.jpg/png or folder.jpg/png;
-      // crosscheck with settings
       if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER_JPG)) {
         posternames.add(MoviePosterNaming.FOLDER_JPG);
         posternames.add(MoviePosterNaming.FOLDER_PNG);
       }
-
       if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER_JPG) || posternames.isEmpty()) {
         posternames.add(MoviePosterNaming.POSTER_JPG);
         posternames.add(MoviePosterNaming.POSTER_PNG);
+      }
+      if (posternames.isEmpty()) {
+        posternames.add(MoviePosterNaming.FOLDER_JPG);
+        posternames.add(MoviePosterNaming.FOLDER_PNG);
       }
     }
     else {
       posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
     }
-    for (MoviePosterNaming name : posternames) {
+    return posternames;
+  }
+
+  private static void downloadPoster(Movie movie) {
+    String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
+    if (StringUtils.isBlank(posterUrl)) {
+      return;
+    }
+
+    int i = 0;
+    for (MoviePosterNaming name : getPosterNamesForMovie(movie)) {
       boolean firstImage = false;
       String filename = getPosterFilename(name, movie);
 

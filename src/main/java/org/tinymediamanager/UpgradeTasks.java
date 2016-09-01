@@ -33,6 +33,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -145,12 +146,12 @@ public class UpgradeTasks {
       // So reSet some default values, but ONLY for release ONCE;
       // else every start of prerel/nightly would reset this over and over again
       if (ReleaseInfo.isReleaseBuild()) {
-        Globals.settings.getMovieSettings().setImageBanner(true);
-        Globals.settings.getMovieSettings().setImageLogo(true);
-        Globals.settings.getMovieSettings().setImageClearart(true);
-        Globals.settings.getMovieSettings().setImageDiscart(true);
-        Globals.settings.getMovieSettings().setImageThumb(true);
-        Globals.settings.getMovieSettings().setUseTrailerPreference(true);
+        MovieModuleManager.MOVIE_SETTINGS.setImageBanner(true);
+        MovieModuleManager.MOVIE_SETTINGS.setImageLogo(true);
+        MovieModuleManager.MOVIE_SETTINGS.setImageClearart(true);
+        MovieModuleManager.MOVIE_SETTINGS.setImageDiscart(true);
+        MovieModuleManager.MOVIE_SETTINGS.setImageThumb(true);
+        MovieModuleManager.MOVIE_SETTINGS.setUseTrailerPreference(true);
         Globals.settings.writeDefaultSettings(); // activate default plugins
       }
     }
@@ -204,8 +205,8 @@ public class UpgradeTasks {
 
       // upgrade certification settings
       // if MP NFO style is chosen, set the certification style to TECHNICAL
-      if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
-        Globals.settings.getMovieSettings().setMovieCertificationStyle(CertificationStyle.TECHNICAL);
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
+        MovieModuleManager.MOVIE_SETTINGS.setMovieCertificationStyle(CertificationStyle.TECHNICAL);
       }
 
       // reevaluate movie stacking and offline stubs (without the need for UDS) and save

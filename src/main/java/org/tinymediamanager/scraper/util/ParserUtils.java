@@ -369,7 +369,7 @@ public class ParserUtils {
     }
 
     // also remove bad words
-    for (String s : TvShowModuleManager.TV_SHOW_SETTINGS.getBadWords()) {
+    for (String s : TvShowModuleManager.SETTINGS.getBadWords()) {
       filename = filename.replaceAll("(?i)\\W" + s + "(\\W|$)", " "); // TV bad words must start AND END with a non-word (else too global) or line end
       if (LOGGER.isTraceEnabled() && filename.length() != before.length()) {
         LOGGER.trace("Removed some TV bad word (" + s + "): " + before + " -> " + filename);

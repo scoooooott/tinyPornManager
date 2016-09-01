@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
@@ -98,7 +97,7 @@ public class TvShowTest {
     // setup done
 
     // display renamed EP name :)
-    System.out.println(TvShowRenamer.createDestination(Globals.settings.getTvShowSettings().getRenamerFilename(), show, show.getEpisodes()));
+    System.out.println(TvShowRenamer.createDestination(TvShowModuleManager.SETTINGS.getRenamerFilename(), show, show.getEpisodes()));
     System.out.println(TvShowRenamer.generateFilename(show, dmf));
 
     TvShowModuleManager.getInstance().shutDown();

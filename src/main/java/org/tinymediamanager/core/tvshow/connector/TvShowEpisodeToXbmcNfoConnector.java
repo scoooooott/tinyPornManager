@@ -158,8 +158,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
 
     TvShowEpisode episode = tvShowEpisodes.get(0);
-    MediaFile mf = episode.getBiggestMediaFile();
-    if (mf == null || mf.getType() != MediaFileType.VIDEO) {
+    MediaFile mf = episode.getBiggestMediaFile(MediaFileType.VIDEO);
+    if (mf == null) {
       return; // no video file?
     }
     String nfoFilename = mf.getBasename() + ".nfo";

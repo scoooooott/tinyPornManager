@@ -38,11 +38,11 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.border.TitledBorder;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -387,7 +387,7 @@ public class TvShowBatchEditorDialog extends TmmDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
 
-          if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+          if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
             Set<TvShow> tvShows = new HashSet<>();
             for (TvShowEpisode episode : tvShowEpisodesToEdit) {
               tvShows.add(episode.getTvShow());

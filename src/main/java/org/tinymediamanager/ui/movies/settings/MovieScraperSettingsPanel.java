@@ -53,9 +53,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -64,6 +64,8 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -93,7 +95,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
 
   private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
@@ -230,7 +232,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    panelScraperMetadata = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
+    panelScraperMetadata = new MovieScraperMetadataPanel(Settings.getInstance().getMovieScraperMetadataConfig());
     panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 4, 1, fill, default");
 
     chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
@@ -256,7 +258,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     sliderThreshold.setMajorTickSpacing(10);
     sliderThreshold.setPaintTicks(true);
     sliderThreshold.setPaintLabels(true);
-    sliderThreshold.setValue((int) (settings.getMovieSettings().getScraperThreshold() * 100));
+    sliderThreshold.setValue((int) (settings.getScraperThreshold() * 100));
 
     Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<>();
     labelTable.put(100, new JLabel("1.0"));
@@ -268,7 +270,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     sliderThreshold.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent arg0) {
-        settings.getMovieSettings().setScraperThreshold(sliderThreshold.getValue() / 100.0);
+        settings.setScraperThreshold(sliderThreshold.getValue() / 100.0);
       }
     });
     panelAutomaticScraper.add(sliderThreshold, "3, 2");
@@ -297,7 +299,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
           MovieScraper changedScraper = scrapers.get(row);
           // if flag default scraper was changed, change all other flags
           if (changedScraper.getDefaultScraper()) {
-            settings.getMovieSettings().setMovieScraper(changedScraper.getScraperId());
+            settings.setMovieScraper(changedScraper.getScraperId());
             for (MovieScraper scraper : scrapers) {
               if (scraper != changedScraper) {
                 scraper.setDefaultScraper(Boolean.FALSE);
@@ -414,25 +416,25 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("movieSettings.scraperLanguage");
+    BeanProperty<MovieSettings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, cbScraperLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("movieSettings.certificationCountry");
-    AutoBinding<Settings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    AutoBinding<MovieSettings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, cbCertificationCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.scrapeBestImage");
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("scrapeBestImage");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieSettings.scraperFallback");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("scraperFallback");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxScraperFallback, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
@@ -441,8 +443,8 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty, chckbxImageLanguage, jCheckBoxBeanProperty_1);
     autoBinding_10.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_10 = BeanProperty.create("movieSettings.imageLanguagePriority");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("imageLanguagePriority");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
     autoBinding_11.bind();
     //

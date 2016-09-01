@@ -42,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -97,7 +96,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   public TvShowUpdateDatasourceTask2() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+    dataSources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
   }
 
   /**
@@ -566,7 +565,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             // something found with the season detection?
             for (int ep : result.episodes) {
               TvShowEpisode episode = new TvShowEpisode();
-              episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+              episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
               episode.setEpisode(ep);
               episode.setSeason(result.season);
               episode.setFirstAired(result.date);
@@ -611,7 +610,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             // STEP 2.1.3 - episode detection found nothing - simply add this video as -1/-1
             // ******************************
             TvShowEpisode episode = new TvShowEpisode();
-            episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+            episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
             episode.setEpisode(-1);
             episode.setSeason(-1);
             episode.setPath(mf.getPath());
@@ -788,7 +787,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
+              && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -816,7 +815,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
+            && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -865,7 +864,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
-          || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

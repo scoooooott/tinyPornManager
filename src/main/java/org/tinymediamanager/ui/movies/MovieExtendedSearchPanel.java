@@ -162,7 +162,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
   /**
    * add a new filter to the panel
-   * 
+   *
    * @param tvShowWatchedFilter
    */
   private void addFilter(IMovieUIFilter filter) {

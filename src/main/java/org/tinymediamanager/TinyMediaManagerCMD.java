@@ -36,6 +36,7 @@ import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -310,7 +311,7 @@ public class TinyMediaManagerCMD {
           task.run(); // blocking
         }
         else {
-          List<String> dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+          List<String> dataSources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
           for (Integer i : updateTvDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new TvShowUpdateDatasourceTask2(dataSources.get(i - 1));
@@ -325,8 +326,8 @@ public class TinyMediaManagerCMD {
       // *****************
       // prepare shows/episodes for scrape
       // *****************
-      List<TvShow> showToScrape = new ArrayList<TvShow>();
-      List<TvShowEpisode> episodeToScrape = new ArrayList<TvShowEpisode>();
+      List<TvShow> showToScrape = new ArrayList<>();
+      List<TvShowEpisode> episodeToScrape = new ArrayList<>();
       if (scrapeAll) {
         LOGGER.info("Commandline - scraping ALL TvShows...");
         if (TvShowList.getInstance().getTvShowCount() > 0) {
@@ -335,8 +336,8 @@ public class TinyMediaManagerCMD {
         }
       }
       else {
-        HashSet<TvShow> scrapeShow = new HashSet<TvShow>(); // no dupes
-        HashSet<TvShowEpisode> scrapeEpisode = new HashSet<TvShowEpisode>(); // no dupes
+        HashSet<TvShow> scrapeShow = new HashSet<>(); // no dupes
+        HashSet<TvShowEpisode> scrapeEpisode = new HashSet<>(); // no dupes
 
         if (scrapeNew) {
           List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
@@ -365,15 +366,15 @@ public class TinyMediaManagerCMD {
         }
 
         // if we scrape already the whole show, no need to scrape dedicated episodes for it
-        HashSet<TvShowEpisode> removedEpisode = new HashSet<TvShowEpisode>(); // no dupes
+        HashSet<TvShowEpisode> removedEpisode = new HashSet<>(); // no dupes
         for (TvShowEpisode ep : scrapeEpisode) {
           if (scrapeShow.contains(ep.getTvShow())) {
             removedEpisode.add(ep);
           }
         }
         scrapeEpisode.removeAll(removedEpisode);
-        showToScrape = new ArrayList<TvShow>(scrapeShow);
-        episodeToScrape = new ArrayList<TvShowEpisode>(scrapeEpisode);
+        showToScrape = new ArrayList<>(scrapeShow);
+        episodeToScrape = new ArrayList<>(scrapeEpisode);
       }
 
       // *****************

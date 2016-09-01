@@ -698,7 +698,9 @@ public class MovieRenamer {
           List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
-            nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().size() > 1) {
+              nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            }
           }
           else {
             nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
@@ -723,18 +725,7 @@ public class MovieRenamer {
         break;
 
       case POSTER:
-        List<MoviePosterNaming> posternames = new ArrayList<>();
-        if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
-          if (newDestIsMultiMovieDir) {
-            // Fixate the name regardless of setting
-            posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-            posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
-          }
-          else {
-            posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
-          }
-        }
-        for (MoviePosterNaming name : posternames) {
+        for (MoviePosterNaming name : MovieArtworkHelper.getPosterNamesForMovie(movie)) {
           String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
           if (newPosterName != null && !newPosterName.isEmpty()) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
@@ -761,18 +752,7 @@ public class MovieRenamer {
         break;
 
       case FANART:
-        List<MovieFanartNaming> fanartnames = new ArrayList<>();
-        if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
-          if (newDestIsMultiMovieDir) {
-            // Fixate the name regardless of setting
-            fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-            fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
-          }
-          else {
-            fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
-          }
-        }
-        for (MovieFanartNaming name : fanartnames) {
+        for (MovieFanartNaming name : MovieArtworkHelper.getFanartNamesForMovie(movie)) {
           String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
           if (newFanartName != null && !newFanartName.isEmpty()) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg

@@ -62,6 +62,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -265,7 +266,7 @@ public class TvShowPanel extends JPanel {
         buttonUpdateDatasource.getPopupMenu().removeAll();
         buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateDatasources2));
         buttonUpdateDatasource.getPopupMenu().addSeparator();
-        for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+        for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new TvShowUpdateSingleDatasourceAction(ds)));
         }
         buttonUpdateDatasource.getPopupMenu().addSeparator();

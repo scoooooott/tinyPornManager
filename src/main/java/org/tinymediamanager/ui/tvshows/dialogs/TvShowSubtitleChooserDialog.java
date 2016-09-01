@@ -46,7 +46,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.threading.DownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -132,8 +131,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
     // Subtitle scraper
     List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
-    for (MediaScraper subtitleScraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
+    for (MediaScraper subtitleScraper : tvShowList.getAvailableSubtitleScrapers()) {
+      if (TvShowModuleManager.SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
         selectedSubtitleScrapers.add(subtitleScraper);
       }
     }
@@ -143,7 +142,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
     for (MediaLanguages language : MediaLanguages.values()) {
       cbLanguage.addItem(language);
-      if (language == TvShowModuleManager.TV_SHOW_SETTINGS.getSubtitleScraperLanguage()) {
+      if (language == TvShowModuleManager.SETTINGS.getSubtitleScraperLanguage()) {
         cbLanguage.setSelectedItem(language);
       }
     }
