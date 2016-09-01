@@ -434,7 +434,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         basename = "VIDEO_TS"; // FIXME: BluRay?
       }
 
-      switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+      switch (TvShowModuleManager.SETTINGS.getTvShowEpisodeThumbFilename()) {
         case FILENAME_THUMB_POSTFIX:
           filename = basename + "-thumb." + FilenameUtils.getExtension(thumbUrl);
           break;

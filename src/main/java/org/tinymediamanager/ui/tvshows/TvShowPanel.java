@@ -57,11 +57,12 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -72,8 +73,8 @@ import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
-import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTree;
+import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShow;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
@@ -264,7 +265,7 @@ public class TvShowPanel extends JPanel {
         buttonUpdateDatasource.getPopupMenu().removeAll();
         buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateDatasources2));
         buttonUpdateDatasource.getPopupMenu().addSeparator();
-        for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+        for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new TvShowUpdateSingleDatasourceAction(ds)));
         }
         buttonUpdateDatasource.getPopupMenu().addSeparator();

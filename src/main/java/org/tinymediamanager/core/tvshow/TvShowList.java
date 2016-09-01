@@ -40,13 +40,12 @@ import org.h2.mvstore.MVMap;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -373,7 +372,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
@@ -429,7 +428,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getDefaultArtworkScrapers() {
-    return getArtworkScrapers(TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowArtworkScrapers());
+    return getArtworkScrapers(TvShowModuleManager.SETTINGS.getTvShowArtworkScrapers());
   }
 
   /**
@@ -442,7 +441,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchTvShow(String searchTerm, MediaScraper mediaScraper) {
-    return searchTvShow(searchTerm, mediaScraper, Globals.settings.getTvShowSettings().getScraperLanguage());
+    return searchTvShow(searchTerm, mediaScraper, TvShowModuleManager.SETTINGS.getScraperLanguage());
   }
 
   /**
@@ -473,7 +472,7 @@ public class TvShowList extends AbstractModelObject {
 
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, searchTerm);
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Searching with scraper: " + provider.getProviderInfo().getId() + ", " + provider.getProviderInfo().getVersion());
       LOGGER.info(options.toString());

@@ -36,9 +36,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -71,7 +71,7 @@ class TvShowScraperPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
 
-  private final TvShowSettings        settings         = TvShowModuleManager.TV_SHOW_SETTINGS;
+  private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
   private final List<TvShowScraper>   scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
 
   private JTable                      tableScraper;

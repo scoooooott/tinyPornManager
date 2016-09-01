@@ -37,17 +37,17 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -101,7 +101,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask() {
     super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
-    dataSources = new ArrayList<>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+    dataSources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
   }
 
   /**
@@ -202,7 +202,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         String directoryName = subdir.getName();
         // check against unwanted dirs
         if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)
-            || TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(subdir.getAbsolutePath())) {
+            || TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(subdir.getAbsolutePath())) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
         }
@@ -298,7 +298,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       // build image cache on import
-      if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
+      if (TvShowModuleManager.SETTINGS.isBuildImageCacheOnImport()) {
         for (TvShow tvShow : new ArrayList<>(tvShowList.getTvShows())) {
           if (!new File(path).equals(new File(tvShow.getDataSource()))) {
             continue;
@@ -328,7 +328,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
 
-    if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+    if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
       TmmTask task = new SyncTraktTvTask(false, false, true, true);
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
@@ -408,7 +408,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     // build up the image cache
-    if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
+    if (TvShowModuleManager.SETTINGS.isBuildImageCacheOnImport()) {
       List<Path> imageFiles = new ArrayList<>();
       for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
         if (cancel) {
@@ -772,7 +772,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               // something found with the season detection?
               for (int ep : result.episodes) {
                 TvShowEpisode episode = new TvShowEpisode();
-                episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+                episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
                 episode.setEpisode(ep);
                 episode.setSeason(result.season);
                 episode.setFirstAired(result.date);
@@ -798,7 +798,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             else {
               // episode detection found nothing - simply add this file
               TvShowEpisode episode = new TvShowEpisode();
-              episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+              episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
               episode.setEpisode(-1);
               episode.setSeason(-1);
               episode.setPath(dir.getPath());
@@ -829,7 +829,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       } // end isFile
 
       if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
-          && !TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
+          && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
         File tmmIgnore2 = new File(file, "tmmignore");
@@ -947,7 +947,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
           if (episode == null) {
             episode = new TvShowEpisode();
-            episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+            episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
             episode.setEpisode(ep);
             episode.setSeason(result.season);
             episode.setNewlyAdded(true);
@@ -989,7 +989,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         else {
           TvShowEpisode episode = new TvShowEpisode();
           episode.setPath(dir.getPath());
-          episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
+          episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
           episode.setEpisode(-1);
           episode.setSeason(-1);
           episode.setTvShow(tvShow);

@@ -55,12 +55,12 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -289,7 +289,7 @@ public class TvShowEditorDialog extends TmmDialog {
       }
     }
     cbCertification = new JComboBox();
-    for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getTvShowSettings().getCertificationCountry())) {
+    for (Certification cert : Certification.getCertificationsforCountry(TvShowModuleManager.SETTINGS.getCertificationCountry())) {
       cbCertification.addItem(cert);
     }
     details1Panel.add(cbCertification, "10, 8, fill, default");
@@ -892,7 +892,7 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.writeNFO();
       tvShowToEdit.saveToDb();
 
-      if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+      if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
         TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }

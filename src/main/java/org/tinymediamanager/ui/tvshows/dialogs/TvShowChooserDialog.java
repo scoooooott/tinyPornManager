@@ -48,9 +48,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -59,11 +59,12 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -82,8 +83,8 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -213,7 +214,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       {
         cbLanguage = new JComboBox<>();
         cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
-        cbLanguage.setSelectedItem(Globals.settings.getTvShowSettings().getScraperLanguage());
+        cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getScraperLanguage());
         cbLanguage.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -386,7 +387,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!Globals.settings.getTvShowSettings().isScrapeBestImage()) {
+          if (!TvShowModuleManager.SETTINGS.isScrapeBestImage()) {
             md.clearMediaArt();
           }
 
@@ -398,7 +399,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
-            if (!Globals.settings.getTvShowSettings().isScrapeBestImage()) {
+            if (!TvShowModuleManager.SETTINGS.isScrapeBestImage()) {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
@@ -451,7 +452,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-          if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+          if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
             TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToScrape));
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }

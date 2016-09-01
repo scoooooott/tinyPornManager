@@ -22,8 +22,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -37,7 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
@@ -264,8 +264,8 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     @Override
     public Void doInBackground() {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
-      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }

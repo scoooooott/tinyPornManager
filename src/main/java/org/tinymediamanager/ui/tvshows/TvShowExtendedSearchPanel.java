@@ -41,9 +41,9 @@ import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaSource;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.SmallCheckBoxUI;
@@ -323,7 +323,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       }
     };
     tvShowList.addPropertyChangeListener(propertyChangeListener);
-    Settings.getInstance().getTvShowSettings().addPropertyChangeListener(propertyChangeListener);
+    TvShowModuleManager.SETTINGS.addPropertyChangeListener(propertyChangeListener);
 
     buildAndInstallDatasourceArray();
     buildAndInstallTagsArray();
@@ -332,7 +332,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallDatasourceArray() {
     cbDatasource.removeAllItems();
-    List<String> datasources = new ArrayList<>(Settings.getInstance().getTvShowSettings().getTvShowDataSource());
+    List<String> datasources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
       cbDatasource.addItem(datasource);

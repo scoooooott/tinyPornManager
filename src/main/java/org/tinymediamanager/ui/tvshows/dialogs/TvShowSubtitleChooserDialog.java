@@ -139,14 +139,14 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     for (MediaScraper scraper : tvShowList.getAvailableSubtitleScrapers()) {
       model.addElement(scraper);
 
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(scraper.getId())) {
+      if (TvShowModuleManager.SETTINGS.getTvShowSubtitleScrapers().contains(scraper.getId())) {
         model.addCheck(scraper);
       }
     }
 
     for (MediaLanguages language : MediaLanguages.values()) {
       cbLanguage.addItem(language);
-      if (language == TvShowModuleManager.TV_SHOW_SETTINGS.getSubtitleScraperLanguage()) {
+      if (language == TvShowModuleManager.SETTINGS.getSubtitleScraperLanguage()) {
         cbLanguage.setSelectedItem(language);
       }
     }

@@ -135,12 +135,12 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
     for (MediaScraper subtitleScraper : TvShowList.getInstance().getAvailableSubtitleScrapers()) {
       model.addElement(subtitleScraper);
 
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
+      if (TvShowModuleManager.SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
         model.addCheck(subtitleScraper);
       }
     }
 
-    cbLanguage.setSelectedItem(TvShowModuleManager.TV_SHOW_SETTINGS.getSubtitleScraperLanguage());
+    cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getSubtitleScraperLanguage());
   }
 
   /**

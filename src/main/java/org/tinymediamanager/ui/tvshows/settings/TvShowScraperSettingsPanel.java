@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
+import static org.tinymediamanager.core.tvshow.TvShowEpisodeThumbNaming.FILENAME_THUMB_POSTFIX;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -52,9 +54,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -63,6 +65,8 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -91,7 +95,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private List<TvShowScraper>         scrapers         = ObservableCollections.observableList(new ArrayList<TvShowScraper>());
   private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
@@ -138,7 +142,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       scrapers.add(tvShowScraper);
       counter++;
     }
-    List<String> enabledArtworkProviders = settings.getTvShowSettings().getTvShowArtworkScrapers();
+    List<String> enabledArtworkProviders = settings.getTvShowArtworkScrapers();
     int artworkSelectedIndex = -1;
     int counterAW = 0;
     for (MediaScraper scraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
@@ -278,7 +282,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    panelScraperMetadata = new TvShowScraperMetadataPanel(settings.getTvShowScraperMetadataConfig());
+    panelScraperMetadata = new TvShowScraperMetadataPanel(Settings.getInstance().getTvShowScraperMetadataConfig());
     panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 2, 1, fill, default");
 
     chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
@@ -307,7 +311,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
             TvShowScraper changedScraper = scrapers.get(row);
             // if flag inNFO was changed, change all other trailers flags
             if (changedScraper.getDefaultScraper()) {
-              settings.getTvShowSettings().setTvShowScraper(changedScraper.getScraperId());
+              settings.setTvShowScraper(changedScraper.getScraperId());
               for (TvShowScraper scraper : scrapers) {
                 if (scraper != changedScraper) {
                   scraper.setDefaultScraper(Boolean.FALSE);
@@ -341,10 +345,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
             int row = arg0.getFirstRow();
             ArtworkScraper changedScraper = artworkScrapers.get(row);
             if (changedScraper.active) {
-              settings.getTvShowSettings().addTvShowArtworkScraper(changedScraper.getScraperId());
+              settings.addTvShowArtworkScraper(changedScraper.getScraperId());
             }
             else {
-              settings.getTvShowSettings().removeTvShowArtworkScraper(changedScraper.getScraperId());
+              settings.removeTvShowArtworkScraper(changedScraper.getScraperId());
             }
           }
         }
@@ -385,7 +389,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       rdbtnThumbWithPostfix.addItemListener(itemListener);
       rdbtnThumbTbn.addItemListener(itemListener);
 
-      switch (settings.getTvShowSettings().getTvShowEpisodeThumbFilename()) {
+      switch (settings.getTvShowEpisodeThumbFilename()) {
         case FILENAME_THUMB_POSTFIX:
           rdbtnThumbWithPostfix.setSelected(true);
           break;
@@ -409,13 +413,13 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
    */
   public void checkChanges() {
     if (rdbtnThumbWithPostfix.isSelected()) {
-      settings.getTvShowSettings().setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB_POSTFIX);
+      settings.setTvShowEpisodeThumbFilename(FILENAME_THUMB_POSTFIX);
     }
     if (rdbtnThumbWoPostfix.isSelected()) {
-      settings.getTvShowSettings().setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
+      settings.setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
     }
     if (rdbtnThumbTbn.isSelected()) {
-      settings.getTvShowSettings().setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB_TBN);
+      settings.setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB_TBN);
     }
   }
 
@@ -567,20 +571,20 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
 
   @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
-    BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("tvShowSettings.scraperLanguage");
+    BeanProperty<TvShowSettings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, cbScraperTmdbLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("tvShowSettings.certificationCountry");
-    AutoBinding<Settings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<TvShowSettings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    AutoBinding<TvShowSettings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("tvShowSettings.scrapeBestImage");
+    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty = BeanProperty.create("scrapeBestImage");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
     //

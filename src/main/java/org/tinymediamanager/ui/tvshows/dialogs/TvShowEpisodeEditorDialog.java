@@ -61,12 +61,12 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -598,8 +598,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     protected Void doInBackground() throws Exception {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
-      options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
-      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+      options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }

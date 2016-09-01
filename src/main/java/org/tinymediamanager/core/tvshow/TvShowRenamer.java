@@ -32,14 +32,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -54,7 +53,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class TvShowRenamer {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(TvShowRenamer.class);
-  private static final TvShowSettings SETTINGS       = Globals.settings.getTvShowSettings();
+  private static final TvShowSettings SETTINGS       = TvShowModuleManager.SETTINGS;
 
   private static final String[]       seasonNumbers  = { "$1", "$2", "$3", "$4" };
   private static final String[]       episodeNumbers = { "$E", "$D" };
@@ -431,7 +430,7 @@ public class TvShowRenamer {
     // since we can use this method for folders too, use the next options solely for files
     if (forFile) {
       if (mf.getType().equals(MediaFileType.THUMB)) {
-        switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+        switch (TvShowModuleManager.SETTINGS.getTvShowEpisodeThumbFilename()) {
           case FILENAME_THUMB_POSTFIX:
             filename = filename + "-thumb";
             break;
@@ -468,7 +467,7 @@ public class TvShowRenamer {
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {
               String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(),
-                  TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+                  TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
               if (StringUtils.isBlank(lang)) {
                 lang = mfs.getLanguage();
               }
@@ -502,7 +501,7 @@ public class TvShowRenamer {
               break;
             }
           }
-          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = originalLang;
           }

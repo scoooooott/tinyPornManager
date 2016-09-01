@@ -34,9 +34,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -62,7 +62,7 @@ class TvShowSourcePanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final TvShowSettings        settings         = TvShowModuleManager.TV_SHOW_SETTINGS;
+  private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
 
   private JList<String>               listDataSources;
   private JCheckBox                   cbDvdOrder;
