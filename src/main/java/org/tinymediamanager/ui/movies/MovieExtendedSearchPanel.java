@@ -44,6 +44,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.japura.gui.CheckComboBox;
+import org.japura.gui.event.ListCheckListener;
+import org.japura.gui.event.ListEvent;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -57,6 +60,7 @@ import org.tinymediamanager.ui.SmallCheckBoxUI;
 import org.tinymediamanager.ui.SmallSpinnerUI;
 import org.tinymediamanager.ui.SmallTextFieldBorder;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.SmallCheckComboBox;
 import org.tinymediamanager.ui.components.SmallComboBox;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.OfflineMovie;
@@ -100,7 +104,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterCast;
   private JTextField                   tfCastMember;
   private JCheckBox                    cbFilterTag;
-  private JComboBox                    cbTag;
+  private CheckComboBox                cbTag;
   private JCheckBox                    cbFilterDuplicates;
   private JCheckBox                    cbFilterMovieset;
   private JComboBox                    cbMovieset;
@@ -119,6 +123,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
   private final Action                 actionSort       = new SortAction();
   private final Action                 actionFilter     = new FilterAction();
+  private final ListCheckListener      listCheckListener;
   private JCheckBox                    cbFilterNewMovies;
   private JLabel                       lblNewMovies;
   private JCheckBox                    cbFilterCertification;
@@ -151,6 +156,18 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
+
+    listCheckListener = new ListCheckListener() {
+      @Override
+      public void removeCheck(ListEvent event) {
+        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+      }
+
+      @Override
+      public void addCheck(ListEvent event) {
+        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+      }
+    };
 
     setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
@@ -295,10 +312,11 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblTag);
     add(lblTag, "4, 11, right, default");
 
-    cbTag = new SmallComboBox();
-    setComponentFont(cbTag);
-    cbTag.setAction(actionFilter);
-
+    cbTag = new SmallCheckComboBox();
+    cbTag.setTextFor(CheckComboBox.NONE, BUNDLE.getString("movieextendedsearch.tags.selected.none")); //$NON-NLS-1$
+    cbTag.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("movieextendedsearch.tags.selected.multiple")); //$NON-NLS-1$
+    cbTag.setTextFor(CheckComboBox.ALL, BUNDLE.getString("movieextendedsearch.tags.selected.all")); //$NON-NLS-1$
+    cbTag.getModel().addListCheckListener(listCheckListener);
     add(cbTag, "6, 11, fill, default");
 
     cbFilterMovieset = new JCheckBox("");
@@ -492,22 +510,24 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallTagsArray() {
     // remember old value and remove listener
-    Object oldValue = cbTag.getSelectedItem();
-    cbTag.removeActionListener(actionFilter);
+    List<Object> oldValues = cbTag.getModel().getCheckeds();
+    cbTag.getModel().removeListCheckListener(listCheckListener);
 
-    // build up the new cb
-    cbTag.removeAllItems();
+    // build up the new checkbox
+    cbTag.getModel().clear();
     List<String> tags = new ArrayList<>(movieList.getTagsInMovies());
     Collections.sort(tags);
     for (String tag : tags) {
-      cbTag.addItem(tag);
+      cbTag.getModel().addElement(tag);
     }
 
     // re-set the value and readd action listener
-    if (oldValue != null) {
-      cbTag.setSelectedItem(oldValue);
+    if (oldValues != null) {
+      for (Object obj : oldValues) {
+        cbTag.getModel().setCheck(obj);
+      }
     }
-    cbTag.addActionListener(actionFilter);
+    cbTag.getModel().addListCheckListener(listCheckListener);
   }
 
   private void buildAndInstallCodecArray() {
@@ -650,10 +670,8 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
       // filter by tag
       if (cbFilterTag.isSelected()) {
-        String tag = (String) cbTag.getSelectedItem();
-        if (StringUtils.isNotBlank(tag)) {
-          searchOptions.put(MovieSearchOptions.TAG, tag);
-        }
+        List<Object> tags = cbTag.getModel().getCheckeds();
+        searchOptions.put(MovieSearchOptions.TAG, tags);
       }
 
       // filter by movie in movieset

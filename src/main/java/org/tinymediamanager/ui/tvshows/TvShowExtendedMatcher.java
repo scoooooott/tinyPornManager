@@ -43,8 +43,20 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 public class TvShowExtendedMatcher {
 
   public enum SearchOptions {
-    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MEDIA_SOURCE, MISSING_METADATA, MISSING_ARTWORK,
-    MISSING_SUBTITLES, NEW_EPISODES
+    TEXT,
+    WATCHED,
+    GENRE,
+    CAST,
+    TAG,
+    VIDEO_FORMAT,
+    VIDEO_CODEC,
+    AUDIO_CODEC,
+    DATASOURCE,
+    MEDIA_SOURCE,
+    MISSING_METADATA,
+    MISSING_ARTWORK,
+    MISSING_SUBTITLES,
+    NEW_EPISODES
   }
 
   Map<SearchOptions, Object> searchOptions = Collections.synchronizedMap(new HashMap<SearchOptions, Object>());
@@ -138,8 +150,8 @@ public class TvShowExtendedMatcher {
       }
     }
 
-    if (searchOptions.containsKey(SearchOptions.TAG)) {
-      if (!filterTag(tvShow, (String) searchOptions.get(SearchOptions.TAG))) {
+    if (searchOptions.containsKey(SearchOptions.TAG) && searchOptions.get(SearchOptions.TAG) instanceof List) {
+      if (!filterTag(tvShow, (List) searchOptions.get(SearchOptions.TAG))) {
         return false;
       }
     }
@@ -221,8 +233,8 @@ public class TvShowExtendedMatcher {
       }
     }
 
-    if (searchOptions.containsKey(SearchOptions.TAG)) {
-      if (!filterTag(season, (String) searchOptions.get(SearchOptions.TAG))) {
+    if (searchOptions.containsKey(SearchOptions.TAG) && searchOptions.get(SearchOptions.TAG) instanceof List) {
+      if (!filterTag(season, (List) searchOptions.get(SearchOptions.TAG))) {
         return false;
       }
     }
@@ -304,8 +316,8 @@ public class TvShowExtendedMatcher {
       }
     }
 
-    if (searchOptions.containsKey(SearchOptions.TAG)) {
-      if (!filterTag(episode, (String) searchOptions.get(SearchOptions.TAG))) {
+    if (searchOptions.containsKey(SearchOptions.TAG) && searchOptions.get(SearchOptions.TAG) instanceof List) {
+      if (!filterTag(episode, (List) searchOptions.get(SearchOptions.TAG))) {
         return false;
       }
     }
@@ -447,16 +459,16 @@ public class TvShowExtendedMatcher {
     return matchesGenre(episode.getTvShow(), genre);
   }
 
-  private boolean filterTag(TvShow tvShow, String tag) {
-    return matchesTag(tvShow, new ArrayList<>(tvShow.getEpisodes()), tag);
+  private boolean filterTag(TvShow tvShow, List<?> tags) {
+    return matchesTag(tvShow, new ArrayList<>(tvShow.getEpisodes()), tags);
   }
 
-  private boolean filterTag(TvShowSeason season, String tag) {
-    return matchesTag(season.getTvShow(), new ArrayList<>(season.getEpisodes()), tag);
+  private boolean filterTag(TvShowSeason season, List<?> tags) {
+    return matchesTag(season.getTvShow(), new ArrayList<>(season.getEpisodes()), tags);
   }
 
-  private boolean filterTag(TvShowEpisode episode, String tag) {
-    return matchesTag(episode.getTvShow(), Arrays.asList(episode), tag);
+  private boolean filterTag(TvShowEpisode episode, List<?> tags) {
+    return matchesTag(episode.getTvShow(), Arrays.asList(episode), tags);
   }
 
   private boolean filterVideoCodec(TvShow tvShow, String codec) {
@@ -611,15 +623,32 @@ public class TvShowExtendedMatcher {
     return false;
   }
 
-  private boolean matchesTag(TvShow tvShow, List<TvShowEpisode> episodes, String tag) {
+  private boolean matchesTag(TvShow tvShow, List<TvShowEpisode> episodes, List<?> tags) {
+    List<String> cleanedTags = new ArrayList<>();
+
+    // cleanup the tags list
+    for (Object obj : tags) {
+      if (obj instanceof String && StringUtils.isNotBlank((String) obj)) {
+        cleanedTags.add((String) obj);
+      }
+    }
+
     // search tag in the TV show
-    if (tvShow.getTags().contains(tag)) {
+    // special check for empty tags
+    if (cleanedTags.isEmpty()) {
+      return tvShow.getTags().isEmpty();
+    }
+    if (tvShow.getTags().containsAll(cleanedTags)) {
       return true;
     }
 
     // search tag in the episodes
     for (TvShowEpisode episode : episodes) {
-      if (episode.getTags().contains(tag)) {
+      // special check for empty tags
+      if (cleanedTags.isEmpty()) {
+        return episode.getTags().isEmpty();
+      }
+      if (episode.getTags().containsAll(cleanedTags)) {
         return true;
       }
     }
