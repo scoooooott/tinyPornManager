@@ -16,11 +16,13 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Graphics;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -38,17 +40,27 @@ public class ActorImageLabel extends ImageLabel {
     setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
   }
 
-  public void setActor(MovieActor actor) {
+  public void setActor(Person actor) {
     if (actor != null) {
-      if (StringUtils.isNotBlank(actor.getThumbPath())) {
-        File actorThumb = new File(actor.getThumbPath());
-        if (actorThumb.exists()) {
-          setImagePath(actorThumb.getPath());
+
+      // set file (or cached one) if existent
+      if (StringUtils.isNotBlank(actor.getEntityRoot())) {
+        Path p = ImageCache.getCachedFile(actor.getStoragePath());
+        if (p != null && Files.exists(p)) {
+          setImagePath(p.toString());
           return;
         }
       }
 
-      setImageUrl(actor.getThumbUrl());
+      // no file found, try to cache url
+      Path p = ImageCache.getCachedFile(actor.getThumbUrl());
+      if (p != null) {
+        setImagePath(p.toString());
+      }
+      else {
+        // fallback - set url
+        setImageUrl(actor.getThumbUrl());
+      }
     }
   }
 

@@ -29,8 +29,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -52,8 +52,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -88,8 +88,8 @@ import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -885,7 +885,6 @@ public class MovieEditorDialog extends TmmDialog {
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
         actor.setThumbUrl(origCast.getThumbUrl());
-        actor.setThumbPath(origCast.getThumbPath());
         cast.add(actor);
       }
 
@@ -894,7 +893,6 @@ public class MovieEditorDialog extends TmmDialog {
         producer.setName(origProducer.getName());
         producer.setRole(origProducer.getRole());
         producer.setThumbUrl(origProducer.getThumbUrl());
-        producer.setThumbPath(origProducer.getThumbPath());
         producers.add(producer);
       }
 

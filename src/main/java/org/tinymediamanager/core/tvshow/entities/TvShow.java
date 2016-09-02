@@ -80,9 +80,9 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -574,7 +574,7 @@ public class TvShow extends MediaEntity {
             TvShowActor actor = new TvShowActor();
             actor.setName(member.getName());
             actor.setCharacter(member.getCharacter());
-            actor.setThumb(member.getImageUrl());
+            actor.setThumbUrl(member.getImageUrl());
             actors.add(actor);
             break;
 

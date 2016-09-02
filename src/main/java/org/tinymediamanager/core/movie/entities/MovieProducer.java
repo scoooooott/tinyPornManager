@@ -15,120 +15,24 @@
  */
 package org.tinymediamanager.core.movie.entities;
 
-import static org.tinymediamanager.core.Constants.NAME;
-import static org.tinymediamanager.core.Constants.ROLE;
-import static org.tinymediamanager.core.Constants.THUMB_PATH;
-import static org.tinymediamanager.core.Constants.THUMB_URL;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tinymediamanager.core.AbstractModelObject;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.tinymediamanager.core.entities.Person;
 
 /**
  * The Class MovieProducer. This class is representing a movie producer
  * 
  * @author Manuel Laggner
  */
-public class MovieProducer extends AbstractModelObject {
-  public static final String ACTOR_DIR = ".actors";
-
-  @JsonProperty
-  private String             name      = "";
-  @JsonProperty
-  private String             role      = "";
-  @JsonProperty
-  private String             thumbUrl  = "";
-  @JsonProperty
-  private String             thumbPath = "";
-
+public class MovieProducer extends Person {
   public MovieProducer() {
+    super();
   }
 
   public MovieProducer(String name) {
-    this.name = name;
+    super(name);
   }
 
   public MovieProducer(String name, String role) {
-    this.name = name;
-    this.role = role;
-  }
-
-  public void setName(String newValue) {
-    String oldValue = name;
-    name = newValue;
-    firePropertyChange(NAME, oldValue, newValue);
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getRole() {
-    return role;
-  }
-
-  public void setRole(String newValue) {
-    String oldValue = role;
-    role = newValue;
-    firePropertyChange(ROLE, oldValue, newValue);
-  }
-
-  public String getThumbUrl() {
-    return thumbUrl;
-  }
-
-  public void setThumbUrl(String newValue) {
-    String oldValue = this.thumbUrl;
-    thumbUrl = newValue;
-    firePropertyChange(THUMB_URL, oldValue, newValue);
-  }
-
-  public String getThumbPath() {
-    return thumbPath;
-  }
-
-  public void setThumbPath(String newValue) {
-    String oldValue = this.thumbPath;
-    thumbPath = newValue;
-    firePropertyChange(THUMB_PATH, oldValue, newValue);
-  }
-
-  /**
-   * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
-   * </p>
-   * 
-   * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
-   */
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof MovieProducer)) {
-      return false;
-    }
-
-    MovieProducer cast = (MovieProducer) obj;
-
-    // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder().append(name).append(role).append(thumbUrl).build();
+    super(name);
+    setRole(role);
   }
 }

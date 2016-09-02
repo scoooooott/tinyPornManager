@@ -38,9 +38,11 @@ import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -294,6 +296,47 @@ public class UpgradeTasks {
       }
     }
 
+    if (StrgUtils.compareVersion(v, "2.8.4") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.8.4");
+
+      // Update actors to current structure; add entitiy root and cleanout actor path
+      for (Movie movie : movieList.getMovies()) {
+        for (MovieActor a : movie.getActors()) {
+          if (a.getEntityRoot().isEmpty()) {
+            a.setEntityRoot(movie.getPathNIO().toString());
+            a.setThumbPath("");
+          }
+        }
+        for (MovieProducer a : movie.getProducers()) {
+          if (a.getEntityRoot().isEmpty()) {
+            a.setEntityRoot(movie.getPathNIO().toString());
+            a.setThumbPath("");
+          }
+        }
+        movie.saveToDb();
+      }
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        for (TvShowActor a : tvShow.getActors()) {
+          if (a.getEntityRoot().isEmpty()) {
+            a.setEntityRoot(tvShow.getPathNIO().toString());
+            a.setThumbUrl(a.getThumb());
+            a.setThumbPath("");
+            a.setThumb("");
+          }
+        }
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          for (TvShowActor a : episode.getActors()) {
+            if (a.getEntityRoot().isEmpty()) {
+              a.setEntityRoot(episode.getPathNIO().toString());
+              a.setThumbUrl(a.getThumb());
+              a.setThumbPath("");
+              a.setThumb("");
+            }
+          }
+        }
+        tvShow.saveToDb();
+      }
+    }
   }
 
   /**

@@ -492,7 +492,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     movie.setPath(movieDir.toAbsolutePath().toString());
     movie.setDataSource(dataSource.toString());
 
-    movie.findActorImages(); // TODO: find as MediaFiles
+    // movie.findActorImages(); // TODO: find as MediaFiles
     LOGGER.debug("| store movie into DB as: " + movie.getTitle());
 
     movieList.addMovie(movie);

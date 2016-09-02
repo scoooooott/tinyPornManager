@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -28,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.ui.UTF8Control;
@@ -127,7 +129,13 @@ public class TvShowCastPanel extends JPanel {
           int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
           if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
             TvShowActor actor = actorEventList.get(selectedRow);
-            lblActorImage.setImageUrl(actor.getThumb());
+            Path p = ImageCache.getCachedFile(actor.getThumbUrl());
+            if (p == null) {
+              lblActorImage.setImageUrl(actor.getThumbUrl());
+            }
+            else {
+              lblActorImage.setImagePath(p.toAbsolutePath().toString());
+            }
           }
         }
       }

@@ -48,8 +48,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,8 +71,8 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -500,7 +500,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
           TvShowActor actor = new TvShowActor();
           actor.setName(member.getName());
           actor.setCharacter(member.getCharacter());
-          actor.setThumb(member.getImageUrl());
+          actor.setThumbUrl(member.getImageUrl());
           actors.add(actor);
           break;
 

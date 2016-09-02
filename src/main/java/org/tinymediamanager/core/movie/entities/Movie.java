@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,8 +60,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -102,10 +101,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -532,7 +531,10 @@ public class Movie extends MediaEntity {
 
   /**
    * Searches for actor images, and matches them to our "actors", updating the thumb url
+   * 
+   * @deprecated thumbPath is generated dynamic - no need for storage
    */
+  @Deprecated
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
@@ -1152,23 +1154,26 @@ public class Movie extends MediaEntity {
     }
 
     // third - rename thumbs if needed
-    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
-      Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
+    // actor writing/caching is done somewhere else...
 
-      for (MovieActor actor : actors) {
-        if (StringUtils.isNotBlank(actor.getThumbPath())) {
-          try {
-            // build expected filename
-            Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-            Path oldFile = Paths.get(actor.getThumbPath());
-            Utils.moveFileSafe(oldFile, actorName);
-          }
-          catch (IOException e) {
-            LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-          }
-        }
-      }
-    }
+    // if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    // Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+    //
+    // for (MovieActor actor : actors) {
+    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
+    // try {
+    // // build expected filename
+    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+    // Path oldFile = Paths.get(actor.getThumbPath());
+    // Utils.moveFileSafe(oldFile, actorName);
+    // }
+    // catch (IOException e) {
+    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
+    // }
+    // }
+    // }
+    // }
 
     firePropertyChange(ACTORS, null, this.getActors());
   }
