@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -313,18 +314,34 @@ public class Url {
   }
 
   /**
-   * Download an Url to a file via NIO FileChannel
+   * Download an Url to a file via NIO FileChannel (synchron)
    * 
    * @param file
-   * @throws IOException
-   * @throws InterruptedException
+   * @return successful or not
    */
-  public void download(File file) throws IOException, InterruptedException {
-    InputStream is = getInputStream();
-    ReadableByteChannel rbc = Channels.newChannel(is);
-    FileOutputStream fos = new FileOutputStream(file);
-    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-    fos.close();
+  public boolean download(File file) {
+    try {
+      InputStream is = getInputStream();
+      ReadableByteChannel rbc = Channels.newChannel(is);
+      FileOutputStream fos = new FileOutputStream(file);
+      fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+      fos.close();
+      return true;
+    }
+    catch (IOException | InterruptedException e) {
+      LOGGER.error("Error downloading " + this.url);
+    }
+    return false;
+  }
+
+  /**
+   * Download an Url to a file via NIO FileChannel (synchron)
+   * 
+   * @param file
+   * @return successful or not
+   */
+  public boolean download(Path file) {
+    return download(file.toFile());
   }
 
   /**
