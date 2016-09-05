@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.StreamingUrl;
@@ -112,7 +112,7 @@ public class DownloadTask extends TmmTask {
 
       // if file extension is empty, detect from url, or content type
       String ext = FilenameUtils.getExtension(file.getFileName().toString());
-      if (ext != null && ext.length() > 4) {
+      if (ext != null && ext.length() > 4 || !Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
         ext = ""; // no extension when longer than 4 chars!
       }
       if (ext == null || ext.isEmpty()) {

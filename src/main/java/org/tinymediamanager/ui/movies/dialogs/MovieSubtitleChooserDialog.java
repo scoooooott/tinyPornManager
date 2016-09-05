@@ -43,7 +43,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.japura.gui.CheckComboBox;
@@ -216,6 +215,12 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     panelContent.add(lblLanguageT, "2, 10, right, default");
 
     cbLanguage = new JComboBox<>();
+    cbLanguage.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        searchSubtitle(null, "", tfSearchQuery.getText());
+      }
+    });
     panelContent.add(cbLanguage, "4, 10, fill, default");
 
     final JScrollPane scrollPaneSubs = new JScrollPane();
@@ -464,8 +469,8 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         MovieSubtitleChooserModel model = subtitleEventList.get(row);
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
-          String filename = FilenameUtils.getBaseName(fileToScrape.getFilename()) + "." + model.getLanguage().name();
-          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), movieToScrape.getPathNIO().resolve(filename), movieToScrape);
+          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), fileToScrape.getFileAsPath(), model.getLanguage().name(),
+              movieToScrape);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }
       }
