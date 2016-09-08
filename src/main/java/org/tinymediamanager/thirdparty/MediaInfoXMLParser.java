@@ -61,9 +61,18 @@ public class MediaInfoXMLParser {
    */
   public MiFile getBiggestFile() {
     long biggest = 0L;
+    long longest = 0L;
     MiFile biggestFile = null;
     for (MiFile f : files) {
-      if (f.getFilesize() > biggest) {
+      if (f.getFilesize() == 0) {
+        // check on duration
+        if (f.getDuration() > longest) {
+          longest = f.getDuration();
+          biggestFile = f;
+        }
+      }
+      else if (f.getFilesize() > biggest && f.getFilesize() > 1024 * 1024) {
+        // filesize must be over 1MB to be taken into account
         biggest = f.getFilesize();
         biggestFile = f;
       }
