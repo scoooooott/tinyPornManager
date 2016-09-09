@@ -19,6 +19,8 @@ import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
+
 /**
  * Interface ITmmUIModule to access UI Modules easily
  * 
@@ -26,27 +28,30 @@ import javax.swing.JPopupMenu;
  */
 public interface ITmmUIModule {
 
-  public String getModuleId();
+  String getModuleId();
 
-  public JPanel getTabPanel();
+  JPanel getTabPanel();
 
-  public String getTabTitle();
+  String getTabTitle();
 
-  public JPanel getDetailPanel();
+  JPanel getDetailPanel();
 
-  public Action getSearchAction();
+  Action getSearchAction();
 
-  public JPopupMenu getSearchMenu();
+  JPopupMenu getSearchMenu();
 
-  public Action getEditAction();
+  Action getEditAction();
 
-  public JPopupMenu getEditMenu();
+  JPopupMenu getEditMenu();
 
-  public Action getUpdateAction();
+  Action getUpdateAction();
 
-  public JPopupMenu getUpdateMenu();
+  JPopupMenu getUpdateMenu();
 
-  public Action getExportAction();
+  Action getExportAction();
 
-  public JPanel getSettingsPanel();
+  @Deprecated
+  JPanel getSettingsPanel();
+
+  TmmSettingsNode getSettingsNode();
 }

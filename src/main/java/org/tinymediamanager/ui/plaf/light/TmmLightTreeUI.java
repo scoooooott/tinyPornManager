@@ -45,6 +45,39 @@ public class TmmLightTreeUI extends BaseTreeUI {
   }
 
   @Override
+  public void paint(Graphics g, JComponent c) {
+
+    final Insets insets = tree.getInsets();
+    final int w = tree.getWidth() - insets.left - insets.right;
+    final int h = tree.getHeight() - insets.top - insets.bottom;
+    final int x = insets.left;
+    int y = insets.top;
+
+    // paint row background across the whole tree
+    final int nItems = tree.getRowCount();
+    int rowHeight = 17; // A default for empty trees
+    for (int i = 0; i < nItems; i++, y += rowHeight) {
+      Rectangle rect = tree.getRowBounds(i);
+      rowHeight = rect != null ? rect.height : rowHeight;
+      g.setColor(getSelectionModel().isRowSelected(i) ? AbstractLookAndFeel.getSelectionBackgroundColor() : AbstractLookAndFeel.getBackgroundColor());
+      g.fillRect(x, y, w, rowHeight);
+    }
+
+    final int remainder = insets.top + h - y;
+    if (remainder > 0) {
+      g.setColor(AbstractLookAndFeel.getBackgroundColor());
+      g.fillRect(x, y, w, remainder);
+    }
+
+    tree.setOpaque(false);
+    super.paint(g, c);
+    tree.setOpaque(true);
+  }
+
+  /*
+   * expand the tree background to the whole tree width
+   */
+  @Override
   protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
       boolean hasBeenExpanded, boolean isLeaf) {
     if (editingComponent != null && editingRow == row) {
@@ -54,19 +87,6 @@ public class TmmLightTreeUI extends BaseTreeUI {
     bounds.width = tree.getWidth() - bounds.x;
     super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
   }
-
-  @Override
-  protected void paintExpandControl(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
-      boolean hasBeenExpanded, boolean isLeaf) {
-
-    // draw selection background behind expand control
-    Graphics g2 = g.create();
-    g2.setColor(getSelectionModel().isRowSelected(row) ? AbstractLookAndFeel.getTheme().getSelectionBackgroundColor()
-        : AbstractLookAndFeel.getTheme().getBackgroundColor());
-    g2.fillRect(clipBounds.x, bounds.y, bounds.x, bounds.height);
-
-    super.paintExpandControl(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
-  };
 
   @Override
   protected void paintVerticalLine(Graphics g, JComponent c, int x, int top, int bottom) {
@@ -94,8 +114,6 @@ public class TmmLightTreeUI extends BaseTreeUI {
    * The listener interface for receiving rowSelection events. The class that is interested in processing a rowSelection event implements this
    * interface, and the object created with that class is registered with a component using the component's <code>addRowSelectionListener
    * <code> method. When the rowSelection event occurs, that object's appropriate method is invoked.
-   * 
-   * @see RowSelectionEvent
    */
   private class RowSelectionListener extends MouseAdapter {
     @Override

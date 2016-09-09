@@ -46,7 +46,7 @@ import com.jgoodies.forms.layout.FormLayout;
  *          the node type
  */
 public class TmmTree<E extends TmmTreeNode> extends JTree {
-  private static final long              serialVersionUID = 4918691644082882866L;
+  private static final long        serialVersionUID = 4918691644082882866L;
 
   protected Set<ITmmTreeFilter<E>> treeFilters;
   protected PropertyChangeListener filterChangeListener;
@@ -233,7 +233,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
   /*
    * helper classes
    */
-  static class BottomBorderBorder extends AbstractBorder implements UIResource {
+  public static class BottomBorderBorder extends AbstractBorder implements UIResource {
     private static final long  serialVersionUID = -1431631265848685069L;
     public static final Color  COLOR            = new Color(211, 211, 211);
     private static final Color COLOR2           = new Color(248, 248, 248);

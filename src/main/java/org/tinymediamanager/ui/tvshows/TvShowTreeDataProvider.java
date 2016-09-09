@@ -19,11 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -45,8 +41,6 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   private final PropertyChangeListener   tvShowListPropertyChangeListener;
   private final PropertyChangeListener   tvShowPropertyChangeListener;
   private final PropertyChangeListener   episodePropertyChangeListener;
-  protected final ReadWriteLock          readWriteLock  = new ReentrantReadWriteLock();
-  private final Map<Object, TmmTreeNode> nodeMap        = new HashMap<>();
 
   private final TvShowList               tvShowList     = TvShowList.getInstance();
 
@@ -201,26 +195,6 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
   @Override
   public Comparator<TmmTreeNode> getTreeComparator() {
     return super.getTreeComparator();
-  }
-
-  private TmmTreeNode getNodeFromCache(Object obj) {
-    readWriteLock.readLock().lock();
-    TmmTreeNode node = nodeMap.get(obj);
-    readWriteLock.readLock().unlock();
-    return node;
-  }
-
-  private void putNodeToCache(Object obj, TmmTreeNode node) {
-    readWriteLock.writeLock().lock();
-    nodeMap.put(obj, node);
-    readWriteLock.writeLock().unlock();
-  }
-
-  private TmmTreeNode removeNodeFromCache(Object obj) {
-    readWriteLock.writeLock().lock();
-    TmmTreeNode node = nodeMap.remove(obj);
-    readWriteLock.writeLock().unlock();
-    return node;
   }
 
   private TmmTreeNode addTvShow(TvShow tvShow) {

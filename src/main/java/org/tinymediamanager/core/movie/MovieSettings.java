@@ -35,9 +35,9 @@ import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.movie.MovieSearchOptions.MovieSearchOptionsAdapter;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.entities.CountryCode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 
 /**
  * The Class MovieSettings.
@@ -139,7 +139,7 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String>              movieSkipFolders                         = ObservableCollections.observableList(new ArrayList<String>());
 
-  private final List<String>              movieTableHiddenColumns                  = ObservableCollections.observableList(new ArrayList<>());
+  private final List<String>              movieTableHiddenColumns                  = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
   private boolean                         detectMovieMultiDir                      = false;

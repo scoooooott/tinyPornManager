@@ -33,6 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MainTabbedPane;
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
@@ -63,7 +64,11 @@ import org.tinymediamanager.ui.tvshows.panels.season.TvShowSeasonMediaFilesPanel
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowArtworkPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowRenamerSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsContainerPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -96,6 +101,8 @@ public class TvShowUIModule implements ITmmUIModule {
   private JPopupMenu                      updatePopupMenu;
   private JPopupMenu                      scrapePopupMenu;
   private JPopupMenu                      editPopupMenu;
+
+  private TmmSettingsNode                 settingsNode;
 
   private TvShowUIModule() {
     tvShowSelectionModel = new TvShowSelectionModel();
@@ -151,6 +158,13 @@ public class TvShowUIModule implements ITmmUIModule {
     createPopupMenu();
 
     settingsPanel = new TvShowSettingsContainerPanel();
+
+    // build settings node
+    settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.tvshow"), null);//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.general"), new TvShowSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));//$NON-NLS-1$
   }
 
   public static TvShowUIModule getInstance() {
@@ -226,6 +240,11 @@ public class TvShowUIModule implements ITmmUIModule {
   @Override
   public JPanel getSettingsPanel() {
     return settingsPanel;
+  }
+
+  @Override
+  public TmmSettingsNode getSettingsNode() {
+    return settingsNode;
   }
 
   private void createActions() {

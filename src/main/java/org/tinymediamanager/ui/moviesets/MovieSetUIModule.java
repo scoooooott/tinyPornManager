@@ -37,6 +37,7 @@ import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
 import org.tinymediamanager.ui.moviesets.panels.MovieSetTreePanel;
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 public class MovieSetUIModule implements ITmmUIModule {
   private final static ResourceBundle  BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -148,6 +149,11 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   @Override
   public JPanel getSettingsPanel() {
+    return null;
+  }
+
+  @Override
+  public TmmSettingsNode getSettingsNode() {
     return null;
   }
 

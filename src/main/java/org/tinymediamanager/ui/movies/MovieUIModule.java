@@ -61,15 +61,24 @@ import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieListPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
+import org.tinymediamanager.ui.movies.settings.MovieDatasourceSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieImageSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieRenamerSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieScraperSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSettingsContainerPanel;
+import org.tinymediamanager.ui.movies.settings.MovieSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieSubtitleSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieTrailerSettingsPanel;
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * @author Manuel Laggner
+ * The class MovieUIModule is the general access point to all movie related UI operations
  * 
+ * @author Manuel Laggner
  */
 public class MovieUIModule implements ITmmUIModule {
   private final static ResourceBundle    BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -94,6 +103,8 @@ public class MovieUIModule implements ITmmUIModule {
   private JPopupMenu                     updatePopupMenu;
   private JPopupMenu                     searchPopupMenu;
   private JPopupMenu                     editPopupMenu;
+
+  private TmmSettingsNode                settingsNode;
 
   private MovieUIModule() {
     actionMap = new HashMap<>();
@@ -143,6 +154,15 @@ public class MovieUIModule implements ITmmUIModule {
     registerAccelerators();
 
     listPanel.setPopupMenu(popupMenu);
+
+    // create settings node
+    settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.datasourceandnfo"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel())); //$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.images"), new MovieImageSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new MovieTrailerSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new MovieSubtitleSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new MovieRenamerSettingsPanel()));//$NON-NLS-1$
   }
 
   public static MovieUIModule getInstance() {
@@ -340,5 +360,10 @@ public class MovieUIModule implements ITmmUIModule {
       settingsPanel = new MovieSettingsContainerPanel();
     }
     return settingsPanel;
+  }
+
+  @Override
+  public TmmSettingsNode getSettingsNode() {
+    return settingsNode;
   }
 }

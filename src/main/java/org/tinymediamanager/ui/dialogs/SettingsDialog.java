@@ -16,29 +16,37 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.MainTabbedPane;
-import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.settings.TmmSettingsContainerPanel;
-import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+import org.tinymediamanager.ui.components.tree.TmmTree;
+import org.tinymediamanager.ui.components.tree.TmmTreeNode;
+import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
+import org.tinymediamanager.ui.settings.TmmSettingsDataProvider;
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class SettingsDialog. For displaying all settings in a dialog
@@ -46,10 +54,14 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class SettingsDialog extends TmmDialog {
-  private static final long           serialVersionUID = 2435834806519338339L;
+  private static final long              serialVersionUID = 2435834806519338339L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static JDialog              instance;
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static JDialog                 instance;
+
+  private TmmTree<TmmTreeNode>           tree;
+  private JScrollPane                    scrollPaneRight;
+  private TmmTreeTextFilter<TmmTreeNode> tfFilter;
 
   /**
    * Get the single instance of the settings dialog
@@ -66,29 +78,75 @@ public class SettingsDialog extends TmmDialog {
   private SettingsDialog() {
     super(BUNDLE.getString("tmm.settings"), "settings"); //$NON-NLS-1$
 
-    Rectangle bounds = MainWindow.getActiveInstance().getBounds();
-    setBounds(bounds.x + (bounds.width / 40), bounds.y + (bounds.height / 20), 1115, 665);
+    initComponents();
 
-    JPanel containerPanel = new JPanel();
-    containerPanel.putClientProperty("class", "rootPanel");
-    getContentPane().add(containerPanel, BorderLayout.CENTER);
-    containerPanel
-        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("12dlu"), ColumnSpec.decode("default:grow"), ColumnSpec.decode("12dlu"), },
-            new RowSpec[] { RowSpec.decode("12dlu"), RowSpec.decode("default:grow"), }));
+    //
+    // JPanel containerPanel = new JPanel();
+    // containerPanel.putClientProperty("class", "rootPanel");
+    // getContentPane().add(containerPanel, BorderLayout.CENTER);
+    // containerPanel
+    // .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("12dlu"), ColumnSpec.decode("default:grow"), ColumnSpec.decode("12dlu"), },
+    // new RowSpec[] { RowSpec.decode("12dlu"), RowSpec.decode("default:grow"), }));
+    // {
+    // // JPanel panelSettings = new SettingsPanel();
+    // // getContentPane().add(panelSettings, BorderLayout.CENTER);
+    // MainTabbedPane panelSettings = new MainTabbedPane();
+    // containerPanel.add(panelSettings, "2, 2, fill, fill");
+    //
+    // // General settings
+    // panelSettings.addTab(BUNDLE.getString("Settings.general"), new TmmSettingsContainerPanel()); //$NON-NLS-1$
+    //
+    // // Movie settings
+    // panelSettings.addTab(BUNDLE.getString("Settings.movies"), MovieUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
+    //
+    // // TV show settings
+    // panelSettings.addTab(BUNDLE.getString("Settings.tvshow"), TvShowUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
+    // }
+
+    tree.addFilter(tfFilter);
+    tree.setRootVisible(false);
+    tree.setShowsRootHandles(true);
+    tree.setRowHeight(0);
+    tree.setCellRenderer(new SettingsTreeCellRenderer());
+
+    tree.addTreeSelectionListener(e -> {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+      if (node != null) {
+        // click on a tv show
+        if (node.getUserObject() instanceof TmmSettingsNode) {
+          TmmSettingsNode tmmSettingsNode = (TmmSettingsNode) node.getUserObject();
+          scrollPaneRight.setViewportView(tmmSettingsNode.getComponent());
+          revalidate();
+        }
+      }
+    });
+  }
+
+  private void initComponents() {
     {
-      // JPanel panelSettings = new SettingsPanel();
-      // getContentPane().add(panelSettings, BorderLayout.CENTER);
-      MainTabbedPane panelSettings = new MainTabbedPane();
-      containerPanel.add(panelSettings, "2, 2, fill, fill");
+      JSplitPane splitPane = new JSplitPane();
+      getContentPane().add(splitPane, BorderLayout.CENTER);
 
-      // General settings
-      panelSettings.addTab(BUNDLE.getString("Settings.general"), new TmmSettingsContainerPanel()); //$NON-NLS-1$
+      JPanel panelLeft = new JPanel();
+      splitPane.setLeftComponent(panelLeft);
+      panelLeft.setLayout(new MigLayout("", "[200lp,grow]", "[][600lp,grow]"));
+      {
+        tfFilter = new TmmTreeTextFilter<>();
+        panelLeft.add(tfFilter, "cell 0 0,grow");
+        tfFilter.setColumns(10);
+      }
 
-      // Movie settings
-      panelSettings.addTab(BUNDLE.getString("Settings.movies"), MovieUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
+      JScrollPane scrollPaneLeft = new JScrollPane();
+      panelLeft.add(scrollPaneLeft, "cell 0 1,grow");
 
-      // TV show settings
-      panelSettings.addTab(BUNDLE.getString("Settings.tvshow"), TvShowUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
+      tree = new TmmTree<>(new TmmSettingsDataProvider());
+      scrollPaneLeft.setViewportView(tree);
+
+      JPanel panelRight = new JPanel();
+      splitPane.setRightComponent(panelRight);
+      panelRight.setLayout(new MigLayout("", "[800lp,grow]", "[500lp,grow]"));
+      scrollPaneRight = new JScrollPane();
+      panelRight.add(scrollPaneRight, "cell 0 0,grow");
     }
     {
       JPanel panelButtons = new JPanel();
@@ -108,7 +166,7 @@ public class SettingsDialog extends TmmDialog {
   private class CloseAction extends AbstractAction {
     private static final long serialVersionUID = 2386371884117941373L;
 
-    public CloseAction() {
+    CloseAction() {
       putValue(NAME, BUNDLE.getString("Button.close")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
@@ -128,8 +186,23 @@ public class SettingsDialog extends TmmDialog {
     super.setVisible(visible);
   }
 
-  @Override
-  public void pack() {
-    // do nothing for better visibility
+  private class SettingsTreeCellRenderer implements TreeCellRenderer {
+
+    private JLabel label;
+
+    SettingsTreeCellRenderer() {
+      label = new JLabel();
+      label.setForeground(UIManager.getColor("Tree.selectionForeground"));
+      TmmFontHelper.changeFont(label, Font.BOLD);
+      label.setBorder(new CompoundBorder(new TmmTree.BottomBorderBorder(), new EmptyBorder(5, 0, 5, 0)));
+    }
+
+    @Override
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
+        boolean hasFocus) {
+      label.setText(value.toString());
+      label.invalidate();
+      return label;
+    }
   }
 }

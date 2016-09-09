@@ -39,4 +39,9 @@ public class TmmTreeNode extends DefaultMutableTreeNode {
   public TmmTreeDataProvider getDataProvider() {
     return dataProvider;
   }
+
+  @Override
+  public String toString() {
+    return userObject.toString();
+  }
 }

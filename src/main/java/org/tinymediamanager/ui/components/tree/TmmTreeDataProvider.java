@@ -16,8 +16,12 @@
 package org.tinymediamanager.ui.components.tree;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.tinymediamanager.core.AbstractModelObject;
 
@@ -29,12 +33,14 @@ import org.tinymediamanager.core.AbstractModelObject;
  * @param <E>
  */
 public abstract class TmmTreeDataProvider<E extends TmmTreeNode> extends AbstractModelObject {
-  public final static String       NODE_INSERTED  = "nodeInserted";
-  public final static String       NODE_CHANGED   = "nodeChanged";
-  public final static String       NODE_REMOVED   = "nodeRemoved";
+  public final static String               NODE_INSERTED  = "nodeInserted";
+  public final static String               NODE_CHANGED   = "nodeChanged";
+  public final static String               NODE_REMOVED   = "nodeRemoved";
 
-  protected Set<ITmmTreeFilter<E>> treeFilters;
-  protected Comparator<E>          treeComparator = null;
+  protected Set<ITmmTreeFilter<E>>         treeFilters;
+  protected Comparator<E>                  treeComparator = null;
+  protected final ReadWriteLock            readWriteLock  = new ReentrantReadWriteLock();
+  protected final Map<Object, TmmTreeNode> nodeMap        = new HashMap<>();
 
   /**
    * Get all tree filters assigned to this data provider
@@ -72,6 +78,26 @@ public abstract class TmmTreeDataProvider<E extends TmmTreeNode> extends Abstrac
    */
   public void setTreeComparator(Comparator<E> treeComparator) {
     this.treeComparator = treeComparator;
+  }
+
+  protected TmmTreeNode getNodeFromCache(Object obj) {
+    readWriteLock.readLock().lock();
+    TmmTreeNode node = nodeMap.get(obj);
+    readWriteLock.readLock().unlock();
+    return node;
+  }
+
+  protected void putNodeToCache(Object obj, TmmTreeNode node) {
+    readWriteLock.writeLock().lock();
+    nodeMap.put(obj, node);
+    readWriteLock.writeLock().unlock();
+  }
+
+  protected TmmTreeNode removeNodeFromCache(Object obj) {
+    readWriteLock.writeLock().lock();
+    TmmTreeNode node = nodeMap.remove(obj);
+    readWriteLock.writeLock().unlock();
+    return node;
   }
 
   /**

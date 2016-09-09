@@ -29,6 +29,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowSettingsContainerPanel extends JPanel {
   private static final long           serialVersionUID = 6923587105310213302L;
   /**

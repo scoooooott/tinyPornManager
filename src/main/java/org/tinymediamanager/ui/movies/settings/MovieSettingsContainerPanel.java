@@ -29,6 +29,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieSettingsContainerPanel extends JPanel {
   private static final long           serialVersionUID = -1191910643362891059L;
   /**
@@ -43,7 +44,7 @@ public class MovieSettingsContainerPanel extends JPanel {
       add(tabbedPanePages, BorderLayout.CENTER);
       {
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(new MovieSettingsPanel());
+        scrollPane.setViewportView(new MovieDatasourceSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.general"), null, scrollPane, null); //$NON-NLS-1$
       }
       {

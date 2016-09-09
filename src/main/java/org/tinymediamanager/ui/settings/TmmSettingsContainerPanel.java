@@ -30,6 +30,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TmmSettingsContainerPanel extends JPanel {
   private static final long           serialVersionUID = 2489431064154526834L;
   /** @wbp.nls.resourceBundle messages */
