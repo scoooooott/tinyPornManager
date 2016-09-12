@@ -361,7 +361,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
         path = MovieRenamer.createDestinationForFoldername(tfMoviePath.getText(), movie);
       }
       else {
-        path = movie.getPath();
+        // the old folder name
+        path = movie.getPathNIO().getFileName().toString();
       }
 
       if (StringUtils.isNotBlank(tfMovieFilename.getText())) {
