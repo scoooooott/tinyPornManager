@@ -115,7 +115,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterAudioCodec;
   private JComboBox                    cbAudioCodec;
   private JCheckBox                    cbFilterDatasource;
-  private JComboBox                    cbDatasource;
+  private CheckComboBox                cbDatasource;
   private JCheckBox                    cbFilterMissingMetadata;
   private JCheckBox                    cbFilterMissingArtwork;
   private JCheckBox                    cbFilterMissingSubtitles;
@@ -160,12 +160,12 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     listCheckListener = new ListCheckListener() {
       @Override
       public void removeCheck(ListEvent event) {
-        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
       }
 
       @Override
       public void addCheck(ListEvent event) {
-        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
       }
     };
 
@@ -399,9 +399,11 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblDatasource);
     add(lblDatasource, "4, 17, right, default");
 
-    cbDatasource = new SmallComboBox();
-    setComponentFont(cbDatasource);
-    cbDatasource.setAction(actionFilter);
+    cbDatasource = new SmallCheckComboBox();
+    cbDatasource.setTextFor(CheckComboBox.NONE, BUNDLE.getString("checkcombobox.selected.none")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("checkcombobox.selected.multiple")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.ALL, BUNDLE.getString("checkcombobox.selected.all")); //$NON-NLS-1$
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
     add(cbDatasource, "6, 17, fill, default");
 
     cbFilterMediaSource = new JCheckBox("");
@@ -570,22 +572,24 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
   private void buildAndInstallDatasourceArray() {
     // remember old value and remove listener
-    Object oldValue = cbDatasource.getSelectedItem();
-    cbDatasource.removeActionListener(actionFilter);
+    List<Object> oldValues = cbDatasource.getModel().getCheckeds();
+    cbDatasource.getModel().removeListCheckListener(listCheckListener);
 
-    // build up the new cb
-    cbDatasource.removeAllItems();
+    // build up the new checkbox
+    cbDatasource.getModel().clear();
     List<String> datasources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
     Collections.sort(datasources);
     for (String datasource : datasources) {
-      cbDatasource.addItem(datasource);
+      cbDatasource.getModel().addElement(datasource);
     }
 
     // re-set the value and readd action listener
-    if (oldValue != null) {
-      cbDatasource.setSelectedItem(oldValue);
+    if (oldValues != null) {
+      for (Object obj : oldValues) {
+        cbDatasource.getModel().setCheck(obj);
+      }
     }
-    cbDatasource.addActionListener(actionFilter);
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
   }
 
   private void buildAndInstallCertificationArray() {
@@ -708,10 +712,8 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
       // filter by datasource
       if (cbFilterDatasource.isSelected()) {
-        String datasource = (String) cbDatasource.getSelectedItem();
-        if (StringUtils.isNotBlank(datasource)) {
-          searchOptions.put(MovieSearchOptions.DATASOURCE, datasource);
-        }
+        List<Object> datasources = cbDatasource.getModel().getCheckeds();
+        searchOptions.put(MovieSearchOptions.DATASOURCE, datasources);
       }
 
       // filer by missing metadata

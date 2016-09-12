@@ -83,7 +83,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   /** UI components */
   private JCheckBox                    cbFilterDatasource;
-  private JComboBox                    cbDatasource;
+  private CheckComboBox                cbDatasource;
   private JCheckBox                    cbFilterCast;
   private JTextField                   tfCastMember;
   private JCheckBox                    cbFilterMissingMetadata;
@@ -125,12 +125,12 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     listCheckListener = new ListCheckListener() {
       @Override
       public void removeCheck(ListEvent event) {
-        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
       }
 
       @Override
       public void addCheck(ListEvent event) {
-        actionFilter.actionPerformed(new ActionEvent(cbTag, 1, "checked"));
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
       }
     };
 
@@ -280,9 +280,11 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblDatasource);
     add(lblDatasource, "4, 12, right, default");
 
-    cbDatasource = new SmallComboBox();
-    setComponentFont(cbDatasource);
-    cbDatasource.setAction(actionFilter);
+    cbDatasource = new SmallCheckComboBox();
+    cbDatasource.setTextFor(CheckComboBox.NONE, BUNDLE.getString("checkcombobox.selected.none")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("checkcombobox.selected.multiple")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.ALL, BUNDLE.getString("checkcombobox.selected.all")); //$NON-NLS-1$
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
     add(cbDatasource, "6, 12, fill, default");
 
     cbFilterMediaSource = new JCheckBox("");
@@ -350,12 +352,25 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   }
 
   private void buildAndInstallDatasourceArray() {
-    cbDatasource.removeAllItems();
+    // remember old value and remove listener
+    List<Object> oldValues = cbDatasource.getModel().getCheckeds();
+    cbDatasource.getModel().removeListCheckListener(listCheckListener);
+
+    // build up the new checkbox
+    cbDatasource.getModel().clear();
     List<String> datasources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
-    Collections.sort(datasources);
+
     for (String datasource : datasources) {
-      cbDatasource.addItem(datasource);
+      cbDatasource.getModel().addElement(datasource);
     }
+
+    // re-set the value and readd action listener
+    if (oldValues != null) {
+      for (Object obj : oldValues) {
+        cbDatasource.getModel().setCheck(obj);
+      }
+    }
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
   }
 
   private void buildAndInstallTagsArray() {
@@ -435,10 +450,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
       // filter by datasource
       if (cbFilterDatasource.isSelected()) {
-        String datasource = (String) cbDatasource.getSelectedItem();
-        if (StringUtils.isNotBlank(datasource)) {
-          tvShowTreeModel.setFilter(SearchOptions.DATASOURCE, datasource);
-        }
+        List<Object> datasources = cbDatasource.getModel().getCheckeds();
+        tvShowTreeModel.setFilter(SearchOptions.DATASOURCE, datasources);
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.DATASOURCE);

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -96,8 +95,8 @@ public class TvShowExtendedMatcher {
       }
     }
 
-    if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
-      if (!filterDatasource(tvShow, (String) searchOptions.get(SearchOptions.DATASOURCE))) {
+    if (searchOptions.containsKey(SearchOptions.DATASOURCE) && searchOptions.get(SearchOptions.DATASOURCE) instanceof List) {
+      if (!filterDatasource(tvShow, (List) searchOptions.get(SearchOptions.DATASOURCE))) {
         return false;
       }
     }
@@ -356,8 +355,8 @@ public class TvShowExtendedMatcher {
     return matchesText(episode.getTvShow(), Arrays.asList(episode), filterText);
   }
 
-  private boolean filterDatasource(TvShow tvShow, String datasource) {
-    if (new File(tvShow.getDataSource()).equals(new File(datasource))) {
+  private boolean filterDatasource(TvShow tvShow, List<?> datasources) {
+    if (datasources.isEmpty() || datasources.contains(tvShow.getDataSource())) {
       return true;
     }
     return false;

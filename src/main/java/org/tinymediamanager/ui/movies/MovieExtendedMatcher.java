@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -151,9 +150,9 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check against datasource
-    if (searchOptions.containsKey(MovieSearchOptions.DATASOURCE)) {
-      String datasource = (String) searchOptions.get(MovieSearchOptions.DATASOURCE);
-      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+    if (searchOptions.containsKey(MovieSearchOptions.DATASOURCE) && searchOptions.get(MovieSearchOptions.DATASOURCE) instanceof List) {
+      List<Object> datasources = (List) searchOptions.get(MovieSearchOptions.DATASOURCE);
+      if (!datasources.isEmpty() && !datasources.contains(movie.getDataSource())) {
         return false;
       }
     }
