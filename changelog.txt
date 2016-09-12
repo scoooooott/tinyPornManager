@@ -15,6 +15,7 @@ x some improvements to the TV show renamer
 x fixed an occasional multi threading problem (ConcurrentModificationException)
 x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
+x added filter indicator for TV shows too
 x many internal changes....
 
 

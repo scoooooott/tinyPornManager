@@ -560,6 +560,10 @@ public class TvShowTreeModel implements TreeModel {
     reload();
     reExpandPaths(tree, currOpen);
     restoreSelection(selection, tree);
+
+    // inform listeners that the filter changed
+    boolean newState = matcher.searchOptions.isEmpty();
+    tree.firePropertyChange("filterChanged", newState, !newState);
   }
 
   private List<TreePath> getCurrExpandedPaths(JTree tree) {
