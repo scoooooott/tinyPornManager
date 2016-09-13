@@ -17,30 +17,20 @@ package org.tinymediamanager.ui.plaf;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.font.TextAttribute;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.plaf.FontUIResource;
 
 import com.jtattoo.plaf.AbstractTheme;
 
+/**
+ * The class TmmTheme is the base class for our theme
+ * 
+ * @author Manuel Laggner
+ */
 public class TmmTheme extends AbstractTheme {
 
-  public static final String FONT = "DejaVu Sans";
+  public static final String FONT = "Dialog";
 
   static {
-    try {
-      InputStream fontStream = TmmTheme.class.getResource("DejaVuSans.ttf").openStream();
-      Font dejavuRegular = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-      GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(dejavuRegular);
-      fontStream.close();
-    }
-    catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     try {
       InputStream fontStream = TmmTheme.class.getResource("MaterialIcons-Regular.ttf").openStream();
       Font materialIconsRegular = Font.createFont(Font.TRUETYPE_FONT, fontStream);
@@ -52,58 +42,5 @@ public class TmmTheme extends AbstractTheme {
       e.printStackTrace();
     }
 
-  }
-
-  @Override
-  public FontUIResource getControlTextFont() {
-    if (controlFont == null) {
-      controlFont = new FontUIResource(FONT, Font.PLAIN, 12);
-    }
-    return controlFont;
-  }
-
-  @Override
-  public FontUIResource getSystemTextFont() {
-    if (systemFont == null) {
-      systemFont = new FontUIResource(FONT, Font.PLAIN, 12);
-    }
-    return systemFont;
-  }
-
-  @Override
-  public FontUIResource getUserTextFont() {
-    if (userFont == null) {
-      userFont = new FontUIResource(FONT, Font.PLAIN, 12);
-      // FIXME
-      Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
-      attributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
-      userFont = new FontUIResource(userFont.deriveFont(attributes));
-    }
-    return userFont;
-  }
-
-  @Override
-  public FontUIResource getMenuTextFont() {
-    if (menuFont == null) {
-      menuFont = new FontUIResource(FONT, Font.PLAIN, 12);
-
-    }
-    return menuFont;
-  }
-
-  @Override
-  public FontUIResource getWindowTitleFont() {
-    if (windowTitleFont == null) {
-      windowTitleFont = new FontUIResource(FONT, Font.BOLD, 12);
-    }
-    return windowTitleFont;
-  }
-
-  @Override
-  public FontUIResource getSubTextFont() {
-    if (smallFont == null) {
-      smallFont = new FontUIResource(FONT, Font.PLAIN, 10);
-    }
-    return smallFont;
   }
 }
