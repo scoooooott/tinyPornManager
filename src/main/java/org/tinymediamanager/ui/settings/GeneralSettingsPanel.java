@@ -16,20 +16,12 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,43 +30,28 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.ImageCache.CacheType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 import com.sun.jna.Platform;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class GeneralSettingsPanel.
@@ -82,17 +59,14 @@ import com.sun.jna.Platform;
  * @author Manuel Laggner
  */
 public class GeneralSettingsPanel extends ScrollablePanel {
-  private static final long           serialVersionUID   = 500841588272296493L;
+  private static final long           serialVersionUID = 500841588272296493L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
-  private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
-  private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Pattern        MEMORY_PATTERN   = Pattern.compile("-Xmx([0-9]*)(.)");
 
-  private Settings                    settings           = Settings.getInstance();
-  private List<LocaleComboBox>        locales            = new ArrayList<>();
+  private Settings                    settings         = Settings.getInstance();
 
   private JTextField                  tfProxyHost;
   private JTextField                  tfProxyPort;
@@ -100,370 +74,149 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JPasswordField              tfProxyPassword;
   private JComboBox                   cbImageCacheQuality;
   private JCheckBox                   chckbxImageCache;
-  private JComboBox                   cbLanguage;
   private JTextField                  tfMediaPlayer;
   private JButton                     btnSearchMediaPlayer;
-  private JTextPane                   tpMediaPlayer;
-  private JTextPane                   tpFontHint;
-  private JComboBox                   cbFontSize;
-  private JComboBox                   cbFontFamily;
   private JCheckBox                   chckbxDeleteTrash;
   private JSlider                     sliderMemory;
-  private JTextPane                   tpMemoryHint;
-  private LinkLabel                   lblLinkTransifex;
   private JCheckBox                   chckbxAnalytics;
-  private JLabel                      lblLanguageHint;
-  private JLabel                      lblFontChangeHint;
   private JLabel                      lblMemory;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min):grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(200px;default):grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-    JPanel panelUI = new JPanel();
-    panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelUI, "2, 2, 3, 1, fill, fill");
-    panelUI.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"),
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-    LocaleComboBox actualLocale = null;
-    // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
-    Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
-    for (Locale l : Utils.getLanguages()) {
-      LocaleComboBox localeComboBox = new LocaleComboBox(l);
-      locales.add(localeComboBox);
-      if (l.equals(settingsLang)) {
-        actualLocale = localeComboBox;
-      }
-    }
-
-    JLabel lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language"));
-    panelUI.add(lblUiLanguage, "2, 2");
-    cbLanguage = new JComboBox(locales.toArray());
-    panelUI.add(cbLanguage, "4, 2");
-
-    if (actualLocale != null) {
-      cbLanguage.setSelectedItem(actualLocale);
-    }
-
-    JSeparator separator = new JSeparator();
-    separator.setOrientation(SwingConstants.VERTICAL);
-    panelUI.add(separator, "8, 2, 1, 7");
-
-    JLabel lblFontFamily = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
-    panelUI.add(lblFontFamily, "10, 2, right, default");
-    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
-    cbFontFamily.setSelectedItem(Globals.settings.getFontFamily());
-    int index = cbFontFamily.getSelectedIndex();
-    if (index < 0) {
-      cbFontFamily.setSelectedItem("Dialog");
-      index = cbFontFamily.getSelectedIndex();
-    }
-    if (index < 0) {
-      cbFontFamily.setSelectedIndex(0);
-    }
-    panelUI.add(cbFontFamily, "12, 2, fill, default");
-
-    JLabel lblFontSize = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
-    panelUI.add(lblFontSize, "10, 4, right, default");
-
-    cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
-    cbFontSize.setSelectedItem(Globals.settings.getFontSize());
-    index = cbFontSize.getSelectedIndex();
-    if (index < 0) {
-      cbFontSize.setSelectedIndex(0);
-    }
-
-    panelUI.add(cbFontSize, "12, 4, fill, default");
-
-    JPanel panel = new JPanel();
-    panelUI.add(panel, "2, 6, 5, 1, fill, fill");
-    panel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"), FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
-
-    JLabel lblMissingTranslation = new JLabel(BUNDLE.getString("tmm.helptranslate"));
-    panel.add(lblMissingTranslation, "1, 1, 5, 1");
-
-    lblLinkTransifex = new LinkLabel("https://www.transifex.com/projects/p/tinymediamanager/");
-    panel.add(lblLinkTransifex, "1, 3, 5, 1");
-    lblLinkTransifex.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        try {
-          TmmUIHelper.browseUrl(lblLinkTransifex.getNormalText());
-        }
-        catch (Exception e) {
-          LOGGER.error(e.getMessage());
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, lblLinkTransifex.getNormalText(), "message.erroropenurl",
-              new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-1$
-        }
-      }
-    });
-
-    tpFontHint = new JTextPane();
-    tpFontHint.setOpaque(false);
-    TmmFontHelper.changeFont(tpFontHint, 0.833);
-    tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-    panelUI.add(tpFontHint, "10, 6, 5, 1");
-
-    lblLanguageHint = new JLabel("");
-    TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
-    panelUI.add(lblLanguageHint, "2, 8, 5, 1");
-
-    lblFontChangeHint = new JLabel("");
-    TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-    panelUI.add(lblFontChangeHint, "10, 8, 5, 1");
-
-    JPanel panelMemory = new JPanel();
-    panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMemory, "2, 4, fill, fill");
-    panelMemory.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("250px:grow(4)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(20dlu;default)"),
-            ColumnSpec.decode("left:default:grow(5)"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    JLabel lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
-    panelMemory.add(lblMemoryT, "2, 1");
-
-    sliderMemory = new JSlider();
-    sliderMemory.setPaintLabels(true);
-    sliderMemory.setPaintTicks(true);
-    sliderMemory.setSnapToTicks(true);
-    sliderMemory.setMajorTickSpacing(512);
-    sliderMemory.setMinorTickSpacing(128);
-    sliderMemory.setMinimum(256);
-    sliderMemory.setMaximum(1536);
-    sliderMemory.setValue(512);
-    panelMemory.add(sliderMemory, "4, 1, fill, default");
-
-    lblMemory = new JLabel("512"); //$NON-NLS-1$
-    panelMemory.add(lblMemory, "6, 1, right, default");
-
-    JLabel lblMb = new JLabel("MB");
-    panelMemory.add(lblMb, "7, 1, left, default");
-
-    tpMemoryHint = new JTextPane();
-    tpMemoryHint.setOpaque(false);
-    tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(tpMemoryHint, 0.833);
-    panelMemory.add(tpMemoryHint, "2, 3, 6, 1, fill, fill");
-
-    JPanel panelProxySettings = new JPanel();
-    panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "4, 4, fill, fill");
-    panelProxySettings.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    JLabel lblProxyHost = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
-    panelProxySettings.add(lblProxyHost, "2, 2, right, default");
-
-    tfProxyHost = new JTextField();
-    lblProxyHost.setLabelFor(tfProxyHost);
-    panelProxySettings.add(tfProxyHost, "4, 2, fill, default");
-    tfProxyHost.setColumns(10);
-
-    JLabel lblProxyPort = new JLabel(BUNDLE.getString("Settings.proxyport")); //$NON-NLS-1$
-    panelProxySettings.add(lblProxyPort, "2, 4, right, default");
-
-    tfProxyPort = new JTextField();
-    lblProxyPort.setLabelFor(tfProxyPort);
-    panelProxySettings.add(tfProxyPort, "4, 4, fill, default");
-    tfProxyPort.setColumns(10);
-
-    JLabel lblProxyUser = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
-    panelProxySettings.add(lblProxyUser, "2, 6, right, default");
-
-    tfProxyUsername = new JTextField();
-    lblProxyUser.setLabelFor(tfProxyUsername);
-    panelProxySettings.add(tfProxyUsername, "4, 6, fill, default");
-    tfProxyUsername.setColumns(10);
-
-    JLabel lblProxyPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-    panelProxySettings.add(lblProxyPassword, "2, 8, right, default");
-
-    tfProxyPassword = new JPasswordField();
-    lblProxyPassword.setLabelFor(tfProxyPassword);
-    panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
-
-    JPanel panelMediaPlayer = new JPanel();
-    panelMediaPlayer.setBorder(new TitledBorder(null, "MediaPlayer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelMediaPlayer, "2, 6, fill, fill");
-    panelMediaPlayer.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    tpMediaPlayer = new JTextPane();
-    tpMediaPlayer.setOpaque(false);
-    TmmFontHelper.changeFont(tpMediaPlayer, 0.833);
-    tpMediaPlayer.setText(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
-    panelMediaPlayer.add(tpMediaPlayer, "2, 2, 3, 1, fill, fill");
-
-    tfMediaPlayer = new JTextField();
-    panelMediaPlayer.add(tfMediaPlayer, "2, 4, fill, default");
-    tfMediaPlayer.setColumns(10);
-
-    btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-    btnSearchMediaPlayer.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
-        if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
-          tfMediaPlayer.setText(file.toAbsolutePath().toString());
-        }
-      }
-    });
-    panelMediaPlayer.add(btnSearchMediaPlayer, "4, 4");
-
-    JPanel panelCache = new JPanel();
-    panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelCache, "4, 6, fill, fill");
-    panelCache.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));//$NON-NLS-1$
-    panelCache.add(chckbxImageCache, "2, 2, 3, 1");
-
-    JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));//$NON-NLS-1$
-    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
-
-    cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
-    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
-
-    JPanel panelAnalytics = new JPanel();
-    panelAnalytics
-        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.analytics.border"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelAnalytics, "2, 8, fill, fill");
-    panelAnalytics.setLayout(
-        new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.LINE_GAP_ROWSPEC, }));
-
-    chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));//$NON-NLS-1$
-    panelAnalytics.add(chckbxAnalytics, "2, 2");
-
-    JTextPane tpAnalyticsDescription = new JTextPane();
-    tpAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
-    tpAnalyticsDescription.setOpaque(false);
-    panelAnalytics.add(tpAnalyticsDescription, "2, 4, fill, fill");
-
-    JPanel panelMisc = new JPanel();
-    panelMisc.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.misc"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMisc, "4, 8, fill, fill");
-    panelMisc.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
-    panelMisc.add(chckbxDeleteTrash, "2, 2, 3, 1");
+    initComponents();
 
     initDataBindings();
 
     initMemorySlider();
 
-    // listen to changes of the combo box
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
+    // data init
+    btnSearchMediaPlayer.addActionListener(arg0 -> {
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+      if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
+        tfMediaPlayer.setText(file.toAbsolutePath().toString());
       }
-    };
-
-    cbLanguage.addItemListener(listener);
-    cbFontSize.addItemListener(listener);
-    cbFontFamily.addItemListener(listener);
+    });
   }
 
-  /**
-   * Check changes.
-   */
-  private void checkChanges() {
-    LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
-    Locale locale = loc.loc;
-    Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
-    if (!locale.equals(actualLocale)) {
-      Globals.settings.setLanguage(locale.toString());
-      lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+  private void initComponents() {
+    setLayout(new MigLayout("", "[25lp][][][][][grow]", "[][][][20lp][][][][20lp][][][][20lp][][][][][][][][]"));
+    {
+      final JLabel lblMediaPlayerT = new JLabel(BUNDLE.getString("Settings.mediaplayer")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblMediaPlayerT, 1.16667, Font.BOLD);
+      add(lblMediaPlayerT, "cell 0 0 3 1");
     }
+    {
+      tfMediaPlayer = new JTextField();
+      add(tfMediaPlayer, "flowx,cell 1 1 4 1");
+      tfMediaPlayer.setColumns(35);
 
-    // fonts
-    Integer fontSize = (Integer) cbFontSize.getSelectedItem();
-    if (fontSize != Globals.settings.getFontSize()) {
-      Globals.settings.setFontSize(fontSize);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      btnSearchMediaPlayer = new JButton(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+      add(btnSearchMediaPlayer, "cell 1 1 4 1");
+
+      JTextPane tpMediaPlayer = new JTextPane();
+      add(tpMediaPlayer, "cell 1 2 5 1,growx");
+      tpMediaPlayer.setOpaque(false);
+      TmmFontHelper.changeFont(tpMediaPlayer, 0.833);
+      tpMediaPlayer.setText(BUNDLE.getString("Settings.mediaplayer.hint"));
     }
-
-    String fontFamily = (String) cbFontFamily.getSelectedItem();
-    if (!fontFamily.equals(Globals.settings.getFontFamily())) {
-      Globals.settings.setFontFamily(fontFamily);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+    {
+      final JLabel lblMemorySettingsT = new JLabel(BUNDLE.getString("Settings.memoryborder")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblMemorySettingsT, 1.16667, Font.BOLD);
+      add(lblMemorySettingsT, "cell 0 4 3 1");
     }
-  }
+    {
+      JLabel lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
+      add(lblMemoryT, "flowx,cell 1 5 4 1,aligny center");
 
-  /**
-   * Helper class for customized toString() method, to get the Name in localized language.
-   */
-  public static class LocaleComboBox {
-    private Locale       loc;
-    private List<Locale> countries;
+      sliderMemory = new JSlider();
+      add(sliderMemory, "cell 1 5 2 1,growx,aligny center");
+      sliderMemory.setPaintLabels(true);
+      sliderMemory.setPaintTicks(true);
+      sliderMemory.setSnapToTicks(true);
+      sliderMemory.setMajorTickSpacing(512);
+      sliderMemory.setMinorTickSpacing(128);
+      sliderMemory.setMinimum(256);
+      sliderMemory.setMaximum(1536);
+      sliderMemory.setValue(512);
 
-    public LocaleComboBox(Locale loc) {
-      this.loc = loc;
-      countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase());
+      lblMemory = new JLabel("512");
+      add(lblMemory, "cell 1 5 4 1,aligny center");
+
+      JLabel lblMb = new JLabel("MB");
+      add(lblMb, "cell 1 5 2 1,aligny center");
+
+      JTextPane tpMemoryHint = new JTextPane();
+      add(tpMemoryHint, "cell 1 6 5 1,growx");
+      tpMemoryHint.setOpaque(false);
+      tpMemoryHint.setText(BUNDLE.getString("Settings.memory.hint")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(tpMemoryHint, 0.833);
     }
-
-    public Locale getLocale() {
-      return loc;
+    {
+      final JLabel lblProxySettingsT = new JLabel(BUNDLE.getString("Settings.proxy")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblProxySettingsT, 1.16667, Font.BOLD);
+      add(lblProxySettingsT, "cell 0 8 3 1");
     }
+    {
+      JLabel lblProxyHostT = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
+      add(lblProxyHostT, "cell 1 9,alignx right");
 
-    @Override
-    public String toString() {
-      // display country name if needed
-      // not needed when language == country
-      if (loc.getLanguage().equalsIgnoreCase(loc.getCountry())) {
-        return loc.getDisplayLanguage(loc);
-      }
+      tfProxyHost = new JTextField();
+      add(tfProxyHost, "cell 2 9");
+      tfProxyHost.setColumns(20);
+      lblProxyHostT.setLabelFor(tfProxyHost);
 
-      // special exceptions (which do not have language == country)
-      if (loc.toString().equals("en_US")) {
-        return loc.getDisplayLanguage(loc);
-      }
+      JLabel lblProxyPortT = new JLabel(BUNDLE.getString("Settings.proxyport")); //$NON-NLS-1$
+      add(lblProxyPortT, "cell 3 9,alignx right");
+      lblProxyPortT.setLabelFor(tfProxyPort);
 
-      // not needed, when this language is only in one country
-      if (countries.size() == 1) {
-        return loc.getDisplayLanguage(loc);
-      }
+      tfProxyPort = new JTextField();
+      add(tfProxyPort, "cell 4 9");
+      tfProxyPort.setColumns(20);
 
-      // output country if available
-      if (StringUtils.isNotBlank(loc.getDisplayCountry(loc))) {
-        return loc.getDisplayLanguage(loc) + " (" + loc.getDisplayCountry(loc) + ")";
-      }
+      JLabel lblProxyUserT = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
+      add(lblProxyUserT, "cell 1 10,alignx right");
+      lblProxyUserT.setLabelFor(tfProxyUsername);
 
-      return loc.getDisplayLanguage(loc);
+      tfProxyUsername = new JTextField();
+      add(tfProxyUsername, "cell 2 10");
+      tfProxyUsername.setColumns(20);
+
+      JLabel lblProxyPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
+      add(lblProxyPasswordT, "cell 3 10,alignx right");
+      lblProxyPasswordT.setLabelFor(tfProxyPassword);
+
+      tfProxyPassword = new JPasswordField();
+      tfProxyPassword.setColumns(20);
+      add(tfProxyPassword, "cell 4 10");
+    }
+    {
+      final JLabel lblMiscSettingsT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblMiscSettingsT, 1.16667, Font.BOLD);
+      add(lblMiscSettingsT, "cell 0 12 3 1");
+    }
+    {
+      chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
+      add(chckbxImageCache, "cell 1 13 2 1");
+
+      JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
+      add(lblImageCacheQuality, "flowx,cell 2 14");
+
+      cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
+      add(cbImageCacheQuality, "cell 2 14");
+
+      chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
+      add(chckbxDeleteTrash, "cell 1 16 2 1");
+
+      chckbxAnalytics = new JCheckBox(BUNDLE.getString("Settings.analytics"));
+      add(chckbxAnalytics, "cell 1 18 2 1");
+
+      JTextPane tpAnalyticsDescription = new JTextPane();
+      add(tpAnalyticsDescription, "cell 1 19 5 1,growx");
+      tpAnalyticsDescription.setText(BUNDLE.getString("Settings.analytics.desc"));//$NON-NLS-1$
+      tpAnalyticsDescription.setOpaque(false);
     }
   }
 
@@ -524,7 +277,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       try {
         Utils.writeStringToFile(file, jvmArg);
       }
-      catch (IOException e) {
+      catch (IOException ignored) {
       }
     }
     else if (Files.exists(file)) {
@@ -547,7 +300,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
           Utils.writeStringToFile(file, extraTxt);
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
   }

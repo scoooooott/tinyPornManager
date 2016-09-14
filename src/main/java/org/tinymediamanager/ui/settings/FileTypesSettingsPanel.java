@@ -15,270 +15,173 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 public class FileTypesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 9136097757447080369L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
-  private JPanel                      panelVideoFiletypes;
   private JTextField                  tfVideoFiletype;
-  private JList                       listVideoFiletypes;
-  private JPanel                      panelSubtitleFiletypes;
+  private JList<String>               listVideoFiletypes;
   private JTextField                  tfSubtitleFiletype;
-  private JList                       listSubtitleFiletypes;
-  private JList                       listSortPrefixes;
-  private JTextField                  tfSortPrefix;
-  private JPanel                      panelAudioFiletypes;
-  private JList                       listAudioFiletypes;
+  private JList<String>               listSubtitleFiletypes;
+  private JList<String>               listAudioFiletypes;
   private JTextField                  tfAudioFiletype;
+  private JButton                     btnAddAudioFiletype;
+  private JButton                     btnAddSubtitleFiletype;
+  private JButton                     btnAddVideoFiletype;
+  private JButton                     btnRemoveAudioFiletype;
+  private JButton                     btnRemoveSubtitleFiletype;
+  private JButton                     btnRemoveVideoFiletype;
 
   /**
    * Instantiates a new general settings panel.
    */
   public FileTypesSettingsPanel() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
-
-    panelVideoFiletypes = new JPanel();
-    panelVideoFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.videofiletypes"), //$NON-NLS-1$
-        TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelVideoFiletypes.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
-
-    JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
-    panelVideoFiletypes.add(scrollPaneVideoFiletypes, "2, 2, 5, 1, fill, fill");
-
-    listVideoFiletypes = new JList();
-    scrollPaneVideoFiletypes.setViewportView(listVideoFiletypes);
-
-    tfVideoFiletype = new JTextField();
-    panelVideoFiletypes.add(tfVideoFiletype, "2, 4, fill, default");
-    tfVideoFiletype.setColumns(10);
-
-    JButton btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
-    btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddVideoFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (StringUtils.isNotEmpty(tfVideoFiletype.getText())) {
-          Globals.settings.addVideoFileTypes(tfVideoFiletype.getText());
-          tfVideoFiletype.setText("");
-        }
-      }
-    });
-
-    panelVideoFiletypes.add(btnAddVideoFiletype, "4, 4");
-    add(panelVideoFiletypes, "2, 2, fill, fill");
-
-    JButton btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
-    btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveVideoFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listVideoFiletypes.getSelectedIndex();
-        if (row != -1) {
-          String prefix = Globals.settings.getVideoFileType().get(row);
-          Globals.settings.removeVideoFileType(prefix);
-        }
-      }
-    });
-    panelVideoFiletypes.add(btnRemoveVideoFiletype, "6, 4, default, bottom");
-
-    panelSubtitleFiletypes = new JPanel();
-    add(panelSubtitleFiletypes, "4, 2, fill, fill");
-    panelSubtitleFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.extrafiletypes"), //$NON-NLS-1$
-        TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelSubtitleFiletypes.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
-    JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
-    panelSubtitleFiletypes.add(scrollPaneSubtitleFiletypes, "2, 2, 5, 1, fill, fill");
-
-    listSubtitleFiletypes = new JList();
-    scrollPaneSubtitleFiletypes.setViewportView(listSubtitleFiletypes);
-
-    tfSubtitleFiletype = new JTextField();
-    panelSubtitleFiletypes.add(tfSubtitleFiletype, "2, 4, fill, default");
-    tfSubtitleFiletype.setColumns(10);
-
-    JButton btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
-    btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddSubtitleFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (StringUtils.isNotEmpty(tfSubtitleFiletype.getText())) {
-          Globals.settings.addSubtitleFileTypes(tfSubtitleFiletype.getText());
-          tfSubtitleFiletype.setText("");
-        }
-      }
-    });
-    panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
-
-    JButton btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
-    btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveSubtitleFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listSubtitleFiletypes.getSelectedIndex();
-        if (row != -1) {
-          String prefix = Globals.settings.getSubtitleFileType().get(row);
-          Globals.settings.removeSubtitleFileType(prefix);
-        }
-      }
-    });
-    panelSubtitleFiletypes.add(btnRemoveSubtitleFiletype, "6, 4, default, bottom");
-
-    panelAudioFiletypes = new JPanel();
-    add(panelAudioFiletypes, "6, 2, fill, fill");
-    panelAudioFiletypes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.audiofiletypes"), //$NON-NLS-1$
-        TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelAudioFiletypes.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
-    JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
-    panelAudioFiletypes.add(scrollPaneAudioFiletypes, "2, 2, 5, 1, fill, fill");
-
-    listAudioFiletypes = new JList();
-    scrollPaneAudioFiletypes.setViewportView(listAudioFiletypes);
-
-    tfAudioFiletype = new JTextField();
-    panelAudioFiletypes.add(tfAudioFiletype, "2, 4, fill, default");
-    tfAudioFiletype.setColumns(10);
-
-    JButton btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
-    btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddAudioFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (StringUtils.isNotEmpty(tfAudioFiletype.getText())) {
-          Globals.settings.addAudioFileTypes(tfAudioFiletype.getText());
-          tfAudioFiletype.setText("");
-        }
-      }
-    });
-    panelAudioFiletypes.add(btnAddAudioFiletype, "4, 4");
-
-    JButton btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
-    btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveAudioFiletype.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listAudioFiletypes.getSelectedIndex();
-        if (row != -1) {
-          String prefix = Globals.settings.getAudioFileType().get(row);
-          Globals.settings.removeAudioFileType(prefix);
-        }
-      }
-    });
-    panelAudioFiletypes.add(btnRemoveAudioFiletype, "6, 4, default, bottom");
-
-    JPanel panelSortOptions = new JPanel();
-    panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); // $NON-NLS-1$
-    add(panelSortOptions, "2, 4, 3, 1, fill, fill");
-    panelSortOptions.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-
-    JScrollPane scrollPaneSortPrefixes = new JScrollPane();
-    panelSortOptions.add(scrollPaneSortPrefixes, "2, 2, 5, 1, fill, fill");
-
-    listSortPrefixes = new JList();
-    scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
-
-    tfSortPrefix = new JTextField();
-    panelSortOptions.add(tfSortPrefix, "2, 4, fill, default");
-    tfSortPrefix.setColumns(10);
-
-    JButton btnAddSortPrefix = new JButton(IconManager.ADD_INV);
-    btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddSortPrefix.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
-          Globals.settings.addTitlePrefix(tfSortPrefix.getText());
-          tfSortPrefix.setText("");
-          MovieList.getInstance().invalidateTitleSortable();
-          TvShowList.getInstance().invalidateTitleSortable();
-        }
-      }
-    });
-    panelSortOptions.add(btnAddSortPrefix, "4, 4");
-
-    JButton btnRemoveSortPrefix = new JButton(IconManager.REMOVE_INV);
-    btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveSortPrefix.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listSortPrefixes.getSelectedIndex();
-        if (row != -1) {
-          String prefix = Globals.settings.getTitlePrefix().get(row);
-          Globals.settings.removeTitlePrefix(prefix);
-          MovieList.getInstance().invalidateTitleSortable();
-          TvShowList.getInstance().invalidateTitleSortable();
-        }
-      }
-    });
-    panelSortOptions.add(btnRemoveSortPrefix, "6, 4, default, bottom");
-
-    JTextPane tpSortingHints = new JTextPane();
-    TmmFontHelper.changeFont(tpSortingHints, 0.833);
-    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
-    tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
-    panelSortOptions.add(tpSortingHints, "2, 6, 3, 1, fill, fill");
-
+    // UI init
+    initComponents();
     initDataBindings();
+
+    // data init
+    btnAddVideoFiletype.addActionListener(e -> {
+      if (StringUtils.isNotEmpty(tfVideoFiletype.getText())) {
+        Globals.settings.addVideoFileTypes(tfVideoFiletype.getText());
+        tfVideoFiletype.setText("");
+      }
+    });
+    btnRemoveVideoFiletype.addActionListener(arg0 -> {
+      int row = listVideoFiletypes.getSelectedIndex();
+      if (row != -1) {
+        String prefix = Globals.settings.getVideoFileType().get(row);
+        Globals.settings.removeVideoFileType(prefix);
+      }
+    });
+    btnAddSubtitleFiletype.addActionListener(e -> {
+      if (StringUtils.isNotEmpty(tfSubtitleFiletype.getText())) {
+        Globals.settings.addSubtitleFileTypes(tfSubtitleFiletype.getText());
+        tfSubtitleFiletype.setText("");
+      }
+    });
+    btnRemoveSubtitleFiletype.addActionListener(arg0 -> {
+      int row = listSubtitleFiletypes.getSelectedIndex();
+      if (row != -1) {
+        String prefix = Globals.settings.getSubtitleFileType().get(row);
+        Globals.settings.removeSubtitleFileType(prefix);
+      }
+    });
+    btnAddAudioFiletype.addActionListener(e -> {
+      if (StringUtils.isNotEmpty(tfAudioFiletype.getText())) {
+        Globals.settings.addAudioFileTypes(tfAudioFiletype.getText());
+        tfAudioFiletype.setText("");
+      }
+    });
+    btnRemoveAudioFiletype.addActionListener(arg0 -> {
+      int row = listAudioFiletypes.getSelectedIndex();
+      if (row != -1) {
+        String prefix = Globals.settings.getAudioFileType().get(row);
+        Globals.settings.removeAudioFileType(prefix);
+      }
+    });
   }
 
+  private void initComponents() {
+    setLayout(new MigLayout("", "[25lp][150lp][][25lp][150lp][][25lp][150lp][]", "[][400lp][]"));
+    {
+      final JLabel lblVideoFiletypesT = new JLabel(BUNDLE.getString("Settings.videofiletypes")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblVideoFiletypesT, 1.16667, Font.BOLD);
+      add(lblVideoFiletypesT, "cell 0 0 2 1");
+
+      JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
+      add(scrollPaneVideoFiletypes, "cell 1 1,grow");
+
+      listVideoFiletypes = new JList<>();
+      scrollPaneVideoFiletypes.setViewportView(listVideoFiletypes);
+
+      btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
+      add(btnRemoveVideoFiletype, "cell 2 1,aligny bottom");
+      btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+
+      tfVideoFiletype = new JTextField();
+      add(tfVideoFiletype, "cell 1 2,growx");
+      tfVideoFiletype.setColumns(10);
+
+      btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
+      add(btnAddVideoFiletype, "cell 2 2");
+      btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    }
+    {
+      final JLabel lblSubtitleFiletypeT = new JLabel(BUNDLE.getString("Settings.extrafiletypes")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblSubtitleFiletypeT, 1.16667, Font.BOLD);
+      add(lblSubtitleFiletypeT, "cell 3 0 2 1");
+
+      JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
+      add(scrollPaneSubtitleFiletypes, "cell 4 1,grow");
+
+      listSubtitleFiletypes = new JList<>();
+      scrollPaneSubtitleFiletypes.setViewportView(listSubtitleFiletypes);
+
+      btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
+      add(btnRemoveSubtitleFiletype, "cell 5 1,aligny bottom");
+      btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+
+      tfSubtitleFiletype = new JTextField();
+      add(tfSubtitleFiletype, "cell 4 2,growx");
+      tfSubtitleFiletype.setColumns(10);
+
+      btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
+      add(btnAddSubtitleFiletype, "cell 5 2");
+      btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    }
+    {
+      final JLabel lblAudioFiletypeT = new JLabel(BUNDLE.getString("Settings.audiofiletypes")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblAudioFiletypeT, 1.16667, Font.BOLD);
+      add(lblAudioFiletypeT, "cell 6 0 2 1");
+
+      JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
+      add(scrollPaneAudioFiletypes, "cell 7 1,grow");
+
+      listAudioFiletypes = new JList<>();
+      scrollPaneAudioFiletypes.setViewportView(listAudioFiletypes);
+
+      btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
+      add(btnRemoveAudioFiletype, "cell 8 1,aligny bottom");
+      btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+
+      tfAudioFiletype = new JTextField();
+      add(tfAudioFiletype, "cell 7 2,growx");
+      tfAudioFiletype.setColumns(10);
+
+      btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
+      add(btnAddAudioFiletype, "cell 8 2");
+      btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    }
+  }
+
+  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, List<String>> settingsBeanProperty_5 = BeanProperty.create("videoFileType");
     JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
@@ -289,11 +192,6 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, listSubtitleFiletypes);
     jListBinding_2.bind();
-    //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_10 = BeanProperty.create("titlePrefix");
-    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_10, listSortPrefixes);
-    jListBinding.bind();
     //
     BeanProperty<Settings, List<String>> settingsBeanProperty_11 = BeanProperty.create("audioFileType");
     JListBinding<String, Settings, JList> jListBinding_3 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,

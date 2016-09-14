@@ -40,6 +40,7 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class SettingsPanel extends JPanel {
   private static final long           serialVersionUID = -3509434882626534578L;
   /**

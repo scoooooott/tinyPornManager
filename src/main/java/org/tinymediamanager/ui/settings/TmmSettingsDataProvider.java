@@ -41,10 +41,12 @@ public class TmmSettingsDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     root = new TmmTreeNode(rootSettingsNode, this);
 
     // build up the settings structure
-    TmmSettingsNode generalSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.general"), new GeneralSettingsPanel()); //$NON-NLS-1$
+    TmmSettingsNode generalSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.general"), new UiSettingsPanel()); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.filetypes"), new FileTypesSettingsPanel())); //$NON-NLS-1$
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.sorting"), new SortTitleSettingsPanel())); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externaldevices"), new ExternalDevicesSettingsPanel())); //$NON-NLS-1$
     generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externalservices"), new ExternalServicesSettingsPanel())); //$NON-NLS-1$
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.misc"), new GeneralSettingsPanel())); //$NON-NLS-1$
     rootSettingsNode.addChild(generalSettingsNode);
 
     // movie settings

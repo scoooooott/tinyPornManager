@@ -15,38 +15,33 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The ExternalDevicesSettingsPanel - a panel to configure external devices
@@ -55,9 +50,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 8176824801347872222L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
@@ -66,109 +59,102 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private JTextField                  tfXbmcHost;
   private JTextField                  tfXbmcUsername;
   private JPasswordField              tfXbmcPassword;
+  private JButton                     btnRemoveWolDevice;
+  private JButton                     btnAddWolDevice;
+  private JButton                     btnEditWolDevice;
 
   public ExternalDevicesSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    JPanel panelWol = new JPanel();
-    panelWol.setBorder(new TitledBorder(null, BUNDLE.getString("tmm.wakeonlan"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelWol, "2, 2, fill, fill");
-    panelWol.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(50dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(100px;default)"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(40dlu;default)"), }));
-
-    JScrollPane spWolDevices = new JScrollPane();
-    panelWol.add(spWolDevices, "2, 2, 1, 5, fill, fill");
-
-    tableWolDevices = new JTable();
-    spWolDevices.setViewportView(tableWolDevices);
-
-    JButton btnAddWolDevice = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddWolDevice.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        WolDeviceDialog dialog = new WolDeviceDialog();
-        dialog.pack();
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-      }
-    });
-    panelWol.add(btnAddWolDevice, "4, 2, fill, default");
-
-    JButton btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
-    btnEditWolDevice.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int row = tableWolDevices.getSelectedRow();
-        row = tableWolDevices.convertRowIndexToModel(row);
-        if (row != -1) {
-          WolDevice device = Globals.settings.getWolDevices().get(row);
-          if (device != null) {
-            WolDeviceDialog dialog = new WolDeviceDialog();
-            dialog.setDevice(device);
-            dialog.pack();
-            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-            dialog.setVisible(true);
-          }
-        }
-
-      }
-    });
-    panelWol.add(btnEditWolDevice, "4, 4");
-
-    JButton btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveWolDevice.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int row = tableWolDevices.getSelectedRow();
-        row = tableWolDevices.convertRowIndexToModel(row);
-        if (row != -1) {
-          WolDevice device = Globals.settings.getWolDevices().get(row);
-          Globals.settings.removeWolDevice(device);
-        }
-      }
-    });
-    panelWol.add(btnRemoveWolDevice, "4, 6, fill, top");
-
-    JPanel panelXBMC = new JPanel();
-    panelXBMC.setVisible(false);
-    panelXBMC.setBorder(new TitledBorder(null, "Kodi / XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelXBMC, "2, 4, fill, fill");
-    panelXBMC.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
-
-    JLabel lblXbmcHost = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
-    panelXBMC.add(lblXbmcHost, "2, 2, right, default");
-
-    tfXbmcHost = new JTextField();
-    panelXBMC.add(tfXbmcHost, "4, 2, fill, default");
-    tfXbmcHost.setColumns(10);
-
-    JLabel lblXbmcUsername = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
-    panelXBMC.add(lblXbmcUsername, "2, 4, right, default");
-
-    tfXbmcUsername = new JTextField();
-    panelXBMC.add(tfXbmcUsername, "4, 4, fill, default");
-    tfXbmcUsername.setColumns(10);
-
-    JLabel lblXbmcPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
-    panelXBMC.add(lblXbmcPassword, "2, 6, right, default");
-
-    tfXbmcPassword = new JPasswordField();
-    panelXBMC.add(tfXbmcPassword, "4, 6, fill, default");
-    tfXbmcPassword.setColumns(10);
+    // UI init
+    initComponents();
     initDataBindings();
+
+    // button listeners
+    btnAddWolDevice.addActionListener(arg0 -> {
+      WolDeviceDialog dialog = new WolDeviceDialog();
+      dialog.pack();
+      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      dialog.setVisible(true);
+    });
+    btnRemoveWolDevice.addActionListener(e -> {
+      int row = tableWolDevices.getSelectedRow();
+      row = tableWolDevices.convertRowIndexToModel(row);
+      if (row != -1) {
+        WolDevice device = Globals.settings.getWolDevices().get(row);
+        Globals.settings.removeWolDevice(device);
+      }
+    });
+    btnEditWolDevice.addActionListener(e -> {
+      int row = tableWolDevices.getSelectedRow();
+      row = tableWolDevices.convertRowIndexToModel(row);
+      if (row != -1) {
+        WolDevice device = Globals.settings.getWolDevices().get(row);
+        if (device != null) {
+          WolDeviceDialog dialog = new WolDeviceDialog();
+          dialog.setDevice(device);
+          dialog.pack();
+          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+          dialog.setVisible(true);
+        }
+      }
+
+    });
 
     // set column titles
     tableWolDevices.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
     tableWolDevices.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("Settings.macaddress")); //$NON-NLS-1$
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[25lp][][150lp][]", "[][200lp][20lp][][][][][]"));
+    {
+      final JLabel lblWolT = new JLabel(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblWolT, 1.16667, Font.BOLD);
+      add(lblWolT, "cell 0 0 2 1");
+    }
+    {
+      JScrollPane spWolDevices = new JScrollPane();
+      add(spWolDevices, "cell 1 1 2 1,grow");
+
+      tableWolDevices = new JTable();
+      spWolDevices.setViewportView(tableWolDevices);
+
+      btnAddWolDevice = new JButton(BUNDLE.getString("Button.add"));
+      add(btnAddWolDevice, "flowy,cell 3 1,growx,aligny top");
+
+      btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit"));
+      add(btnEditWolDevice, "cell 3 1,growx");
+
+      btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove"));
+      add(btnRemoveWolDevice, "cell 3 1,growx");
+    }
+    {
+      final JLabel lblKodiT = new JLabel("Kodi / XBMC");
+      TmmFontHelper.changeFont(lblKodiT, 1.16667, Font.BOLD);
+      add(lblKodiT, "cell 0 3 2 1");
+    }
+    {
+      JLabel lblXbmcHostT = new JLabel(BUNDLE.getString("Settings.proxyhost"));
+      add(lblXbmcHostT, "cell 1 4");
+
+      tfXbmcHost = new JTextField();
+      add(tfXbmcHost, "cell 2 4");
+      tfXbmcHost.setColumns(20);
+
+      JLabel lblXbmcUsernameT = new JLabel(BUNDLE.getString("Settings.proxyuser"));
+      add(lblXbmcUsernameT, "cell 1 5");
+
+      tfXbmcUsername = new JTextField();
+      add(tfXbmcUsername, "cell 2 5");
+      tfXbmcUsername.setColumns(20);
+
+      JLabel lblXbmcPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass"));
+      add(lblXbmcPasswordT, "cell 1 6");
+
+      tfXbmcPassword = new JPasswordField();
+      add(tfXbmcPassword, "cell 2 6");
+      tfXbmcPassword.setColumns(20);
+    }
   }
 
   protected void initDataBindings() {
