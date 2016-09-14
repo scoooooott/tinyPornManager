@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.SEASON_POSTER;
+import static org.tinymediamanager.core.Constants.THUMB;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -33,21 +34,20 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.StarRater;
+import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.converter.MediaInfoAudioCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoFormatConverter;
-import org.tinymediamanager.ui.converter.WatchedIconConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -82,8 +82,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JLabel                      lblMediaLogoResolution;
   private JLabel                      lblMediaLogoVideoCodec;
   private JLabel                      lblMediaLogoAudio;
-  private JPanel                      panelWatched;
-  private JLabel                      lblWatched;
 
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
   private JPanel                      panelLeft;
@@ -154,12 +152,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     lblTvShowName = new JLabel("");
     panelMovieTitle.add(lblTvShowName);
     TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
-
-    panelWatched = new JPanel();
-    panelMovieTitle.add(panelWatched, BorderLayout.EAST);
-
-    lblWatched = new JLabel("");
-    panelWatched.add(lblWatched);
 
     lblEpisodeTitle = new JLabel();
     panelTop.add(lblEpisodeTitle, "2, 2");
@@ -317,12 +309,5 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_8, lblMediaLogoAudio, jLabelBeanProperty_1);
     autoBinding_9.setConverter(new MediaInfoAudioCodecConverter());
     autoBinding_9.bind();
-    //
-    BeanProperty<TvShowEpisodeSelectionModel, Boolean> tvShowEpisodeSelectionModelBeanProperty_10 = BeanProperty
-        .create("selectedTvShowEpisode.watched");
-    AutoBinding<TvShowEpisodeSelectionModel, Boolean, JLabel, Icon> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_10, lblWatched, jLabelBeanProperty_1);
-    autoBinding_11.setConverter(new WatchedIconConverter());
-    autoBinding_11.bind();
   }
 }

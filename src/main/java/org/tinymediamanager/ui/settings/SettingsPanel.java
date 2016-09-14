@@ -76,20 +76,20 @@ public class SettingsPanel extends JPanel {
      */
     panelTmmSettings = new TmmSettingsContainerPanel();
     addButton(BUNDLE.getString("Settings.general"), //$NON-NLS-1$
-        new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelTmmSettings);
+        null, panelTmmSettings);
 
     /*
      * Movie settings
      */
     panelMovieSettings = MovieUIModule.getInstance().getSettingsPanel();
-    addButton(BUNDLE.getString("Settings.movies"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), //$NON-NLS-1$
+    addButton(BUNDLE.getString("Settings.movies"), null, //$NON-NLS-1$
         panelMovieSettings);
 
     /*
      * TV show settings
      */
     panelTvShowSettings = TvShowUIModule.getInstance().getSettingsPanel();
-    addButton(BUNDLE.getString("Settings.tvshow"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/tv_show.png")), //$NON-NLS-1$
+    addButton(BUNDLE.getString("Settings.tvshow"), null, //$NON-NLS-1$
         panelTvShowSettings);
 
   }
