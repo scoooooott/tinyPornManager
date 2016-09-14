@@ -49,7 +49,7 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   }
 
   public boolean isMetadata() {
-    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || genres || collection;
+    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || genres || collection || tags;
   }
 
   /**
