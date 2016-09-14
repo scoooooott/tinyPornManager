@@ -44,7 +44,7 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
     }
 
     try {
-      StringBuilder sb = new StringBuilder("/images/mediainfo/video/");
+      StringBuilder sb = new StringBuilder("../images/mediainfo/video/");
       sb.append(arg0.toLowerCase());
       sb.append(".png");
 
@@ -66,5 +66,4 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
   public String convertReverse(Icon arg0) {
     return null;
   }
-
 }

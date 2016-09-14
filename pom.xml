@@ -34,11 +34,6 @@
 			<version>2.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.tinymediamanager</groupId>
-			<artifactId>resources</artifactId>
-			<version>3.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<!-- own patched artifacts -->
 			<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
 				-Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 

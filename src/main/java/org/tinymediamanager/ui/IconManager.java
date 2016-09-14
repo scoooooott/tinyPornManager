@@ -38,8 +38,6 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_ABOUT_HOVER    = loadImage("icn_about_hover.png");
   public final static ImageIcon            TOOLBAR_DONATE         = loadImage("icn_donate.png");
   public final static ImageIcon            TOOLBAR_DONATE_HOVER   = loadImage("icn_donate_hover.png");
-  public final static ImageIcon            TOOLBAR_DOWNLOAD       = loadImage("icn_download.png");
-  public final static ImageIcon            TOOLBAR_DOWNLOAD_HOVER = loadImage("icn_download_hover.png");
   public final static ImageIcon            TOOLBAR_EDIT           = loadImage("icn_edit.png");
   public final static ImageIcon            TOOLBAR_EDIT_HOVER     = loadImage("icn_edit_hover.png");
   public final static ImageIcon            TOOLBAR_EXPORT         = loadImage("icn_export.png");
@@ -74,7 +72,6 @@ public class IconManager {
   public final static ImageIcon            IMAGE                  = loadImage("image.png");
   public final static ImageIcon            INFO                   = loadImage("info.png");
 
-  public final static ImageIcon            LOADING                = loadImage("loading.gif");
   public final static ImageIcon            NEW                    = loadImage("new.png");
   public final static ImageIcon            PLAY_SMALL             = loadImage("play-small.png");
   public final static ImageIcon            PLAY                   = loadImage("play.png");
@@ -123,7 +120,7 @@ public class IconManager {
   public final static ImageIcon            EXIT                   = loadImage("exit.png");
 
   private static ImageIcon loadImage(String name) {
-    URL file = IconManager.class.getResource("/images/ui/" + name);
+    URL file = IconManager.class.getResource("images/interface/" + name);
     if (file != null) {
       return new ImageIcon(file);
     }

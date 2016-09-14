@@ -31,18 +31,9 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
-
-  /** The Constant LOGGER. */
   private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
-
-  /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
-   */
   @Override
   public Icon convertForward(String arg0) {
     // try to get the image file
@@ -53,7 +44,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
     }
 
     try {
-      StringBuilder sb = new StringBuilder("/images/mediainfo/audio/");
+      StringBuilder sb = new StringBuilder("../images/mediainfo/audio/");
       sb.append(arg0.toLowerCase());
       sb.append(".png");
 
@@ -61,7 +52,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
       if (file == null) {
         // strip out channels info
         String codec = arg0.replaceFirst("_.*ch", "");
-        sb = new StringBuilder("/images/mediainfo/audio/");
+        sb = new StringBuilder("../images/mediainfo/audio/");
         sb.append(codec.toLowerCase());
         sb.append(".png");
         file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
@@ -80,14 +71,8 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
     return emptyImage;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
-   */
   @Override
   public String convertReverse(Icon arg0) {
     return null;
   }
-
 }
