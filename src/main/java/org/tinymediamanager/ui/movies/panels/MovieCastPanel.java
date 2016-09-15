@@ -15,10 +15,10 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.PRODUCERS;
 
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -27,13 +27,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -41,13 +39,8 @@ import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -56,6 +49,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Panel to display the movie actors, writer and director
@@ -84,110 +78,104 @@ public class MovieCastPanel extends JPanel {
 
   public MovieCastPanel(MovieSelectionModel model) {
     selectionModel = model;
-    producerEventList = GlazedLists.threadSafeList(
-        new ObservableElementList<MovieProducer>(new BasicEventList<MovieProducer>(), GlazedLists.beanConnector(MovieProducer.class)));
-    producerTableModel = new DefaultEventTableModel<MovieProducer>(GlazedListsSwing.swingThreadProxyList(producerEventList),
-        new ProducerTableFormat());
+    producerEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieProducer.class)));
+    producerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(producerEventList), new ProducerTableFormat());
 
-    actorEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<MovieActor>(new BasicEventList<MovieActor>(), GlazedLists.beanConnector(MovieActor.class)));
-    actorTableModel = new DefaultEventTableModel<MovieActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieActor.class)));
+    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.MIN_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"),
-            FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("50dlu:grow(2)"),
-            FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
-
-    JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
-    add(lblDirectorT, "2, 2, right, default");
-
-    lblDirector = new JLabel("");
-    lblDirectorT.setLabelFor(lblDirector);
-    add(lblDirector, "4, 2, 5, 1");
-
-    JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
-    add(lblWriterT, "2, 4, right, default");
-
-    lblWriter = new JLabel("");
-    lblWriterT.setLabelFor(lblWriter);
-    add(lblWriter, "4, 4, 5, 1");
-
-    JLabel lblProducersT = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblProducersT, Font.BOLD);
-    add(lblProducersT, "2, 6, right, top");
-
-    tableProducer = new TmmTable(producerTableModel);
-    tableProducer.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
-    tableProducer.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
-
-    JScrollPane scrollPaneMovieProducer = TmmTable.createJScrollPane(tableProducer);
-    add(scrollPaneMovieProducer, "6, 6, 1, 1");
-    scrollPaneMovieProducer.setViewportView(tableProducer);
-
-    JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
-    add(lblActorsT, "2, 8, right, top");
-
-    tableActors = new TmmTable(actorTableModel);
-    tableActors.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
-    tableActors.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
-    JScrollPane scrollPaneMovieActors = TmmTable.createJScrollPane(tableActors);
-    add(scrollPaneMovieActors, "6, 8, 1, 2");
-    scrollPaneMovieActors.setViewportView(tableActors);
-
-    lblActorThumb = new ActorImageLabel();
-    add(lblActorThumb, "8, 8, 1, 2, fill, fill");
-
+    initComponents();
     initDataBindings();
 
-    // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a movie
-        if ((source instanceof MovieSelectionModel && "selectedMovie".equals(property)) || (source instanceof Movie && ACTORS.equals(property))) {
-          actorEventList.clear();
-          actorEventList.addAll(selectionModel.getSelectedMovie().getActors());
-          if (actorEventList.size() > 0) {
-            tableActors.getSelectionModel().setSelectionInterval(0, 0);
-          }
+    tableProducer.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
+    tableProducer.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
+    tableActors.getColumnModel().getColumn(0).setCellRenderer(new BorderTableCellRenderer());
+    tableActors.getColumnModel().getColumn(1).setCellRenderer(new BorderTableCellRenderer());
+
+    // selectionlistener for the selected actor
+    tableActors.getSelectionModel().addListSelectionListener(arg0 -> {
+      if (!arg0.getValueIsAdjusting()) {
+        int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
+        if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
+          MovieActor actor = actorEventList.get(selectedRow);
+          lblActorThumb.setActor(actor);
         }
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && PRODUCERS.equals(property))) {
-          producerEventList.clear();
-          producerEventList.addAll(selectionModel.getSelectedMovie().getProducers());
-          if (producerEventList.size() > 0) {
-            tableProducer.getSelectionModel().setSelectionInterval(0, 0);
-          }
+        else {
+          lblActorThumb.setImageUrl("");
+        }
+      }
+    });
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a movie
+      if ((source instanceof MovieSelectionModel && "selectedMovie".equals(property)) || (source instanceof Movie && ACTORS.equals(property))) {
+        actorEventList.clear();
+        actorEventList.addAll(selectionModel.getSelectedMovie().getActors());
+        if (actorEventList.size() > 0) {
+          tableActors.getSelectionModel().setSelectionInterval(0, 0);
+        }
+      }
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+          || (source.getClass() == Movie.class && PRODUCERS.equals(property))) {
+        producerEventList.clear();
+        producerEventList.addAll(selectionModel.getSelectedMovie().getProducers());
+        if (producerEventList.size() > 0) {
+          tableProducer.getSelectionModel().setSelectionInterval(0, 0);
         }
       }
     };
 
     selectionModel.addPropertyChangeListener(propertyChangeListener);
+  }
 
-    // selectionlistener for the selected actor
-    tableActors.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent arg0) {
-        if (!arg0.getValueIsAdjusting()) {
-          int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
-          if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-            MovieActor actor = actorEventList.get(selectedRow);
-            lblActorThumb.setActor(actor);
-          }
-          else {
-            lblActorThumb.setImageUrl("");
-          }
-        }
-      }
-    });
+  private void initComponents() {
+    setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][150lp,grow][200lp,grow]"));
+    {
+      JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
+      add(lblDirectorT, "cell 0 0,alignx right,aligny top");
+
+      lblDirector = new JLabel("");
+      lblDirectorT.setLabelFor(lblDirector);
+      add(lblDirector, "cell 1 0 2 1");
+    }
+    {
+      JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
+      add(lblWriterT, "cell 0 1,alignx right,aligny top");
+
+      lblWriter = new JLabel("");
+      lblWriterT.setLabelFor(lblWriter);
+      add(lblWriter, "cell 1 1 2 1,wmin 0");
+    }
+    {
+      JLabel lblProducersT = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblProducersT, Font.BOLD);
+      add(lblProducersT, "cell 0 2,alignx right,aligny top");
+
+      tableProducer = new TmmTable(producerTableModel);
+      JScrollPane scrollPaneMovieProducer = new JScrollPane(tableProducer);
+      add(scrollPaneMovieProducer, "cell 1 2,grow");
+      scrollPaneMovieProducer.setViewportView(tableProducer);
+    }
+    {
+      JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
+      add(lblActorsT, "cell 0 3,alignx right,aligny top");
+
+      tableActors = new TmmTable(actorTableModel);
+      JScrollPane scrollPaneMovieActors = new JScrollPane(tableActors);
+      add(scrollPaneMovieActors, "cell 1 3,grow");
+      scrollPaneMovieActors.setViewportView(tableActors);
+    }
+    {
+      lblActorThumb = new ActorImageLabel();
+      add(lblActorThumb, "cell 2 3,grow");
+    }
   }
 
   protected void initDataBindings() {

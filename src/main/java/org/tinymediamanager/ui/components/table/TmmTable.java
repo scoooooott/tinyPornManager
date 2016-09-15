@@ -254,11 +254,23 @@ public class TmmTable extends JTable {
         scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, b);
       }
     }
-
-    // updateColumnSelectionMouseListener();
-
   }
 
+  public void configureScrollPane(JScrollPane scrollPane) {
+    int[] columnsWithoutRightVerticalGrid = {};
+    configureScrollPane(scrollPane, columnsWithoutRightVerticalGrid);
+  }
+
+  public void configureScrollPane(JScrollPane scrollPane, int[] columnsWithoutRightVerticalGrid) {
+    if (!(scrollPane.getViewport() instanceof TmmViewport)) {
+      scrollPane.setViewport(new TmmViewport(this, columnsWithoutRightVerticalGrid));
+      scrollPane.getViewport().setView(this);
+    }
+    scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, TABLE_GRID_COLOR));
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+  }
+
+  @Deprecated
   public static JScrollPane createJScrollPane(JTable table, int[] columnsWithoutRightVerticalGrid) {
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setViewport(new TmmViewport(table, columnsWithoutRightVerticalGrid));
@@ -269,6 +281,7 @@ public class TmmTable extends JTable {
     return scrollPane;
   }
 
+  @Deprecated
   public static JScrollPane createJScrollPane(JTable table) {
     int[] columnsWithoutRightVerticalGrid = {};
     return createJScrollPane(table, columnsWithoutRightVerticalGrid);
