@@ -64,6 +64,7 @@ import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
 import org.tinymediamanager.ui.movies.settings.MovieDatasourceSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieImageSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieRenamerSettingsPanel;
+import org.tinymediamanager.ui.movies.settings.MovieScraperOptionsSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieScraperSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSettingsContainerPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSettingsPanel;
@@ -159,6 +160,7 @@ public class MovieUIModule implements ITmmUIModule {
     settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.datasourceandnfo"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel())); //$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new MovieScraperOptionsSettingsPanel())); //$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.images"), new MovieImageSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new MovieTrailerSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new MovieSubtitleSettingsPanel()));//$NON-NLS-1$
