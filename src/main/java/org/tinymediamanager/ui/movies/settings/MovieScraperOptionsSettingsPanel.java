@@ -101,14 +101,14 @@ public class MovieScraperOptionsSettingsPanel extends JPanel {
     }
     {
       final JLabel lblScraperThreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
-      add(lblScraperThreshold, "flowx,cell 1 8 2 1,aligny center");
+      add(lblScraperThreshold, "flowx,cell 1 8 2 1,aligny top");
 
       sliderThreshold = new JSlider();
       sliderThreshold.setMinorTickSpacing(5);
       sliderThreshold.setMajorTickSpacing(10);
       sliderThreshold.setPaintTicks(true);
       sliderThreshold.setPaintLabels(true);
-      add(sliderThreshold, "cell 1 8 2 1,growx");
+      add(sliderThreshold, "cell 1 8 2 1,growx,aligny top");
 
       final JTextPane tpScraperThresholdHint = new JTextPane();
       tpScraperThresholdHint.setOpaque(false);

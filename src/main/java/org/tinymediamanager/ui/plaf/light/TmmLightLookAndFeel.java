@@ -236,6 +236,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
             "TextPaneUI", TmmLightTextPaneUI.class.getName(),
             "ScrollPaneUI", TmmLightScrollPaneUI.class.getName(),
             "ProgressBarUI", TmmLightProgressBarUI.class.getName(),
+            "SliderUI", TmmLightSliderUI.class.getName()
 //        "ViewportUI", TmmLightViewportUI.class.getName(),
     };
     table.putDefaults(uiDefaults);

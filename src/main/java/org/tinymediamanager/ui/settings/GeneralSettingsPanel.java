@@ -129,10 +129,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     }
     {
       JLabel lblMemoryT = new JLabel(BUNDLE.getString("Settings.memory")); //$NON-NLS-1$
-      add(lblMemoryT, "flowx,cell 1 5 4 1,aligny center");
+      add(lblMemoryT, "flowx,cell 1 5 4 1,aligny top");
 
       sliderMemory = new JSlider();
-      add(sliderMemory, "cell 1 5 2 1,growx,aligny center");
+      add(sliderMemory, "cell 1 5 2 1,growx,aligny top");
       sliderMemory.setPaintLabels(true);
       sliderMemory.setPaintTicks(true);
       sliderMemory.setSnapToTicks(true);
@@ -143,10 +143,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
       sliderMemory.setValue(512);
 
       lblMemory = new JLabel("512");
-      add(lblMemory, "cell 1 5 4 1,aligny center");
+      add(lblMemory, "cell 1 5 4 1,aligny top");
 
       JLabel lblMb = new JLabel("MB");
-      add(lblMb, "cell 1 5 2 1,aligny center");
+      add(lblMb, "cell 1 5 2 1,aligny top");
 
       JTextPane tpMemoryHint = new JTextPane();
       add(tpMemoryHint, "cell 1 6 5 1,growx");
