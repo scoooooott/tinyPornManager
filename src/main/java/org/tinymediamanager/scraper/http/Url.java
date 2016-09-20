@@ -322,6 +322,9 @@ public class Url {
   public boolean download(File file) {
     try {
       InputStream is = getInputStream();
+      if (is == null) {
+        return false;
+      }
       ReadableByteChannel rbc = Channels.newChannel(is);
       FileOutputStream fos = new FileOutputStream(file);
       fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
