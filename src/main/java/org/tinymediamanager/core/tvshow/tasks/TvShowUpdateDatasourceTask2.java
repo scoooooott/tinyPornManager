@@ -276,7 +276,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      if (Files.notExists(tvShow.getPathNIO())) {
+      if (!Files.exists(tvShow.getPathNIO())) {
         tvShowList.removeTvShow(tvShow);
       }
       else {
@@ -304,7 +304,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      if (Files.notExists(tvShow.getPathNIO())) {
+      if (!Files.exists(tvShow.getPathNIO())) {
         tvShowList.removeTvShow(tvShow);
       }
       else {

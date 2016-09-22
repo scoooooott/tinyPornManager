@@ -285,7 +285,7 @@ public class MovieRenamer {
           // ## either way - check & create dest folder
           // ######################################################################
           LOGGER.trace("New movie path is a MMD :( " + newPathname);
-          if (Files.notExists(destDir)) { // if existent, all is good -> MMD (FIXME: kinda, we *might* have another full movie in there)
+          if (!Files.exists(destDir)) { // if existent, all is good -> MMD (FIXME: kinda, we *might* have another full movie in there)
             try {
               Files.createDirectories(destDir);
             }
@@ -1186,7 +1186,7 @@ public class MovieRenamer {
   private static boolean moveFile(Path oldFilename, Path newFilename) {
     try {
       // create parent if needed
-      if (Files.notExists(newFilename.getParent())) {
+      if (!Files.exists(newFilename.getParent())) {
         Files.createDirectory(newFilename.getParent());
       }
       boolean ok = Utils.moveFileSafe(oldFilename, newFilename);
@@ -1225,7 +1225,7 @@ public class MovieRenamer {
       }
       try {
         // create parent if needed
-        if (Files.notExists(newFilename.getParent())) {
+        if (!Files.exists(newFilename.getParent())) {
           Files.createDirectory(newFilename.getParent());
         }
         Utils.copyFileSafe(oldFilename, newFilename, true);

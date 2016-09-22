@@ -72,7 +72,7 @@ public class ImageCache {
    * @return the cache dir
    */
   public static Path getCacheDir() {
-    if (Files.notExists(CACHE_DIR)) {
+    if (!Files.exists(CACHE_DIR)) {
       try {
         Files.createDirectories(CACHE_DIR);
       }
@@ -263,9 +263,9 @@ public class ImageCache {
   public static Path cacheImage(Path originalFile) throws Exception {
     MediaFile mf = new MediaFile(originalFile);
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
-    if (Files.notExists(cachedFile)) {
+    if (!Files.exists(cachedFile)) {
       // check if the original file exists && size > 0
-      if (Files.notExists(originalFile)) {
+      if (!Files.exists(originalFile)) {
         throw new FileNotFoundException("unable to cache file: " + originalFile + "; file does not exist");
       }
       if (Files.size(originalFile) == 0) {
@@ -364,7 +364,7 @@ public class ImageCache {
       scaledImage = null;
     }
 
-    if (Files.notExists(cachedFile)) {
+    if (!Files.exists(cachedFile)) {
       throw new Exception("unable to cache file: " + originalFile);
     }
 

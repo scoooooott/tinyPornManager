@@ -74,7 +74,7 @@ public class MovieExporter extends MediaEntityExporter {
     engine.registerNamedRenderer(new ArtworkCopyRenderer(exportDir));
 
     // prepare export destination
-    if (Files.notExists(exportDir)) {
+    if (!Files.exists(exportDir)) {
       try {
         Files.createDirectories(exportDir);
       }
@@ -253,7 +253,7 @@ public class MovieExporter extends MediaEntityExporter {
         }
         try {
           // create the image dir
-          if (Files.notExists(imageDir)) {
+          if (!Files.exists(imageDir)) {
             Files.createDirectory(imageDir);
           }
 

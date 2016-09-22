@@ -856,7 +856,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       Path movieDir = movie.getPathNIO();
       if (!filesFound.contains(movieDir)) {
         // dir is not in hashset - check with exists to be sure it is not here
-        if (Files.notExists(movieDir)) {
+        if (!Files.exists(movieDir)) {
           LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
           moviesToRemove.add(movie);
         }

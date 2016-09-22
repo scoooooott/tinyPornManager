@@ -53,7 +53,7 @@ public abstract class MediaEntityExporter {
     }
 
     Path configFile = templateDir.resolve("template.conf");
-    if (Files.notExists(configFile)) {
+    if (!Files.exists(configFile)) {
       throw new Exception("illegal template config");
     }
 
@@ -123,7 +123,7 @@ public abstract class MediaEntityExporter {
 
           // get type of template
           Path config = path.resolve("template.conf");
-          if (Files.notExists(config)) {
+          if (!Files.exists(config)) {
             continue;
           }
 
