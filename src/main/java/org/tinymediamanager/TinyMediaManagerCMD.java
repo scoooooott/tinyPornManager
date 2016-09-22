@@ -417,6 +417,22 @@ public class TinyMediaManagerCMD {
       // RENAME
       // *****************
       if (rename) {
+        LOGGER.info("Commandline - rename & cleanup new shows...");
+        if (showToScrape.size() > 0) {
+          if (dryRun) {
+            for (TvShow show : showToScrape) {
+              LOGGER.info("DRYRUN: would have renamed show " + show.getTitle() + " with " + show.getEpisodeCount() + " episodes");
+            }
+          }
+          else {
+            task = new TvShowRenameTask(showToScrape, null, true);
+            task.run(); // blocking
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
+          }
+        }
         LOGGER.info("Commandline - rename & cleanup new episodes...");
         if (episodeToScrape.size() > 0) {
           if (dryRun) {

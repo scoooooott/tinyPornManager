@@ -37,11 +37,15 @@ import org.tinymediamanager.core.threading.DownloadTask;
  */
 public class MovieSubtitleDownloadTask extends DownloadTask {
 
-  private final Movie movie;
+  private final Movie  movie;
+  private final String languageTag;
+  private final Path   videoFilePath;
 
-  public MovieSubtitleDownloadTask(String url, Path toFile, Movie movie) {
-    super(url, toFile);
+  public MovieSubtitleDownloadTask(String url, Path videoFilePath, String languageTag, Movie movie) {
+    super(url, movie.getPathNIO().resolve(FilenameUtils.getBaseName(videoFilePath.getFileName().toString()) + "." + languageTag));
     this.movie = movie;
+    this.languageTag = languageTag;
+    this.videoFilePath = videoFilePath;
   }
 
   @Override
@@ -52,7 +56,7 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
     MediaFile mf = new MediaFile(file);
 
     if (mf.getType() != MediaFileType.SUBTITLE) {
-      String basename = FilenameUtils.getBaseName(file.getFileName().toString());
+      String basename = FilenameUtils.getBaseName(videoFilePath.toString()) + "." + languageTag;
 
       // try to decompress
       try {
@@ -68,7 +72,7 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
           String extension = FilenameUtils.getExtension(zipEntryFilename);
 
           // check is that is a valid file type
-          if (!Globals.settings.getSubtitleFileType().contains("." + extension)) {
+          if (!Globals.settings.getSubtitleFileType().contains("." + extension) && !"idx".equals(extension)) {
             ze = is.getNextEntry();
             continue;
           }

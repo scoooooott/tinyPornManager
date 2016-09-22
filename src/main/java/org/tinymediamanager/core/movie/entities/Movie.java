@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -364,6 +363,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
    *          the obj
    */
   public void addActor(MovieActor obj) {
+    // and re-set movie path the actors
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -533,7 +537,10 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   /**
    * Searches for actor images, and matches them to our "actors", updating the thumb url
+   * 
+   * @deprecated thumbPath is generated dynamic - no need for storage
    */
+  @Deprecated
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
@@ -1152,24 +1159,34 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
     }
 
-    // third - rename thumbs if needed
-    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
-      Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
-
-      for (MovieActor actor : actors) {
-        if (StringUtils.isNotBlank(actor.getThumbPath())) {
-          try {
-            // build expected filename
-            Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-            Path oldFile = Paths.get(actor.getThumbPath());
-            Utils.moveFileSafe(oldFile, actorName);
-          }
-          catch (IOException e) {
-            LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-          }
-        }
+    // and re-set movie path to the actors
+    for (MovieActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
       }
     }
+
+    // third - rename thumbs if needed
+    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
+    // actor writing/caching is done somewhere else...
+
+    // if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    // Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+    //
+    // for (MovieActor actor : actors) {
+    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
+    // try {
+    // // build expected filename
+    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+    // Path oldFile = Paths.get(actor.getThumbPath());
+    // Utils.moveFileSafe(oldFile, actorName);
+    // }
+    // catch (IOException e) {
+    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
+    // }
+    // }
+    // }
+    // }
 
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -1692,11 +1709,21 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Gets the images to cache.
    */
   public List<Path> getImagesToCache() {
-    // get files to cache
+    // image files
     List<Path> filesToCache = new ArrayList<>();
-    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
+    for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
+      }
+    }
+
+    // actor image files
+    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+      for (MovieActor actor : actors) {
+        Path imagePath = actor.getStoragePath();
+        if (imagePath != null) {
+          filesToCache.add(imagePath);
+        }
       }
     }
 
@@ -1854,7 +1881,13 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   public void addProducer(MovieProducer obj) {
+    // and re-set movie path of the producer
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     producers.add(obj);
+
     firePropertyChange(PRODUCERS, null, producers);
   }
 
@@ -1897,6 +1930,13 @@ public class Movie extends MediaEntity implements IMediaInformation {
             producers.add(oldProducer);
           }
         }
+      }
+    }
+
+    // and re-set movie path to the producers
+    for (MovieProducer producer : producers) {
+      if (StringUtils.isBlank(producer.getEntityRoot())) {
+        producer.setEntityRoot(getPathNIO().toString());
       }
     }
 

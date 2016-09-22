@@ -28,8 +28,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -53,8 +53,8 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
@@ -73,10 +73,10 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -477,7 +477,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         TvShowActor actor = new TvShowActor();
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
-        actor.setThumb(origCast.getThumb());
+        actor.setThumbUrl(origCast.getThumbUrl());
         cast.add(actor);
       }
 
@@ -648,7 +648,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
                 TvShowActor actor = new TvShowActor();
                 actor.setName(member.getName());
                 actor.setCharacter(member.getCharacter());
-                actor.setThumb(member.getImageUrl());
+                actor.setThumbUrl(member.getImageUrl());
                 actors.add(actor);
                 break;
 

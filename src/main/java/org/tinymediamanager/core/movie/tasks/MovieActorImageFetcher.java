@@ -15,23 +15,20 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The Class MovieActorImageFetcher.
@@ -59,7 +56,7 @@ public class MovieActorImageFetcher implements Runnable {
     try {
 
       // check if actors folder exists
-      Path actorsDir = Paths.get(movie.getPath(), MovieActor.ACTOR_DIR);
+      Path actorsDir = movie.getPathNIO().resolve(MovieActor.ACTOR_DIR);
       if (!Files.isDirectory(actorsDir)) {
         Files.createDirectory(actorsDir);
       }
@@ -71,13 +68,13 @@ public class MovieActorImageFetcher implements Runnable {
               && !path.getFileName().toString().startsWith(".")) {
             boolean found = false;
             // check if there is an actor for this file
-            String name = FilenameUtils.getBaseName(path.getFileName().toString()).replace("_", " ");
+            String actorImage = FilenameUtils.getBaseName(path.getFileName().toString()).replace("_", " ");
             for (MovieActor actor : movie.getActors()) {
-              if (actor.getName().equals(name)) {
+              if (actor.getName().equals(actorImage)) {
                 found = true;
 
                 // trick it to get rid of wrong extensions
-                if (!FilenameUtils.getExtension(path.getFileName().toString()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumbUrl()))) {
+                if (!FilenameUtils.getExtension(path.getFileName().toString()).equalsIgnoreCase(UrlUtil.getExtension(actor.getThumbUrl()))) {
                   found = false;
                 }
                 break;
@@ -95,37 +92,19 @@ public class MovieActorImageFetcher implements Runnable {
 
       // second download missing images
       for (MovieActor actor : movie.getActors()) {
-        String actorName = actor.getNameForStorage();
+        Path actorImage = actor.getStoragePath();
 
-        String providedFiletype = FilenameUtils.getExtension(actor.getThumbUrl());
-        Path actorImage = actorsDir.resolve(actorName + "." + providedFiletype);
-        if (StringUtils.isNotEmpty(actor.getThumbUrl()) && Files.notExists(actorImage)) {
-          try {
-            Url url = new Url(actor.getThumbUrl());
-            FileOutputStream outputStream = new FileOutputStream(actorImage.toFile());
-            InputStream is = url.getInputStream();
-            IOUtils.copy(is, outputStream);
-            outputStream.flush();
-            try {
-              outputStream.getFD().sync();
-            }
-            catch (Exception e) {
-            }
-            outputStream.close();
-            is.close();
-
-            actor.setThumbPath(actorImage.toAbsolutePath().toString());
-          }
-          catch (IOException e) {
-            LOGGER.warn("Problem getting actor image: " + e.getMessage());
+        if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && Files.notExists(actorImage)) {
+          Path cache = ImageCache.getCachedFile(actor.getThumbUrl());
+          if (cache != null) {
+            Utils.copyFileSafe(cache, actorImage);
           }
         }
-
-        // set path if it is empty and an image exists
-        if (Files.exists(actorImage) && StringUtils.isEmpty(actor.getThumbPath())) {
-          actor.setThumbPath(actorImage.toAbsolutePath().toString());
+        else {
+          LOGGER.warn("Cannot download actor image " + actor);
         }
       }
+
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);

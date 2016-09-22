@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -101,9 +101,9 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check against tag
-    if (searchOptions.containsKey(MovieSearchOptions.TAG)) {
-      String tag = (String) searchOptions.get(MovieSearchOptions.TAG);
-      if (!containsTag(movie, tag)) {
+    if (searchOptions.containsKey(MovieSearchOptions.TAG) && searchOptions.get(MovieSearchOptions.TAG) instanceof List) {
+      List<Object> tags = (List) searchOptions.get(MovieSearchOptions.TAG);
+      if (!containsTag(movie, tags)) {
         return false;
       }
     }
@@ -151,9 +151,9 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     }
 
     // check against datasource
-    if (searchOptions.containsKey(MovieSearchOptions.DATASOURCE)) {
-      String datasource = (String) searchOptions.get(MovieSearchOptions.DATASOURCE);
-      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+    if (searchOptions.containsKey(MovieSearchOptions.DATASOURCE) && searchOptions.get(MovieSearchOptions.DATASOURCE) instanceof List) {
+      List<Object> datasources = (List) searchOptions.get(MovieSearchOptions.DATASOURCE);
+      if (!datasources.isEmpty() && !datasources.contains(movie.getDataSource())) {
         return false;
       }
     }
@@ -253,14 +253,23 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     return false;
   }
 
-  private boolean containsTag(final Movie movie, final String tag) {
-    for (String tagInMovie : movie.getTags()) {
-      if (tagInMovie.equals(tag)) {
-        return true;
+  private boolean containsTag(final Movie movie, final List<?> tags) {
+    List<String> cleanedTags = new ArrayList<>();
+
+    // cleanup the tags list
+    for (Object obj : tags) {
+      if (obj instanceof String && StringUtils.isNotBlank((String) obj)) {
+        cleanedTags.add((String) obj);
       }
     }
 
-    return false;
+    // special check for empty tags
+    if (cleanedTags.isEmpty()) {
+      return movie.getTags().isEmpty();
+    }
+
+    // check against the movie
+    return movie.getTags().containsAll(cleanedTags);
   }
 
   private boolean containsCast(final Movie movie, final String name) {

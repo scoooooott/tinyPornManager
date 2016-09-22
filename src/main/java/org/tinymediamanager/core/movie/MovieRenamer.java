@@ -517,9 +517,7 @@ public class MovieRenamer {
 
     // update .actors
     for (MovieActor actor : movie.getActors()) {
-      if (StringUtils.isNotBlank(actor.getThumbPath())) {
-        actor.updateThumbRoot(newPathname);
-      }
+      actor.setEntityRoot(newPathname);
     }
 
     movie.saveToDb();

@@ -575,7 +575,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
             TvShowActor actor = new TvShowActor();
             actor.setName(member.getName());
             actor.setCharacter(member.getCharacter());
-            actor.setThumb(member.getImageUrl());
+            actor.setThumbUrl(member.getImageUrl());
             actors.add(actor);
             break;
 
@@ -1081,8 +1081,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actors.add(obj);
+    // and re-set TV show path to the actor
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
 
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1129,6 +1133,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       TvShowActor actor = actors.get(i);
       if (!newActors.contains(actor)) {
         actors.remove(actor);
+      }
+    }
+
+    // and re-set TV show path to the actors
+    for (TvShowActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
       }
     }
 

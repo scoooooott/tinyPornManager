@@ -55,8 +55,8 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
-import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
+import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
@@ -1233,7 +1233,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (miSnapshot == null) {
       int BUFFER_SIZE = 64 * 1024;
-      Iso9660FileSystem image;
+      Iso9660FileSystem image = null;
       try {
         LOGGER.trace("ISO: Open");
         image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
@@ -1320,6 +1320,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
       catch (Exception e) {
         LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
+        try {
+          if (image != null) {
+            image.close();
+            image = null;
+          }
+        }
+        catch (IOException e1) {
+          LOGGER.warn("Uh-oh. Cannot close disc image :(", e);
+        }
         closeMediaInfo();
         getMediaInfoSnapshot();
       }

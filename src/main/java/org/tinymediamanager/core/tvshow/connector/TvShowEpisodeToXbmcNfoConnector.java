@@ -228,7 +228,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.actors.clear();
       // actors for tv show episode (guests)
       for (TvShowActor actor : episode.getGuests()) {
-        xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+        xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumbUrl());
       }
 
       // write thumb url to multi ep NFOs
@@ -448,7 +448,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       // BUT: at this moment there is no information about the tv show, so we parse them all into the episode
       for (Actor actor : xbmc.getActors()) {
         TvShowActor cast = new TvShowActor(actor.getName(), actor.getRole());
-        cast.setThumb(actor.getThumb());
+        cast.setThumbUrl(actor.getThumb());
         episode.addActor(cast);
       }
 

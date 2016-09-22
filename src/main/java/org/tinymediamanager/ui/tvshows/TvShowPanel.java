@@ -27,6 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -234,7 +236,7 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
+    final JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     panelTvShowTree.add(btnFilter, "6, 1, default, bottom");
 
@@ -424,6 +426,22 @@ public class TvShowPanel extends JPanel {
         }
         else {
           panelExtendedSearch.setVisible(true);
+        }
+      }
+    });
+    // add a propertychangelistener which reacts on setting a filter
+    tree.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if ("filterChanged".equals(evt.getPropertyName())) {
+          if (Boolean.TRUE.equals(evt.getNewValue())) {
+            btnFilter.setIcon(IconManager.FILTER);
+            btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options.active")); //$NON-NLS-1$
+          }
+          else {
+            btnFilter.setIcon(IconManager.FILTER);
+            btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+          }
         }
       }
     });

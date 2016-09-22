@@ -159,7 +159,7 @@ public class License {
         pleaseDoNotCrack += "If you are reading this, you're probably a java developer.";
         pleaseDoNotCrack += "If so, you know how much work can be in such a project like TMM.";
         pleaseDoNotCrack += "So please, be kind and support the developers for your free License :)";
-        pleaseDoNotCrack += "http://www.tinymediamanager.org/index.php/donate/";
+        pleaseDoNotCrack += "http://www.tinymediamanager.org/donate/";
         pleaseDoNotCrack += "It gives you a warm and fuzzy feeling - i swear ;)";
         return true;
       }

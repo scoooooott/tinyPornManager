@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -70,7 +69,7 @@ public class ImageCacheTask extends TmmTask {
         }
 
         publishState(++i);
-        ImageCache.cacheImage(new MediaFile(fileToCache));
+        ImageCache.cacheImage(fileToCache);
       }
       catch (EmptyFileException e) {
         LOGGER.warn("failed to cache file (file is empty): " + fileToCache);

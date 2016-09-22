@@ -6,10 +6,19 @@ You now have the option to scrape localized language/country names instead of IS
 
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
 + added a date picker for easier date editing
++ implemented filtering for multiple tags (movie & TV shows)
++ implemented filtering for multiple datasources (movie & TV shows)
++ added play button in the movie chooser
+x fixed subtitle downloading where language tag got stripped off
+x fixed a UI glitch in the movie renamer settings when no folder name has been chosen
 x fix Kodi scraper detection on MacOS
+x some improvements to the TV show renamer
 x fixed an occasional multi threading problem (ConcurrentModificationException)
 x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
+x added filter indicator for TV shows too
+x fixed detection of episode files
+x many internal changes....
 
 
 Version 2.8.3

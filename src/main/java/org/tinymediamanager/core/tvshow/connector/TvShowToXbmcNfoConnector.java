@@ -50,8 +50,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -194,7 +194,7 @@ public class TvShowToXbmcNfoConnector {
 
     xbmc.actors.clear();
     for (TvShowActor actor : tvShow.getActors()) {
-      xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+      xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumbUrl());
     }
 
     xbmc.tags.clear();
@@ -286,7 +286,7 @@ public class TvShowToXbmcNfoConnector {
 
       for (Actor actor : xbmc.getActors()) {
         TvShowActor tvShowActor = new TvShowActor(actor.getName(), actor.getRole());
-        tvShowActor.setThumb(actor.getThumb());
+        tvShowActor.setThumbUrl(actor.getThumb());
         tvShow.addActor(tvShowActor);
       }
 

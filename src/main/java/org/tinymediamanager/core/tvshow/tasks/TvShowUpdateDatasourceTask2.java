@@ -149,8 +149,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // here we have 2 ways of updating:
       // - per datasource -> update ds / remove orphaned / update MFs
       // - per TV show -> udpate TV show / update MFs
-      if (tvShowFolders.size() == 0) {
-
+      if (tvShowFolders.isEmpty()) {
+        // update selected data sources
         for (String ds : dataSources) {
           initThreadPool(3, "update"); // FIXME: more threads result in duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<>();
@@ -192,7 +192,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       }
       else {
         initThreadPool(3, "update");
-        // update selected TV show
+        // update selected TV shows
         for (Path path : tvShowFolders) {
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
@@ -211,12 +211,29 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       setProgressDone(0);
       // gather MediaInformation for ALL shows - TBD
       if (!cancel) {
-        for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
-          if (cancel) {
-            break;
+        if (tvShowFolders.isEmpty()) {
+          // get MI for selected DS
+          for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+            if (cancel) {
+              break;
+            }
+            TvShow tvShow = tvShowList.getTvShows().get(i);
+            if (dataSources.contains(tvShow.getDataSource())) {
+              gatherMediaInformationForUngatheredMediaFiles(tvShow);
+            }
           }
-          TvShow tvShow = tvShowList.getTvShows().get(i);
-          gatherMediaInformationForUngatheredMediaFiles(tvShow);
+        }
+        else {
+          // get MI for selected TV shows
+          for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+            if (cancel) {
+              break;
+            }
+            TvShow tvShow = tvShowList.getTvShows().get(i);
+            if (tvShowFolders.contains(tvShow.getPathNIO())) {
+              gatherMediaInformationForUngatheredMediaFiles(tvShow);
+            }
+          }
         }
         waitForCompletionOrCancel();
       }
@@ -471,7 +488,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           // normal episode file - get all same named files
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
           for (MediaFile em : mfs) {
-            if (em.getFilename().startsWith(basename)) {
+            String emBasename = FilenameUtils.getBaseName(em.getFilename());
+            // same named files or thumb files
+            if (emBasename.equals(basename) || (emBasename).equals(basename + "-thumb")) {
               // we found some graphics named like the episode - define them as thumb here
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);

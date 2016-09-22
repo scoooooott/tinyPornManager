@@ -293,7 +293,7 @@ public class TvShowRenamer {
       }
       String filename = generateFilename(show, mf);
       LOGGER.debug("new filename should be " + filename);
-      if (filename != null && !filename.isEmpty()) {
+      if (StringUtils.isNotBlank(filename)) {
         Path newFile = seasonDir.resolve(filename);
 
         try {
@@ -427,6 +427,10 @@ public class TvShowRenamer {
       filename = createDestination(template, tvShow, eps);
     }
 
+    if (StringUtils.isBlank(filename) && forFile) {
+      return mf.getFilename();
+    }
+
     // since we can use this method for folders too, use the next options solely for files
     if (forFile) {
       if (mf.getType().equals(MediaFileType.THUMB)) {
@@ -466,8 +470,7 @@ public class TvShowRenamer {
           MediaFileSubtitle mfs = mf.getSubtitles().get(0);
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {
-              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(),
-                  TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
               if (StringUtils.isBlank(lang)) {
                 lang = mfs.getLanguage();
               }
@@ -663,7 +666,11 @@ public class TvShowRenamer {
     String newDestination = template;
     TvShowEpisode firstEp = null;
 
-    if (episodes == null || episodes.size() == 0) {
+    if (StringUtils.isBlank(template)) {
+      return "";
+    }
+
+    if (episodes == null || episodes.isEmpty()) {
       // TV show root folder
 
       // replace all $x parameters
