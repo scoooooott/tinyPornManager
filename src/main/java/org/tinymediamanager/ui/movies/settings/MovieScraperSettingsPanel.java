@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -32,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -54,6 +56,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
@@ -62,6 +65,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
@@ -88,6 +92,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxScraperFallback;
   private JPanel                      panelScraperOptions;
   private JTextPane                   tpScraperDescription;
+  private JSlider                     sliderThreshold;
+  private JCheckBox                   chckbxAutomaticallyScrapeImages;
+  private JCheckBox                   chckbxImageLanguage;
 
   private JTable                      tableScraper;
 
@@ -163,18 +170,28 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     if (counter > 0) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
+
+    Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<>();
+    labelTable.put(100, new JLabel("1.0"));
+    labelTable.put(75, new JLabel("0.75"));
+    labelTable.put(50, new JLabel("0.50"));
+    labelTable.put(25, new JLabel("0.25"));
+    labelTable.put(0, new JLabel("0.0"));
+    sliderThreshold.setLabelTable(labelTable);
+    sliderThreshold.setValue((int) (settings.getScraperThreshold() * 100));
+    sliderThreshold.addChangeListener(arg0 -> settings.setScraperThreshold(sliderThreshold.getValue() / 100.0));
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][400lp,grow]", "[][400lp][20lp][][][]"));
+    setLayout(new MigLayout("", "[25lp][20lp][][][grow]", "[][200lp][20lp][][][][20lp][][][20lp][][][][][][][]"));
     {
       final JLabel lblMetadataScraper = new JLabel(BUNDLE.getString("scraper.metadata")); // $NON-NLS-1$
       TmmFontHelper.changeFont(lblMetadataScraper, 1.16667, Font.BOLD);
-      add(lblMetadataScraper, "cell 0 0 4 1");
+      add(lblMetadataScraper, "cell 0 0 5 1");
     }
     {
       JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
+      add(scrollPaneScraper, "cell 1 1 3 1,growy");
 
       tableScraper = new JTable() {
         private static final long serialVersionUID = -144223066269069772L;
@@ -199,7 +216,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();
-      add(scrollPaneScraperDetails, "cell 3 1,grow");
+      add(scrollPaneScraperDetails, "cell 4 1 1 5,grow");
       scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       scrollPaneScraperDetails.setBorder(null);
 
@@ -218,19 +235,63 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     }
     {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
-      add(lblScraperLanguage, "cell 1 3");
+      add(lblScraperLanguage, "cell 1 3 2 1");
 
       cbScraperLanguage = new JComboBox(MediaLanguages.values());
-      add(cbScraperLanguage, "cell 2 3");
+      add(cbScraperLanguage, "cell 3 3");
 
       JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry"));
-      add(lblCountry, "cell 1 4");
+      add(lblCountry, "cell 1 4 2 1");
 
       cbCertificationCountry = new JComboBox(CountryCode.values());
-      add(cbCertificationCountry, "cell 2 4");
+      add(cbCertificationCountry, "cell 3 4");
 
       chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback"));
       add(chckbxScraperFallback, "cell 1 5 3 1");
+    }
+    {
+      final JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblScraperOptionsT, 1.16667, Font.BOLD);
+      add(lblScraperOptionsT, "cell 0 7 5 1");
+    }
+    {
+      final MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel((MovieScraperMetadataConfig) null);
+      add(movieScraperMetadataPanel, "cell 1 8 4 1,grow");
+    }
+    {
+      final JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblArtworkScrapeT, 1.16667, Font.BOLD);
+      add(lblArtworkScrapeT, "cell 0 10 5 1");
+    }
+    {
+      chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape"));
+      add(chckbxAutomaticallyScrapeImages, "cell 1 11 4 1");
+    }
+    {
+      chckbxImageLanguage = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape.language"));
+      add(chckbxImageLanguage, "cell 2 12 3 1");
+    }
+    {
+      final JLabel lblAutomaticScrapeT = new JLabel(BUNDLE.getString("Settings.automaticscraper")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblAutomaticScrapeT, 1.16667, Font.BOLD);
+      add(lblAutomaticScrapeT, "cell 0 14 5 1");
+    }
+    {
+      final JLabel lblScraperThreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
+      add(lblScraperThreshold, "flowx,cell 1 15 3 1,aligny top");
+
+      sliderThreshold = new JSlider();
+      sliderThreshold.setMinorTickSpacing(5);
+      sliderThreshold.setMajorTickSpacing(10);
+      sliderThreshold.setPaintTicks(true);
+      sliderThreshold.setPaintLabels(true);
+      add(sliderThreshold, "cell 1 15 3 1,growx,aligny top");
+
+      final JTextPane tpScraperThresholdHint = new JTextPane();
+      tpScraperThresholdHint.setOpaque(false);
+      TmmFontHelper.changeFont(tpScraperThresholdHint, 0.833);
+      tpScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
+      add(tpScraperThresholdHint, "cell 1 16 4 1");
     }
   }
 
@@ -355,5 +416,20 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<JTable, String, JTextPane, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
         tpScraperDescription, jTextPaneBeanProperty);
     autoBinding_12.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty = BeanProperty.create("scrapeBestImage");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty, chckbxImageLanguage, jCheckBoxBeanProperty_1);
+    autoBinding_10.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_10 = BeanProperty.create("imageLanguagePriority");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
+    autoBinding_11.bind();
   }
 }

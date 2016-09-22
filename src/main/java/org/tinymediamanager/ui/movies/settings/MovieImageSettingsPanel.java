@@ -16,13 +16,10 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Canvas;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
@@ -39,20 +36,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
@@ -81,10 +71,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieImageSettingsPanel.
@@ -93,9 +80,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieImageSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 7312645402037806284L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
@@ -130,20 +115,19 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxThumb;
   private JCheckBox                   chckbxDiscArt;
   private JCheckBox                   chckbxClearArt;
-  private JPanel                      panelExtraArtwork;
   private JCheckBox                   chckbxMovieSetArtwork;
-  private JScrollPane                 scrollPaneScraper;
-  private JPanel                      panelScraperDetails;
   private JTable                      tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
-  private JPanel                      panelFileNaming;
-  private JScrollPane                 scrollPaneScraperDetails;
 
   /**
    * Instantiates a new movie image settings panel.
    */
   public MovieImageSettingsPanel() {
+    // UI init
+    initComponents();
+    initDataBindings();
+
     // data init
     List<String> enabledArtworkProviders = settings.getMovieArtworkScrapers();
     int selectedIndex = -1;
@@ -160,211 +144,64 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       counter++;
     }
 
-    // init UI
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+    // adjust table columns
+    // Checkbox and Logo shall have minimal width
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 0, 2);
+    TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
+    TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
-    JPanel panelMovieImages = new JPanel();
-    panelMovieImages.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.poster"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMovieImages, "2, 2, default, fill");
-    panelMovieImages.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("100dlu:grow"), FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
-
-    scrollPaneScraperDetails = new JScrollPane();
-    scrollPaneScraperDetails.setBorder(null);
-    scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    panelMovieImages.add(scrollPaneScraperDetails, "6, 1, 1, 7, fill, fill");
-
-    panelScraperDetails = new ScrollablePanel();
-    scrollPaneScraperDetails.setViewportView(panelScraperDetails);
-    panelScraperDetails.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
-
-    {
-      // add a CSS rule to force body tags to use the default label font
-      // instead of the value in javax.swing.text.html.default.csss
-      Font font = UIManager.getFont("Label.font");
-      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
-      tpScraperDescription = new JTextPane();
-      tpScraperDescription.setOpaque(false);
-      tpScraperDescription.setEditorKit(new HTMLEditorKit());
-      ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
-      panelScraperDetails.add(tpScraperDescription, "1, 1, fill, top");
-    }
-    panelScraperOptions = new JPanel();
-    panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
-    panelScraperDetails.add(panelScraperOptions, "1, 3, fill, top");
-
-    scrollPaneScraper = new JScrollPane();
-    panelMovieImages.add(scrollPaneScraper, "2, 2, 3, 1, fill, fill");
-
-    tableScraper = new JTable();
-    tableScraper.setRowHeight(29);
-    scrollPaneScraper.setViewportView(tableScraper);
-
-    JSeparator separator = new JSeparator();
-    panelMovieImages.add(separator, "2, 3, 3, 1");
-
-    JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size"));
-    panelMovieImages.add(lblImageTmdbPosterSize, "2, 5");
-
-    cbImagePosterSize = new JComboBox(PosterSizes.values());
-    panelMovieImages.add(cbImagePosterSize, "4, 5");
-
-    JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size"));
-    panelMovieImages.add(lblImageTmdbFanartSize, "2, 7");
-
-    cbImageFanartSize = new JComboBox(FanartSizes.values());
-    panelMovieImages.add(cbImageFanartSize, "4, 7");
-
-    separator = new JSeparator();
-    panelMovieImages.add(separator, "2, 9, 5, 1");
-
-    panelFileNaming = new JPanel();
-    panelMovieImages.add(panelFileNaming, "2, 11, 5, 1, fill, fill");
-    panelFileNaming.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-            FormSpecs.DEFAULT_ROWSPEC, }));
-
-    JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));
-    panelFileNaming.add(lblPosterFilename, "1, 1");
-
-    cbMoviePosterFilename7 = new JCheckBox("<dynamic>.ext");
-    panelFileNaming.add(cbMoviePosterFilename7, "3, 1");
-
-    cbMoviePosterFilename4 = new JCheckBox("poster.ext");
-    panelFileNaming.add(cbMoviePosterFilename4, "5, 1");
-
-    cbMoviePosterFilename2 = new JCheckBox("movie.ext");
-    panelFileNaming.add(cbMoviePosterFilename2, "7, 1");
-
-    cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
-    panelFileNaming.add(cbMoviePosterFilename8, "9, 1");
-
-    cbMoviePosterFilename6 = new JCheckBox("folder.ext");
-    panelFileNaming.add(cbMoviePosterFilename6, "11, 1");
-
-    JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));
-    panelFileNaming.add(lblFanartFileNaming, "1, 3");
-
-    cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
-    panelFileNaming.add(cbMovieFanartFilename1, "3, 3");
-
-    cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");
-    panelFileNaming.add(cbMovieFanartFilename3, "5, 3");
-
-    cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
-    panelFileNaming.add(cbMovieFanartFilename2, "7, 3");
-
-    tpFileNamingHint = new JTextPane();
-    panelFileNaming.add(tpFileNamingHint, "1, 5, 11, 1, fill, fill");
-    tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
-    tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
-    TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
-
-    panelExtraArtwork = new JPanel();
-    panelExtraArtwork
-        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.extraartwork"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelExtraArtwork, "2, 4, default, fill");
-    panelExtraArtwork.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
-
-    chckbxBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner"));
-    panelExtraArtwork.add(chckbxBanner, "2, 2");
-
-    chckbxClearArt = new JCheckBox(BUNDLE.getString("mediafiletype.clearart"));
-    panelExtraArtwork.add(chckbxClearArt, "4, 2");
-
-    chckbxThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb"));
-    panelExtraArtwork.add(chckbxThumb, "6, 2");
-
-    chckbxLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo"));
-    panelExtraArtwork.add(chckbxLogo, "8, 2");
-
-    chckbxDiscArt = new JCheckBox(BUNDLE.getString("mediafiletype.discart"));
-    panelExtraArtwork.add(chckbxDiscArt, "10, 2");
-
-    separator = new JSeparator();
-    panelExtraArtwork.add(separator, "2, 4, 9, 1");
-
-    chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));
-    panelExtraArtwork.add(chckbxEnableExtrathumbs, "2, 6, 3, 1");
-
-    chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs"));
-    panelExtraArtwork.add(chckbxResizeExtrathumbsTo, "6, 6, 3, 1");
-
-    spExtrathumbWidth = new JSpinner();
-    panelExtraArtwork.add(spExtrathumbWidth, "10, 6");
-    spExtrathumbWidth.setPreferredSize(new Dimension(49, 20));
-
-    lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-    panelExtraArtwork.add(lblDownload, "2, 8, 7, 1, right, default");
-
-    spDownloadCountExtrathumbs = new JSpinner();
-    panelExtraArtwork.add(spDownloadCountExtrathumbs, "10, 8");
-    spDownloadCountExtrathumbs.setPreferredSize(new Dimension(49, 20));
-
-    chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
-    panelExtraArtwork.add(chckbxEnableExtrafanart, "2, 10, 9, 1");
-
-    lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
-    panelExtraArtwork.add(lblDownloadCount, "2, 12, 7, 1, right, default");
-
-    spDownloadCountExtrafanart = new JSpinner();
-    panelExtraArtwork.add(spDownloadCountExtrafanart, "10, 12");
-    spDownloadCountExtrafanart.setPreferredSize(new Dimension(49, 20));
-
-    separator = new JSeparator();
-    panelExtraArtwork.add(separator, "2, 14, 9, 1");
-
-    cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
-    panelExtraArtwork.add(cbActorImages, "2, 16, 9, 1");
-
-    separator = new JSeparator();
-    panelExtraArtwork.add(separator, "2, 18, 9, 1");
-
-    chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie")); //$NON-NLS-1$
-    panelExtraArtwork.add(chckbxMovieSetArtwork, "2, 20, 9, 1");
-
-    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store")); //$NON-NLS-1$
-    panelExtraArtwork.add(chckbxStoreMoviesetArtwork, "2, 22, 9, 1");
-
-    lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername")); //$NON-NLS-1$
-    panelExtraArtwork.add(lblFoldername, "2, 24, 3, 1, right, default");
-
-    tfMovieSetArtworkFolder = new JTextField();
-    panelExtraArtwork.add(tfMovieSetArtworkFolder, "6, 24, 3, 1");
-    tfMovieSetArtworkFolder.setColumns(10);
-
-    btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect")); //$NON-NLS-1$
-    panelExtraArtwork.add(btnSelectFolder, "10, 24");
-    btnSelectFolder.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
-        if (file != null && Files.isDirectory(file)) {
-          tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
+    tableScraper.getModel().addTableModelListener(arg0 -> {
+      // click on the checkbox
+      if (arg0.getColumn() == 0) {
+        int row = arg0.getFirstRow();
+        ArtworkScraper changedScraper = scrapers.get(row);
+        if (changedScraper.active) {
+          settings.addMovieArtworkScraper(changedScraper.getScraperId());
+        }
+        else {
+          settings.removeMovieArtworkScraper(changedScraper.getScraperId());
         }
       }
     });
 
-    initDataBindings();
+    // implement selection listener to load settings
+    tableScraper.getSelectionModel().addListSelectionListener(e -> {
+      int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
+      if (index > -1) {
+        panelScraperOptions.removeAll();
+        if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
+          panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
+        }
+        panelScraperOptions.revalidate();
+      }
+    });
+
+    // listen to changes of the checkboxes
+    ItemListener listener = e -> checkChanges();
+    cbMovieFanartFilename2.addItemListener(listener);
+    cbMovieFanartFilename3.addItemListener(listener);
+
+    cbMovieFanartFilename1.addItemListener(listener);
+    cbMoviePosterFilename2.addItemListener(listener);
+    cbMoviePosterFilename4.addItemListener(listener);
+    cbMoviePosterFilename7.addItemListener(listener);
+    cbMoviePosterFilename8.addItemListener(listener);
+    cbMoviePosterFilename6.addItemListener(listener);
+
+    // add a CSS rule to force body tags to use the default label font
+    // instead of the value in javax.swing.text.html.default.csss
+    Font font = UIManager.getFont("Label.font");
+    Color color = UIManager.getColor("Label.foreground");
+    String bodyRule = "body { font-family: " + font.getFamily() + "; font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
+        + color.getGreen() + "," + color.getBlue() + "); }";
+    ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
+
+    btnSelectFolder.addActionListener(arg0 -> {
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
+      if (file != null && Files.isDirectory(file)) {
+        tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
+      }
+    });
 
     // poster filenames
     List<MoviePosterNaming> moviePosterFilenames = settings.getMoviePosterFilenames();
@@ -396,66 +233,177 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       cbMovieFanartFilename3.setSelected(true);
     }
 
-    // listen to changes of the checkboxes
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    };
-    cbMovieFanartFilename2.addItemListener(listener);
-    cbMovieFanartFilename3.addItemListener(listener);
-
-    cbMovieFanartFilename1.addItemListener(listener);
-    cbMoviePosterFilename2.addItemListener(listener);
-    cbMoviePosterFilename4.addItemListener(listener);
-    cbMoviePosterFilename7.addItemListener(listener);
-    cbMoviePosterFilename8.addItemListener(listener);
-    cbMoviePosterFilename6.addItemListener(listener);
-
-    // adjust table columns
-    // Checkbox and Logo shall have minimal width
-    TableColumnResizer.setMaxWidthForColumn(tableScraper, 0, 2);
-    TableColumnResizer.setMaxWidthForColumn(tableScraper, 1, 2);
-    TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
-
-    tableScraper.getModel().addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent arg0) {
-        // click on the checkbox
-        if (arg0.getColumn() == 0) {
-          int row = arg0.getFirstRow();
-          ArtworkScraper changedScraper = scrapers.get(row);
-          if (changedScraper.active) {
-            settings.addMovieArtworkScraper(changedScraper.getScraperId());
-          }
-          else {
-            settings.removeMovieArtworkScraper(changedScraper.getScraperId());
-          }
-        }
-      }
-    });
-
-    // implement selection listener to load settings
-    tableScraper.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
-        if (index > -1) {
-          panelScraperOptions.removeAll();
-          if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
-            panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
-          }
-          panelScraperOptions.revalidate();
-        }
-      }
-    });
-
     // select default artwork scraper
     if (selectedIndex < 0) {
       selectedIndex = 0;
     }
     if (counter > 0) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[25lp][][][grow]", "[][200lp][][][20lp][][][20lp][][][]"));
+    {
+      final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
+      add(lblScraperT, "cell 0 0 4 1");
+    }
+    {
+      JScrollPane scrollPaneScraper = new JScrollPane();
+      add(scrollPaneScraper, "cell 1 1 2 1");
+
+      tableScraper = new JTable();
+      tableScraper.setRowHeight(29);
+      scrollPaneScraper.setViewportView(tableScraper);
+    }
+    {
+      JScrollPane scrollPaneScraperDetails = new JScrollPane();
+      add(scrollPaneScraperDetails, "cell 3 1 1 3,grow");
+      scrollPaneScraperDetails.setBorder(null);
+      scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+      JPanel panelScraperDetails = new ScrollablePanel();
+      scrollPaneScraperDetails.setViewportView(panelScraperDetails);
+      panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
+
+      tpScraperDescription = new JTextPane();
+      tpScraperDescription.setOpaque(false);
+      tpScraperDescription.setEditable(false);
+      panelScraperDetails.add(tpScraperDescription, "cell 0 0,growx");
+
+      panelScraperOptions = new JPanel();
+      panelScraperOptions.setLayout(new FlowLayout(FlowLayout.LEFT));
+      panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx");
+    }
+    {
+      JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$
+      add(lblImageTmdbPosterSize, "cell 1 2");
+
+      cbImagePosterSize = new JComboBox(PosterSizes.values());
+      add(cbImagePosterSize, "cell 2 2");
+
+      JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size")); //$NON-NLS-1$
+      add(lblImageTmdbFanartSize, "cell 1 3");
+
+      cbImageFanartSize = new JComboBox(FanartSizes.values());
+      add(cbImageFanartSize, "cell 2 3");
+    }
+    {
+      final JLabel lblFileNamingT = new JLabel(BUNDLE.getString("Settings.artwork.naming")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblFileNamingT, 1.16667, Font.BOLD);
+      add(lblFileNamingT, "cell 0 5 4 1");
+    }
+    {
+      JPanel panelFileNaming = new JPanel();
+      add(panelFileNaming, "cell 1 6 3 1");
+      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][][][]", "[][][]"));
+
+      JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));//$NON-NLS-1$
+      panelFileNaming.add(lblPosterFilename, "cell 0 0,growx,aligny center");
+
+      cbMoviePosterFilename7 = new JCheckBox("<dynamic>.ext");
+      panelFileNaming.add(cbMoviePosterFilename7, "cell 1 0,growx,aligny top");
+
+      cbMoviePosterFilename4 = new JCheckBox("poster.ext");
+      panelFileNaming.add(cbMoviePosterFilename4, "cell 2 0,growx,aligny top");
+
+      cbMoviePosterFilename2 = new JCheckBox("movie.ext");
+      panelFileNaming.add(cbMoviePosterFilename2, "cell 3 0,growx,aligny top");
+
+      cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
+      panelFileNaming.add(cbMoviePosterFilename8, "cell 4 0,alignx left,aligny top");
+
+      cbMoviePosterFilename6 = new JCheckBox("folder.ext");
+      panelFileNaming.add(cbMoviePosterFilename6, "cell 5 0,alignx left,aligny top");
+
+      JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));//$NON-NLS-1$
+      panelFileNaming.add(lblFanartFileNaming, "cell 0 1,alignx left,aligny center");
+
+      cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
+      panelFileNaming.add(cbMovieFanartFilename1, "cell 1 1,alignx left,aligny top");
+
+      cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");
+      panelFileNaming.add(cbMovieFanartFilename3, "cell 2 1,alignx left,aligny top");
+
+      cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
+      panelFileNaming.add(cbMovieFanartFilename2, "cell 3 1,alignx left,aligny top");
+
+      tpFileNamingHint = new JTextPane();
+      panelFileNaming.add(tpFileNamingHint, "cell 0 2 6 1,grow");
+      tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
+      tpFileNamingHint.setOpaque(false);
+      tpFileNamingHint.setEditable(false);
+      TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
+    }
+    {
+      final JLabel lblExtraArtworkT = new JLabel(BUNDLE.getString("Settings.extraartwork"));//$NON-NLS-1$
+      TmmFontHelper.changeFont(lblExtraArtworkT, 1.16667, Font.BOLD);
+      add(lblExtraArtworkT, "cell 0 8 4 1");
+    }
+    {
+      chckbxBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+      add(chckbxBanner, "flowx,cell 1 9 3 1");
+
+      chckbxClearArt = new JCheckBox(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+      add(chckbxClearArt, "cell 1 9");
+
+      chckbxThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+      add(chckbxThumb, "cell 1 9");
+
+      chckbxLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+      add(chckbxLogo, "cell 1 9");
+
+      chckbxDiscArt = new JCheckBox(BUNDLE.getString("mediafiletype.discart")); //$NON-NLS-1$
+      add(chckbxDiscArt, "cell 1 9");
+    }
+    {
+      JPanel panelExtraArtwork = new JPanel();
+      add(panelExtraArtwork, "cell 1 10 3 1,grow");
+      panelExtraArtwork.setLayout(new MigLayout("insets 0", "[][][][][]", "[][][][][15lp][][15lp][][][]"));
+
+      chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));//$NON-NLS-1$
+      panelExtraArtwork.add(chckbxEnableExtrathumbs, "cell 0 0 2 1");
+
+      chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs"));//$NON-NLS-1$
+      panelExtraArtwork.add(chckbxResizeExtrathumbsTo, "cell 2 0 2 1");
+
+      spExtrathumbWidth = new JSpinner();
+      panelExtraArtwork.add(spExtrathumbWidth, "cell 4 0,growx");
+
+      lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblDownload, "cell 2 1 2 1,alignx right");
+
+      spDownloadCountExtrathumbs = new JSpinner();
+      panelExtraArtwork.add(spDownloadCountExtrathumbs, "cell 4 1,growx");
+
+      chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));//$NON-NLS-1$
+      panelExtraArtwork.add(chckbxEnableExtrafanart, "cell 0 2 5 1");
+
+      lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblDownloadCount, "cell 2 3 2 1,alignx right");
+
+      spDownloadCountExtrafanart = new JSpinner();
+      panelExtraArtwork.add(spDownloadCountExtrafanart, "cell 4 3,growx");
+
+      cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));//$NON-NLS-1$
+      panelExtraArtwork.add(cbActorImages, "cell 0 5 5 1,growx");
+
+      chckbxMovieSetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store.movie")); //$NON-NLS-1$
+      panelExtraArtwork.add(chckbxMovieSetArtwork, "cell 0 7 5 1,growx");
+
+      chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store")); //$NON-NLS-1$
+      panelExtraArtwork.add(chckbxStoreMoviesetArtwork, "cell 0 8 5 1,growx");
+
+      lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername")); //$NON-NLS-1$
+      panelExtraArtwork.add(lblFoldername, "cell 1 9,alignx right");
+
+      tfMovieSetArtworkFolder = new JTextField();
+      panelExtraArtwork.add(tfMovieSetArtworkFolder, "cell 2 9 2 1,growx");
+      tfMovieSetArtworkFolder.setColumns(10);
+
+      btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect")); //$NON-NLS-1$
+      panelExtraArtwork.add(btnSelectFolder, "cell 4 9");
     }
   }
 
