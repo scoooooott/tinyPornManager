@@ -20,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import javax.swing.SwingWorker;
+
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.entities.Person;
@@ -35,6 +37,8 @@ public class ActorImageLabel extends ImageLabel {
   private static final long           serialVersionUID = -1768796209645569296L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  protected SwingWorker<Void, Void>   actorWorker      = null;
+
   public ActorImageLabel() {
     super();
     setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
@@ -42,48 +46,37 @@ public class ActorImageLabel extends ImageLabel {
 
   public void setActor(Person actor) {
     if (actor != null) {
-
-      // set file (or cached one) if existent
-      if (StringUtils.isNotBlank(actor.getEntityRoot())) {
-        Path p = ImageCache.getCachedFile(actor.getStoragePath());
-        if (p != null && Files.exists(p)) {
-          setImagePath(p.toString());
-          return;
-        }
+      // load actors async
+      if (actorWorker != null && !actorWorker.isDone()) {
+        actorWorker.cancel(true);
       }
 
-      // no file found, try to cache url
-      Path p = ImageCache.getCachedFile(actor.getThumbUrl());
-      if (p != null) {
-        setImagePath(p.toString());
-      }
-      else {
-        // fallback - set url
-        setImageUrl(actor.getThumbUrl());
-      }
+      // load image in separate worker -> performance
+      actorWorker = new ActorImageLoader(actor);
+      actorWorker.execute();
     }
   }
 
-  @Override
-  public void setImagePath(String newValue) {
-    String oldValue = this.imagePath;
-
-    if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
-      return;
-    }
-
-    this.imagePath = newValue;
-    firePropertyChange("imagePath", oldValue, newValue);
-
-    // stop previous worker
-    if (worker != null && !worker.isDone()) {
-      worker.cancel(true);
-    }
-
-    // load image in separate worker -> performance
-    worker = new ImageLoader(this.imagePath, this.getSize());
-    worker.execute();
-  }
+  // @Override
+  // public void setImagePath(String newValue) {
+  // String oldValue = this.imagePath;
+  //
+  // if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
+  // return;
+  // }
+  //
+  // this.imagePath = newValue;
+  // firePropertyChange("imagePath", oldValue, newValue);
+  //
+  // // stop previous worker
+  // if (worker != null && !worker.isDone()) {
+  // worker.cancel(true);
+  // }
+  //
+  // // load image in separate worker -> performance
+  // worker = new ImageLoader(this.imagePath, this.getSize());
+  // worker.execute();
+  // }
 
   @Override
   public void setImageUrl(String newValue) {
@@ -91,15 +84,16 @@ public class ActorImageLabel extends ImageLabel {
     this.imageUrl = newValue;
     firePropertyChange("imageUrl", oldValue, newValue);
 
-    if (StringUtils.isEmpty(newValue)) {
-      scaledImage = null;
-      this.repaint();
-      return;
-    }
-
     // stop previous worker
     if (worker != null && !worker.isDone()) {
       worker.cancel(true);
+    }
+
+    scaledImage = null;
+    this.repaint();
+
+    if (StringUtils.isEmpty(newValue)) {
+      return;
     }
 
     // fetch image in separate worker -> performance
@@ -123,5 +117,51 @@ public class ActorImageLabel extends ImageLabel {
     }
 
     super.paintComponent(g);
+  }
+
+  /*
+   * inner class for loading the actor images
+   */
+  protected class ActorImageLoader extends SwingWorker<Void, Void> {
+    private Person actor;
+    private Path   imagePath = null;
+
+    public ActorImageLoader(Person actor) {
+      this.actor = actor;
+    }
+
+    @Override
+    protected Void doInBackground() throws Exception {
+      // set file (or cached one) if existent
+      if (StringUtils.isNotBlank(actor.getEntityRoot())) {
+        Path p = ImageCache.getCachedFile(actor.getStoragePath());
+        if (p != null && Files.exists(p)) {
+          imagePath = p;
+          return null;
+        }
+      }
+
+      // no file found, try to cache url
+      Path p = ImageCache.getCachedFile(actor.getThumbUrl());
+      if (p != null) {
+        imagePath = p;
+      }
+
+      return null;
+    }
+
+    @Override
+    protected void done() {
+      if (isCancelled()) {
+        return;
+      }
+
+      if (imagePath != null) {
+        setImagePath(imagePath.toString());
+      }
+      else if (StringUtils.isNotBlank(imageUrl)) {
+        setImageUrl(actor.getThumbUrl());
+      }
+    }
   }
 }

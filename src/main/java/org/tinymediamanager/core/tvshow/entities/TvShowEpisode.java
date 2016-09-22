@@ -48,8 +48,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,8 +71,8 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -639,8 +639,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actors.add(obj);
+    // and re-set episode path to the actor
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
 
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -704,6 +708,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       TvShowActor actor = actors.get(i);
       if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
         actors.remove(actor);
+      }
+    }
+
+    // and re-set episode path to the actors
+    for (TvShowActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
       }
     }
 

@@ -60,8 +60,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -101,10 +101,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -362,6 +362,11 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addActor(MovieActor obj) {
+    // and re-set movie path the actors
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -1153,6 +1158,13 @@ public class Movie extends MediaEntity {
       }
     }
 
+    // and re-set movie path to the actors
+    for (MovieActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
     // third - rename thumbs if needed
     // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
     // actor writing/caching is done somewhere else...
@@ -1722,11 +1734,21 @@ public class Movie extends MediaEntity {
    * Gets the images to cache.
    */
   public List<Path> getImagesToCache() {
-    // get files to cache
+    // image files
     List<Path> filesToCache = new ArrayList<>();
-    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
+    for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
+      }
+    }
+
+    // actor image files
+    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+      for (MovieActor actor : actors) {
+        Path imagePath = actor.getStoragePath();
+        if (imagePath != null) {
+          filesToCache.add(imagePath);
+        }
       }
     }
 
@@ -1884,7 +1906,13 @@ public class Movie extends MediaEntity {
   }
 
   public void addProducer(MovieProducer obj) {
+    // and re-set movie path of the producer
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     producers.add(obj);
+
     firePropertyChange(PRODUCERS, null, producers);
   }
 
@@ -1927,6 +1955,13 @@ public class Movie extends MediaEntity {
             producers.add(oldProducer);
           }
         }
+      }
+    }
+
+    // and re-set movie path to the producers
+    for (MovieProducer producer : producers) {
+      if (StringUtils.isBlank(producer.getEntityRoot())) {
+        producer.setEntityRoot(getPathNIO().toString());
       }
     }
 
