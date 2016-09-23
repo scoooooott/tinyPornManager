@@ -285,7 +285,7 @@ public class MovieRenamer {
           // ## either way - check & create dest folder
           // ######################################################################
           LOGGER.trace("New movie path is a MMD :( " + newPathname);
-          if (Files.notExists(destDir)) { // if existent, all is good -> MMD (FIXME: kinda, we *might* have another full movie in there)
+          if (!Files.exists(destDir)) { // if existent, all is good -> MMD (FIXME: kinda, we *might* have another full movie in there)
             try {
               Files.createDirectories(destDir);
             }
@@ -519,9 +519,7 @@ public class MovieRenamer {
 
     // update .actors
     for (MovieActor actor : movie.getActors()) {
-      if (StringUtils.isNotBlank(actor.getThumbPath())) {
-        actor.updateThumbRoot(newPathname);
-      }
+      actor.setEntityRoot(newPathname);
     }
 
     movie.saveToDb();
@@ -700,7 +698,9 @@ public class MovieRenamer {
           List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
-            nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().size() > 1) {
+              nfonames.add(MovieNfoNaming.FILENAME_NFO);
+            }
           }
           else {
             nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
@@ -725,18 +725,7 @@ public class MovieRenamer {
         break;
 
       case POSTER:
-        List<MoviePosterNaming> posternames = new ArrayList<>();
-        if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
-          if (newDestIsMultiMovieDir) {
-            // Fixate the name regardless of setting
-            posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-            posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
-          }
-          else {
-            posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
-          }
-        }
-        for (MoviePosterNaming name : posternames) {
+        for (MoviePosterNaming name : MovieArtworkHelper.getPosterNamesForMovie(movie)) {
           String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
           if (newPosterName != null && !newPosterName.isEmpty()) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
@@ -763,18 +752,7 @@ public class MovieRenamer {
         break;
 
       case FANART:
-        List<MovieFanartNaming> fanartnames = new ArrayList<>();
-        if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
-          if (newDestIsMultiMovieDir) {
-            // Fixate the name regardless of setting
-            fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-            fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
-          }
-          else {
-            fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
-          }
-        }
-        for (MovieFanartNaming name : fanartnames) {
+        for (MovieFanartNaming name : MovieArtworkHelper.getFanartNamesForMovie(movie)) {
           String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
           if (newFanartName != null && !newFanartName.isEmpty()) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
@@ -1208,7 +1186,7 @@ public class MovieRenamer {
   private static boolean moveFile(Path oldFilename, Path newFilename) {
     try {
       // create parent if needed
-      if (Files.notExists(newFilename.getParent())) {
+      if (!Files.exists(newFilename.getParent())) {
         Files.createDirectory(newFilename.getParent());
       }
       boolean ok = Utils.moveFileSafe(oldFilename, newFilename);
@@ -1247,7 +1225,7 @@ public class MovieRenamer {
       }
       try {
         // create parent if needed
-        if (Files.notExists(newFilename.getParent())) {
+        if (!Files.exists(newFilename.getParent())) {
           Files.createDirectory(newFilename.getParent());
         }
         Utils.copyFileSafe(oldFilename, newFilename, true);

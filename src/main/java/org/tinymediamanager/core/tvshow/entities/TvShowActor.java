@@ -15,12 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.entities;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.entities.Person;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -29,101 +24,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public class TvShowActor extends AbstractModelObject {
-  public static final String ACTOR_DIR = ".actors";
+public class TvShowActor extends Person {
 
+  @Deprecated
   @JsonProperty
-  private String             name      = "";
-  @JsonProperty
-  private String             character = "";
-  @JsonProperty
-  private String             thumb     = "";
-  @JsonProperty
-  private String             thumbPath = "";
+  private String thumb = ""; // same as movie thumburl
 
   public TvShowActor() {
+    super();
   }
 
   public TvShowActor(String name) {
-    this.name = name;
+    super(name);
   }
 
   public TvShowActor(String name, String character) {
-    this.name = name;
-    this.character = character;
-  }
-
-  public void setName(String newValue) {
-    String oldValue = name;
-    name = newValue;
-    firePropertyChange("name", oldValue, newValue);
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getCharacter() {
-    return character;
-  }
-
-  public void setCharacter(String newValue) {
-    String oldValue = character;
-    character = newValue;
-    firePropertyChange("name", oldValue, newValue);
-  }
-
-  public String getThumb() {
-    return thumb;
-  }
-
-  public void setThumb(String newValue) {
-    String oldValue = this.thumb;
-    thumb = newValue;
-    firePropertyChange("thumb", oldValue, newValue);
-  }
-
-  public String getThumbPath() {
-    return thumbPath;
-  }
-
-  public void setThumbPath(String newValue) {
-    String oldValue = this.thumbPath;
-    thumbPath = newValue;
-    firePropertyChange("thumbPath", oldValue, newValue);
+    super(name, character);
   }
 
   /**
-   * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
-   * </p>
-   * 
-   * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
+   * @Deprecated use getThumbUrl()
    */
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  @Deprecated
+  public String getThumb() {
+    return this.thumb;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TvShowActor)) {
-      return false;
-    }
-
-    TvShowActor cast = (TvShowActor) obj;
-
-    // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumb, cast.thumb)) {
-      return true;
-    }
-
-    return false;
+  /**
+   * @Deprecated use setThumbUrl()
+   */
+  @Deprecated
+  public void setThumb(String thumb) {
+    this.thumb = thumb;
   }
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder().append(name).append(character).append(thumb).build();
-  }
 }

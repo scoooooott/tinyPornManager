@@ -169,7 +169,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     for (MediaScraper artworkScraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
       model.addElement(artworkScraper);
 
-      if (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowArtworkScrapers().contains(artworkScraper.getId())) {
+      if (TvShowModuleManager.SETTINGS.getTvShowArtworkScrapers().contains(artworkScraper.getId())) {
         model.addCheck(artworkScraper);
       }
     }

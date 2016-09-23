@@ -39,16 +39,16 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -69,12 +69,10 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = -675729644848101096L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
+  private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private JLabel                      lblImageCache;
   private JCheckBox                   chckbxImageCache;
   private JLabel                      lblImageCacheHint;
@@ -167,8 +165,8 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = listBadWords.getSelectedIndex();
         if (row != -1) {
-          String badWord = TvShowModuleManager.TV_SHOW_SETTINGS.getBadWords().get(row);
-          TvShowModuleManager.TV_SHOW_SETTINGS.removeBadWord(badWord);
+          String badWord = TvShowModuleManager.SETTINGS.getBadWords().get(row);
+          TvShowModuleManager.SETTINGS.removeBadWord(badWord);
         }
       }
     });
@@ -185,7 +183,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (StringUtils.isNotEmpty(tfAddBadword.getText())) {
-          TvShowModuleManager.TV_SHOW_SETTINGS.addBadWord(tfAddBadword.getText());
+          TvShowModuleManager.SETTINGS.addBadWord(tfAddBadword.getText());
           tfAddBadword.setText("");
         }
       }
@@ -231,7 +229,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
         public void actionPerformed(ActionEvent arg0) {
           Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
           if (file != null && Files.isDirectory(file)) {
-            settings.getTvShowSettings().addTvShowDataSources(file.toAbsolutePath().toString());
+            settings.addTvShowDataSources(file.toAbsolutePath().toString());
           }
         }
       });
@@ -246,14 +244,14 @@ public class TvShowSettingsPanel extends ScrollablePanel {
         public void actionPerformed(ActionEvent arg0) {
           int row = listDatasources.getSelectedIndex();
           if (row != -1) { // nothing selected
-            String path = Globals.settings.getTvShowSettings().getTvShowDataSource().get(row);
+            String path = settings.getTvShowDataSource().get(row);
             String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
             int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
                 BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
                 BUNDLE.getString("Button.abort")); //$NON-NLS-1$
             if (decision == 0) {
               setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-              Globals.settings.getTvShowSettings().removeTvShowDataSources(path);
+              settings.removeTvShowDataSources(path);
               setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
           }
@@ -280,7 +278,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
         public void actionPerformed(ActionEvent e) {
           Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
           if (file != null && Files.isDirectory(file)) {
-            settings.getTvShowSettings().addTvShowSkipFolder(file.toAbsolutePath().toString());
+            settings.addTvShowSkipFolder(file.toAbsolutePath().toString());
           }
         }
       });
@@ -294,8 +292,8 @@ public class TvShowSettingsPanel extends ScrollablePanel {
         public void actionPerformed(ActionEvent e) {
           int row = listExclude.getSelectedIndex();
           if (row != -1) { // nothing selected
-            String ingore = settings.getTvShowSettings().getTvShowSkipFolders().get(row);
-            settings.getTvShowSettings().removeTvShowSkipFolder(ingore);
+            String ingore = settings.getTvShowSkipFolders().get(row);
+            settings.removeTvShowSkipFolder(ingore);
           }
         }
       });
@@ -318,29 +316,29 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("tvShowSettings.syncTrakt");
+    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty = BeanProperty.create("syncTrakt");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.dvdOrder");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<TvShowSettings, Boolean> settingsBeanProperty_1 = BeanProperty.create("dvdOrder");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, cbDvdOrder, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_2 = BeanProperty.create("tvShowSettings.tvShowDataSource");
-    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_2,
-        listDatasources);
+    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_2 = BeanProperty.create("tvShowDataSource");
+    JListBinding<String, TvShowSettings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, listDatasources);
     jListBinding.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_3 = BeanProperty.create("tvShowSettings.tvShowSkipFolders");
-    JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_3 = BeanProperty.create("tvShowSkipFolders");
+    JListBinding<String, TvShowSettings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, listExclude);
     jListBinding_1.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowSettings.badWords");
-    JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<TvShowSettings, List<String>> settingsBeanProperty_4 = BeanProperty.create("badWords");
+    JListBinding<String, TvShowSettings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, listBadWords);
     jListBinding_2.bind();
   }

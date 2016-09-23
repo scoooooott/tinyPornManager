@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +49,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.thirdparty.ImageLoader;
 
 /**
@@ -70,7 +72,7 @@ public class ImageCache {
    * @return the cache dir
    */
   public static Path getCacheDir() {
-    if (Files.notExists(CACHE_DIR)) {
+    if (!Files.exists(CACHE_DIR)) {
       try {
         Files.createDirectories(CACHE_DIR);
       }
@@ -258,12 +260,12 @@ public class ImageCache {
    * @return the file the cached file
    * @throws Exception
    */
-  public static Path cacheImage(MediaFile mf) throws Exception {
-    Path originalFile = mf.getFileAsPath();
+  public static Path cacheImage(Path originalFile) throws Exception {
+    MediaFile mf = new MediaFile(originalFile);
     Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(originalFile.toString()) + "." + Utils.getExtension(originalFile));
-    if (Files.notExists(cachedFile)) {
+    if (!Files.exists(cachedFile)) {
       // check if the original file exists && size > 0
-      if (Files.notExists(originalFile)) {
+      if (!Files.exists(originalFile)) {
         throw new FileNotFoundException("unable to cache file: " + originalFile + "; file does not exist");
       }
       if (Files.size(originalFile) == 0) {
@@ -362,7 +364,7 @@ public class ImageCache {
       scaledImage = null;
     }
 
-    if (Files.notExists(cachedFile)) {
+    if (!Files.exists(cachedFile)) {
       throw new Exception("unable to cache file: " + originalFile);
     }
 
@@ -395,7 +397,52 @@ public class ImageCache {
   }
 
   /**
-   * Gets the cached file.
+   * Gets the cached image for "string".<br>
+   * If not found AND it is a valid url, download and cache first.<br>
+   * 
+   * @param url
+   *          the url of image, or basically the unhashed string of cache file
+   * @return the cached file or NULL
+   */
+  public static Path getCachedFile(String url) {
+    if (url == null || url.isEmpty()) {
+      return null;
+    }
+
+    String ext = UrlUtil.getExtension(url);
+    if (ext.isEmpty()) {
+      ext = "jpg"; // just assume
+    }
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(url) + "." + ext);
+    if (Files.exists(cachedFile)) {
+      LOGGER.trace("found cached url :) " + url);
+      return cachedFile;
+    }
+
+    // is the image cache activated?
+    if (!Globals.settings.isImageCache()) {
+      return null;
+    }
+
+    try {
+      Url u = new Url(url);
+      boolean ok = u.download(cachedFile);
+      if (ok) {
+        LOGGER.trace("cached url successfully :) " + url);
+        return cachedFile;
+      }
+    }
+    catch (MalformedURLException e) {
+      LOGGER.trace("Problem getting cached file for url " + e.getMessage());
+    }
+
+    LOGGER.trace("Problem getting cached file for url " + url);
+    return null;
+  }
+
+  /**
+   * Gets the cached file, if ImageCache is activated<br>
+   * If not found, cache original first
    * 
    * @param path
    *          the path
@@ -405,25 +452,36 @@ public class ImageCache {
     if (path == null) {
       return null;
     }
-    // is the image cache activated?
-    if (!Globals.settings.isImageCache()) {
+    path = path.toAbsolutePath();
+
+    Path cachedFile = ImageCache.getCacheDir().resolve(getMD5(path.toString()) + "." + Utils.getExtension(path));
+    if (Files.exists(cachedFile)) {
+      LOGGER.trace("found cached file :) " + path);
+      return cachedFile;
+    }
+
+    // TODO: when does this happen?!?!
+    // is the path already inside the cache dir? serve direct
+    if (path.startsWith(CACHE_DIR.toAbsolutePath())) {
       return path;
     }
 
-    // is the path already inside the cache dir? serve direct
-    if (path.toAbsolutePath().startsWith(CACHE_DIR.toAbsolutePath())) {
+    // is the image cache activated?
+    if (!Globals.settings.isImageCache()) {
+      LOGGER.trace("ImageCache not activated - return original file 1:1");
       return path;
     }
 
     try {
-      MediaFile mf = new MediaFile(path);
-      return ImageCache.cacheImage(mf);
+      Path p = ImageCache.cacheImage(path);
+      LOGGER.trace("cached file successfully :) " + p);
+      return p;
     }
     catch (EmptyFileException e) {
       LOGGER.warn("failed to cache file (file is empty): " + path);
     }
     catch (FileNotFoundException e) {
-      LOGGER.warn(e.getMessage());
+      LOGGER.trace(e.getMessage());
     }
     catch (Exception e) {
       LOGGER.warn("problem caching file: " + e.getMessage());

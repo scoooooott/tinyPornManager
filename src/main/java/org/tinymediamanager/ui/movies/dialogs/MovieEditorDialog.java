@@ -52,7 +52,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -86,6 +85,8 @@ import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.datepicker.DatePicker;
+import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -107,11 +108,8 @@ import ca.odell.glazedlists.EventList;
  */
 public class MovieEditorDialog extends TmmDialog {
   private static final long                                         serialVersionUID = -286251957529920347L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
-  private static final Date                                         INITIAL_DATE     = new Date(0);
 
   private Movie                                                     movieToEdit;
   private MovieList                                                 movieList        = MovieList.getInstance();
@@ -134,7 +132,7 @@ public class MovieEditorDialog extends TmmDialog {
   private final JPanel                                              details2Panel    = new JPanel();
   private JTextField                                                tfTitle;
   private JTextField                                                tfOriginalTitle;
-  private JSpinner                                                  spYear;
+  private YearSpinner                                               spYear;
   private JTextPane                                                 tpPlot;
   private JTextField                                                tfDirector;
   private JTable                                                    tableActors;
@@ -159,7 +157,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                                                tfSorttitle;
   private JTextField                                                tfSpokenLanguages;
   private JTextField                                                tfCountry;
-  private JSpinner                                                  spReleaseDate;
+  private DatePicker                                                dpReleaseDate;
   private JSpinner                                                  spTop250;
   private JComboBox                                                 cbSource;
   private JCheckBox                                                 chckbxVideo3D;
@@ -299,7 +297,7 @@ public class MovieEditorDialog extends TmmDialog {
         details1Panel.add(lblYear, "2, 12, right, default");
       }
       {
-        spYear = new JSpinner();
+        spYear = new YearSpinner();
         details1Panel.add(spYear, "4, 12, fill, top");
       }
       {
@@ -329,8 +327,8 @@ public class MovieEditorDialog extends TmmDialog {
         details1Panel.add(lblReleaseDate, "2, 14, right, default");
       }
       {
-        spReleaseDate = new JSpinner(new SpinnerDateModel());
-        details1Panel.add(spReleaseDate, "4, 14");
+        dpReleaseDate = new DatePicker(movie.getReleaseDate());
+        details1Panel.add(dpReleaseDate, "4, 14");
       }
       {
         JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
@@ -871,9 +869,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
-      spYear.setModel(new SpinnerNumberModel(year, 0, 2050, 1));
-      spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
-      spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
+      spYear.setValue(year);
       cbCertification.setSelectedItem(movieToEdit.getCertification());
       tfSorttitle.setText(movieToEdit.getSortTitle());
 
@@ -883,19 +879,12 @@ public class MovieEditorDialog extends TmmDialog {
       lblThumb.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.THUMB));
       lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISCART));
       lblBanner.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.BANNER));
-      if (movieToEdit.getReleaseDate() != null) {
-        spReleaseDate.setValue(movieToEdit.getReleaseDate());
-      }
-      else {
-        spReleaseDate.setValue(INITIAL_DATE);
-      }
 
       for (MovieActor origCast : movieToEdit.getActors()) {
         MovieActor actor = new MovieActor();
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
         actor.setThumbUrl(origCast.getThumbUrl());
-        actor.setThumbPath(origCast.getThumbPath());
         cast.add(actor);
       }
 
@@ -904,7 +893,6 @@ public class MovieEditorDialog extends TmmDialog {
         producer.setName(origProducer.getName());
         producer.setRole(origProducer.getRole());
         producer.setThumbUrl(origProducer.getThumbUrl());
-        producer.setThumbPath(origProducer.getThumbPath());
         producers.add(producer);
       }
 
@@ -1000,11 +988,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setTagline(tpTagline.getText());
       movieToEdit.setPlot(tpPlot.getText());
       movieToEdit.setYear(spYear.getValue().equals(0) ? "" : String.valueOf(spYear.getValue())); // set empty on 0
-
-      Date releaseDate = (Date) spReleaseDate.getValue();
-      if (!DateUtils.isSameDay(releaseDate, INITIAL_DATE)) {
-        movieToEdit.setReleaseDate(releaseDate);
-      }
+      movieToEdit.setReleaseDate(dpReleaseDate.getDate());
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
       movieToEdit.setTop250((Integer) spTop250.getValue());
       movieToEdit.setWatched(cbWatched.isSelected());
@@ -1514,6 +1498,7 @@ public class MovieEditorDialog extends TmmDialog {
     jListBinding_1.unbind();
     jTableBinding_2.unbind();
     mediaFilesPanel.unbindBindings();
+    dpReleaseDate.cleanup();
   }
 
   @Override

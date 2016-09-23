@@ -42,8 +42,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -68,8 +68,8 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -348,10 +348,20 @@ public class MovieSetEditorDialog extends TmmDialog {
       tfTmdbId.setText(String.valueOf(movieSetToEdit.getTmdbId()));
       tpOverview.setText(movieSetToEdit.getPlot());
       moviesInSet.addAll(movieSetToEdit.getMovies());
-      lblPoster.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.POSTER));
-      lblPoster.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.POSTER));
-      lblFanart.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.FANART));
-      lblFanart.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.FANART));
+
+      if (StringUtils.isNotBlank(movieSetToEdit.getArtworkFilename(MediaFileType.POSTER))) {
+        lblPoster.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.POSTER));
+      }
+      else {
+        lblPoster.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.POSTER));
+      }
+
+      if (StringUtils.isNotBlank(movieSetToEdit.getArtworkFilename(MediaFileType.FANART))) {
+        lblFanart.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.FANART));
+      }
+      else {
+        lblFanart.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.FANART));
+      }
 
       // extra artwork
       lblBanner.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.BANNER));

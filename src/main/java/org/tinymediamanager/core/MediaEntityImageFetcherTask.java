@@ -121,7 +121,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
           is.close();
 
           // check if the file has been downloaded
-          if (Files.notExists(tempFile) || Files.size(tempFile) == 0) {
+          if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
             throw new Exception("0byte file downloaded: " + filename);
           }
 

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ImageCache;
@@ -52,9 +53,9 @@ public class MovieSet extends MediaEntity {
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new MovieMediaFileComparator();
 
   @JsonProperty
-  private List<UUID>                         movieIds              = new ArrayList<>();
+  private List<UUID>                         movieIds              = new ArrayList<>(0);
 
-  private List<Movie>                        movies                = new ArrayList<>(0);
+  private List<Movie>                        movies                = new CopyOnWriteArrayList<>();
   private String                             titleSortable         = "";
 
   /**
@@ -270,7 +271,7 @@ public class MovieSet extends MediaEntity {
    */
   public void sortMovies() {
     synchronized (movies) {
-      Collections.sort(movies, MOVIE_SET_COMPARATOR);
+      Utils.sortList(movies, MOVIE_SET_COMPARATOR);
       // rebuild the ID table the same way
       movieIds.clear();
       for (Movie movie : movies) {

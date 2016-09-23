@@ -274,7 +274,6 @@ public abstract class MediaEntity extends AbstractModelObject {
       case LOGO:
         artworkUrlMap.put(type, url);
         break;
-
       default:
         return;
     }
@@ -573,18 +572,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
-   * gets the BIGGEST MediaFiles - it must be the main movie ;)<br>
+   * gets the BIGGEST MediaFile of type(s)<br>
    * useful for getting the right MF for displaying mediaInformation
    * 
    * @return biggest MF
    */
-  public MediaFile getBiggestMediaFile() {
-    MediaFile mf = new MediaFile();
+  public MediaFile getBiggestMediaFile(MediaFileType... types) {
+    MediaFile mf = null;
 
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
-      if (mediaFile.getFilesize() > mf.getFilesize()) {
-        mf = mediaFile;
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          if (mf == null || mediaFile.getFilesize() >= mf.getFilesize()) {
+            mf = mediaFile;
+          }
+        }
       }
     }
     readWriteLock.readLock().unlock();
@@ -598,14 +601,16 @@ public abstract class MediaEntity extends AbstractModelObject {
    *          the MediaFileType to get the MediaFile for
    * @return NULL or MF
    */
-  public MediaFile getNewestMediaFilesOfType(MediaFileType type) {
+  public MediaFile getNewestMediaFilesOfType(MediaFileType... types) {
     MediaFile mf = null;
     readWriteLock.readLock().lock();
     for (MediaFile mediaFile : mediaFiles) {
-      if (mediaFile.getType().equals(type)) {
-        if (mf == null || mediaFile.getFiledate() >= mf.getFiledate()) {
-          // get the latter one
-          mf = new MediaFile(mediaFile);
+      for (MediaFileType type : types) {
+        if (mediaFile.getType().equals(type)) {
+          if (mf == null || mediaFile.getFiledate() >= mf.getFiledate()) {
+            // get the latter one
+            mf = new MediaFile(mediaFile);
+          }
         }
       }
     }

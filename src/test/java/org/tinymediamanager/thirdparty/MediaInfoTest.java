@@ -59,7 +59,7 @@ public class MediaInfoTest {
     LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
     lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
 
-    MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD.iso"));
+    MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-nosize.iso"));
     mf.gatherMediaInformation();
 
     System.out.println("----------------------");

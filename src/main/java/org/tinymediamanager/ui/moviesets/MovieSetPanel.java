@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -43,6 +44,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -53,6 +55,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.moviesets.actions.DebugDumpMovieSet;
 import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
@@ -298,6 +301,13 @@ public class MovieSetPanel extends JPanel {
     popupMenu.addSeparator();
     Action actionRenameMovies = new MovieSetRenameAction();
     popupMenu.add(actionRenameMovies);
+
+    if (Globals.isDebug()) {
+      popupMenu.addSeparator();
+      JMenu menuDebug = new JMenu("Debug"); //$NON-NLS-1$
+      menuDebug.add(new DebugDumpMovieSet());
+      popupMenu.add(menuDebug);
+    }
 
     MouseListener popupListener = new TreePopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);

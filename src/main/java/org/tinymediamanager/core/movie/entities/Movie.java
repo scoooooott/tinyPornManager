@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,8 +60,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -101,16 +101,17 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The main class for movies.
@@ -169,24 +170,24 @@ public class Movie extends MediaEntity {
   private boolean                               offline                    = false;
 
   @JsonProperty
-  private List<String>                          genres                     = new ArrayList<>(1);
+  private List<String>                          genres                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          tags                       = new ArrayList<>(0);
+  private List<String>                          tags                       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          extraThumbs                = new ArrayList<>(0);
+  private List<String>                          extraThumbs                = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                          extraFanarts               = new ArrayList<>(0);
+  private List<String>                          extraFanarts               = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieActor>                      actors                     = new ArrayList<>();
+  private List<MovieActor>                      actors                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new ArrayList<>(0);
+  private List<MovieProducer>                   producers                  = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieTrailer>                    trailer                    = new ArrayList<>(0);
+  private List<MovieTrailer>                    trailer                    = new CopyOnWriteArrayList<>();
 
   private MovieSet                              movieSet;
   private String                                titleSortable              = "";
   private Date                                  lastWatched                = null;
-  private List<MediaGenres>                     genresForAccess            = new ArrayList<>(0);
+  private List<MediaGenres>                     genresForAccess            = new CopyOnWriteArrayList<>();
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -335,6 +336,7 @@ public class Movie extends MediaEntity {
   /**
    * Initialize after loading.
    */
+  @Override
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
 
@@ -360,6 +362,11 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addActor(MovieActor obj) {
+    // and re-set movie path the actors
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -432,6 +439,7 @@ public class Movie extends MediaEntity {
    * @param newTags
    *          the new tags
    */
+  @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
 
@@ -528,7 +536,10 @@ public class Movie extends MediaEntity {
 
   /**
    * Searches for actor images, and matches them to our "actors", updating the thumb url
+   * 
+   * @deprecated thumbPath is generated dynamic - no need for storage
    */
+  @Deprecated
   public void findActorImages() {
     if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
@@ -719,8 +730,10 @@ public class Movie extends MediaEntity {
    * @param extraThumbs
    *          the new extra thumbs
    */
+  @JsonSetter
   public void setExtraThumbs(List<String> extraThumbs) {
-    this.extraThumbs = extraThumbs;
+    this.extraThumbs.clear();
+    this.extraThumbs.addAll(extraThumbs);
   }
 
   /**
@@ -738,8 +751,10 @@ public class Movie extends MediaEntity {
    * @param extraFanarts
    *          the new extra fanarts
    */
+  @JsonSetter
   public void setExtraFanarts(List<String> extraFanarts) {
-    this.extraFanarts = extraFanarts;
+    this.extraFanarts.clear();
+    this.extraFanarts.addAll(extraFanarts);
   }
 
   /**
@@ -963,6 +978,7 @@ public class Movie extends MediaEntity {
    * @param trailers
    *          the new trailers
    */
+  @JsonSetter
   public void setTrailers(List<MovieTrailer> trailers) {
     MovieTrailer preferredTrailer = null;
     removeAllTrailers();
@@ -1105,6 +1121,7 @@ public class Movie extends MediaEntity {
    * @param newActors
    *          the new actors
    */
+  @JsonSetter
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
 
@@ -1141,24 +1158,34 @@ public class Movie extends MediaEntity {
       }
     }
 
-    // third - rename thumbs if needed
-    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
-      Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
-
-      for (MovieActor actor : actors) {
-        if (StringUtils.isNotBlank(actor.getThumbPath())) {
-          try {
-            // build expected filename
-            Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-            Path oldFile = Paths.get(actor.getThumbPath());
-            Utils.moveFileSafe(oldFile, actorName);
-          }
-          catch (IOException e) {
-            LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-          }
-        }
+    // and re-set movie path to the actors
+    for (MovieActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
       }
     }
+
+    // third - rename thumbs if needed
+    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
+    // actor writing/caching is done somewhere else...
+
+    // if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    // Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
+    //
+    // for (MovieActor actor : actors) {
+    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
+    // try {
+    // // build expected filename
+    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+    // Path oldFile = Paths.get(actor.getThumbPath());
+    // Utils.moveFileSafe(oldFile, actorName);
+    // }
+    // catch (IOException e) {
+    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
+    // }
+    // }
+    // }
+    // }
 
     firePropertyChange(ACTORS, null, this.getActors());
   }
@@ -1399,6 +1426,7 @@ public class Movie extends MediaEntity {
    * @param genres
    *          the new genres
    */
+  @JsonSetter
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
 
@@ -1706,11 +1734,21 @@ public class Movie extends MediaEntity {
    * Gets the images to cache.
    */
   public List<Path> getImagesToCache() {
-    // get files to cache
+    // image files
     List<Path> filesToCache = new ArrayList<>();
-    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
+    for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
+      }
+    }
+
+    // actor image files
+    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+      for (MovieActor actor : actors) {
+        Path imagePath = actor.getStoragePath();
+        if (imagePath != null) {
+          filesToCache.add(imagePath);
+        }
       }
     }
 
@@ -1868,7 +1906,13 @@ public class Movie extends MediaEntity {
   }
 
   public void addProducer(MovieProducer obj) {
+    // and re-set movie path of the producer
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
+
     producers.add(obj);
+
     firePropertyChange(PRODUCERS, null, producers);
   }
 
@@ -1877,6 +1921,7 @@ public class Movie extends MediaEntity {
     firePropertyChange(PRODUCERS, null, producers);
   }
 
+  @JsonSetter
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
     // first remove unused
@@ -1910,6 +1955,13 @@ public class Movie extends MediaEntity {
             producers.add(oldProducer);
           }
         }
+      }
+    }
+
+    // and re-set movie path to the producers
+    for (MovieProducer producer : producers) {
+      if (StringUtils.isBlank(producer.getEntityRoot())) {
+        producer.setEntityRoot(getPathNIO().toString());
       }
     }
 

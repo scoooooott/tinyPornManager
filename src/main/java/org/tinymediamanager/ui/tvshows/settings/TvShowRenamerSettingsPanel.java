@@ -45,14 +45,14 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -90,7 +90,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
    */
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private TvShowSettings                  settings         = Settings.getInstance().getTvShowSettings();
+  private TvShowSettings                  settings         = TvShowModuleManager.SETTINGS;
   private List<String>                    spaceReplacement = new ArrayList<>(Arrays.asList("_", ".", "-"));
   private EventList<TvShowRenamerExample> exampleEventList = null;
 
@@ -161,31 +161,46 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
             FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, }));
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+    {
+      final JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDefault, 0.833);
+      panelRenamer.add(lblDefault, "6, 2");
+    }
 
     lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
-    panelRenamer.add(lblTvShowFolder, "2, 2, right, default");
+    panelRenamer.add(lblTvShowFolder, "2, 3, right, default");
 
     tfTvShowFolder = new JTextField();
-    panelRenamer.add(tfTvShowFolder, "4, 2, 3, 1, fill, default");
+    panelRenamer.add(tfTvShowFolder, "4, 3, fill, default");
     tfTvShowFolder.getDocument().addDocumentListener(documentListener);
+    {
+      final JLabel lblDefaultFolderName = new JLabel("$N ($Y)"); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDefaultFolderName, 0.833);
+      panelRenamer.add(lblDefaultFolderName, "6, 3");
+    }
 
     lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
-    panelRenamer.add(lblSeasonFolderName, "2, 4, right, default");
+    panelRenamer.add(lblSeasonFolderName, "2, 5, right, default");
 
     tfSeasonFoldername = new JTextField();
-    panelRenamer.add(tfSeasonFoldername, "4, 4, 3, 1, fill, default");
+    panelRenamer.add(tfSeasonFoldername, "4, 5, fill, default");
     tfSeasonFoldername.getDocument().addDocumentListener(documentListener);
+    {
+      final JLabel lblDefaultSeasonFoldername = new JLabel("Season $1"); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDefaultSeasonFoldername, 0.833);
+      panelRenamer.add(lblDefaultSeasonFoldername, "6, 5");
+    }
 
     lblEpisodeFileName = new JLabel(BUNDLE.getString("Settings.tvshowfilename"));//$NON-NLS-1$
-    panelRenamer.add(lblEpisodeFileName, "2, 6, right, default");
+    panelRenamer.add(lblEpisodeFileName, "2, 7, right, default");
 
     tfEpisodeFilename = new JTextField();
-    panelRenamer.add(tfEpisodeFilename, "4, 6, 3, 1, fill, default");
+    panelRenamer.add(tfEpisodeFilename, "4, 7, fill, default");
     tfEpisodeFilename.getDocument().addDocumentListener(documentListener);
 
     chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
@@ -195,24 +210,29 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     chckbxSpaceReplacement.setHintIcon(IconManager.HINT);
     chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
     chckbxSpaceReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxSpaceReplacement, "2, 10, right, default");
+    {
+      final JLabel lblDefaultEpisodeFilename = new JLabel("$N - S$2E$E - $T"); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDefaultEpisodeFilename, 0.833);
+      panelRenamer.add(lblDefaultEpisodeFilename, "6, 7");
+    }
+    panelRenamer.add(chckbxSpaceReplacement, "2, 11, right, default");
 
     cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
-    panelRenamer.add(cbSpaceReplacement, "4, 10, fill, default");
+    panelRenamer.add(cbSpaceReplacement, "4, 11, fill, default");
     cbSpaceReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxAsciiReplacement, "2, 12, 9, 1");
+    panelRenamer.add(chckbxAsciiReplacement, "2, 13, 9, 1");
 
     txtpntAsciiHint = new JTextPane();
     txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
     txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtpntAsciiHint, "2, 14, 7, 1, fill, fill");
+    panelRenamer.add(txtpntAsciiHint, "2, 15, 7, 1, fill, fill");
 
     JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
-    panelRenamer.add(lblLanguageStyle, "2, 16, right, default");
+    panelRenamer.add(lblLanguageStyle, "2, 17, right, default");
 
     cbLanguageStyle = new JComboBox(LanguageStyle.values());
-    panelRenamer.add(cbLanguageStyle, "4, 16, 3, 1, fill, default");
+    panelRenamer.add(cbLanguageStyle, "4, 17, 3, 1, fill, default");
 
     panelExample = new JPanel();
     panelExample.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.example"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$

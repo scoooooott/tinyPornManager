@@ -39,16 +39,20 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.japura.gui.CheckComboBox;
+import org.japura.gui.event.ListCheckListener;
+import org.japura.gui.event.ListEvent;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaSource;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.ui.SmallCheckBoxUI;
 import org.tinymediamanager.ui.SmallTextFieldBorder;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.SmallCheckComboBox;
 import org.tinymediamanager.ui.components.SmallComboBox;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
 import org.tinymediamanager.ui.panels.RoundedPanel;
@@ -79,7 +83,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   /** UI components */
   private JCheckBox                    cbFilterDatasource;
-  private JComboBox                    cbDatasource;
+  private CheckComboBox                cbDatasource;
   private JCheckBox                    cbFilterCast;
   private JTextField                   tfCastMember;
   private JCheckBox                    cbFilterMissingMetadata;
@@ -91,7 +95,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterGenres;
   private JComboBox                    cbGenres;
   private JCheckBox                    cbFilterTag;
-  private JComboBox                    cbTag;
+  private CheckComboBox                cbTag;
   private JCheckBox                    cbFilterVideoCodec;
   private JComboBox                    cbVideoCodec;
   private JCheckBox                    cbFilterAudioCodec;
@@ -100,6 +104,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JComboBox                    cbVideoFormat;
 
   private final Action                 actionFilter     = new FilterAction();
+  private final ListCheckListener      listCheckListener;
   private JCheckBox                    cbFilterMediaSource;
   private JLabel                       lblMediaSource;
   private JComboBox                    cbMediaSource;
@@ -116,6 +121,18 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
+
+    listCheckListener = new ListCheckListener() {
+      @Override
+      public void removeCheck(ListEvent event) {
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
+      }
+
+      @Override
+      public void addCheck(ListEvent event) {
+        actionFilter.actionPerformed(new ActionEvent(event.getSource(), 1, "checked"));
+      }
+    };
 
     setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
@@ -205,9 +222,11 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblTag);
     add(lblTag, "4, 8, right, default");
 
-    cbTag = new SmallComboBox();
-    setComponentFont(cbTag);
-    cbTag.setAction(actionFilter);
+    cbTag = new SmallCheckComboBox();
+    cbTag.setTextFor(CheckComboBox.NONE, BUNDLE.getString("movieextendedsearch.tags.selected.none")); //$NON-NLS-1$
+    cbTag.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("movieextendedsearch.tags.selected.multiple")); //$NON-NLS-1$
+    cbTag.setTextFor(CheckComboBox.ALL, BUNDLE.getString("movieextendedsearch.tags.selected.all")); //$NON-NLS-1$
+    cbTag.getModel().addListCheckListener(listCheckListener);
     add(cbTag, "6, 8, fill, default");
 
     cbFilterVideoFormat = new JCheckBox("");
@@ -261,9 +280,11 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblDatasource);
     add(lblDatasource, "4, 12, right, default");
 
-    cbDatasource = new SmallComboBox();
-    setComponentFont(cbDatasource);
-    cbDatasource.setAction(actionFilter);
+    cbDatasource = new SmallCheckComboBox();
+    cbDatasource.setTextFor(CheckComboBox.NONE, BUNDLE.getString("checkcombobox.selected.none")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.MULTIPLE, BUNDLE.getString("checkcombobox.selected.multiple")); //$NON-NLS-1$
+    cbDatasource.setTextFor(CheckComboBox.ALL, BUNDLE.getString("checkcombobox.selected.all")); //$NON-NLS-1$
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
     add(cbDatasource, "6, 12, fill, default");
 
     cbFilterMediaSource = new JCheckBox("");
@@ -323,7 +344,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       }
     };
     tvShowList.addPropertyChangeListener(propertyChangeListener);
-    Settings.getInstance().getTvShowSettings().addPropertyChangeListener(propertyChangeListener);
+    TvShowModuleManager.SETTINGS.addPropertyChangeListener(propertyChangeListener);
 
     buildAndInstallDatasourceArray();
     buildAndInstallTagsArray();
@@ -331,21 +352,48 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   }
 
   private void buildAndInstallDatasourceArray() {
-    cbDatasource.removeAllItems();
-    List<String> datasources = new ArrayList<>(Settings.getInstance().getTvShowSettings().getTvShowDataSource());
-    Collections.sort(datasources);
+    // remember old value and remove listener
+    List<Object> oldValues = cbDatasource.getModel().getCheckeds();
+    cbDatasource.getModel().removeListCheckListener(listCheckListener);
+
+    // build up the new checkbox
+    cbDatasource.getModel().clear();
+    List<String> datasources = new ArrayList<>(TvShowModuleManager.SETTINGS.getTvShowDataSource());
+
     for (String datasource : datasources) {
-      cbDatasource.addItem(datasource);
+      cbDatasource.getModel().addElement(datasource);
     }
+
+    // re-set the value and readd action listener
+    if (oldValues != null) {
+      for (Object obj : oldValues) {
+        cbDatasource.getModel().setCheck(obj);
+      }
+    }
+    cbDatasource.getModel().addListCheckListener(listCheckListener);
   }
 
   private void buildAndInstallTagsArray() {
-    cbTag.removeAllItems();
+    // remember old value and remove listener
+    List<Object> oldValues = cbTag.getModel().getCheckeds();
+    cbTag.getModel().removeListCheckListener(listCheckListener);
+
+    // build up the new checkbox
+    cbTag.getModel().clear();
     Set<String> tags = new TreeSet<>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
+
     for (String tag : tags) {
-      cbTag.addItem(tag);
+      cbTag.getModel().addElement(tag);
     }
+
+    // re-set the value and readd action listener
+    if (oldValues != null) {
+      for (Object obj : oldValues) {
+        cbTag.getModel().setCheck(obj);
+      }
+    }
+    cbTag.getModel().addListCheckListener(listCheckListener);
   }
 
   private void buildAndInstallCodecArray() {
@@ -393,8 +441,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
       // filter by tag
       if (cbFilterTag.isSelected()) {
-        String tag = (String) cbTag.getSelectedItem();
-        tvShowTreeModel.setFilter(SearchOptions.TAG, tag);
+        List<Object> tags = cbTag.getModel().getCheckeds();
+        tvShowTreeModel.setFilter(SearchOptions.TAG, tags);
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.TAG);
@@ -402,10 +450,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
       // filter by datasource
       if (cbFilterDatasource.isSelected()) {
-        String datasource = (String) cbDatasource.getSelectedItem();
-        if (StringUtils.isNotBlank(datasource)) {
-          tvShowTreeModel.setFilter(SearchOptions.DATASOURCE, datasource);
-        }
+        List<Object> datasources = cbDatasource.getModel().getCheckeds();
+        tvShowTreeModel.setFilter(SearchOptions.DATASOURCE, datasources);
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.DATASOURCE);

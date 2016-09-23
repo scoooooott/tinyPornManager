@@ -32,14 +32,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -54,7 +53,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 public class TvShowRenamer {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(TvShowRenamer.class);
-  private static final TvShowSettings SETTINGS       = Globals.settings.getTvShowSettings();
+  private static final TvShowSettings SETTINGS       = TvShowModuleManager.SETTINGS;
 
   private static final String[]       seasonNumbers  = { "$1", "$2", "$3", "$4" };
   private static final String[]       episodeNumbers = { "$E", "$D" };
@@ -98,7 +97,7 @@ public class TvShowRenamer {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
           // create parent if needed
-          if (Files.notExists(destDir.getParent())) {
+          if (!Files.exists(destDir.getParent())) {
             Files.createDirectory(destDir.getParent());
           }
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
@@ -212,7 +211,7 @@ public class TvShowRenamer {
     Path seasonDir = show.getPathNIO();
     if (StringUtils.isNotBlank(seasonName)) {
       seasonDir = show.getPathNIO().resolve(seasonName);
-      if (Files.notExists(seasonDir)) {
+      if (!Files.exists(seasonDir)) {
         try {
           Files.createDirectory(seasonDir);
         }
@@ -245,7 +244,7 @@ public class TvShowRenamer {
             boolean ok = false;
             try {
               // create parent if needed
-              if (Files.notExists(newEpFolder.getParent())) {
+              if (!Files.exists(newEpFolder.getParent())) {
                 Files.createDirectory(newEpFolder.getParent());
               }
               ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
@@ -283,7 +282,7 @@ public class TvShowRenamer {
       if (mf.getType().equals(MediaFileType.TRAILER)) {
         // move trailer into separate dir - not supported by XBMC
         Path sample = seasonDir.resolve("sample");
-        if (Files.notExists(sample)) {
+        if (!Files.exists(sample)) {
           try {
             Files.createDirectory(sample);
           }
@@ -294,7 +293,7 @@ public class TvShowRenamer {
       }
       String filename = generateFilename(show, mf);
       LOGGER.debug("new filename should be " + filename);
-      if (filename != null && !filename.isEmpty()) {
+      if (StringUtils.isNotBlank(filename)) {
         Path newFile = seasonDir.resolve(filename);
 
         try {
@@ -304,7 +303,7 @@ public class TvShowRenamer {
             boolean ok = false;
             try {
               // create parent if needed
-              if (Files.notExists(newFile.getParent())) {
+              if (!Files.exists(newFile.getParent())) {
                 Files.createDirectory(newFile.getParent());
               }
               ok = Utils.moveFileSafe(oldMfFile, newFile);
@@ -428,10 +427,14 @@ public class TvShowRenamer {
       filename = createDestination(template, tvShow, eps);
     }
 
+    if (StringUtils.isBlank(filename) && forFile) {
+      return mf.getFilename();
+    }
+
     // since we can use this method for folders too, use the next options solely for files
     if (forFile) {
       if (mf.getType().equals(MediaFileType.THUMB)) {
-        switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+        switch (TvShowModuleManager.SETTINGS.getTvShowEpisodeThumbFilename()) {
           case FILENAME_THUMB_POSTFIX:
             filename = filename + "-thumb";
             break;
@@ -467,8 +470,7 @@ public class TvShowRenamer {
           MediaFileSubtitle mfs = mf.getSubtitles().get(0);
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {
-              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(),
-                  TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+              String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
               if (StringUtils.isBlank(lang)) {
                 lang = mfs.getLanguage();
               }
@@ -502,7 +504,7 @@ public class TvShowRenamer {
               break;
             }
           }
-          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowRenamerLanguageStyle());
+          lang = LanguageStyle.getLanguageCodeForStyle(originalLang, TvShowModuleManager.SETTINGS.getTvShowRenamerLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = originalLang;
           }
@@ -664,7 +666,11 @@ public class TvShowRenamer {
     String newDestination = template;
     TvShowEpisode firstEp = null;
 
-    if (episodes == null || episodes.size() == 0) {
+    if (StringUtils.isBlank(template)) {
+      return "";
+    }
+
+    if (episodes == null || episodes.isEmpty()) {
       // TV show root folder
 
       // replace all $x parameters

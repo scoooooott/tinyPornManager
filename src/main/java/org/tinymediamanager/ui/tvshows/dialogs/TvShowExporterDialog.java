@@ -177,7 +177,7 @@ public class TvShowExporterDialog extends TmmDialog {
             exporter.export(tvShows, Paths.get(tfExportDir.getText()));
           }
           catch (Exception e) {
-            LOGGER.error("Error exporting tv shows: " + e.getMessage());
+            LOGGER.error("Error exporting tv shows: ", e);
           }
           setVisible(false);
         }

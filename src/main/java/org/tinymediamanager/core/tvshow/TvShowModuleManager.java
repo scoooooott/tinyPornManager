@@ -47,11 +47,11 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class TvShowModuleManager implements ITmmModule {
-  public static final TvShowSettings TV_SHOW_SETTINGS = Globals.settings.getTvShowSettings();
+  public static final TvShowSettings SETTINGS     = Globals.settings.getTvShowSettings();
 
-  private static final String        MODULE_TITLE     = "TV show management";
-  private static final String        TV_SHOW_DB       = "tvshows.db";
-  private static final Logger        LOGGER           = LoggerFactory.getLogger(TvShowModuleManager.class);
+  private static final String        MODULE_TITLE = "TV show management";
+  private static final String        TV_SHOW_DB   = "tvshows.db";
+  private static final Logger        LOGGER       = LoggerFactory.getLogger(TvShowModuleManager.class);
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;
@@ -127,7 +127,7 @@ public class TvShowModuleManager implements ITmmModule {
     enabled = false;
 
     if (Globals.settings.isDeleteTrashOnExit()) {
-      for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+      for (String ds : SETTINGS.getTvShowDataSource()) {
         Path file = Paths.get(ds, Constants.BACKUP_FOLDER);
         Utils.deleteDirectoryRecursive(file);
       }

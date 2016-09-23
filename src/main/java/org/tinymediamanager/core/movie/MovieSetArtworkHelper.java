@@ -262,7 +262,7 @@ public class MovieSetArtworkHelper {
       Path artworkFolder = Paths.get(this.artworkFolder);
 
       // check if folder exists
-      if (Files.notExists(artworkFolder)) {
+      if (!Files.exists(artworkFolder)) {
         try {
           Files.createDirectories(artworkFolder);
         }

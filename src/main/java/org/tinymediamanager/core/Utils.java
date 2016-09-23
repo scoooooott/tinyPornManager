@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -44,11 +45,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +59,7 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,7 +142,7 @@ public class Utils {
    * not a directory, and either a regular file or "other" one.<br>
    * see http://serverfault.com/a/667220
    * 
-   * @param file
+   * @param attr
    * @return
    */
   public static boolean isRegularFile(BasicFileAttributes attr) {
@@ -461,7 +465,7 @@ public class Utils {
   public static void trackEvent(final String event) {
     // should we track the event?
     Path disable = Paths.get("tmm.uuid.disable");
-    if (Globals.settings.isEnableAnalytics() && Files.notExists(disable)) {
+    if (Globals.settings.isEnableAnalytics() && !Files.exists(disable)) {
       new Thread(new Runnable() {
         @Override
         public void run() {
@@ -469,7 +473,7 @@ public class Utils {
             Thread.currentThread().setName("trackEventThread");
             Path uuidFile = Paths.get("tmm.uuid");
 
-            if (Files.notExists(uuidFile)) {
+            if (!Files.exists(uuidFile)) {
               writeStringToFile(uuidFile, UUID.randomUUID().toString());
             }
 
@@ -632,7 +636,7 @@ public class Utils {
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
-      if (Files.notExists(destDir.getParent())) {
+      if (!Files.exists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
         try {
           Files.createDirectories(destDir.getParent());
@@ -721,7 +725,7 @@ public class Utils {
     // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
       LOGGER.debug("try to move file " + srcFile + " to " + destFile);
-      if (Files.notExists(srcFile)) {
+      if (!Files.exists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
       if (Files.isDirectory(srcFile)) {
@@ -832,7 +836,7 @@ public class Utils {
     // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
       LOGGER.debug("try to copy file " + srcFile + " to " + destFile);
-      if (Files.notExists(srcFile)) {
+      if (!Files.exists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
       if (Files.isDirectory(srcFile)) {
@@ -914,7 +918,7 @@ public class Utils {
     try {
       // create path
       Path backup = Paths.get(fn);
-      if (Files.notExists(backup.getParent())) {
+      if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
@@ -981,7 +985,7 @@ public class Utils {
     try {
       // create path
       Path backup = Paths.get(fn);
-      if (Files.notExists(backup.getParent())) {
+      if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
@@ -1090,16 +1094,16 @@ public class Utils {
   public static final void createBackupFile(Path file, boolean overwrite) {
     Path backup = Paths.get("backup");
     try {
-      if (Files.notExists(backup)) {
+      if (!Files.exists(backup)) {
         Files.createDirectory(backup);
       }
-      if (Files.notExists(file)) {
+      if (!Files.exists(file)) {
         return;
       }
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
-      if (Files.notExists(backup) || overwrite == true) {
+      if (!Files.exists(backup) || overwrite == true) {
         // v1 - just copy
         // FileUtils.copyFile(f, backup, true);
 
@@ -1201,7 +1205,7 @@ public class Utils {
    */
   public static ProcessBuilder getPBforTMMrestart() {
     Path f = Paths.get("tmm.jar");
-    if (Files.notExists(f)) {
+    if (!Files.exists(f)) {
       LOGGER.error("cannot restart TMM - tmm.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1223,7 +1227,7 @@ public class Utils {
    */
   public static ProcessBuilder getPBforTMMupdate() {
     Path f = Paths.get("getdown.jar");
-    if (Files.notExists(f)) {
+    if (!Files.exists(f)) {
       LOGGER.error("cannot start updater - getdown.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1265,7 +1269,7 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
-    if (Files.notExists(dir)) {
+    if (!Files.exists(dir)) {
       return;
     }
 
@@ -1312,7 +1316,7 @@ public class Utils {
     Map<String, String> env = new HashMap<>();
     try {
       // check if file exists
-      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      env.put("create", String.valueOf(!Files.exists(zipFile)));
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
@@ -1339,9 +1343,9 @@ public class Utils {
   /**
    * Unzips the specified zip file to the specified destination directory. Replaces any files in the destination, if they already exist.
    * 
-   * @param zipFilename
+   * @param zipFile
    *          the name of the zip file to extract
-   * @param destFilename
+   * @param destDir
    *          the directory to unzip to
    * @throws IOException
    */
@@ -1350,12 +1354,12 @@ public class Utils {
 
     try {
       // if the destination doesn't exist, create it
-      if (Files.notExists(destDir)) {
+      if (!Files.exists(destDir)) {
         Files.createDirectories(destDir);
       }
 
       // check if file exists
-      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      env.put("create", String.valueOf(!Files.exists(zipFile)));
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
@@ -1376,7 +1380,7 @@ public class Utils {
           @Override
           public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
-            if (Files.notExists(dirToCreate)) {
+            if (!Files.exists(dirToCreate)) {
               LOGGER.debug("Creating directory {}", dirToCreate);
               Files.createDirectory(dirToCreate);
             }
@@ -1408,7 +1412,7 @@ public class Utils {
           String fn = path.getFileName().toString();
           if (fn.endsWith(".jar")) {
             // always extract when dir not existing
-            if (Files.notExists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
+            if (!Files.exists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
               Utils.unzip(path, dest);
             }
             else {
@@ -1466,6 +1470,44 @@ public class Utils {
     Files.walkFileTree(from, new CopyFileVisitor(to));
   }
 
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   */
+  public static void sortList(List list) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list);
+    }
+  }
+
+  /**
+   * Sorts the list. Since CopyOnWriteArrayLists are not sortable with Java7, we need this wrapper to sort it differently on Java7.
+   *
+   * @param list
+   *          the list to be sorted
+   * @param comparator
+   *          the comparator used for sorting
+   */
+  public static void sortList(List list, Comparator comparator) {
+    if (SystemUtils.IS_JAVA_1_7 && list instanceof CopyOnWriteArrayList) {
+      List tempList = new ArrayList(list);
+      Collections.sort(tempList, comparator);
+      list.clear();
+      list.addAll(tempList);
+    }
+    else {
+      Collections.sort(list, comparator);
+    }
+  }
+
   /*
    * Visitor for copying a directory recursively<br> Usage: Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));
    */
@@ -1482,15 +1524,24 @@ public class Utils {
       if (sourcePath == null) {
         sourcePath = dir;
       }
-      else {
-        Files.createDirectories(targetPath.resolve(sourcePath.relativize(dir)));
+      Path target = targetPath.resolve(sourcePath.relativize(dir));
+      if (!Files.exists(target)) {
+        try {
+          Files.createDirectories(target);
+        }
+        catch (FileAlreadyExistsException e) {
+          // ignore
+        }
+        catch (IOException x) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
       }
       return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+      Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
       return FileVisitResult.CONTINUE;
     }
   }

@@ -48,8 +48,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,12 +71,13 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * The Class TvShowEpisode.
@@ -121,9 +123,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private MediaSource                        mediaSource           = MediaSource.UNKNOWN;                         // DVD, Bluray, etc
 
   @JsonProperty
-  private List<TvShowActor>                  actors                = new ArrayList<>(0);
+  private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<String>                       tags                  = new ArrayList<>(0);
+  private List<String>                       tags                  = new CopyOnWriteArrayList<>();
 
   private TvShow                             tvShow                = null;
   private Date                               lastWatched           = null;
@@ -432,7 +434,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         basename = "VIDEO_TS"; // FIXME: BluRay?
       }
 
-      switch (TvShowModuleManager.TV_SHOW_SETTINGS.getTvShowEpisodeThumbFilename()) {
+      switch (TvShowModuleManager.SETTINGS.getTvShowEpisodeThumbFilename()) {
         case FILENAME_THUMB_POSTFIX:
           filename = basename + "-thumb." + FilenameUtils.getExtension(thumbUrl);
           break;
@@ -498,7 +500,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
           TvShowActor actor = new TvShowActor();
           actor.setName(member.getName());
           actor.setCharacter(member.getCharacter());
-          actor.setThumb(member.getImageUrl());
+          actor.setThumbUrl(member.getImageUrl());
           actors.add(actor);
           break;
 
@@ -637,8 +639,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actors.add(obj);
+    // and re-set episode path to the actor
+    if (StringUtils.isBlank(obj.getEntityRoot())) {
+      obj.setEntityRoot(getPathNIO().toString());
+    }
 
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -680,6 +686,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param newActors
    *          the new actors
    */
+  @JsonSetter
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
     List<TvShowActor> tvShowActors = new ArrayList<>();
@@ -701,6 +708,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       TvShowActor actor = actors.get(i);
       if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
         actors.remove(actor);
+      }
+    }
+
+    // and re-set episode path to the actors
+    for (TvShowActor actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
       }
     }
 
@@ -1004,6 +1018,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @param newTags
    *          the new tags
    */
+  @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
 

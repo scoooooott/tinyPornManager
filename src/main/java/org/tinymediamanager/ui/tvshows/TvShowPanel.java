@@ -27,6 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -57,11 +59,12 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -72,8 +75,8 @@ import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
-import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.components.ZebraJTree;
+import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.actions.DebugDumpShow;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
@@ -232,7 +235,7 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
+    final JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     panelTvShowTree.add(btnFilter, "6, 1, default, bottom");
 
@@ -264,7 +267,7 @@ public class TvShowPanel extends JPanel {
         buttonUpdateDatasource.getPopupMenu().removeAll();
         buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateDatasources2));
         buttonUpdateDatasource.getPopupMenu().addSeparator();
-        for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+        for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new TvShowUpdateSingleDatasourceAction(ds)));
         }
         buttonUpdateDatasource.getPopupMenu().addSeparator();
@@ -421,6 +424,22 @@ public class TvShowPanel extends JPanel {
         }
         else {
           panelExtendedSearch.setVisible(true);
+        }
+      }
+    });
+    // add a propertychangelistener which reacts on setting a filter
+    tree.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if ("filterChanged".equals(evt.getPropertyName())) {
+          if (Boolean.TRUE.equals(evt.getNewValue())) {
+            btnFilter.setIcon(IconManager.FILTER_ACTIVE);
+            btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options.active")); //$NON-NLS-1$
+          }
+          else {
+            btnFilter.setIcon(IconManager.FILTER);
+            btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+          }
         }
       }
     });

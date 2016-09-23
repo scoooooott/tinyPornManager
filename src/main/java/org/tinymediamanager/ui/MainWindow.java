@@ -304,15 +304,14 @@ public class MainWindow extends JFrame {
 
     menuBar.add(Box.createGlue());
 
-    JButton btnDonate = new JButton(new DonateAction());
-    btnDonate.setBorderPainted(false);
-    btnDonate.setFocusPainted(false);
-    btnDonate.setContentAreaFilled(false);
-    menuBar.add(btnDonate);
+    if (!Globals.isDonator()) {
+      JButton btnDonate = new JButton(new DonateAction());
+      btnDonate.setBorderPainted(false);
+      btnDonate.setFocusPainted(false);
+      btnDonate.setContentAreaFilled(false);
+      menuBar.add(btnDonate);
+    }
 
-    // Globals.executor.execute(new MyStatusbarThread());
-    // use a Future to be able to cancel it
-    // statusTask.execute();
     checkForUpdate();
   }
 

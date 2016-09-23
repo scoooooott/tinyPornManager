@@ -34,10 +34,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -218,8 +219,20 @@ public class MovieSetInformationPanel extends JPanel {
             || (source.getClass() == MovieSet.class && "movies".equals(property))) {
           movieEventList.clear();
           movieEventList.addAll(selectionModel.getSelectedMovieSet().getMovies());
-          lblMovieSetFanart.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART));
-          lblMovieSetPoster.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.POSTER));
+          if (StringUtils.isNotBlank(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.POSTER))) {
+            lblMovieSetPoster.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.POSTER));
+          }
+          else {
+            lblMovieSetPoster.setImagePath("");
+            lblMovieSetPoster.setImageUrl(selectionModel.getSelectedMovieSet().getArtworkUrl(MediaFileType.POSTER));
+          }
+          if (StringUtils.isNotBlank(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART))) {
+            lblMovieSetFanart.setImagePath(selectionModel.getSelectedMovieSet().getArtworkFilename(MediaFileType.FANART));
+          }
+          else {
+            lblMovieSetFanart.setImagePath("");
+            lblMovieSetFanart.setImageUrl(selectionModel.getSelectedMovieSet().getArtworkUrl(MediaFileType.FANART));
+          }
         }
 
         // react on changes of the images

@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,9 +141,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     stackingMarker     = "";
 
   @JsonProperty
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<>(0);
+  private List<MediaFileAudioStream>                 audioStreams       = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new CopyOnWriteArrayList<>();
 
   private MediaInfo                                  mediaInfo;
   private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
@@ -1233,7 +1233,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     if (miSnapshot == null) {
       int BUFFER_SIZE = 64 * 1024;
-      Iso9660FileSystem image;
+      Iso9660FileSystem image = null;
       try {
         LOGGER.trace("ISO: Open");
         image = new Iso9660FileSystem(getFileAsPath().toFile(), true);
@@ -1320,6 +1320,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
       catch (Exception e) {
         LOGGER.error("Mediainfo could not open STREAM - trying fallback", e);
+        try {
+          if (image != null) {
+            image.close();
+            image = null;
+          }
+        }
+        catch (IOException e1) {
+          LOGGER.warn("Uh-oh. Cannot close disc image :(", e);
+        }
         closeMediaInfo();
         getMediaInfoSnapshot();
       }

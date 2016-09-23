@@ -30,8 +30,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,16 +59,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -767,8 +767,8 @@ public class ImageChooserDialog extends TmmDialog {
             options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
           }
           else if (mediaType == MediaType.TV_SHOW) {
-            options.setLanguage(LocaleUtils.toLocale(Globals.settings.getTvShowSettings().getScraperLanguage().name()));
-            options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
+            options.setLanguage(LocaleUtils.toLocale(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
           }
           else {
             continue;

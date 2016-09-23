@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,9 +48,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -58,8 +59,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -76,18 +78,20 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -175,15 +179,39 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.RELATED_GAP_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+            FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
     {
-      lblPath = new JLabel("");
-      contentPanel.add(lblPath, "2, 2");
+      final JPanel panelPath = new JPanel();
+      contentPanel.add(panelPath, "2, 2, left, default");
+      panelPath.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+      {
+        lblPath = new JLabel("");
+        panelPath.add(lblPath);
+      }
+
+      {
+        final JButton btnPlay = new JButton(IconManager.PLAY_SMALL);
+        btnPlay.setFocusable(false);
+        btnPlay.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            MediaFile mf = movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0);
+            try {
+              TmmUIHelper.openFile(mf.getFileAsPath());
+            }
+            catch (Exception ex) {
+              LOGGER.error("open file", e);
+              MessageManager.instance
+                  .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", ex.getLocalizedMessage() }));
+            }
+          }
+        });
+        panelPath.add(btnPlay);
+      }
     }
     {
       JPanel panelSearchField = new JPanel();
@@ -375,16 +403,18 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
     }
 
+    initDataBindings();
+
     {
       movieToScrape = movie;
       progressBar.setVisible(false);
-      initDataBindings();
 
       // adjust column name
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
-      lblPath.setText(movieToScrape.getPath() + File.separatorChar + movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape);
+
+      lblPath.setText(movieToScrape.getPath() + File.separatorChar + movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
     }
 
   }
