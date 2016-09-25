@@ -43,13 +43,14 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -194,6 +195,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     Color color = UIManager.getColor("Label.foreground");
     String bodyRule = "body { font-family: " + font.getFamily() + "; font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
         + color.getGreen() + "," + color.getBlue() + "); }";
+    tpScraperDescription.setEditorKit(new HTMLEditorKit());
     ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
 
     btnSelectFolder.addActionListener(arg0 -> {
