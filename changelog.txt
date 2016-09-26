@@ -19,6 +19,7 @@ x adhere graphic settings better for multiple movies in one directory / disc fol
 x added filter indicator for TV shows too
 x fixed detection of episode files
 x fix renaming TvShows on CMD line
+x fixed downloading of empty movie set image files
 x many internal changes....
 
 
