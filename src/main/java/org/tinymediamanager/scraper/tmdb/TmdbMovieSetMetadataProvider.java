@@ -161,20 +161,24 @@ class TmdbMovieSetMetadataProvider {
     md.setPlot(collection.overview);
 
     // Poster
-    MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
-    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + collection.poster_path);
-    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
-    ma.setLanguage(options.getLanguage().getLanguage());
-    ma.setTmdbId(tmdbId);
-    md.addMediaArt(ma);
+    if (StringUtils.isNotBlank(collection.poster_path)) {
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + collection.poster_path);
+      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + collection.poster_path);
+      ma.setLanguage(options.getLanguage().getLanguage());
+      ma.setTmdbId(tmdbId);
+      md.addMediaArt(ma);
+    }
 
     // Fanart
-    ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
-    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + collection.backdrop_path);
-    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
-    ma.setLanguage(options.getLanguage().getLanguage());
-    ma.setTmdbId(tmdbId);
-    md.addMediaArt(ma);
+    if (StringUtils.isNotBlank(collection.backdrop_path)) {
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
+      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + collection.backdrop_path);
+      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + collection.backdrop_path);
+      ma.setLanguage(options.getLanguage().getLanguage());
+      ma.setTmdbId(tmdbId);
+      md.addMediaArt(ma);
+    }
 
     // add all movies belonging to this movie set
     for (Part part : ListUtils.nullSafe(collection.parts)) {
@@ -183,20 +187,24 @@ class TmdbMovieSetMetadataProvider {
       mdSubItem.setTitle(part.title);
 
       // Poster
-      ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
-      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + part.poster_path);
-      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
-      ma.setLanguage(options.getLanguage().getLanguage());
-      ma.setTmdbId(part.id);
-      mdSubItem.addMediaArt(ma);
+      if (StringUtils.isNotBlank(part.poster_path)) {
+        MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+        ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + part.poster_path);
+        ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + part.poster_path);
+        ma.setLanguage(options.getLanguage().getLanguage());
+        ma.setTmdbId(part.id);
+        mdSubItem.addMediaArt(ma);
+      }
 
       // Fanart
-      ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
-      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + part.backdrop_path);
-      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
-      ma.setLanguage(options.getLanguage().getLanguage());
-      ma.setTmdbId(part.id);
-      mdSubItem.addMediaArt(ma);
+      if (StringUtils.isNotBlank(part.backdrop_path)) {
+        MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.BACKGROUND);
+        ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w300" + part.backdrop_path);
+        ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w1280" + part.backdrop_path);
+        ma.setLanguage(options.getLanguage().getLanguage());
+        ma.setTmdbId(part.id);
+        mdSubItem.addMediaArt(ma);
+      }
 
       mdSubItem.setReleaseDate(part.release_date);
       md.addSubItem(mdSubItem);
