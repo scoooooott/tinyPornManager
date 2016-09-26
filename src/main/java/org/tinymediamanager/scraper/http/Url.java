@@ -255,6 +255,7 @@ public class Url {
       // log any "connection problems"
       if (responseCode < 200 || responseCode >= 400) {
         LOGGER.error("bad http response: " + responseCode + " ; " + responseMessage);
+        return null;
       }
 
       if (response.body().contentType() != null) { // could be null, see AnimeDB
