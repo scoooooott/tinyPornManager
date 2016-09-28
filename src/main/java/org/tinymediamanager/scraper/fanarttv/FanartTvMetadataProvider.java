@@ -91,6 +91,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
 
     switch (options.getType()) {
       case MOVIE:
+      case MOVIE_SET:
         artwork = getMovieArtwork(options);
         break;
 
