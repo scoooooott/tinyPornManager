@@ -9,6 +9,7 @@ You now have the option to scrape localized language/country names instead of IS
 + implemented filtering for multiple tags (movie & TV shows)
 + implemented filtering for multiple datasources (movie & TV shows)
 + added play button in the movie chooser
++ added scraping of movie set artwork from fanart.tv
 x fixed subtitle downloading where language tag got stripped off
 x fixed a UI glitch in the movie renamer settings when no folder name has been chosen
 x fix Kodi scraper detection on MacOS
