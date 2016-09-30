@@ -88,6 +88,26 @@ public class CachedUrl extends Url {
   }
 
   /**
+   * Is the url already cached?
+   * 
+   * @param url
+   *          the url to check
+   * @return true/false
+   */
+  public static boolean isCached(String url) {
+    return CACHE.get(url) != null;
+  }
+
+  /**
+   * Is the url already cached?
+   *
+   * @return true/false
+   */
+  public boolean isCached() {
+    return isCached(url);
+  }
+
+  /**
    * A inner class for representing cached entries
    */
   private static class CachedRequest {
