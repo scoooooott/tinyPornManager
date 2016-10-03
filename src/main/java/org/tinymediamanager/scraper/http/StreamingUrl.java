@@ -72,7 +72,8 @@ public class StreamingUrl extends Url {
 
     Response response = null;
     try {
-      response = client.newCall(request).execute();
+      call = client.newCall(request);
+      response = call.execute();
       headersResponse = response.headers();
       responseCode = response.code();
       responseMessage = response.message();
@@ -83,6 +84,9 @@ public class StreamingUrl extends Url {
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
+      if (call != null) {
+        call.cancel();
+      }
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {

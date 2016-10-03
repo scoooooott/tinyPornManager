@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.Pair;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
+import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -66,6 +67,7 @@ public class Url {
   protected Headers                    headersResponse       = null;
   protected List<Pair<String, String>> headersRequest        = new ArrayList<>();
   protected URI                        uri                   = null;
+  protected Call                       call                  = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -247,7 +249,8 @@ public class Url {
 
     Response response = null;
     try {
-      response = client.newCall(request).execute();
+      call = client.newCall(request);
+      response = call.execute();
       headersResponse = response.headers();
       responseCode = response.code();
       responseMessage = response.message();
@@ -266,6 +269,9 @@ public class Url {
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
+      if (call != null) {
+        call.cancel();
+      }
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
@@ -332,8 +338,13 @@ public class Url {
       fos.close();
       return true;
     }
-    catch (IOException | InterruptedException e) {
+    catch (IOException e) {
       LOGGER.error("Error downloading " + this.url);
+    }
+    catch (InterruptedException ignored) {
+      if (call != null) {
+        call.cancel();
+      }
     }
     return false;
   }
