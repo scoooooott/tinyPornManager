@@ -13,7 +13,7 @@ You now have the option to scrape localized language/country names instead of IS
 + added connection throttling for anidb
 x fixed subtitle downloading where language tag got stripped off
 x fixed a UI glitch in the movie renamer settings when no folder name has been chosen
-x fix Kodi scraper detection on MacOS
+x fixed Kodi scraper detection on MacOS
 x some improvements to the TV show renamer
 x fixed update of offline data sources
 x fixed an occasional multi threading problem (ConcurrentModificationException)
@@ -21,8 +21,9 @@ x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
 x added filter indicator for TV shows too
 x fixed detection of episode files
-x fix renaming TvShows on CMD line
+x fixed renaming TvShows on CMD line
 x fixed downloading of empty movie set image files
+x fixed changing the default scraper in the episode editor dialog
 x many internal changes....
 
 

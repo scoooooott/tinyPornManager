@@ -140,6 +140,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private JList                                                 listTags;
   private JComboBox<MediaSource>                                cbMediaSource;
   private MediaFileEditorPanel                                  mediaFilesPanel;
+  private MediaScraperComboBox                                  cbScraper;
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
   private JListBinding<String, List<String>, JList>             jListBinding;
@@ -392,7 +393,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
               FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
           new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
-      MediaScraperComboBox cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
+      cbScraper = new MediaScraperComboBox(tvShowList.getAvailableMediaScrapers());
       MediaScraper defaultScraper = tvShowList.getDefaultMediaScraper();
       cbScraper.setSelectedItem(defaultScraper);
       bottomPanel.add(cbScraper, "2, 2, fill, default");
@@ -562,13 +563,15 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
     // scrape
     if ("Scrape".equals(e.getActionCommand())) {
-      ScrapeTask task = new ScrapeTask(TvShowList.getInstance().getDefaultMediaScraper());
+      MediaScraper scraper = (MediaScraper) cbScraper.getSelectedItem();
+      ScrapeTask task = new ScrapeTask(scraper);
       task.execute();
     }
 
     // search
     if ("Search".equals(e.getActionCommand())) {
-      TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, TvShowList.getInstance().getDefaultMediaScraper());
+      MediaScraper scraper = (MediaScraper) cbScraper.getSelectedItem();
+      TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, scraper);
       dialog.setLocationRelativeTo(this);
       dialog.setVisible(true);
       MediaEpisode metadata = dialog.getMetadata();
