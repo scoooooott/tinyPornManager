@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.Pair;
 
 import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).
@@ -68,9 +67,8 @@ public class StreamingUrl extends Url {
       requestBuilder.addHeader(header.first(), header.second());
     }
 
-    Request request = requestBuilder.build();
+    request = requestBuilder.build();
 
-    Response response = null;
     try {
       call = client.newCall(request);
       response = call.execute();
@@ -80,13 +78,10 @@ public class StreamingUrl extends Url {
       responseCharset = response.body().contentType().charset();
       responseContentType = response.body().contentType().toString();
       is = response.body().byteStream();
-
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
-      if (call != null) {
-        call.cancel();
-      }
+      cleanup();
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {

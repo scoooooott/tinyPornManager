@@ -67,7 +67,10 @@ public class Url {
   protected Headers                    headersResponse       = null;
   protected List<Pair<String, String>> headersRequest        = new ArrayList<>();
   protected URI                        uri                   = null;
+
   protected Call                       call                  = null;
+  protected Request                    request               = null;
+  protected Response                   response              = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -245,9 +248,8 @@ public class Url {
       requestBuilder.addHeader(header.first().toString(), header.second().toString());
     }
 
-    Request request = requestBuilder.build();
+    request = requestBuilder.build();
 
-    Response response = null;
     try {
       call = client.newCall(request);
       response = call.execute();
@@ -257,6 +259,7 @@ public class Url {
 
       // log any "connection problems"
       if (responseCode < 200 || responseCode >= 400) {
+        cleanup();
         LOGGER.error("bad http response: " + responseCode + " ; " + responseMessage);
         return null;
       }
@@ -269,9 +272,7 @@ public class Url {
     }
     catch (InterruptedIOException e) {
       LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
-      if (call != null) {
-        call.cancel();
-      }
+      cleanup();
       throw new InterruptedException();
     }
     catch (UnknownHostException e) {
@@ -281,6 +282,18 @@ public class Url {
       LOGGER.error("Exception getting url " + logUrl + " ; " + e.getMessage(), e);
     }
     return is;
+  }
+
+  /**
+   * Cleanup the connection
+   */
+  protected void cleanup() {
+    if (call != null) {
+      call.cancel();
+    }
+    if (response != null) {
+      response.close();
+    }
   }
 
   /**
