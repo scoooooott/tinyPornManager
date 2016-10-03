@@ -510,8 +510,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
           for (MediaFile em : mfs) {
             String emBasename = FilenameUtils.getBaseName(em.getFilename());
+            String epNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
             // same named files or thumb files
-            if (emBasename.equals(basename) || (emBasename).equals(basename + "-thumb")) {
+            if (emBasename.equals(basename) || emBasename.matches(epNameRegexp)) {
               // we found some graphics named like the episode - define them as thumb here
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);
