@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +41,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -68,8 +67,8 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -129,7 +128,15 @@ public class MovieSetEditorDialog extends TmmDialog {
 
     movieSetToEdit = movieSet;
     try {
-      artworkScrapers.addAll(movieList.getArtworkScrapers(Arrays.asList(Constants.TMDB)));
+      List<String> enabledScrapers = new ArrayList<>();
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(Constants.TMDB)) {
+        enabledScrapers.add(Constants.TMDB);
+      }
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(Constants.FANART_TV)) {
+        enabledScrapers.add(Constants.FANART_TV);
+      }
+      artworkScrapers.addAll(movieList.getArtworkScrapers(enabledScrapers));
+      // artworkScrapers.addAll(movieList.getArtworkScrapers(Arrays.asList(Constants.TMDB, Constants.FANART_TV)));
     }
     catch (Exception e2) {
       LOGGER.warn("error getting IMediaArtworkProvider " + e2.getMessage());

@@ -112,6 +112,7 @@ public final class Constants {
   public final static String IMDB                   = "imdb";
   public final static String TVDB                   = "tvdb";
   public final static String TRAKT                  = "trakt";
+  public final static String FANART_TV              = "fanarttv";
 
   private Constants() {
   }

@@ -16,14 +16,15 @@
 package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -32,6 +33,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -87,6 +89,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private MediaEpisode                                     metadata;
   private ObservableElementList<TvShowEpisodeChooserModel> episodeEventList;
   private final List<TvShowEpisodeChooserModel>            selectedEpisodes;
+  private final SortedList<TvShowEpisodeChooserModel>      sortedEpisodes;
 
   private JTable                                           table;
   private JTextArea                                        taPlot;
@@ -101,8 +104,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     this.metadata = new MediaEpisode(mediaScraper.getId());
     episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()),
         GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
-    SortedList<TvShowEpisodeChooserModel> sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList),
-        new EpisodeComparator());
+    sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
 
     getContentPane()
         .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("590px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
@@ -277,8 +279,57 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       }
       catch (Exception e) {
       }
-
       return null;
+    }
+
+    @Override
+    protected void done() {
+      int index = -1;
+      // search for a match and preselect it
+      for (int i = 0; i < sortedEpisodes.size(); i++) {
+        TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
+        if (episode.getTitle().equals(model.getTitle())) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index > -1) {
+        // preselect the entry
+        table.getSelectionModel().setSelectionInterval(index, index);
+        // and scroll it to the top
+        scrollToVisible(index, 0);
+        // Rectangle rect = table.getCellRect(index, 0, true);
+        // table.scrollRectToVisible(rect);
+      }
+    }
+
+    private void scrollToVisible(int rowIndex, int vColIndex) {
+      if (!(table.getParent() instanceof JViewport)) {
+        return;
+      }
+
+      if (table.getRowCount() < 1) {
+        return;
+      }
+
+      // view dimension
+      Dimension viewportExtentSize = ((JViewport) table.getParent()).getExtentSize();
+      Dimension cellDimension = new Dimension(0, 0);
+
+      Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
+      Rectangle rectOne;
+      if (rowIndex + 1 < table.getRowCount()) {
+        if (vColIndex + 1 < table.getColumnCount()) {
+          vColIndex++;
+        }
+        rectOne = table.getCellRect(rowIndex + 1, vColIndex, true);
+        cellDimension.width = rectOne.x - rect.x;
+        cellDimension.height = rectOne.y - rect.y;
+      }
+
+      rect.setLocation(rect.x + viewportExtentSize.width - cellDimension.width, rect.y + viewportExtentSize.height - cellDimension.height);
+      table.scrollRectToVisible(rect);
     }
   }
 

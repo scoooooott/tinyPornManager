@@ -227,6 +227,10 @@ public class MovieSetArtworkHelper {
       try {
         Url url = new Url(urlToArtwork);
         InputStream is = url.getInputStream();
+        if (url.isFault()) {
+          return;
+        }
+
         byte[] bytes = IOUtils.toByteArray(is);
         is.close();
 

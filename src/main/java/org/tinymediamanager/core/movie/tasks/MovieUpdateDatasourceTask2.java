@@ -140,10 +140,21 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
         publishState();
 
+        Path dsAsPath = Paths.get(ds);
+
+        // first of all check if the DS is available; we can take the Files.exist here:
+        // if the DS exists (and we have access to read it): Files.exist = true
+        if (!Files.exists(dsAsPath)) {
+          // error - continue with next datasource
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
+          continue;
+        }
+
         // just check datasource folder, parse NEW folders first
         List<Path> newMovieDirs = new ArrayList<>();
         List<Path> existingMovieDirs = new ArrayList<>();
-        List<Path> rootList = listFilesAndDirs(Paths.get(ds));
+        List<Path> rootList = listFilesAndDirs(dsAsPath);
         List<Path> rootFiles = new ArrayList<>();
         for (Path path : rootList) {
           if (Files.isDirectory(path)) {
@@ -160,13 +171,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
         rootList.clear();
         for (Path path : newMovieDirs) {
-          searchAndParse(Paths.get(ds).toAbsolutePath(), path, Integer.MAX_VALUE);
+          searchAndParse(dsAsPath.toAbsolutePath(), path, Integer.MAX_VALUE);
         }
         for (Path path : existingMovieDirs) {
-          searchAndParse(Paths.get(ds).toAbsolutePath(), path, Integer.MAX_VALUE);
+          searchAndParse(dsAsPath.toAbsolutePath(), path, Integer.MAX_VALUE);
         }
         if (rootFiles.size() > 0) {
-          submitTask(new parseMultiMovieDirTask(Paths.get(ds).toAbsolutePath(), Paths.get(ds).toAbsolutePath(), rootFiles));
+          submitTask(new parseMultiMovieDirTask(dsAsPath.toAbsolutePath(), dsAsPath.toAbsolutePath(), rootFiles));
         }
 
         waitForCompletionOrCancel();
@@ -191,7 +202,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         // build image cache on import
         if (MovieModuleManager.MOVIE_SETTINGS.isBuildImageCacheOnImport()) {
           for (Movie movie : movieList.getMovies()) {
-            if (!Paths.get(ds).equals(Paths.get(movie.getDataSource()))) {
+            if (!dsAsPath.equals(Paths.get(movie.getDataSource()))) {
               // check only movies matching datasource
               continue;
             }

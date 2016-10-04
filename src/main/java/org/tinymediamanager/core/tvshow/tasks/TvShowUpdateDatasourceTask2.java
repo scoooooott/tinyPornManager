@@ -46,15 +46,15 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -152,10 +152,22 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShowFolders.isEmpty()) {
         // update selected data sources
         for (String ds : dataSources) {
+          Path dsAsPath = Paths.get(ds);
+
+          // first of all check if the DS is available; we can take the Files.exist here:
+          // if the DS exists (and we have access to read it): Files.exist = true
+          if (!Files.exists(dsAsPath)) {
+            // error - continue with next datasource
+            LOGGER.warn("Datasource not available/empty " + ds);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
+            continue;
+          }
+
           initThreadPool(3, "update"); // FIXME: more threads result in duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<>();
           List<Path> existingTvShowDirs = new ArrayList<>();
-          List<Path> rootList = listFilesAndDirs(Paths.get(ds));
+          List<Path> rootList = listFilesAndDirs(dsAsPath);
           for (Path path : rootList) {
             if (Files.isDirectory(path)) {
               if (existing.contains(path)) {
@@ -173,10 +185,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
 
           for (Path subdir : newTvShowDirs) {
-            submitTask(new FindTvShowTask(subdir, Paths.get(ds).toAbsolutePath()));
+            submitTask(new FindTvShowTask(subdir, dsAsPath.toAbsolutePath()));
           }
           for (Path subdir : existingTvShowDirs) {
-            submitTask(new FindTvShowTask(subdir, Paths.get(ds).toAbsolutePath()));
+            submitTask(new FindTvShowTask(subdir, dsAsPath.toAbsolutePath()));
           }
           waitForCompletionOrCancel();
           if (cancel) {
@@ -194,6 +206,15 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         initThreadPool(3, "update");
         // update selected TV shows
         for (Path path : tvShowFolders) {
+          // first of all check if the DS is available; we can take the Files.exist here:
+          // if the DS exists (and we have access to read it): Files.exist = true
+          if (!Files.exists(path)) {
+            // error - continue with next datasource
+            LOGGER.warn("Datasource not available/empty " + path.toAbsolutePath().toString());
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
+                new String[] { path.toAbsolutePath().toString() }));
+            continue;
+          }
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
         waitForCompletionOrCancel();
@@ -489,8 +510,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
           for (MediaFile em : mfs) {
             String emBasename = FilenameUtils.getBaseName(em.getFilename());
+            String epNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
             // same named files or thumb files
-            if (emBasename.equals(basename) || (emBasename).equals(basename + "-thumb")) {
+            if (emBasename.equals(basename) || emBasename.matches(epNameRegexp)) {
               // we found some graphics named like the episode - define them as thumb here
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);
