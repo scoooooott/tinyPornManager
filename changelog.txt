@@ -21,6 +21,7 @@ x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
 x added filter indicator for TV shows too
 x fixed detection of episode files
+x improved episode name detection at import
 x fixed renaming TvShows on CMD line
 x fixed downloading of empty movie set image files
 x fixed changing the default scraper in the episode editor dialog
