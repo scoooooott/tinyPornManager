@@ -441,7 +441,6 @@ public class MovieToMpNfoConnector {
         // add movie to movieset
         if (movieSet != null) {
           movie.setMovieSet(movieSet);
-          movie.setSortTitle(sets.name + String.format("%02d", sets.order));
         }
       }
       // movie set (new style)

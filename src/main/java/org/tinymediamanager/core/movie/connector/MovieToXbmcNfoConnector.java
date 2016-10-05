@@ -663,14 +663,7 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      // be aware of the sorttitle - set an empty string if nothing has been
-      // found
-      if (StringUtils.isEmpty(xbmc.sorttitle)) {
-        movie.setSortTitle("");
-      }
-      else {
-        movie.setSortTitle(xbmc.sorttitle);
-      }
+      movie.setSortTitle(xbmc.sorttitle);
 
       for (Actor actor : xbmc.getActors()) {
         MovieActor cast = new MovieActor(actor.name, actor.role);

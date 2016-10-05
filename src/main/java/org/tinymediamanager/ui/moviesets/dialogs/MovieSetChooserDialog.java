@@ -390,7 +390,6 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
               }
 
               movie.setMovieSet(movieSetToScrape);
-              movie.setSortTitle(movieSetToScrape.getTitle() + String.format("%02d", i + 1));
               movie.writeNFO();
               movie.saveToDb();
               movieSetToScrape.addMovie(movie);

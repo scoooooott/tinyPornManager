@@ -871,7 +871,6 @@ public class MovieEditorDialog extends TmmDialog {
       tfCountry.setText(movieToEdit.getCountry());
       spYear.setValue(year);
       cbCertification.setSelectedItem(movieToEdit.getCertification());
-      tfSorttitle.setText(movieToEdit.getSortTitle());
 
       lblMoviePath.setText(movieToEdit.getPath());
       lblLogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.LOGO));
@@ -918,8 +917,6 @@ public class MovieEditorDialog extends TmmDialog {
           cbMovieSet.setSelectedItem(movieSet);
         }
       }
-      cbMovieSet.setAction(new ToggleMovieSetAction()); // $hide$
-      toggleSorttitle();
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
@@ -955,20 +952,6 @@ public class MovieEditorDialog extends TmmDialog {
         }
       }
     });
-  }
-
-  /**
-   * Toggle sorttitle.
-   */
-  private void toggleSorttitle() {
-    Object obj = cbMovieSet.getSelectedItem();
-    if (obj instanceof String) {
-      tfSorttitle.setEnabled(true);
-      // tfSorttitle.setText(""); // NOO - else we couldn't specify on our own!
-    }
-    else {
-      tfSorttitle.setEnabled(false);
-    }
   }
 
   private class ChangeMovieAction extends AbstractAction {
@@ -1102,12 +1085,12 @@ public class MovieEditorDialog extends TmmDialog {
 
       movieToEdit.setTags(tags);
       movieToEdit.setDateAdded((Date) spDateAdded.getValue());
+      movieToEdit.setSortTitle(tfSorttitle.getText());
 
       // movie set
       Object obj = cbMovieSet.getSelectedItem();
       if (obj instanceof String) {
         movieToEdit.removeFromMovieSet();
-        movieToEdit.setSortTitle(tfSorttitle.getText());
       }
       if (obj instanceof MovieSet) {
         MovieSet movieSet = (MovieSet) obj;
@@ -1115,12 +1098,8 @@ public class MovieEditorDialog extends TmmDialog {
         if (movieToEdit.getMovieSet() != movieSet) {
           movieToEdit.removeFromMovieSet();
           movieToEdit.setMovieSet(movieSet);
-          // movieSet.addMovie(movieToEdit);
           movieSet.insertMovie(movieToEdit);
         }
-
-        // movieToEdit.setSortTitleFromMovieSet();
-        movieSet.updateMovieSorttitle();
       }
 
       double tempRating = (Double) spRating.getValue();
@@ -1391,18 +1370,6 @@ public class MovieEditorDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       String tag = (String) listTags.getSelectedValue();
       tags.remove(tag);
-    }
-  }
-
-  private class ToggleMovieSetAction extends AbstractAction {
-    private static final long serialVersionUID = 5666621763248388091L;
-
-    public ToggleMovieSetAction() {
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      toggleSorttitle();
     }
   }
 

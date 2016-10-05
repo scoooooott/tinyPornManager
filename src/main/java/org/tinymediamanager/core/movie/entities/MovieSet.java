@@ -20,7 +20,6 @@ import static org.tinymediamanager.core.Constants.TMDB;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -378,17 +377,6 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * recalculate all movie sorttitles
-   */
-  public void updateMovieSorttitle() {
-    for (Movie movie : new ArrayList<>(movies)) {
-      movie.setSortTitleFromMovieSet();
-      movie.writeNFO();
-      movie.saveToDb();
-    }
-  }
-
-  /**
    * clean movies from this movieset if there are any inconsistances
    */
   public void cleanMovieSet() {
@@ -416,12 +404,6 @@ public class MovieSet extends MediaEntity {
     public int compare(Movie o1, Movie o2) {
       if (o1 == null || o2 == null) {
         return 0;
-      }
-
-      // sort with sorttitle if available
-      if (StringUtils.isNotBlank(o1.getSortTitle()) && StringUtils.isNotBlank(o2.getSortTitle())) {
-        Collator collator = Collator.getInstance();
-        return collator.compare(o1.getSortTitle(), o2.getSortTitle());
       }
 
       // sort with release date if available
