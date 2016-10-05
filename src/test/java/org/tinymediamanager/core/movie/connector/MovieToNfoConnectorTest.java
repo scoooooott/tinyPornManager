@@ -51,7 +51,7 @@ public class MovieToNfoConnectorTest {
       assertThat(xbmc.outline).isNotEmpty();
       assertThat(xbmc.mpaa).isNotEmpty();
       assertThat(xbmc.certification).isNotEmpty();
-      assertThat(xbmc.set).isNotEmpty();
+      assertThat(xbmc.set.name).isNotEmpty();
       assertThat(xbmc.fileinfo.streamdetails).isNotNull();
       assertThat(xbmc.fileinfo.streamdetails.video.codec).isNotEmpty();
       assertThat(xbmc.fileinfo.streamdetails.video.aspect).isNotEmpty().isNotEqualTo("0");
@@ -68,7 +68,8 @@ public class MovieToNfoConnectorTest {
       assertThat(xbmc.playcount).isGreaterThan(0);
 
       // need to clean movie set because it is not reimportable in the unit test
-      xbmc.set = "";
+      xbmc.set.name = "";
+      xbmc.set.overview = "";
 
       // write it
       List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
