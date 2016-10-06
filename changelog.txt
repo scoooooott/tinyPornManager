@@ -5,6 +5,7 @@ You now have the option to scrape localized language/country names instead of IS
 !Check your scraper config (IMDB/TMDB/MovieMeter.nl)!
 
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
++ added support for clearlogos
 + added a date picker for easier date editing
 + implemented filtering for multiple tags (movie & TV shows)
 + implemented filtering for multiple datasources (movie & TV shows)
@@ -21,6 +22,7 @@ x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
 x added filter indicator for TV shows too
 x fixed detection of episode files
+x improved episode name detection at import
 x fixed renaming TvShows on CMD line
 x fixed downloading of empty movie set image files
 x fixed changing the default scraper in the episode editor dialog

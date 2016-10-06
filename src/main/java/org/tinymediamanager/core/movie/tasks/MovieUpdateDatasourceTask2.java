@@ -820,6 +820,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           case BANNER:
           case CLEARART:
           case LOGO:
+          case CLEARLOGO:
             movie.addToMediaFiles(mf);
             break;
 

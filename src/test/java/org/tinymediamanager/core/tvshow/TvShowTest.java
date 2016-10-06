@@ -33,6 +33,18 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
  */
 public class TvShowTest {
 
+  // own method to get some logging ;)
+  private static void assertEqual(Object expected, Object actual) {
+    try {
+      Assert.assertEquals(expected, actual);
+      System.out.println(expected + " - passed");
+    }
+    catch (AssertionError e) {
+      System.err.println(expected + " - FAILED: " + e.getMessage());
+      throw e;
+    }
+  }
+
   /**
    * Test tv shows.
    */
@@ -248,6 +260,28 @@ public class TvShowTest {
 
   private String padRight(String s, int n) {
     return String.format("%1$-" + n + "s", s);
+  }
+
+  /**
+   * Test the removal of season/episode string for clean title
+   */
+  @Test
+  public void testRemoveEpisodeString() {
+    // Assert.assertEquals("S: E:", detectEpisode(""));
+
+    // ************************************************************************
+    // various real world examples
+    assertEqual("Der Weg nach Uralia", cleanTitle("Die Gummibärenbande - S05E02 - Der Weg nach Uralia.avi", "Die Gummibärenbande"));
+    assertEqual("BlBlub Messy", cleanTitle("BlBlub - S08E01 - Messy.mp4", ""));
+    assertEqual("Messy", cleanTitle("BlBlub - S08E01 - Messy.mp4", "BlBlub"));
+    // assertEqual("episode1 title episode2 title", cleanTitle("name.s01e01.episode1.title.s01e02.episode2.title.ext", "name")); // E1 removed!
+    assertEqual("my first title my second title", cleanTitle("name.s01e01.my.first.title.s01e02.my.second.title.ext", "name"));
+    assertEqual("ep01 ep02", cleanTitle("name.ep01.ep02.ext", "name")); // no title
+
+  }
+
+  private String cleanTitle(String filename, String showname) {
+    return TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(filename, showname).name;
   }
 
 }

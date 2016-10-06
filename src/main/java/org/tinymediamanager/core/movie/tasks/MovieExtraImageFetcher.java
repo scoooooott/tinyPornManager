@@ -66,6 +66,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
       switch (type) {
         case LOGO:
+        case CLEARLOGO:
         case BANNER:
         case CLEARART:
         case THUMB:

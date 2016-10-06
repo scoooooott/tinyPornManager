@@ -333,7 +333,7 @@ public class MovieSet extends MediaEntity {
 
   public void rewriteAllImages() {
     List<MediaFileType> types = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER, MediaFileType.LOGO,
-        MediaFileType.CLEARART);
+        MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
 
     for (MediaFileType type : types) {
       MovieSetArtworkHelper.downloadArtwork(this, type);
