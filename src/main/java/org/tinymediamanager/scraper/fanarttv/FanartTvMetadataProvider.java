@@ -234,6 +234,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         break;
 
       case LOGO:
+      case CLEARLOGO:
         artworks.addAll(prepareArtwork(images.hdmovielogo, ImageType.HDMOVIELOGO));
         artworks.addAll(prepareArtwork(images.movielogo, ImageType.MOVIELOGO));
         artworks.addAll(prepareArtwork(images.hdtvlogo, ImageType.HDTVLOGO));
@@ -311,6 +312,11 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         }
       }
       artworks.add(ma);
+
+      // fanart.tv only knows clearlogo; copy that for the logo type
+      if (type.type == MediaArtworkType.CLEARLOGO) {
+        artworks.add(new MediaArtwork(ma, MediaArtworkType.LOGO));
+      }
     }
 
     return artworks;
@@ -332,10 +338,10 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     TVBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
     MOVIEBANNER(1000, 185, MediaArtworkType.BANNER, FanartSizes.MEDIUM.getOrder()),
     SEASONBANNER(1000, 185, MediaArtworkType.SEASON, FanartSizes.MEDIUM.getOrder()),
-    HDMOVIELOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()),
-    HDTVLOGO(800, 310, MediaArtworkType.LOGO, FanartSizes.MEDIUM.getOrder()),
-    CLEARLOGO(400, 155, MediaArtworkType.LOGO, FanartSizes.SMALL.getOrder()),
-    MOVIELOGO(400, 155, MediaArtworkType.LOGO, FanartSizes.SMALL.getOrder()),
+    HDMOVIELOGO(800, 310, MediaArtworkType.CLEARLOGO, FanartSizes.MEDIUM.getOrder()),
+    HDTVLOGO(800, 310, MediaArtworkType.CLEARLOGO, FanartSizes.MEDIUM.getOrder()),
+    CLEARLOGO(400, 155, MediaArtworkType.CLEARLOGO, FanartSizes.SMALL.getOrder()),
+    MOVIELOGO(400, 155, MediaArtworkType.CLEARLOGO, FanartSizes.SMALL.getOrder()),
     CLEARART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
     MOVIEART(500, 281, MediaArtworkType.CLEARART, FanartSizes.SMALL.getOrder()),
     MOVIEDISC(1000, 1000, MediaArtworkType.DISC, FanartSizes.MEDIUM.getOrder());
