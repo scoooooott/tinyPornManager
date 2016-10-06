@@ -52,7 +52,8 @@ public class MediaArtwork {
     THUMB, 
     CLEARART, 
     DISC, 
-    LOGO, 
+    LOGO,
+    CLEARLOGO,
     ALL
     // @formatter:on
   }
@@ -139,6 +140,32 @@ public class MediaArtwork {
    */
   public MediaArtwork(String providerId, MediaArtworkType type) {
     this.providerId = providerId;
+    this.type = type;
+  }
+
+  /**
+   * A copy constructor for MediaArtwork - to clone an existing one for a new type
+   * 
+   * @param oldArtwork
+   *          the instance to copy
+   * @param type
+   *          the new type
+   */
+  public MediaArtwork(MediaArtwork oldArtwork, MediaArtworkType type) {
+    this.imdbId = oldArtwork.getImdbId();
+    this.tmdbId = oldArtwork.getTmdbId();
+    this.season = oldArtwork.getSeason();
+    this.previewUrl = oldArtwork.getPreviewUrl();
+    this.defaultUrl = oldArtwork.getDefaultUrl();
+    this.language = oldArtwork.getLanguage();
+    this.providerId = oldArtwork.getProviderId();
+    this.sizeOrder = oldArtwork.getSizeOrder();
+    this.likes = oldArtwork.getLikes();
+
+    for (ImageSizeAndUrl oldImageSizeAndUrl : oldArtwork.getImageSizes()) {
+      this.imageSizes.add(new ImageSizeAndUrl(oldImageSizeAndUrl.width, oldImageSizeAndUrl.height, oldImageSizeAndUrl.url));
+    }
+
     this.type = type;
   }
 
