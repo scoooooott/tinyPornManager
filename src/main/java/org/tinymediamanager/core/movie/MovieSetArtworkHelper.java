@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,6 +38,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.http.Url;
 
 /**
@@ -117,6 +119,175 @@ public class MovieSetArtworkHelper {
           mediaFile.gatherMediaInformation();
           movieSet.addToMediaFiles(mediaFile);
         }
+      }
+    }
+  }
+
+  /**
+   * set the found artwork for the given movie
+   *
+   * @param movieSet
+   *          the movie set to set the artwork for
+   * @param artwork
+   *          a list of all artworks to be set
+   */
+  public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
+    // sort artwork once again (langu/rating)
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
+
+    // poster
+    setBestPoster(movieSet, artwork);
+
+    // fanart
+    setBestFanart(movieSet, artwork);
+
+    // works now for single & multimovie
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.LOGO);
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARLOGO);
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.CLEARART);
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.BANNER);
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.THUMB);
+    setBestArtwork(movieSet, artwork, MediaArtwork.MediaArtworkType.DISC);
+
+    // update DB
+    movieSet.saveToDb();
+  }
+
+  /*
+   * find the "best" poster in the list of artwork, assign it to the movie and download it
+   */
+  private static void setBestPoster(MovieSet movieSet, List<MediaArtwork> artwork) {
+    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder();
+    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+
+    MediaArtwork foundPoster = null;
+
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+      // language has priority over size.
+      // first run: find it with the preferred size
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtwork.MediaArtworkType.POSTER && art.getLanguage().equals(preferredLanguage)
+            && art.getSizeOrder() == preferredSizeOrder) {
+          foundPoster = art;
+          break;
+        }
+      }
+
+      // second run: try to find a poster in the right language with size +/- 1 (order)
+      if (foundPoster == null) {
+        int minOrder = preferredSizeOrder - 1;
+        int maxOrder = preferredSizeOrder + 1;
+        for (MediaArtwork art : artwork) {
+          if (art.getType() == MediaArtwork.MediaArtworkType.POSTER && art.getLanguage().equals(preferredLanguage)
+              && (art.getSizeOrder() == minOrder || art.getSizeOrder() == maxOrder)) {
+            foundPoster = art;
+            break;
+          }
+        }
+      }
+    }
+    else {
+      // size has priority over language
+      for (MediaArtwork art : artwork) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtwork.MediaArtworkType.POSTER && art.getSizeOrder() == preferredSizeOrder) {
+          foundPoster = art;
+          break;
+        }
+      }
+    }
+
+    // final run: if there has nothing been found take the first one
+    if (foundPoster == null) {
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtwork.MediaArtworkType.POSTER) {
+          foundPoster = art;
+          break;
+        }
+      }
+    }
+
+    // assign and download the poster
+    if (foundPoster != null) {
+      movieSet.setArtworkUrl(foundPoster.getDefaultUrl(), MediaFileType.POSTER);
+    }
+  }
+
+  /*
+   * find the "best" fanart in the list of artwork, assign it to the movie set and download it
+   */
+  private static void setBestFanart(MovieSet movieSet, List<MediaArtwork> artwork) {
+    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder();
+    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+
+    MediaArtwork foundfanart = null;
+
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+      // language has priority over size.
+      // first run: find it with the preferred size
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtwork.MediaArtworkType.BACKGROUND && art.getLanguage().equals(preferredLanguage)
+            && art.getSizeOrder() == preferredSizeOrder) {
+          foundfanart = art;
+          break;
+        }
+      }
+
+      // second run: try to find a fanart in the right language with size +/- 1 (order)
+      if (foundfanart == null) {
+        int minOrder = preferredSizeOrder - 1;
+        int maxOrder = preferredSizeOrder + 1;
+        for (MediaArtwork art : artwork) {
+          if (art.getType() == MediaArtwork.MediaArtworkType.BACKGROUND && art.getLanguage().equals(preferredLanguage)
+              && (art.getSizeOrder() == minOrder || art.getSizeOrder() == maxOrder)) {
+            foundfanart = art;
+            break;
+          }
+        }
+      }
+    }
+    else {
+      // size has priority over language
+      for (MediaArtwork art : artwork) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtwork.MediaArtworkType.BACKGROUND && art.getSizeOrder() == preferredSizeOrder) {
+          foundfanart = art;
+          break;
+        }
+      }
+    }
+
+    // final run: if there has nothing been found take the first one
+    if (foundfanart == null) {
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtwork.MediaArtworkType.BACKGROUND) {
+          foundfanart = art;
+          break;
+        }
+      }
+    }
+
+    // assign and download the fanart
+    if (foundfanart != null) {
+      movieSet.setArtworkUrl(foundfanart.getDefaultUrl(), MediaFileType.FANART);
+    }
+  }
+
+  /**
+   * choose the best artwork for this movieSet
+   *
+   * @param movieSet
+   *          our movie set
+   * @param artwork
+   *          the artwork list
+   * @param type
+   *          the type to download
+   */
+  private static void setBestArtwork(MovieSet movieSet, List<MediaArtwork> artwork, MediaArtwork.MediaArtworkType type) {
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == type) {
+        movieSet.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
+        break;
       }
     }
   }

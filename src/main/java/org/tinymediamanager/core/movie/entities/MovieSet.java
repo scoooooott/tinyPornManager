@@ -37,7 +37,9 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -136,6 +138,20 @@ public class MovieSet extends MediaEntity {
   public void setArtworkUrl(String url, MediaFileType type) {
     super.setArtworkUrl(url, type);
     MovieSetArtworkHelper.downloadArtwork(this, type);
+  }
+
+  /**
+   * Sets the artwork.
+   *
+   * @param artwork
+   *          the artwork
+   * @param config
+   *          the config
+   */
+  public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
+    if (config.isArtwork()) {
+      MovieSetArtworkHelper.setArtwork(this, artwork);
+    }
   }
 
   @Override

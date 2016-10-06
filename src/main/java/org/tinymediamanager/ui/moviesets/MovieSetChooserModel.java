@@ -29,14 +29,20 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.mediaprovider.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -231,6 +237,65 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
   public List<MovieInSet> getMovies() {
     return movies;
+  }
+
+  public void startArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+    TmmTaskManager.getInstance().addUnnamedTask(new ArtworkScrapeTask(movieSet, config));
+  }
+
+  private class ArtworkScrapeTask extends TmmTask {
+    private MovieSet                   movieSetToScrape;
+    private MovieScraperMetadataConfig config;
+
+    public ArtworkScrapeTask(MovieSet movieSet, MovieScraperMetadataConfig config) {
+      super(BUNDLE.getString("message.scrape.artwork") + " " + movieSet.getTitle(), 0, TaskType.BACKGROUND_TASK);
+      this.movieSetToScrape = movieSet;
+      this.config = config;
+    }
+
+    @Override
+    protected void doInBackground() {
+      if (!scraped) {
+        return;
+      }
+
+      List<MediaArtwork> artwork = new ArrayList<>();
+
+      MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
+      options.setArtworkType(MediaArtwork.MediaArtworkType.ALL);
+      options.setMetadata(metadata);
+      options.setId(MediaMetadata.IMDB, String.valueOf(metadata.getId(MediaMetadata.IMDB)));
+      try {
+        options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDB_SET))));
+      }
+      catch (Exception e) {
+        options.setTmdbId(0);
+      }
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
+      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+
+      // scrape providers till one artwork has been found
+      for (MediaScraper artworkScraper : MovieList.getInstance().getDefaultArtworkScrapers()) {
+        IMovieArtworkProvider artworkProvider = (IMovieArtworkProvider) artworkScraper.getMediaProvider();
+        try {
+          artwork.addAll(artworkProvider.getArtwork(options));
+        }
+        catch (Exception e) {
+        }
+      }
+
+      // at last take the poster from the result
+      if (StringUtils.isNotBlank(getPosterUrl())) {
+        MediaArtwork ma = new MediaArtwork(result.getProviderId(), MediaArtwork.MediaArtworkType.POSTER);
+        ma.setDefaultUrl(getPosterUrl());
+        ma.setPreviewUrl(getPosterUrl());
+        artwork.add(ma);
+      }
+
+      movieSetToScrape.setArtwork(artwork, config);
+    }
   }
 
   public static class MovieInSet extends AbstractModelObject implements Comparable<MovieInSet> {
