@@ -46,7 +46,7 @@ import org.tinymediamanager.scraper.http.Url;
  */
 public class MovieSetArtworkHelper {
   private static final List<MediaFileType> SUPPORTED_ARTWORK_TYPES     = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART,
-      MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARART);
+      MediaFileType.BANNER, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
   private static final String[]            SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
   private static final Logger              LOGGER                      = LoggerFactory.getLogger(MovieSetArtworkHelper.class);

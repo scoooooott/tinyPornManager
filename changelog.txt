@@ -5,6 +5,7 @@ You now have the option to scrape localized language/country names instead of IS
 !Check your scraper config (IMDB/TMDB/MovieMeter.nl)!
 
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
++ added support for clearlogos
 + added a date picker for easier date editing
 + implemented filtering for multiple tags (movie & TV shows)
 + implemented filtering for multiple datasources (movie & TV shows)

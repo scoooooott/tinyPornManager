@@ -78,6 +78,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case CLEARART:
             case DISC:
             case LOGO:
+            case CLEARLOGO:
               oldFilename = entity.getArtworkFilename(MediaFileType.getMediaFileType(type));
               entity.removeAllMediaFiles(MediaFileType.getMediaFileType(type));
               break;
@@ -157,6 +158,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case CLEARART:
             case DISC:
             case LOGO:
+            case CLEARLOGO:
               entity.setArtwork(destFile, MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();
@@ -193,6 +195,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             case CLEARART:
             case DISC:
             case LOGO:
+            case CLEARLOGO:
               entity.setArtwork(Paths.get(oldFilename), MediaFileType.getMediaFileType(type));
               entity.callbackForWrittenArtwork(type);
               entity.saveToDb();

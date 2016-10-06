@@ -42,6 +42,7 @@ public enum MediaFileType {
   CLEARART, // gfx
   DISCART, // gfx
   LOGO, // gfx
+  CLEARLOGO, // gfx
   THUMB, // gfx
   SEASON_POSTER, // gfx
   EXTRAFANART, // gfx
@@ -81,6 +82,9 @@ public enum MediaFileType {
       case LOGO:
         return MediaFileType.LOGO;
 
+      case CLEARLOGO:
+        return MediaFileType.CLEARLOGO;
+
       case DISC:
         return MediaFileType.DISCART;
 
@@ -119,6 +123,9 @@ public enum MediaFileType {
       case LOGO:
         return MediaArtworkType.LOGO;
 
+      case CLEARLOGO:
+        return MediaArtworkType.CLEARLOGO;
+
       case DISCART:
         return MediaArtworkType.DISC;
 
@@ -141,6 +148,7 @@ public enum MediaFileType {
         MediaFileType.CLEARART,
         MediaFileType.DISCART,
         MediaFileType.LOGO,
+        MediaFileType.CLEARLOGO,
         MediaFileType.THUMB,
         MediaFileType.SEASON_POSTER,
         MediaFileType.EXTRAFANART,

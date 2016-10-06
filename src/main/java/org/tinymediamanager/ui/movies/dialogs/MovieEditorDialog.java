@@ -166,6 +166,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JComboBox                                                 cbEdition;
 
   private ImageLabel                                                lblLogo;
+  private ImageLabel                                                lblClearlogo;
   private ImageLabel                                                lblBanner;
   private ImageLabel                                                lblClearart;
   private ImageLabel                                                lblThumb;
@@ -693,13 +694,14 @@ public class MovieEditorDialog extends TmmDialog {
       JPanel artworkPanel = new JPanel();
       tabbedPane.addTab(BUNDLE.getString("metatag.extraartwork"), null, artworkPanel, null); //$NON-NLS-1$
       artworkPanel.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-              RowSpec.decode("50px:grow(2)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-              RowSpec.decode("200px:grow(2)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("250px:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("50px:grow(2)"),
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("50px:grow(2)"),
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("200px:grow(2)"),
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
       {
-        JLabel lblLogoT = new JLabel("Logo");
+        JLabel lblLogoT = new JLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "2, 2");
       }
       {
@@ -714,12 +716,31 @@ public class MovieEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        {
-          JLabel lblBannerT = new JLabel("Banner");
-          artworkPanel.add(lblBannerT, "4, 2");
-        }
         lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblLogo, "2, 4, fill, fill");
+      }
+      {
+        final JLabel lblClearlogoT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+        artworkPanel.add(lblClearlogoT, "4, 2");
+      }
+      {
+        lblClearlogo = new ImageLabel();
+        lblClearlogo.setAlternativeText(BUNDLE.getString("image.notfound.clearlogo")); //$NON-NLS-1$
+        lblClearlogo.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.CLEARLOGO, movieList.getDefaultArtworkScrapers(),
+                lblClearlogo, null, null, MediaType.MOVIE);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+          }
+        });
+        lblClearlogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        artworkPanel.add(lblClearlogo, "4, 4, fill, fill");
+      }
+      {
+        JLabel lblBannerT = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        artworkPanel.add(lblBannerT, "2, 6");
       }
       {
         lblBanner = new ImageLabel();
@@ -734,15 +755,12 @@ public class MovieEditorDialog extends TmmDialog {
           }
         });
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        artworkPanel.add(lblBanner, "4, 4, 3, 1, fill, fill");
+        artworkPanel.add(lblBanner, "2, 8, 3, 1, fill, fill");
       }
+
       {
         JLabel lblClearartT = new JLabel("ClearArt");
-        artworkPanel.add(lblClearartT, "2, 6");
-      }
-      {
-        JLabel lblThumbT = new JLabel("Thumb");
-        artworkPanel.add(lblThumbT, "4, 6");
+        artworkPanel.add(lblClearartT, "2, 10");
       }
       {
         lblClearart = new ImageLabel();
@@ -756,12 +774,12 @@ public class MovieEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
-        {
-          JLabel lblDiscT = new JLabel("Disc");
-          artworkPanel.add(lblDiscT, "6, 6");
-        }
         lblClearart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        artworkPanel.add(lblClearart, "2, 8, fill, fill");
+        artworkPanel.add(lblClearart, "2, 12, fill, fill");
+      }
+      {
+        JLabel lblThumbT = new JLabel("Thumb");
+        artworkPanel.add(lblThumbT, "4, 10");
       }
       {
         lblThumb = new ImageLabel();
@@ -776,7 +794,11 @@ public class MovieEditorDialog extends TmmDialog {
           }
         });
         lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        artworkPanel.add(lblThumb, "4, 8, fill, fill");
+        artworkPanel.add(lblThumb, "4, 12, fill, fill");
+      }
+      {
+        JLabel lblDiscT = new JLabel("Disc");
+        artworkPanel.add(lblDiscT, "6, 10");
       }
       {
         lblDisc = new ImageLabel();
@@ -791,7 +813,7 @@ public class MovieEditorDialog extends TmmDialog {
           }
         });
         lblDisc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        artworkPanel.add(lblDisc, "6, 8, fill, fill");
+        artworkPanel.add(lblDisc, "6, 12, fill, fill");
       }
     }
 
@@ -875,6 +897,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       lblMoviePath.setText(movieToEdit.getPath());
       lblLogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.LOGO));
+      lblClearlogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.CLEARLOGO));
       lblClearart.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.THUMB));
       lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISCART));
@@ -1050,6 +1073,12 @@ public class MovieEditorDialog extends TmmDialog {
       if (!StringUtils.isEmpty(lblLogo.getImageUrl()) && !lblLogo.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.LOGO))) {
         movieToEdit.setArtworkUrl(lblLogo.getImageUrl(), MediaFileType.LOGO);
         movieToEdit.downloadArtwork(MediaFileType.LOGO);
+      }
+
+      if (!StringUtils.isEmpty(lblClearlogo.getImageUrl())
+          && !lblClearlogo.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+        movieToEdit.setArtworkUrl(lblClearlogo.getImageUrl(), MediaFileType.CLEARLOGO);
+        movieToEdit.downloadArtwork(MediaFileType.CLEARLOGO);
       }
 
       if (!StringUtils.isEmpty(lblBanner.getImageUrl()) && !lblBanner.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.BANNER))) {
