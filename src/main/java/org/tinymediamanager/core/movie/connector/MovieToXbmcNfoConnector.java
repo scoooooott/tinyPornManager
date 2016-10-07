@@ -659,6 +659,9 @@ public class MovieToXbmcNfoConnector {
 
         // add movie to movieset
         if (movieSet != null) {
+          if (StringUtils.isBlank(movieSet.getPlot())) {
+            movieSet.setPlot(xbmc.set.overview);
+          }
           movie.setMovieSet(movieSet);
         }
       }
