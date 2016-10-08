@@ -285,23 +285,25 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
     @Override
     protected void done() {
-      int index = -1;
-      // search for a match and preselect it
-      for (int i = 0; i < sortedEpisodes.size(); i++) {
-        TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-        if (StringUtils.trim(episode.getTitle()).equals(StringUtils.trim(model.getTitle()))) {
-          index = i;
-          break;
+      if(textField.getText().isEmpty()) {
+        int index = -1;
+        // search for a match and preselect it
+        for (int i = 0; i < sortedEpisodes.size(); i++) {
+          TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
+          if (StringUtils.trim(episode.getTitle()).equals(StringUtils.trim(model.getTitle()))) {
+            index = i;
+            break;
+          }
         }
-      }
 
-      if (index > -1) {
-        // preselect the entry
-        table.getSelectionModel().setSelectionInterval(index, index);
-        // and scroll it to the top
-        scrollToVisible(index, 0);
-        // Rectangle rect = table.getCellRect(index, 0, true);
-        // table.scrollRectToVisible(rect);
+        if (index > -1) {
+          // preselect the entry
+          table.getSelectionModel().setSelectionInterval(index, index);
+          // and scroll it to the top
+          scrollToVisible(index, 0);
+          // Rectangle rect = table.getCellRect(index, 0, true);
+          // table.scrollRectToVisible(rect);
+        }
       }
     }
 
