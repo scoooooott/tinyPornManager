@@ -103,8 +103,8 @@ public class TvShowEpisodeAndSeasonParser {
     return result;
   }
 
-  private static String parseEpisodeTitleFromFilename(String name, String showname) {
-    String basename = FilenameUtils.getBaseName(ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(name));
+  public static String cleanEpisodeTitle(String titleToClean, String tvShowName) {
+    String basename = FilenameUtils.getBaseName(ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(titleToClean));
 
     // parse foldername
     Pattern regex = Pattern.compile("(.*[\\/\\\\])");
@@ -115,10 +115,10 @@ public class TvShowEpisodeAndSeasonParser {
     basename = basename + " ";
 
     // remove show name
-    if (showname != null && !showname.isEmpty()) {
+    if (tvShowName != null && !tvShowName.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
-      basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
-      basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
+      basename = basename.replaceAll("(?i)^" + Pattern.quote(tvShowName) + "", "");
+      basename = basename.replaceAll("(?i) " + Pattern.quote(tvShowName) + " ", "");
     }
     basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
     basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
@@ -192,13 +192,6 @@ public class TvShowEpisodeAndSeasonParser {
 
     String basename = ParserUtils.removeStopwordsAndBadwordsFromTvEpisodeName(name);
     String foldername = "";
-    if (showname != null && !showname.isEmpty()) {
-      // remove string like tvshow name (440, 24, ...)
-      basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
-      basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
-    }
-    basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
-    basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
 
     // parse foldername
     regex = Pattern.compile("(.*[\\/\\\\])");
@@ -207,10 +200,19 @@ public class TvShowEpisodeAndSeasonParser {
       foldername = m.group(1);
       basename = basename.replaceAll(regex.pattern(), "");
     }
+
+    if (showname != null && !showname.isEmpty()) {
+      // remove string like tvshow name (440, 24, ...)
+      basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
+      basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
+    }
+    basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
+    basename = basename.replaceFirst("[\\(\\[]\\d{4}[\\)\\]]", ""); // remove (xxxx) or [xxxx] as year
+
     basename = basename + " ";
 
     result.stackingMarkerFound = !Utils.getStackingMarker(filename).isEmpty() ? true : false;
-    result.name = parseEpisodeTitleFromFilename(name, showname);
+    result.name = basename.trim();
 
     // season detection
     if (result.season == -1) {

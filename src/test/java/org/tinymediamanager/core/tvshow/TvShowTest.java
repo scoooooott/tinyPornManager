@@ -277,11 +277,9 @@ public class TvShowTest {
     // assertEqual("episode1 title episode2 title", cleanTitle("name.s01e01.episode1.title.s01e02.episode2.title.ext", "name")); // E1 removed!
     assertEqual("my first title my second title", cleanTitle("name.s01e01.my.first.title.s01e02.my.second.title.ext", "name"));
     assertEqual("ep01 ep02", cleanTitle("name.ep01.ep02.ext", "name")); // no title
-
   }
 
   private String cleanTitle(String filename, String showname) {
-    return TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(filename, showname).name;
+    return TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(filename, showname);
   }
-
 }

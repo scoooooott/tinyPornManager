@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -285,12 +286,13 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
     @Override
     protected void done() {
-      if(textField.getText().isEmpty()) {
+      if (textField.getText().isEmpty()) {
         int index = -1;
         // search for a match and preselect it
         for (int i = 0; i < sortedEpisodes.size(); i++) {
           TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-          if (StringUtils.trim(episode.getTitle()).equals(StringUtils.trim(model.getTitle()))) {
+          if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle())
+              .equals(StringUtils.trim(model.getTitle()))) {
             index = i;
             break;
           }
