@@ -289,12 +289,26 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       if (textField.getText().isEmpty()) {
         int index = -1;
         // search for a match and preselect it
+
+        // with file name
         for (int i = 0; i < sortedEpisodes.size(); i++) {
           TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-          if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle())
+          if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getVideoBasenameWithoutStacking(), episode.getTvShow().getTitle())
               .equals(StringUtils.trim(model.getTitle()))) {
             index = i;
             break;
+          }
+        }
+
+        // with ep title
+        if (index == 0) {
+          for (int i = 0; i < sortedEpisodes.size(); i++) {
+            TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
+            if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle())
+                .equals(StringUtils.trim(model.getTitle()))) {
+              index = i;
+              break;
+            }
           }
         }
 
