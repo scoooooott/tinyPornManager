@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -103,12 +102,11 @@ public class MovieSetEditorDialog extends TmmDialog {
   private JTextPane                   tpOverview;
   private JTextField                  tfTmdbId;
   private ImageLabel                  lblLogo;
+  private ImageLabel                  lblClearlogo;
   private ImageLabel                  lblBanner;
   private ImageLabel                  lblClearart;
 
-  private final Action                actionMoveMovieDown = new MoveDownAction();
   private final Action                actionRemoveMovie   = new RemoveMovieAction();
-  private final Action                actionMoveMovieUp   = new MoveUpAction();
   private final Action                actionOk            = new OkAction();
   private final Action                actionCancel        = new CancelAction();
   private final Action                actionAbort         = new AbortAction();
@@ -220,10 +218,6 @@ public class MovieSetEditorDialog extends TmmDialog {
     btnRemoveMovie.setAction(actionRemoveMovie);
     panelContent.add(btnRemoveMovie, "2, 10, right, top");
 
-    JButton btnMoveMovieUp = new JButton("");
-    btnMoveMovieUp.setAction(actionMoveMovieUp);
-    panelContent.add(btnMoveMovieUp, "2, 12, right, top");
-
     lblFanart = new ImageLabel();
     lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblFanart.addMouseListener(new MouseAdapter() {
@@ -238,16 +232,11 @@ public class MovieSetEditorDialog extends TmmDialog {
         HashMap<String, Object> ids = new HashMap<>(movieSetToEdit.getIds());
         ids.put(Constants.TMDB, tmdbId);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkScrapers, lblFanart, null, null, MediaType.MOVIE_SET);
-        // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
       }
     });
     panelContent.add(lblFanart, "8, 12, 1, 5, fill, fill");
-
-    JButton btnMoveMovieDown = new JButton("");
-    btnMoveMovieDown.setAction(actionMoveMovieDown);
-    panelContent.add(btnMoveMovieDown, "2, 14, right, top");
 
     /**
      * Artwork pane
@@ -262,7 +251,7 @@ public class MovieSetEditorDialog extends TmmDialog {
               RowSpec.decode("50px:grow(2)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
               RowSpec.decode("200px:grow(2)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
       {
-        JLabel lblLogoT = new JLabel("Logo");
+        JLabel lblLogoT = new JLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
         artworkPanel.add(lblLogoT, "2, 2");
       }
       {
@@ -278,30 +267,30 @@ public class MovieSetEditorDialog extends TmmDialog {
           }
         });
         {
-          JLabel lblBannerT = new JLabel("Banner");
-          artworkPanel.add(lblBannerT, "4, 2");
+          final JLabel lblClearlogoT = new JLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+          artworkPanel.add(lblClearlogoT, "4, 2");
         }
         lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblLogo, "2, 4, fill, fill");
       }
       {
-        lblBanner = new ImageLabel();
-        lblBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
-        lblBanner.addMouseListener(new MouseAdapter() {
+        lblClearlogo = new ImageLabel();
+        lblClearlogo.setAlternativeText(BUNDLE.getString("image.notfound.clearlogo")); //$NON-NLS-1$
+        lblClearlogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            ImageChooserDialog dialog = new ImageChooserDialog(movieSetToEdit.getIds(), ImageType.BANNER, movieList.getDefaultArtworkScrapers(),
-                lblBanner, null, null, MediaType.MOVIE);
+            ImageChooserDialog dialog = new ImageChooserDialog(movieSetToEdit.getIds(), ImageType.CLEARLOGO, movieList.getDefaultArtworkScrapers(),
+                lblClearlogo, null, null, MediaType.MOVIE);
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
             dialog.setVisible(true);
           }
         });
-        lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        artworkPanel.add(lblBanner, "4, 4, 3, 1, fill, fill");
+        lblClearlogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        artworkPanel.add(lblClearlogo, "4, 4, fill, fill");
       }
 
       {
-        JLabel lblClearartT = new JLabel("ClearArt");
+        JLabel lblClearartT = new JLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
         artworkPanel.add(lblClearartT, "2, 6");
       }
       {
@@ -316,9 +305,31 @@ public class MovieSetEditorDialog extends TmmDialog {
             dialog.setVisible(true);
           }
         });
+        {
+          JLabel lblBannerT = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+          artworkPanel.add(lblBannerT, "4, 6");
+        }
         lblClearart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblClearart, "2, 8, fill, fill");
       }
+      {
+        lblBanner = new ImageLabel();
+        lblBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
+        lblBanner.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            ImageChooserDialog dialog = new ImageChooserDialog(movieSetToEdit.getIds(), ImageType.BANNER, movieList.getDefaultArtworkScrapers(),
+                lblBanner, null, null, MediaType.MOVIE);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+          }
+        });
+        lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        artworkPanel.add(lblBanner, "4, 8, 3, 1, fill, fill");
+      }
+
+      // extra artwork
+      lblBanner.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.BANNER));
     }
 
     /**
@@ -369,10 +380,8 @@ public class MovieSetEditorDialog extends TmmDialog {
       else {
         lblFanart.setImageUrl(movieSetToEdit.getArtworkUrl(MediaFileType.FANART));
       }
-
-      // extra artwork
-      lblBanner.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.BANNER));
       lblLogo.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.LOGO));
+      lblClearlogo.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.CLEARLOGO));
       lblClearart.setImagePath(movieSetToEdit.getArtworkFilename(MediaFileType.CLEARART));
     }
 
@@ -423,46 +432,6 @@ public class MovieSetEditorDialog extends TmmDialog {
     }
   }
 
-  private class MoveUpAction extends AbstractAction {
-    private static final long serialVersionUID = -4620223948432713667L;
-
-    public MoveUpAction() {
-      putValue(LARGE_ICON_KEY, IconManager.ARROW_UP);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.moveup")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      if (moviesInSet.isEmpty()) {
-        return;
-      }
-
-      int row = tableMovies.getSelectedRow();
-      if (row > 0) {
-        Collections.rotate(moviesInSet.subList(row - 1, row + 1), 1);
-        tableMovies.getSelectionModel().setSelectionInterval(row - 1, row - 1);
-      }
-    }
-  }
-
-  private class MoveDownAction extends AbstractAction {
-    private static final long serialVersionUID = 8986131051527422410L;
-
-    public MoveDownAction() {
-      putValue(LARGE_ICON_KEY, IconManager.ARROW_DOWN);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.movedown")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      int row = tableMovies.getSelectedRow();
-      if (row > -1 && row < moviesInSet.size() - 1) {
-        Collections.rotate(moviesInSet.subList(row, row + 2), -1);
-        tableMovies.getSelectionModel().setSelectionInterval(row + 1, row + 1);
-      }
-    }
-  }
-
   private class OkAction extends AbstractAction {
     private static final long serialVersionUID = -7322270015667230646L;
 
@@ -490,6 +459,11 @@ public class MovieSetEditorDialog extends TmmDialog {
         movieSetToEdit.setArtworkUrl(lblLogo.getImageUrl(), MediaFileType.LOGO);
       }
 
+      if (!StringUtils.isEmpty(lblClearlogo.getImageUrl())
+          && !lblClearlogo.getImageUrl().equals(movieSetToEdit.getArtworkUrl(MediaFileType.CLEARLOGO))) {
+        movieSetToEdit.setArtworkUrl(lblClearlogo.getImageUrl(), MediaFileType.CLEARLOGO);
+      }
+
       if (!StringUtils.isEmpty(lblBanner.getImageUrl()) && !lblBanner.getImageUrl().equals(movieSetToEdit.getArtworkUrl(MediaFileType.BANNER))) {
         movieSetToEdit.setArtworkUrl(lblBanner.getImageUrl(), MediaFileType.BANNER);
       }
@@ -513,7 +487,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       // sort movies in the right order
       for (int i = 0; i < moviesInSet.size(); i++) {
         Movie movie = moviesInSet.get(i);
-        movie.setSortTitle(movieSetToEdit.getTitle() + String.format("%02d", i + 1));
         movie.saveToDb();
         movie.writeNFO();
       }

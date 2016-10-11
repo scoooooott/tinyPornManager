@@ -39,6 +39,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -284,23 +286,40 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
 
     @Override
     protected void done() {
-      int index = -1;
-      // search for a match and preselect it
-      for (int i = 0; i < sortedEpisodes.size(); i++) {
-        TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-        if (episode.getTitle().equals(model.getTitle())) {
-          index = i;
-          break;
-        }
-      }
+      if (textField.getText().isEmpty()) {
+        int index = -1;
+        // search for a match and preselect it
 
-      if (index > -1) {
-        // preselect the entry
-        table.getSelectionModel().setSelectionInterval(index, index);
-        // and scroll it to the top
-        scrollToVisible(index, 0);
-        // Rectangle rect = table.getCellRect(index, 0, true);
-        // table.scrollRectToVisible(rect);
+        // with file name
+        for (int i = 0; i < sortedEpisodes.size(); i++) {
+          TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
+          if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getVideoBasenameWithoutStacking(), episode.getTvShow().getTitle())
+              .equals(StringUtils.trim(model.getTitle()))) {
+            index = i;
+            break;
+          }
+        }
+
+        // with ep title
+        if (index == 0) {
+          for (int i = 0; i < sortedEpisodes.size(); i++) {
+            TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
+            if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle())
+                .equals(StringUtils.trim(model.getTitle()))) {
+              index = i;
+              break;
+            }
+          }
+        }
+
+        if (index > -1) {
+          // preselect the entry
+          table.getSelectionModel().setSelectionInterval(index, index);
+          // and scroll it to the top
+          scrollToVisible(index, 0);
+          // Rectangle rect = table.getCellRect(index, 0, true);
+          // table.scrollRectToVisible(rect);
+        }
       }
     }
 

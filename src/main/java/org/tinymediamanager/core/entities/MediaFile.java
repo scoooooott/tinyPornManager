@@ -85,6 +85,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static Pattern                             thumbPattern       = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             seasonPattern      = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
   private static Pattern                             logoPattern        = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
+  private static Pattern                             clearlogoPattern   = Pattern.compile("(?i)(.*-clearlogo|clearlogo)\\..{2,4}");
   // be careful: disc.avi would be valid!
   private static Pattern                             discartPattern     = Pattern
       .compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|jpeg|png|tbn)");
@@ -409,6 +410,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.LOGO;
     }
 
+    // clearlogo.*
+    matcher = clearlogoPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.CLEARLOGO;
+    }
+
     // discart.*
     matcher = discartPattern.matcher(name);
     if (matcher.matches()) {
@@ -441,6 +448,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case POSTER:
       case THUMB:
       case LOGO:
+      case CLEARLOGO:
       case CLEARART:
       case SEASON_POSTER:
       case EXTRAFANART:
@@ -1620,6 +1628,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case GRAPHIC:
       case SEASON_POSTER:
       case LOGO:
+      case CLEARLOGO:
       case CLEARART:
       case DISCART:
       case EXTRATHUMB:

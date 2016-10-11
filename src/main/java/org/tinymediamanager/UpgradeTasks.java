@@ -313,6 +313,11 @@ public class UpgradeTasks {
             a.setThumbPath("");
           }
         }
+
+        // also clean out the sorttitle if a movie set is assigned (not needed any more)
+        if (movie.getMovieSet() != null) {
+          movie.setSortTitle("");
+        }
         movie.saveToDb();
       }
       for (TvShow tvShow : tvShowList.getTvShows()) {

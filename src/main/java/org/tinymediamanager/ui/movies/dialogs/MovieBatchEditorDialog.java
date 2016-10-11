@@ -250,7 +250,6 @@ public class MovieBatchEditorDialog extends TmmDialog {
           for (Movie movie : moviesToEdit) {
             if (obj instanceof String) {
               movie.removeFromMovieSet();
-              movie.setSortTitle("");
             }
             if (obj instanceof MovieSet) {
               MovieSet movieSet = (MovieSet) obj;
@@ -258,13 +257,8 @@ public class MovieBatchEditorDialog extends TmmDialog {
               if (movie.getMovieSet() != movieSet) {
                 movie.removeFromMovieSet();
                 movie.setMovieSet(movieSet);
-                // movieSet.addMovie(movie);
                 movieSet.insertMovie(movie);
               }
-
-              // movie.setSortTitleFromMovieSet();
-              // movie.saveToDb();
-              movieSet.updateMovieSorttitle();
             }
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

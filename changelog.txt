@@ -4,8 +4,20 @@ SCRAPER CHANGES:
 You now have the option to scrape localized language/country names instead of ISO codes
 !Check your scraper config (IMDB/TMDB/MovieMeter.nl)!
 
+MOVIE SET CHANGES:
+Due to recent changes in Kodi we've changed our internal handling of movie sets:
+- the sorttitle of movies in a movie set is no longer used
+  (tinyMediaManager and Kodi use the release date to sort)
+- tinyMediaManager now supports the new NFO style for movie sets
+  (reading & writing; we also support reading the old style for importing)
+
+! Due to the NFO changes and sorttitle changes you should rewrite the NFO                   !
+! files of your movies if you use movie sets! (Don't forget to re-import he movies in Kodi) !
+
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
++ added support for clearlogos
 + added a date picker for easier date editing
++ added automatic download of extra artwork for movie sets
 + implemented filtering for multiple tags (movie & TV shows)
 + implemented filtering for multiple datasources (movie & TV shows)
 + added play button in the movie chooser
@@ -21,6 +33,7 @@ x fixed loading of online movie set artwork (if no local artwork has been found)
 x adhere graphic settings better for multiple movies in one directory / disc folders 
 x added filter indicator for TV shows too
 x fixed detection of episode files
+x improved episode name detection at import
 x fixed renaming TvShows on CMD line
 x fixed downloading of empty movie set image files
 x fixed changing the default scraper in the episode editor dialog

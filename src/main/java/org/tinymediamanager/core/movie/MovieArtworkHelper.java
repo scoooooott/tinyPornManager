@@ -58,6 +58,7 @@ public class MovieArtworkHelper {
       case EXTRAFANART:
       case EXTRATHUMB:
       case LOGO:
+      case CLEARLOGO:
       case BANNER:
       case CLEARART:
       case THUMB:
@@ -125,6 +126,7 @@ public class MovieArtworkHelper {
             }
             break;
           case LOGO:
+          case CLEARLOGO:
             if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo() || force) {
               downloadExtraArtwork(movie, mft);
             }
@@ -479,6 +481,7 @@ public class MovieArtworkHelper {
 
     // works now for single & multimovie
     setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
+    setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
     setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.MOVIE_SETTINGS.isImageClearart());
     setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.MOVIE_SETTINGS.isImageBanner());
     setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.MOVIE_SETTINGS.isImageThumb());
