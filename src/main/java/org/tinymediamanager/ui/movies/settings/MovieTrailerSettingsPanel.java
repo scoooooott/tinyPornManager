@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -70,7 +71,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Manuel Laggner
  */
-public class MovieTrailerSettingsPanel extends JPanel {
+public class MovieTrailerSettingsPanel extends ScrollablePanel {
   private static final long              serialVersionUID = -1607146878528487625L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
@@ -142,7 +143,9 @@ public class MovieTrailerSettingsPanel extends JPanel {
       // add a CSS rule to force body tags to use the default label font
       // instead of the value in javax.swing.text.html.default.csss
       Font font = UIManager.getFont("Label.font");
-      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+      Color color = UIManager.getColor("Label.foreground");
+      String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; color: rgb(" + color.getRed() + ","
+          + color.getGreen() + "," + color.getBlue() + "); }";
       tpScraperDescription.setEditorKit(new HTMLEditorKit());
       ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
     }
@@ -160,11 +163,12 @@ public class MovieTrailerSettingsPanel extends JPanel {
     setLayout(new MigLayout("", "[25lp][20lp][][][grow]", "[][200lp][][][][][]"));
     {
       JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
       add(lblScraperT, "cell 0 0 5 1");
     }
     {
       JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 3 1");
+      add(scrollPaneScraper, "cell 1 1 3 1,growy");
 
       tableTrailerScraper = new JTable();
       tableTrailerScraper.setRowHeight(29);
@@ -176,7 +180,7 @@ public class MovieTrailerSettingsPanel extends JPanel {
       scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       scrollPaneScraperDetails.setBorder(null);
 
-      JPanel panelScraperDetails = new JPanel();
+      JPanel panelScraperDetails = new ScrollablePanel();
       scrollPaneScraperDetails.setViewportView(panelScraperDetails);
       panelScraperDetails.setLayout(new MigLayout("", "[grow]", "[][]"));
       tpScraperDescription = new JTextPane();
@@ -188,17 +192,17 @@ public class MovieTrailerSettingsPanel extends JPanel {
       panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
     }
     {
-      checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred"));
+      checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
       add(checkBox, "cell 1 2 3 1");
 
-      JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source"));
+      JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
       add(lblTrailerSource, "cell 2 3,alignx right");
 
       cbTrailerSource = new JComboBox<>();
       add(cbTrailerSource, "cell 3 3");
       cbTrailerSource.setModel(new DefaultComboBoxModel<>(MovieTrailerSources.values()));
 
-      JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality"));
+      JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
       add(lblTrailerQuality, "cell 2 4,alignx right");
 
       cbTrailerQuality = new JComboBox<>();
@@ -206,7 +210,7 @@ public class MovieTrailerSettingsPanel extends JPanel {
       cbTrailerQuality.setModel(new DefaultComboBoxModel<>(MovieTrailerQuality.values()));
     }
     {
-      chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload"));
+      chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
       add(chckbxAutomaticTrailerDownload, "cell 1 5 3 1");
 
       JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$

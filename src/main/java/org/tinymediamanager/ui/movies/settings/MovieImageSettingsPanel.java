@@ -299,7 +299,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     {
       JPanel panelFileNaming = new JPanel();
       add(panelFileNaming, "cell 1 6 3 1");
-      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][][][]", "[][][]"));
+      panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][][]"));
 
       JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));//$NON-NLS-1$
       panelFileNaming.add(lblPosterFilename, "cell 0 0,growx,aligny center");
@@ -314,25 +314,25 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       panelFileNaming.add(cbMoviePosterFilename2, "cell 3 0,growx,aligny top");
 
       cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
-      panelFileNaming.add(cbMoviePosterFilename8, "cell 4 0,alignx left,aligny top");
+      panelFileNaming.add(cbMoviePosterFilename8, "cell 1 1,alignx left,aligny top");
 
       cbMoviePosterFilename6 = new JCheckBox("folder.ext");
-      panelFileNaming.add(cbMoviePosterFilename6, "cell 5 0,alignx left,aligny top");
+      panelFileNaming.add(cbMoviePosterFilename6, "cell 2 1,alignx left,aligny top");
 
       JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));//$NON-NLS-1$
-      panelFileNaming.add(lblFanartFileNaming, "cell 0 1,alignx left,aligny center");
+      panelFileNaming.add(lblFanartFileNaming, "cell 0 2,alignx left,aligny center");
 
       cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename1, "cell 1 1,alignx left,aligny top");
+      panelFileNaming.add(cbMovieFanartFilename1, "cell 1 2,alignx left,aligny top");
 
       cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename3, "cell 2 1,alignx left,aligny top");
+      panelFileNaming.add(cbMovieFanartFilename3, "cell 2 2,alignx left,aligny top");
 
       cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename2, "cell 3 1,alignx left,aligny top");
+      panelFileNaming.add(cbMovieFanartFilename2, "cell 3 2,alignx left,aligny top");
 
       tpFileNamingHint = new JTextPane();
-      panelFileNaming.add(tpFileNamingHint, "cell 0 2 6 1,grow");
+      panelFileNaming.add(tpFileNamingHint, "cell 0 3 4 1,grow");
       tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
       tpFileNamingHint.setOpaque(false);
       tpFileNamingHint.setEditable(false);
