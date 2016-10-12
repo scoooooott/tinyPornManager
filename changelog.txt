@@ -12,7 +12,7 @@ Due to recent changes in Kodi we've changed our internal handling of movie sets:
   (reading & writing; we also support reading the old style for importing)
 
 ! Due to the NFO changes and sorttitle changes you should rewrite the NFO                   !
-! files of your movies if you use movie sets! (Don't forget to re-import he movies in Kodi) !
+! files of your movies if you use movie sets! (Don't forget to re-import your movies in Kodi) !
 
 + MediaInfo: parse pre-generated XMLs (mainly needed for ISO files)
 + added support for clearlogos
