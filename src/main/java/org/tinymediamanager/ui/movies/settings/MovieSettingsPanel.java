@@ -25,9 +25,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -83,7 +83,7 @@ public class MovieSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[25lp:n][]", "[][][20lp][][][][20lp:n][][][]"));
     {
-      final JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
+      JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
       add(lblUiT, "cell 0 0 2 1");
     }
@@ -92,7 +92,7 @@ public class MovieSettingsPanel extends JPanel {
       add(chckbxPersistUiFilters, "cell 1 1");
     }
     {
-      final JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
+      JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
       add(lblAutomaticTasksT, "cell 0 3 2 1");
     }
@@ -101,7 +101,7 @@ public class MovieSettingsPanel extends JPanel {
       add(chckbxRenameAfterScrape, "flowx,cell 1 4");
     }
     {
-      final JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
+      JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
       lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
       add(lblAutomaticRenameHint, "cell 1 4");
     }
@@ -114,7 +114,7 @@ public class MovieSettingsPanel extends JPanel {
       add(btnClearTraktData, "cell 1 5");
     }
     {
-      final JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
+      JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
       add(lblMiscT, "cell 0 7 2 1");
     }
@@ -123,7 +123,7 @@ public class MovieSettingsPanel extends JPanel {
       add(chckbxBuildImageCache, "flowx,cell 1 8");
     }
     {
-      final JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
+      JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
       add(lblBuildImageCacheHint, "cell 1 8");
     }

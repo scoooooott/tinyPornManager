@@ -35,9 +35,9 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.CertificationStyle;
@@ -197,9 +197,9 @@ public class MovieDatasourceSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][300lp,grow][][300lp,grow]", "[][100lp,grow][20lp][][100lp,grow][20lp][][][][][grow]"));
+    setLayout(new MigLayout("", "[25lp:n][300lp,grow][25lp][300lp,grow]", "[][100lp,grow][20lp][][100lp,grow][20lp][][][][][grow]"));
     {
-      final JLabel lblDatasourcesT = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
+      JLabel lblDatasourcesT = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblDatasourcesT, 1.16667, Font.BOLD);
       add(lblDatasourcesT, "cell 0 0 2 1");
     }
@@ -211,7 +211,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       scrollPaneDataSources.setViewportView(listDataSources);
     }
     {
-      final JPanel panelButtonsDatasource = new JPanel();
+      JPanel panelButtonsDatasource = new JPanel();
       add(panelButtonsDatasource, "cell 1 1,aligny top");
       panelButtonsDatasource.setLayout(new MigLayout("", "[]", "[][][]"));
 
@@ -227,15 +227,15 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     }
 
     {
-      final JLabel lblIngoreT = new JLabel(BUNDLE.getString("Settings.ignore"));
+      JLabel lblIngoreT = new JLabel(BUNDLE.getString("Settings.ignore"));
       TmmFontHelper.changeFont(lblIngoreT, 1.16667, Font.BOLD);
       add(lblIngoreT, "cell 0 3 2 1");
 
-      final JLabel lblBadWordsT = new JLabel(BUNDLE.getString("Settings.movie.badwords")); //$NON-NLS-1$
+      JLabel lblBadWordsT = new JLabel(BUNDLE.getString("Settings.movie.badwords")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblBadWordsT, 1.16667, Font.BOLD);
       add(lblBadWordsT, "flowx,cell 2 3 2 1");
 
-      final JLabel lblBadWordsDesc = new JLabel(IconManager.HINT);
+      JLabel lblBadWordsDesc = new JLabel(IconManager.HINT);
       lblBadWordsDesc.setToolTipText(BUNDLE.getString("Settings.movie.badwords.hint")); //$NON-NLS-1$
       add(lblBadWordsDesc, "cell 2 3 2 1");
     }
@@ -262,7 +262,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       btnRemoveIgnore.setMargin(new Insets(2, 2, 2, 2));
     }
     {
-      final JPanel panelBadWords = new JPanel();
+      JPanel panelBadWords = new JPanel();
       add(panelBadWords, "cell 3 4,grow");
       panelBadWords.setLayout(new MigLayout("insets 0", "[][]", "[100lp,grow][]"));
 
@@ -287,7 +287,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       btnAddBadWord.setMargin(new Insets(2, 2, 2, 2));
     }
     {
-      final JLabel lblNfoT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
+      JLabel lblNfoT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblNfoT, 1.16667, Font.BOLD);
       add(lblNfoT, "cell 0 6 2 1");
     }
@@ -296,7 +296,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
       add(lblNfoFormat, "flowx,cell 1 7");
       {
-        final JPanel panelNfoFormat = new JPanel();
+        JPanel panelNfoFormat = new JPanel();
         add(panelNfoFormat, "cell 1 8,grow");
         panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][][]"));
 
@@ -313,7 +313,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
         panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
       }
 
-      final JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
+      JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
       add(lblCertificationStyle, "flowx,cell 1 9 3 1");
 
       cbCertificationStyle = new JComboBox();
