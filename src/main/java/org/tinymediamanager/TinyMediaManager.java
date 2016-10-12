@@ -19,6 +19,7 @@ package org.tinymediamanager;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -26,7 +27,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -232,7 +232,7 @@ public class TinyMediaManager {
           if (splash != null) {
             g2 = splash.createGraphics();
             if (g2 != null) {
-              Font font = getFont();
+              Font font = new Font("Dialog", Font.PLAIN, 11);
               g2.setFont(font);
               g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
               g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -440,15 +440,6 @@ public class TinyMediaManager {
         // g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
         // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
         // LOGGER.debug("Startup (" + progress + "%) " + text);
-      }
-
-      private Font getFont() {
-        try {
-          return Font.createFont(Font.PLAIN, TmmTheme.class.getResource("DejaVuSans.ttf").openStream()).deriveFont(11f);
-        }
-        catch (Exception e) {
-          return Font.getFont("Dialog").deriveFont(11f);
-        }
       }
 
       /**
