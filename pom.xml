@@ -10,7 +10,7 @@
 
 	<groupId>org.tinymediamanager.plugins</groupId>
 	<artifactId>scraper-imdb</artifactId>
-	<version>1.7</version>
+	<version>1.8-SNAPSHOT</version>
 
 	<name>IMDb scraper</name>
 	<description>A scraper for IMDb</description>
@@ -20,7 +20,7 @@
 		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
 		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-	  <tag>scraper-imdb-1.7</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
