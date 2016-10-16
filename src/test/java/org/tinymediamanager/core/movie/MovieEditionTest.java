@@ -5,6 +5,7 @@ import static org.tinymediamanager.core.movie.MovieEdition.DIRECTORS_CUT;
 import static org.tinymediamanager.core.movie.MovieEdition.EXTENDED_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.IMAX;
 import static org.tinymediamanager.core.movie.MovieEdition.NONE;
+import static org.tinymediamanager.core.movie.MovieEdition.THEATRICAL_EDITION;
 import static org.tinymediamanager.core.movie.MovieEdition.UNCUT;
 import static org.tinymediamanager.core.movie.MovieEdition.UNRATED;
 
@@ -29,6 +30,10 @@ public class MovieEditionTest {
     assertThat(parse("Taken.3.EXTENDED.2014.BRRip.XviD.AC3-xyz")).isEqualTo(EXTENDED_EDITION);
     assertThat(parse("Coyote.Ugly.UNRATED.EXTENDED.CUT.2000.German.AC3D.HDRip.x264")).isEqualTo(EXTENDED_EDITION);
     assertThat(parse("Project X EXTENDED CUT Italian AC3 BDRip XviD-xxx")).isEqualTo(EXTENDED_EDITION);
+
+    // THEATRICAL
+    assertThat(parse("The.Lord.of.the.Rings.The.Return.of.the.King.THEATRICAL.EDITION.2003.720p.BrRip.x264.mp4")).isEqualTo(THEATRICAL_EDITION);
+    assertThat(parse("Movie.43.2013.American.Theatrical.Version.DVDRip.XViD.avi")).isEqualTo(THEATRICAL_EDITION);
 
     // UNRATED
     assertThat(parse("Get.Hard.2015.UNRATED.720p.BluRay.DTS.x264-xyz")).isEqualTo(UNRATED);
