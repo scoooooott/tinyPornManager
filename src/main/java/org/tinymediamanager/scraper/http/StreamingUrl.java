@@ -29,7 +29,8 @@ import org.tinymediamanager.scraper.util.Pair;
 import okhttp3.Request;
 
 /**
- * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files which can't the streamed via a ByteArrayInputStream).
+ * The class StreamingUrl. Used to build streaming downloads (e.g. bigger files
+ * which can't the streamed via a ByteArrayInputStream).
  * 
  * @author Manuel Laggner
  */
@@ -41,7 +42,8 @@ public class StreamingUrl extends Url {
   }
 
   /**
-   * get the InputStream of the content. Be aware: using this class needs you to close the connection per hand calling the method closeConnection()
+   * get the InputStream of the content. Be aware: using this class needs you to
+   * close the connection per hand calling the method closeConnection()
    * 
    * @return the InputStream of the content
    */
@@ -79,7 +81,7 @@ public class StreamingUrl extends Url {
       responseContentType = response.body().contentType().toString();
       is = response.body().byteStream();
     }
-    catch (InterruptedIOException e) {
+    catch (InterruptedIOException | IllegalStateException e) {
       LOGGER.info("aborted request: " + logUrl + " ;" + e.getMessage());
       cleanup();
       throw new InterruptedException();

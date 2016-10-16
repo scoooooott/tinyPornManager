@@ -270,7 +270,7 @@ public class Url {
       }
       is = response.body().byteStream();
     }
-    catch (InterruptedIOException e) {
+    catch (InterruptedIOException | IllegalStateException e) {
       LOGGER.info("aborted request: " + logUrl + " ; " + e.getMessage());
       cleanup();
       throw new InterruptedException();
