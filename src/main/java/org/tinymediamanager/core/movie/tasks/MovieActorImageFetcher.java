@@ -79,10 +79,10 @@ public class MovieActorImageFetcher implements Runnable {
                 }
                 break;
               }
-              // delete image if not found
-              if (!found) {
-                Utils.deleteFileWithBackup(path, movie.getDataSource());
-              }
+            }
+            // delete image if not found
+            if (!found) {
+              Utils.deleteFileWithBackup(path, movie.getDataSource());
             }
           }
         }

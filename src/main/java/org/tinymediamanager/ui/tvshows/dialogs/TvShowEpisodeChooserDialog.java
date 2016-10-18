@@ -39,7 +39,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -293,8 +292,8 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
         // with file name
         for (int i = 0; i < sortedEpisodes.size(); i++) {
           TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-          if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getVideoBasenameWithoutStacking(), episode.getTvShow().getTitle())
-              .equals(StringUtils.trim(model.getTitle()))) {
+          if (equals(TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getVideoBasenameWithoutStacking(), episode.getTvShow().getTitle()),
+              model.getTitle())) {
             index = i;
             break;
           }
@@ -304,8 +303,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
         if (index == 0) {
           for (int i = 0; i < sortedEpisodes.size(); i++) {
             TvShowEpisodeChooserModel model = sortedEpisodes.get(i);
-            if (TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle())
-                .equals(StringUtils.trim(model.getTitle()))) {
+            if (equals(TvShowEpisodeAndSeasonParser.cleanEpisodeTitle(episode.getTitle(), episode.getTvShow().getTitle()), model.getTitle())) {
               index = i;
               break;
             }
@@ -321,6 +319,12 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
           // table.scrollRectToVisible(rect);
         }
       }
+    }
+
+    private boolean equals(String title1, String title2) {
+      String cleaned1 = title1.replaceAll("[!?,._-]", " ").replaceAll("\\s+", " ").trim();
+      String cleaned2 = title2.replaceAll("[!?,._-]", " ").replaceAll("\\s+", " ").trim();
+      return cleaned1.equalsIgnoreCase(cleaned2);
     }
 
     private void scrollToVisible(int rowIndex, int vColIndex) {

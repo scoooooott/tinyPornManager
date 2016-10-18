@@ -38,6 +38,7 @@ public class ActorImageLabel extends ImageLabel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   protected SwingWorker<Void, Void>   actorWorker      = null;
+  protected Person                    actor            = null;
 
   public ActorImageLabel() {
     super();
@@ -45,15 +46,11 @@ public class ActorImageLabel extends ImageLabel {
   }
 
   public void setActor(Person actor) {
-    if (actor != null) {
-      // load actors async
-      if (actorWorker != null && !actorWorker.isDone()) {
-        actorWorker.cancel(true);
-      }
+    if (actor != null && actor != this.actor) {
+      this.actor = actor;
 
-      // load image in separate worker -> performance
-      actorWorker = new ActorImageLoader(actor);
-      actorWorker.execute();
+      scaledImage = null;
+      this.repaint();
     }
   }
 
@@ -99,6 +96,11 @@ public class ActorImageLabel extends ImageLabel {
     // fetch image in separate worker -> performance
     // only do http fetches, if the label is visible
     if (isShowing()) {
+      // stop previous worker
+      if (worker != null && !worker.isDone()) {
+        worker.cancel(true);
+      }
+
       worker = new ImageFetcher(this.getSize());
       worker.execute();
     }
@@ -110,7 +112,17 @@ public class ActorImageLabel extends ImageLabel {
   @Override
   protected void paintComponent(Graphics g) {
     // refetch the image if its visible now
-    if (isShowing() && scaledImage == null && StringUtils.isNotBlank(imageUrl)) {
+    if (isShowing() && scaledImage == null && this.actor != null) {
+      // load actors async
+      if (actorWorker != null && !actorWorker.isDone()) {
+        actorWorker.cancel(true);
+      }
+
+      // load image in separate worker -> performance
+      actorWorker = new ActorImageLoader(actor);
+      actorWorker.execute();
+    }
+    else if (isShowing() && scaledImage == null && StringUtils.isNotBlank(imageUrl)) {
       worker = new ImageFetcher(this.getSize());
       worker.execute();
       return;
@@ -141,10 +153,13 @@ public class ActorImageLabel extends ImageLabel {
         }
       }
 
-      // no file found, try to cache url
-      Path p = ImageCache.getCachedFile(actor.getThumbUrl());
-      if (p != null) {
-        imagePath = p;
+      // no file found, try to cache url (if visible, otherwise load on demand
+      // in paintComponent)
+      if (isShowing()) {
+        Path p = ImageCache.getCachedFile(actor.getThumbUrl());
+        if (p != null) {
+          imagePath = p;
+        }
       }
 
       return null;
