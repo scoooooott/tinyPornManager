@@ -48,9 +48,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -59,8 +59,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -83,8 +83,8 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -502,6 +502,17 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
                 dialog.setVisible(true);
                 movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.LOGO);
                 movieToScrape.downloadArtwork(MediaFileType.LOGO);
+              }
+
+              // clearlogo
+              if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+                ImageLabel lblImage = new ImageLabel();
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARLOGO, artworkScrapers, lblImage, null, null,
+                    MediaType.MOVIE);
+                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+                dialog.setVisible(true);
+                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.CLEARLOGO);
+                movieToScrape.downloadArtwork(MediaFileType.CLEARLOGO);
               }
 
               // clearart

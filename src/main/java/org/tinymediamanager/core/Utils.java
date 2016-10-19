@@ -465,7 +465,7 @@ public class Utils {
   public static void trackEvent(final String event) {
     // should we track the event?
     Path disable = Paths.get("tmm.uuid.disable");
-    if (Globals.settings.isEnableAnalytics() && Files.notExists(disable)) {
+    if (Globals.settings.isEnableAnalytics() && !Files.exists(disable)) {
       new Thread(new Runnable() {
         @Override
         public void run() {
@@ -473,7 +473,7 @@ public class Utils {
             Thread.currentThread().setName("trackEventThread");
             Path uuidFile = Paths.get("tmm.uuid");
 
-            if (Files.notExists(uuidFile)) {
+            if (!Files.exists(uuidFile)) {
               writeStringToFile(uuidFile, UUID.randomUUID().toString());
             }
 
@@ -636,7 +636,7 @@ public class Utils {
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
-      if (Files.notExists(destDir.getParent())) {
+      if (!Files.exists(destDir.getParent())) {
         // create parent folder structure, else renameTo does not work
         try {
           Files.createDirectories(destDir);
@@ -725,7 +725,7 @@ public class Utils {
     // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
       LOGGER.debug("try to move file " + srcFile + " to " + destFile);
-      if (Files.notExists(srcFile)) {
+      if (!Files.exists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
       if (Files.isDirectory(srcFile)) {
@@ -836,7 +836,7 @@ public class Utils {
     // if (!srcFile.equals(destFile)) {
     if (!srcFile.toAbsolutePath().toString().equals(destFile.toAbsolutePath().toString())) {
       LOGGER.debug("try to copy file " + srcFile + " to " + destFile);
-      if (Files.notExists(srcFile)) {
+      if (!Files.exists(srcFile)) {
         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
       }
       if (Files.isDirectory(srcFile)) {
@@ -918,7 +918,7 @@ public class Utils {
     try {
       // create path
       Path backup = Paths.get(fn);
-      if (Files.notExists(backup.getParent())) {
+      if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
@@ -985,7 +985,7 @@ public class Utils {
     try {
       // create path
       Path backup = Paths.get(fn);
-      if (Files.notExists(backup.getParent())) {
+      if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
       // overwrite backup file by deletion prior
@@ -1094,16 +1094,16 @@ public class Utils {
   public static final void createBackupFile(Path file, boolean overwrite) {
     Path backup = Paths.get("backup");
     try {
-      if (Files.notExists(backup)) {
+      if (!Files.exists(backup)) {
         Files.createDirectory(backup);
       }
-      if (Files.notExists(file)) {
+      if (!Files.exists(file)) {
         return;
       }
       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       String date = formatter.format(Files.getLastModifiedTime(file).toMillis());
       backup = backup.resolve(file.getFileName() + "." + date + ".zip");
-      if (Files.notExists(backup) || overwrite == true) {
+      if (!Files.exists(backup) || overwrite == true) {
         // v1 - just copy
         // FileUtils.copyFile(f, backup, true);
 
@@ -1205,7 +1205,7 @@ public class Utils {
    */
   public static ProcessBuilder getPBforTMMrestart() {
     Path f = Paths.get("tmm.jar");
-    if (Files.notExists(f)) {
+    if (!Files.exists(f)) {
       LOGGER.error("cannot restart TMM - tmm.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1227,7 +1227,7 @@ public class Utils {
    */
   public static ProcessBuilder getPBforTMMupdate() {
     Path f = Paths.get("getdown.jar");
-    if (Files.notExists(f)) {
+    if (!Files.exists(f)) {
       LOGGER.error("cannot start updater - getdown.jar not found.");
       return null; // when we are in SVN, return null = normal close
     }
@@ -1269,7 +1269,7 @@ public class Utils {
    * @throws IOException
    */
   public static void deleteDirectoryRecursive(Path dir) throws IOException {
-    if (Files.notExists(dir)) {
+    if (!Files.exists(dir)) {
       return;
     }
 
@@ -1316,7 +1316,7 @@ public class Utils {
     Map<String, String> env = new HashMap<>();
     try {
       // check if file exists
-      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      env.put("create", String.valueOf(!Files.exists(zipFile)));
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
@@ -1354,12 +1354,12 @@ public class Utils {
 
     try {
       // if the destination doesn't exist, create it
-      if (Files.notExists(destDir)) {
+      if (!Files.exists(destDir)) {
         Files.createDirectories(destDir);
       }
 
       // check if file exists
-      env.put("create", String.valueOf(Files.notExists(zipFile)));
+      env.put("create", String.valueOf(!Files.exists(zipFile)));
       // use a Zip filesystem URI
       URI fileUri = zipFile.toUri(); // here
       URI zipUri = new URI("jar:" + fileUri.getScheme(), fileUri.getPath(), null);
@@ -1380,7 +1380,7 @@ public class Utils {
           @Override
           public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
-            if (Files.notExists(dirToCreate)) {
+            if (!Files.exists(dirToCreate)) {
               LOGGER.debug("Creating directory {}", dirToCreate);
               Files.createDirectory(dirToCreate);
             }
@@ -1412,7 +1412,7 @@ public class Utils {
           String fn = path.getFileName().toString();
           if (fn.endsWith(".jar")) {
             // always extract when dir not existing
-            if (Files.notExists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
+            if (!Files.exists(dest.resolve(Paths.get(fn.replace(".jar", ""))))) {
               Utils.unzip(path, dest);
             }
             else {
@@ -1525,7 +1525,7 @@ public class Utils {
         sourcePath = dir;
       }
       Path target = targetPath.resolve(sourcePath.relativize(dir));
-      if (Files.notExists(target)) {
+      if (!Files.exists(target)) {
         try {
           Files.createDirectories(target);
         }

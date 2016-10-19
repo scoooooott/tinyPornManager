@@ -54,7 +54,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -367,8 +367,8 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
         if (model != MovieSetChooserModel.emptyResult) {
           movieSetToScrape.setTitle(model.getName());
           movieSetToScrape.setPlot(model.getOverview());
-          movieSetToScrape.setArtworkUrl(model.getPosterUrl(), MediaFileType.POSTER);
-          movieSetToScrape.setArtworkUrl(model.getFanartUrl(), MediaFileType.FANART);
+          // movieSetToScrape.setArtworkUrl(model.getPosterUrl(), MediaFileType.POSTER);
+          // movieSetToScrape.setArtworkUrl(model.getFanartUrl(), MediaFileType.FANART);
           movieSetToScrape.setTmdbId(model.getTmdbId());
           movieSetToScrape.saveToDb();
 
@@ -390,7 +390,6 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
               }
 
               movie.setMovieSet(movieSetToScrape);
-              movie.setSortTitle(movieSetToScrape.getTitle() + String.format("%02d", i + 1));
               movie.writeNFO();
               movie.saveToDb();
               movieSetToScrape.addMovie(movie);
@@ -399,7 +398,11 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
             // and finally save assignments
             movieSetToScrape.saveToDb();
           }
-
+          // get images?
+          if (Globals.settings.getMovieScraperMetadataConfig().isArtwork()) {
+            // get artwork asynchronous
+            model.startArtworkScrapeTask(movieSetToScrape, Globals.settings.getMovieScraperMetadataConfig());
+          }
         }
         setVisible(false);
       }

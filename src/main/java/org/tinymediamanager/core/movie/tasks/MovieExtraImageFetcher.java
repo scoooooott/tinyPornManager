@@ -66,6 +66,7 @@ public class MovieExtraImageFetcher implements Runnable {
 
       switch (type) {
         case LOGO:
+        case CLEARLOGO:
         case BANNER:
         case CLEARART:
         case THUMB:
@@ -157,7 +158,7 @@ public class MovieExtraImageFetcher implements Runnable {
       }
 
       // check if the file has been downloaded
-      if (Files.notExists(tempFile) || Files.size(tempFile) == 0) {
+      if (!Files.exists(tempFile) || Files.size(tempFile) == 0) {
         throw new Exception("0byte file downloaded: " + filename);
       }
 

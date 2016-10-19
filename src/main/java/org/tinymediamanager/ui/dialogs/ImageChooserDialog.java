@@ -30,8 +30,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -66,9 +66,9 @@ import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
-import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -105,6 +105,7 @@ public class ImageChooserDialog extends TmmDialog {
     BANNER,
     SEASON,
     LOGO,
+    CLEARLOGO,
     CLEARART,
     DISC,
     THUMB;
@@ -194,6 +195,10 @@ public class ImageChooserDialog extends TmmDialog {
 
       case LOGO:
         setTitle(BUNDLE.getString("image.choose.logo")); //$NON-NLS-1$
+        break;
+
+      case CLEARLOGO:
+        setTitle(BUNDLE.getString("image.choose.clearlogo")); //$NON-NLS-1$
         break;
 
       case THUMB:
@@ -406,6 +411,7 @@ public class ImageChooserDialog extends TmmDialog {
 
       case BANNER:
       case LOGO:
+      case CLEARLOGO:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 120 };
         size = ImageCache.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
@@ -541,6 +547,9 @@ public class ImageChooserDialog extends TmmDialog {
               break;
             case LOGO:
               art = new MediaArtwork("", MediaArtworkType.LOGO);
+              break;
+            case CLEARLOGO:
+              art = new MediaArtwork("", MediaArtworkType.CLEARLOGO);
               break;
             case POSTER:
               art = new MediaArtwork("", MediaArtworkType.POSTER);
@@ -800,6 +809,10 @@ public class ImageChooserDialog extends TmmDialog {
 
             case LOGO:
               options.setArtworkType(MediaArtworkType.LOGO);
+              break;
+
+            case CLEARLOGO:
+              options.setArtworkType(MediaArtworkType.CLEARLOGO);
               break;
 
             case THUMB:

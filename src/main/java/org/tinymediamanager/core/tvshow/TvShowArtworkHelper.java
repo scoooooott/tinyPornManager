@@ -66,6 +66,7 @@ public class TvShowArtworkHelper {
       case EXTRAFANART:
       case EXTRATHUMB:
       case LOGO:
+      case CLEARLOGO:
       case CLEARART:
       case THUMB:
         url = show.getArtworkUrl(type);
@@ -103,6 +104,7 @@ public class TvShowArtworkHelper {
           case CLEARART:
           case DISCART:
           case LOGO:
+          case CLEARLOGO:
           case THUMB:
           case EXTRAFANART:
           case EXTRATHUMB:

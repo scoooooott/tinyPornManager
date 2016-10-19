@@ -79,10 +79,10 @@ public class MovieActorImageFetcher implements Runnable {
                 }
                 break;
               }
-              // delete image if not found
-              if (!found) {
-                Utils.deleteFileWithBackup(path, movie.getDataSource());
-              }
+            }
+            // delete image if not found
+            if (!found) {
+              Utils.deleteFileWithBackup(path, movie.getDataSource());
             }
           }
         }
@@ -94,7 +94,7 @@ public class MovieActorImageFetcher implements Runnable {
       for (MovieActor actor : movie.getActors()) {
         Path actorImage = actor.getStoragePath();
 
-        if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && Files.notExists(actorImage)) {
+        if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && !Files.exists(actorImage)) {
           Path cache = ImageCache.getCachedFile(actor.getThumbUrl());
           if (cache != null) {
             Utils.copyFileSafe(cache, actorImage);

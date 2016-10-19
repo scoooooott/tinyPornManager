@@ -47,9 +47,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -101,7 +104,9 @@ public class MovieToXbmcNfoConnector {
 
   public String                title                 = "";
   public String                originaltitle         = "";
-  public String                set                   = "";
+
+  @XmlJavaTypeAdapter(MovieSetAdapter.class)
+  public Set                   set;
   public String                sorttitle             = "";
   public float                 rating                = 0;
   public String                year                  = "";
@@ -162,7 +167,7 @@ public class MovieToXbmcNfoConnector {
    */
   private static JAXBContext initContext() {
     try {
-      return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+      return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class, Set.class);
     }
     catch (JAXBException e) {
       LOGGER.error("Error instantiating JaxB", e);
@@ -180,6 +185,7 @@ public class MovieToXbmcNfoConnector {
     ids = new HashMap<>();
     unsupportedElements = new ArrayList<>();
     fileinfo = new Fileinfo();
+    set = new Set();
   }
 
   /**
@@ -370,10 +376,12 @@ public class MovieToXbmcNfoConnector {
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      xbmc.set = movieSet.getTitle();
+      xbmc.set.name = movieSet.getTitle();
+      xbmc.set.overview = movieSet.getPlot();
     }
     else {
-      xbmc.set = "";
+      xbmc.set.name = "";
+      xbmc.set.overview = "";
     }
 
     xbmc.sorttitle = movie.getSortTitle();
@@ -622,25 +630,21 @@ public class MovieToXbmcNfoConnector {
       }
 
       // movieset
-      if (StringUtils.isNotEmpty(xbmc.set)) {
+      if (StringUtils.isNotEmpty(xbmc.set.name)) {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(xbmc.set, 0);
+        MovieSet movieSet = movieList.getMovieSet(xbmc.set.name, 0);
 
         // add movie to movieset
         if (movieSet != null) {
+          if (StringUtils.isBlank(movieSet.getPlot())) {
+            movieSet.setPlot(xbmc.set.overview);
+          }
           movie.setMovieSet(movieSet);
         }
       }
 
-      // be aware of the sorttitle - set an empty string if nothing has been
-      // found
-      if (StringUtils.isEmpty(xbmc.sorttitle)) {
-        movie.setSortTitle("");
-      }
-      else {
-        movie.setSortTitle(xbmc.sorttitle);
-      }
+      movie.setSortTitle(xbmc.sorttitle);
 
       for (Actor actor : xbmc.getActors()) {
         MovieActor cast = new MovieActor(actor.name, actor.role);
@@ -915,5 +919,55 @@ public class MovieToXbmcNfoConnector {
    */
   static class Subtitle {
     public String language;
+  }
+
+  static class Set {
+    public String name     = "";
+    public String overview = "";
+
+    List<String>  mixed;
+
+    @XmlMixed
+    public List<String> getMixed() {
+      return mixed;
+    }
+
+    public void setMixed(List<String> mixed) {
+      this.mixed = mixed;
+    }
+  }
+
+  static class MovieSetAdapter extends XmlAdapter<Set, Set> {
+
+    @Override
+    public Set marshal(Set set) throws Exception {
+      // write code for marshall
+      if (StringUtils.isBlank(set.name)) {
+        return null;
+      }
+
+      // return "<set><name>" + set.name + "</name><overview>" + set.overview + "</overview></set>";
+      return set;
+    }
+
+    @Override
+    public Set unmarshal(Set v) throws Exception {
+      Set movieSet = new Set();
+
+      if (StringUtils.isBlank(v.name) && !v.mixed.isEmpty()) {
+        try {
+          movieSet.name = v.mixed.get(0);
+        }
+        catch (Exception ignored) {
+        }
+      }
+
+      if (StringUtils.isBlank(movieSet.name)) {
+        movieSet.name = v.name;
+        movieSet.overview = v.overview;
+      }
+
+      return movieSet;
+    }
   }
 }

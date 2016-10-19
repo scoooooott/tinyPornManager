@@ -46,15 +46,15 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -152,10 +152,35 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShowFolders.isEmpty()) {
         // update selected data sources
         for (String ds : dataSources) {
-          initThreadPool(3, "update"); // FIXME: more threads result in duplicate tree entries :/
+          Path dsAsPath = Paths.get(ds);
+
+          // first of all check if the DS is available; we can take the
+          // Files.exist here:
+          // if the DS exists (and we have access to read it): Files.exist =
+          // true
+          if (!Files.exists(dsAsPath)) {
+            // error - continue with next datasource
+            LOGGER.warn("Datasource not available/empty " + ds);
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
+            continue;
+          }
+
+          initThreadPool(3, "update"); // FIXME: more threads result in
+                                       // duplicate tree entries :/
           List<Path> newTvShowDirs = new ArrayList<>();
           List<Path> existingTvShowDirs = new ArrayList<>();
-          List<Path> rootList = listFilesAndDirs(Paths.get(ds));
+          List<Path> rootList = listFilesAndDirs(dsAsPath);
+
+          // when there is _nothing_ found in the ds root, it might be offline -
+          // skip further processing
+          if (rootList.isEmpty()) {
+            // error - continue with next datasource
+            MessageManager.instance
+                .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
+            continue;
+          }
+
           for (Path path : rootList) {
             if (Files.isDirectory(path)) {
               if (existing.contains(path)) {
@@ -173,10 +198,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
 
           for (Path subdir : newTvShowDirs) {
-            submitTask(new FindTvShowTask(subdir, Paths.get(ds).toAbsolutePath()));
+            submitTask(new FindTvShowTask(subdir, dsAsPath.toAbsolutePath()));
           }
           for (Path subdir : existingTvShowDirs) {
-            submitTask(new FindTvShowTask(subdir, Paths.get(ds).toAbsolutePath()));
+            submitTask(new FindTvShowTask(subdir, dsAsPath.toAbsolutePath()));
           }
           waitForCompletionOrCancel();
           if (cancel) {
@@ -194,6 +219,17 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         initThreadPool(3, "update");
         // update selected TV shows
         for (Path path : tvShowFolders) {
+          // first of all check if the DS is available; we can take the
+          // Files.exist here:
+          // if the DS exists (and we have access to read it): Files.exist =
+          // true
+          if (!Files.exists(path)) {
+            // error - continue with next datasource
+            LOGGER.warn("Datasource not available/empty " + path.toAbsolutePath().toString());
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
+                new String[] { path.toAbsolutePath().toString() }));
+            continue;
+          }
           submitTask(new FindTvShowTask(path, path.getParent().toAbsolutePath()));
         }
         waitForCompletionOrCancel();
@@ -276,7 +312,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      if (Files.notExists(tvShow.getPathNIO())) {
+      if (!Files.exists(tvShow.getPathNIO())) {
         tvShowList.removeTvShow(tvShow);
       }
       else {
@@ -304,7 +340,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         continue;
       }
 
-      if (Files.notExists(tvShow.getPathNIO())) {
+      if (!Files.exists(tvShow.getPathNIO())) {
         tvShowList.removeTvShow(tvShow);
       }
       else {
@@ -427,7 +463,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // STEP 1 - get (or create) TvShow object
       // ******************************
       TvShow tvShow = tvShowList.getTvShowByPath(showDir);
-      // FIXME: create a method to get a MF solely by constant name like SHOW_NFO or SEASON_BANNER
+      // FIXME: create a method to get a MF solely by constant name like
+      // SHOW_NFO or SEASON_BANNER
       MediaFile showNFO = new MediaFile(showDir.resolve("tvshow.nfo"), MediaFileType.NFO); // fixate
       if (tvShow == null) {
         // tvShow did not exist - try to parse a NFO file in parent folder
@@ -471,7 +508,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             folder = showDir.relativize(discRoot).toString().toUpperCase(); // reevaluate
           }
           if (discFolders.contains(discRoot)) {
-            // we already parsed one disc file (which adds all other videos), so break here already
+            // we already parsed one disc file (which adds all other videos), so
+            // break here already
             continue;
           }
           discFolders.add(discRoot);
@@ -489,9 +527,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
           for (MediaFile em : mfs) {
             String emBasename = FilenameUtils.getBaseName(em.getFilename());
+            String epNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
             // same named files or thumb files
-            if (emBasename.equals(basename) || (emBasename).equals(basename + "-thumb")) {
-              // we found some graphics named like the episode - define them as thumb here
+            if (emBasename.equals(basename) || emBasename.matches(epNameRegexp)) {
+              // we found some graphics named like the episode - define them as
+              // thumb here
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);
               }
@@ -559,7 +599,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           String relativePath = showDir.relativize(mf.getFileAsPath()).toString();
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
-          // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers
+          // second check: is the detected episode (>-1; season >-1) already in
+          // tmm and any valid stacking markers
           // found?
           // FIXME: uhm.. for what is that?!?
           if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {
@@ -577,7 +618,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
           if (result.season == -1) {
             // did the search find a season?
-            // no -> search for it in the folder name (relative path between tv show root and the current dir)
+            // no -> search for it in the folder name (relative path between tv
+            // show root and the current dir)
             result.season = TvShowEpisodeAndSeasonParser.detectSeason(relativePath);
           }
           if (result.episodes.size() > 0) {
@@ -626,7 +668,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
           else {
             // ******************************
-            // STEP 2.1.3 - episode detection found nothing - simply add this video as -1/-1
+            // STEP 2.1.3 - episode detection found nothing - simply add this
+            // video as -1/-1
             // ******************************
             TvShowEpisode episode = new TvShowEpisode();
             episode.setDvdOrder(TvShowModuleManager.SETTINGS.isDvdOrder());
@@ -662,10 +705,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         } // end creation of new episodes
         else {
           // ******************************
-          // STEP 2.2 - video MF was already found in DB - just add all non-video MFs
+          // STEP 2.2 - video MF was already found in DB - just add all
+          // non-video MFs
           // ******************************
           for (TvShowEpisode episode : episodes) {
-            episode.addToMediaFiles(epFiles); // add all (dupes will be filtered)
+            episode.addToMediaFiles(epFiles); // add all (dupes will be
+                                              // filtered)
             episode.setDisc(mf.isDiscFile());
             if (episodes.size() > 1) {
               episode.setMultiEpisode(true);
@@ -787,13 +832,15 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
   @Override
   public void callback(Object obj) {
-    // do not publish task description here, because with different workers the text is never right
+    // do not publish task description here, because with different workers the
+    // text is never right
     publishState(progressDone);
   }
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
+   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT
+   * recursive)
    * 
    * @param directory
    *          the folder to list the files for
@@ -857,7 +904,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), deep, visitor);
     }
     catch (IOException e) {
-      // can not happen, since we overrided visitFileFailed, which throws no exception ;)
+      // can not happen, since we overrided visitFileFailed, which throws no
+      // exception ;)
     }
     return visitor.fFound;
   }
@@ -897,7 +945,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     // If there is some error accessing the file, let the user know.
-    // If you don't override this method and an error occurs, an IOException is thrown.
+    // If you don't override this method and an error occurs, an IOException is
+    // thrown.
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
       LOGGER.error("" + exc);

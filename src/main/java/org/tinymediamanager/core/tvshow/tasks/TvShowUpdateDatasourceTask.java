@@ -37,17 +37,17 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -85,6 +85,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Pattern        clearartPattern2      = Pattern.compile("(?i).*(-|.)clearart\\..{2,4}");
   private static final Pattern        logoPattern1          = Pattern.compile("(?i)logo\\..{2,4}");
   private static final Pattern        logoPattern2          = Pattern.compile("(?i).*(-|.)logo\\..{2,4}");
+  private static final Pattern        clearlogoPattern1     = Pattern.compile("(?i)clearlogo\\..{2,4}");
+  private static final Pattern        clearlogoPattern2     = Pattern.compile("(?i).*(-|.)clearlogo\\..{2,4}");
   private static final Pattern        thumbPattern1         = Pattern.compile("(?i)thumb\\..{2,4}");
   private static final Pattern        thumbPattern2         = Pattern.compile("(?i).*(-|.)thumb\\..{2,4}");
   private static final Pattern        seasonPattern         = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
@@ -646,6 +648,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     findArtwork(tvShow, completeDirContents, logoPattern1, MediaFileType.LOGO);
     findArtwork(tvShow, completeDirContents, logoPattern2, MediaFileType.LOGO);
     downloadArtwork(tvShow, MediaFileType.LOGO);
+
+    // search clearlogo or download
+    findArtwork(tvShow, completeDirContents, clearlogoPattern1, MediaFileType.CLEARLOGO);
+    findArtwork(tvShow, completeDirContents, clearlogoPattern2, MediaFileType.CLEARLOGO);
+    downloadArtwork(tvShow, MediaFileType.CLEARLOGO);
 
     // search clearart or download
     findArtwork(tvShow, completeDirContents, clearartPattern1, MediaFileType.CLEARART);

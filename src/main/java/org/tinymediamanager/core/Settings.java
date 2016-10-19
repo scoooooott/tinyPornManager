@@ -214,7 +214,7 @@ public class Settings extends AbstractModelObject {
       }
 
       cfgFolder = Paths.get(folder);
-      if (Files.notExists(cfgFolder)) {
+      if (!Files.exists(cfgFolder)) {
         try {
           Files.createDirectories(cfgFolder);
         }

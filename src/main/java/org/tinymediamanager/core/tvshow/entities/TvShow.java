@@ -81,9 +81,9 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -672,6 +672,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
           // and download it
           artworkHelper.downloadArtwork(this, MediaFileType.LOGO);
+          break;
+        }
+      }
+
+      // clearlogo
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.CLEARLOGO) {
+          // set url
+          setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARLOGO);
+          // and download it
+          artworkHelper.downloadArtwork(this, MediaFileType.CLEARLOGO);
           break;
         }
       }

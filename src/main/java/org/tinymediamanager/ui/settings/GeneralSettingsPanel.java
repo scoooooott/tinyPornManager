@@ -273,7 +273,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     Path file = Paths.get("extra.txt");
     // new file - do not write when 512MB is set
-    if (memoryAmount != 512 && Files.notExists(file)) {
+    if (memoryAmount != 512 && !Files.exists(file)) {
       try {
         Utils.writeStringToFile(file, jvmArg);
       }

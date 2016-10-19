@@ -60,8 +60,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -102,10 +102,10 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -234,16 +234,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     String oldValue = this.sortTitle;
     this.sortTitle = newValue;
     firePropertyChange(SORT_TITLE, oldValue, newValue);
-  }
-
-  /**
-   * Sets the sort title from movie set.
-   */
-  public void setSortTitleFromMovieSet() {
-    if (movieSet != null) {
-      int index = movieSet.getMovieIndex(this) + 1;
-      setSortTitle(movieSet.getTitle() + String.format("%02d", index));
-    }
   }
 
   /**
@@ -957,7 +947,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
           // movieSet.addMovie(this);
           setMovieSet(movieSet);
           movieSet.insertMovie(this);
-          movieSet.updateMovieSorttitle();
           movieSet.saveToDb();
         }
       }
@@ -1596,11 +1585,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
     else {
       movieSetId = newValue.getDbId();
-    }
-
-    // remove movieset-sorttitle
-    if (oldValue != null && newValue == null) {
-      setSortTitle("");
     }
 
     firePropertyChange(MOVIESET, oldValue, newValue);

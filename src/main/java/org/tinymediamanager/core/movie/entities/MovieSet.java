@@ -20,7 +20,6 @@ import static org.tinymediamanager.core.Constants.TMDB;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +37,9 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -137,6 +138,20 @@ public class MovieSet extends MediaEntity {
   public void setArtworkUrl(String url, MediaFileType type) {
     super.setArtworkUrl(url, type);
     MovieSetArtworkHelper.downloadArtwork(this, type);
+  }
+
+  /**
+   * Sets the artwork.
+   *
+   * @param artwork
+   *          the artwork
+   * @param config
+   *          the config
+   */
+  public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
+    if (config.isArtwork()) {
+      MovieSetArtworkHelper.setArtwork(this, artwork);
+    }
   }
 
   @Override
@@ -334,7 +349,7 @@ public class MovieSet extends MediaEntity {
 
   public void rewriteAllImages() {
     List<MediaFileType> types = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER, MediaFileType.LOGO,
-        MediaFileType.CLEARART);
+        MediaFileType.CLEARLOGO, MediaFileType.CLEARART);
 
     for (MediaFileType type : types) {
       MovieSetArtworkHelper.downloadArtwork(this, type);
@@ -385,17 +400,6 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * recalculate all movie sorttitles
-   */
-  public void updateMovieSorttitle() {
-    for (Movie movie : new ArrayList<>(movies)) {
-      movie.setSortTitleFromMovieSet();
-      movie.writeNFO();
-      movie.saveToDb();
-    }
-  }
-
-  /**
    * clean movies from this movieset if there are any inconsistances
    */
   public void cleanMovieSet() {
@@ -423,12 +427,6 @@ public class MovieSet extends MediaEntity {
     public int compare(Movie o1, Movie o2) {
       if (o1 == null || o2 == null) {
         return 0;
-      }
-
-      // sort with sorttitle if available
-      if (StringUtils.isNotBlank(o1.getSortTitle()) && StringUtils.isNotBlank(o2.getSortTitle())) {
-        Collator collator = Collator.getInstance();
-        return collator.compare(o1.getSortTitle(), o2.getSortTitle());
       }
 
       // sort with release date if available

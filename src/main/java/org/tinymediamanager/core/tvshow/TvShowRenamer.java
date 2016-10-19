@@ -97,7 +97,7 @@ public class TvShowRenamer {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
           // create parent if needed
-          if (Files.notExists(destDir.getParent())) {
+          if (!Files.exists(destDir.getParent())) {
             Files.createDirectory(destDir.getParent());
           }
           boolean ok = Utils.moveDirectorySafe(srcDir, destDir);
@@ -211,7 +211,7 @@ public class TvShowRenamer {
     Path seasonDir = show.getPathNIO();
     if (StringUtils.isNotBlank(seasonName)) {
       seasonDir = show.getPathNIO().resolve(seasonName);
-      if (Files.notExists(seasonDir)) {
+      if (!Files.exists(seasonDir)) {
         try {
           Files.createDirectory(seasonDir);
         }
@@ -244,7 +244,7 @@ public class TvShowRenamer {
             boolean ok = false;
             try {
               // create parent if needed
-              if (Files.notExists(newEpFolder.getParent())) {
+              if (!Files.exists(newEpFolder.getParent())) {
                 Files.createDirectory(newEpFolder.getParent());
               }
               ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
@@ -282,7 +282,7 @@ public class TvShowRenamer {
       if (mf.getType().equals(MediaFileType.TRAILER)) {
         // move trailer into separate dir - not supported by XBMC
         Path sample = seasonDir.resolve("sample");
-        if (Files.notExists(sample)) {
+        if (!Files.exists(sample)) {
           try {
             Files.createDirectory(sample);
           }
@@ -303,7 +303,7 @@ public class TvShowRenamer {
             boolean ok = false;
             try {
               // create parent if needed
-              if (Files.notExists(newFile.getParent())) {
+              if (!Files.exists(newFile.getParent())) {
                 Files.createDirectory(newFile.getParent());
               }
               ok = Utils.moveFileSafe(oldMfFile, newFile);
