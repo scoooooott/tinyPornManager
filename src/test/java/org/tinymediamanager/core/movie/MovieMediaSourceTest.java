@@ -22,8 +22,7 @@ public class MovieMediaSourceTest {
     Assert.assertEquals(MediaSource.DVD, MediaSource.parseMediaSource("/media/jets/movies/Planes.(dvdrip).avi"));
 
     // TS
-    Assert.assertEquals(MediaSource.TS,
-        MediaSource.parseMediaSource("Planet.der.Affen.Revolution.2014.German.AC3D.HDTS.720p.NEW.SOURCE.x264"));
+    Assert.assertEquals(MediaSource.TS, MediaSource.parseMediaSource("Planet.der.Affen.Revolution.2014.German.AC3D.HDTS.720p.NEW.SOURCE.x264"));
     Assert.assertEquals(MediaSource.TS, MediaSource.parseMediaSource("/media/jets/movies/Planes.ts.avi"));
     Assert.assertEquals(MediaSource.TS, MediaSource.parseMediaSource("/media/jets/movies/Planes.[ts].avi"));
     Assert.assertEquals(MediaSource.TS, MediaSource.parseMediaSource("/media/jets/movies/Planes-ts.avi"));
@@ -35,6 +34,11 @@ public class MovieMediaSourceTest {
     // web-dl
     Assert.assertEquals(MediaSource.WEB_DL, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.web-dl"));
     Assert.assertEquals(MediaSource.WEB_DL, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.webdl"));
+
+    // internet stream
+    Assert.assertEquals(MediaSource.STREAM, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.strm"));
+    Assert.assertEquals(MediaSource.TV, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.TVRIP.strm"));
+
   }
 
 }

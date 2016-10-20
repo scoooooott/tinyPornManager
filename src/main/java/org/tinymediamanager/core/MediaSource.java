@@ -17,6 +17,8 @@ package org.tinymediamanager.core;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
+
 /**
  * The enum MovieMediaSource - to represent all possible media sources for movies
  * 
@@ -77,6 +79,7 @@ public enum MediaSource {
    */
   public static MediaSource parseMediaSource(String filename) {
     String fn = filename.toLowerCase();
+    String ext = FilenameUtils.getExtension(fn);
     // http://wiki.xbmc.org/index.php?title=Media_flags#Media_source
 
     if (blurayPattern.matcher(fn).find()) {
@@ -114,6 +117,10 @@ public enum MediaSource {
     }
     else if (r5Pattern.matcher(fn).find()) {
       return MediaSource.R5;
+    }
+
+    if (ext.equals("strm")) {
+      return MediaSource.STREAM;
     }
 
     return MediaSource.UNKNOWN;
