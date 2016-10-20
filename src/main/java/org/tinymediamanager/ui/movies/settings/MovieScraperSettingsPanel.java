@@ -45,18 +45,18 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
@@ -183,15 +183,15 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][20lp][][][grow]", "[][200lp][20lp][][][][20lp][][][20lp][][][][][][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][][][500lp,grow]", "[][200lp][20lp][][][][20lp][][][20lp][][][][][][][]"));
     {
-      final JLabel lblMetadataScraper = new JLabel(BUNDLE.getString("scraper.metadata")); // $NON-NLS-1$
+      JLabel lblMetadataScraper = new JLabel(BUNDLE.getString("scraper.metadata")); // $NON-NLS-1$
       TmmFontHelper.changeFont(lblMetadataScraper, 1.16667, Font.BOLD);
       add(lblMetadataScraper, "cell 0 0 5 1");
     }
     {
       JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 3 1,growy");
+      add(scrollPaneScraper, "cell 1 1 3 1,grow");
 
       tableScraper = new JTable() {
         private static final long serialVersionUID = -144223066269069772L;
@@ -250,16 +250,16 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       add(chckbxScraperFallback, "cell 1 5 3 1");
     }
     {
-      final JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
+      JLabel lblScraperOptionsT = new JLabel(BUNDLE.getString("scraper.metadata.defaults")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperOptionsT, 1.16667, Font.BOLD);
       add(lblScraperOptionsT, "cell 0 7 5 1");
     }
     {
-      final MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel((MovieScraperMetadataConfig) null);
+      MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel(Settings.getInstance().getMovieScraperMetadataConfig());
       add(movieScraperMetadataPanel, "cell 1 8 4 1,grow");
     }
     {
-      final JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
+      JLabel lblArtworkScrapeT = new JLabel(BUNDLE.getString("Settings.images")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblArtworkScrapeT, 1.16667, Font.BOLD);
       add(lblArtworkScrapeT, "cell 0 10 5 1");
     }
@@ -272,12 +272,12 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       add(chckbxImageLanguage, "cell 2 12 3 1");
     }
     {
-      final JLabel lblAutomaticScrapeT = new JLabel(BUNDLE.getString("Settings.automaticscraper")); //$NON-NLS-1$
+      JLabel lblAutomaticScrapeT = new JLabel(BUNDLE.getString("Settings.automaticscraper")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticScrapeT, 1.16667, Font.BOLD);
       add(lblAutomaticScrapeT, "cell 0 14 5 1");
     }
     {
-      final JLabel lblScraperThreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
+      JLabel lblScraperThreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
       add(lblScraperThreshold, "flowx,cell 1 15 3 1,aligny top");
 
       sliderThreshold = new JSlider();
@@ -287,7 +287,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       sliderThreshold.setPaintLabels(true);
       add(sliderThreshold, "cell 1 15 3 1,growx,aligny top");
 
-      final JTextPane tpScraperThresholdHint = new JTextPane();
+      JTextPane tpScraperThresholdHint = new JTextPane();
       tpScraperThresholdHint.setOpaque(false);
       TmmFontHelper.changeFont(tpScraperThresholdHint, 0.833);
       tpScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$

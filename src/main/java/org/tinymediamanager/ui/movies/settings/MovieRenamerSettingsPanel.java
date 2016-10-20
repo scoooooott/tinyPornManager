@@ -42,9 +42,9 @@ import javax.swing.event.DocumentListener;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
@@ -188,7 +188,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][20lp][][200lp,grow]", "[][][][][][][][15lp][][][][][][20lp][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][20lp][][200lp,grow]", "[][][][][][][][15lp][][][][][][20lp][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.movie.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
@@ -300,7 +300,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       tableExamples = new TmmTable(exampleTableModel);
       scrollPaneExamples = new JScrollPane(tableExamples);
       add(scrollPaneExamples, "cell 1 17 5 1,grow");
-      scrollPaneExamples.setViewportView(tableExamples);
     }
   }
 

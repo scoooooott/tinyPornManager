@@ -152,7 +152,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][grow]", "[][200lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.subtitle"));// $NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);

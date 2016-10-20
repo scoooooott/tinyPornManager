@@ -160,7 +160,7 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][20lp][][][grow]", "[][200lp][][][][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][20lp][][][500lp,grow]", "[][200lp][][][][][]"));
     {
       JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);

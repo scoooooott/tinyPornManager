@@ -65,6 +65,7 @@ import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowArtworkPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowDatasourceSettingsPanel;
+import org.tinymediamanager.ui.tvshows.settings.TvShowImageSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowRenamerSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsContainerPanel;
@@ -164,6 +165,7 @@ public class TvShowUIModule implements ITmmUIModule {
     settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.tvshow"), new TvShowSettingsPanel());//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new TvShowDatasourceSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel()));//$NON-NLS-1$
+    settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));//$NON-NLS-1$
   }

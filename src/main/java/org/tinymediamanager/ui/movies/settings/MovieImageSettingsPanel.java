@@ -245,7 +245,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][][grow]", "[][200lp][][][20lp][][][20lp][][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][][][20lp][][][20lp][][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
@@ -253,7 +253,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     }
     {
       JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 2 1");
+      add(scrollPaneScraper, "cell 1 1 2 1,grow");
 
       tableScraper = new JTable();
       tableScraper.setRowHeight(29);
