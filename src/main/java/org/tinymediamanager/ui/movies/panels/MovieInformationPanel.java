@@ -1,6 +1,8 @@
 package org.tinymediamanager.ui.movies.panels;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,6 +34,12 @@ import org.tinymediamanager.ui.converter.VoteCountConverter;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
 /*
  * Copyright 2012 - 2013 Manuel Laggner
  *
@@ -47,12 +55,6 @@ import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieInformationPanel.
@@ -74,7 +76,6 @@ public class MovieInformationPanel extends JPanel {
   private JLabel                      lblRating;
   private JLabel                      lblVoteCount;
   private JLabel                      lblTagline;
-  private JTextPane                   tpOverview;
   private JPanel                      panelTopRight;
   private JLabel                      lblYear;
   private JLabel                      lblImdbid;
@@ -129,7 +130,7 @@ public class MovieInformationPanel extends JPanel {
     panelLeft.add(Box.createVerticalStrut(20));
 
     lblMovieFanart = new ImageLabel(false, false, true);
-    lblMovieFanart.setDesiredAspectRatio(9 / 16f);
+    lblMovieFanart.setDesiredAspectRatio(16 / 9f);
     panelLeft.add(lblMovieFanart);
     lblMovieFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
     lblMovieFanart.enableLightbox();
@@ -332,12 +333,6 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_1, panelRatingStars, starRaterBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.plot");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_14, tpOverview, jTextPaneBeanProperty);
-    autoBinding_15.bind();
-    //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
@@ -369,6 +364,8 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_16, lblGenres, jLabelBeanProperty);
     autoBinding_17.bind();
     //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.plot");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_14, tpPlot, jTextPaneBeanProperty);
     autoBinding_18.bind();

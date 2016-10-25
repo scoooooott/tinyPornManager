@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.BANNER;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.POSTER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -108,7 +110,7 @@ public class TvShowInformationPanel extends JPanel {
     panelLeft.add(Box.createVerticalStrut(20));
 
     lblTvShowBackground = new ImageLabel(false, false, true);
-    lblTvShowBackground.setDesiredAspectRatio(9 / 16f);
+    lblTvShowBackground.setDesiredAspectRatio(16 / 9f);
     panelLeft.add(lblTvShowBackground);
     lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
     lblTvShowBackground.enableLightbox();
@@ -117,7 +119,7 @@ public class TvShowInformationPanel extends JPanel {
     panelLeft.add(Box.createVerticalStrut(20));
 
     lblTvShowBanner = new ImageLabel(false, false, true);
-    lblTvShowBanner.setDesiredAspectRatio(8 / 25f);
+    lblTvShowBanner.setDesiredAspectRatio(25 / 8f);
     panelLeft.add(lblTvShowBanner);
     lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
     lblTvShowBanner.enableLightbox();
