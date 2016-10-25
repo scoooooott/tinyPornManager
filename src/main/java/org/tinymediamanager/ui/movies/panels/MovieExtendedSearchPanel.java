@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.panels;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -33,8 +33,10 @@ import javax.swing.JSeparator;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.movies.IMovieUIFilter;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
+import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.filters.MovieAudioCodecFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCastFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCertificationFilter;
@@ -62,7 +64,6 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-@Deprecated
 public class MovieExtendedSearchPanel extends RoundedPanel {
   private static final long           serialVersionUID = -4170930017190753789L;
   /**

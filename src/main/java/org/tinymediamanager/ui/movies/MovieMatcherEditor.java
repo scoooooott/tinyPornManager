@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,12 +42,7 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
    */
   public MovieMatcherEditor() {
     filters = new HashSet<>();
-    filterChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        updateFiltering();
-      }
-    };
+    filterChangeListener = evt -> updateFiltering();
   }
 
   /**

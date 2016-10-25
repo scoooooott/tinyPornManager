@@ -44,10 +44,7 @@ import org.tinymediamanager.ui.tvshows.filters.TvShowVideoCodecFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowVideoFormatFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowWatchedFilter;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Manuel Laggner
@@ -71,16 +68,13 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
-
-    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LINE_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[]", "[][][20lp]"));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
-    add(lblFilterBy, "2, 2");
+    add(lblFilterBy, "cell 0 0,growx,aligny top");
 
     createFilterPanel();
-    add(panelFilter, "2, 4, fill, fill");
+    add(panelFilter, "cell 0 1,grow");
   }
 
   private void createFilterPanel() {
@@ -111,6 +105,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
    * add a new filter to the panel
    * 
    * @param filter
+   *          the filter to be added
    */
   private void addFilter(ITvShowUIFilter<TmmTreeNode> filter) {
     GridBagConstraints gbc = new GridBagConstraints();

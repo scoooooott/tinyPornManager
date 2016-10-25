@@ -105,6 +105,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JLabel                       lblMediaSource;
   private JComboBox                    cbMediaSource;
 
+  @Deprecated
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
     setOpaque(false);

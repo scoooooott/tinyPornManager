@@ -58,6 +58,7 @@ import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 import org.tinymediamanager.ui.movies.panels.MovieArtworkPanel;
 import org.tinymediamanager.ui.movies.panels.MovieCastPanel;
+import org.tinymediamanager.ui.movies.panels.MovieExtendedSearchPanel;
 import org.tinymediamanager.ui.movies.panels.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.panels.MovieListPanel;
 import org.tinymediamanager.ui.movies.panels.MovieTrailerPanel;
