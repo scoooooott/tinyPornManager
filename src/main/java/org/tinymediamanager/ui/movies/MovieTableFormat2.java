@@ -45,6 +45,7 @@ public class MovieTableFormat2 extends TmmTableFormat<Movie> {
     Comparator<Float> floatComparator = new FloatComparator();
     Comparator<ImageIcon> imageComparator = new ImageComparator();
     Comparator<Date> dateComparator = new DateComparator();
+    Comparator<String> videoFormatComparator = new VideoFormatComparator();
 
     /*
      * title
@@ -78,6 +79,15 @@ public class MovieTableFormat2 extends TmmTableFormat<Movie> {
     col.setColumnComparator(dateComparator);
     col.setHeaderIcon(IconManager.DATE_ADDED);
     col.setCellRenderer(new DateTableCellRenderer(SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)));
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
+     * video format
+     */
+    col = new Column(BUNDLE.getString("metatag.format"), "videoFormat", Movie::getMediaInfoVideoFormat, String.class);
+    col.setColumnComparator(videoFormatComparator);
+    col.setHeaderIcon(IconManager.VIDEO_FORMAT);
     col.setColumnResizeable(false);
     addColumn(col);
 

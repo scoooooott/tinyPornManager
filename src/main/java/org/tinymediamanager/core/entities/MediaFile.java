@@ -92,12 +92,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static Pattern                             clearartPattern    = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_480P  = "480p";
-  public static final String                         VIDEO_FORMAT_576P  = "576p";
   public static final String                         VIDEO_FORMAT_540P  = "540p";
+  public static final String                         VIDEO_FORMAT_576P  = "576p";
   public static final String                         VIDEO_FORMAT_720P  = "720p";
   public static final String                         VIDEO_FORMAT_1080P = "1080p";
   public static final String                         VIDEO_FORMAT_4K    = "4k";
   public static final String                         VIDEO_FORMAT_8K    = "8k";
+  public static final List<String>                   VIDEO_FORMATS      = Arrays.asList(VIDEO_FORMAT_480P, VIDEO_FORMAT_540P, VIDEO_FORMAT_576P,
+      VIDEO_FORMAT_720P, VIDEO_FORMAT_1080P, VIDEO_FORMAT_4K, VIDEO_FORMAT_8K);
 
   // meta formats
   public static final String                         VIDEO_FORMAT_SD    = "SD";

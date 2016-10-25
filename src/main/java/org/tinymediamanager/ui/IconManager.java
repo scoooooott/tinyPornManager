@@ -114,6 +114,7 @@ public class IconManager {
   public final static ImageIcon            SEASONS                = createFontIcon('S', 20);
   public final static ImageIcon            SUBTITLES              = createMaterialFontIcon('\uE24C', 24);
   public final static ImageIcon            TRAILER                = createMaterialFontIcon('\uE02C', 24);
+  public final static ImageIcon            VIDEO_FORMAT           = createMaterialFontIcon('\uE85B', 24);
   public final static ImageIcon            WATCHED                = createMaterialFontIcon('\uE037', 24);
 
   // OBSOLETE ICONS (will be dropped when legacy code is removed)

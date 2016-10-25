@@ -63,6 +63,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     addColumn(col);
 
     /*
+     * video format
+     */
+    col = new Column(BUNDLE.getString("metatag.format"), "format", node -> getFormat(node), String.class);
+    col.setHeaderIcon(IconManager.VIDEO_FORMAT);
+    col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
      * NFO
      */
     col = new Column(BUNDLE.getString("tmm.nfo"), "nfo", node -> hasNfo(node), ImageIcon.class);
@@ -102,6 +110,14 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow || userObject instanceof TvShowEpisode) {
       return String.valueOf(((MediaEntity) userObject).getRating());
+    }
+    return "";
+  }
+
+  private String getFormat(TmmTreeNode node) {
+    Object userObject = node.getUserObject();
+    if (userObject instanceof TvShowEpisode) {
+      return ((TvShowEpisode) userObject).getMediaInfoVideoFormat();
     }
     return "";
   }
