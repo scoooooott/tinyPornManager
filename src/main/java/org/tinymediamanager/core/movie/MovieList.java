@@ -83,7 +83,7 @@ public class MovieList extends AbstractModelObject {
 
   private final MovieSettings          movieSettings;
   private ObservableElementList<Movie> movieList;
-  private List<MovieSet>               movieSetList;
+  private List<MovieSet>               movieSetList       = new ArrayList<MovieSet>(0);
   private PropertyChangeListener       tagListener;
   private List<String>                 tagsObservable;
   private List<String>                 videoCodecsObservable;
