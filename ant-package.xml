@@ -26,11 +26,14 @@
 	</target>
 
 	<target name="downloadLocales">
+		<!--<antcall target="downloadLocale"><param name="lang" value="ar_SA" /></antcall>-->
 		<!--<antcall target="downloadLocale"><param name="lang" value="ca" /></antcall>-->
 		<antcall target="downloadLocale">
 			<param name="lang" value="cs" />
 		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="da"/></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="da" />
+		</antcall>
 		<antcall target="downloadLocale">
 			<param name="lang" value="de" />
 		</antcall>
@@ -65,7 +68,9 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="pt" />
 		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="pt_BR" /></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="pt_BR" />
+		</antcall>
 		<antcall target="downloadLocale">
 			<param name="lang" value="ru" />
 		</antcall>
@@ -80,7 +85,9 @@
 		<antcall target="downloadLocale">
 			<param name="lang" value="tr" />
 		</antcall>
-		<!--<antcall target="downloadLocale"><param name="lang" value="vi" /></antcall>-->
+		<antcall target="downloadLocale">
+			<param name="lang" value="vi" />
+		</antcall>
 		<!--<antcall target="downloadLocale"><param name="lang" value="uk" /></antcall>-->
 		<antcall target="downloadLocale">
 			<param name="lang" value="zh" />
