@@ -297,8 +297,8 @@ public class UpgradeTasks {
       }
     }
 
-    if (StrgUtils.compareVersion(v, "2.8.4") < 0) {
-      LOGGER.info("Performing database upgrade tasks to version 2.8.4");
+    if (StrgUtils.compareVersion(v, "2.9") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9");
 
       // Update actors to current structure; add entitiy root and cleanout actor path
       for (Movie movie : movieList.getMovies()) {
