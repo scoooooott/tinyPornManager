@@ -48,9 +48,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -59,8 +59,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -83,14 +83,15 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaScraperComboBox;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -317,16 +318,16 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(bottomPane, "2, 11");
       {
         bottomPane.setLayout(new FormLayout(
-            new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+            new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("50dlu:grow"), FormSpecs.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2");
         }
         {
           lblProgressAction = new JLabel("");
-          bottomPane.add(lblProgressAction, "4, 2");
+          bottomPane.add(lblProgressAction, "4, 2, left, default");
         }
         {
           JPanel buttonPane = new JPanel();
