@@ -1,5 +1,6 @@
 Version 2.9.1
 =======================
+x added a connector for XBMC/Kodi < v16
 x fixed some UI scaling issues
 
 

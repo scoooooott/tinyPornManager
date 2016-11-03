@@ -42,9 +42,9 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -452,7 +452,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
               }
             }
           }
-          else if (cbNfoFormat.getSelectedItem() == MovieConnectors.XBMC) {
+          else if (cbNfoFormat.getSelectedItem() == MovieConnectors.XBMC || cbNfoFormat.getSelectedItem() == MovieConnectors.KODI) {
             for (int i = 0; i < cbCertificationStyle.getItemCount(); i++) {
               CertificationStyleWrapper wrapper = cbCertificationStyle.getItemAt(i);
               if (wrapper.style == CertificationStyle.LARGE) {

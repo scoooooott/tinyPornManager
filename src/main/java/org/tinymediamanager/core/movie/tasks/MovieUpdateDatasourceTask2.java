@@ -61,6 +61,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -251,8 +252,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   /**
-   * ThreadpoolWorker to work off ONE possible movie from root datasource
-   * directory
+   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
    * 
    * @author Myron Boyle
    * @version 1.0
@@ -445,15 +445,38 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
               if (nfo == null) {
                 // try the other
+                nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
+              }
+              if (nfo == null) {
+                // try the other
                 nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
               }
               break;
+
+            case KODI:
+              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
+              // not needed at the moment since kodi is downwards compatible
+              // if (nfo == null) {
+              // // try the other
+              // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+              // }
+              if (nfo == null) {
+                // try the other
+                nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
+              }
+              break;
+
             case MP:
               nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
               if (nfo == null) {
                 // try the other
-                nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+                nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
               }
+              // not needed at the moment since kodi is downwards compatible
+              // if (nfo == null) {
+              // // try the other
+              // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+              // }
               break;
           }
           if (nfo != null) {
@@ -675,15 +698,38 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               if (movie == null) {
                 // try the other
+                movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
+              }
+              if (movie == null) {
+                // try the other
                 movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               }
               break;
+
+            case KODI:
+              movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
+              // not needed at the moment since kodi is downwards compatible
+              // if (movie == null) {
+              // // try the other
+              // movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
+              // }
+              if (movie == null) {
+                // try the other
+                movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
+              }
+              break;
+
             case MP:
               movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               if (movie == null) {
                 // try the other
-                movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
+                movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
               }
+              // not needed at the moment since kodi is downwards compatible
+              // if (movie == null) {
+              // // try the other
+              // movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
+              // }
               break;
           }
           if (movie != null) {
@@ -1046,8 +1092,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns ONLY regular files (NO folders, NO hidden) in specified dir,
-   * filtering against our badwords (NOT recursive)
+   * returns ONLY regular files (NO folders, NO hidden) in specified dir, filtering against our badwords (NOT recursive)
    * 
    * @param directory
    *          the folder to list the files for
@@ -1076,8 +1121,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns all files & folders in specified dir, filtering against our skip
-   * folders (NOT recursive)
+   * returns all files & folders in specified dir, filtering against our skip folders (NOT recursive)
    * 
    * @param directory
    *          the folder to list the items for
