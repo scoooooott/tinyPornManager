@@ -1,5 +1,13 @@
 package org.tinymediamanager.scraper.trakt;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang3.LocaleUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -7,37 +15,15 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.logging.LogManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class TraktMetadataProviderTest {
-  private static final String CRLF = "\n";
 
   @BeforeClass
   public static void setUp() {
-    StringBuilder config = new StringBuilder("handlers = java.util.logging.ConsoleHandler\n");
-    config.append(".level = ALL").append(CRLF);
-    config.append("java.util.logging.ConsoleHandler.level = ALL").append(CRLF);
-    // Only works with Java 7 or later
-    config.append("java.util.logging.SimpleFormatter.format = [%1$tH:%1$tM:%1$tS %4$6s] %2$s - %5$s %6$s%n").append(CRLF);
-    // Exclude http logging
-    config.append("sun.net.www.protocol.http.HttpURLConnection.level = OFF").append(CRLF);
-    InputStream ins = new ByteArrayInputStream(config.toString().getBytes());
-    try {
-      LogManager.getLogManager().readConfiguration(ins);
-    }
-    catch (IOException ignored) {
-    }
+    ProxySettings.setProxySettings("localhost", 3128, "", "");
   }
 
   @Test
@@ -45,8 +31,7 @@ public class TraktMetadataProviderTest {
     TraktMetadataProvider mp;
     List<MediaSearchResult> results;
 
-    // Harry Potter
-    // Movie Search
+    // Harry Potter and the Philosopher's Stone
     try {
       mp = new TraktMetadataProvider();
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, "Harry Potter and the Philosopher's Stone");
@@ -58,16 +43,16 @@ public class TraktMetadataProviderTest {
       // are there all fields filled in the result?
       MediaSearchResult result = results.get(0);
       assertThat(result.getTitle()).isNotEmpty();
-      assertThat(result.getYear()).isNotNull();
-      assertThat(result.getId()).isNotEmpty();
-      assertThat(result.getScore()).isNotNull();
-      assertThat(result.getIMDBId()).isNotNull();
-      assertThat(result.getProviderId()).isNotNull();
+      assertThat(result.getYear()).isEqualTo(2001);
+      assertThat(result.getId()).isEqualTo("545");
+      assertThat(result.getScore()).isGreaterThan(0);
+      assertThat(result.getIMDBId()).isEqualTo("tt0241527");
+      assertThat(result.getProviderId()).isNotEmpty();
       assertThat(result.getPosterUrl()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
-      fail();
+      fail(e.getMessage());
     }
   }
 
@@ -76,13 +61,29 @@ public class TraktMetadataProviderTest {
 
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
     TraktMetadataProvider mp = new TraktMetadataProvider();
-    options.setId(mp.getProviderInfo().getId(), "521");
+    options.setLanguage(LocaleUtils.toLocale(MediaLanguages.en.name()));
+    options.setId(mp.getProviderInfo().getId(), "545"); // Harry Potter and the Philosopher's Stone
 
     try {
+      /**
+       * Harry Potter and the Philosopher's Stone
+       */
       MediaMetadata md = mp.getMetadata(options);
       assertNotNull(md);
+      assertThat(md.getTitle()).isEqualTo("Harry Potter and the Philosopher's Stone");
+      assertThat(md.getOriginalTitle()).isEqualTo("Harry Potter and the Philosopher's Stone");
+      assertThat(md.getPlot()).isNotEmpty();
+      assertThat(md.getYear()).isEqualTo(2001);
+      assertThat(md.getRating()).isGreaterThan(0);
+      assertThat(md.getVoteCount()).isGreaterThan(0);
+      assertThat(md.getRuntime()).isGreaterThan(0);
+      assertThat(md.getId(md.getProviderId())).isEqualTo(545);
+      assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0241527");
+      assertThat(md.getId(MediaMetadata.TMDB)).isEqualTo(671);
+      // assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotEmpty();
     }
     catch (Exception e) {
+      e.printStackTrace();
       fail(e.getMessage());
     }
 
@@ -90,27 +91,27 @@ public class TraktMetadataProviderTest {
 
   @Test
   // Game of Thrones
-  public void testTVShowScrape() {
+  public void testTVShowEpisodeList() {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     TraktMetadataProvider mp = new TraktMetadataProvider();
-    options.setId(mp.getProviderInfo().getId(), "353");
+    options.setId(mp.getProviderInfo().getId(), "1390");
     List<MediaEpisode> episodeList;
-    MediaEpisode test;
+    MediaEpisode episode;
 
     try {
-
       episodeList = mp.getEpisodeList(options);
 
+      assertThat(episodeList).isNotEmpty();
       assertThat(episodeList.get(0)).isNotNull();
-      test = episodeList.get(0);
 
-      assertThat(test.title).isNotNull();
-      assertThat(test.plot).isNotNull();
-      assertThat(test.ids).isNotNull();
-
+      episode = episodeList.get(0);
+      assertThat(episode.title).isNotEmpty();
+      assertThat(episode.plot).isNotNull(); // can be empty for some eps
+      assertThat(episode.ids).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
+      fail(e.getMessage());
     }
   }
 }

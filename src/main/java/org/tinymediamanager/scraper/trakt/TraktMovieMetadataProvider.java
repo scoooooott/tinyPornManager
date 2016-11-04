@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,27 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import com.uwetrottmann.trakt.v2.TraktV2;
-import com.uwetrottmann.trakt.v2.entities.Movie;
-import com.uwetrottmann.trakt.v2.entities.SearchResult;
-import com.uwetrottmann.trakt.v2.enums.Extended;
-import com.uwetrottmann.trakt.v2.enums.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.*;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.uwetrottmann.trakt5.TraktV2;
+import com.uwetrottmann.trakt5.entities.Movie;
+import com.uwetrottmann.trakt5.entities.SearchResult;
+import com.uwetrottmann.trakt5.enums.Extended;
+import com.uwetrottmann.trakt5.enums.Type;
+
+import retrofit2.Response;
 
 /**
  * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
@@ -69,12 +77,14 @@ class TraktMovieMetadataProvider {
     List<SearchResult> searchResults = null;
 
     try {
+      Response<List<SearchResult>> response;
       if (year != 0) {
-        searchResults = api.search().textQuery(searchString, Type.MOVIE, year, 1, 25);
+        response = api.search().textQuery(searchString, Type.MOVIE, year, 1, 25).execute();
       }
       else {
-        searchResults = api.search().textQuery(searchString, Type.MOVIE, null, 1, 25);
+        response = api.search().textQuery(searchString, Type.MOVIE, null, 1, 25).execute();
       }
+      searchResults = response.body();
     }
     catch (Exception e) {
       LOGGER.error("Problem scraping for " + searchString + "; " + e.getMessage());
@@ -87,13 +97,12 @@ class TraktMovieMetadataProvider {
 
     // set SearchResult Data for every Entry of the result
     for (SearchResult result : searchResults) {
-      MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId());
+      MediaSearchResult mediaSearchResult = new MediaSearchResult(TraktMetadataProvider.providerInfo.getId(), MediaType.MOVIE);
 
       mediaSearchResult.setTitle(result.movie.title);
       mediaSearchResult.setYear((result.movie.year));
       mediaSearchResult.setId((result.movie.ids.trakt).toString());
       mediaSearchResult.setIMDBId(result.movie.ids.imdb);
-      mediaSearchResult.setProviderId((result.movie.ids.trakt).toString());
       mediaSearchResult.setPosterUrl(result.movie.images.poster.full);
 
       mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
@@ -114,10 +123,16 @@ class TraktMovieMetadataProvider {
 
     LOGGER.debug("Scraping... Trakt ID");
 
-    result = api.movies().summary(options.getId(TraktMetadataProvider.providerInfo.getId()), Extended.FULL);
+    Response<Movie> response = api.movies().summary(options.getId(TraktMetadataProvider.providerInfo.getId()), Extended.FULL).execute();
+    result = response.body();
 
+    metadata.setId(TraktMetadataProvider.providerInfo.getId(), result.ids.trakt);
     metadata.setId(MediaMetadata.IMDB, result.ids.imdb);
-    metadata.setRating(result.rating.floatValue());
+
+    if (result.rating != null) {
+      metadata.setRating(result.rating.floatValue());
+    }
+
     metadata.setRuntime(result.runtime);
     metadata.setOriginalTitle(result.title);
     metadata.setPlot(result.overview);
