@@ -23,7 +23,7 @@
 	</scm>
 
 	<properties>
-		<okhttp.version>3.3.0</okhttp.version>
+        <okhttp.version>3.4.1</okhttp.version>
 	</properties>
 
 	<dependencies>

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Authenticator;
+import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -37,23 +39,16 @@ import okhttp3.Route;
  * @since 1.0
  */
 public class TmmHttpClient {
-  private static OkHttpClient client = createHttpClient();
+  public static final String  CACHE_DIR = "cache";
+  private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 5 * 1024 * 1024);
+  private static OkHttpClient client    = createHttpClient();
 
   /**
    * instantiates a new OkHttpClient
    * 
    * @return OkHttpClient
    */
-  public static OkHttpClient createHttpClient() {
-    return newBuilder().build();
-  }
-
-  /**
-   * create a new OkHttpClient.Builder along with all our settings set
-   *
-   * @return the newly created builder
-   */
-  public static OkHttpClient.Builder newBuilder() {
+  private static OkHttpClient createHttpClient() {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
     // pool
@@ -69,15 +64,41 @@ public class TmmHttpClient {
       setProxy(builder);
     }
 
+    return builder.build();
+  }
+
+  /**
+   * create a new OkHttpClient.Builder along with all our settings set
+   *
+   * @return the newly created builder
+   */
+  public static OkHttpClient.Builder newBuilder() {
+    return newBuilder(false);
+  }
+
+  /**
+   * create a new OkHttpClient.Builder along with all our settings set
+   * 
+   * @param withCache
+   *          create the builder with a cache set
+   * @return the newly created builder
+   */
+  public static OkHttpClient.Builder newBuilder(boolean withCache) {
+    OkHttpClient.Builder builder = client.newBuilder();
+
+    if (withCache) {
+      builder.cache(CACHE);
+    }
+
     return builder;
   }
 
   /**
-   * Gets the preconfigured http client.
+   * Gets the pre-configured http client.
    * 
    * @return the http client
    */
-  public static OkHttpClient getHttpClient() {
+  static OkHttpClient getHttpClient() {
     return client;
   }
 
