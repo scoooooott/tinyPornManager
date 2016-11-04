@@ -254,7 +254,9 @@ class TmdbTvShowMetadataProvider {
     md.setId(TmdbMetadataProvider.providerInfo.getId(), tmdbId);
     md.setTitle(complete.name);
     md.setOriginalTitle(complete.original_name);
-    md.setRating(complete.vote_average.floatValue());
+    if (complete.vote_average != null) {
+      md.setRating(complete.vote_average.floatValue());
+    }
     md.setVoteCount(complete.vote_count);
     if (complete.first_air_date != null) {
       md.setReleaseDate(complete.first_air_date);
@@ -384,7 +386,10 @@ class TmdbTvShowMetadataProvider {
     md.setId(TmdbMetadataProvider.providerInfo.getId(), episode.id);
     md.setTitle(episode.name);
     md.setPlot(episode.overview);
-    md.setRating(episode.vote_average.floatValue());
+
+    if (episode.vote_average != null) {
+      md.setRating(episode.vote_average.floatValue());
+    }
     md.setVoteCount(episode.vote_count);
 
     if (episode.air_date != null) {

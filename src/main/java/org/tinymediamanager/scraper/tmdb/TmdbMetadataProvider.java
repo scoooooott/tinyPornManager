@@ -81,7 +81,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
 
         @Override
         protected synchronized OkHttpClient okHttpClient() {
-          OkHttpClient.Builder builder = TmmHttpClient.newBuilder();
+          OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
           builder.addInterceptor(new TmdbInterceptor(this));
           return builder.build();
         }
