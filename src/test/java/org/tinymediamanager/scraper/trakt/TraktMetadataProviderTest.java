@@ -14,16 +14,18 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.entities.Certification;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.http.ProxySettings;
 
 public class TraktMetadataProviderTest {
 
   @BeforeClass
   public static void setUp() {
-    ProxySettings.setProxySettings("localhost", 3128, "", "");
+    // ProxySettings.setProxySettings("localhost", 3128, "", "");
   }
 
   @Test
@@ -48,7 +50,6 @@ public class TraktMetadataProviderTest {
       assertThat(result.getScore()).isGreaterThan(0);
       assertThat(result.getIMDBId()).isEqualTo("tt0241527");
       assertThat(result.getProviderId()).isNotEmpty();
-      assertThat(result.getPosterUrl()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -71,16 +72,27 @@ public class TraktMetadataProviderTest {
       MediaMetadata md = mp.getMetadata(options);
       assertNotNull(md);
       assertThat(md.getTitle()).isEqualTo("Harry Potter and the Philosopher's Stone");
-      assertThat(md.getOriginalTitle()).isEqualTo("Harry Potter and the Philosopher's Stone");
+      assertThat(md.getTagline()).isNotEmpty();
       assertThat(md.getPlot()).isNotEmpty();
       assertThat(md.getYear()).isEqualTo(2001);
+      assertThat(md.getReleaseDate()).isInSameDayAs("2001-11-16");
       assertThat(md.getRating()).isGreaterThan(0);
       assertThat(md.getVoteCount()).isGreaterThan(0);
       assertThat(md.getRuntime()).isGreaterThan(0);
+      assertThat(md.getCertifications()).containsOnly(Certification.US_PG);
+      assertThat(md.getGenres()).containsOnly(MediaGenres.ADVENTURE, MediaGenres.FANTASY, MediaGenres.FAMILY);
+
+      // ids
       assertThat(md.getId(md.getProviderId())).isEqualTo(545);
       assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0241527");
       assertThat(md.getId(MediaMetadata.TMDB)).isEqualTo(671);
       // assertThat(md.getMediaArt(MediaArtwork.MediaArtworkType.POSTER)).isNotEmpty();
+
+      // crew
+      assertThat(md.getCastMembers()).isNotEmpty();
+      MediaCastMember castMember = md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0);
+      assertThat(castMember.getName()).isNotEmpty();
+      assertThat(castMember.getCharacter()).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -90,10 +102,11 @@ public class TraktMetadataProviderTest {
   }
 
   @Test
-  // Game of Thrones
-  public void testTVShowEpisodeList() {
+  public void testTvShowEpisodeList() {
     MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
     TraktMetadataProvider mp = new TraktMetadataProvider();
+
+    // Game of Thrones
     options.setId(mp.getProviderInfo().getId(), "1390");
     List<MediaEpisode> episodeList;
     MediaEpisode episode;
@@ -108,6 +121,83 @@ public class TraktMetadataProviderTest {
       assertThat(episode.title).isNotEmpty();
       assertThat(episode.plot).isNotNull(); // can be empty for some eps
       assertThat(episode.ids).isNotEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testTvShowScrape() {
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_SHOW);
+    TraktMetadataProvider mp = new TraktMetadataProvider();
+
+    // Game of Thrones
+    options.setId(mp.getProviderInfo().getId(), "1390");
+
+    try {
+      MediaMetadata md = mp.getMetadata(options);
+
+      assertThat(md).isNotNull();
+      assertThat(md.getTitle()).isEqualTo("Game of Thrones");
+      assertThat(md.getYear()).isEqualTo(2011);
+      assertThat(md.getPlot()).isNotEmpty();
+      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-17");
+      assertThat(md.getRuntime()).isEqualTo(55);
+      assertThat(md.getProductionCompanies()).containsOnly("HBO");
+      assertThat(md.getCertifications()).containsOnly(Certification.US_TVMA);
+      assertThat(md.getCountries()).containsOnly("us");
+      assertThat(md.getStatus()).isEqualTo("returning series");
+      assertThat(md.getRating()).isGreaterThan(0);
+      assertThat(md.getVoteCount()).isGreaterThan(0);
+
+      assertThat(md.getGenres()).containsOnly(MediaGenres.DRAMA, MediaGenres.FANTASY, MediaGenres.SCIENCE_FICTION, MediaGenres.ACTION,
+          MediaGenres.ADVENTURE);
+
+      // ids
+      assertThat(md.getId(TraktMetadataProvider.providerInfo.getId())).isEqualTo(1390);
+      assertThat(md.getId(MediaMetadata.TVDB)).isEqualTo(121361);
+      assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt0944947");
+      assertThat(md.getId(MediaMetadata.TMDB)).isEqualTo(1399);
+
+      // crew
+      assertThat(md.getCastMembers()).isNotEmpty();
+      MediaCastMember castMember = md.getCastMembers(MediaCastMember.CastType.ACTOR).get(0);
+      assertThat(castMember.getName()).isNotEmpty();
+      assertThat(castMember.getCharacter()).isNotEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testTvShowEpisodeScrape() {
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+    TraktMetadataProvider mp = new TraktMetadataProvider();
+
+    // Game of Thrones
+    options.setId(mp.getProviderInfo().getId(), "1390");
+    options.setId(MediaMetadata.SEASON_NR, "1");
+    options.setId(MediaMetadata.EPISODE_NR, "1");
+
+    try {
+      MediaMetadata md = mp.getMetadata(options);
+
+      assertThat(md).isNotNull();
+      assertThat(md.getTitle()).isEqualTo("Winter Is Coming");
+      assertThat(md.getPlot()).isNotEmpty();
+      assertThat(md.getReleaseDate()).isInSameDayAs("2011-04-18");
+      assertThat(md.getRating()).isGreaterThan(0);
+      assertThat(md.getVoteCount()).isGreaterThan(0);
+
+      // ids
+      assertThat(md.getId(TraktMetadataProvider.providerInfo.getId())).isEqualTo(73640);
+      assertThat(md.getId(MediaMetadata.TVDB)).isEqualTo(3254641);
+      assertThat(md.getId(MediaMetadata.IMDB)).isEqualTo("tt1480055");
+      assertThat(md.getId(MediaMetadata.TMDB)).isEqualTo(63056);
     }
     catch (Exception e) {
       e.printStackTrace();

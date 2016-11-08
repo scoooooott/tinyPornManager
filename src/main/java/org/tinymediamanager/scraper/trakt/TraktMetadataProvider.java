@@ -17,8 +17,6 @@ package org.tinymediamanager.scraper.trakt;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -38,21 +36,20 @@ import okhttp3.OkHttpClient;
 
 @PluginImplementation
 public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMetadataProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TraktMetadataProvider.class);
-  private static final String CLIENT_ID = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
+  private static final String    CLIENT_ID    = "a8e7e30fd7fd3f397b6e079f9f023e790f9cbd80a2be57c104089174fa8c6d89";
 
   static final MediaProviderInfo providerInfo = createMediaProviderInfo();
 
-  static TraktV2 api;
+  private static TraktV2         api;
 
   public TraktMetadataProvider() {
   }
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo("trakt", "Trakt.tv",
-            "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things," + " but primarily keeps track of TV shows and movies you watch. "
-                    + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
-            TraktMetadataProvider.class.getResource("/trakt_tv.png"));
+        "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things," + " but primarily keeps track of TV shows and movies you watch. "
+            + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
+        TraktMetadataProvider.class.getResource("/trakt_tv.png"));
 
     return providerInfo;
   }
@@ -109,6 +106,9 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
         return new TraktMovieMetadataProvider(api).scrape(options);
 
       case TV_SHOW:
+        return new TraktTVShowMetadataProvider(api).scrape(options);
+
+      case TV_EPISODE:
         return new TraktTVShowMetadataProvider(api).scrape(options);
 
       default:

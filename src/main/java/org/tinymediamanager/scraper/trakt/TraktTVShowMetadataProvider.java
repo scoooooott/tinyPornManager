@@ -30,8 +30,10 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
+import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaEpisode;
+import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -47,18 +49,16 @@ import com.uwetrottmann.trakt5.entities.Show;
 import com.uwetrottmann.trakt5.enums.Extended;
 import com.uwetrottmann.trakt5.enums.Type;
 
-import retrofit2.Response;
-
 /**
- * The class TraktMovieMetadataProvider is used to provide metadata for movies from trakt.tv
+ * The class TraktTvShowMetadataProvider is used to provide metadata for movies from trakt.tv
  */
 
 class TraktTVShowMetadataProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(TraktTVShowMetadataProvider.class);
 
-  final TraktV2               api;
+  private final TraktV2       api;
 
-  public TraktTVShowMetadataProvider(TraktV2 api) {
+  TraktTVShowMetadataProvider(TraktV2 api) {
     this.api = api;
   }
 
@@ -89,18 +89,13 @@ class TraktTVShowMetadataProvider {
     List<MediaSearchResult> results = new ArrayList<>();
     List<SearchResult> searchResults = null;
 
-    try {
-      Response<List<SearchResult>> response;
+    synchronized (api) {
       if (year != 0) {
-        response = api.search().textQuery(searchString, Type.SHOW, year, 1, 25).execute();
+        searchResults = api.search().textQuery(searchString, Type.SHOW, year, 1, 25).execute().body();
       }
       else {
-        response = api.search().textQuery(searchString, Type.SHOW, null, 1, 25).execute();
+        searchResults = api.search().textQuery(searchString, Type.SHOW, null, 1, 25).execute().body();
       }
-      searchResults = response.body();
-    }
-    catch (Exception e) {
-      LOGGER.error("Problem scraping for " + searchString + "; " + e.getMessage());
     }
 
     if (searchResults == null || searchResults.isEmpty()) {
@@ -114,10 +109,8 @@ class TraktTVShowMetadataProvider {
 
       mediaSearchResult.setTitle(result.show.title);
       mediaSearchResult.setYear(result.show.year);
-      mediaSearchResult.setId((result.show.ids.trakt).toString());
+      mediaSearchResult.setId(result.show.ids.trakt.toString());
       mediaSearchResult.setIMDBId(result.show.ids.imdb);
-      mediaSearchResult.setProviderId((result.show.ids.trakt).toString());
-      mediaSearchResult.setPosterUrl(result.show.images.poster.full);
 
       mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
 
@@ -152,7 +145,9 @@ class TraktTVShowMetadataProvider {
           ep.episode = episode.number;
           ep.season = episode.season;
           ep.title = episode.title;
-          ep.rating = episode.rating.floatValue();
+          if (episode.rating != null) {
+            ep.rating = episode.rating.floatValue();
+          }
           ep.voteCount = episode.votes;
 
           ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
@@ -193,6 +188,10 @@ class TraktTVShowMetadataProvider {
     MediaMetadata md = new MediaMetadata(TraktMetadataProvider.providerInfo.getId());
 
     String id = options.getId(TraktMetadataProvider.providerInfo.getId());
+    if (StringUtils.isBlank(id) && options.getResult() != null) {
+      // take the id from the search result
+      id = options.getResult().getId();
+    }
     if (StringUtils.isBlank(id)) {
       // alternatively we can take the imdbid
       id = options.getId(IMDB);
@@ -226,74 +225,77 @@ class TraktTVShowMetadataProvider {
 
     md.setTitle(show.title);
     md.setPlot(show.overview);
-
-    if (show.rating != null) {
-      md.setRating(show.rating.floatValue());
-    }
+    md.setYear(show.year);
+    md.setRating(show.rating);
     md.setVoteCount(show.votes);
-
-    if (show.first_aired != null) {
-      md.setReleaseDate(show.first_aired.toDate());
+    md.addCertification(Certification.findCertification(show.certification));
+    md.addCountry(show.country);
+    md.setReleaseDate(show.first_aired);
+    if (show.status != null) {
+      md.setStatus(show.status.toString());
     }
-    md.setStatus(show.status.toString());
     md.setRuntime(show.runtime);
     md.addProductionCompany(show.network);
+
+    for (String genreAsString : ListUtils.nullSafe(show.genres)) {
+      md.addGenre(MediaGenres.getGenre(genreAsString));
+    }
 
     // cast&crew
     if (credits != null) {
       for (CastMember cast : ListUtils.nullSafe(credits.cast)) {
         MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
         cm.setName(cast.person.name);
-        cm.setName(cast.character);
+        cm.setCharacter(cast.character);
         md.addCastMember(cm);
       }
       if (credits.crew != null) {
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.directing)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.DIRECTOR);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.production)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.PRODUCER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.writing)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.WRITER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.costumeAndMakeUp)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.sound)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.camera)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
 
         for (CrewMember crew : ListUtils.nullSafe(credits.crew.art)) {
           MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.OTHER);
           cm.setName(crew.person.name);
-          cm.setName(crew.job);
+          cm.setPart(crew.job);
           md.addCastMember(cm);
         }
       }
@@ -369,15 +371,9 @@ class TraktTVShowMetadataProvider {
 
     md.setTitle(episode.title);
     md.setPlot(episode.overview);
-
-    if (episode.rating != null) {
-      md.setRating(episode.rating.floatValue());
-    }
+    md.setRating(episode.rating);
     md.setVoteCount(episode.votes);
-
-    if (episode.first_aired != null) {
-      md.setReleaseDate(episode.first_aired.toDate());
-    }
+    md.setReleaseDate(episode.first_aired);
 
     return md;
   }
