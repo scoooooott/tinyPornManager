@@ -178,7 +178,9 @@ class TmdbTvShowMetadataProvider {
               ep.episode = episode.episode_number;
               ep.season = episode.season_number;
               ep.title = episode.name;
-              ep.rating = episode.vote_average.floatValue();
+              if (episode.vote_average != null) {
+                ep.rating = episode.vote_average.floatValue();
+              }
               ep.voteCount = episode.vote_count;
               ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
               episodes.add(ep);
@@ -254,13 +256,9 @@ class TmdbTvShowMetadataProvider {
     md.setId(TmdbMetadataProvider.providerInfo.getId(), tmdbId);
     md.setTitle(complete.name);
     md.setOriginalTitle(complete.original_name);
-    if (complete.vote_average != null) {
-      md.setRating(complete.vote_average.floatValue());
-    }
+    md.setRating(complete.vote_average);
     md.setVoteCount(complete.vote_count);
-    if (complete.first_air_date != null) {
-      md.setReleaseDate(complete.first_air_date);
-    }
+    md.setReleaseDate(complete.first_air_date);
     md.setPlot(complete.overview);
 
     // Poster
@@ -296,6 +294,9 @@ class TmdbTvShowMetadataProvider {
     // external IDs
     if (complete.external_ids != null && complete.external_ids.tvdb_id != null) {
       md.setId(MediaMetadata.TVDB, complete.external_ids.tvdb_id);
+    }
+    if (complete.external_ids != null && complete.external_ids.imdb_id != null) {
+      md.setId(MediaMetadata.IMDB, complete.external_ids.imdb_id);
     }
     // not yet used
     // if (complete.external_ids != null && complete.external_ids.tvrage_id!= null) {
@@ -386,15 +387,9 @@ class TmdbTvShowMetadataProvider {
     md.setId(TmdbMetadataProvider.providerInfo.getId(), episode.id);
     md.setTitle(episode.name);
     md.setPlot(episode.overview);
-
-    if (episode.vote_average != null) {
-      md.setRating(episode.vote_average.floatValue());
-    }
+    md.setRating(episode.vote_average);
     md.setVoteCount(episode.vote_count);
-
-    if (episode.air_date != null) {
-      md.setReleaseDate(episode.air_date);
-    }
+    md.setReleaseDate(episode.air_date);
 
     for (CastMember castMember : ListUtils.nullSafe(episode.guest_stars)) {
       MediaCastMember cm = new MediaCastMember(MediaCastMember.CastType.ACTOR);
