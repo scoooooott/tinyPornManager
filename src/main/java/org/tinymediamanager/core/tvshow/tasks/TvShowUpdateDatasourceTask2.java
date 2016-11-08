@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
@@ -191,9 +192,12 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               }
             }
             else {
-              // File in root folder - not possible for TV datasource
-              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot",
-                  new String[] { path.getFileName().toString() }));
+              // File in root folder - not possible for TV datasource (at least, for videos ;)
+              String ext = FilenameUtils.getExtension(path.getFileName().toString());
+              if (Globals.settings.getVideoFileType().contains("." + ext)) {
+                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot",
+                    new String[] { path.getFileName().toString() }));
+              }
             }
           }
 
@@ -839,8 +843,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
   /**
    * simple NIO File.listFiles() replacement<br>
-   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT
-   * recursive)
+   * returns ONLY regular files (NO folders, NO hidden) in specified dir (NOT recursive)
    * 
    * @param directory
    *          the folder to list the files for
