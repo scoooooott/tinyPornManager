@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.time.DateTime;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
@@ -115,6 +116,10 @@ public class MediaMetadata {
    */
 
   public void mergeFrom(MediaMetadata md) {
+    if (md == null) {
+      return;
+    }
+
     Map<String, Object> delta = md.getIds();
     delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we have in our map
 
@@ -276,7 +281,6 @@ public class MediaMetadata {
       return;
     }
     castMembers.add(cm);
-
   }
 
   /**
@@ -286,7 +290,9 @@ public class MediaMetadata {
    *          the ma
    */
   public void addMediaArt(MediaArtwork ma) {
-    artwork.add(ma);
+    if (ma != null) {
+      artwork.add(ma);
+    }
   }
 
   /**
@@ -331,7 +337,9 @@ public class MediaMetadata {
    *          the subitem to be added
    */
   public void addSubItem(MediaMetadata item) {
-    subItems.add(item);
+    if (item != null) {
+      subItems.add(item);
+    }
   }
 
   /**
@@ -371,7 +379,9 @@ public class MediaMetadata {
    *          the certification
    */
   public void addCertification(Certification certification) {
-    certifications.add(certification);
+    if (certification != null) {
+      certifications.add(certification);
+    }
   }
 
   /**
@@ -390,7 +400,9 @@ public class MediaMetadata {
    *          the trailer
    */
   public void addTrailer(MediaTrailer trailer) {
-    trailers.add(trailer);
+    if (trailer != null) {
+      trailers.add(trailer);
+    }
   }
 
   /**
@@ -411,7 +423,9 @@ public class MediaMetadata {
    *          the id
    */
   public void setId(String key, Object object) {
-    ids.put(key, object);
+    if (StringUtils.isNotBlank(key) && object != null) {
+      ids.put(key, object);
+    }
   }
 
   /**
@@ -454,7 +468,10 @@ public class MediaMetadata {
    *          set the given list of production companies
    */
   public void setProductionCompanies(List<String> productionCompanies) {
-    this.productionCompanies = productionCompanies;
+    this.productionCompanies.clear();
+    if (productionCompanies != null) {
+      this.productionCompanies.addAll(productionCompanies);
+    }
   }
 
   /**
@@ -495,7 +512,10 @@ public class MediaMetadata {
    *          the spoken languages to be set
    */
   public void setSpokenLanguages(List<String> spokenLanguages) {
-    this.spokenLanguages = spokenLanguages;
+    this.spokenLanguages.clear();
+    if (spokenLanguages != null) {
+      this.spokenLanguages.addAll(spokenLanguages);
+    }
   }
 
   /**
@@ -536,7 +556,10 @@ public class MediaMetadata {
    *          the countries to be set
    */
   public void setCountries(List<String> countries) {
-    this.countries = countries;
+    this.countries.clear();
+    if (countries != null) {
+      this.countries.addAll(countries);
+    }
   }
 
   /**
@@ -577,7 +600,9 @@ public class MediaMetadata {
    *          the title to be set
    */
   public void setTitle(String title) {
-    this.title = title;
+    if (title != null) {
+      this.title = title;
+    }
   }
 
   /**
@@ -596,7 +621,9 @@ public class MediaMetadata {
    *          the origial title to be set
    */
   public void setOriginalTitle(String originalTitle) {
-    this.originalTitle = originalTitle;
+    if (originalTitle != null) {
+      this.originalTitle = originalTitle;
+    }
   }
 
   /**
@@ -619,6 +646,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the year - nullsafe
+   *
+   * @param year
+   *          the year to be set
+   */
+  public void setYear(Integer year) {
+    if (year != null) {
+      setYear(year.intValue());
+    }
+  }
+
+  /**
    * Get the release date
    * 
    * @return the release date
@@ -638,6 +677,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the release date
+   *
+   * @param releaseDate
+   *          the release date to be set
+   */
+  public void setReleaseDate(DateTime releaseDate) {
+    if (releaseDate != null) {
+      setReleaseDate(releaseDate.toDate());
+    }
+  }
+
+  /**
    * Get the plot
    * 
    * @return the plot
@@ -653,7 +704,9 @@ public class MediaMetadata {
    *          the plot to be set
    */
   public void setPlot(String plot) {
-    this.plot = plot;
+    if (plot != null) {
+      this.plot = plot;
+    }
   }
 
   /**
@@ -672,7 +725,9 @@ public class MediaMetadata {
    *          the tagline to be set
    */
   public void setTagline(String tagline) {
-    this.tagline = tagline;
+    if (tagline != null) {
+      this.tagline = tagline;
+    }
   }
 
   /**
@@ -691,7 +746,9 @@ public class MediaMetadata {
    *          the collection name to be set
    */
   public void setCollectionName(String collectionName) {
-    this.collectionName = collectionName;
+    if (collectionName != null) {
+      this.collectionName = collectionName;
+    }
   }
 
   /**
@@ -714,6 +771,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the runtime in minutes (full minutes) - nullsafe
+   *
+   * @param runtime
+   *          the runtime in minutes to be set
+   */
+  public void setRuntime(Integer runtime) {
+    if (runtime != null) {
+      setRuntime(runtime.intValue());
+    }
+  }
+
+  /**
    * Get the rating (0 ... 10.0)
    * 
    * @return the rating
@@ -730,6 +799,40 @@ public class MediaMetadata {
    */
   public void setRating(float rating) {
     this.rating = rating;
+  }
+
+  /**
+   * Set the rating. The values are valid from 0 to 10.0 - nullsafe
+   *
+   * @param rating
+   *          the rating to be set
+   */
+  public void setRating(Float rating) {
+    if (rating != null) {
+      setRating(rating.floatValue());
+    }
+  }
+
+  /**
+   * Set the rating. The values are valid from 0 to 10.0
+   *
+   * @param rating
+   *          the rating to be set
+   */
+  public void setRating(double rating) {
+    setRating((float) rating);
+  }
+
+  /**
+   * Set the rating. The values are valid from 0 to 10.0 - nullsafe
+   *
+   * @param rating
+   *          the rating to be set
+   */
+  public void setRating(Double rating) {
+    if (rating != null) {
+      setRating(rating.floatValue());
+    }
   }
 
   /**
@@ -752,6 +855,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the vote count - nullsafe
+   *
+   * @param voteCount
+   *          the vote count to be set
+   */
+  public void setVoteCount(Integer voteCount) {
+    if (voteCount != null) {
+      setVoteCount(voteCount.intValue());
+    }
+  }
+
+  /**
    * Get the place in the top 250 or 0 if not set
    * 
    * @return the place in top 250 or 0
@@ -768,6 +883,18 @@ public class MediaMetadata {
    */
   public void setTop250(int top250) {
     this.top250 = top250;
+  }
+
+  /**
+   * Set the place in the top 250 - nullsafe
+   *
+   * @param top250
+   *          the place to be set
+   */
+  public void setTop250(Integer top250) {
+    if (top250 != null) {
+      setTop250(top250.intValue());
+    }
   }
 
   /**
@@ -790,6 +917,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the episode number - nullsafe
+   *
+   * @param episodeNumber
+   *          the episode number to be set
+   */
+  public void setEpisodeNumber(Integer episodeNumber) {
+    if (episodeNumber != null) {
+      setEpisodeNumber(episodeNumber.intValue());
+    }
+  }
+
+  /**
    * Get the season number (or -1 if not set)
    * 
    * @return the season number (or -1 if not set)
@@ -806,6 +945,18 @@ public class MediaMetadata {
    */
   public void setSeasonNumber(int seasonNumber) {
     this.seasonNumber = seasonNumber;
+  }
+
+  /**
+   * Set the season number - nullsafe
+   *
+   * @param seasonNumber
+   *          the season number to be set
+   */
+  public void setSeasonNumber(Integer seasonNumber) {
+    if (seasonNumber != null) {
+      setSeasonNumber(seasonNumber.intValue());
+    }
   }
 
   /**
@@ -828,6 +979,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the DVD episode number - nullsafe
+   *
+   * @param dvdEpisodeNumber
+   *          the DVD episode number to be set
+   */
+  public void setDvdEpisodeNumber(Integer dvdEpisodeNumber) {
+    if (dvdEpisodeNumber != null) {
+      setDvdEpisodeNumber(dvdEpisodeNumber.intValue());
+    }
+  }
+
+  /**
    * Get the DVD season number (or -1 if not set)
    * 
    * @return the DVD season number (or -1 if not set)
@@ -844,6 +1007,18 @@ public class MediaMetadata {
    */
   public void setDvdSeasonNumber(int dvdSeasonNumber) {
     this.dvdSeasonNumber = dvdSeasonNumber;
+  }
+
+  /**
+   * Set the DVD season number - nullsafe
+   *
+   * @param dvdSeasonNumber
+   *          the DVD season number to be set
+   */
+  public void setDvdSeasonNumber(Integer dvdSeasonNumber) {
+    if (dvdSeasonNumber != null) {
+      setDvdSeasonNumber(dvdSeasonNumber.intValue());
+    }
   }
 
   /**
@@ -866,6 +1041,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the display-episode number - nullsafe
+   *
+   * @param displayEpisodeNumber
+   *          the display-episode number to be set
+   */
+  public void setDisplayEpisodeNumber(Integer displayEpisodeNumber) {
+    if (displayEpisodeNumber != null) {
+      setDisplayEpisodeNumber(displayEpisodeNumber.intValue());
+    }
+  }
+
+  /**
    * Get the display-season number (or -1 if not set)
    * 
    * @return the display-season number (or -1 if not set)
@@ -882,6 +1069,18 @@ public class MediaMetadata {
    */
   public void setDisplaySeasonNumber(int displaySeasonNumber) {
     this.displaySeasonNumber = displaySeasonNumber;
+  }
+
+  /**
+   * Set the display-season number - nullsafe
+   *
+   * @param displaySeasonNumber
+   *          the display-season number to be set
+   */
+  public void setDisplaySeasonNumber(Integer displaySeasonNumber) {
+    if (displaySeasonNumber != null) {
+      setDisplaySeasonNumber(displaySeasonNumber.intValue());
+    }
   }
 
   /**
@@ -904,6 +1103,18 @@ public class MediaMetadata {
   }
 
   /**
+   * Set the absolute number - nullsafe
+   *
+   * @param absoluteNumber
+   *          the absolute number to be set
+   */
+  public void setAbsoluteNumber(Integer absoluteNumber) {
+    if (absoluteNumber != null) {
+      setAbsoluteNumber(absoluteNumber.intValue());
+    }
+  }
+
+  /**
    * Get the airing status
    * 
    * @return the airing status
@@ -919,7 +1130,9 @@ public class MediaMetadata {
    *          the airing status to be set
    */
   public void setStatus(String status) {
-    this.status = status;
+    if (status != null) {
+      this.status = status;
+    }
   }
 
   /**
@@ -940,7 +1153,9 @@ public class MediaMetadata {
    *          the value
    */
   public void addExtraData(String key, Object value) {
-    extraData.put(key, value);
+    if (StringUtils.isNotBlank(key) && value != null) {
+      extraData.put(key, value);
+    }
   }
 
   /**
@@ -970,7 +1185,10 @@ public class MediaMetadata {
    *          the tags to be set
    */
   public void setTags(List<String> tags) {
-    this.tags = tags;
+    this.tags.clear();
+    if (tags != null) {
+      this.tags.addAll(tags);
+    }
   }
 
   /**

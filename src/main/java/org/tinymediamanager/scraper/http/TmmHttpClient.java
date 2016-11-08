@@ -98,7 +98,7 @@ public class TmmHttpClient {
    * 
    * @return the http client
    */
-  static OkHttpClient getHttpClient() {
+  public static OkHttpClient getHttpClient() {
     return client;
   }
 

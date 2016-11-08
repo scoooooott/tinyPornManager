@@ -180,6 +180,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    */
   @JsonCreator
   public static MediaGenres getGenre(String name) {
+    String cleanedName = name.replaceAll("[._-]", " ");
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
       if (genre.name().equals(name)) {
@@ -187,6 +188,9 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
       }
       // check if the printable name matches
       if (genre.name.equalsIgnoreCase(name)) {
+        return genre;
+      }
+      if (genre.name.equalsIgnoreCase(cleanedName)) {
         return genre;
       }
       // check if one of the possible names matches

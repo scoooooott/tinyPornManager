@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.MetadataUtil;
 
 /**
  * The Class MediaSearchResult.
@@ -69,6 +70,10 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          other MediaSerachResult
    */
   public void mergeFrom(MediaSearchResult msr) {
+    if (msr == null) {
+      return;
+    }
+
     url = StringUtils.isEmpty(url) ? msr.getUrl() : url;
     title = StringUtils.isEmpty(title) ? msr.getTitle() : title;
     year = year == 0 ? msr.getYear() : year;
@@ -101,7 +106,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the original title
    */
   public void setOriginalTitle(String originalTitle) {
-    this.originalTitle = originalTitle;
+    if (originalTitle != null) {
+      this.originalTitle = originalTitle;
+    }
   }
 
   /**
@@ -139,7 +146,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the title
    */
   public void setTitle(String title) {
-    this.title = title;
+    if (title != null) {
+      this.title = title;
+    }
   }
 
   /**
@@ -162,6 +171,18 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   /**
+   * Set the year of this search result (nullsafe)
+   *
+   * @param year
+   *          the year
+   */
+  public void setYear(Integer year) {
+    if (year != null) {
+      setYear(year.intValue());
+    }
+  }
+
+  /**
    * Get the score of this search result. 1.0 is perfect match
    * 
    * @return the score
@@ -181,6 +202,18 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   /**
+   * Set the score of this result (nullsafe)
+   *
+   * @param score
+   *          the result
+   */
+  public void setScore(Float score) {
+    if (score != null) {
+      setScore(score.floatValue());
+    }
+  }
+
+  /**
    * Get the url to this search result
    * 
    * @return the url
@@ -196,7 +229,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the url
    */
   public void setUrl(String url) {
-    this.url = url;
+    if (url != null) {
+      this.url = url;
+    }
   }
 
   /**
@@ -243,7 +278,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the IMDB id
    */
   public void setIMDBId(String imdbid) {
-    imdbId = imdbid;
+    if (MetadataUtil.isValidImdbId(imdbid)) {
+      imdbId = imdbid;
+    }
   }
 
   /**
@@ -281,7 +318,9 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the poster url
    */
   public void setPosterUrl(String posterUrl) {
-    this.posterUrl = posterUrl;
+    if (posterUrl != null) {
+      this.posterUrl = posterUrl;
+    }
   }
 
   @Override

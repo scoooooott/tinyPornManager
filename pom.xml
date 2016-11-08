@@ -83,6 +83,11 @@
 			<artifactId>logging-interceptor</artifactId>
 			<version>${okhttp.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.5</version>
+		</dependency>
 		<!-- load after retrofit2 to avoid problems with gson versions -->
 		<dependency>
 			<groupId>com.jakewharton.retrofit</groupId>

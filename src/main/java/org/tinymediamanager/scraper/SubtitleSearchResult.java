@@ -76,7 +76,9 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the release name
    */
   public void setReleaseName(String releaseName) {
-    this.releaseName = releaseName;
+    if (releaseName != null) {
+      this.releaseName = releaseName;
+    }
   }
 
   /**
@@ -114,7 +116,9 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the title
    */
   public void setTitle(String title) {
-    this.title = title;
+    if (title != null) {
+      this.title = title;
+    }
   }
 
   /**
@@ -137,6 +141,18 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
   }
 
   /**
+   * Set the score of this result (nullsafe)
+   *
+   * @param score
+   *          the result
+   */
+  public void setScore(Float score) {
+    if (score != null) {
+      setScore(score.floatValue());
+    }
+  }
+
+  /**
    * Get the url to this search result
    * 
    * @return the url
@@ -152,7 +168,9 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the url
    */
   public void setUrl(String url) {
-    this.url = url;
+    if (url != null) {
+      this.url = url;
+    }
   }
 
   @Override
