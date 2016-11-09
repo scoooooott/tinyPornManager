@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.scraper.trakttv;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,17 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -45,28 +38,27 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.util.ApiKey;
 
-import com.jakewharton.retrofit.Ok3Client;
-import com.uwetrottmann.trakt.v2.TraktV2;
-import com.uwetrottmann.trakt.v2.entities.BaseEpisode;
-import com.uwetrottmann.trakt.v2.entities.BaseMovie;
-import com.uwetrottmann.trakt.v2.entities.BaseSeason;
-import com.uwetrottmann.trakt.v2.entities.BaseShow;
-import com.uwetrottmann.trakt.v2.entities.MovieIds;
-import com.uwetrottmann.trakt.v2.entities.ShowIds;
-import com.uwetrottmann.trakt.v2.entities.SyncEpisode;
-import com.uwetrottmann.trakt.v2.entities.SyncErrors;
-import com.uwetrottmann.trakt.v2.entities.SyncItems;
-import com.uwetrottmann.trakt.v2.entities.SyncMovie;
-import com.uwetrottmann.trakt.v2.entities.SyncResponse;
-import com.uwetrottmann.trakt.v2.entities.SyncSeason;
-import com.uwetrottmann.trakt.v2.entities.SyncShow;
-import com.uwetrottmann.trakt.v2.entities.SyncStats;
-import com.uwetrottmann.trakt.v2.enums.Extended;
-import com.uwetrottmann.trakt.v2.exceptions.OAuthUnauthorizedException;
+import com.uwetrottmann.trakt5.TraktV2;
+import com.uwetrottmann.trakt5.TraktV2Interceptor;
+import com.uwetrottmann.trakt5.entities.AccessToken;
+import com.uwetrottmann.trakt5.entities.BaseEpisode;
+import com.uwetrottmann.trakt5.entities.BaseMovie;
+import com.uwetrottmann.trakt5.entities.BaseSeason;
+import com.uwetrottmann.trakt5.entities.BaseShow;
+import com.uwetrottmann.trakt5.entities.MovieIds;
+import com.uwetrottmann.trakt5.entities.ShowIds;
+import com.uwetrottmann.trakt5.entities.SyncEpisode;
+import com.uwetrottmann.trakt5.entities.SyncErrors;
+import com.uwetrottmann.trakt5.entities.SyncItems;
+import com.uwetrottmann.trakt5.entities.SyncMovie;
+import com.uwetrottmann.trakt5.entities.SyncResponse;
+import com.uwetrottmann.trakt5.entities.SyncSeason;
+import com.uwetrottmann.trakt5.entities.SyncShow;
+import com.uwetrottmann.trakt5.entities.SyncStats;
+import com.uwetrottmann.trakt5.enums.Extended;
 
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import okhttp3.OkHttpClient;
+import retrofit2.Response;
 
 /**
  * Sync your collection and watched status with Trakt.tv<br>
@@ -86,20 +78,19 @@ public class TraktTv {
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TRAKT, "Trakt.tv",
       "Scraper for Trakt.tv; yes, we can scrape here too :)");
 
-  private SyncResponse             response;
-
   private static TraktV2 createTraktApi() {
-    TraktV2 api = new TraktV2() {
+    TraktV2 api = new TraktV2(CLIENT_ID,
+        ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
+        "urn:ietf:wg:oauth:2.0:oob") {
       // tell the trakt api to use our OkHttp client
+
       @Override
-      protected RestAdapter.Builder newRestAdapterBuilder() {
-        return new RestAdapter.Builder().setClient(new Ok3Client(TmmHttpClient.getHttpClient()));
+      protected synchronized OkHttpClient okHttpClient() {
+        OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
+        builder.addInterceptor(new TraktV2Interceptor(this));
+        return builder.build();
       }
     };
-    api.setApiKey(CLIENT_ID);
-    if (LOGGER.isTraceEnabled()) {
-      api.setIsDebug(true);
-    }
 
     return api;
   }
@@ -117,13 +108,15 @@ public class TraktTv {
   public static Map<String, String> authenticateViaPin(String pin) throws Exception {
     Map<String, String> result = new HashMap<>();
 
-    OAuthAccessTokenResponse response = TraktV2.getAccessToken(CLIENT_ID,
-        ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
-        "urn:ietf:wg:oauth:2.0:oob", pin);
+    // OAuthAccessTokenResponse response = TraktV2.getAccessToken(CLIENT_ID,
+    // ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
+    // "urn:ietf:wg:oauth:2.0:oob", pin);
+
+    Response<AccessToken> response = TRAKT.exchangeCodeForAccessToken(pin);
 
     // get tokens
-    String accessToken = response.getAccessToken();
-    String refreshToken = response.getRefreshToken();
+    String accessToken = response.body().access_token;
+    String refreshToken = response.body().refresh_token;
     if (StringUtils.isNoneBlank(accessToken, refreshToken)) {
       result.put("accessToken", accessToken);
       result.put("refreshToken", refreshToken);
@@ -140,14 +133,15 @@ public class TraktTv {
       throw new Exception("not trakt.tv refresh token found");
     }
 
-    OAuthAccessTokenResponse response = TraktV2.refreshAccessToken(CLIENT_ID,
-        ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
-        "urn:ietf:wg:oauth:2.0:oob", Globals.settings.getTraktRefreshToken());
+    // OAuthAccessTokenResponse response = TraktV2.refreshAccessToken(CLIENT_ID,
+    // ApiKey.decryptApikey("VD2h4jmnrrYWnP1Nk49UtTNRILiWsuelJKdza7DAw+ROh1wtVf2U6PQScm7QWCOTsxN0K3QluIykKs2ZT1af1GcPz1401005bDBDss1Pz2c="),
+    // "urn:ietf:wg:oauth:2.0:oob", Globals.settings.getTraktRefreshToken());
+    Response<AccessToken> response = TRAKT.refreshToken(Globals.settings.getTraktRefreshToken()).refreshAccessToken();
 
-    if (StringUtils.isNoneBlank(response.getAccessToken(), response.getRefreshToken())) {
-      Globals.settings.setTraktAccessToken(response.getAccessToken());
-      Globals.settings.setTraktRefreshToken(response.getRefreshToken());
-      TRAKT.setAccessToken(Globals.settings.getTraktAccessToken());
+    if (StringUtils.isNoneBlank(response.body().access_token, response.body().refresh_token)) {
+      Globals.settings.setTraktAccessToken(response.body().access_token);
+      Globals.settings.setTraktRefreshToken(response.body().refresh_token);
+      TRAKT.accessToken(Globals.settings.getTraktAccessToken());
     }
   }
 
@@ -163,7 +157,7 @@ public class TraktTv {
     }
     if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
       // everything seems fine; also set the access token
-      TRAKT.setAccessToken(Globals.settings.getTraktAccessToken());
+      TRAKT.accessToken(Globals.settings.getTraktAccessToken());
       return true;
     }
     return false;
@@ -195,33 +189,27 @@ public class TraktTv {
     LOGGER.info("got up to " + tmmMovies.size() + " movies for Trakt.tv collection sync");
 
     // get ALL Trakt movies in collection
-    List<BaseMovie> traktMovies = new ArrayList<>();
-
+    List<BaseMovie> traktMovies;
     try {
-      traktMovies = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      Response<List<BaseMovie>> response = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+      if (!response.isSuccessful() && response.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktMovies = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
+        response = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!response.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + response.message());
         return;
       }
+      traktMovies = response.body();
     }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
+    }
+
     LOGGER.info("You have " + traktMovies.size() + " movies in your Trakt.tv collection");
 
     // loop over all movies on trakt
@@ -290,16 +278,16 @@ public class TraktTv {
     try {
       LOGGER.info("Adding " + movies.size() + " movies to Trakt.tv collection");
       SyncItems items = new SyncItems().movies(movies);
-      response = TRAKT.sync().addItemsToCollection(items);
+      Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
+      if (response.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + response.message());
+        return;
+      }
       LOGGER.info("Trakt add-to-library status:");
-      printStatus(response);
+      printStatus(response.body());
     }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
       return;
     }
   }
@@ -323,33 +311,40 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get ALL Trakt movies in collection / watched
     // *****************************************************************************
-    List<BaseMovie> traktCollection = new ArrayList<>();
-    List<BaseMovie> traktWatched = new ArrayList<>();
+    List<BaseMovie> traktCollection;
+    List<BaseMovie> traktWatched;
     try {
-      traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
-      traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      // collection
+      Response<List<BaseMovie>> traktCollectionResponse = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
+      if (!traktCollectionResponse.isSuccessful() && traktCollectionResponse.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktCollection = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN);
-        traktWatched = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
+        traktCollectionResponse = TRAKT.sync().collectionMovies(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!traktCollectionResponse.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
         return;
       }
+      traktCollection = traktCollectionResponse.body();
+
+      // watched
+      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+      if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
+        // try to re-auth
+        refreshAccessToken();
+        traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+      }
+      if (!traktWatchedResponse.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
+        return;
+      }
+      traktWatched = traktWatchedResponse.body();
     }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
+    }
+
     LOGGER.info("You have " + traktCollection.size() + " movies in your Trakt.tv collection");
     LOGGER.info("You have " + traktWatched.size() + " movies watched");
 
@@ -363,15 +358,15 @@ public class TraktTv {
     if (!movieToRemove.isEmpty()) {
       try {
         SyncItems items = new SyncItems().movies(movieToRemove);
-        TRAKT.sync().deleteItemsFromCollection(items);
+        Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.info("removed " + movieToRemove.size() + " movies from your trakt.tv collection");
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-        return;
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
         return;
       }
     }
@@ -386,15 +381,15 @@ public class TraktTv {
     if (!movieToRemove.isEmpty()) {
       try {
         SyncItems items = new SyncItems().movies(movieToRemove);
-        TRAKT.sync().deleteItemsFromWatchedHistory(items);
+        Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.info("removed " + movieToRemove.size() + " movies from your trakt.tv watched");
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-        return;
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
         return;
       }
     }
@@ -417,31 +412,25 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get all Trakt watched movies and update our "watched" status
     // *****************************************************************************
-    List<BaseMovie> traktMovies = new ArrayList<>();
+    List<BaseMovie> traktMovies;
     try {
-      traktMovies = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      Response<List<BaseMovie>> traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
+      if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktMovies = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN);
+        traktWatchedResponse = TRAKT.sync().watchedMovies(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!traktWatchedResponse.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
         return;
       }
+      traktMovies = traktWatchedResponse.body();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
     }
     LOGGER.info("You have " + traktMovies.size() + " movies marked as 'watched' in your Trakt.tv collection");
 
@@ -531,16 +520,16 @@ public class TraktTv {
     try {
       LOGGER.info("Marking " + movies.size() + " movies as 'watched' to Trakt.tv collection");
       SyncItems items = new SyncItems().movies(movies);
-      response = TRAKT.sync().addItemsToWatchedHistory(items);
+      Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
+      if (response.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + response.message());
+        return;
+      }
       LOGGER.info("Trakt mark-as-watched status:");
-      printStatus(response);
+      printStatus(response.body());
     }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      handleRetrofitError((RetrofitError) e.getCause());
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
       return;
     }
   }
@@ -580,29 +569,25 @@ public class TraktTv {
     // *****************************************************************************
     // 1) sync ALL missing show IDs & dates from trakt
     // *****************************************************************************
-    List<BaseShow> traktShows = new ArrayList<>();
+    List<BaseShow> traktShows;
     try {
-      traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+      Response<List<BaseShow>> response = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+      if (!response.isSuccessful() && response.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktShows = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
+        response = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!response.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + response.message());
         return;
       }
+      traktShows = response.body();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
     }
     LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
 
@@ -669,16 +654,17 @@ public class TraktTv {
 
       try {
         SyncItems items = new SyncItems().shows(show);
-        response = TRAKT.sync().addItemsToCollection(items);
-
+        Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.debug("Trakt add-to-library status: " + tvShow.getTitle());
-        printStatus(response);
+        printStatus(response.body());
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        return;
       }
     }
   }
@@ -702,30 +688,27 @@ public class TraktTv {
     // create a local copy of the list
     List<TvShow> tvShows = new ArrayList<>(tvShowsInTmm);
 
-    List<BaseShow> traktShows = new ArrayList<>();
+    List<BaseShow> traktShows;
     try {
-      traktShows = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+      Response<List<BaseShow>> response = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+      if (!response.isSuccessful() && response.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktShows = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
+        response = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!response.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + response.message());
         return;
       }
+      traktShows = response.body();
     }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
+    }
+
     LOGGER.info("You have " + traktShows.size() + " TvShows marked as watched on Trakt.tv");
     for (BaseShow traktShow : traktShows) {
       for (TvShow tmmShow : tvShows) {
@@ -783,16 +766,17 @@ public class TraktTv {
 
       try {
         SyncItems items = new SyncItems().shows(sync);
-        response = TRAKT.sync().addItemsToWatchedHistory(items);
-
+        Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.debug("Trakt add-to-library status: " + show.getTitle());
-        printStatus(response);
+        printStatus(response.body());
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
+        return;
       }
     }
   }
@@ -812,32 +796,38 @@ public class TraktTv {
     // *****************************************************************************
     // 1) get ALL Trakt shows in collection / watched
     // *****************************************************************************
-    List<BaseShow> traktCollection = new ArrayList<>();
-    List<BaseShow> traktWatched = new ArrayList<>();
+    List<BaseShow> traktCollection;
+    List<BaseShow> traktWatched;
     try {
-      traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-      traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
-    }
-    catch (RetrofitError e) {
-      handleRetrofitError(e);
-      return;
-    }
-    catch (OAuthUnauthorizedException e) {
-      try {
-        // not authorized - maybe access token revoked - relogin
+      // collection
+      Response<List<BaseShow>> traktCollectionResponse = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
+      if (!traktCollectionResponse.isSuccessful() && traktCollectionResponse.code() == 401) {
+        // try to re-auth
         refreshAccessToken();
-        traktCollection = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN);
-        traktWatched = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN);
+        traktCollectionResponse = TRAKT.sync().collectionShows(Extended.DEFAULT_MIN).execute();
       }
-      catch (Exception e1) {
-        if (e1.getCause() instanceof RetrofitError) {
-          handleRetrofitError((RetrofitError) e1.getCause());
-        }
-        else {
-          LOGGER.error("could not retrieve trakt.tv response: ", e1.getMessage());
-        }
+      if (!traktCollectionResponse.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + traktCollectionResponse.message());
         return;
       }
+      traktCollection = traktCollectionResponse.body();
+
+      // watched
+      Response<List<BaseShow>> traktWatchedResponse = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+      if (!traktWatchedResponse.isSuccessful() && traktWatchedResponse.code() == 401) {
+        // try to re-auth
+        refreshAccessToken();
+        traktWatchedResponse = TRAKT.sync().watchedShows(Extended.DEFAULT_MIN).execute();
+      }
+      if (!traktWatchedResponse.isSuccessful()) {
+        LOGGER.error("failed syncing trakt: " + traktWatchedResponse.message());
+        return;
+      }
+      traktWatched = traktWatchedResponse.body();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed syncing trakt: " + e.getMessage());
+      return;
     }
     LOGGER.info("You have " + traktCollection.size() + " shows in your Trakt.tv collection");
     LOGGER.info("You have " + traktWatched.size() + " shows watched");
@@ -852,15 +842,15 @@ public class TraktTv {
     if (!showToRemove.isEmpty()) {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
-        TRAKT.sync().deleteItemsFromCollection(items);
+        Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv collection");
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-        return;
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
         return;
       }
     }
@@ -875,15 +865,15 @@ public class TraktTv {
     if (!showToRemove.isEmpty()) {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
-        TRAKT.sync().deleteItemsFromWatchedHistory(items);
+        Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
+        if (response.isSuccessful()) {
+          LOGGER.error("failed syncing trakt: " + response.message());
+          return;
+        }
         LOGGER.debug("removed " + showToRemove.size() + " shows from your trakt.tv watched");
       }
-      catch (RetrofitError e) {
-        handleRetrofitError(e);
-        return;
-      }
-      catch (OAuthUnauthorizedException e) {
-        handleRetrofitError((RetrofitError) e.getCause());
+      catch (Exception e) {
+        LOGGER.error("failed syncing trakt: " + e.getMessage());
         return;
       }
     }
@@ -1175,85 +1165,4 @@ public class TraktTv {
 
     return sb.toString();
   }
-
-  /**
-   * handles the retrofit errors<br>
-   * (which is always thrown when http status != 200)<br>
-   * and print some error msg
-   * 
-   * @param re
-   *          the Retrofit error
-   */
-  private void handleRetrofitError(RetrofitError re) {
-    Response r = re.getResponse();
-    String msg = "";
-    if (r != null) {
-      msg = r.getStatus() + " " + r.getReason();
-      if (r.getBody() != null && r.getBody().length() > 0) {
-        try {
-          InputStream in = r.getBody().in();
-          String body = " - " + IOUtils.toString(in, "UTF-8");
-          in.close();
-          LOGGER.trace(body);
-        }
-        catch (IOException e1) {
-          LOGGER.warn("IOException on Trakt error", e1);
-        }
-      }
-    }
-    else {
-      msg = re.getMessage();
-    }
-    LOGGER.error("Trakt error (wrong settings?) " + msg);
-    MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, msg, "Settings.trakttv"));
-  }
-
-  // /**
-  // * Maps scraper Genres to internal TMM genres
-  // */
-  // private MediaGenres getTmmGenre(String genre) {
-  // MediaGenres g = null;
-  // if (genre == null || genre.isEmpty()) {
-  // return g;
-  // }
-//    // @formatter:off
-//    else if (genre.equals("Action"))           { g = MediaGenres.ACTION; }
-//    else if (genre.equals("Adventure"))        { g = MediaGenres.ADVENTURE; }
-//    else if (genre.equals("Animation"))        { g = MediaGenres.ANIMATION; }
-//    else if (genre.equals("Comedy"))           { g = MediaGenres.COMEDY; }
-//    else if (genre.equals("Children"))         { g = MediaGenres.FAMILY; }
-//    else if (genre.equals("Crime"))            { g = MediaGenres.CRIME; }
-//    else if (genre.equals("Documentary"))      { g = MediaGenres.DOCUMENTARY; }
-//    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
-//    else if (genre.equals("Family"))           { g = MediaGenres.FAMILY; }
-//    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
-//    else if (genre.equals("Film Noir"))        { g = MediaGenres.FILM_NOIR; }
-//    else if (genre.equals("History"))          { g = MediaGenres.HISTORY; }
-//    else if (genre.equals("Game Show"))        { g = MediaGenres.GAME_SHOW; }
-//    else if (genre.equals("Home and Garden"))  { g = MediaGenres.DOCUMENTARY; }
-//    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
-//    else if (genre.equals("Indie"))            { g = MediaGenres.INDIE; }
-//    else if (genre.equals("Music"))            { g = MediaGenres.MUSIC; }
-//    else if (genre.equals("Mini Series"))      { g = MediaGenres.SERIES; }
-//    else if (genre.equals("Musical"))          { g = MediaGenres.MUSICAL; }
-//    else if (genre.equals("Mystery"))          { g = MediaGenres.MYSTERY; }
-//    else if (genre.equals("News"))             { g = MediaGenres.NEWS; }
-//    else if (genre.equals("Reality"))          { g = MediaGenres.REALITY_TV; }
-//    else if (genre.equals("Romance"))          { g = MediaGenres.ROMANCE; }
-//    else if (genre.equals("Science Fiction"))  { g = MediaGenres.SCIENCE_FICTION; }
-//    else if (genre.equals("Sport"))            { g = MediaGenres.SPORT; }
-//    else if (genre.equals("Special Interest")) { g = MediaGenres.INDIE; }
-//    else if (genre.equals("Soap"))             { g = MediaGenres.SERIES; }
-//    else if (genre.equals("Suspense"))         { g = MediaGenres.SUSPENSE; }
-//    else if (genre.equals("Talk Show"))        { g = MediaGenres.TALK_SHOW; }
-//    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
-//    else if (genre.equals("War"))              { g = MediaGenres.WAR; }
-//    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
-//    else if (genre.equals("No Genre"))         { return null; }
-//    // @formatter:on
-  // if (g == null) {
-  // g = MediaGenres.getGenre(genre);
-  // }
-  // return g;
-  // }
 }
