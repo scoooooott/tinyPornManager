@@ -471,6 +471,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false); // $NON-NLS-1$
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, List<MovieInSet>> jTableBeanProperty = BeanProperty.create("selectedElement.movies");
@@ -483,18 +484,21 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.title");
     jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName(BUNDLE.getString("movieset.movie.matched")).setEditable(false); //$NON-NLS-1$
     //
+    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.name");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets, jTableBeanProperty_1,
         lblMovieSetName, jTextAreaBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
   }
 

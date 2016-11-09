@@ -80,19 +80,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetEditorDialog extends TmmDialog {
-  private static final long           serialVersionUID    = -4446433759280691976L;
-  private static final Logger         LOGGER              = LoggerFactory.getLogger(MovieSetEditorDialog.class);
+  private static final long           serialVersionUID   = -4446433759280691976L;
+  private static final Logger         LOGGER             = LoggerFactory.getLogger(MovieSetEditorDialog.class);
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
 
-  private MovieList                   movieList           = MovieList.getInstance();
+  private MovieList                   movieList          = MovieList.getInstance();
   private MovieSet                    movieSetToEdit;
-  private List<Movie>                 moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
-  private List<Movie>                 removedMovies       = new ArrayList<>();
-  private List<MediaScraper>          artworkScrapers     = new ArrayList<>();
-  private boolean                     continueQueue       = true;
+  private List<Movie>                 moviesInSet        = ObservableCollections.observableList(new ArrayList<Movie>());
+  private List<Movie>                 removedMovies      = new ArrayList<>();
+  private List<MediaScraper>          artworkScrapers    = new ArrayList<>();
+  private boolean                     continueQueue      = true;
 
   /** UI components */
   private JTextField                  tfName;
@@ -106,11 +106,11 @@ public class MovieSetEditorDialog extends TmmDialog {
   private ImageLabel                  lblBanner;
   private ImageLabel                  lblClearart;
 
-  private final Action                actionRemoveMovie   = new RemoveMovieAction();
-  private final Action                actionOk            = new OkAction();
-  private final Action                actionCancel        = new CancelAction();
-  private final Action                actionAbort         = new AbortAction();
-  private final Action                actionSearchTmdbId  = new SwingAction();
+  private final Action                actionRemoveMovie  = new RemoveMovieAction();
+  private final Action                actionOk           = new OkAction();
+  private final Action                actionCancel       = new CancelAction();
+  private final Action                actionAbort        = new AbortAction();
+  private final Action                actionSearchTmdbId = new SwingAction();
 
   /**
    * Instantiates a new movie set editor.
@@ -563,6 +563,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     jTableBinding.addColumnBinding(movieBeanProperty_2).setEditable(false).setColumnClass(Boolean.class); // $NON-NLS-1$
     //
     jTableBinding.setEditable(false);
+    bindings.add(jTableBinding);
     jTableBinding.bind();
   }
 

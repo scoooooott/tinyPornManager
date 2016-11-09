@@ -102,48 +102,45 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-  private static final long                                     serialVersionUID = 7702248909791283043L;
+  private static final long           serialVersionUID = 7702248909791283043L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
-  private static final Date                                     INITIAL_DATE     = new Date(0);
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
+  private static final Date           INITIAL_DATE     = new Date(0);
 
-  private TvShowList                                            tvShowList       = TvShowList.getInstance();
-  private TvShowEpisode                                         episodeToEdit;
-  private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private List<MediaFile>                                       mediaFiles       = new ArrayList<>();
-  private boolean                                               continueQueue    = true;
-  private int                                                   voteCount        = 0;
+  private TvShowList                  tvShowList       = TvShowList.getInstance();
+  private TvShowEpisode               episodeToEdit;
+  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>                tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<MediaFile>             mediaFiles       = new ArrayList<>();
+  private boolean                     continueQueue    = true;
+  private int                         voteCount        = 0;
 
-  private JTextField                                            tfTitle;
-  private JLabel                                                lblFilename;
-  private JSpinner                                              spEpisode;
-  private JSpinner                                              spSeason;
-  private JSpinner                                              spRating;
-  private JSpinner                                              spDvdSeason;
-  private JSpinner                                              spDvdEpisode;
-  private JCheckBox                                             cbDvdOrder;
-  private JSpinner                                              spDisplaySeason;
-  private JSpinner                                              spDisplayEpisode;
-  private DatePicker                                            dpFirstAired;
-  private JSpinner                                              spDateAdded;
-  private JCheckBox                                             chckbxWatched;
-  private ImageLabel                                            lblThumb;
-  private JTextArea                                             taPlot;
-  private JTextField                                            tfDirector;
-  private JTextField                                            tfWriter;
-  private JTable                                                tableGuests;
-  private JComboBox                                             cbTags;
-  private JList                                                 listTags;
-  private JComboBox<MediaSource>                                cbMediaSource;
-  private MediaFileEditorPanel                                  mediaFilesPanel;
-  private MediaScraperComboBox                                  cbScraper;
-
-  private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
-  private JListBinding<String, List<String>, JList>             jListBinding;
+  private JTextField                  tfTitle;
+  private JLabel                      lblFilename;
+  private JSpinner                    spEpisode;
+  private JSpinner                    spSeason;
+  private JSpinner                    spRating;
+  private JSpinner                    spDvdSeason;
+  private JSpinner                    spDvdEpisode;
+  private JCheckBox                   cbDvdOrder;
+  private JSpinner                    spDisplaySeason;
+  private JSpinner                    spDisplayEpisode;
+  private DatePicker                  dpFirstAired;
+  private JSpinner                    spDateAdded;
+  private JCheckBox                   chckbxWatched;
+  private ImageLabel                  lblThumb;
+  private JTextArea                   taPlot;
+  private JTextField                  tfDirector;
+  private JTextField                  tfWriter;
+  private JTable                      tableGuests;
+  private JComboBox                   cbTags;
+  private JList                       listTags;
+  private JComboBox<MediaSource>      cbMediaSource;
+  private MediaFileEditorPanel        mediaFilesPanel;
+  private MediaScraperComboBox        cbScraper;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
@@ -696,7 +693,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   }
 
   protected void initDataBindings() {
-    jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
+    JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
     //
     BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty);
@@ -704,9 +701,11 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
     jTableBinding.addColumnBinding(movieCastBeanProperty_1);
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
-    jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    JListBinding<String, List<String>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    bindings.add(jListBinding);
     jListBinding.bind();
     //
   }
@@ -714,12 +713,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   @Override
   public void dispose() {
     super.dispose();
-    if (jTableBinding.isBound()) {
-      jTableBinding.unbind();
-    }
-    if (jListBinding.isBound()) {
-      jListBinding.unbind();
-    }
 
     mediaFilesPanel.unbindBindings();
     dpFirstAired.cleanup();

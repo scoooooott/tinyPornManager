@@ -16,6 +16,8 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.event.ActionEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,6 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
+import org.jdesktop.beansbinding.Binding;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
@@ -36,6 +39,8 @@ import org.tinymediamanager.ui.TmmWindowSaver;
  */
 public abstract class TmmDialog extends JDialog {
   private static final long serialVersionUID = 1L;
+
+  protected Set<Binding>    bindings         = new HashSet<>();
 
   public TmmDialog(String title, String id) {
     super(MainWindow.getActiveInstance());
@@ -86,6 +91,23 @@ public abstract class TmmDialog extends JDialog {
     else {
       super.setVisible(false);
       dispose();
+    }
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    unbind();
+  }
+
+  /**
+   * unbind bound bindings (reduce memory consumption)
+   */
+  protected void unbind() {
+    for (Binding binding : bindings) {
+      if (binding != null && binding.isBound()) {
+        binding.unbind();
+      }
     }
   }
 }

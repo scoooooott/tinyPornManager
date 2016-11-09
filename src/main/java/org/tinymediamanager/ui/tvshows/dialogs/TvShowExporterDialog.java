@@ -209,29 +209,34 @@ public class TvShowExporterDialog extends TmmDialog {
     BeanProperty<ExportTemplate, String> exportTemplateBeanProperty = BeanProperty.create("name");
     jListBinding.setDetailBinding(exportTemplateBeanProperty);
     //
+    bindings.add(jListBinding);
     jListBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty = BeanProperty.create("selectedElement.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty, lblTemplateName,
         jLabelBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_1 = BeanProperty.create("selectedElement.url");
     AutoBinding<JList, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_1, lblUrl,
         jLabelBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JList, String> jListBeanProperty_2 = BeanProperty.create("selectedElement.description");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JList, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
         tpDescription, jTextPaneBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JList, Boolean> jListBeanProperty_3 = BeanProperty.create("selectedElement.detail");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<JList, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_3,
         chckbxTemplateWithDetail, jCheckBoxBeanProperty);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
   }
 }

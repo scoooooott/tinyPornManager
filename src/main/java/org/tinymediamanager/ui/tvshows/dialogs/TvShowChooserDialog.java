@@ -576,24 +576,28 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     BeanProperty<TvShowChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
         tpTvShowOverview, jTextPaneBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
         lblTvShowPoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
         lblTvShowName, jTextAreaBeanProperty_1);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
   }
 

@@ -100,48 +100,41 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
-  private static final long                                                 serialVersionUID      = -3104541519073924724L;
+  private static final long           serialVersionUID      = -3104541519073924724L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle("messages",              //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages",                                     //$NON-NLS-1$
       new UTF8Control());
-  private static final Logger                                               LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                                                         movieList             = MovieList.getInstance();
-  private Movie                                                             movieToScrape;
-  private List<MovieChooserModel>                                           moviesFound           = ObservableCollections
-      .observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig                                        scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private MediaScraper                                                      mediaScraper;
-  private List<MediaScraper>                                                artworkScrapers;
-  private List<MediaScraper>                                                trailerScrapers;
-  private boolean                                                           continueQueue         = true;
+  private MovieList                   movieList             = MovieList.getInstance();
+  private Movie                       movieToScrape;
+  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private MediaScraper                mediaScraper;
+  private List<MediaScraper>          artworkScrapers;
+  private List<MediaScraper>          trailerScrapers;
+  private boolean                     continueQueue         = true;
 
-  private SearchTask                                                        activeSearchTask;
+  private SearchTask                  activeSearchTask;
 
   /**
    * UI components
    */
-  private final JPanel                                                      contentPanel          = new JPanel();
-  private JTextField                                                        textFieldSearchString;
-  private MediaScraperComboBox                                              cbScraper;
-  private JTable                                                            table;
-  private JLabel                                                            lblMovieName;
-  private JTextPane                                                         tpMovieDescription;
-  private ImageLabel                                                        lblMoviePoster;
-  private JLabel                                                            lblProgressAction;
-  private JProgressBar                                                      progressBar;
-  private JLabel                                                            lblTagline;
-  private JButton                                                           okButton;
-  private JLabel                                                            lblPath;
-  private JComboBox                                                         cbLanguage;
-
-  private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
-  private AutoBinding<JTable, String, JLabel, String>                       autoBinding;
-  private AutoBinding<JTable, String, JTextPane, String>                    autoBinding_1;
-  private AutoBinding<JTable, String, ImageLabel, String>                   autoBinding_2;
-  private AutoBinding<JTable, String, JLabel, String>                       autoBinding_3;
+  private final JPanel                contentPanel          = new JPanel();
+  private JTextField                  textFieldSearchString;
+  private MediaScraperComboBox        cbScraper;
+  private JTable                      table;
+  private JLabel                      lblMovieName;
+  private JTextPane                   tpMovieDescription;
+  private ImageLabel                  lblMoviePoster;
+  private JLabel                      lblProgressAction;
+  private JProgressBar                progressBar;
+  private JLabel                      lblTagline;
+  private JButton                     okButton;
+  private JLabel                      lblPath;
+  private JComboBox                   cbLanguage;
 
   /**
    * Create the dialog.
@@ -615,31 +608,41 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   }
 
   protected void initDataBindings() {
-    jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
+    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false); // $NON-NLS-1$
     //
+    bindings.add(jTableBinding);
     jTableBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1, tpMovieDescription, jTextPaneBeanProperty);
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
+        tpMovieDescription, jTextPaneBeanProperty);
+    bindings.add(autoBinding_1);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2, lblMoviePoster, imageLabelBeanProperty);
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
+        lblMoviePoster, imageLabelBeanProperty);
+    bindings.add(autoBinding_2);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
     BeanProperty<JLabel, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, lblTagline, jTextAreaBeanProperty);
+    AutoBinding<JTable, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, lblTagline,
+        jTextAreaBeanProperty);
+    bindings.add(autoBinding);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JLabel, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
-    autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3, lblMovieName, jTextAreaBeanProperty_1);
+    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
+        lblMovieName, jTextAreaBeanProperty_1);
+    bindings.add(autoBinding_3);
     autoBinding_3.bind();
   }
 
@@ -661,11 +664,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       activeSearchTask.cancel();
     }
     super.dispose();
-    jTableBinding.unbind();
-    autoBinding.unbind();
-    autoBinding_1.unbind();
-    autoBinding_2.unbind();
-    autoBinding_3.unbind();
   }
 
   /******************************************************************************
