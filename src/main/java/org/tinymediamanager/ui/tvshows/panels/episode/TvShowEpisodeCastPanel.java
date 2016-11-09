@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
@@ -111,7 +111,6 @@ public class TvShowEpisodeCastPanel extends JPanel {
     add(lblWriter, "6, 4");
 
     lblActorImage = new ImageLabel();
-    lblActorImage.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     add(lblActorImage, "8, 2, 1, 5");
 
     JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$

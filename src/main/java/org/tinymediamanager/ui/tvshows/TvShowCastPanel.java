@@ -90,7 +90,6 @@ public class TvShowCastPanel extends JPanel {
             new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), }));
 
     lblActorImage = new ImageLabel();
-    lblActorImage.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     add(lblActorImage, "4, 2");
 
     tableActors = new ZebraJTable(actorTableModel);

@@ -165,7 +165,6 @@ public class MovieSetEditorDialog extends TmmDialog {
     tfName.setColumns(10);
 
     lblPoster = new ImageLabel();
-    lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblPoster.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -219,7 +218,6 @@ public class MovieSetEditorDialog extends TmmDialog {
     panelContent.add(btnRemoveMovie, "2, 10, right, top");
 
     lblFanart = new ImageLabel();
-    lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblFanart.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -256,7 +254,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
       {
         lblLogo = new ImageLabel();
-        lblLogo.setAlternativeText(BUNDLE.getString("image.notfound.logo")); //$NON-NLS-1$
         lblLogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -275,7 +272,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
       {
         lblClearlogo = new ImageLabel();
-        lblClearlogo.setAlternativeText(BUNDLE.getString("image.notfound.clearlogo")); //$NON-NLS-1$
         lblClearlogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -295,7 +291,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
       {
         lblClearart = new ImageLabel();
-        lblClearart.setAlternativeText(BUNDLE.getString("image.notfound.clearart")); //$NON-NLS-1$
         lblClearart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -314,7 +309,6 @@ public class MovieSetEditorDialog extends TmmDialog {
       }
       {
         lblBanner = new ImageLabel();
-        lblBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
         lblBanner.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {

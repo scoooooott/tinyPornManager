@@ -18,15 +18,14 @@ package org.tinymediamanager.ui.components;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,13 +34,13 @@ import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
 
@@ -52,18 +51,21 @@ import org.tinymediamanager.ui.thirdparty.ShadowRenderer;
  */
 public class ImageLabel extends JLabel {
   public enum Position {
-    TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
+    CENTER
   }
 
   private static final long                  serialVersionUID   = -2524445544386464158L;
   protected static final ResourceBundle      BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static Font                        FONT;
+  private static final char                  ICON_ID            = '\uE40B';
 
   protected BufferedImage                    scaledImage;
   protected String                           imageUrl;
   protected String                           imagePath;
   protected Position                         position           = Position.TOP_LEFT;
-  protected String                           alternativeText    = null;
   protected boolean                          drawBorder;
   protected boolean                          drawFullWidth;
   protected boolean                          enabledLightbox    = false;
@@ -73,17 +75,6 @@ public class ImageLabel extends JLabel {
 
   protected SwingWorker<BufferedImage, Void> worker             = null;
   protected MouseListener                    lightboxListener   = null;
-
-  static {
-    try {
-      JLabel fontLabel = new JLabel("");
-      TmmFontHelper.changeFont(fontLabel, 1.5);
-      FONT = fontLabel.getFont();
-    }
-    catch (Exception e) {
-      FONT = Font.getFont("Dialog").deriveFont(18f);
-    }
-  }
 
   public ImageLabel() {
     super("");
@@ -290,48 +281,51 @@ public class ImageLabel extends JLabel {
       }
     }
     else {
-      // draw border and background
-      if (drawBorder) {
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
-        if (getParent().isOpaque()) {
-          g.setColor(getParent().getBackground());
-          g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
-        }
-      }
+      // nothing to draw; draw the _no image found_ indicator
+      int newWidth;
+      int newHeight;
 
-      // calculate diagonal
-      int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());
-
-      // draw text
-      String text = "";
-      if (alternativeText != null) {
-        text = alternativeText;
+      if (drawShadow) {
+        newWidth = this.getWidth() - 8;
+        newHeight = this.getHeight() - 8;
       }
       else {
-        text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
+        newWidth = this.getWidth();
+        newHeight = this.getHeight();
       }
-      if (!getParent().isOpaque()) {
-        text = "";
-      }
-      Graphics2D g2 = (Graphics2D) g.create();
+
+      // calculate the optimal font size; the pt is about 0.75 * the needed px
+      // we draw that icon at max 50% of the available space
+      int fontSize = (int) ((newWidth < newHeight ? newWidth : newHeight) * 0.5 / 0.75);
+
+      // draw the _no image found_ icon
+      Font materialFont = new Font("Material Icons", Font.PLAIN, fontSize);
+      BufferedImage tmp = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(tmp);
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      AffineTransform orig = g2.getTransform();
-      AffineTransform at = new AffineTransform(orig);
-      at.translate(0, this.getHeight());
-      at.rotate(this.getWidth(), -this.getHeight());
-      g2.setTransform(at);
-      g2.setColor(Color.BLACK);
-      g2.setFont(FONT);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      FontMetrics fm = g2.getFontMetrics();
-      int x = (diagonalSize - fm.stringWidth(text)) / 2;
-      int y = (fm.getAscent() - fm.getDescent()) / 2;
+      g2.setColor(new Color(213, 213, 213));
+      g2.fillRect(0, 0, newWidth, newHeight);
 
-      g2.drawString(text, x, y);
-      // g2.drawLine(0, 0, diagonalSize, 0);
-      at.translate(0, -this.getHeight());
-      g2.setTransform(orig);
+      g2.setFont(materialFont);
+      g2.setColor(UIManager.getColor("Label.foreground"));
+      int iconWidth = g2.getFontMetrics().charWidth(ICON_ID);
+      int iconHeight = g2.getFontMetrics().getHeight();
+      g2.drawString(String.valueOf(ICON_ID), newWidth / 2 - iconWidth / 2, newHeight / 2 + iconHeight / 2);
+
+      g2.dispose();
+
+      if (drawShadow) {
+        ShadowRenderer shadow = new ShadowRenderer(8, 0.3f, Color.BLACK);
+        BufferedImage shadowImage = shadow.createShadow(tmp);
+
+        // draw shadow
+        g.drawImage(shadowImage, 8, 8, newWidth, newHeight, this);
+      }
+
+      // draw image
+      g.drawImage(tmp, 0, 0, newWidth, newHeight, this);
     }
   }
 
@@ -351,10 +345,6 @@ public class ImageLabel extends JLabel {
 
   public void setPosition(Position position) {
     this.position = position;
-  }
-
-  public void setAlternativeText(String text) {
-    this.alternativeText = text;
   }
 
   public void enableLightbox() {

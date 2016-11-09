@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.season;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.POSTER;
+import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -109,7 +112,6 @@ public class TvShowSeasonInformationPanel extends JPanel {
     lblTvShowPoster = new ImageLabel(false, false, true);
     lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblTvShowPoster);
-    lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblTvShowPoster.enableLightbox();
     lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
     panelLeft.add(lblPosterSize);

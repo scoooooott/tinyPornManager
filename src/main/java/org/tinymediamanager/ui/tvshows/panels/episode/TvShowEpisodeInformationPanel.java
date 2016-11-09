@@ -34,17 +34,17 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
+import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.MediaInfoAudioCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoCodecConverter;
 import org.tinymediamanager.ui.converter.MediaInfoVideoFormatConverter;
@@ -111,7 +111,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     lblSeasonPoster = new ImageLabel(false, false, true);
     lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblSeasonPoster);
-    lblSeasonPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
     lblSeasonPoster.enableLightbox();
 
@@ -122,7 +121,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     lblEpisodeThumb = new ImageLabel(false, false, true);
     lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
     panelLeft.add(lblEpisodeThumb);
-    lblEpisodeThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
     lblEpisodeThumb.enableLightbox();
 

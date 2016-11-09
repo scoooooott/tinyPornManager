@@ -138,7 +138,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     };
     lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblSeasonPoster);
-    lblSeasonPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
     lblSeasonPoster.enableLightbox();
 
@@ -162,7 +161,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     };
     lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
     panelLeft.add(lblEpisodeThumb);
-    lblEpisodeThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
     lblEpisodeThumb.enableLightbox();
 

@@ -132,7 +132,6 @@ public class TvShowInformationPanel extends JPanel {
     };
     lblTvShowPoster.setDesiredAspectRatio(2 / 3.0f);
     panelLeft.add(lblTvShowPoster);
-    lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblTvShowPoster.enableLightbox();
     lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
     panelLeft.add(lblPosterSize);
@@ -154,7 +153,6 @@ public class TvShowInformationPanel extends JPanel {
     };
     lblTvShowBackground.setDesiredAspectRatio(16 / 9.0f);
     panelLeft.add(lblTvShowBackground);
-    lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
     lblTvShowBackground.enableLightbox();
     lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
     panelLeft.add(lblFanartSize);
@@ -176,7 +174,6 @@ public class TvShowInformationPanel extends JPanel {
     };
     lblTvShowBanner.setDesiredAspectRatio(25 / 8.0f);
     panelLeft.add(lblTvShowBanner);
-    lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
     lblTvShowBanner.enableLightbox();
     lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
     panelLeft.add(lblBannerSize);

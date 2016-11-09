@@ -40,11 +40,6 @@ public class ActorImageLabel extends ImageLabel {
   protected SwingWorker<Void, Void>   actorWorker      = null;
   protected Person                    actor            = null;
 
-  public ActorImageLabel() {
-    super();
-    setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
-  }
-
   public void setActor(Person actor) {
     if (actor != null && actor != this.actor) {
       this.actor = actor;

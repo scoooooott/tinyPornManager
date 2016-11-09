@@ -252,7 +252,6 @@ public class MovieEditorDialog extends TmmDialog {
       {
         // JLabel lblPoster = new JLabel("");
         lblPoster = new ImageLabel();
-        lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
         lblPoster.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -459,7 +458,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblFanart = new ImageLabel();
-        lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
         lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblFanart.addMouseListener(new MouseAdapter() {
           @Override
@@ -706,7 +704,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblLogo = new ImageLabel();
-        lblLogo.setAlternativeText(BUNDLE.getString("image.notfound.logo")); //$NON-NLS-1$
         lblLogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -725,7 +722,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblClearlogo = new ImageLabel();
-        lblClearlogo.setAlternativeText(BUNDLE.getString("image.notfound.clearlogo")); //$NON-NLS-1$
         lblClearlogo.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -744,7 +740,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblBanner = new ImageLabel();
-        lblBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
         lblBanner.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -764,7 +759,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblClearart = new ImageLabel();
-        lblClearart.setAlternativeText(BUNDLE.getString("image.notfound.clearart")); //$NON-NLS-1$
         lblClearart.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -783,7 +777,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblThumb = new ImageLabel();
-        lblThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
         lblThumb.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -802,7 +795,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         lblDisc = new ImageLabel();
-        lblDisc.setAlternativeText(BUNDLE.getString("image.notfound.disc")); //$NON-NLS-1$
         lblDisc.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -1488,13 +1480,17 @@ public class MovieEditorDialog extends TmmDialog {
   @Override
   public void dispose() {
     super.dispose();
-    jTableBinding.unbind();
-    jListBinding.unbind();
-    jTableBinding_1.unbind();
-    jListBinding_1.unbind();
-    jTableBinding_2.unbind();
-    mediaFilesPanel.unbindBindings();
-    dpReleaseDate.cleanup();
+    try {
+      jTableBinding.unbind();
+      jListBinding.unbind();
+      jTableBinding_1.unbind();
+      jListBinding_1.unbind();
+      jTableBinding_2.unbind();
+      mediaFilesPanel.unbindBindings();
+      dpReleaseDate.cleanup();
+    }
+    catch (Exception ignored) {
+    }
   }
 
   @Override

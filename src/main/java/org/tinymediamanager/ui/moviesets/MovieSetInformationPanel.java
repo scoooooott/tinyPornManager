@@ -36,9 +36,9 @@ import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -146,13 +146,11 @@ public class MovieSetInformationPanel extends JPanel {
         new RowSpec[] { RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
 
     lblMovieSetPoster = new ImageLabel();
-    lblMovieSetPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblMovieSetPoster.enableLightbox();
     layeredPane.setLayer(lblMovieSetPoster, 1);
     layeredPane.add(lblMovieSetPoster, "2, 2, fill, fill");
 
     lblMovieSetFanart = new ImageLabel(false, true);
-    lblMovieSetFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblMovieSetFanart.enableLightbox();
     layeredPane.add(lblMovieSetFanart, "1, 1, 3, 3, fill, fill");
 

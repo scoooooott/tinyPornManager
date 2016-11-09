@@ -333,7 +333,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           {
             lblMoviePoster = new ImageLabel(false);
             panel.add(lblMoviePoster, "1, 1, fill, fill");
-            lblMoviePoster.setAlternativeText("");
           }
           {
             JScrollPane scrollPane = new JScrollPane();

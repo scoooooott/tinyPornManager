@@ -297,7 +297,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       scrollPane.setViewportView(taPlot);
 
       lblThumb = new ImageLabel();
-      lblThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
       lblThumb.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {

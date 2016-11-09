@@ -246,12 +246,10 @@ public class MovieInformationPanel extends JPanel {
         new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px:grow"), RowSpec.decode("fill:80px:grow(3)"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
-    lblMovieBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblMovieBackground.enableLightbox();
     layeredPaneImages.add(lblMovieBackground, "1, 1, 3, 3, fill, fill");
 
     lblMoviePoster = new ImageLabel();
-    lblMoviePoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblMoviePoster.enableLightbox();
     layeredPaneImages.setLayer(lblMoviePoster, 1);
     layeredPaneImages.add(lblMoviePoster, "2, 2, fill, fill");

@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 
@@ -75,8 +76,13 @@ public class LightBox {
     image = new ImageLabel(true);
     image.setUseCache(false);
     image.setPosition(Position.CENTER);
-    image.setImageUrl(url);
-    image.setImagePath(path);
+    if (StringUtils.isNotBlank(path)) {
+      image.setImagePath(path);
+    }
+    else if (StringUtils.isBlank(url)) {
+      image.setImageUrl(url);
+    }
+
     imagePanel.add(image, "1, 1, fill, fill");
 
     backgroundPanel.addMouseListener(new MouseListener() {

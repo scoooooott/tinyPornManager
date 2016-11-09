@@ -123,7 +123,6 @@ public class MovieInformationPanel extends JPanel {
     lblMoviePoster = new ImageLabel(false, false, true);
     lblMoviePoster.setDesiredAspectRatio(2 / 3f);
     panelLeft.add(lblMoviePoster);
-    lblMoviePoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblMoviePoster.enableLightbox();
     lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
     panelLeft.add(lblPosterSize);
@@ -132,7 +131,6 @@ public class MovieInformationPanel extends JPanel {
     lblMovieFanart = new ImageLabel(false, false, true);
     lblMovieFanart.setDesiredAspectRatio(16 / 9f);
     panelLeft.add(lblMovieFanart);
-    lblMovieFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
     lblMovieFanart.enableLightbox();
     lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
     panelLeft.add(lblFanartSize);
