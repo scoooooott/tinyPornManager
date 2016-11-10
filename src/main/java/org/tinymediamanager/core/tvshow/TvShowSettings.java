@@ -16,8 +16,10 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -57,6 +59,8 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String      ENTRY                          = "entry";
   private final static String      TV_SHOW_SKIP_FOLDERS           = "tvShowSkipFolders";
   private final static String      TV_SHOW_SUBTITLE_SCRAPERS      = "tvShowSubtitleScrapers";
+  private final static String      UI_FILTERS                     = "uiFilters";
+  private final static String      STORE_UI_FILTERS               = "storeUiFilters";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -78,6 +82,8 @@ public class TvShowSettings extends AbstractModelObject {
   @XmlElement(name = ENTRY)
   private final List<String>       tvShowSubtitleScrapers         = ObservableCollections.observableList(new ArrayList<String>());
 
+  private Map<String, String>      uiFilters                      = new HashMap<>();
+
   private String                   tvShowScraper                  = Constants.TVDB;
   private boolean                  scrapeBestImage                = true;
   private MediaLanguages           scraperLanguage                = MediaLanguages.en;
@@ -94,6 +100,7 @@ public class TvShowSettings extends AbstractModelObject {
   private LanguageStyle            tvShowRenamerLanguageStyle     = LanguageStyle.ISO3T;
   private boolean                  syncTrakt                      = false;
   private boolean                  dvdOrder                       = false;
+  private boolean                  storeUiFilters                 = false;
 
   public TvShowSettings() {
   }
@@ -352,5 +359,28 @@ public class TvShowSettings extends AbstractModelObject {
     LanguageStyle oldValue = this.tvShowRenamerLanguageStyle;
     this.tvShowRenamerLanguageStyle = newValue;
     firePropertyChange("tvShowRenamerLanguageStyle", oldValue, newValue);
+  }
+
+  public void setUiFilters(Map<String, String> filters) {
+    uiFilters = filters;
+    firePropertyChange(UI_FILTERS, null, uiFilters);
+  }
+
+  @XmlElement(name = UI_FILTERS)
+  public Map<String, String> getUiFilters() {
+    if (storeUiFilters) {
+      return uiFilters;
+    }
+    return new HashMap<>();
+  }
+
+  public void setStoreUiFilters(boolean newValue) {
+    boolean oldValue = this.storeUiFilters;
+    this.storeUiFilters = newValue;
+    firePropertyChange(STORE_UI_FILTERS, oldValue, newValue);
+  }
+
+  public boolean isStoreUiFilters() {
+    return storeUiFilters;
   }
 }

@@ -34,6 +34,45 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
   JSpinner spinner;
 
   @Override
+  public String getId() {
+    return "movieYear";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return spinner.getValue().toString();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+
+    Integer year = null;
+    if (value instanceof Integer) {
+      year = (Integer) value;
+    }
+    else {
+      try {
+        year = Integer.parseInt(value.toString());
+      }
+      catch (NumberFormatException e) {
+
+      }
+    }
+
+    if (year != null) {
+      spinner.setValue(year);
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     Integer year = (Integer) spinner.getValue();
     if (movie.getYear().equals(year.toString())) {

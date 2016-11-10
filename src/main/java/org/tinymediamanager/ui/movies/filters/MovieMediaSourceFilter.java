@@ -32,6 +32,37 @@ public class MovieMediaSourceFilter extends AbstractMovieUIFilter {
   private JComboBox<MediaSource> comboBox;
 
   @Override
+  public String getId() {
+    return "movieMediaSource";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((MediaSource) comboBox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof MediaSource) {
+      comboBox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      MediaSource mediaSource = MediaSource.valueOf((String) value);
+      if (mediaSource != null) {
+        comboBox.setSelectedItem(mediaSource);
+      }
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     if (movie.getMediaSource() == comboBox.getSelectedItem()) {
       return true;

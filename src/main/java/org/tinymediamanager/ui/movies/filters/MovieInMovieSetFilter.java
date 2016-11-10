@@ -47,6 +47,37 @@ public class MovieInMovieSetFilter extends AbstractMovieUIFilter {
   private JComboBox<MovieInMovieSet> combobox;
 
   @Override
+  public String getId() {
+    return "movieInMovieSet";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((MovieInMovieSet) combobox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof MovieInMovieSet) {
+      combobox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      MovieInMovieSet movieInMovieSet = MovieInMovieSet.valueOf((String) value);
+      if (movieInMovieSet != null) {
+        combobox.setSelectedItem(movieInMovieSet);
+      }
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     if ((movie.getMovieSet() != null) && combobox.getSelectedItem() == MovieInMovieSet.IN_MOVIESET) {
       return true;

@@ -38,6 +38,23 @@ public class TvShowCastFilter extends AbstractTvShowUIFilter {
   private JTextField textField;
 
   @Override
+  public String getId() {
+    return "tvShowCast";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return textField.getText();
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value != null && value instanceof String) {
+      textField.setText((String) value);
+    }
+  }
+
+  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     String filterText = textField.getText();
     if (StringUtils.isBlank(filterText)) {

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,13 +43,39 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
   public MovieCertificationFilter() {
     super();
     buildAndInstallCertificationArray();
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallCertificationArray();
-      }
-    };
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallCertificationArray();
     movieList.addPropertyChangeListener(Constants.AUDIO_CODEC, propertyChangeListener);
+  }
+
+  @Override
+  public String getId() {
+    return "movieCertification";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((Certification) comboBox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof Certification) {
+      comboBox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      Certification certification = Certification.valueOf((String) value);
+      if (certification != null) {
+        comboBox.setSelectedItem(certification);
+      }
+    }
   }
 
   @Override

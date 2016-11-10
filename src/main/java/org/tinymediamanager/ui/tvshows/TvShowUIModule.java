@@ -23,10 +23,12 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -168,6 +170,18 @@ public class TvShowUIModule implements ITmmUIModule {
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));//$NON-NLS-1$
+
+    // further initializations
+    init();
+  }
+
+  private void init() {
+    // re-set filters
+    if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
+      SwingUtilities.invokeLater(() -> {
+        listPanel.getTreeTable().setFilterValues(TvShowModuleManager.SETTINGS.getUiFilters());
+      });
+    }
   }
 
   public static TvShowUIModule getInstance() {

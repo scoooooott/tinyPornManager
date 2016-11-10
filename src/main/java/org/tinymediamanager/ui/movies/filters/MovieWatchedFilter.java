@@ -47,6 +47,37 @@ public class MovieWatchedFilter extends AbstractMovieUIFilter {
   private JComboBox<WatchedFlag> combobox;
 
   @Override
+  public String getId() {
+    return "movieWatched";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((WatchedFlag) combobox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof WatchedFlag) {
+      combobox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      WatchedFlag watchedFlag = WatchedFlag.valueOf((String) value);
+      if (watchedFlag != null) {
+        combobox.setSelectedItem(watchedFlag);
+      }
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     return !(movie.isWatched() ^ combobox.getSelectedItem() == WatchedFlag.WATCHED);
   }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -43,6 +44,8 @@ import javax.swing.tree.AbstractLayoutCache;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
@@ -487,6 +490,38 @@ public class TmmTreeTable extends TmmTable {
     if (model != null && model instanceof TmmTreeModel) {
       ((TmmTreeModel) model).updateSortingAndFiltering();
     }
+
+    storeFilters();
+  }
+
+  public void setFilterValues(Map<String, String> values) {
+    boolean fireFilterChanged = false;
+
+    for (Map.Entry<String, String> entry : values.entrySet()) {
+      if (StringUtils.isBlank(entry.getKey())) {
+        continue;
+      }
+      for (ITmmTreeFilter filter : treeFilters) {
+        if (filter instanceof ITmmUIFilter) {
+          ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
+          if (uiFilter.getId().equals(entry.getKey())) {
+            uiFilter.setActive(true);
+            uiFilter.setFilterValue(entry.getValue());
+            fireFilterChanged = true;
+          }
+        }
+      }
+    }
+
+    if (fireFilterChanged) {
+      updateFiltering();
+    }
+  }
+
+  /**
+   * to be overridden to provide storing of filters
+   */
+  public void storeFilters() {
   }
 
   private static class TreeCellEditorBorder implements Border {

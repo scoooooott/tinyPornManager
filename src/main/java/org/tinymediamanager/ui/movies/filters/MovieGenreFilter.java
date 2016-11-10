@@ -32,6 +32,37 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
   private JComboBox<MediaGenres> combobox;
 
   @Override
+  public String getId() {
+    return "movieGenre";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((MediaGenres) combobox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof MediaGenres) {
+      combobox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      MediaGenres mediaGenres = MediaGenres.getGenre((String) value);
+      if (mediaGenres != null) {
+        combobox.setSelectedItem(mediaGenres);
+      }
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     MediaGenres genre = (MediaGenres) combobox.getSelectedItem();
     if (movie.getGenres().contains(genre)) {
@@ -51,5 +82,4 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
     combobox = new JComboBox<>(MediaGenres.values());
     return combobox;
   }
-
 }

@@ -26,10 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MainTabbedPane;
@@ -78,7 +81,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The class MovieUIModule is the general access point to all movie related UI operations
- * 
+ *
  * @author Manuel Laggner
  */
 public class MovieUIModule implements ITmmUIModule {
@@ -164,6 +167,19 @@ public class MovieUIModule implements ITmmUIModule {
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new MovieTrailerSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new MovieSubtitleSettingsPanel()));//$NON-NLS-1$
     settingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new MovieRenamerSettingsPanel()));//$NON-NLS-1$
+
+    // further initializations
+    init();
+  }
+
+  private void init() {
+    // apply stored UI filters
+    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+      SwingUtilities.invokeLater(() -> {
+        MovieList.getInstance().searchDuplicates();
+        selectionModel.setFilterValues(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
+      });
+    }
   }
 
   public static MovieUIModule getInstance() {
@@ -186,7 +202,7 @@ public class MovieUIModule implements ITmmUIModule {
 
   /**
    * this factory creates the action and registers the hotkeys for accelerator management
-   * 
+   *
    * @param actionClass
    *          the class of the action
    * @return the constructed action

@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.movies;
 
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
@@ -57,17 +59,49 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
   }
 
   /**
+   * set any stored filter values
+   *
+   * @param values
+   *          the values to be set
+   */
+  public void setFilterValues(Map<String, String> values) {
+    boolean fireFilterChanged = false;
+
+    for (Map.Entry<String, String> entry : values.entrySet()) {
+      if (StringUtils.isBlank(entry.getKey())) {
+        continue;
+      }
+      for (IMovieUIFilter filter : filters) {
+        if (filter.getId().equals(entry.getKey())) {
+          filter.setActive(true);
+          filter.setFilterValue(entry.getValue());
+          fireFilterChanged = true;
+        }
+      }
+    }
+
+    if (fireFilterChanged) {
+      updateFiltering();
+    }
+  }
+
+  /**
    * re-filter the list
    */
   private void updateFiltering() {
     Matcher<Movie> matcher = new MovieMatcher(new HashSet<>(filters));
     fireChanged(matcher);
 
-    // ToDo
-    // if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
-    // MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
-    // Globals.settings.saveSettings();
-    // }
+    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+      Map<String, String> filterValues = new HashMap<>();
+      for (IMovieUIFilter filter : filters) {
+        if (filter.isActive()) {
+          filterValues.put(filter.getId(), filter.getFilterValueAsString());
+        }
+      }
+      MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filterValues);
+      Globals.settings.saveSettings();
+    }
   }
 
   /**
@@ -80,10 +114,10 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
   public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
     fireChanged(matcher);
-    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
-      MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
-      Globals.settings.saveSettings();
-    }
+    // if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+    // MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
+    // Globals.settings.saveSettings();
+    // }
   }
 
   /*

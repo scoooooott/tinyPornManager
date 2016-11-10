@@ -36,6 +36,23 @@ public class MovieCastFilter extends AbstractMovieUIFilter {
   private JTextField textField;
 
   @Override
+  public String getId() {
+    return "movieCast";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return textField.getText();
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value != null && value instanceof String) {
+      textField.setText((String) value);
+    }
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     String name = textField.getText();
 

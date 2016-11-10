@@ -223,6 +223,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param filter
    *          the filter
    */
+  @Deprecated
   public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     matcherEditor.filterMovies(filter);
     firePropertyChange("filterChanged", filter.isEmpty(), !filter.isEmpty());
@@ -268,5 +269,15 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public void addFilter(IMovieUIFilter filter) {
     matcherEditor.addFilter(filter);
+  }
+
+  /**
+   * set any stored filter values
+   * 
+   * @param values
+   *          the values to be set
+   */
+  public void setFilterValues(Map<String, String> values) {
+    matcherEditor.setFilterValues(values);
   }
 }

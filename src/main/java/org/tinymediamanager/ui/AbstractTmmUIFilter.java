@@ -109,6 +109,11 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
     return checkBox.isSelected();
   }
 
+  @Override
+  public void setActive(boolean active) {
+    checkBox.setSelected(active);
+  }
+
   /**
    * delegate the filter changed event to our listeners
    */

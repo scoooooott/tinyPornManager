@@ -32,6 +32,26 @@ public class MovieVideoFormatFilter extends AbstractMovieUIFilter {
   private JComboBox<String> comboBox;
 
   @Override
+  public String getId() {
+    return "movieVideoFormat";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return (String) comboBox.getSelectedItem();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    comboBox.setSelectedItem(value);
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     String videoFormat = (String) comboBox.getSelectedItem();
     if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {

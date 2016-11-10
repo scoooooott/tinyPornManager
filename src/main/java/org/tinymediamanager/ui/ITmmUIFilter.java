@@ -30,6 +30,13 @@ public interface ITmmUIFilter<E> {
   public final static String FILTER_CHANGED = "filterChanged";
 
   /**
+   * get the id of this filter. Used for storing/loading filters
+   * 
+   * @return the id of this filter
+   */
+  public String getId();
+
+  /**
    * Get the JCheckBox for enabling/disabling the filter
    * 
    * @return the JCheckBox to enable/disable the filter
@@ -51,11 +58,31 @@ public interface ITmmUIFilter<E> {
   public JComponent getFilterComponent();
 
   /**
+   * get the filter value
+   * 
+   * @return the filter value
+   */
+  public String getFilterValueAsString();
+
+  /**
+   * set the filter value
+   */
+  public void setFilterValue(Object value);
+
+  /**
    * Is this filter active?
    * 
    * @return true or false
    */
   public boolean isActive();
+
+  /**
+   * set this filter active/inactive
+   * 
+   * @param active
+   *          the active flag
+   */
+  public void setActive(boolean active);
 
   /**
    * Returns whether the specified object is accepted by this filter or not.

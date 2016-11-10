@@ -32,6 +32,20 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 public class TvShowNewEpisodesFilter extends AbstractTvShowUIFilter {
 
   @Override
+  public String getId() {
+    return "tvShowNewEpisodes";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     return tvShow.isNewlyAdded() || tvShow.hasNewlyAddedEpisodes();
   }

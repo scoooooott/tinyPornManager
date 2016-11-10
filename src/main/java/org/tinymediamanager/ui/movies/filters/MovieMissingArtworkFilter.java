@@ -29,6 +29,20 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 public class MovieMissingArtworkFilter extends AbstractMovieUIFilter {
 
   @Override
+  public String getId() {
+    return "movieMissingArtwork";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     if (!movie.getHasImages()) {
       return true;

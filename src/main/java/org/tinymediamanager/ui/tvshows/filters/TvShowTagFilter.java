@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.filters;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
@@ -44,13 +43,28 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
   public TvShowTagFilter() {
     super();
     buildAndInstallTagsArray();
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallTagsArray();
-      }
-    };
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallTagsArray();
     tvShowList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
+  }
+
+  @Override
+  public String getId() {
+    return "tvShowTag";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return (String) comboBox.getSelectedItem();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    comboBox.setSelectedItem(value);
   }
 
   @Override

@@ -16,6 +16,8 @@
 package org.tinymediamanager.ui.tvshows.panels;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -28,15 +30,19 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ITmmTabItem;
+import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
@@ -80,7 +86,24 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
     btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterMenuVisible(btnFilter.isSelected()));
     add(btnFilter, "4, 1, default, bottom");
 
-    tree = new TmmTreeTable(new TvShowTreeDataProvider());
+    tree = new TmmTreeTable(new TvShowTreeDataProvider()) {
+      @Override
+      public void storeFilters() {
+        if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
+          Map<String, String> filterValues = new HashMap<>();
+          for (ITmmTreeFilter<TmmTreeNode> filter : treeFilters) {
+            if (filter instanceof ITmmUIFilter) {
+              ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
+              if (uiFilter.isActive()) {
+                filterValues.put(uiFilter.getId(), uiFilter.getFilterValueAsString());
+              }
+            }
+          }
+          TvShowModuleManager.SETTINGS.setUiFilters(filterValues);
+          Globals.settings.saveSettings();
+        }
+      }
+    };
     tree.addFilter(searchField);
     JScrollPane scrollPane = TmmTable.createJScrollPane(tree, new int[] { 0, 1 });
     add(scrollPane, "1, 3, 5, 1, fill, fill");

@@ -35,6 +35,37 @@ public class TvShowMediaSourceFilter extends AbstractTvShowUIFilter {
   private JComboBox<MediaSource> combobox;
 
   @Override
+  public String getId() {
+    return "tvShowMediaSource";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((MediaSource) combobox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof MediaSource) {
+      combobox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      MediaSource mediaSource = MediaSource.valueOf((String) value);
+      if (mediaSource != null) {
+        combobox.setSelectedItem(mediaSource);
+      }
+    }
+  }
+
+  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     // search for media source in episodes
     for (TvShowEpisode episode : episodes) {

@@ -35,6 +35,37 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
   private JComboBox<MediaGenres> comboBox;
 
   @Override
+  public String getId() {
+    return "tvShowGenre";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((MediaGenres) comboBox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof MediaGenres) {
+      comboBox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      MediaGenres mediaGenres = MediaGenres.getGenre((String) value);
+      if (mediaGenres != null) {
+        comboBox.setSelectedItem(mediaGenres);
+      }
+    }
+  }
+
+  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     if (tvShow.getGenres().contains(comboBox.getSelectedItem())) {
       return true;

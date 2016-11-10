@@ -29,6 +29,20 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 public class MovieMissingSubtitlesFilter extends AbstractMovieUIFilter {
 
   @Override
+  public String getId() {
+    return "movieMissingSubtitles";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     if (!movie.hasSubtitles()) {
       return true;

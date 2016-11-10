@@ -32,6 +32,20 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
 
   @Override
+  public String getId() {
+    return "tvShowMissingSubtitles";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
     for (TvShowEpisode episode : episodes) {
       if (!episode.hasSubtitles()) {

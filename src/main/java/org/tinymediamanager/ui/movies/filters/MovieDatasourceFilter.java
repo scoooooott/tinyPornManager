@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,13 +43,28 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
   public MovieDatasourceFilter() {
     super();
     buildAndInstallDatasourceArray();
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallDatasourceArray();
-      }
-    };
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallDatasourceArray();
     movieSettings.addPropertyChangeListener(Constants.DATA_SOURCE, propertyChangeListener);
+  }
+
+  @Override
+  public String getId() {
+    return "movieDatasource";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return (String) comboBox.getSelectedItem();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    comboBox.setSelectedItem(value);
   }
 
   @Override

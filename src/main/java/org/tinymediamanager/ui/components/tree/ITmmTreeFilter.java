@@ -38,7 +38,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
 
   /**
    * Adds the property change listener.
-   * 
+   *
    * @param listener
    *          the listener
    */
@@ -46,7 +46,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
 
   /**
    * Adds the property change listener.
-   * 
+   *
    * @param propertyName
    *          the property name
    * @param listener
@@ -56,7 +56,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
 
   /**
    * Removes the property change listener.
-   * 
+   *
    * @param listener
    *          the listener
    */
@@ -64,7 +64,7 @@ public interface ITmmTreeFilter<E extends TmmTreeNode> {
 
   /**
    * Removes the property change listener.
-   * 
+   *
    * @param propertyName
    *          the property name
    * @param listener

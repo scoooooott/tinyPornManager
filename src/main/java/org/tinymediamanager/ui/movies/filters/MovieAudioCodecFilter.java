@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,13 +42,13 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
   public MovieAudioCodecFilter() {
     super();
     buildAndInstallCodecArray();
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallCodecArray();
-      }
-    };
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallCodecArray();
     movieList.addPropertyChangeListener(Constants.AUDIO_CODEC, propertyChangeListener);
+  }
+
+  @Override
+  public String getId() {
+    return "movieAudioCodec";
   }
 
   @Override
@@ -71,6 +70,21 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
   protected JComponent createFilterComponent() {
     comboBox = new JComboBox<>();
     return comboBox;
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return (String) comboBox.getSelectedItem();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    comboBox.setSelectedItem(value);
   }
 
   private void buildAndInstallCodecArray() {

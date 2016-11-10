@@ -41,6 +41,20 @@ public class MovieDuplicateFilter extends AbstractMovieUIFilter {
   }
 
   @Override
+  public String getId() {
+    return "movieDuplicate";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   protected JLabel createLabel() {
     return new JLabel(BUNDLE.getString("movieextendedsearch.duplicates")); //$NON-NLS-1$
   }

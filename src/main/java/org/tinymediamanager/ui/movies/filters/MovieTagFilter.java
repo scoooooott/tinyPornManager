@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 
@@ -41,13 +40,28 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
   public MovieTagFilter() {
     super();
     buildAndInstallTagsArray();
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        buildAndInstallTagsArray();
-      }
-    };
+    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallTagsArray();
     movieList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
+  }
+
+  @Override
+  public String getId() {
+    return "movieTag";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return (String) comboBox.getSelectedItem();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    comboBox.setSelectedItem(value);
   }
 
   @Override

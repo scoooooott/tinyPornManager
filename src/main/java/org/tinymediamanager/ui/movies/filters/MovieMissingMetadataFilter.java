@@ -29,6 +29,20 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 public class MovieMissingMetadataFilter extends AbstractMovieUIFilter {
 
   @Override
+  public String getId() {
+    return "movieMissingMetadata";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    return null;
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+  }
+
+  @Override
   public boolean accept(Movie movie) {
     if (!movie.isScraped()) {
       return true;

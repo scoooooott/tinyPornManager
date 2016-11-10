@@ -88,7 +88,7 @@ public class MovieSettingsPanel extends JPanel {
       add(lblUiT, "cell 0 0 2 1");
     }
     {
-      chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter"));
+      chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
       add(chckbxPersistUiFilters, "cell 1 1");
     }
     {
@@ -97,7 +97,7 @@ public class MovieSettingsPanel extends JPanel {
       add(lblAutomaticTasksT, "cell 0 3 2 1");
     }
     {
-      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename"));
+      chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
       add(chckbxRenameAfterScrape, "flowx,cell 1 4");
     }
     {
@@ -106,11 +106,11 @@ public class MovieSettingsPanel extends JPanel {
       add(lblAutomaticRenameHint, "cell 1 4");
     }
     {
-      chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt"));
+      chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
       add(chckbxTraktSync, "flowx,cell 1 5");
     }
     {
-      btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));
+      btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
       add(btnClearTraktData, "cell 1 5");
     }
     {

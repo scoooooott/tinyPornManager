@@ -50,6 +50,37 @@ public class TvShowWatchedFilter extends AbstractTvShowUIFilter {
   private JComboBox<WatchedFlag> comboBox;
 
   @Override
+  public String getId() {
+    return "tvShowWatched";
+  }
+
+  @Override
+  public String getFilterValueAsString() {
+    try {
+      return ((WatchedFlag) comboBox.getSelectedItem()).name();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void setFilterValue(Object value) {
+    if (value == null) {
+      return;
+    }
+    if (value instanceof WatchedFlag) {
+      comboBox.setSelectedItem(value);
+    }
+    else if (value instanceof String) {
+      WatchedFlag watchedFlag = WatchedFlag.valueOf((String) value);
+      if (watchedFlag != null) {
+        comboBox.setSelectedItem(watchedFlag);
+      }
+    }
+  }
+
+  @Override
   protected JLabel createLabel() {
     return new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
   }
