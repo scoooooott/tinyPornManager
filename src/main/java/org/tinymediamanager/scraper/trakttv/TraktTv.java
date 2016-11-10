@@ -86,7 +86,7 @@ public class TraktTv {
 
       @Override
       protected synchronized OkHttpClient okHttpClient() {
-        OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
+        OkHttpClient.Builder builder = TmmHttpClient.newBuilder();
         builder.addInterceptor(new TraktV2Interceptor(this));
         return builder.build();
       }
