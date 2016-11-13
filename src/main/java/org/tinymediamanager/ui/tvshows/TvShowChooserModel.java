@@ -17,8 +17,8 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,21 +26,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -183,6 +185,35 @@ public class TvShowChooserModel extends AbstractModelObject {
       MessageManager.instance.pushMessage(
           new Message(MessageLevel.ERROR, "TvShowChooser", "message.scrape.threadcrashed", new String[] { ":", e.getLocalizedMessage() }));
     }
+  }
+
+  public List<TvShowEpisode> getEpisodesForDisplay() {
+    List<TvShowEpisode> episodes = new ArrayList<>();
+
+    if (!scraped) {
+      return episodes;
+    }
+
+    MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
+    options.setLanguage(LocaleUtils.toLocale(language.name()));
+    options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
+      options.setId(entry.getKey(), entry.getValue().toString());
+    }
+
+    try {
+      List<MediaEpisode> mediaEpisodes = ((ITvShowMetadataProvider) mediaScraper.getMediaProvider()).getEpisodeList(options);
+      for (MediaEpisode me : mediaEpisodes) {
+        TvShowEpisode ep = new TvShowEpisode();
+        ep.setEpisode(me.episode);
+        ep.setSeason(me.season);
+        ep.setTitle(me.title);
+        episodes.add(ep);
+      }
+    }
+    catch (Exception e) {
+    }
+    return episodes;
   }
 
   public MediaMetadata getMetadata() {

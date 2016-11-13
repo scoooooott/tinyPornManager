@@ -40,7 +40,7 @@ import javax.swing.tree.TreePath;
  *
  * @author Manuel Laggner
  */
-class TmmTreeTableCellRenderer extends DefaultTableCellRenderer {
+public class TmmTreeTableCellRenderer extends DefaultTableCellRenderer {
 
   private static int                                expansionHandleWidth  = 0;
   private static int                                expansionHandleHeight = 0;
@@ -55,7 +55,7 @@ class TmmTreeTableCellRenderer extends DefaultTableCellRenderer {
   private Reference<Object>                         lastRenderedValueRef  = new WeakReference<>(null);
   private static final Border                       expansionBorder       = new ExpansionHandleBorder();
 
-  TmmTreeTableCellRenderer() {
+  public TmmTreeTableCellRenderer() {
     theCheckBox = createCheckBox();
   }
 

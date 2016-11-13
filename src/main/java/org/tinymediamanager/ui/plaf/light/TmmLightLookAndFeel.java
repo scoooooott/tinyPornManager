@@ -50,7 +50,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
 
   private static TmmLightDefaultTheme          myTheme          = null;
 
-  private static final List<String>            themesList       = new ArrayList<String>();
+  private static final List<String>            themesList       = new ArrayList<>();
   private static final Map<String, Properties> themesMap        = new HashMap<>();
   private static final Properties              defaultProps     = new Properties();
   private static final Properties              smallFontProps   = new Properties();

@@ -51,6 +51,7 @@ public class TmmLightDefaultTheme extends TmmTheme {
     alterBackgroundColor = new ColorUIResource(232, 228, 208);
 
     foregroundColor = new ColorUIResource(107, 107, 107);
+    disabledForegroundColor = new ColorUIResource(157, 157, 157);
 
     selectionForegroundColor = black;
     selectionBackgroundColor = new ColorUIResource(141, 165, 179);

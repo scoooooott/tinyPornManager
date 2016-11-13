@@ -101,6 +101,7 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean                  syncTrakt                      = false;
   private boolean                  dvdOrder                       = false;
   private boolean                  storeUiFilters                 = false;
+  private boolean                  displayMissingEpisodes         = false;
 
   public TvShowSettings() {
   }
@@ -382,5 +383,15 @@ public class TvShowSettings extends AbstractModelObject {
 
   public boolean isStoreUiFilters() {
     return storeUiFilters;
+  }
+
+  public boolean isDisplayMissingEpisodes() {
+    return displayMissingEpisodes;
+  }
+
+  public void setDisplayMissingEpisodes(boolean newValue) {
+    boolean oldValue = this.displayMissingEpisodes;
+    this.displayMissingEpisodes = newValue;
+    firePropertyChange("displayMissingEpisodes", oldValue, newValue);
   }
 }

@@ -22,7 +22,6 @@ import static org.tinymediamanager.core.Constants.POSTER_URL;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
@@ -52,12 +51,9 @@ public class TvShowSeason extends AbstractModelObject {
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;
     this.tvShow = tvShow;
-    listener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof TvShowEpisode && MEDIA_FILES.equals(evt.getPropertyName())) {
-          firePropertyChange(MEDIA_FILES, null, evt.getNewValue());
-        }
+    listener = evt -> {
+      if (evt.getSource() instanceof TvShowEpisode && MEDIA_FILES.equals(evt.getPropertyName())) {
+        firePropertyChange(MEDIA_FILES, null, evt.getNewValue());
       }
     };
   }
@@ -71,6 +67,18 @@ public class TvShowSeason extends AbstractModelObject {
   }
 
   public void addEpisode(TvShowEpisode episode) {
+    // when adding a new episode, check:
+    for (TvShowEpisode e : episodes) {
+      // - if that is a dummy episode; do not add it if a the real episode is available
+      if (episode.isDummy() && episode.getEpisode() == e.getEpisode() && episode.getSeason() == e.getSeason()) {
+        return;
+      }
+      // - if that is a real episode; remove the corresponding dummy episode if available
+      if (!episode.isDummy() && e.isDummy() && episode.getEpisode() == e.getEpisode() && episode.getSeason() == e.getSeason()) {
+        removeEpisode(e);
+      }
+    }
+
     episodes.add(episode);
     Utils.sortList(episodes);
     episode.addPropertyChangeListener(listener);
@@ -84,6 +92,25 @@ public class TvShowSeason extends AbstractModelObject {
   }
 
   public List<TvShowEpisode> getEpisodes() {
+    List<TvShowEpisode> episodes = new ArrayList<>();
+    for (TvShowEpisode episode : this.episodes) {
+      if (!episode.isDummy()) {
+        episodes.add(episode);
+      }
+    }
+    return episodes;
+  }
+
+  public boolean isDummy() {
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.isDummy()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public List<TvShowEpisode> getEpisodesForDisplay() {
     return episodes;
   }
 

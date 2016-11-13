@@ -392,6 +392,12 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           // set scraped metadata
           tvShowToScrape.setMetadata(md, scraperMetadataConfig);
 
+          // get the episode list for display?
+          if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+            tvShowToScrape.setDummyEpisodes(model.getEpisodesForDisplay());
+            tvShowToScrape.saveToDb();
+          }
+
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
           // get images?

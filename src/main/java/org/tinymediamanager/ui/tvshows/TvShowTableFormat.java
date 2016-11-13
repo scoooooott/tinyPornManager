@@ -109,7 +109,9 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
   private String getRating(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow || userObject instanceof TvShowEpisode) {
-      return String.valueOf(((MediaEntity) userObject).getRating());
+      if(((MediaEntity) userObject).getRating() > 0) {
+        return String.valueOf(((MediaEntity) userObject).getRating());
+      }
     }
     return "";
   }

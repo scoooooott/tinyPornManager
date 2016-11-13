@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
+import org.tinymediamanager.ui.tvshows.TvShowTreeCellRenderer;
 import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
@@ -104,6 +105,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         }
       }
     };
+    tree.setDefaultRenderer(Object.class, new TvShowTreeCellRenderer());
     tree.addFilter(searchField);
     JScrollPane scrollPane = TmmTable.createJScrollPane(tree, new int[] { 0, 1 });
     add(scrollPane, "1, 3, 5, 1, fill, fill");

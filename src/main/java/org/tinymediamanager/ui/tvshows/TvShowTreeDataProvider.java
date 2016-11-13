@@ -171,7 +171,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     else if (parent.getUserObject() instanceof TvShowSeason) {
       TvShowSeason season = (TvShowSeason) parent.getUserObject();
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
-      for (TvShowEpisode episode : season.getEpisodes()) {
+      for (TvShowEpisode episode : season.getEpisodesForDisplay()) {
         TmmTreeNode node = new TvShowEpisodeTreeNode(episode, this);
         putNodeToCache(episode, node);
         nodes.add(node);
@@ -224,7 +224,7 @@ public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     for (TvShowSeason season : tvShow.getSeasons()) {
       removeNodeFromCache(season);
     }
-    for (TvShowEpisode epsiode : tvShow.getEpisodes()) {
+    for (TvShowEpisode epsiode : tvShow.getEpisodesForDisplay()) {
       removeNodeFromCache(epsiode);
     }
 

@@ -42,7 +42,6 @@ import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -55,9 +54,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,6 +77,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -128,6 +130,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
   @JsonProperty
   private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<TvShowEpisode>                dummyEpisodes         = new CopyOnWriteArrayList<>();
 
   private List<TvShowEpisode>                episodes              = new CopyOnWriteArrayList<>();
   private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
@@ -146,12 +150,9 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     super();
 
     // give tag events from episodes up to the TvShowList
-    propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
-          firePropertyChange(evt);
-        }
+    propertyChangeListener = evt -> {
+      if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+        firePropertyChange(evt);
       }
     };
   }
@@ -175,6 +176,14 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // load genres
     for (String genre : new ArrayList<>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
+    }
+
+    // load dummy episodes
+    if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+      for (TvShowEpisode episode : dummyEpisodes) {
+        episode.setTvShow(this);
+        addToSeason(episode);
+      }
     }
 
     // create season poster map
@@ -264,6 +273,55 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     firePropertyChange(ADDED_EPISODE, null, episode);
     firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
+  }
+
+  public List<TvShowEpisode> getDummyEpisodes() {
+    return dummyEpisodes;
+  }
+
+  public void setDummyEpisodes(List<TvShowEpisode> dummyEpisodes) {
+    this.dummyEpisodes.clear();
+    this.dummyEpisodes.addAll(dummyEpisodes);
+
+    for (TvShowEpisode episode : dummyEpisodes) {
+      episode.setTvShow(this);
+      addToSeason(episode);
+    }
+
+    Utils.sortList(this.dummyEpisodes);
+
+    firePropertyChange("dummyEpisodes", null, dummyEpisodes);
+  }
+
+  /**
+   * build a list of <br>
+   * a) available episodes along with<br>
+   * b) missing episodes <br>
+   * for display in the TV show list
+   * 
+   * @return a list of _all_ episodes
+   */
+  public List<TvShowEpisode> getEpisodesForDisplay() {
+    List<TvShowEpisode> episodes = new ArrayList<>(getEpisodes());
+
+    // mix in unavailable episodes if the user wants to
+    if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+      // build up a set which holds a string representing the S/E indicator
+      Set<String> availableEpisodes = new HashSet<>();
+
+      for (TvShowEpisode episode : episodes) {
+        availableEpisodes.add(episode.getSeason() + "." + episode.getEpisode());
+      }
+
+      // and now mix in unavailable ones
+      for (TvShowEpisode episode : getDummyEpisodes()) {
+        if (!availableEpisodes.contains(episode.getSeason() + "." + episode.getEpisode())) {
+          episodes.add(episode);
+        }
+      }
+    }
+
+    return episodes;
   }
 
   /**
