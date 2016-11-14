@@ -17,6 +17,7 @@ package org.tinymediamanager.core.movie;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -198,10 +199,62 @@ public class MovieExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
-        return getMovieFilename(movie);
+
+        Map<String, Object> parameters = parseParameters(pattern);
+
+        String filename = getMovieFilename(movie);
+        if (parameters.get("escape") == Boolean.TRUE) {
+          try {
+            filename = URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+          }
+          catch (Exception ignored) {
+          }
+        }
+
+        return filename;
       }
       return null;
     }
+
+    /**
+     * parse the parameters out of the parameters string
+     *
+     * @param parameters
+     *          the parameters as string
+     * @return a map containing all parameters
+     */
+    private Map<String, Object> parseParameters(String parameters) {
+      Map<String, Object> parameterMap = new HashMap<>();
+
+      String[] details = parameters.split(",");
+      for (int x = 0; x < details.length; x++) {
+        String key = "";
+        String value = "";
+        try {
+          String[] d = details[x].split("=");
+          key = d[0].trim();
+          value = d[1].trim();
+        }
+        catch (Exception e) {
+        }
+
+        if (StringUtils.isAnyBlank(key, value)) {
+          continue;
+        }
+
+        switch (key.toLowerCase()) {
+          case "escape":
+            parameterMap.put(key, Boolean.parseBoolean(value));
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return parameterMap;
+    }
+
   }
 
   /**
@@ -277,6 +330,14 @@ public class MovieExporter extends MediaEntityExporter {
           return "";
         }
 
+        if (parameters.get("escape") == Boolean.TRUE) {
+          try {
+            filename = URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+          }
+          catch (Exception ignored) {
+          }
+        }
+
         return filename;
       }
       return null;
@@ -334,6 +395,10 @@ public class MovieExporter extends MediaEntityExporter {
             }
             catch (Exception e) {
             }
+            break;
+
+          case "escape":
+            parameterMap.put(key, Boolean.parseBoolean(value));
             break;
 
           default:
