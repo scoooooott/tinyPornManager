@@ -64,11 +64,8 @@ public class FileLoader extends AbstractLoader {
     // If not caught by the previous handler, handle files normally.
     if (url.getScheme().equals("file")) {
 
-      // Get the actual file from the given path (TODO: Why don't we do new
-      // File(url)?)
-      String file = url.getPath();
-
-      // FIXME: Where does this trailing slash come from ?!
+      // Get the actual file from the given path (toPath() strips out the hostname from smb shares)
+      String file = url.toString().replace("file:", "");
       if (file.startsWith("/") && file.substring(0, 4).contains(":")) {
         file = file.substring(1);
       }
