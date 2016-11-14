@@ -113,7 +113,6 @@ class TraktMovieMetadataProvider {
       mediaSearchResult.setYear((result.movie.year));
       mediaSearchResult.setId((result.movie.ids.trakt).toString());
       mediaSearchResult.setIMDBId(result.movie.ids.imdb);
-      mediaSearchResult.setPosterUrl(result.movie.images.poster.full);
 
       mediaSearchResult.setScore(MetadataUtil.calculateScore(searchString, mediaSearchResult.getTitle()));
 
