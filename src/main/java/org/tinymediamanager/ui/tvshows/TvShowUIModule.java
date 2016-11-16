@@ -68,6 +68,7 @@ import org.tinymediamanager.ui.tvshows.panels.season.TvShowSeasonMediaFilesPanel
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowArtworkPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowInformationPanel;
+import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowDatasourceSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowImageSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowRenamerSettingsPanel;

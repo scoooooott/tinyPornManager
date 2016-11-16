@@ -42,14 +42,11 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MediaFilesPanel.
@@ -69,7 +66,6 @@ public class MediaFilesPanel extends JPanel {
 
   public MediaFilesPanel(EventList<MediaFile> mediaFiles) {
     this.mediaFileEventList = mediaFiles;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("default:grow"), }));
 
     mediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
     tableFiles = new TmmTable(mediaFileTableModel);
@@ -78,10 +74,11 @@ public class MediaFilesPanel extends JPanel {
     LinkListener linkListener = new LinkListener();
     tableFiles.addMouseListener(linkListener);
     tableFiles.addMouseMotionListener(linkListener);
+    setLayout(new MigLayout("insets 0", "[450lp,grow]", "[300lp,grow]"));
 
     scrollPaneFiles = new JScrollPane(tableFiles);
     tableFiles.configureScrollPane(scrollPaneFiles);
-    add(scrollPaneFiles, "1, 1, fill, fill");
+    add(scrollPaneFiles, "cell 0 0,grow");
 
     scrollPaneFiles.setViewportView(tableFiles);
   }
