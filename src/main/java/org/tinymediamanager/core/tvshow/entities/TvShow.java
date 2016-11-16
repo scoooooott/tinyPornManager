@@ -286,11 +286,24 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     for (TvShowEpisode episode : dummyEpisodes) {
       episode.setTvShow(this);
       addToSeason(episode);
+
+      // also fire the event there has no real episode for that dummy
+      boolean found = false;
+      for (TvShowEpisode e : episodes) {
+        if (e.getSeason() == episode.getSeason() && e.getEpisode() == episode.getEpisode()) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        firePropertyChange(ADDED_EPISODE, null, episode);
+      }
     }
 
     Utils.sortList(this.dummyEpisodes);
 
     firePropertyChange("dummyEpisodes", null, dummyEpisodes);
+    firePropertyChange(EPISODE_COUNT, 0, episodes.size());
   }
 
   /**
@@ -380,7 +393,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   public int getSeasonCount() {
-    return seasons.size();
+    int count = 0;
+    for (TvShowSeason season : seasons) {
+      if (!season.isDummy()) {
+        count++;
+      }
+    }
+    return count;
   }
 
   /**
@@ -438,6 +457,23 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
       firePropertyChange(REMOVED_EPISODE, null, episode);
       firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
+
+      // and mix in the dummy one again
+      if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
+        for (TvShowEpisode dummy : dummyEpisodes) {
+          if (dummy.getSeason() == episode.getSeason() && dummy.getEpisode() == episode.getEpisode()) {
+            addToSeason(dummy);
+            firePropertyChange(ADDED_EPISODE, null, dummy);
+            break;
+          }
+        }
+      }
+    }
+    else if (dummyEpisodes.contains(episode)) {
+      // just fire the event for updating the UI
+      removeFromSeason(episode);
+      firePropertyChange(REMOVED_EPISODE, null, episode);
+      firePropertyChange(EPISODE_COUNT, 0, episodes.size());
     }
   }
 
@@ -1259,19 +1295,17 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   public static TvShow parseNFO(File tvShowDirectory) {
     LOGGER.debug("try to find a nfo for " + tvShowDirectory.getPath());
     // check if there are any NFOs in that directory
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        // do not start with .
-        if (name.toLowerCase().startsWith("."))
-          return false;
-
-        // check if filetype is in our settings
-        if (name.toLowerCase().endsWith("nfo")) {
-          return true;
-        }
-
+    FilenameFilter filter = (dir, name) -> {
+      // do not start with .
+      if (name.toLowerCase().startsWith("."))
         return false;
+
+      // check if filetype is in our settings
+      if (name.toLowerCase().endsWith("nfo")) {
+        return true;
       }
+
+      return false;
     };
 
     TvShow tvShow = null;
@@ -1301,7 +1335,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public List<TvShowEpisode> getEpisodesToScrape() {
     List<TvShowEpisode> episodes = new ArrayList<>();
-    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
+    for (TvShowEpisode episode : this.episodes) {
       if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
         episodes.add(episode);
       }
@@ -1443,9 +1477,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public List<MediaFile> getEpisodesMediaFiles() {
     List<MediaFile> mediaFiles = new ArrayList<>();
-    for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
+    for (TvShowEpisode episode : this.episodes) {
       for (MediaFile mf : episode.getMediaFiles()) {
-
         if (!mediaFiles.contains(mf)) {
           mediaFiles.add(mf);
         }
@@ -1463,7 +1496,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // get files to cache
     List<Path> filesToCache = new ArrayList<>();
 
-    for (MediaFile mf : new ArrayList<>(getMediaFiles())) {
+    for (MediaFile mf : getMediaFiles()) {
       if (mf.isGraphic()) {
         filesToCache.add(mf.getFileAsPath());
       }

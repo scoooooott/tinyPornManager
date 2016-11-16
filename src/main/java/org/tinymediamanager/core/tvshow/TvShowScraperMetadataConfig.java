@@ -27,20 +27,56 @@ import org.tinymediamanager.core.AbstractModelObject;
 @XmlRootElement(name = "TvShowScraperMetadata")
 public class TvShowScraperMetadataConfig extends AbstractModelObject {
 
-  private boolean title         = true;
-  private boolean plot          = true;
-  private boolean rating        = true;
-  private boolean runtime       = true;
-  private boolean year          = true;
-  private boolean aired         = true;
-  private boolean status        = true;
-  private boolean certification = true;
-  private boolean cast          = true;
-  private boolean genres        = true;
-  private boolean artwork       = true;
-  private boolean episodes      = true;
+  private boolean title;
+  private boolean plot;
+  private boolean rating;
+  private boolean runtime;
+  private boolean year;
+  private boolean aired;
+  private boolean status;
+  private boolean certification;
+  private boolean cast;
+  private boolean genres;
+  private boolean artwork;
+  private boolean episodes;
+  private boolean episodeList;
 
+  /**
+   * create a new instance with defaults
+   */
   public TvShowScraperMetadataConfig() {
+    title = true;
+    plot = true;
+    rating = true;
+    runtime = true;
+    year = true;
+    aired = true;
+    status = true;
+    certification = true;
+    cast = true;
+    genres = true;
+    artwork = true;
+    episodes = true;
+    episodeList = false;
+  }
+
+  /**
+   * create a new instance with the given parameter
+   */
+  public TvShowScraperMetadataConfig(boolean defaultValue) {
+    title = defaultValue;
+    plot = defaultValue;
+    rating = defaultValue;
+    runtime = defaultValue;
+    year = defaultValue;
+    aired = defaultValue;
+    status = defaultValue;
+    certification = defaultValue;
+    cast = defaultValue;
+    genres = defaultValue;
+    artwork = defaultValue;
+    episodes = defaultValue;
+    episodeList = defaultValue;
   }
 
   public boolean isTitle() {
@@ -159,5 +195,15 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.status;
     this.status = newValue;
     firePropertyChange("status", oldValue, newValue);
+  }
+
+  public boolean isEpisodeList() {
+    return episodeList;
+  }
+
+  public void setEpisodeList(boolean newValue) {
+    boolean oldValue = this.episodeList;
+    this.episodeList = newValue;
+    firePropertyChange("episodeList", oldValue, newValue);
   }
 }

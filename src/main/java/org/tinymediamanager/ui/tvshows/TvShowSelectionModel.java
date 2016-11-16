@@ -116,14 +116,14 @@ public class TvShowSelectionModel extends AbstractModelObject {
     for (Object obj : getSelectedObjects()) {
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode episode = (TvShowEpisode) obj;
-        if (!episodes.contains(episode)) {
+        if (!episode.isDummy() && !episodes.contains(episode)) {
           episodes.add(episode);
         }
       }
       else if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
         for (TvShowEpisode episode : season.getEpisodes()) {
-          if (!episodes.contains(episode)) {
+          if (!episode.isDummy() && !episodes.contains(episode)) {
             episodes.add(episode);
           }
         }
@@ -131,7 +131,7 @@ public class TvShowSelectionModel extends AbstractModelObject {
       else if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          if (!episodes.contains(episode)) {
+          if (!episode.isDummy() && !episodes.contains(episode)) {
             episodes.add(episode);
           }
         }
@@ -142,18 +142,51 @@ public class TvShowSelectionModel extends AbstractModelObject {
   }
 
   /**
-   * Get all selected objects from the treeTable
+   * Get all selected objects from the treeTable w/o dummies
    * 
    * @return the selected objects
    */
   public List<Object> getSelectedObjects() {
+    return getSelectedObjects(false);
+  }
+
+  /**
+   * Get all selected objects from the treeTable
+   * 
+   * @param withDummy
+   *          with or without dummies
+   *
+   * @return the selected objects
+   */
+  public List<Object> getSelectedObjects(boolean withDummy) {
     List<Object> selectedObjects = new ArrayList<>();
 
     int rows[] = treeTable.getSelectedRows();
     for (int row : rows) {
       DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeTable.getValueAt(row, 0);
       if (node != null) {
-        selectedObjects.add(node.getUserObject());
+        Object userObject = node.getUserObject();
+        if (userObject instanceof TvShow) {
+          selectedObjects.add(userObject);
+        }
+        else if (userObject instanceof TvShowSeason) {
+          TvShowSeason season = (TvShowSeason) userObject;
+          if (!season.isDummy()) {
+            selectedObjects.add(userObject);
+          }
+          else if (season.isDummy() && withDummy) {
+            selectedObjects.add(userObject);
+          }
+        }
+        else if (userObject instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) userObject;
+          if (!episode.isDummy()) {
+            selectedObjects.add(userObject);
+          }
+          else if (episode.isDummy() && withDummy) {
+            selectedObjects.add(userObject);
+          }
+        }
       }
     }
     return selectedObjects;

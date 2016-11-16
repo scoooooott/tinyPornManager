@@ -55,6 +55,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxTraktTv;
   private JButton                     btnClearTraktTvShows;
   private JCheckBox                   chckbxPersistUiFilters;
+  private JCheckBox                   chckbxShowMissingEpisodes;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -81,7 +82,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][]", "[][][20lp][][][20lp][][][]"));
+    setLayout(new MigLayout("", "[25lp][]", "[][][][20lp][][][20lp][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
@@ -92,30 +93,34 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       add(chckbxPersistUiFilters, "cell 1 1");
     }
     {
+      chckbxShowMissingEpisodes = new JCheckBox(BUNDLE.getString("Settings.tvshow.missingepisodes")); //$NON-NLS-1$
+      add(chckbxShowMissingEpisodes, "cell 1 2");
+    }
+    {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 3 2 1");
+      add(lblAutomaticTasksT, "cell 0 4 2 1");
     }
 
     {
       chckbxTraktTv = new JCheckBox(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
-      add(chckbxTraktTv, "flowx,cell 1 4");
+      add(chckbxTraktTv, "flowx,cell 1 5");
       btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
-      add(btnClearTraktTvShows, "cell 1 4");
+      add(btnClearTraktTvShows, "cell 1 5");
     }
 
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 6 2 1");
+      add(lblMiscT, "cell 0 7 2 1");
     }
     {
       chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxImageCache, "flowx,cell 1 7");
+      add(chckbxImageCache, "flowx,cell 1 8");
 
       JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 7");
+      add(lblBuildImageCacheHint, "cell 1 8");
     }
   }
 
@@ -135,5 +140,10 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_1, chckbxPersistUiFilters, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_2 = BeanProperty.create("displayMissingEpisodes");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_2, chckbxShowMissingEpisodes, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
   }
 }

@@ -48,6 +48,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
@@ -279,6 +280,7 @@ public class TvShowUIModule implements ITmmUIModule {
     popupMenu.add(new TvShowScrapeEpisodesAction(true));
     popupMenu.add(new TvShowScrapeEpisodesAction(false));
     popupMenu.add(new TvShowScrapeNewItemsAction());
+    popupMenu.add(new TvShowScrapeMissingEpisodesAction());
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(new TvShowUpdateAction());
@@ -333,6 +335,7 @@ public class TvShowUIModule implements ITmmUIModule {
     scrapePopupMenu.add(new TvShowSingleScrapeAction(true));
     scrapePopupMenu.add(new TvShowSelectedScrapeAction());
     scrapePopupMenu.add(new TvShowScrapeNewItemsAction());
+    scrapePopupMenu.add(new TvShowScrapeMissingEpisodesAction());
 
     // edit popupmenu
     editPopupMenu = new JPopupMenu();

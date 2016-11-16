@@ -75,7 +75,7 @@ public class TvShowSeason extends AbstractModelObject {
       }
       // - if that is a real episode; remove the corresponding dummy episode if available
       if (!episode.isDummy() && e.isDummy() && episode.getEpisode() == e.getEpisode() && episode.getSeason() == e.getSeason()) {
-        removeEpisode(e);
+        tvShow.removeEpisode(e);
       }
     }
 

@@ -101,7 +101,9 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
       return String.valueOf(((TvShow) userObject).getEpisodeCount());
     }
     if (userObject instanceof TvShowSeason) {
-      return String.valueOf(((TvShowSeason) userObject).getEpisodes().size());
+      if (((TvShowSeason) userObject).getEpisodes().size() > 0) {
+        return String.valueOf(((TvShowSeason) userObject).getEpisodes().size());
+      }
     }
     return "";
   }
@@ -109,7 +111,7 @@ public class TvShowTableFormat extends TmmTableFormat<TmmTreeNode> {
   private String getRating(TmmTreeNode node) {
     Object userObject = node.getUserObject();
     if (userObject instanceof TvShow || userObject instanceof TvShowEpisode) {
-      if(((MediaEntity) userObject).getRating() > 0) {
+      if (((MediaEntity) userObject).getRating() > 0) {
         return String.valueOf(((MediaEntity) userObject).getRating());
       }
     }
