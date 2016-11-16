@@ -34,6 +34,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowGenresPanel extends JPanel {
 
   /** The Constant serialVersionUID. */

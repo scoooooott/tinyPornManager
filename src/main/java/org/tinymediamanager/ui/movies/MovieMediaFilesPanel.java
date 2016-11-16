@@ -61,6 +61,7 @@ import ca.odell.glazedlists.ObservableElementList;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 3181909355114738346L;
   /**

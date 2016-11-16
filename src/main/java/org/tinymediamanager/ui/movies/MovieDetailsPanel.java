@@ -54,6 +54,7 @@ import com.jgoodies.forms.layout.Sizes;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieDetailsPanel extends JPanel {
 
   /**

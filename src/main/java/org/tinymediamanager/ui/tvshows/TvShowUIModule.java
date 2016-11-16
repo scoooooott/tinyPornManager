@@ -62,6 +62,7 @@ import org.tinymediamanager.ui.tvshows.panels.TvShowExtendedSearchPanel;
 import org.tinymediamanager.ui.tvshows.panels.TvShowTreePanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeCastPanel;
 import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeInformationPanel;
+import org.tinymediamanager.ui.tvshows.panels.episode.TvShowEpisodeMediaInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.season.TvShowSeasonInformationPanel;
 import org.tinymediamanager.ui.tvshows.panels.season.TvShowSeasonMediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.panels.tvshow.TvShowArtworkPanel;

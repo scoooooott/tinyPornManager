@@ -60,6 +60,7 @@ import ca.odell.glazedlists.ObservableElementList;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowMediaInformationPanel extends JPanel {
 
   /** The Constant serialVersionUID. */

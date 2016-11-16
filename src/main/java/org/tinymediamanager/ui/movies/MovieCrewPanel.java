@@ -54,6 +54,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieCrewPanel extends JPanel {
   private static final long                     serialVersionUID   = 2972207353452870494L;
   /**

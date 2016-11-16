@@ -39,6 +39,7 @@ import ca.odell.glazedlists.ObservableElementList;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowEpisodeMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 6409916197348303643L;
   private MediaFilesPanel             panelMediaFiles;

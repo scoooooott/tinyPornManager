@@ -67,6 +67,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowSeasonInformationPanel extends JPanel {
   private static final long                     serialVersionUID  = 1911808562993073590L;
   /**

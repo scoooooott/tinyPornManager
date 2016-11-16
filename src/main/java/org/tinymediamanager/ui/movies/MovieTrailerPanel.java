@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
@@ -69,6 +69,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieTrailerPanel extends JPanel {
   private static final long                    serialVersionUID  = 2506465845096043845L;
   /**

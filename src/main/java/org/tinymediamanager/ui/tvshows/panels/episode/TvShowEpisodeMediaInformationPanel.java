@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.tvshows;
 
+package org.tinymediamanager.ui.tvshows.panels.episode;
+
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
 import java.awt.GridLayout;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.List;
@@ -33,27 +34,34 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.panels.MediaFilesPanel;
+import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+
 /**
  * The Class TvShowEpisodeMediaInformationPanel.
  * 
  * @author Manuel Laggner
  */
-@Deprecated
 public class TvShowEpisodeMediaInformationPanel extends JPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisodeSelectionModel selectionModel;
+  private EventList<MediaFile>        mediaFileEventList;
+
   private JLabel                      lblRuntime;
   private JCheckBox                   chckbxWatched;
   private JPanel                      panelVideoStreamDetails;
@@ -66,17 +74,59 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   private JPanel                      panelSubtitleDetails;
   private JLabel                      lblSourceT;
   private JLabel                      lblSource;
+  private MediaFilesPanel             panelMediaFiles;
 
   public TvShowEpisodeMediaInformationPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
+    initComponents();
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of media files
+      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
+          || MEDIA_INFORMATION.equals(property)) {
+        fillVideoStreamDetails();
+        buildAudioStreamDetails();
+        buildSubtitleStreamDetails();
+      }
+      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
+          || (source.getClass() == TvShowEpisode.class && MEDIA_FILES.equals(property))) {
+        // this does sometimes not work. simply wrap it
+        try {
+          mediaFileEventList.getReadWriteLock().writeLock().lock();
+          mediaFileEventList.clear();
+          mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
+        }
+        catch (Exception e) {
+        }
+        finally {
+          mediaFileEventList.getReadWriteLock().writeLock().unlock();
+        }
+        try {
+          panelMediaFiles.adjustColumns();
+        }
+        catch (Exception e) {
+        }
+      }
+    };
+    selectionModel.addPropertyChangeListener(propertyChangeListener);
+
+  }
+
+  private void initComponents() {
     setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), },
+        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, },
         new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"),
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
     JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     add(lblRuntimeT, "2, 2");
@@ -140,22 +190,10 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     panelSubtitleDetails.setLayout(new GridLayout(0, 1));
     add(panelSubtitleDetails, "10, 10, 5, 1, left, top");
 
-    // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of media files
-        if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
-            || MEDIA_INFORMATION.equals(property)) {
-          fillVideoStreamDetails();
-          buildAudioStreamDetails();
-          buildSubtitleStreamDetails();
-        }
-      }
-    };
-
-    selectionModel.addPropertyChangeListener(propertyChangeListener);
+    {
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+      add(panelMediaFiles, "2, 12, 15, 1, fill, fill");
+    }
   }
 
   private void fillVideoStreamDetails() {

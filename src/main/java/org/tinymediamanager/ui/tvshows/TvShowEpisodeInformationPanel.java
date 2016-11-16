@@ -66,6 +66,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowEpisodeInformationPanel extends JPanel {
   private static final long           serialVersionUID = 2032708149757390567L;
   /**

@@ -15,13 +15,14 @@
  */
 package org.tinymediamanager.ui.movies.panels;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
+import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,8 +103,7 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
-        GlazedLists.beanConnector(MediaFile.class));
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
@@ -115,7 +115,7 @@ public class MovieMediaInformationPanel extends JPanel {
             FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
             FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+            FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("max(50dlu;default):grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
     JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
@@ -209,35 +209,33 @@ public class MovieMediaInformationPanel extends JPanel {
     add(panelMediaFiles, "2, 18, 15, 1, fill, fill");
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of media files
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)
-            || MEDIA_SOURCE.equals(property)) {
-          fillVideoStreamDetails();
-          buildAudioStreamDetails();
-          buildSubtitleStreamDetails();
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of media files
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)
+          || MEDIA_SOURCE.equals(property)) {
+        fillVideoStreamDetails();
+        buildAudioStreamDetails();
+        buildSubtitleStreamDetails();
+      }
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+          || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
+        // this does sometimes not work. simply wrap it
+        try {
+          mediaFileEventList.getReadWriteLock().writeLock().lock();
+          mediaFileEventList.clear();
+          mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
         }
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
-          // this does sometimes not work. simply wrap it
-          try {
-            mediaFileEventList.getReadWriteLock().writeLock().lock();
-            mediaFileEventList.clear();
-            mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
-          }
-          catch (Exception e) {
-          }
-          finally {
-            mediaFileEventList.getReadWriteLock().writeLock().unlock();
-          }
-          try {
-            panelMediaFiles.adjustColumns();
-          }
-          catch (Exception e) {
-          }
+        catch (Exception e) {
+        }
+        finally {
+          mediaFileEventList.getReadWriteLock().writeLock().unlock();
+        }
+        try {
+          panelMediaFiles.adjustColumns();
+        }
+        catch (Exception e) {
         }
       }
     };

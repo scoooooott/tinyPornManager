@@ -55,6 +55,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class TvShowEpisodeDetailsPanel extends JPanel {
   private static final long                 serialVersionUID = -5598009673335010850L;
   private final static Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);

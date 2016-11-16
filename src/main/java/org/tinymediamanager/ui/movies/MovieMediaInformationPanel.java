@@ -49,6 +49,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  * 
  */
+@Deprecated
 public class MovieMediaInformationPanel extends JPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
   /**

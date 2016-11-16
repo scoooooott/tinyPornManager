@@ -36,6 +36,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieGenresPanel extends JPanel {
   private static final long   serialVersionUID = -6585642654072040266L;
   private static final Logger LOGGER           = LoggerFactory.getLogger(MovieGenresPanel.class);

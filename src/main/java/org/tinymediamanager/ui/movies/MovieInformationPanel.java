@@ -68,6 +68,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public class MovieInformationPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
