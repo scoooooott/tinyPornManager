@@ -82,6 +82,10 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
 
       Url url = new CachedUrl(search);
       InputStream in = url.getInputStream();
+      if (in == null) {
+        return trailers;
+      }
+
       Document doc = Jsoup.parse(in, "UTF-8", "");
       Elements tr = doc.getElementsByAttributeValue("itemprop", "trailer");
       /*
