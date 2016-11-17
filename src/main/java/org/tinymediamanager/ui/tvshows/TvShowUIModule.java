@@ -16,13 +16,17 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -48,6 +52,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesWoArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeMissingEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
@@ -99,6 +104,8 @@ public class TvShowUIModule implements ITmmUIModule {
   private final JPanel                    dataPanel;
   private final TvShowExtendedSearchPanel filterPanel;
 
+  private Map<Class, Action>              actionMap;
+
   private Action                          searchAction;
   private Action                          editAction;
   private Action                          updateAction;
@@ -112,6 +119,8 @@ public class TvShowUIModule implements ITmmUIModule {
   private TmmSettingsNode                 settingsNode;
 
   private TvShowUIModule() {
+    actionMap = new HashMap<>();
+
     tvShowSelectionModel = new TvShowSelectionModel();
     tvShowSeasonSelectionModel = new TvShowSeasonSelectionModel();
     tvShowEpisodeSelectionModel = new TvShowEpisodeSelectionModel();
@@ -163,6 +172,7 @@ public class TvShowUIModule implements ITmmUIModule {
     // create actions and menus
     createActions();
     createPopupMenu();
+    registerAccelerators();
 
     settingsPanel = new TvShowSettingsContainerPanel();
 
@@ -268,42 +278,48 @@ public class TvShowUIModule implements ITmmUIModule {
   }
 
   private void createActions() {
-    searchAction = new TvShowSingleScrapeAction(false);
-    editAction = new TvShowEditAction(false);
-    updateAction = new TvShowUpdateDatasourcesAction(false);
-    exportAction = new TvShowExportAction();
+    searchAction = createAndRegisterAction(TvShowSingleScrapeAction.class);
+    editAction = createAndRegisterAction(TvShowEditAction.class);
+    updateAction = createAndRegisterAction(TvShowUpdateDatasourcesAction.class);
+    exportAction = createAndRegisterAction(TvShowExportAction.class);
   }
 
   private void createPopupMenu() {
     // popup menu
     popupMenu = new JPopupMenu();
-    popupMenu.add(new TvShowSingleScrapeAction(true));
-    popupMenu.add(new TvShowSelectedScrapeAction());
-    popupMenu.add(new TvShowScrapeEpisodesAction(true));
-    popupMenu.add(new TvShowScrapeEpisodesAction(false));
-    popupMenu.add(new TvShowScrapeNewItemsAction());
-    popupMenu.add(new TvShowScrapeMissingEpisodesAction());
-    // popupMenu.add(actionScrapeMetadataSelected);
+    popupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
+
     popupMenu.addSeparator();
-    popupMenu.add(new TvShowUpdateAction());
+
+    popupMenu.add(createAndRegisterAction(TvShowUpdateAction.class));
+
     popupMenu.addSeparator();
-    popupMenu.add(new TvShowEditAction(true));
-    popupMenu.add(new TvShowChangeSeasonPosterAction(true));
-    popupMenu.add(new TvShowBulkEditAction());
-    popupMenu.add(new TvShowSetWatchedFlagAction());
-    popupMenu.add(new TvShowRewriteNfoAction());
-    popupMenu.add(new TvShowRewriteEpisodeNfoAction());
-    // popupMenu.add(actionBatchEdit);
-    popupMenu.add(new TvShowRenameAction());
-    popupMenu.add(new TvShowMediaInformationAction(true));
-    popupMenu.add(new TvShowExportAction());
-    popupMenu.add(new TvShowClearImageCacheAction());
+
+    popupMenu.add(createAndRegisterAction(TvShowEditAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowChangeSeasonPosterAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowRenameAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowMediaInformationAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowExportAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowClearImageCacheAction.class));
+
     popupMenu.addSeparator();
-    popupMenu.add(new TvShowSyncTraktTvAction());
-    popupMenu.add(new TvShowSyncWatchedTraktTvAction());
+
+    popupMenu.add(createAndRegisterAction(TvShowSyncTraktTvAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowSyncWatchedTraktTvAction.class));
+
     popupMenu.addSeparator();
-    popupMenu.add(new TvShowRemoveAction(true));
-    popupMenu.add(new TvShowDeleteAction(true));
+
+    popupMenu.add(createAndRegisterAction(TvShowRemoveAction.class));
+    popupMenu.add(createAndRegisterAction(TvShowDeleteAction.class));
 
     listPanel.setPopupMenu(popupMenu);
 
@@ -313,7 +329,7 @@ public class TvShowUIModule implements ITmmUIModule {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
         updatePopupMenu.removeAll();
-        updatePopupMenu.add(new TvShowUpdateDatasourcesAction(true));
+        updatePopupMenu.add(createAndRegisterAction(TvShowUpdateDatasourcesAction.class));
         updatePopupMenu.addSeparator();
         for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
           updatePopupMenu.add(new TvShowUpdateSingleDatasourceAction(ds));
@@ -334,19 +350,60 @@ public class TvShowUIModule implements ITmmUIModule {
 
     // scrape popup menu
     scrapePopupMenu = new JPopupMenu();
-    scrapePopupMenu.add(new TvShowSingleScrapeAction(true));
-    scrapePopupMenu.add(new TvShowSelectedScrapeAction());
-    scrapePopupMenu.add(new TvShowScrapeNewItemsAction());
-    scrapePopupMenu.add(new TvShowScrapeMissingEpisodesAction());
+    scrapePopupMenu.add(createAndRegisterAction(TvShowSingleScrapeAction.class));
+    scrapePopupMenu.add(createAndRegisterAction(TvShowSelectedScrapeAction.class));
+    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesAction.class));
+    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeEpisodesWoArtworkAction.class));
+    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeNewItemsAction.class));
+    scrapePopupMenu.add(createAndRegisterAction(TvShowScrapeMissingEpisodesAction.class));
 
     // edit popupmenu
     editPopupMenu = new JPopupMenu();
-    editPopupMenu.add(new TvShowEditAction(true));
-    editPopupMenu.add(new TvShowChangeSeasonPosterAction(true));
-    editPopupMenu.add(new TvShowBulkEditAction());
-    editPopupMenu.add(new TvShowSetWatchedFlagAction());
-    editPopupMenu.add(new TvShowRewriteNfoAction());
-    editPopupMenu.add(new TvShowRewriteEpisodeNfoAction());
+    editPopupMenu.add(createAndRegisterAction(TvShowEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowChangeSeasonPosterAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowBulkEditAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowSetWatchedFlagAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowRewriteNfoAction.class));
+    editPopupMenu.add(createAndRegisterAction(TvShowRewriteEpisodeNfoAction.class));
+  }
+
+  /**
+   * this factory creates the action and registers the hotkeys for accelerator management
+   *
+   * @param actionClass
+   *          the class of the action
+   * @return the constructed action
+   */
+  private Action createAndRegisterAction(Class<? extends Action> actionClass) {
+    Action action = actionMap.get(actionClass);
+    if (action == null) {
+      try {
+        action = (Action) actionClass.newInstance();
+        actionMap.put(actionClass, action);
+        // KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+      }
+      catch (Exception ignored) {
+      }
+    }
+    return action;
+  }
+
+  /**
+   * register accelerators
+   */
+  private void registerAccelerators() {
+    for (Map.Entry<Class, Action> entry : actionMap.entrySet()) {
+      try {
+        KeyStroke keyStroke = (KeyStroke) entry.getValue().getValue(Action.ACCELERATOR_KEY);
+        if (keyStroke != null) {
+          String actionMapKey = "action" + entry.getKey().getName();
+          listPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionMapKey);
+          listPanel.getActionMap().put(actionMapKey, entry.getValue());
+        }
+      }
+      catch (Exception ignored) {
+      }
+    }
   }
 
   /**

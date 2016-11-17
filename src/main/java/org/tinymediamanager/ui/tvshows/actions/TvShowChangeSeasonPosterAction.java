@@ -43,10 +43,18 @@ public class TvShowChangeSeasonPosterAction extends AbstractAction {
   private static final long           serialVersionUID = 8356413227405772558L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  @Deprecated
   public TvShowChangeSeasonPosterAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
     }
+    putValue(LARGE_ICON_KEY, IconManager.EDIT);
+    putValue(SMALL_ICON, IconManager.EDIT);
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
+  }
+
+  public TvShowChangeSeasonPosterAction() {
+    putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$

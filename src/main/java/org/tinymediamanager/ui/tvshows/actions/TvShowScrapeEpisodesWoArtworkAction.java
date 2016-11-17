@@ -13,42 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
- * The class TvShowSetWatchedFlagAction. Set the watched flag to all selected episodes
+ * The class TvShowScrapeEpisodesWoArtworkAction. To Scrape episode data (without artwork) with the default scraper
  * 
  * @author Manuel Laggner
  */
-public class TvShowSetWatchedFlagAction extends AbstractAction {
-  private static final long           serialVersionUID = 5762347331284295996L;
+public class TvShowScrapeEpisodesWoArtworkAction extends AbstractAction {
+  private static final long           serialVersionUID = -75916665265142730L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowSetWatchedFlagAction() {
-    putValue(NAME, BUNDLE.getString("tvshowepisode.setwatchedflag")); //$NON-NLS-1$
-    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+  public TvShowScrapeEpisodesWoArtworkAction() {
+    putValue(NAME, BUNDLE.getString("tvshowepisode.scrape.withoutartwork")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+    putValue(SMALL_ICON, IconManager.SEARCH);
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
-    final List<TvShowEpisode> selectedEpisodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
+  public void actionPerformed(ActionEvent arg0) {
+    List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
-    for (TvShowEpisode episode : selectedEpisodes) {
-      episode.setWatched(true);
-      episode.writeNFO();
-      episode.saveToDb();
-    }
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, TvShowList.getInstance().getDefaultMediaScraper(), false);
+    TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }

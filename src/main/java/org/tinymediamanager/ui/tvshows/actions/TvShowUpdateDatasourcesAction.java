@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -36,12 +38,20 @@ public class TvShowUpdateDatasourcesAction extends AbstractAction {
   private static final long           serialVersionUID = 5704371143505653741L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  @Deprecated
   public TvShowUpdateDatasourcesAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     }
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
     putValue(SMALL_ICON, IconManager.REFRESH);
+  }
+
+  public TvShowUpdateDatasourcesAction() {
+    putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+    putValue(SMALL_ICON, IconManager.REFRESH);
+    putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }
 
   @Override
