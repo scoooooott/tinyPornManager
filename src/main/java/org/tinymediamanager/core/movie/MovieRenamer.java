@@ -698,9 +698,7 @@ public class MovieRenamer {
           List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
-            if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().size() > 1) {
-              nfonames.add(MovieNfoNaming.FILENAME_NFO);
-            }
+            nfonames.add(MovieNfoNaming.FILENAME_NFO);
           }
           else {
             nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
