@@ -40,6 +40,7 @@ public enum MediaLanguages {
   pl("Język polski"),
   pt("Portuguese"),
   pt_BR("Portuguese (Brazil)"),
+  ro("Română"),
   ru("русский язык"),
   sl("Slovenščina"),
   sk("Slovenčina"),
