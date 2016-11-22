@@ -141,7 +141,7 @@ public class MovieSettings extends AbstractModelObject {
   // data sources / NFO settings
   private boolean                         detectMovieMultiDir                      = false;
   private boolean                         buildImageCacheOnImport                  = false;
-  private MovieConnectors                 movieConnector                           = MovieConnectors.XBMC;
+  private MovieConnectors                 movieConnector                           = MovieConnectors.KODI;
   private CertificationStyle              movieCertificationStyle                  = CertificationStyle.LARGE;
 
   // renamer

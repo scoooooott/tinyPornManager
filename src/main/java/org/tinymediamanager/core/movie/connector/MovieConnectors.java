@@ -23,12 +23,13 @@ import java.nio.file.Path;
  * @author Manuel Laggner
  */
 public enum MovieConnectors {
-  XBMC("Kodi / XBMC"),
+  KODI("Kodi"),
+  XBMC("Kodi / XBMC < v16"),
   MP("MediaPortal");
 
   private String title;
 
-  private MovieConnectors(String title) {
+  MovieConnectors(String title) {
     this.title = title;
   }
 
@@ -46,26 +47,40 @@ public enum MovieConnectors {
    * @return true/false
    */
   public static boolean isValidNFO(Path nfo) {
-    MovieToXbmcNfoConnector tmp = null;
+    MovieToKodiNfoConnector kodi = null;
     try {
-      tmp = MovieToXbmcNfoConnector.parseNFO(nfo);
+      kodi = MovieToKodiNfoConnector.parseNFO(nfo);
     }
     catch (Exception e) {
     }
 
-    MovieToMpNfoConnector tmp2 = null;
-    if (tmp == null) {
-      try {
-        tmp2 = MovieToMpNfoConnector.parseNFO(nfo);
-      }
-      catch (Exception e) {
-      }
+    if (kodi != null) {
+      return true;
     }
 
-    if (tmp == null && tmp2 == null) {
-      return false;
+    // at this moment the Kodi connector is able to parse the old XBMC and Plex NFOs
+    // MovieToXbmcNfoConnector xbmc = null;
+    // try {
+    // xbmc = MovieToXbmcNfoConnector.parseNFO(nfo);
+    // }
+    // catch (Exception e) {
+    // }
+    //
+    // if (xbmc != null) {
+    // return true;
+    // }
+
+    MovieToMpNfoConnector mp = null;
+    try {
+      mp = MovieToMpNfoConnector.parseNFO(nfo);
     }
-    return true;
+    catch (Exception e) {
+    }
+
+    if (mp != null) {
+      return true;
+    }
+
+    return false;
   }
-
 }

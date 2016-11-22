@@ -39,7 +39,7 @@ public class MovieToNfoConnectorTest {
   }
 
   @Test
-  public void testKodiNfo() {
+  public void testXbmcNfo() {
     FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));
     try {
       Movie movie = createXbmcMovie();
@@ -51,7 +51,7 @@ public class MovieToNfoConnectorTest {
       assertThat(xbmc.outline).isNotEmpty();
       assertThat(xbmc.mpaa).isNotEmpty();
       assertThat(xbmc.certification).isNotEmpty();
-      assertThat(xbmc.set.name).isNotEmpty();
+      assertThat(xbmc.set).isNotEmpty();
       assertThat(xbmc.fileinfo.streamdetails).isNotNull();
       assertThat(xbmc.fileinfo.streamdetails.video.codec).isNotEmpty();
       assertThat(xbmc.fileinfo.streamdetails.video.aspect).isNotEmpty().isNotEqualTo("0");
@@ -68,12 +68,60 @@ public class MovieToNfoConnectorTest {
       assertThat(xbmc.playcount).isGreaterThan(0);
 
       // need to clean movie set because it is not reimportable in the unit test
-      xbmc.set.name = "";
-      xbmc.set.overview = "";
+      xbmc.set = "";
 
       // write it
       List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
       MovieToXbmcNfoConnector.writeNfoFiles(movie, xbmc, nfoNames);
+
+      Path nfoFile = Paths.get("target/test-classes/xbmc_nfo/movie.nfo");
+      assertThat(Files.exists(nfoFile)).isTrue();
+
+      // unmarshal it
+      Movie newMovie = MovieToXbmcNfoConnector.getData(nfoFile);
+      compareMovies(movie, newMovie);
+    }
+    catch (Exception e) {
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testKodiNfo() {
+    FileUtils.deleteQuietly(new File("target/test-classes/kodi_nfo/"));
+    try {
+      Movie movie = createXbmcMovie();
+
+      MovieToKodiNfoConnector kodi = MovieToKodiNfoConnector.createInstanceFromMovie(movie);
+      assertThat(kodi).isNotNull();
+
+      // check values which does not get reimported
+      assertThat(kodi.outline).isNotEmpty();
+      assertThat(kodi.mpaa).isNotEmpty();
+      assertThat(kodi.certification).isNotEmpty();
+      assertThat(kodi.set.name).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails).isNotNull();
+      assertThat(kodi.fileinfo.streamdetails.video.codec).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.video.aspect).isNotEmpty().isNotEqualTo("0");
+      assertThat(kodi.fileinfo.streamdetails.video.width).isGreaterThan(0);
+      assertThat(kodi.fileinfo.streamdetails.video.height).isGreaterThan(0);
+      assertThat(kodi.fileinfo.streamdetails.video.durationinseconds).isGreaterThan(0);
+      assertThat(kodi.fileinfo.streamdetails.video.stereomode).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.audio).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.audio.get(0).codec).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.audio.get(0).language).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.audio.get(0).channels).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.subtitle).isNotEmpty();
+      assertThat(kodi.fileinfo.streamdetails.subtitle.get(0).language).isNotEmpty();
+      assertThat(kodi.playcount).isGreaterThan(0);
+
+      // need to clean movie set because it is not reimportable in the unit test
+      kodi.set.name = "";
+      kodi.set.overview = "";
+
+      // write it
+      List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
+      MovieToKodiNfoConnector.writeNfoFiles(movie, kodi, nfoNames);
 
       Path nfoFile = Paths.get("target/test-classes/xbmc_nfo/movie.nfo");
       assertThat(Files.exists(nfoFile)).isTrue();
@@ -197,6 +245,7 @@ public class MovieToNfoConnectorTest {
 
     MovieSet movieSet = new MovieSet();
     movieSet.setTitle("Aladdin Collection");
+    movieSet.setPlot("Aladdin plot");
     movie.setMovieSet(movieSet);
 
     // ToDo fileinfo

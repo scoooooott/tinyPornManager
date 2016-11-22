@@ -49,6 +49,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -301,6 +302,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             case XBMC:
               movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               break;
+
+            case KODI:
+              movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
+              break;
+
             case MP:
               movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
               break;
@@ -463,6 +469,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
                 case XBMC:
                   nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+                  break;
+
+                case KODI:
+                  nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
                   break;
 
                 case MP:

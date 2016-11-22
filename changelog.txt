@@ -1,3 +1,13 @@
+Version 2.9.1
+=======================
++ added Trakt.tv scraper
++ added option in the bulk renamer to set/clear the sort title
++/x added escaping of file names/urls in the movie exporter
+x fixed loading of plugins from a network share
+x added a connector for XBMC/Kodi < v16
+x fixed some UI scaling issues
+
+
 Version 2.9
 =======================
 SCRAPER CHANGES: 

@@ -297,6 +297,7 @@ public class UpgradeTasks {
       }
     }
 
+    // upgrade to v2.9
     if (StrgUtils.compareVersion(v, "2.9") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 2.9");
 
@@ -363,6 +364,16 @@ public class UpgradeTasks {
         if (changed) {
           tvShow.saveToDb();
         }
+      }
+    }
+
+    // upgrade to v2.9.1
+    if (StrgUtils.compareVersion(v, "2.9.1") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9.1");
+
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
+        MovieModuleManager.MOVIE_SETTINGS.setMovieConnector(MovieConnectors.KODI);
+        Settings.getInstance().saveSettings();
       }
     }
   }
