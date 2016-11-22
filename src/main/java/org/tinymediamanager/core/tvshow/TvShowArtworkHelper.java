@@ -203,7 +203,7 @@ public class TvShowArtworkHelper {
       catch (IOException e) {
         LOGGER.debug("fetch image", e);
         // fallback
-        if (tvShowSeason != null) {
+        if (tvShowSeason != null && !oldFilename.isEmpty()) {
           tvShowSeason.setPoster(new File(oldFilename));
         }
       }

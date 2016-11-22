@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.tinymediamanager.core.movie.connector;
 
 import java.io.FileInputStream;
@@ -47,9 +48,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -71,8 +75,8 @@ import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
-import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
-import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
+import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector.Actor;
+import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector.Producer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -84,7 +88,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
- * The Class MovieToXbmcNfoConnector. This class is the interface between tinyMediaManager and the Kodi/XBMC style NFO files
+ * The Class MovieToKodiNfoConnector. This class is the interface between tinyMediaManager and the Kodi style NFO files
  *
  * @author Manuel Laggner
  */
@@ -94,14 +98,16 @@ import org.tinymediamanager.scraper.util.ParserUtils;
     "runtime", "thumb", "fanart", "mpaa", "certification", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
     "keywords", "poster", "url", "languages", "source", "unsupportedElements" })
-public class MovieToXbmcNfoConnector {
-  private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
+public class MovieToKodiNfoConnector {
+  private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToKodiNfoConnector.class);
   private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");
   private static JAXBContext   context               = initContext();
 
   public String                title                 = "";
   public String                originaltitle         = "";
-  public String                set                   = "";
+
+  @XmlJavaTypeAdapter(MovieSetAdapter.class)
+  public Set                   set;
   public String                sorttitle             = "";
   public float                 rating                = 0;
   public String                year                  = "";
@@ -142,7 +148,9 @@ public class MovieToXbmcNfoConnector {
   @XmlAnyElement(lax = true)
   private List<Object>         unsupportedElements;
 
-  /** not supported tags, but used to retrain in NFO. */
+  /**
+   * not supported tags, but used to retrain in NFO.
+   */
   public String                epbookmark;
   public String                lastplayed;
   public String                status;
@@ -158,11 +166,11 @@ public class MovieToXbmcNfoConnector {
   // private Object rottentomatoes;
 
   /*
-   * init the context for faster marshalling/unmarshalling
+   * inits the context for faster marshalling/unmarshalling
    */
   private static JAXBContext initContext() {
     try {
-      return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+      return JAXBContext.newInstance(MovieToKodiNfoConnector.class, Actor.class, Set.class);
     }
     catch (JAXBException e) {
       LOGGER.error("Error instantiating JaxB", e);
@@ -170,7 +178,7 @@ public class MovieToXbmcNfoConnector {
     return null;
   }
 
-  public MovieToXbmcNfoConnector() {
+  public MovieToKodiNfoConnector() {
     actors = new ArrayList<>();
     genres = new ArrayList<>();
     tags = new ArrayList<>();
@@ -180,6 +188,7 @@ public class MovieToXbmcNfoConnector {
     ids = new HashMap<>();
     unsupportedElements = new ArrayList<>();
     fileinfo = new Fileinfo();
+    set = new Set();
   }
 
   /**
@@ -195,7 +204,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     // create the instance from movie data
-    MovieToXbmcNfoConnector xbmc = createInstanceFromMovie(movie);
+    MovieToKodiNfoConnector kodi = createInstanceFromMovie(movie);
 
     // and marshall it
     List<MovieNfoNaming> nfonames = new ArrayList<>();
@@ -206,7 +215,7 @@ public class MovieToXbmcNfoConnector {
     else {
       nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
     }
-    writeNfoFiles(movie, xbmc, nfonames);
+    writeNfoFiles(movie, kodi, nfonames);
   }
 
   /**
@@ -216,8 +225,8 @@ public class MovieToXbmcNfoConnector {
    *          the movie to create the instance for
    * @return the newly created instance
    */
-  static MovieToXbmcNfoConnector createInstanceFromMovie(Movie movie) {
-    MovieToXbmcNfoConnector xbmc = null;
+  static MovieToKodiNfoConnector createInstanceFromMovie(Movie movie) {
+    MovieToKodiNfoConnector kodi = null;
     List<Object> unsupportedTags = new ArrayList<>();
 
     // load existing NFO if possible
@@ -225,24 +234,24 @@ public class MovieToXbmcNfoConnector {
       Path file = mf.getFileAsPath();
       if (Files.exists(file)) {
         try {
-          xbmc = parseNFO(file);
+          kodi = parseNFO(file);
         }
         catch (Exception e) {
           LOGGER.error("failed to parse " + mf.getFilename(), e);
         }
       }
-      if (xbmc != null) {
+      if (kodi != null) {
         break;
       }
     }
 
     // create new
-    if (xbmc == null) {
-      xbmc = new MovieToXbmcNfoConnector();
+    if (kodi == null) {
+      kodi = new MovieToKodiNfoConnector();
     }
     else {
       // store all unsupported tags
-      for (Object obj : xbmc.actors) { // ugly hack for invalid xml structure
+      for (Object obj : kodi.actors) { // ugly hack for invalid xml structure
         if (!(obj instanceof Producer) && !(obj instanceof Actor)) {
           unsupportedTags.add(obj);
         }
@@ -250,135 +259,153 @@ public class MovieToXbmcNfoConnector {
     }
 
     // set data
-    xbmc.title = movie.getTitle();
-    xbmc.originaltitle = movie.getOriginalTitle();
-    xbmc.rating = movie.getRating();
-    xbmc.votes = movie.getVotes();
+    kodi.title = movie.getTitle();
+    kodi.originaltitle = movie.getOriginalTitle();
+    kodi.rating = movie.getRating();
+    kodi.votes = movie.getVotes();
     if (movie.getTop250() == 0) {
-      xbmc.top250 = "";
+      kodi.top250 = "";
     }
     else {
-      xbmc.top250 = String.valueOf(movie.getTop250());
+      kodi.top250 = String.valueOf(movie.getTop250());
     }
-    xbmc.year = movie.getYear();
-    xbmc.premiered = movie.getReleaseDateFormatted();
-    xbmc.plot = movie.getPlot();
+    kodi.year = movie.getYear();
+    kodi.premiered = movie.getReleaseDateFormatted();
+    kodi.plot = movie.getPlot();
 
     // outline is only the first 200 characters of the plot
-    if (StringUtils.isNotBlank(xbmc.plot) && xbmc.plot.length() > 200) {
-      int spaceIndex = xbmc.plot.indexOf(" ", 200);
+    if (StringUtils.isNotBlank(kodi.plot) && kodi.plot.length() > 200) {
+      int spaceIndex = kodi.plot.indexOf(" ", 200);
       if (spaceIndex > 0) {
-        xbmc.outline = xbmc.plot.substring(0, spaceIndex) + "...";
+        kodi.outline = kodi.plot.substring(0, spaceIndex) + "...";
       }
       else {
-        xbmc.outline = xbmc.plot;
+        kodi.outline = kodi.plot;
       }
     }
-    else if (StringUtils.isNotBlank(xbmc.plot)) {
-      xbmc.outline = xbmc.plot;
+    else if (StringUtils.isNotBlank(kodi.plot)) {
+      kodi.outline = kodi.plot;
     }
 
-    xbmc.tagline = movie.getTagline();
-    xbmc.runtime = String.valueOf(movie.getRuntime());
-    xbmc.thumb = movie.getArtworkUrl(MediaFileType.POSTER);
-    xbmc.fanart = movie.getArtworkUrl(MediaFileType.FANART);
+    kodi.tagline = movie.getTagline();
+    kodi.runtime = String.valueOf(movie.getRuntime());
 
-    xbmc.id = movie.getImdbId();
-    xbmc.tmdbId = movie.getTmdbId();
-
-    xbmc.ids.putAll(movie.getIds());
-
-    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
-      xbmc.studio = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
-    }
-
-    xbmc.country = movie.getCountry();
-    xbmc.watched = movie.isWatched();
-    if (xbmc.watched) {
-      xbmc.playcount = 1;
+    String artworkUrl = movie.getArtworkUrl(MediaFileType.POSTER);
+    if (artworkUrl.matches("https?://.*")) {
+      kodi.thumb = artworkUrl;
     }
     else {
-      xbmc.playcount = 0;
+      // clean old invalid entries
+      kodi.thumb = "";
     }
 
-    xbmc.languages = movie.getSpokenLanguages();
+    artworkUrl = movie.getArtworkUrl(MediaFileType.FANART);
+    if (artworkUrl.matches("https?://.*")) {
+      kodi.fanart = artworkUrl;
+    }
+    else {
+      // clean old invalid entries
+      kodi.fanart = "";
+    }
+
+    kodi.id = movie.getImdbId();
+    kodi.tmdbId = movie.getTmdbId();
+
+    kodi.ids.putAll(movie.getIds());
+
+    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
+      kodi.studio = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    }
+
+    kodi.country = movie.getCountry();
+    kodi.watched = movie.isWatched();
+    if (kodi.watched) {
+      kodi.playcount = 1;
+    }
+    else {
+      kodi.playcount = 0;
+    }
+
+    kodi.languages = movie.getSpokenLanguages();
 
     // certifications
     if (movie.getCertification() != null) {
-      xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
+      kodi.certification = CertificationStyle.formatCertification(movie.getCertification(),
           MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
+        kodi.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
+        kodi.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
       }
     }
 
     // support of frodo director tags
-    xbmc.director.clear();
+    kodi.director.clear();
     if (StringUtils.isNotEmpty(movie.getDirector())) {
       String directors[] = movie.getDirector().split(", ");
       for (String director : directors) {
-        xbmc.director.add(director);
+        kodi.director.add(director);
       }
     }
 
     // support of frodo credits tags
-    xbmc.credits.clear();
+    kodi.credits.clear();
     if (StringUtils.isNotEmpty(movie.getWriter())) {
       String writers[] = movie.getWriter().split(", ");
       for (String writer : writers) {
-        xbmc.credits.add(writer);
+        kodi.credits.add(writer);
       }
     }
 
-    xbmc.actors.clear();
+    kodi.actors.clear();
     for (MovieActor cast : new ArrayList<>(movie.getActors())) {
-      xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
+      kodi.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
-    xbmc.producers.clear();
+    kodi.producers.clear();
     for (MovieProducer producer : new ArrayList<>(movie.getProducers())) {
-      xbmc.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
+      kodi.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
-    xbmc.genres.clear();
+    kodi.genres.clear();
     for (MediaGenres genre : new ArrayList<>(movie.getGenres())) {
-      xbmc.genres.add(genre.toString());
+      kodi.genres.add(genre.toString());
     }
 
-    xbmc.trailer = "";
+    kodi.trailer = "";
     for (MovieTrailer trailer : new ArrayList<>(movie.getTrailer())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
-        xbmc.trailer = prepareTrailerForXbmc(trailer);
+        kodi.trailer = prepareTrailerForKodi(trailer);
         break;
       }
     }
     // keep trailer already in NFO, remove tag only when empty
-    if (xbmc.trailer.isEmpty()) {
-      xbmc.trailer = null;
+    if (kodi.trailer.isEmpty()) {
+      kodi.trailer = null;
     }
 
-    xbmc.tags.clear();
+    kodi.tags.clear();
     for (String tag : new ArrayList<>(movie.getTags())) {
-      xbmc.tags.add(tag);
+      kodi.tags.add(tag);
     }
 
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      xbmc.set = movieSet.getTitle();
+      kodi.set.name = movieSet.getTitle();
+      kodi.set.overview = movieSet.getPlot();
     }
     else {
-      xbmc.set = "";
+      kodi.set.name = "";
+      kodi.set.overview = "";
     }
 
-    xbmc.sorttitle = movie.getSortTitle();
+    kodi.sorttitle = movie.getSortTitle();
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {
-      xbmc.source = movie.getMediaSource().name();
+      kodi.source = movie.getMediaSource().name();
     }
 
     // fileinfo
@@ -387,20 +414,20 @@ public class MovieToXbmcNfoConnector {
         break;
       }
 
-      xbmc.fileinfo.streamdetails.video.codec = mediaFile.getVideoCodec();
-      xbmc.fileinfo.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
-      xbmc.fileinfo.streamdetails.video.width = mediaFile.getVideoWidth();
-      xbmc.fileinfo.streamdetails.video.height = mediaFile.getVideoHeight();
-      xbmc.fileinfo.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
+      kodi.fileinfo.streamdetails.video.codec = mediaFile.getVideoCodec();
+      kodi.fileinfo.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
+      kodi.fileinfo.streamdetails.video.width = mediaFile.getVideoWidth();
+      kodi.fileinfo.streamdetails.video.height = mediaFile.getVideoHeight();
+      kodi.fileinfo.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
       // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
       if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
-        xbmc.fileinfo.streamdetails.video.stereomode = "left_right";
+        kodi.fileinfo.streamdetails.video.stereomode = "left_right";
       }
       else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
-        xbmc.fileinfo.streamdetails.video.stereomode = "top_bottom"; // maybe?
+        kodi.fileinfo.streamdetails.video.stereomode = "top_bottom"; // maybe?
       }
 
-      xbmc.fileinfo.streamdetails.audio.clear();
+      kodi.fileinfo.streamdetails.audio.clear();
       for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
         Audio audio = new Audio();
 
@@ -412,14 +439,14 @@ public class MovieToXbmcNfoConnector {
         }
         audio.language = as.getLanguage();
         audio.channels = String.valueOf(as.getChannelsAsInt());
-        xbmc.fileinfo.streamdetails.audio.add(audio);
+        kodi.fileinfo.streamdetails.audio.add(audio);
       }
 
-      xbmc.fileinfo.streamdetails.subtitle.clear();
+      kodi.fileinfo.streamdetails.subtitle.clear();
       for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
         Subtitle sub = new Subtitle();
         sub.language = ss.getLanguage();
-        xbmc.fileinfo.streamdetails.subtitle.add(sub);
+        kodi.fileinfo.streamdetails.subtitle.add(sub);
       }
       break;
     }
@@ -428,17 +455,17 @@ public class MovieToXbmcNfoConnector {
       for (MediaFileSubtitle ss : mediaFile.getSubtitles()) {
         Subtitle sub = new Subtitle();
         sub.language = ss.getLanguage();
-        xbmc.fileinfo.streamdetails.subtitle.add(sub);
+        kodi.fileinfo.streamdetails.subtitle.add(sub);
       }
     }
 
     // add all unsupported tags again
-    xbmc.unsupportedElements.addAll(unsupportedTags);
+    kodi.unsupportedElements.addAll(unsupportedTags);
 
-    return xbmc;
+    return kodi;
   }
 
-  static void writeNfoFiles(Movie movie, MovieToXbmcNfoConnector xbmc, List<MovieNfoNaming> nfoNames) {
+  static void writeNfoFiles(Movie movie, MovieToKodiNfoConnector kodi, List<MovieNfoNaming> nfoNames) {
     String nfoFilename = "";
     List<MediaFile> newNfos = new ArrayList<>(1);
 
@@ -460,7 +487,7 @@ public class MovieToXbmcNfoConnector {
 
         // w = new FileWriter(nfoFilename);
         Writer w = new StringWriter();
-        m.marshal(xbmc, w);
+        m.marshal(kodi, w);
         StringBuilder sb = new StringBuilder(w.toString());
         w.close();
 
@@ -504,16 +531,16 @@ public class MovieToXbmcNfoConnector {
     // try to parse XML
     Movie movie = null;
     try {
-      MovieToXbmcNfoConnector xbmc = parseNFO(nfoFile);
+      MovieToKodiNfoConnector kodi = parseNFO(nfoFile);
       movie = new Movie();
-      movie.setTitle(xbmc.title);
-      movie.setOriginalTitle(xbmc.originaltitle);
-      movie.setRating(xbmc.rating);
-      movie.setVotes(xbmc.votes);
-      movie.setYear(xbmc.year);
-      if (StringUtils.isNotBlank(xbmc.top250)) {
+      movie.setTitle(kodi.title);
+      movie.setOriginalTitle(kodi.originaltitle);
+      movie.setRating(kodi.rating);
+      movie.setVotes(kodi.votes);
+      movie.setYear(kodi.year);
+      if (StringUtils.isNotBlank(kodi.top250)) {
         try {
-          movie.setTop250(Integer.parseInt(xbmc.top250));
+          movie.setTop250(Integer.parseInt(kodi.top250));
         }
         catch (NumberFormatException e) {
           movie.setTop250(0);
@@ -523,33 +550,33 @@ public class MovieToXbmcNfoConnector {
         movie.setTop250(0);
       }
       try {
-        movie.setReleaseDate(xbmc.premiered);
+        movie.setReleaseDate(kodi.premiered);
       }
       catch (ParseException e) {
       }
-      movie.setPlot(xbmc.plot);
-      movie.setTagline(xbmc.tagline);
+      movie.setPlot(kodi.plot);
+      movie.setTagline(kodi.tagline);
       try {
-        String rt = xbmc.runtime.replaceAll("[^0-9]", "");
+        String rt = kodi.runtime.replaceAll("[^0-9]", "");
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPathNIO());
+        LOGGER.warn("could not parse runtime: " + kodi.runtime + "; Movie: " + movie.getPathNIO());
       }
 
-      if (StringUtils.isNotBlank(xbmc.thumb)) {
-        if (xbmc.thumb.matches("https?://.*")) {
-          movie.setArtworkUrl(xbmc.thumb, MediaFileType.POSTER);
+      if (StringUtils.isNotBlank(kodi.thumb)) {
+        if (kodi.thumb.matches("https?://.*")) {
+          movie.setArtworkUrl(kodi.thumb, MediaFileType.POSTER);
         }
       }
 
-      if (StringUtils.isNotBlank(xbmc.fanart)) {
-        if (xbmc.fanart.matches("https?://.*")) {
-          movie.setArtworkUrl(xbmc.fanart, MediaFileType.FANART);
+      if (StringUtils.isNotBlank(kodi.fanart)) {
+        if (kodi.fanart.matches("https?://.*")) {
+          movie.setArtworkUrl(kodi.fanart, MediaFileType.FANART);
         }
       }
 
-      for (Entry<String, Object> entry : xbmc.ids.entrySet()) {
+      for (Entry<String, Object> entry : kodi.ids.entrySet()) {
         try {
           // reformat old ID styles
           if ("imdbId".equals(entry.getKey())) {
@@ -568,15 +595,15 @@ public class MovieToXbmcNfoConnector {
       }
 
       if (StringUtils.isBlank(movie.getImdbId())) {
-        movie.setImdbId(xbmc.id);
+        movie.setImdbId(kodi.id);
       }
       if (movie.getTmdbId() == 0) {
-        movie.setTmdbId(xbmc.tmdbId);
+        movie.setTmdbId(kodi.tmdbId);
       }
 
       // convert director to internal format
       String director = "";
-      for (String dir : xbmc.director) {
+      for (String dir : kodi.director) {
         if (!StringUtils.isEmpty(director)) {
           director += ", ";
         }
@@ -586,7 +613,7 @@ public class MovieToXbmcNfoConnector {
 
       // convert writer to internal format
       String writer = "";
-      for (String wri : xbmc.credits) {
+      for (String wri : kodi.credits) {
         if (StringUtils.isNotEmpty(writer)) {
           writer += ", ";
         }
@@ -594,25 +621,31 @@ public class MovieToXbmcNfoConnector {
       }
       movie.setWriter(writer);
 
-      movie.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
+      String studio = StringUtils.join(kodi.studio, " / ");
+      if (studio == null) {
+        movie.setProductionCompany("");
+      }
+      else {
+        movie.setProductionCompany(studio);
+      }
       movie.setProductionCompany(movie.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
 
-      movie.setCountry(xbmc.country);
-      if (!StringUtils.isEmpty(xbmc.certification)) {
-        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.certification));
+      movie.setCountry(kodi.country);
+      if (!StringUtils.isEmpty(kodi.certification)) {
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(kodi.certification));
       }
-      if (!StringUtils.isEmpty(xbmc.mpaa) && movie.getCertification() == Certification.NOT_RATED) {
-        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
+      if (!StringUtils.isEmpty(kodi.mpaa) && movie.getCertification() == Certification.NOT_RATED) {
+        movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(kodi.mpaa));
       }
-      movie.setWatched(xbmc.watched);
-      if (xbmc.playcount > 0) {
+      movie.setWatched(kodi.watched);
+      if (kodi.playcount > 0) {
         movie.setWatched(true);
       }
-      movie.setSpokenLanguages(xbmc.languages);
+      movie.setSpokenLanguages(kodi.languages);
 
-      if (StringUtils.isNotBlank(xbmc.source)) {
+      if (StringUtils.isNotBlank(kodi.source)) {
         try {
-          MediaSource source = MediaSource.valueOf(xbmc.source);
+          MediaSource source = MediaSource.valueOf(kodi.source);
           if (source != null) {
             movie.setMediaSource(source);
           }
@@ -622,32 +655,35 @@ public class MovieToXbmcNfoConnector {
       }
 
       // movieset
-      if (StringUtils.isNotEmpty(xbmc.set)) {
+      if (StringUtils.isNotEmpty(kodi.set.name)) {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(xbmc.set, 0);
+        MovieSet movieSet = movieList.getMovieSet(kodi.set.name, 0);
 
         // add movie to movieset
         if (movieSet != null) {
+          if (StringUtils.isBlank(movieSet.getPlot())) {
+            movieSet.setPlot(kodi.set.overview);
+          }
           movie.setMovieSet(movieSet);
         }
       }
 
-      movie.setSortTitle(xbmc.sorttitle);
+      movie.setSortTitle(kodi.sorttitle);
 
-      for (Actor actor : xbmc.getActors()) {
+      for (Actor actor : kodi.getActors()) {
         MovieActor cast = new MovieActor(actor.name, actor.role);
         cast.setThumbUrl(actor.thumb);
         movie.addActor(cast);
       }
 
-      for (Producer producer : xbmc.getProducers()) {
+      for (Producer producer : kodi.getProducers()) {
         MovieProducer cast = new MovieProducer(producer.name, producer.role);
         cast.setThumbUrl(producer.thumb);
         movie.addProducer(cast);
       }
 
-      for (String genre : xbmc.genres) {
+      for (String genre : kodi.genres) {
         String[] genres = genre.split("/");
         for (String g : genres) {
           MediaGenres genreFound = MediaGenres.getGenre(g.trim());
@@ -657,8 +693,8 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      if (StringUtils.isNotEmpty(xbmc.trailer)) {
-        String urlFromNfo = parseTrailerUrl(xbmc.trailer);
+      if (StringUtils.isNotEmpty(kodi.trailer)) {
+        String urlFromNfo = parseTrailerUrl(kodi.trailer);
         if (!urlFromNfo.startsWith("file")) {
           // only add new MT when not a local file
           MovieTrailer trailer = new MovieTrailer();
@@ -671,7 +707,7 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      for (String tag : xbmc.tags) {
+      for (String tag : kodi.tags) {
         movie.addToTags(tag);
       }
 
@@ -693,18 +729,18 @@ public class MovieToXbmcNfoConnector {
     return movie;
   }
 
-  protected static MovieToXbmcNfoConnector parseNFO(Path nfoFile) throws Exception {
+  protected static MovieToKodiNfoConnector parseNFO(Path nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
       throw new Exception("could not create unmarshaller");
     }
 
-    MovieToXbmcNfoConnector xbmc = null;
+    MovieToKodiNfoConnector kodi = null;
     Reader in = null;
     try {
       in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
-      xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+      kodi = (MovieToKodiNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException | IllegalArgumentException e) {
     }
@@ -714,7 +750,7 @@ public class MovieToXbmcNfoConnector {
       }
     }
 
-    if (xbmc == null) {
+    if (kodi == null) {
       // now trying to parse it via string
       String completeNFO = Utils.readFileToString(nfoFile).trim().replaceFirst("^([\\W]+)<", "<");
       Matcher matcher = PATTERN_NFO_MOVIE_TAG.matcher(completeNFO);
@@ -724,7 +760,7 @@ public class MovieToXbmcNfoConnector {
       }
       try {
         in = new StringReader(ParserUtils.cleanNfo(completeNFO));
-        xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+        kodi = (MovieToKodiNfoConnector) um.unmarshal(in);
       }
       finally {
         if (in != null) {
@@ -732,7 +768,7 @@ public class MovieToXbmcNfoConnector {
         }
       }
     }
-    return xbmc;
+    return kodi;
   }
 
   private void addActor(String name, String role, String thumb) {
@@ -772,7 +808,7 @@ public class MovieToXbmcNfoConnector {
     return pureProducers;
   }
 
-  private static String prepareTrailerForXbmc(MovieTrailer trailer) {
+  private static String prepareTrailerForKodi(MovieTrailer trailer) {
     // youtube trailer are stored in a special notation: plugin://plugin.video.youtube/?action=play_video&videoid=<ID>
     // parse out the ID from the url and store it in the right notation
     Pattern pattern = Pattern.compile("https{0,1}://.*youtube..*/watch\\?v=(.*)$");
@@ -857,7 +893,7 @@ public class MovieToXbmcNfoConnector {
   }
 
   /*
-   * inner class holding file information
+   * inner class holding file informations
    */
   static class Fileinfo {
     public Streamdetails streamdetails;
@@ -908,5 +944,55 @@ public class MovieToXbmcNfoConnector {
    */
   static class Subtitle {
     public String language;
+  }
+
+  static class Set {
+    public String name     = "";
+    public String overview = "";
+
+    List<String>  mixed;
+
+    @XmlMixed
+    public List<String> getMixed() {
+      return mixed;
+    }
+
+    public void setMixed(List<String> mixed) {
+      this.mixed = mixed;
+    }
+  }
+
+  static class MovieSetAdapter extends XmlAdapter<Set, Set> {
+
+    @Override
+    public Set marshal(Set set) throws Exception {
+      // write code for marshall
+      if (StringUtils.isBlank(set.name)) {
+        return null;
+      }
+
+      // return "<set><name>" + set.name + "</name><overview>" + set.overview + "</overview></set>";
+      return set;
+    }
+
+    @Override
+    public Set unmarshal(Set v) throws Exception {
+      Set movieSet = new Set();
+
+      if (StringUtils.isBlank(v.name) && !v.mixed.isEmpty()) {
+        try {
+          movieSet.name = v.mixed.get(0);
+        }
+        catch (Exception ignored) {
+        }
+      }
+
+      if (StringUtils.isBlank(movieSet.name)) {
+        movieSet.name = v.name;
+        movieSet.overview = v.overview;
+      }
+
+      return movieSet;
+    }
   }
 }

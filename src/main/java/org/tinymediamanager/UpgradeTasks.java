@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -296,37 +297,57 @@ public class UpgradeTasks {
       }
     }
 
-    if (StrgUtils.compareVersion(v, "2.8.4") < 0) {
-      LOGGER.info("Performing database upgrade tasks to version 2.8.4");
+    // upgrade to v2.9
+    if (StrgUtils.compareVersion(v, "2.9") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9");
 
       // Update actors to current structure; add entitiy root and cleanout actor path
       for (Movie movie : movieList.getMovies()) {
+        boolean changed = false;
         for (MovieActor a : movie.getActors()) {
           if (a.getEntityRoot().isEmpty()) {
             a.setEntityRoot(movie.getPathNIO().toString());
             a.setThumbPath("");
+            changed = true;
           }
         }
         for (MovieProducer a : movie.getProducers()) {
           if (a.getEntityRoot().isEmpty()) {
             a.setEntityRoot(movie.getPathNIO().toString());
             a.setThumbPath("");
+            changed = true;
           }
         }
 
         // also clean out the sorttitle if a movie set is assigned (not needed any more)
         if (movie.getMovieSet() != null) {
           movie.setSortTitle("");
+          changed = true;
         }
-        movie.saveToDb();
+
+        // re-evaluate MediaSource; changed *.strm files to MediaSource.STREAM
+        if (movie.getMediaSource() == MediaSource.UNKNOWN) {
+          MediaFile source = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
+          MediaSource ms = MediaSource.parseMediaSource(source.getPath());
+          if (movie.getMediaSource() != ms) {
+            movie.setMediaSource(ms);
+            changed = true;
+          }
+        }
+
+        if (changed) {
+          movie.saveToDb();
+        }
       }
       for (TvShow tvShow : tvShowList.getTvShows()) {
+        boolean changed = false;
         for (TvShowActor a : tvShow.getActors()) {
           if (a.getEntityRoot().isEmpty()) {
             a.setEntityRoot(tvShow.getPathNIO().toString());
             a.setThumbUrl(a.getThumb());
             a.setThumbPath("");
             a.setThumb("");
+            changed = true;
           }
         }
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
@@ -336,10 +357,23 @@ public class UpgradeTasks {
               a.setThumbUrl(a.getThumb());
               a.setThumbPath("");
               a.setThumb("");
+              changed = true;
             }
           }
         }
-        tvShow.saveToDb();
+        if (changed) {
+          tvShow.saveToDb();
+        }
+      }
+    }
+
+    // upgrade to v2.9.1
+    if (StrgUtils.compareVersion(v, "2.9.1") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9.1");
+
+      if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
+        MovieModuleManager.MOVIE_SETTINGS.setMovieConnector(MovieConnectors.KODI);
+        Settings.getInstance().saveSettings();
       }
     }
   }

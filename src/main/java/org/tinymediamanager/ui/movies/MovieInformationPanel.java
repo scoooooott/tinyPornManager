@@ -61,6 +61,7 @@ import org.tinymediamanager.ui.panels.ImagePanel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -194,9 +195,9 @@ public class MovieInformationPanel extends JPanel {
     panelTop = new JPanel();
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
-    panelTop.setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"), RowSpec.decode("top:pref:grow"), }));
+    panelTop
+        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+            FormSpecs.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"), RowSpec.decode("top:100dlu:grow"), }));
 
     JPanel panelMovieHeader = new JPanel();
     panelTop.add(panelMovieHeader, "2, 1, 3, 1, fill, top");
@@ -281,7 +282,7 @@ public class MovieInformationPanel extends JPanel {
 
     JPanel panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:min:grow"), }));
+        new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
     panelBottom.add(tabbedPaneMovieDetails, "1, 2, fill, fill");

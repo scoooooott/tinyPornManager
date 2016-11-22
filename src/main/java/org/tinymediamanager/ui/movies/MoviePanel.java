@@ -196,7 +196,7 @@ public class MoviePanel extends JPanel {
     menuBar.add(menu);
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("850px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("500px:grow"), }));
 
     splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);

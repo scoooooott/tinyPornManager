@@ -91,6 +91,7 @@ import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -315,16 +316,16 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(bottomPane, "2, 11");
       {
         bottomPane.setLayout(new FormLayout(
-            new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+            new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+                ColumnSpec.decode("50dlu:grow"), FormSpecs.DEFAULT_COLSPEC, },
+            new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2");
         }
         {
           lblProgressAction = new JLabel("");
-          bottomPane.add(lblProgressAction, "4, 2");
+          bottomPane.add(lblProgressAction, "4, 2, left, default");
         }
         {
           JPanel buttonPane = new JPanel();

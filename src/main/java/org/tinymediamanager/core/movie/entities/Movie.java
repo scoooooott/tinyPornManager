@@ -91,6 +91,7 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
@@ -1354,8 +1355,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
     if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       MovieToMpNfoConnector.setData(this);
     }
-    else {
+    else if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
       MovieToXbmcNfoConnector.setData(this);
+    }
+    else {
+      MovieToKodiNfoConnector.setData(this);
     }
     firePropertyChange(HAS_NFO_FILE, false, true);
   }

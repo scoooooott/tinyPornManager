@@ -140,10 +140,10 @@ public class MovieSettings extends AbstractModelObject {
   private final List<String>            movieTableHiddenColumns                  = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
-  private boolean                       detectMovieMultiDir                      = false;
-  private boolean                       buildImageCacheOnImport                  = false;
-  private MovieConnectors               movieConnector                           = MovieConnectors.XBMC;
-  private CertificationStyle            movieCertificationStyle                  = CertificationStyle.LARGE;
+  private boolean                         detectMovieMultiDir                      = false;
+  private boolean                         buildImageCacheOnImport                  = false;
+  private MovieConnectors                 movieConnector                           = MovieConnectors.KODI;
+  private CertificationStyle              movieCertificationStyle                  = CertificationStyle.LARGE;
 
   // renamer
   private boolean                       movieRenameAfterScrape                   = false;
