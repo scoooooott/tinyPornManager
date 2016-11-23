@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,9 +37,11 @@ public class LanguageUtils {
   public final static LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP;
 
   private final static Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
+  private static final List<String>                 CUSTOM;
 
   static {
     ISO_639_2B_EXCEPTIONS = createIso6392BExceptions();
+    CUSTOM = generateCustomArray();
     KEY_TO_LOCALE_MAP = generateLanguageArray();
   }
 
@@ -66,6 +69,19 @@ public class LanguageUtils {
     exceptions.put(Locale.forLanguageTag("cy"), "wel");
 
     return exceptions;
+  }
+
+  /**
+   * Locale support heavily depends on the JVM.<br>
+   * JVM DOES know it, but they're not delivered with Locale.getAvailableLocales()<br>
+   * So we add some custom ones here (see http://forum.kodi.tv/showthread.php?tid=297067)
+   */
+  private static List<String> generateCustomArray() {
+    ArrayList<String> al = new ArrayList<String>();
+    al.add("baq");
+    al.add("tel");
+    al.add("tam");
+    return al;
   }
 
   private static LinkedHashMap<String, Locale> generateLanguageArray() {
@@ -115,6 +131,25 @@ public class LanguageUtils {
       catch (MissingResourceException e) {
         // tjo... maybe not available, see javadoc
       }
+    }
+
+    // add yet unknown ones hardcoded
+    // (after we find the key, the JVM DOES know it :)
+    for (String cus : CUSTOM) {
+      Locale locale = new Locale(cus);
+      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
+      langArray.put(base.getDisplayLanguage(intl), base);
+      langArray.put(base.getDisplayLanguage(), base);
+      try {
+        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
+      }
+      catch (Exception e) {
+        // ignore
+      }
+      // ISO-639-2/T
+      langArray.put(base.getISO3Language(), base);
+      // ISO-639-2/B
+      langArray.put(LanguageUtils.getISO3BLanguage(base), base);
     }
 
     // sort from long to short
