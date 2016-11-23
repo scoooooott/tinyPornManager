@@ -15,9 +15,7 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
+import static org.tinymediamanager.scraper.MediaMetadata.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,10 +211,10 @@ class TraktTVShowMetadataProvider {
 
     // show meta data
     md.setId(TraktMetadataProvider.providerInfo.getId(), show.ids.trakt);
-    if (show.ids.tvdb > 0) {
+    if (show.ids.tvdb != null && show.ids.tvdb > 0) {
       md.setId(TVDB, show.ids.tvdb);
     }
-    if (show.ids.tmdb > 0) {
+    if (show.ids.tmdb != null && show.ids.tmdb > 0) {
       md.setId(TMDB, show.ids.tmdb);
     }
     if (StringUtils.isNotBlank(show.ids.imdb)) {
@@ -359,10 +357,10 @@ class TraktTVShowMetadataProvider {
     md.setEpisodeNumber(episode.number);
     md.setSeasonNumber(episode.season);
     md.setId(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
-    if (episode.ids.tvdb > 0) {
+    if (episode.ids.tvdb != null && episode.ids.tvdb > 0) {
       md.setId(TVDB, episode.ids.tvdb);
     }
-    if (episode.ids.tmdb > 0) {
+    if (episode.ids.tmdb != null && episode.ids.tmdb > 0) {
       md.setId(TMDB, episode.ids.tmdb);
     }
     if (StringUtils.isNotBlank(episode.ids.imdb)) {

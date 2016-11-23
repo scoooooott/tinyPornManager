@@ -15,8 +15,7 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
-import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,7 +169,7 @@ class TraktMovieMetadataProvider {
 
     // ids
     md.setId(TraktMetadataProvider.providerInfo.getId(), movie.ids.trakt);
-    if (movie.ids.tmdb > 0) {
+    if (movie.ids.tmdb != null && movie.ids.tmdb > 0) {
       md.setId(TMDB, movie.ids.tmdb);
     }
     if (StringUtils.isNotBlank(movie.ids.imdb)) {
