@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,15 +57,11 @@ import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Manuel Laggner
@@ -73,6 +69,7 @@ import ca.odell.glazedlists.ObservableElementList;
  */
 public class MovieMediaInformationPanel extends JPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
 
@@ -104,44 +101,33 @@ public class MovieMediaInformationPanel extends JPanel {
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
     mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
-
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"),
-            FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("max(50dlu;default):grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[][][][][][][grow]", "[][][][][][][][][80lp,grow]"));
 
     JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
-    add(lblRuntimeT, "2, 2");
+    add(lblRuntimeT, "cell 0 0");
 
     lblRuntime = new JLabel("");
-    add(lblRuntime, "6, 2");
+    add(lblRuntime, "cell 2 0");
 
     JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblWatchedT, Font.BOLD);
-    add(lblWatchedT, "10, 2");
+    add(lblWatchedT, "cell 4 0");
 
     chckbxWatched = new JCheckBox("");
     chckbxWatched.setEnabled(false);
-    add(chckbxWatched, "14, 2");
+    add(chckbxWatched, "cell 6 0");
 
     JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblVideoT, Font.BOLD);
-    add(lblVideoT, "2, 4");
+    add(lblVideoT, "cell 0 1");
 
     JLabel lblMovie = new JLabel(BUNDLE.getString("metatag.movie")); //$NON-NLS-1$
-    add(lblMovie, "6, 4");
+    add(lblMovie, "cell 2 1");
 
     panelVideoStreamDetails = new JPanel();
     panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
-    add(panelVideoStreamDetails, "10, 4, 7, 1, fill, top");
+    add(panelVideoStreamDetails, "cell 4 1 3 1,growx");
 
     lblVideoCodec = new JLabel("");
     panelVideoStreamDetails.add(lblVideoCodec);
@@ -157,56 +143,56 @@ public class MovieMediaInformationPanel extends JPanel {
 
     JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblSourceT, Font.BOLD);
-    add(lblSourceT, "6, 6");
+    add(lblSourceT, "cell 2 2");
 
     lblSource = new JLabel("");
-    add(lblSource, "10, 6");
+    add(lblSource, "cell 4 2");
 
     JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblAudioT, Font.BOLD);
-    add(lblAudioT, "2, 8, default, top");
+    add(lblAudioT, "cell 0 3,aligny top");
 
     panelAudioStreamT = new JPanel();
     panelAudioStreamT.setLayout(new GridLayout(0, 1));
-    add(panelAudioStreamT, "6, 8, left, top");
+    add(panelAudioStreamT, "cell 2 3,growx");
 
     panelAudioStreamDetails = new JPanel();
     panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-    add(panelAudioStreamDetails, "10, 8, 7, 1, default, top");
+    add(panelAudioStreamDetails, "cell 4 3 3 1,growx");
 
     JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
-    add(lblSubtitle, "2, 10, default, top");
+    add(lblSubtitle, "cell 0 4,aligny top");
 
     panelSubtitleT = new JPanel();
     panelSubtitleT.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleT, "6, 10, left, top");
+    add(panelSubtitleT, "cell 2 4");
 
     panelSubtitleDetails = new JPanel();
     panelSubtitleDetails.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleDetails, "10, 10, 5, 1, left, top");
+    add(panelSubtitleDetails, "cell 4 4,growx");
 
     separator = new JSeparator();
-    add(separator, "2, 12, 15, 1");
+    add(separator, "cell 0 5 7 1,growx");
 
     JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblDateAddedT, Font.BOLD);
-    add(lblDateAddedT, "2, 14");
+    add(lblDateAddedT, "cell 0 6");
 
     lblDateAdded = new JLabel("");
-    add(lblDateAdded, "6, 14, 11, 1");
+    add(lblDateAdded, "cell 2 6 5 1");
 
     JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
-    add(lblMoviePathT, "2, 16");
+    add(lblMoviePathT, "cell 0 7");
 
     lblMoviePath = new LinkLabel("");
     lblMoviePath.addActionListener(new LinkLabelListener());
     lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "6, 16, 11, 1");
+    add(lblMoviePath, "cell 2 7 5 1");
 
     panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "2, 18, 15, 1, fill, fill");
+    add(panelMediaFiles, "cell 0 8 7 1,grow");
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {

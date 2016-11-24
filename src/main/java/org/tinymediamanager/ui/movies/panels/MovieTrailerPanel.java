@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -48,13 +47,8 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -63,6 +57,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieTrailerPanel.
@@ -78,7 +73,7 @@ public class MovieTrailerPanel extends JPanel {
   private static final Logger                  LOGGER            = LoggerFactory.getLogger(MovieTrailerPanel.class);
 
   private MovieSelectionModel                  movieSelectionModel;
-  private JTable                               table;
+  private TmmTable                             table;
   private EventList<MovieTrailer>              trailerEventList  = null;
   private DefaultEventTableModel<MovieTrailer> trailerTableModel = null;
 
@@ -90,19 +85,17 @@ public class MovieTrailerPanel extends JPanel {
    */
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
-    trailerEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<MovieTrailer>(new BasicEventList<MovieTrailer>(), GlazedLists.beanConnector(MovieTrailer.class)));
-    trailerTableModel = new DefaultEventTableModel<MovieTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
+    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieTrailer.class)));
+    trailerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
+    setLayout(new MigLayout("", "[400lp,grow]", "[250lp,grow]"));
     table = new TmmTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
 
-    JScrollPane scrollPane = TmmTable.createJScrollPane(table);
-    add(scrollPane, "2, 2, fill, fill");
+    JScrollPane scrollPane = new JScrollPane(table);
+    table.configureScrollPane(scrollPane);
+    add(scrollPane, "cell 0 0,grow");
     scrollPane.setViewportView(table);
 
     LinkListener linkListener = new LinkListener();
@@ -110,20 +103,18 @@ public class MovieTrailerPanel extends JPanel {
     table.addMouseMotionListener(linkListener);
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a trailer
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && "trailer".equals(property))) {
-          trailerEventList.clear();
-          trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
-          try {
-            TableColumnResizer.adjustColumnPreferredWidths(table, 7);
-          }
-          catch (Exception e) {
-          }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a trailer
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+          || (source.getClass() == Movie.class && "trailer".equals(property))) {
+        trailerEventList.clear();
+        trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailer());
+        try {
+          TableColumnResizer.adjustColumnPreferredWidths(table, 7);
+        }
+        catch (Exception ignored) {
         }
       }
     };

@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.movies.panels;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,11 +40,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieDetailsPanel.
@@ -55,9 +49,7 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class MovieDetailsPanel extends JPanel {
   private static final long           serialVersionUID = 6273970118830324299L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
@@ -65,7 +57,6 @@ public class MovieDetailsPanel extends JPanel {
 
   private JLabel                      lblOriginalTitle;
   private JLabel                      lblProduction;
-  private JLabel                      lblCertification;
   private JLabel                      lblTags;
   private LinkLabel                   lblMoviePath;
   private JLabel                      lblMovieSet;
@@ -81,110 +72,87 @@ public class MovieDetailsPanel extends JPanel {
    */
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
+    initComponents();
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-            new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+    initDataBindings();
 
-    JLabel lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblOriginalTitleT, Font.BOLD);
-    add(lblOriginalTitleT, "2, 2");
-
-    lblOriginalTitle = new JLabel("");
-    add(lblOriginalTitle, "4, 2");
-
-    JLabel lblReleaseDateT = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblReleaseDateT, Font.BOLD);
-    add(lblReleaseDateT, "2, 4");
-    lblReleaseDateT.setLabelFor(lblReleaseDate);
-
-    lblReleaseDate = new JLabel("");
-    add(lblReleaseDate, "4, 4");
-
-    JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblCertificationT, Font.BOLD);
-    add(lblCertificationT, "2, 6");
-    lblCertificationT.setLabelFor(lblCertification);
-
-    lblCertification = new JLabel("");
-    add(lblCertification, "4, 6");
-
-    JLabel lblProductionT = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblProductionT, Font.BOLD);
-    add(lblProductionT, "2, 8, default, top");
-    lblProductionT.setLabelFor(lblProduction);
-
-    lblProduction = new JLabel();
-    add(lblProduction, "4, 8");
-
-    JLabel lblCountryT = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblCountryT, Font.BOLD);
-    add(lblCountryT, "2, 10");
-    lblCountryT.setLabelFor(lblCountry);
-
-    lblCountry = new JLabel("");
-    add(lblCountry, "4, 10");
-
-    JLabel lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblSpokenLanguagesT, Font.BOLD);
-    add(lblSpokenLanguagesT, "2, 12");
-    lblSpokenLanguagesT.setLabelFor(lblSpokenLanguages);
-
-    lblSpokenLanguages = new JLabel("");
-    add(lblSpokenLanguages, "4, 12");
-
-    JLabel lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblMoviesetT, Font.BOLD);
-    add(lblMoviesetT, "2, 14");
-    lblMoviesetT.setLabelFor(lblMovieSet);
-
-    lblMovieSet = new JLabel("");
-    add(lblMovieSet, "4, 14");
-
-    JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblTagsT, Font.BOLD);
-    add(lblTagsT, "2, 16");
-    lblTagsT.setLabelFor(lblTags);
-
-    lblTags = new JLabel("");
-    add(lblTags, "4, 16");
-
-    JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
-    add(lblMoviePathT, "2, 18, default, top");
-    lblMoviePathT.setLabelFor(lblMoviePath);
-
-    lblMoviePath = new LinkLabel("");
-    lblMoviePath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblMoviePath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblMoviePath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+        // get the location from the label
+        Path path = Paths.get(lblMoviePath.getNormalText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "2, 20, 3, 1");
+  }
 
-    initDataBindings();
+  private void initComponents() {
+    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+
+    JLabel lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblOriginalTitleT, Font.BOLD);
+    add(lblOriginalTitleT, "cell 0 0");
+
+    lblOriginalTitle = new JLabel("");
+    add(lblOriginalTitle, "cell 2 0,growx");
+
+    JLabel lblReleaseDateT = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblReleaseDateT, Font.BOLD);
+    add(lblReleaseDateT, "cell 0 1");
+
+    lblReleaseDate = new JLabel("");
+    add(lblReleaseDate, "cell 2 1,growx");
+
+    JLabel lblProductionT = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblProductionT, Font.BOLD);
+    add(lblProductionT, "cell 0 2");
+
+    lblProduction = new JLabel();
+    add(lblProduction, "cell 2 2,growx");
+
+    JLabel lblCountryT = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblCountryT, Font.BOLD);
+    add(lblCountryT, "cell 0 3");
+
+    lblCountry = new JLabel("");
+    add(lblCountry, "cell 2 3,growx");
+
+    JLabel lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblSpokenLanguagesT, Font.BOLD);
+    add(lblSpokenLanguagesT, "cell 0 4");
+
+    lblSpokenLanguages = new JLabel("");
+    add(lblSpokenLanguages, "cell 2 4,growx");
+
+    JLabel lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblMoviesetT, Font.BOLD);
+    add(lblMoviesetT, "cell 0 5");
+
+    lblMovieSet = new JLabel("");
+    add(lblMovieSet, "cell 2 5,growx");
+
+    JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblTagsT, Font.BOLD);
+    add(lblTagsT, "cell 0 6");
+
+    lblTags = new JLabel("");
+    add(lblTags, "cell 2 6,growx");
+
+    JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
+    add(lblMoviePathT, "cell 0 7");
+
+    lblMoviePath = new LinkLabel("");
+    add(lblMoviePath, "cell 2 7,growx");
   }
 
   protected void initDataBindings() {
@@ -193,11 +161,6 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_6, lblOriginalTitle, jLabelBeanProperty);
     autoBinding_7.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.certification.name");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_9, lblCertification, jLabelBeanProperty);
-    autoBinding_10.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovie.tagsAsString");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,

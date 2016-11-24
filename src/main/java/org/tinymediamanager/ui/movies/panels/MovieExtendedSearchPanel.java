@@ -95,7 +95,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     // add a dummy mouse listener to prevent clicking through
     addMouseListener(new MouseAdapter() {
     });
-    setLayout(new MigLayout("", "[][10lp][]", "[14px][][2px][14px][][20lp]"));
+    setLayout(new MigLayout("", "[][10lp][]", "[][][][][][20lp]"));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);

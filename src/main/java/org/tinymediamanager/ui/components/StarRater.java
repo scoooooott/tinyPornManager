@@ -40,7 +40,7 @@ public class StarRater extends JPanel {
   private static final Image STAR_BACKGROUND_IMAGE = ImageCache.createImage(IconManager.STAR_EMPTY.getImage());
   private static final Image STAR_FOREGROUND_IMAGE = ImageCache.createImage(IconManager.STAR_FILLED.getImage());
 
-  public static interface StarListener {
+  public interface StarListener {
     void handleSelection(int selection);
   }
 
@@ -240,6 +240,16 @@ public class StarRater extends JPanel {
   @Override
   public Dimension getPreferredSize() {
     return new Dimension(stars * STAR_BACKGROUND_IMAGE.getWidth(null), STAR_BACKGROUND_IMAGE.getHeight(null));
+  }
+
+  @Override
+  public Dimension getMinimumSize() {
+    return getPreferredSize();
+  }
+
+  @Override
+  public Dimension getMaximumSize() {
+    return getPreferredSize();
   }
 
   /**

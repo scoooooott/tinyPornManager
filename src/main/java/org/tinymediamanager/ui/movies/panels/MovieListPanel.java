@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2015 Manuel Laggner
+ * Copyright 2012 - 2016 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ITmmTabItem;
 import org.tinymediamanager.ui.ITmmUIModule;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.EnhancedTextField;
@@ -51,11 +52,6 @@ import org.tinymediamanager.ui.movies.MovieTableFormat2;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.MatcherEditor;
@@ -63,10 +59,10 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Manuel Laggner
- *
  */
 public class MovieListPanel extends JPanel implements ITmmTabItem {
   private static final long           serialVersionUID = -1681460428331929420L;
@@ -80,26 +76,22 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
   private JLabel                      lblMovieCountFiltered;
 
   public MovieListPanel() {
-    // putClientProperty("class", "roundedPanel");
-    setOpaque(false);
-    setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("10dlu"), ColumnSpec.decode("130dlu:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(150dlu;default):grow"),
-            FormFactory.DEFAULT_ROWSPEC, }));
-
-    buildTable();
-    buildStatusPanel();
+    initComponents();
   }
 
-  private void buildTable() {
+  private void initComponents() {
+    // putClientProperty("class", "roundedPanel");
+    setOpaque(false);
+
     // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
     MovieList movieList = MovieList.getInstance();
     SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
-    searchField = EnhancedTextField.createSearchTextField();
-    add(searchField, "2, 1, fill, fill");
+    setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp,grow][]"));
+
+    searchField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH); //$NON-NLS-1$
+    add(searchField, "cell 0 0,growx");
 
     MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<>(searchField, new MovieFilterator());
     MovieMatcherEditor movieMatcherEditor = new MovieMatcherEditor();
@@ -158,35 +150,26 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
       }
     });
 
-    JScrollPane scrollPane = TmmTable.createJScrollPane(movieTable, new int[] { 0 });
-    add(scrollPane, "1, 3, 5, 1, fill, fill");
-  }
+    JScrollPane scrollPane = new JScrollPane(movieTable);
+    movieTable.configureScrollPane(scrollPane, new int[] { 0 });
+    add(scrollPane, "cell 0 1 2 1,grow");
 
-  private void buildStatusPanel() {
     final JToggleButton btnExtendedFilter = new JToggleButton("Filter");
     btnExtendedFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     btnExtendedFilter.addActionListener(e -> MovieUIModule.getInstance().setFilterMenuVisible(btnExtendedFilter.isSelected()));
-    add(btnExtendedFilter, "4, 1, fill, fill");
-    JPanel panelStatus = new JPanel();
-    add(panelStatus, "2, 4");
-    panelStatus
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"), ColumnSpec.decode("146px:grow"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
-
-    JPanel panelMovieCount = new JPanel();
-    panelStatus.add(panelMovieCount, "3, 1, left, fill");
+    add(btnExtendedFilter, "cell 1 0");
 
     JLabel lblMovieCount = new JLabel("Movies:");
-    panelMovieCount.add(lblMovieCount);
+    add(lblMovieCount, "flowx,cell 0 2 2 1");
 
     lblMovieCountFiltered = new JLabel("");
-    panelMovieCount.add(lblMovieCountFiltered);
+    add(lblMovieCountFiltered, "cell 0 2");
 
     JLabel lblMovieCountOf = new JLabel("of");
-    panelMovieCount.add(lblMovieCountOf);
+    add(lblMovieCountOf, "cell 0 2");
 
     JLabel lblMovieCountTotal = new JLabel("");
-    panelMovieCount.add(lblMovieCountTotal);
+    add(lblMovieCountTotal, "cell 0 2");
   }
 
   public MovieSelectionModel getSelectionModel() {

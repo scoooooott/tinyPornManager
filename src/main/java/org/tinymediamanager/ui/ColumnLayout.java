@@ -53,7 +53,7 @@ public class ColumnLayout implements LayoutManager2 {
 
   @Override
   public Dimension minimumLayoutSize(Container parent) {
-    return preferredLayoutSize(parent);
+    return new Dimension(1, 1);
   }
 
   @Override
@@ -106,6 +106,11 @@ public class ColumnLayout implements LayoutManager2 {
 
   @Override
   public Dimension maximumLayoutSize(Container target) {
-    return preferredLayoutSize(target);
+    Dimension prefSize = preferredLayoutSize(target);
+    int height = target.getHeight();
+    if (height > prefSize.height) {
+      return prefSize;
+    }
+    return new Dimension(prefSize.width * height / prefSize.height, height);
   }
 }

@@ -31,10 +31,7 @@ import javax.swing.JLabel;
  */
 
 public class LinkLabel extends JLabel {
-
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
-
+  private static final long serialVersionUID = 3762584745632060187L;
   /**
    * The normal text set by the user.
    */
