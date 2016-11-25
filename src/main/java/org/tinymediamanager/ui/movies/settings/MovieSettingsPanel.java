@@ -24,6 +24,7 @@ import java.awt.event.ItemListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -616,7 +617,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     @Override
     public String toString() {
-      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase());
+      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ENGLISH));
       return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
     }
   }
