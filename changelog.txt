@@ -7,6 +7,7 @@ x fixed loading of plugins from a network share
 x added a connector for XBMC/Kodi < v16
 x fixed some UI scaling issues
 x fixed NFO writing for multi movie folders
+x fixed settings for Turkish language (#102)
 
 
 Version 2.9
