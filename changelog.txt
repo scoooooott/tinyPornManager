@@ -9,6 +9,7 @@ x added a connector for XBMC/Kodi < v16
 x fixed some UI scaling issues
 x fixed NFO writing for multi movie folders
 x fixed settings for Turkish language (#102)
+x fixed renaming in case insensitive file systems (#101)
 
 
 Version 2.9

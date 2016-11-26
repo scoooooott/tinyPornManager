@@ -631,8 +631,8 @@ public class Utils {
       if (!Files.isDirectory(srcDir)) {
         throw new FileNotFoundException("Source '" + srcDir + "' does not exist, or is not a directory");
       }
-      if (Files.exists(destDir) && !srcDir.equals(destDir)) {
-        // extra check for windows, where the File.equals is case insensitive
+      if (!Files.isSameFile(destDir, srcDir) && Files.exists(destDir)) {
+        // extra check for Windows/OSX, where the File.equals is case insensitive
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
@@ -731,7 +731,7 @@ public class Utils {
       if (Files.isDirectory(srcFile)) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
+      if (!Files.isSameFile(destFile, srcFile) && Files.exists(destFile)) {
         // extra check for windows, where the File.equals is case insensitive
         // so we know now, that the File is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destFile + "' already exists");
