@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -417,7 +418,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
           if ("title".equalsIgnoreCase(episodeInfo.tagName())) {
             try {
-              episode.titles.put(episodeInfo.attr("xml:lang").toLowerCase(), episodeInfo.text());
+              episode.titles.put(episodeInfo.attr("xml:lang").toLowerCase(Locale.ROOT), episodeInfo.text());
             }
             catch (Exception ignored) {
             }
