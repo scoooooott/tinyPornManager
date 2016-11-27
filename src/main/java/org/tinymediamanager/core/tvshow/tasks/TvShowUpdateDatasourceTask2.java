@@ -63,6 +63,8 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
+import com.sun.jna.Platform;
+
 /**
  * The Class TvShowUpdateDataSourcesTask.
  * 
@@ -176,7 +178,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
           // when there is _nothing_ found in the ds root, it might be offline -
           // skip further processing
-          if (rootList.isEmpty()) {
+          // not in Windows since that won't happen there
+          if (rootList.isEmpty() && !Platform.isWindows()) {
             // error - continue with next datasource
             MessageManager.instance
                 .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
