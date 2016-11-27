@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -148,7 +149,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (file.isDirectory()) {
               String directoryName = file.getName();
               // check against unwanted dirs
-              if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)
+              if (skipFolders.contains(directoryName.toUpperCase(Locale.ROOT)) || directoryName.matches(skipFoldersRegex)
                   || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
                 LOGGER.info("ignoring directory " + directoryName);
                 continue;
@@ -622,7 +623,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders, well known unwanted folders and configured skip folders
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+        if (!skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
             && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
           dirs.add(file);
         }
@@ -640,7 +641,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         File moviedir = f.getParentFile();
 
         // walk reverse till disc root (if found)
-        while (moviedir.getPath().toUpperCase().contains("BDMV") || moviedir.getPath().toUpperCase().contains("VIDEO_TS")) {
+        while (moviedir.getPath().toUpperCase(Locale.ROOT).contains("BDMV") || moviedir.getPath().toUpperCase(Locale.ROOT).contains("VIDEO_TS")) {
           disc = true;
           moviedir = moviedir.getParentFile();
         }
@@ -695,7 +696,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders, well known unwanted folders and configured skip folders
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+        if (!skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
             && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
@@ -710,7 +711,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     for (MediaFile mf : mediaFiles) {
       if (!current.contains(mf)) { // a new mediafile was found!
-        if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
+        if (mf.getPath().toUpperCase(Locale.ROOT).contains("BDMV") || mf.getPath().toUpperCase(Locale.ROOT).contains("VIDEO_TS") || mf.isDiscFile()) {
           movie.setDisc(true);
           if (movie.getMediaSource() == MediaSource.UNKNOWN) {
             movie.setMediaSource(MediaSource.parseMediaSource(mf.getPath()));
@@ -751,7 +752,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
 
           case FANART:
-            if (mf.getPath().toLowerCase().contains("extrafanart")) {
+            if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrafanart")) {
               // there shouldn't be any files here
               LOGGER.warn("problem: detected media file type FANART in extrafanart folder: " + mf.getPath());
               continue;
@@ -760,7 +761,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
 
           case THUMB:
-            if (mf.getPath().toLowerCase().contains("extrathumbs")) { //
+            if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrathumbs")) { //
               // there shouldn't be any files here
               LOGGER.warn("problem: detected media file type THUMB in extrathumbs folder: " + mf.getPath());
               continue;

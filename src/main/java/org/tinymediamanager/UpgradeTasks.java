@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -282,10 +283,10 @@ public class UpgradeTasks {
           if (episode.isDisc()) {
             // correct episode path when extracted disc folder
             Path discRoot = episode.getPathNIO().toAbsolutePath(); // folder
-            String folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // relative
+            String folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(Locale.ROOT); // relative
             while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
               discRoot = discRoot.getParent();
-              folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(); // reevaluate
+              folder = tvShow.getPathNIO().relativize(discRoot).toString().toUpperCase(Locale.ROOT); // reevaluate
               episode.setPath(discRoot.toAbsolutePath().toString());
               changed = true;
             }

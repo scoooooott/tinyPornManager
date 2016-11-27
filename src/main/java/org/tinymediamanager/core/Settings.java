@@ -669,7 +669,7 @@ public class Settings extends AbstractModelObject {
 
     // set default languages based on java instance
     String defaultLang = Locale.getDefault().getLanguage();
-    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase(Locale.ROOT));
     if (cc != null) {
       movieSettings.setCertificationCountry(cc);
       tvShowSettings.setCertificationCountry(cc);

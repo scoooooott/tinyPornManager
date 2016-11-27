@@ -617,7 +617,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     @Override
     public String toString() {
-      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ENGLISH));
+      String bundleTag = BUNDLE.getString("Settings.certification." + style.name().toLowerCase(Locale.ROOT));
       return bundleTag.replace("{}", CertificationStyle.formatCertification(Certification.DE_FSK16, style));
     }
   }

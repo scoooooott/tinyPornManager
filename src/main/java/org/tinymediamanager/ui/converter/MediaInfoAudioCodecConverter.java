@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -54,7 +55,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
 
     try {
       StringBuilder sb = new StringBuilder("/images/mediainfo/audio/");
-      sb.append(arg0.toLowerCase());
+      sb.append(arg0.toLowerCase(Locale.ROOT));
       sb.append(".png");
 
       URL file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
@@ -62,7 +63,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
         // strip out channels info
         String codec = arg0.replaceFirst("_.*ch", "");
         sb = new StringBuilder("/images/mediainfo/audio/");
-        sb.append(codec.toLowerCase());
+        sb.append(codec.toLowerCase(Locale.ROOT));
         sb.append(".png");
         file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
       }

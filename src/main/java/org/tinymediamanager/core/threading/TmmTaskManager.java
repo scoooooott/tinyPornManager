@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.threading;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -327,7 +328,7 @@ public class TmmTaskManager implements TmmTaskListener {
    * @return the thread name
    */
   private String getThreadName(Thread t) {
-    return (t != null && !isEmpty(t.getName())) ? t.getName().toLowerCase() : "";
+    return (t != null && !isEmpty(t.getName())) ? t.getName().toLowerCase(Locale.ROOT) : "";
   }
 
   private static boolean isEmpty(CharSequence cs) {

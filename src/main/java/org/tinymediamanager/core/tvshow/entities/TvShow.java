@@ -1202,11 +1202,11 @@ public class TvShow extends MediaEntity {
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
         // do not start with .
-        if (name.toLowerCase().startsWith("."))
+        if (name.toLowerCase(Locale.ROOT).startsWith("."))
           return false;
 
         // check if filetype is in our settings
-        if (name.toLowerCase().endsWith("nfo")) {
+        if (name.toLowerCase(Locale.ROOT).endsWith("nfo")) {
           return true;
         }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -203,7 +204,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         String directoryName = subdir.getName();
         // check against unwanted dirs
-        if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)
+        if (skipFolders.contains(directoryName.toUpperCase(Locale.ROOT)) || directoryName.matches(skipFoldersRegex)
             || TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(subdir.getAbsolutePath())) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
@@ -675,7 +676,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
         MediaFile mf = new MediaFile(file, type);
         show.addToMediaFiles(mf);
-        LOGGER.debug("found " + mf.getType().name().toLowerCase() + ": " + file.getPath());
+        LOGGER.debug("found " + mf.getType().name().toLowerCase(Locale.ROOT) + ": " + file.getPath());
         break;
       }
     }
@@ -684,7 +685,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private void downloadArtwork(TvShow tvShow, MediaFileType type) {
     if (StringUtils.isBlank(tvShow.getArtworkFilename(type)) && StringUtils.isNotBlank(tvShow.getArtworkUrl(type))) {
       tvShow.downloadArtwork(type);
-      LOGGER.debug("got " + type.name().toLowerCase() + " url: " + tvShow.getArtworkUrl(type) + " ; try to download this");
+      LOGGER.debug("got " + type.name().toLowerCase(Locale.ROOT) + " url: " + tvShow.getArtworkUrl(type) + " ; try to download this");
     }
   }
 
@@ -835,17 +836,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         } // end skipFilesStartingWith
       } // end isFile
 
-      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)
+      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
           && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
         File tmmIgnore2 = new File(file, "tmmignore");
         if (!tmmIgnore.exists() && !tmmIgnore2.exists()) {
           // dig deeper
-          if (file.getName().toUpperCase().equals("VIDEO_TS")) {
+          if (file.getName().toUpperCase(Locale.ROOT).equals("VIDEO_TS")) {
             findTvEpisodesAsDisc(tvShow, file);
           }
-          else if (file.getName().toUpperCase().equals("BDMV")) {
+          else if (file.getName().toUpperCase(Locale.ROOT).equals("BDMV")) {
             findTvEpisodesAsDisc(tvShow, file);
           }
           else {
@@ -886,7 +887,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     for (File file : content) {
       if (file.isFile()) {
         // check filetype
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())
+        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase(Locale.ROOT))
             || file.getName().startsWith(skipFilesStartingWith)) { // MacOS ignore
           continue;
         }
@@ -935,7 +936,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(firstVideoFile);
 
       // only walk up, to tvShow root!
-      while (!isRoot && dir.getPath().toUpperCase().contains("BDMV") || dir.getPath().toUpperCase().contains("VIDEO_TS")) {
+      while (!isRoot && dir.getPath().toUpperCase(Locale.ROOT).contains("BDMV") || dir.getPath().toUpperCase(Locale.ROOT).contains("VIDEO_TS")) {
         dir = dir.getParentFile();
       }
 

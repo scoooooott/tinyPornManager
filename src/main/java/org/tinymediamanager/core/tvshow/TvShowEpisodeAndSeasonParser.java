@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -185,8 +186,8 @@ public class TvShowEpisodeAndSeasonParser {
     String extension = FilenameUtils.getExtension(name);
 
     // check for disc files and remove!!
-    if (filename.toLowerCase().matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
-        filename.toLowerCase().matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")) { // bluray
+    if (filename.toLowerCase(Locale.ROOT).matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
+        filename.toLowerCase(Locale.ROOT).matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")) { // bluray
       name = FilenameUtils.getPath(name);
     }
 
@@ -682,7 +683,7 @@ public class TvShowEpisodeAndSeasonParser {
    */
   public static int decodeRoman(String roman) {
     int result = 0;
-    String uRoman = roman.toUpperCase(); // case-insensitive
+    String uRoman = roman.toUpperCase(Locale.ROOT); // case-insensitive
     for (int i = 0; i < uRoman.length() - 1; i++) {// loop over all but the last
                                                    // character
       // if this character has a lower value than the next character

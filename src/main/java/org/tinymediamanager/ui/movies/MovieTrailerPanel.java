@@ -23,6 +23,7 @@ import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.DefaultListSelectionModel;
@@ -37,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
@@ -178,7 +179,7 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
+          if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
             return IconManager.DOWNLOAD;
           }
           return null;
@@ -199,7 +200,7 @@ public class MovieTrailerPanel extends JPanel {
           return trailer.getQuality();
 
         case 6:
-          String ext = UrlUtil.getExtension(trailer.getUrl()).toLowerCase();
+          String ext = UrlUtil.getExtension(trailer.getUrl()).toLowerCase(Locale.ROOT);
           if (!Globals.settings.getVideoFileType().contains("." + ext)) {
             // .php redirection scripts et all
             ext = "";
@@ -252,7 +253,7 @@ public class MovieTrailerPanel extends JPanel {
         if (StringUtils.isEmpty(arg1)) {
           return 1;
         }
-        return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+        return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));
       }
     }
   }
@@ -269,7 +270,7 @@ public class MovieTrailerPanel extends JPanel {
         row = table.convertRowIndexToModel(row);
         MovieTrailer trailer = trailerEventList.get(row);
 
-        if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
+        if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase(Locale.ROOT).startsWith("http")) {
           Movie movie = movieSelectionModel.getSelectedMovie();
           MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
           TmmTaskManager.getInstance().addDownloadTask(task);

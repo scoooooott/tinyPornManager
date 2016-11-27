@@ -200,10 +200,10 @@ public class Utils {
     if (title == null || title.isEmpty()) {
       return "";
     }
-    if (title.toLowerCase().matches("^die hard$") || title.toLowerCase().matches("^die hard[:\\s].*")) {
+    if (title.toLowerCase(Locale.ROOT).matches("^die hard$") || title.toLowerCase(Locale.ROOT).matches("^die hard[:\\s].*")) {
       return title;
     }
-    if (title.toLowerCase().matches("^die another day$") || title.toLowerCase().matches("^die another day[:\\s].*")) {
+    if (title.toLowerCase(Locale.ROOT).matches("^die another day$") || title.toLowerCase(Locale.ROOT).matches("^die another day[:\\s].*")) {
       return title;
     }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
@@ -1057,7 +1057,7 @@ public class Utils {
       return new Locale("en", "US"); // don't mess around; at least fixtate this
     }
     Locale l = null;
-    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase());
+    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
     for (Locale locale : countries) {
       if (locale.getCountry().equalsIgnoreCase(language)) {
         // map to main countries; de->de_DE (and not de_CH)

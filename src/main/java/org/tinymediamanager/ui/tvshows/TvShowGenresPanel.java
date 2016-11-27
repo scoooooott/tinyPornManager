@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -81,7 +82,7 @@ public class TvShowGenresPanel extends JPanel {
     for (MediaGenres genre : genres) {
       try {
         StringBuilder sb = new StringBuilder("/images/genres/");
-        sb.append(genre.name().toLowerCase());
+        sb.append(genre.name().toLowerCase(Locale.ROOT));
         sb.append(".png");
         Icon image = new ImageIcon(TvShowGenresPanel.class.getResource(sb.toString()));
         JLabel lblImage = new JLabel(image);

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -70,7 +71,7 @@ public class TvShowArtworkHelper {
       case CLEARART:
       case THUMB:
         url = show.getArtworkUrl(type);
-        filename = type.name().toLowerCase() + "." + FilenameUtils.getExtension(url);
+        filename = type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(url);
         break;
 
       default:
@@ -109,7 +110,7 @@ public class TvShowArtworkHelper {
           case EXTRAFANART:
           case EXTRATHUMB:
             url = show.getArtworkUrl(mft);
-            filename = mft.name().toLowerCase() + "." + FilenameUtils.getExtension(url);
+            filename = mft.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(url);
             break;
           case SEASON_POSTER: // TODO: valid? can't find it elsewhere
           default:
