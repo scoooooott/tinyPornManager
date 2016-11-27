@@ -214,7 +214,7 @@ public class KodiScraper implements IMediaProvider {
           // hidden|urlencoded
           boolean encrypt = false;
           String option = el.attr("option");
-          if (option.toLowerCase().contains("hidden")) {
+          if (option.toLowerCase(Locale.ROOT).contains("hidden")) {
             encrypt = true;
           }
 

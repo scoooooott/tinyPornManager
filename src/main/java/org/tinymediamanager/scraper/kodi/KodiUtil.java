@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +60,7 @@ class KodiUtil {
       Pattern p = Pattern.compile("(\\w+)=[\"\']?[\\w.-]+[\"\']?"); // key="value" with optional apostrophe
       Matcher m = p.matcher(xmlHeaderNew);
       while (m.find()) {
-        String known = m.group(1).toLowerCase();
+        String known = m.group(1).toLowerCase(Locale.ROOT);
         switch (known) {
           case "version":
           case "encoding":
