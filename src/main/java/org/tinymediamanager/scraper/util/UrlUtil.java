@@ -320,7 +320,7 @@ public class UrlUtil {
       return new Locale("en", "US"); // don't mess around; at least fixtate this
     }
     Locale l = null;
-    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase());
+    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
     for (Locale locale : countries) {
       if (locale.getCountry().equalsIgnoreCase(language)) {
         // map to main countries; de->de_DE (and not de_CH)

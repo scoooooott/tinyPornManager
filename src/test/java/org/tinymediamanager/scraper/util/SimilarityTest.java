@@ -3,6 +3,7 @@ package org.tinymediamanager.scraper.util;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,25 +46,25 @@ public class SimilarityTest {
 
   private void compareAlgs(String s1, String s2) {
     float f = Similarity.compareStrings(s1, s2);
-    double a1 = SimilarityTest.diceCoefficient(s1.toLowerCase(), s2.toLowerCase());
-    double a2 = SimilarityTest.diceCoefficientOptimized(s1.toLowerCase(), s2.toLowerCase());
+    double a1 = SimilarityTest.diceCoefficient(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
+    double a2 = SimilarityTest.diceCoefficientOptimized(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
-    double a3 = levenshtein.similarity(s1.toLowerCase(), s2.toLowerCase());
+    double a3 = levenshtein.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     JaroWinkler jaroWinkler = new JaroWinkler();
-    double a4 = jaroWinkler.similarity(s1.toLowerCase(), s2.toLowerCase());
+    double a4 = jaroWinkler.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     Cosine cosine = new Cosine();
-    double a5 = cosine.similarity(s1.toLowerCase(), s2.toLowerCase());
+    double a5 = cosine.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     Jaccard jaccard = new Jaccard();
-    double a6 = jaccard.similarity(s1.toLowerCase(), s2.toLowerCase());
+    double a6 = jaccard.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     SorensenDice sorensenDice = new SorensenDice();
-    double a7 = sorensenDice.similarity(s1.toLowerCase(), s2.toLowerCase());
+    double a7 = sorensenDice.similarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
-    double a8 = cosineSimilarity(s1.toLowerCase(), s2.toLowerCase());
+    double a8 = cosineSimilarity(s1.toLowerCase(Locale.ROOT), s2.toLowerCase(Locale.ROOT));
 
     System.out.println(padRight(s1 + " | " + s2, 50)
         + String.format("%.2f\t\t%.2f\t\t%.2f\t\t%.2f\t\t%.2f\t\t\t%.2f\t\t%.2f\t\t%.2f\t\t\t%.2f", f, a1, a2, a3, a4, a5, a6, a7, a8));

@@ -113,7 +113,7 @@ public class LanguageUtils {
     for (String cc : Locale.getISOCountries()) {
       // check, if we already have same named language key
       // if so, overwrite this with correct lang_country locale
-      Locale lang = langArray.get(cc.toLowerCase());
+      Locale lang = langArray.get(cc.toLowerCase(Locale.ROOT));
       Locale l;
       if (lang != null) {
         l = new Locale(cc, cc);
@@ -124,9 +124,9 @@ public class LanguageUtils {
 
       langArray.put(l.getDisplayCountry(intl), l); // english name
       langArray.put(l.getDisplayCountry(), l); // localized name
-      langArray.put(l.getCountry().toLowerCase(), l); // country code - lowercase to overwrite possible language key (!)
+      langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code - lowercase to overwrite possible language key (!)
       try {
-        langArray.put(l.getISO3Country().toLowerCase(), l); // country code - lowercase to overwrite possible language key (!)
+        langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code - lowercase to overwrite possible language key (!)
       }
       catch (MissingResourceException e) {
         // tjo... maybe not available, see javadoc
@@ -164,7 +164,7 @@ public class LanguageUtils {
     // all lowercase (!)
     for (String key : keys) {
       if (!key.isEmpty()) {
-        sortedMap.put(key.toLowerCase(), langArray.get(key));
+        sortedMap.put(key.toLowerCase(Locale.ROOT), langArray.get(key));
       }
     }
 
@@ -207,7 +207,7 @@ public class LanguageUtils {
    * @since 2.0
    */
   public static String getIso3LanguageFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase(Locale.ROOT));
     if (l != null) {
       return l.getISO3Language();
     }
@@ -223,7 +223,7 @@ public class LanguageUtils {
    * @since 2.0
    */
   public static String getIso3BLanguageFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase(Locale.ROOT));
     if (l != null) {
       return getISO3BLanguage(l);
     }
@@ -239,7 +239,7 @@ public class LanguageUtils {
    * @since 2.0
    */
   public static String getIso2LanguageFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase(Locale.ROOT));
     if (l != null) {
       return l.getLanguage();
     }
@@ -255,7 +255,7 @@ public class LanguageUtils {
    * @since 2.0
    */
   public static String getEnglishLanguageNameFromLocalizedString(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase(Locale.ROOT));
     if (l != null) {
       return l.getDisplayLanguage(Locale.ENGLISH);
     }
@@ -290,7 +290,7 @@ public class LanguageUtils {
       language = Locale.getDefault();
     }
     for (String s : text) {
-      Locale l = KEY_TO_LOCALE_MAP.get(s.toLowerCase());
+      Locale l = KEY_TO_LOCALE_MAP.get(s.toLowerCase(Locale.ROOT));
       if (l != null) {
         ret = l.getDisplayLanguage(language); // auto fallback to english
         if (!ret.isEmpty()) {
@@ -323,7 +323,7 @@ public class LanguageUtils {
    * @return localized country name, or first country param 1:1 if we cannot translate
    */
   public static String getLocalizedCountryForLanguage(String language, String... countries) {
-    return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase()), countries);
+    return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase(Locale.ROOT)), countries);
   }
 
   /**
@@ -339,7 +339,7 @@ public class LanguageUtils {
       language = Locale.getDefault();
     }
     for (String c : countries) {
-      Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase());
+      Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase(Locale.ROOT));
       if (l != null) {
         ret = l.getDisplayCountry(language); // auto fallback to english
         if (!ret.isEmpty()) {

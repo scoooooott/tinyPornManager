@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.util;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,8 +97,8 @@ public class Similarity {
     }
 
     try {
-      ArrayList<String> pairs1 = wordLetterPairs(str1.toUpperCase());
-      ArrayList<String> pairs2 = wordLetterPairs(str2.toUpperCase());
+      ArrayList<String> pairs1 = wordLetterPairs(str1.toUpperCase(Locale.ROOT));
+      ArrayList<String> pairs2 = wordLetterPairs(str2.toUpperCase(Locale.ROOT));
 
       int intersection = 0;
       int union = pairs1.size() + pairs2.size();
