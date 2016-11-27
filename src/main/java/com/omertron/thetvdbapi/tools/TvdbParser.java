@@ -22,6 +22,7 @@ package com.omertron.thetvdbapi.tools;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -352,14 +353,15 @@ public class TvdbParser {
                 response.append("Episode number seems to be too large.");
             } else if (seasonId == 0 && episodeId > 1) {
                 response.append("This special episode does not exist.");
-            } else if (errorMessage.toLowerCase().contains(ERROR_NOT_ALLOWED_IN_PROLOG)) {
+      }
+      else if (errorMessage.toLowerCase(Locale.ROOT).contains(ERROR_NOT_ALLOWED_IN_PROLOG)) {
                 response.append(ERROR_RETRIEVE_EPISODE_INFO);
             } else {
                 response.append("Unknown episode error: ").append(errorMessage);
             }
         } else {
             // Don't recognise the error format, so just return it
-            if (errorMessage.toLowerCase().contains(ERROR_NOT_ALLOWED_IN_PROLOG)) {
+      if (errorMessage.toLowerCase(Locale.ROOT).contains(ERROR_NOT_ALLOWED_IN_PROLOG)) {
                 response.append(ERROR_RETRIEVE_EPISODE_INFO);
             } else {
                 response.append("Episode error: ").append(errorMessage);

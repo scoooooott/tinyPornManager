@@ -19,6 +19,8 @@
  */
 package com.omertron.thetvdbapi.model;
 
+import java.util.Locale;
+
 /**
  * Describes the list of banner types that are returned in the "BannerType2" field from TheTVDB
  *
@@ -64,11 +66,11 @@ public enum BannerType {
                 }
 
                 // If we've not found the type, then try a generic ARTWORK for the 1920x1080, 1280x720 or 680x1000 values
-                if (type.toLowerCase().contains("x")) {
+        if (type.toLowerCase(Locale.ROOT).contains("x")) {
                     return BannerType.ARTWORK;
                 }
             } catch (IllegalArgumentException ex) {
-                if (type.toLowerCase().contains("x")) {
+        if (type.toLowerCase(Locale.ROOT).contains("x")) {
                     return BannerType.ARTWORK;
                 } else {
                     throw new IllegalArgumentException("BannerType '" + type + "' does not exist", ex);

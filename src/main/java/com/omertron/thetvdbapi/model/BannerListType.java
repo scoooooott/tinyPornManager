@@ -19,6 +19,8 @@
  */
 package com.omertron.thetvdbapi.model;
 
+import java.util.Locale;
+
 /**
  * Describes the list of possible banner types stored in the "BannerType" field returned from TheTVDB
  *
@@ -35,7 +37,7 @@ public enum BannerListType {
     public static BannerListType fromString(String type) {
         if (type != null) {
             try {
-                return BannerListType.valueOf(type.trim().toUpperCase());
+        return BannerListType.valueOf(type.trim().toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException("BannerListType " + type + " does not exist", ex);
             }
