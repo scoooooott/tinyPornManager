@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.hdtrailersnet;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -76,7 +77,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
     }
 
     // best guess
-    String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase() + "/";
+    String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase(Locale.ROOT) + "/";
     try {
       LOGGER.debug("Guessed HD-Trailers Url: " + search);
 
@@ -179,7 +180,7 @@ public class HDTrailersNetTrailerProvider implements IMovieTrailerProvider {
    * @return the provider from url
    */
   private static String getProviderFromUrl(String url) {
-    url = url.toLowerCase();
+    url = url.toLowerCase(Locale.ROOT);
     String source = "unknown";
     if (url.contains("youtube.com")) {
       source = "youtube";
