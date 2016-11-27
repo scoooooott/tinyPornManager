@@ -349,32 +349,32 @@ public abstract class ImdbParser {
     if (StringUtils.isNotBlank(language) && StringUtils.isNotBlank(country)) {
       if (LocaleUtils.isAvailableLocale(new Locale(language, country))) {
         String combined = language + "-" + country;
-        languageString.add(combined.toLowerCase());
+        languageString.add(combined.toLowerCase(Locale.ROOT));
       }
     }
 
     // also build langu & default country
     Locale localeFromLanguage = UrlUtil.getLocaleFromLanguage(language);
     if (localeFromLanguage != null) {
-      String combined = language + "-" + localeFromLanguage.getCountry().toLowerCase();
+      String combined = language + "-" + localeFromLanguage.getCountry().toLowerCase(Locale.ROOT);
       if (!languageString.contains(combined)) {
         languageString.add(combined);
       }
     }
 
     if (StringUtils.isNotBlank(language)) {
-      languageString.add(language.toLowerCase());
+      languageString.add(language.toLowerCase(Locale.ROOT));
     }
 
     // second: the JRE language
     Locale jreLocale = Locale.getDefault();
-    String combined = (jreLocale.getLanguage() + "-" + jreLocale.getCountry()).toLowerCase();
+    String combined = (jreLocale.getLanguage() + "-" + jreLocale.getCountry()).toLowerCase(Locale.ROOT);
     if (!languageString.contains(combined)) {
       languageString.add(combined);
     }
 
-    if (!languageString.contains(jreLocale.getLanguage().toLowerCase())) {
-      languageString.add(jreLocale.getLanguage().toLowerCase());
+    if (!languageString.contains(jreLocale.getLanguage().toLowerCase(Locale.ROOT))) {
+      languageString.add(jreLocale.getLanguage().toLowerCase(Locale.ROOT));
     }
 
     // third: fallback to en
@@ -400,7 +400,7 @@ public abstract class ImdbParser {
       qualifier -= 0.1;
     }
 
-    return languages.toString().toLowerCase();
+    return languages.toString().toLowerCase(Locale.ROOT);
   }
 
   protected MediaMetadata parseCombinedPage(Document doc, MediaScrapeOptions options, MediaMetadata md) {
