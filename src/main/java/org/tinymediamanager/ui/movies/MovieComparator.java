@@ -19,6 +19,7 @@ import java.text.Collator;
 import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
+import java.util.Locale;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -45,10 +46,10 @@ public class MovieComparator implements Comparator<Movie> {
   @Override
   public int compare(Movie movie1, Movie movie2) {
     if (stringCollator != null) {
-      String titleMovie1 = Normalizer.normalize(movie1.getTitleSortable().toLowerCase(), Normalizer.Form.NFD);
-      String titleMovie2 = Normalizer.normalize(movie2.getTitleSortable().toLowerCase(), Normalizer.Form.NFD);
+      String titleMovie1 = Normalizer.normalize(movie1.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+      String titleMovie2 = Normalizer.normalize(movie2.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
       return stringCollator.compare(titleMovie1, titleMovie2);
     }
-    return movie1.getTitleSortable().toLowerCase().compareTo(movie2.getTitleSortable().toLowerCase());
+    return movie1.getTitleSortable().toLowerCase(Locale.ROOT).compareTo(movie2.getTitleSortable().toLowerCase(Locale.ROOT));
   }
 }

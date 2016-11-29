@@ -200,10 +200,10 @@ public class Utils {
     if (title == null || title.isEmpty()) {
       return "";
     }
-    if (title.toLowerCase().matches("^die hard$") || title.toLowerCase().matches("^die hard[:\\s].*")) {
+    if (title.toLowerCase(Locale.ROOT).matches("^die hard$") || title.toLowerCase(Locale.ROOT).matches("^die hard[:\\s].*")) {
       return title;
     }
-    if (title.toLowerCase().matches("^die another day$") || title.toLowerCase().matches("^die another day[:\\s].*")) {
+    if (title.toLowerCase(Locale.ROOT).matches("^die another day$") || title.toLowerCase(Locale.ROOT).matches("^die another day[:\\s].*")) {
       return title;
     }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
@@ -631,8 +631,8 @@ public class Utils {
       if (!Files.isDirectory(srcDir)) {
         throw new FileNotFoundException("Source '" + srcDir + "' does not exist, or is not a directory");
       }
-      if (Files.exists(destDir) && !srcDir.equals(destDir)) {
-        // extra check for windows, where the File.equals is case insensitive
+      if (!Files.isSameFile(destDir, srcDir) && Files.exists(destDir)) {
+        // extra check for Windows/OSX, where the File.equals is case insensitive
         // so we know now, that the Dir is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destDir + "' already exists");
       }
@@ -731,7 +731,7 @@ public class Utils {
       if (Files.isDirectory(srcFile)) {
         throw new IOException("Source '" + srcFile + "' is a directory");
       }
-      if (Files.exists(destFile) && !srcFile.equals(destFile)) {
+      if (!Files.isSameFile(destFile, srcFile) && Files.exists(destFile)) {
         // extra check for windows, where the File.equals is case insensitive
         // so we know now, that the File is the same, but the absolute name does not match
         throw new FileExistsException("Destination '" + destFile + "' already exists");
@@ -1057,7 +1057,7 @@ public class Utils {
       return new Locale("en", "US"); // don't mess around; at least fixtate this
     }
     Locale l = null;
-    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase());
+    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase(Locale.ROOT));
     for (Locale locale : countries) {
       if (locale.getCountry().equalsIgnoreCase(language)) {
         // map to main countries; de->de_DE (and not de_CH)

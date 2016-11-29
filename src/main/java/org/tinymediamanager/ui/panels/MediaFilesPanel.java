@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -190,7 +191,7 @@ public class MediaFilesPanel extends JPanel {
     }
 
     private String getMediaFileTypeLocalized(MediaFileType type) {
-      String prop = "mediafiletype." + type.name().toLowerCase();
+      String prop = "mediafiletype." + type.name().toLowerCase(Locale.ROOT);
       return BUNDLE.getString(prop);
     }
   }

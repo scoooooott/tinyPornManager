@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -204,7 +205,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       if (StringUtils.isEmpty(arg1)) {
         return 1;
       }
-      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+      return arg0.toLowerCase(Locale.ROOT).compareTo(arg1.toLowerCase(Locale.ROOT));
     }
   }
 

@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
@@ -137,13 +138,13 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       // try to sort the chosen column
       switch (sortColumn) {
         case TITLE:
-          sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
+          sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(Locale.ROOT), movie2.getTitleSortable().toLowerCase(Locale.ROOT));
           break;
 
         case SORT_TITLE:
           String title1 = StringUtils.isNotBlank(movie1.getSortTitle()) ? movie1.getSortTitle() : movie1.getTitleSortable();
           String title2 = StringUtils.isNotBlank(movie2.getSortTitle()) ? movie2.getSortTitle() : movie2.getTitleSortable();
-          sortOrder = stringCollator.compare(title1.toLowerCase(), title2.toLowerCase());
+          sortOrder = stringCollator.compare(title1.toLowerCase(Locale.ROOT), title2.toLowerCase(Locale.ROOT));
           break;
 
         case YEAR:

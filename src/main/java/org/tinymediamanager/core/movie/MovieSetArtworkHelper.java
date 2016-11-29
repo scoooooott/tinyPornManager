@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -83,7 +84,8 @@ public class MovieSetArtworkHelper {
 
     for (MediaFileType type : SUPPORTED_ARTWORK_TYPES) {
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
+        String artworkFileName = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "."
+            + fileType;
         Path artworkFile = Paths.get(artworkFolder, artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
@@ -111,7 +113,7 @@ public class MovieSetArtworkHelper {
       }
 
       for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
-        String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
+        String artworkFileName = "movieset-" + type.name().toLowerCase(Locale.ROOT) + "." + fileType;
         Path artworkFile = movie.getPathNIO().resolve(artworkFileName);
         if (Files.exists(artworkFile)) {
           // add this artwork to the media files
@@ -450,7 +452,8 @@ public class MovieSetArtworkHelper {
       try {
         String providedFiletype = FilenameUtils.getExtension(urlToArtwork);
         writeImage(bytes, artworkFolder
-            .resolve(MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase() + "." + providedFiletype));
+            .resolve(
+                MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "." + providedFiletype));
       }
       catch (Exception e) {
         LOGGER.warn("could not write file", e);
@@ -463,7 +466,7 @@ public class MovieSetArtworkHelper {
         return;
       }
 
-      String filename = "movieset-" + type.name().toLowerCase() + ".jpg";
+      String filename = "movieset-" + type.name().toLowerCase(Locale.ROOT) + ".jpg";
 
       // write image for all movies
       for (Movie movie : movies) {

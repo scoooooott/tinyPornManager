@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,12 +83,12 @@ public class MovieRenamer {
         // detect from filename, if we don't have a MediaFileSubtitle entry!
         // remove the filename of movie from subtitle, to ease parsing
         List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
-        String shortname = sub.getBasename().toLowerCase();
+        String shortname = sub.getBasename().toLowerCase(Locale.ROOT);
         if (mfs != null && mfs.size() > 0) {
-          shortname = sub.getBasename().toLowerCase().replace(m.getVideoBasenameWithoutStacking(), "");
+          shortname = sub.getBasename().toLowerCase(Locale.ROOT).replace(m.getVideoBasenameWithoutStacking(), "");
         }
 
-        if (sub.getFilename().toLowerCase().contains("forced")) {
+        if (sub.getFilename().toLowerCase(Locale.ROOT).contains("forced")) {
           // add "forced" prior language
           forced = ".forced";
           shortname = shortname.replaceAll("\\p{Punct}*forced", "");
@@ -780,33 +781,33 @@ public class MovieRenamer {
       // *************
       case BANNER:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
-          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
+          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           newFiles.add(defaultMF);
         }
         break;
       case CLEARART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
-          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
+          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           newFiles.add(defaultMF);
         }
         break;
       case DISCART:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
-          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
+          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
             defaultMF.setFilename(newFilename + "-disc" + defaultMFext);
@@ -820,26 +821,26 @@ public class MovieRenamer {
       case LOGO:
       case CLEARLOGO:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
-          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
+          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           newFiles.add(defaultMF);
         }
         break;
       case THUMB:
         if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
-          defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
+          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase() + defaultMFext);
+            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
           }
           newFiles.add(defaultMF);
         }
@@ -976,15 +977,15 @@ public class MovieRenamer {
       mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
     }
 
-    switch (token.toUpperCase()) {
+    switch (token.toUpperCase(Locale.ROOT)) {
       case "$T":
         ret = movie.getTitle();
         break;
       case "$1":
-        ret = StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase() : "";
+        ret = StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase(Locale.ROOT) : "";
         break;
       case "$2":
-        ret = StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase() : "";
+        ret = StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase(Locale.ROOT) : "";
         break;
       case "$Y":
         ret = movie.getYear().equals("0") ? "" : movie.getYear();
@@ -1262,7 +1263,7 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().toUpperCase().trim();
+    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().toUpperCase(Locale.ROOT).trim();
 
     if (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) {
       return true;

@@ -279,7 +279,7 @@ public abstract class MediaEntity extends AbstractModelObject {
         return;
     }
 
-    firePropertyChange(type.name().toLowerCase() + "Url", oldValue, url);
+    firePropertyChange(type.name().toLowerCase(Locale.ROOT) + "Url", oldValue, url);
   }
 
   /**

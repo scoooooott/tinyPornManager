@@ -433,7 +433,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     public LocaleComboBox(Locale loc) {
       this.loc = loc;
-      countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase());
+      countries = LocaleUtils.countriesByLanguage(loc.getLanguage().toLowerCase(Locale.ROOT));
     }
 
     public Locale getLocale() {

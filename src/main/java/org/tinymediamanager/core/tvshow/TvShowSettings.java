@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -292,14 +293,14 @@ public class TvShowSettings extends AbstractModelObject {
   }
 
   public void addBadWord(String badWord) {
-    if (!badWords.contains(badWord.toLowerCase())) {
-      badWords.add(badWord.toLowerCase());
+    if (!badWords.contains(badWord.toLowerCase(Locale.ROOT))) {
+      badWords.add(badWord.toLowerCase(Locale.ROOT));
       firePropertyChange(BAD_WORDS, null, badWords);
     }
   }
 
   public void removeBadWord(String badWord) {
-    badWords.remove(badWord.toLowerCase());
+    badWords.remove(badWord.toLowerCase(Locale.ROOT));
     firePropertyChange(BAD_WORDS, null, badWords);
   }
 
@@ -307,7 +308,7 @@ public class TvShowSettings extends AbstractModelObject {
     // convert to lowercase for easy contains checking
     ListIterator<String> iterator = badWords.listIterator();
     while (iterator.hasNext()) {
-      iterator.set(iterator.next().toLowerCase());
+      iterator.set(iterator.next().toLowerCase(Locale.ROOT));
     }
     return badWords;
   }

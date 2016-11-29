@@ -2,11 +2,14 @@ Version 2.9.1
 =======================
 + added Trakt.tv scraper
 + added option in the bulk renamer to set/clear the sort title
++ updated libmediainfo to 0.7.90
 +/x added escaping of file names/urls in the movie exporter
 x fixed loading of plugins from a network share
 x added a connector for XBMC/Kodi < v16
 x fixed some UI scaling issues
 x fixed NFO writing for multi movie folders
+x fixed settings for Turkish language (#102)
+x fixed renaming in case insensitive file systems (#101)
 
 
 Version 2.9

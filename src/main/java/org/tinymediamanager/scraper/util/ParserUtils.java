@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,10 +149,10 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
+        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase(Locale.ROOT))) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
-          switch (word.toUpperCase()) {
+          switch (word.toUpperCase(Locale.ROOT)) {
             case "I":
             case "II":
             case "III":
@@ -162,7 +163,7 @@ public class ParserUtils {
             case "VIII":
             case "IX":
             case "X":
-              name = name + word.toUpperCase() + " ";
+              name = name + word.toUpperCase(Locale.ROOT) + " ";
               break;
 
             default:
@@ -287,10 +288,10 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
+        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase(Locale.ROOT))) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
-          switch (word.toUpperCase()) {
+          switch (word.toUpperCase(Locale.ROOT)) {
             case "I":
             case "II":
             case "III":
@@ -301,7 +302,7 @@ public class ParserUtils {
             case "VIII":
             case "IX":
             case "X":
-              name = name + word.toUpperCase() + " ";
+              name = name + word.toUpperCase(Locale.ROOT) + " ";
               break;
 
             default:

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -245,7 +246,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   private void gatherSubtitleInformation() {
     MediaFileSubtitle sub = new MediaFileSubtitle();
-    String shortname = getBasename().toLowerCase();
+    String shortname = getBasename().toLowerCase(Locale.ROOT);
     if (shortname.contains("forced")) {
       sub.setForced(true);
       shortname = shortname.replaceAll("\\p{Punct}*forced", "");
@@ -290,9 +291,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the MediaFileType
    */
   public MediaFileType parseType() {
-    String ext = getExtension().toLowerCase();
+    String ext = getExtension().toLowerCase(Locale.ROOT);
     String basename = FilenameUtils.getBaseName(getFilename());
-    String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
+    String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase(Locale.ROOT);
 
     if (ext.equals("nfo")) {
       return MediaFileType.NFO;
@@ -431,7 +432,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isPacked() {
-    String ext = getExtension().toLowerCase();
+    String ext = getExtension().toLowerCase(Locale.ROOT);
     return (ext.equals("zip") || ext.equals("rar") || ext.equals("7z") || ext.matches("r\\d+"));
   }
 
@@ -477,7 +478,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isDiscFile() {
-    String name = getFilename().toLowerCase();
+    String name = getFilename().toLowerCase(Locale.ROOT);
     return (name.matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
         name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
   }
@@ -891,7 +892,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public void setContainerFormatDirect() {
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
-    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
   }
 
   /**
@@ -1523,7 +1524,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           if (language.isEmpty()) {
             if (!isDiscFile()) { // video_ts parsed 'ts' as Tsonga
               // try to parse from filename
-              String shortname = getBasename().toLowerCase();
+              String shortname = getBasename().toLowerCase(Locale.ROOT);
               stream.setLanguage(parseLanguageFromString(shortname));
             }
           }
@@ -1583,7 +1584,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         String mvc = getMediaInfo(StreamKind.Video, 0, "MultiView_Count");
         if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
           video3DFormat = VIDEO_3D;
-          String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase();
+          String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase(Locale.ROOT);
           LOGGER.debug("3D detected :) " + mvl);
           if (!StringUtils.isEmpty(mvl) && mvl.contains("top") && mvl.contains("bottom")) {
             video3DFormat = VIDEO_3D_TAB;
@@ -1610,7 +1611,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         String language = getMediaInfo(StreamKind.Audio, 0, "Language/String", "Language");
         if (language.isEmpty()) {
           // try to parse from filename
-          String shortname = getBasename().toLowerCase();
+          String shortname = getBasename().toLowerCase(Locale.ROOT);
           stream.setLanguage(parseLanguageFromString(shortname));
         }
         else {
@@ -1659,7 +1660,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
       // get first extension
-      setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+      setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase(Locale.ROOT));
 
       // if container format is still empty -> insert the extension
       if (StringUtils.isBlank(containerFormat)) {
@@ -1778,7 +1779,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true, if is valid mediainfo format
    */
   private boolean isValidMediainfoFormat() {
-    String extension = FilenameUtils.getExtension(filename).toLowerCase();
+    String extension = FilenameUtils.getExtension(filename).toLowerCase(Locale.ROOT);
 
     // check unsupported extensions
     if ("bin".equals(extension) || "dat".equals(extension) || "img".equals(extension) || "nrg".equals(extension) || "disc".equals(extension)) {
