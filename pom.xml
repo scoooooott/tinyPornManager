@@ -259,6 +259,8 @@
 						<bundledSignature>jdk-deprecated</bundledSignature>
 						<bundledSignature>jdk-non-portable</bundledSignature>
 						<bundledSignature>jdk-system-out</bundledSignature>
+						<bundledSignature>jdk-internal</bundledSignature>
+						<bundledSignature>jdk-reflection</bundledSignature>
 						<bundledSignature>commons-io-unsafe-2.5</bundledSignature>
 						<!-- bundledSignature>jdk-unsafe</bundledSignature -->
 					</bundledSignatures>
