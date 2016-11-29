@@ -352,4 +352,22 @@ public class MovieToNfoConnectorTest {
     movie.setMediaSource(MediaSource.BLURAY);
     return movie;
   }
+
+  @Test
+  public void parseNFO() throws Exception {
+    Path dir = Paths.get("target/test-classes/testmovies/MovieSets/");
+
+    System.out.println("is valid? " + MovieConnectors.isValidNFO(dir.resolve("MSold.nfo")));
+    Movie nfo = MovieToXbmcNfoConnector.getData(dir.resolve("MSold.nfo"));
+    System.out.println(nfo.getMovieSet().getTitle() + " - " + nfo.getMovieSet());
+
+    System.out.println("is valid? " + MovieConnectors.isValidNFO(dir.resolve("MSnew.nfo")));
+    nfo = MovieToKodiNfoConnector.getData(dir.resolve("MSnew.nfo"));
+    System.out.println(nfo.getMovieSet().getTitle() + " - " + nfo.getMovieSet());
+
+    System.out.println("is valid? " + MovieConnectors.isValidNFO(dir.resolve("MSmixed.nfo")));
+    // NO - mixed NOT supported
+    // nfo = MovieToKodiNfoConnector.getData(dir.resolve("MSmixed.nfo"));
+    // System.out.println(nfo.getMovieSet().getTitle() + " - " + nfo.getMovieSet());
+  }
 }
