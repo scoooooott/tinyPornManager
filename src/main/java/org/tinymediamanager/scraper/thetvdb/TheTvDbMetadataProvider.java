@@ -413,6 +413,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
     }
 
+    // we have not found an episode with dvd ordering; look for that with aired ordering
+    if (episode == null && useDvdOrder) {
+      for (Episode ep : episodes) {
+        if (ep.getSeasonNumber() == seasonNr && ep.getEpisodeNumber() == episodeNr) {
+          episode = ep;
+          break;
+        }
+      }
+    }
+
     if (episode == null) {
       return md;
     }
