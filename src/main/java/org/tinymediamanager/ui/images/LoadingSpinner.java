@@ -136,13 +136,13 @@ public class LoadingSpinner implements Icon {
       if (customColorLow != null && customColorHigh != null) {
         low = new Color((int) (customColorLow.getRed() * factor), (int) (customColorLow.getGreen() * factor),
             (int) (customColorLow.getBlue() * factor), alpha);
-        high = new Color((int) (customColorHigh.getRed() * factor), (int) (customColorLow.getGreen() * factor),
-            (int) (customColorLow.getBlue() * factor), alpha);
+        high = new Color((int) (customColorHigh.getRed() * factor), (int) (customColorHigh.getGreen() * factor),
+            (int) (customColorHigh.getBlue() * factor), alpha);
       }
       else {
         low = new Color((int) (baseColorLow.getRed() * factor), (int) (baseColorLow.getGreen() * factor), (int) (baseColorLow.getBlue() * factor),
             alpha);
-        high = new Color((int) (baseColorHigh.getRed() * factor), (int) (baseColorLow.getGreen() * factor), (int) (baseColorLow.getBlue() * factor),
+        high = new Color((int) (baseColorHigh.getRed() * factor), (int) (baseColorHigh.getGreen() * factor), (int) (baseColorHigh.getBlue() * factor),
             alpha);
       }
     }

@@ -159,17 +159,17 @@ public class ToolbarPanel extends JPanel {
     btnEdit = createButton("", IconManager.TOOLBAR_EDIT, IconManager.TOOLBAR_EDIT_HOVER);
     panelCenter.add(btnEdit, "8, 1, center, center");
 
-    btnExport = createButton("", IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
-    panelCenter.add(btnExport, "12, 1, center, bottom");
-
-    btnTools = createButton("", IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER);
-    panelCenter.add(btnTools, "14, 1, center, bottom");
+    btnTasks = createTaskButton();
+    panelCenter.add(btnTasks, "12, 1, center, bottom");
 
     btnSettings = createButton("", IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
-    panelCenter.add(btnSettings, "16, 1, center, bottom");
+    panelCenter.add(btnSettings, "14, 1, center, bottom");
 
-    btnTasks = createTaskButton();
-    panelCenter.add(btnTasks, "18, 1, center, bottom");
+    btnTools = createButton("", IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER);
+    panelCenter.add(btnTools, "16, 1, center, bottom");
+
+    btnExport = createButton("", IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
+    panelCenter.add(btnExport, "18, 1, center, bottom");
 
     btnAbout = createButton("", IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER);
     panelCenter.add(btnAbout, "20, 1, center, bottom");
@@ -186,21 +186,21 @@ public class ToolbarPanel extends JPanel {
     lblEdit = createMenu("Edit");
     panelCenter.add(lblEdit, "8, 2, center, default");
 
-    lblExport = new JLabel("Export");
-    lblExport.setForeground(arrowColor);
-    panelCenter.add(lblExport, "12, 2, center, default");
-
-    lblTools = new JLabel("Tools");
-    lblTools.setForeground(arrowColor);
-    panelCenter.add(lblTools, "14, 2, center, default");
+    lblDownload = new JLabel("Progress");
+    lblDownload.setForeground(arrowColor);
+    panelCenter.add(lblDownload, "12, 2, center, default");
 
     lblSettings = new JLabel("Settings");
     lblSettings.setForeground(arrowColor);
-    panelCenter.add(lblSettings, "16, 2, center, default");
+    panelCenter.add(lblSettings, "14, 2, center, default");
 
-    lblDownload = new JLabel("Progress");
-    lblDownload.setForeground(arrowColor);
-    panelCenter.add(lblDownload, "18, 2, center, default");
+    lblTools = new JLabel("Tools");
+    lblTools.setForeground(arrowColor);
+    panelCenter.add(lblTools, "16, 2, center, default");
+
+    lblExport = new JLabel("Export");
+    lblExport.setForeground(arrowColor);
+    panelCenter.add(lblExport, "18, 2, center, default");
 
     lblAbout = new JLabel("About");
     lblAbout.setForeground(arrowColor);
