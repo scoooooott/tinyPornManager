@@ -19,7 +19,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.net.URL;
@@ -105,17 +105,17 @@ public class IconManager {
   public final static ImageIcon            REMOVE                 = createMaterialFontIcon('\uE15B', 16);
 
   // Material icons - column headers
-  public final static ImageIcon            DATE_ADDED             = createMaterialFontIcon('\uE02E', 24);
+  public final static ImageIcon            DATE_ADDED             = createMaterialFontIcon('\uE02E', 18);
   public final static ImageIcon            EPISODES               = createFontIcon('E', 20);
-  public final static ImageIcon            IMAGES                 = createMaterialFontIcon('\uE410', 24);
-  public final static ImageIcon            MOVIE                  = createMaterialFontIcon('\uE54D', 24);
-  public final static ImageIcon            NFO                    = createMaterialFontIcon('\uE873', 24);
-  public final static ImageIcon            RATING                 = createMaterialFontIcon('\uE838', 24);
+  public final static ImageIcon            IMAGES                 = createMaterialFontIcon('\uE410', 18);
+  public final static ImageIcon            MOVIE                  = createMaterialFontIcon('\uE54D', 18);
+  public final static ImageIcon            NFO                    = createMaterialFontIcon('\uE873', 18);
+  public final static ImageIcon            RATING                 = createMaterialFontIcon('\uE838', 18);
   public final static ImageIcon            SEASONS                = createFontIcon('S', 20);
-  public final static ImageIcon            SUBTITLES              = createMaterialFontIcon('\uE24C', 24);
-  public final static ImageIcon            TRAILER                = createMaterialFontIcon('\uE02C', 24);
-  public final static ImageIcon            VIDEO_FORMAT           = createMaterialFontIcon('\uE85B', 24);
-  public final static ImageIcon            WATCHED                = createMaterialFontIcon('\uE037', 24);
+  public final static ImageIcon            SUBTITLES              = createMaterialFontIcon('\uE24C', 18);
+  public final static ImageIcon            TRAILER                = createMaterialFontIcon('\uE02C', 18);
+  public final static ImageIcon            VIDEO_FORMAT           = createMaterialFontIcon('\uE85B', 18);
+  public final static ImageIcon            WATCHED                = createMaterialFontIcon('\uE037', 18);
 
   // OBSOLETE ICONS (will be dropped when legacy code is removed)
   public final static ImageIcon            EXIT                   = loadImage("exit.png");
@@ -248,7 +248,12 @@ public class IconManager {
       // and draw it
       BufferedImage buffer = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) buffer.getGraphics();
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+      // g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+      if (desktopHints != null) {
+        g2.setRenderingHints(desktopHints);
+      }
 
       g2.setFont(font);
       g2.setColor(color);
