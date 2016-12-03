@@ -31,6 +31,9 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerImpl;
 import net.xeoh.plugins.base.impl.classpath.ClassPathManager;
@@ -44,6 +47,7 @@ import net.xeoh.plugins.base.options.AddPluginsFromOption;
  *
  */
 public class FileLoader extends AbstractLoader {
+  private final static Logger LOGGER = LoggerFactory.getLogger(FileLoader.class);
 
   /**
    * @param pluginManager
@@ -65,10 +69,10 @@ public class FileLoader extends AbstractLoader {
     if (url.getScheme().equals("file")) {
 
       // Get the actual file from the given path (toPath() strips out the hostname from smb shares)
-      String file = url.toString().replace("file:", "");
-      if (file.startsWith("/") && file.substring(0, 4).contains(":")) {
-        file = file.substring(1);
-      }
+      // String file = url.toString().replace("file:", "");
+      // if (file.startsWith("/") && file.substring(0, 4).contains(":")) {
+      // file = file.substring(1);
+      // }
 
       // patch to enable loading of plugins in a dir containing a +
       /*
@@ -77,8 +81,8 @@ public class FileLoader extends AbstractLoader {
        */
 
       // Now load from the given file ...
-      this.logger.fine("More specifically, trying to add from " + file);
-      final File root = new File(file);
+      LOGGER.debug("More specifically, trying to add from " + url);
+      final File root = new File(url);
 
       // ... if it exists ...
       if (!root.exists()) {
