@@ -29,7 +29,11 @@ package net.xeoh.plugins.base.impl.classpath.loader;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.impl.PluginManagerImpl;
@@ -44,6 +48,7 @@ import net.xeoh.plugins.base.options.AddPluginsFromOption;
  *
  */
 public class FileLoader extends AbstractLoader {
+  private final static Logger LOGGER = LoggerFactory.getLogger(FileLoader.class);
 
   /**
    * @param pluginManager
@@ -63,32 +68,73 @@ public class FileLoader extends AbstractLoader {
   public void loadFrom(URI url, AddPluginsFromOption[] options) {
     // If not caught by the previous handler, handle files normally.
     if (url.getScheme().equals("file")) {
-
-      // Get the actual file from the given path (toPath() strips out the hostname from smb shares)
-      String file = url.toString().replace("file:", "");
-      if (file.startsWith("/") && file.substring(0, 4).contains(":")) {
-        file = file.substring(1);
-      }
-
-      // patch to enable loading of plugins in a dir containing a +
-      /*
-       * // Try to decode the path properly try { file = URLDecoder.decode(file, "utf8"); } catch (final UnsupportedEncodingException e) {
-       * e.printStackTrace(); }
-       */
-
       // Now load from the given file ...
-      this.logger.fine("More specifically, trying to add from " + file);
-      final File root = new File(file);
+      LOGGER.debug("More specifically, trying to add from " + url);
+      try {
+        File root = toFile(url.toURL());
 
-      // ... if it exists ...
-      if (!root.exists()) {
-        this.logger.warning("Supplied path does not exist. Unable to add plugins from there.");
+        // ... if it exists ...
+        if (!root.exists()) {
+          this.logger.warning("Supplied path does not exist. Unable to add plugins from there.");
+          return;
+        }
+
+        // Here we go
+        locateAllPluginsAt(root);
         return;
       }
+      catch (Exception e) {
+        LOGGER.error("could not load plugins: " + e.getMessage());
+      }
+    }
+  }
 
-      // Here we go
-      locateAllPluginsAt(root);
-      return;
+  /**
+   * + * Ensures the given path string starts with exactly four leading slashes. +
+   */
+  private static String ensureUNCPath(String path) {
+    int len = path.length();
+    StringBuffer result = new StringBuffer(len);
+    for (int i = 0; i < 4; i++) {
+      // if we have hit the first non-slash character, add another leading slash
+      if (i >= len || result.length() > 0 || path.charAt(i) != '/') {
+        result.append('/');
+      }
+    }
+    result.append(path);
+    return result.toString();
+  }
+
+  /**
+   * + * Returns the URL as a local file, or <code>null</code> if the given URL does not represent a + * local file. + * + * @param url The url to
+   * return the file for + * @return The local file corresponding to the given url, or <code>null</code> +
+   */
+  private static File toFile(URL url) {
+
+    if (!"file".equalsIgnoreCase(url.getProtocol())) {
+      return null;
+      // assume all illegal characters have been properly encoded, so use URI class to unencode
+    }
+
+    String externalForm = url.toExternalForm();
+    String pathString = externalForm.substring(5);
+
+    try {
+      if (pathString.indexOf('/') == 0) {
+        if (pathString.indexOf("//") == 0) {
+          externalForm = "file:" + ensureUNCPath(pathString); //$NON-NLS-1$
+        }
+        return new File(new URI(externalForm));
+      }
+      if (pathString.indexOf(':') == 1) {
+        return new File(new URI("file:/" + pathString)); //$NON-NLS-1$
+      }
+
+      return new File(new URI(pathString).getSchemeSpecificPart());
+    }
+    catch (Exception e) {
+      // URL contains unencoded characters
+      return new File(pathString);
     }
   }
 

@@ -256,12 +256,18 @@
 					<!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
 					<bundledSignatures>
 						<!-- This will automatically choose the right signatures based on 'maven.compiler.target': -->
-						<bundledSignature>jdk-unsafe</bundledSignature>
 						<bundledSignature>jdk-deprecated</bundledSignature>
 						<bundledSignature>jdk-non-portable</bundledSignature>
 						<bundledSignature>jdk-system-out</bundledSignature>
+						<bundledSignature>jdk-internal</bundledSignature>
+						<bundledSignature>jdk-reflection</bundledSignature>
 						<bundledSignature>commons-io-unsafe-2.5</bundledSignature>
+						<!-- bundledSignature>jdk-unsafe</bundledSignature -->
 					</bundledSignatures>
+					<signaturesFiles>
+						<!-- use ours b/c of resourcebundle without locale -->
+						<signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
+					</signaturesFiles>
 				</configuration>
 				<executions>
 					<execution>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<movie>
+    <title>MS1</title>
+    <set>
+        <name>MovieSet2</name>
+        <overview>MovieSet2 overview</overview>
+    </set>
+    <year>1995</year>
+    <outline>Outline...</outline>
+    <plot>Plot plot plot plot plot plot plot plot .</plot>
+</movie>
