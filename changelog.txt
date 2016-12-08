@@ -10,6 +10,7 @@ x fixed some UI scaling issues
 x fixed NFO writing for multi movie folders
 x fixed settings for Turkish language (#102)
 x fixed renaming in case insensitive file systems (#101)
+x respect renamer settings for subtitle language tag when downloading
 x fixed language code detection (#107);
   (user with swedish subs may have to rename their subs after upgrading!)
 
