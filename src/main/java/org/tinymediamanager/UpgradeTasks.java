@@ -34,6 +34,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
@@ -375,6 +376,38 @@ public class UpgradeTasks {
       if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
         MovieModuleManager.MOVIE_SETTINGS.setMovieConnector(MovieConnectors.KODI);
         Settings.getInstance().saveSettings();
+      }
+
+      // fix swedish subs detected as sme
+      for (Movie movie : movieList.getMovies()) {
+        boolean changed = false;
+        for (MediaFile mf : movie.getMediaFiles()) {
+          for (MediaFileSubtitle sub : mf.getSubtitles()) {
+            if ("sme".equals(sub.getLanguage())) {
+              sub.setLanguage("swe");
+              changed = true;
+            }
+          }
+        }
+        if (changed) {
+          movie.saveToDb();
+        }
+      }
+      for (TvShow show : tvShowList.getTvShows()) {
+        boolean changed = false;
+        for (TvShowEpisode episode : show.getEpisodes()) {
+          for (MediaFile mf : episode.getMediaFiles()) {
+            for (MediaFileSubtitle sub : mf.getSubtitles()) {
+              if ("sme".equals(sub.getLanguage())) {
+                sub.setLanguage("swe");
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            episode.saveToDb();
+          }
+        }
       }
     }
   }
