@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * This is a helper class for language related tasks
@@ -37,11 +35,9 @@ public class LanguageUtils {
   public final static LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP;
 
   private final static Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
-  private static final List<String>                 CUSTOM;
 
   static {
     ISO_639_2B_EXCEPTIONS = createIso6392BExceptions();
-    CUSTOM = generateCustomArray();
     KEY_TO_LOCALE_MAP = generateLanguageArray();
   }
 
@@ -71,87 +67,29 @@ public class LanguageUtils {
     return exceptions;
   }
 
-  /**
-   * Locale support heavily depends on the JVM.<br>
-   * JVM DOES know it, but they're not delivered with Locale.getAvailableLocales()<br>
-   * So we add some custom ones here (see http://forum.kodi.tv/showthread.php?tid=297067)
-   */
-  private static List<String> generateCustomArray() {
-    ArrayList<String> al = new ArrayList<String>();
-    al.add("baq");
-    al.add("tel");
-    al.add("tam");
-    return al;
-  }
-
   private static LinkedHashMap<String, Locale> generateLanguageArray() {
     Map<String, Locale> langArray = new HashMap<>();
     LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<>();
     Locale intl = Locale.ENGLISH;
 
     // all possible variants of language/prefixes/non-iso style
-    for (Locale locale : Locale.getAvailableLocales()) {
-      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
+    for (String langu : Locale.getISOLanguages()) {
+      Locale base = new Locale(langu); // from all, create only the base languages
       langArray.put(base.getDisplayLanguage(intl), base);
       langArray.put(base.getDisplayLanguage(), base);
       try {
         langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
       }
-      catch (Exception e) {
+      catch (Exception ignore) {
         // ignore
       }
       // ISO-639-2/T
       langArray.put(base.getISO3Language(), base);
       // ISO-639-2/B
       langArray.put(LanguageUtils.getISO3BLanguage(base), base);
+      // ISO 639-1
+      langArray.put(langu, base);
     }
-    for (String l : Locale.getISOLanguages()) {
-      langArray.put(l, new Locale(l));
-    }
-
-    // add "country" locales
-    for (String cc : Locale.getISOCountries()) {
-      // check, if we already have same named language key
-      // if so, overwrite this with correct lang_country locale
-      Locale lang = langArray.get(cc.toLowerCase(Locale.ROOT));
-      Locale l;
-      if (lang != null) {
-        l = new Locale(cc, cc);
-      }
-      else {
-        l = new Locale("", cc);
-      }
-
-      langArray.put(l.getDisplayCountry(intl), l); // english name
-      langArray.put(l.getDisplayCountry(), l); // localized name
-      langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code - lowercase to overwrite possible language key (!)
-      try {
-        langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code - lowercase to overwrite possible language key (!)
-      }
-      catch (MissingResourceException e) {
-        // tjo... maybe not available, see javadoc
-      }
-    }
-
-    // add yet unknown ones hardcoded
-    // (after we find the key, the JVM DOES know it :)
-    for (String cus : CUSTOM) {
-      Locale locale = new Locale(cus);
-      Locale base = new Locale(locale.getLanguage()); // from all, create only the base languages
-      langArray.put(base.getDisplayLanguage(intl), base);
-      langArray.put(base.getDisplayLanguage(), base);
-      try {
-        langArray.put(base.getDisplayLanguage(intl).substring(0, 3), base); // eg German -> Ger, where iso3=deu
-      }
-      catch (Exception e) {
-        // ignore
-      }
-      // ISO-639-2/T
-      langArray.put(base.getISO3Language(), base);
-      // ISO-639-2/B
-      langArray.put(LanguageUtils.getISO3BLanguage(base), base);
-    }
-
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
     Collections.sort(keys, new Comparator<String>() {
