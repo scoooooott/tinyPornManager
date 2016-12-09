@@ -47,6 +47,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.japura.gui.CheckComboBox;
 import org.japura.gui.model.ListCheckModel;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -469,8 +470,13 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         MovieSubtitleChooserModel model = subtitleEventList.get(row);
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
-          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), fileToScrape.getFileAsPath(), model.getLanguage().name(),
-              movieToScrape);
+          // the right language tag from the renamer settings
+          String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(),
+              MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+          if (StringUtils.isBlank(lang)) {
+            lang = model.getLanguage().name();
+          }
+          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), fileToScrape.getFileAsPath(), lang, movieToScrape);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }
       }
