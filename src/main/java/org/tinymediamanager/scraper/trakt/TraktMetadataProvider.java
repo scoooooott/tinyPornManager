@@ -50,7 +50,7 @@ public class TraktMetadataProvider implements IMovieMetadataProvider, ITvShowMet
         "<html><h3>Trakt.tv</h3><br />Trakt.tv is a platform that does many things," + " but primarily keeps track of TV shows and movies you watch. "
             + "It also provides meta data for movies and TV shows<br /><br />Available languages: EN</html>",
         TraktMetadataProvider.class.getResource("/trakt_tv.png"));
-
+    providerInfo.setVersion(TraktMetadataProvider.class);
     return providerInfo;
   }
 
