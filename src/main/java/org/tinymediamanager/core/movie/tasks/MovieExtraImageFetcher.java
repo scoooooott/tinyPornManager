@@ -271,11 +271,11 @@ public class MovieExtraImageFetcher implements Runnable {
         FileOutputStream outputStream = null;
         InputStream is = null;
         Path file = null;
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize() > 0) {
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbsResize() && MovieModuleManager.SETTINGS.getImageExtraThumbsSize() > 0) {
           file = folder.resolve("thumb" + (i + 1) + ".jpg");
           outputStream = new FileOutputStream(file.toFile());
           try {
-            is = ImageCache.scaleImage(url, MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsSize());
+            is = ImageCache.scaleImage(url, MovieModuleManager.SETTINGS.getImageExtraThumbsSize());
           }
           catch (Exception e) {
             LOGGER.warn("problem with rescaling: " + e.getMessage());

@@ -148,7 +148,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
+        if (!MovieModuleManager.SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
           switch (word.toUpperCase()) {
@@ -287,7 +287,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
+        if (!MovieModuleManager.SETTINGS.getBadWords().contains(s[i].toLowerCase())) {
           String word = s[i];
           // roman characters such as "Part Iv" should not be camel-cased
           switch (word.toUpperCase()) {

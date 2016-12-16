@@ -64,7 +64,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
   public MovieFindMissingTask() {
     super(BUNDLE.getString("movie.findmissing"));
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+    dataSources = new ArrayList<>(MovieModuleManager.SETTINGS.getMovieDataSource());
   }
 
   public MovieFindMissingTask(String datasource) {

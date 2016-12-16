@@ -101,48 +101,48 @@ public class MovieArtworkHelper {
         // not in our list? get'em!
         switch (mft) {
           case FANART:
-            if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty() || force) {
+            if (!MovieModuleManager.SETTINGS.getMovieFanartFilenames().isEmpty() || force) {
               downloadFanart(movie);
             }
             break;
           case POSTER:
-            if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty() || force) {
+            if (!MovieModuleManager.SETTINGS.getMoviePosterFilenames().isEmpty() || force) {
               downloadPoster(movie);
             }
             break;
           case BANNER:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner() || force) {
+            if (MovieModuleManager.SETTINGS.isImageBanner() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case CLEARART:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart() || force) {
+            if (MovieModuleManager.SETTINGS.isImageClearart() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case DISCART:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart() || force) {
+            if (MovieModuleManager.SETTINGS.isImageDiscart() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case LOGO:
           case CLEARLOGO:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo() || force) {
+            if (MovieModuleManager.SETTINGS.isImageLogo() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case THUMB:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb() || force) {
+            if (MovieModuleManager.SETTINGS.isImageThumb() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case EXTRAFANART:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() || force) {
+            if (MovieModuleManager.SETTINGS.isImageExtraFanart() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
           case EXTRATHUMB:
-            if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() || force) {
+            if (MovieModuleManager.SETTINGS.isImageExtraThumbs() || force) {
               downloadExtraArtwork(movie, mft);
             }
             break;
@@ -164,15 +164,15 @@ public class MovieArtworkHelper {
    */
   public static List<MovieFanartNaming> getFanartNamesForMovie(Movie movie) {
     List<MovieFanartNaming> fanartnames = new ArrayList<>();
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty()) {
+    if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().isEmpty()) {
       return fanartnames;
     }
     if (movie.isMultiMovieDir()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
+      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
         fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
         fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
       }
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
+      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
         fanartnames.add(MovieFanartNaming.FILENAME_FANART2_JPG);
         fanartnames.add(MovieFanartNaming.FILENAME_FANART2_PNG);
       }
@@ -186,7 +186,7 @@ public class MovieArtworkHelper {
       fanartnames.add(MovieFanartNaming.FANART_PNG);
     }
     else {
-      fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
+      fanartnames = MovieModuleManager.SETTINGS.getMovieFanartFilenames();
     }
     return fanartnames;
   }
@@ -236,15 +236,15 @@ public class MovieArtworkHelper {
    */
   public static List<MoviePosterNaming> getPosterNamesForMovie(Movie movie) {
     List<MoviePosterNaming> posternames = new ArrayList<>();
-    if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty()) {
+    if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().isEmpty()) {
       return posternames;
     }
     if (movie.isMultiMovieDir()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
         posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
         posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
       }
-      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
         posternames.add(MoviePosterNaming.FILENAME_JPG);
         posternames.add(MoviePosterNaming.FILENAME_PNG);
       }
@@ -254,11 +254,11 @@ public class MovieArtworkHelper {
       }
     }
     else if (movie.isDisc()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER_JPG)) {
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER_JPG)) {
         posternames.add(MoviePosterNaming.FOLDER_JPG);
         posternames.add(MoviePosterNaming.FOLDER_PNG);
       }
-      if (MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER_JPG) || posternames.isEmpty()) {
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER_JPG) || posternames.isEmpty()) {
         posternames.add(MoviePosterNaming.POSTER_JPG);
         posternames.add(MoviePosterNaming.POSTER_PNG);
       }
@@ -268,7 +268,7 @@ public class MovieArtworkHelper {
       }
     }
     else {
-      posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
+      posternames = MovieModuleManager.SETTINGS.getMoviePosterFilenames();
     }
     return posternames;
   }
@@ -471,7 +471,7 @@ public class MovieArtworkHelper {
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
 
     // poster
     setBestPoster(movie, artwork);
@@ -480,21 +480,21 @@ public class MovieArtworkHelper {
     setBestFanart(movie, artwork);
 
     // works now for single & multimovie
-    setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
-    setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, MovieModuleManager.MOVIE_SETTINGS.isImageLogo());
-    setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.MOVIE_SETTINGS.isImageClearart());
-    setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.MOVIE_SETTINGS.isImageBanner());
-    setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.MOVIE_SETTINGS.isImageThumb());
-    setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.MOVIE_SETTINGS.isImageDiscart());
+    setBestArtwork(movie, artwork, MediaArtworkType.LOGO, MovieModuleManager.SETTINGS.isImageLogo());
+    setBestArtwork(movie, artwork, MediaArtworkType.CLEARLOGO, MovieModuleManager.SETTINGS.isImageLogo());
+    setBestArtwork(movie, artwork, MediaArtworkType.CLEARART, MovieModuleManager.SETTINGS.isImageClearart());
+    setBestArtwork(movie, artwork, MediaArtworkType.BANNER, MovieModuleManager.SETTINGS.isImageBanner());
+    setBestArtwork(movie, artwork, MediaArtworkType.THUMB, MovieModuleManager.SETTINGS.isImageThumb());
+    setBestArtwork(movie, artwork, MediaArtworkType.DISC, MovieModuleManager.SETTINGS.isImageDiscart());
 
     // extrathumbs
     List<String> extrathumbs = new ArrayList<>();
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
+    if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && MovieModuleManager.SETTINGS.getImageExtraThumbsCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.SETTINGS.getImageFanartSize().getOrder()) {
           extrathumbs.add(art.getDefaultUrl());
-          if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
+          if (extrathumbs.size() >= MovieModuleManager.SETTINGS.getImageExtraThumbsCount()) {
             break;
           }
         }
@@ -509,12 +509,12 @@ public class MovieArtworkHelper {
 
     // extrafanarts
     List<String> extrafanarts = new ArrayList<>();
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
+    if (MovieModuleManager.SETTINGS.isImageExtraFanart() && MovieModuleManager.SETTINGS.getImageExtraFanartCount() > 0) {
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.SETTINGS.getImageFanartSize().getOrder()) {
           extrafanarts.add(art.getDefaultUrl());
-          if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
+          if (extrafanarts.size() >= MovieModuleManager.SETTINGS.getImageExtraFanartCount()) {
             break;
           }
         }
@@ -535,12 +535,12 @@ public class MovieArtworkHelper {
    * find the "best" poster in the list of artwork, assign it to the movie and download it
    */
   private static void setBestPoster(Movie movie, List<MediaArtwork> artwork) {
-    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder();
-    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+    int preferredSizeOrder = MovieModuleManager.SETTINGS.getImagePosterSize().getOrder();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().name();
 
     MediaArtwork foundPoster = null;
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+    if (MovieModuleManager.SETTINGS.isImageLanguagePriority()) {
       // language has priority over size.
       // first run: find it with the preferred size
       for (MediaArtwork art : artwork) {
@@ -600,12 +600,12 @@ public class MovieArtworkHelper {
    * find the "best" fanart in the list of artwork, assign it to the movie and download it
    */
   private static void setBestFanart(Movie movie, List<MediaArtwork> artwork) {
-    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder();
-    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+    int preferredSizeOrder = MovieModuleManager.SETTINGS.getImageFanartSize().getOrder();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().name();
 
     MediaArtwork foundfanart = null;
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+    if (MovieModuleManager.SETTINGS.isImageLanguagePriority()) {
       // language has priority over size.
       // first run: find it with the preferred size
       for (MediaArtwork art : artwork) {

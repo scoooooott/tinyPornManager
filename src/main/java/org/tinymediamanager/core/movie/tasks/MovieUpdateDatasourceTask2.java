@@ -105,7 +105,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   public MovieUpdateDatasourceTask2() {
     super(BUNDLE.getString("update.datasource"));
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+    dataSources = new ArrayList<>(MovieModuleManager.SETTINGS.getMovieDataSource());
   }
 
   public MovieUpdateDatasourceTask2(String datasource) {
@@ -212,7 +212,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
 
         // build image cache on import
-        if (MovieModuleManager.MOVIE_SETTINGS.isBuildImageCacheOnImport()) {
+        if (MovieModuleManager.SETTINGS.isBuildImageCacheOnImport()) {
           for (Movie movie : movieList.getMovies()) {
             if (!dsAsPath.equals(Paths.get(movie.getDataSource()))) {
               // check only movies matching datasource
@@ -228,7 +228,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 
-      if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+      if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
         TmmTask task = new SyncTraktTvTask(true, true, false, false);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
@@ -440,7 +440,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           // FileSystems.getDefault().getPathMatcher("glob:*.[nN][fF][oO]");
           LOGGER.info("| parsing NFO " + mf.getFileAsPath());
           Movie nfo = null;
-          switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
+          switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
             case XBMC:
               nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
               if (nfo == null) {
@@ -693,7 +693,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           MediaFile nfo = new MediaFile(nfoFile, MediaFileType.NFO);
           // from NFO?
           LOGGER.debug("| found NFO '" + nfo + "' - try to parse");
-          switch (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector()) {
+          switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
             case XBMC:
               movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
               if (movie == null) {
@@ -1105,7 +1105,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase();
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
+              && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -1133,7 +1133,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase();
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
+            && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -1183,7 +1183,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
-          || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }
@@ -1258,7 +1258,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       String fn = dir.getFileName().toString().toUpperCase();
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
           || Files.exists(dir.resolve(".nomedia"))
-          || MovieModuleManager.MOVIE_SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

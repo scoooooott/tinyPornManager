@@ -109,7 +109,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       }
     }
 
-    if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+    if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
       TmmTask task = new SyncTraktTvTask(moviesToScrape, null);
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
@@ -162,10 +162,10 @@ public class MovieScrapeTask extends TmmThreadPool {
           try {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setResult(result1);
-            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-            options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+            options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+            options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
             // we didn't do a search - pass imdbid and tmdbid from movie object
             if (!doSearch) {
@@ -235,7 +235,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         }
 
         // get threshold from settings (default 0.75) - to minimize false positives
-        final double scraperTreshold = MovieModuleManager.MOVIE_SETTINGS.getScraperThreshold();
+        final double scraperTreshold = MovieModuleManager.SETTINGS.getScraperThreshold();
         LOGGER.info("using treshold from settings of {}", scraperTreshold);
         if (result.getScore() < scraperTreshold) {
           LOGGER.info("score is lower than " + scraperTreshold + " (" + result.getScore() + ") - ignore result");
@@ -260,10 +260,10 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
       // scrape providers till one artwork has been found
       for (MediaScraper scraper : artworkScrapers) {
@@ -299,8 +299,8 @@ public class MovieScrapeTask extends TmmThreadPool {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {

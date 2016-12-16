@@ -63,7 +63,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                        settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private MovieSettings                        settings         = MovieModuleManager.SETTINGS;
   private JComboBox<MovieConnectors>           cbNfoFormat;
   private JCheckBox                            cbMovieNfoFilename1;
   private JCheckBox                            cbMovieNfoFilename2;
@@ -117,14 +117,14 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     btnRemoveDatasource.addActionListener(arg0 -> {
       int row = listDataSources.getSelectedIndex();
       if (row != -1) { // nothing selected
-        String path = MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource().get(row);
+        String path = MovieModuleManager.SETTINGS.getMovieDataSource().get(row);
         String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
         int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
             BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
             BUNDLE.getString("Button.abort")); //$NON-NLS-1$
         if (decision == 0) {
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MovieModuleManager.MOVIE_SETTINGS.removeMovieDataSources(path);
+          MovieModuleManager.SETTINGS.removeMovieDataSources(path);
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
       }
@@ -153,7 +153,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
 
     btnAddBadWord.addActionListener(e -> {
       if (StringUtils.isNotEmpty(tfAddBadword.getText())) {
-        MovieModuleManager.MOVIE_SETTINGS.addBadWord(tfAddBadword.getText());
+        MovieModuleManager.SETTINGS.addBadWord(tfAddBadword.getText());
         tfAddBadword.setText("");
       }
     });
@@ -161,8 +161,8 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     btnRemoveBadWord.addActionListener(arg0 -> {
       int row = listBadWords.getSelectedIndex();
       if (row != -1) {
-        String badWord = MovieModuleManager.MOVIE_SETTINGS.getBadWords().get(row);
-        MovieModuleManager.MOVIE_SETTINGS.removeBadWord(badWord);
+        String badWord = MovieModuleManager.SETTINGS.getBadWords().get(row);
+        MovieModuleManager.SETTINGS.removeBadWord(badWord);
       }
     });
 

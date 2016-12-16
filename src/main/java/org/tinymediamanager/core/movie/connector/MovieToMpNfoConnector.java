@@ -178,7 +178,7 @@ public class MovieToMpNfoConnector {
       nfoNames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfoNames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+      nfoNames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
     }
     writeNfoFiles(movie, mp, nfoNames);
   }
@@ -260,7 +260,7 @@ public class MovieToMpNfoConnector {
     // certification
     if (movie.getCertification() != null) {
       // mp.mpaa = movie.getCertification().name();
-      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
+      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
     }
 
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {

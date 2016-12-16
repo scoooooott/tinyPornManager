@@ -213,7 +213,7 @@ public class MovieToKodiNfoConnector {
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+      nfonames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
     }
     writeNfoFiles(movie, kodi, nfonames);
   }
@@ -331,13 +331,13 @@ public class MovieToKodiNfoConnector {
     // certifications
     if (movie.getCertification() != null) {
       kodi.certification = CertificationStyle.formatCertification(movie.getCertification(),
-          MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
-      if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
+          MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+      if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         kodi.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        kodi.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
+        kodi.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
       }
     }
 

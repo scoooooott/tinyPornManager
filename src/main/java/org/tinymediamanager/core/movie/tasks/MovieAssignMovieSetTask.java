@@ -86,8 +86,8 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
           MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
-          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-          options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+          options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
           for (Entry<String, Object> entry : movie.getIds().entrySet()) {
             options.setId(entry.getKey(), entry.getValue().toString());
           }
@@ -103,8 +103,8 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
               try {
                 options = new MediaScrapeOptions(MediaType.MOVIE_SET);
                 options.setTmdbId(collectionId);
-                options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-                options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+                options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+                options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
                 MediaMetadata info = mp.getMetadata(options);
                 if (info != null && StringUtils.isNotBlank(info.getTitle())) {

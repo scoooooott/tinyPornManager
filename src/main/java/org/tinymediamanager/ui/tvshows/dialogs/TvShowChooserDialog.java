@@ -56,7 +56,6 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -142,7 +141,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     setBounds(5, 5, 985, 586);
 
     // copy the values
-    TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
+    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
     mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
     // trailerProviders = tvShowList.getTrailerProviders();

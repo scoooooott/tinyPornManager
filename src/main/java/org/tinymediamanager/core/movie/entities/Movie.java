@@ -533,7 +533,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   @Deprecated
   public void findActorImages() {
-    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
       // get all files from the actors path
       try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
         for (Path path : directoryStream) {
@@ -651,7 +651,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public int getRuntime() {
     int runtimeFromMi = getRuntimeFromMediaFilesInMinutes();
-    if (MovieModuleManager.MOVIE_SETTINGS.isRuntimeFromMediaInfo() && runtimeFromMi > 0) {
+    if (MovieModuleManager.SETTINGS.isRuntimeFromMediaInfo() && runtimeFromMi > 0) {
       return runtimeFromMi;
     }
     return runtime == 0 ? runtimeFromMi : runtime;
@@ -918,8 +918,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
               IMovieSetMetadataProvider mp = ((IMovieSetMetadataProvider) first.getMediaProvider());
               MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
               options.setTmdbId(col);
-              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-              options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+              options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
               MediaMetadata info = mp.getMetadata(options);
               if (info != null && StringUtils.isNotBlank(info.getTitle())) {
@@ -958,7 +958,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     saveToDb();
 
     // rename the movie if that has been chosen in the settings
-    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenameAfterScrape()) {
+    if (MovieModuleManager.SETTINGS.isMovieRenameAfterScrape()) {
       MovieRenamer.renameMovie(this);
     }
   }
@@ -975,9 +975,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
     removeAllTrailers();
 
     // set preferred trailer
-    if (MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference()) {
-      MovieTrailerQuality desiredQuality = MovieModuleManager.MOVIE_SETTINGS.getTrailerQuality();
-      MovieTrailerSources desiredSource = MovieModuleManager.MOVIE_SETTINGS.getTrailerSource();
+    if (MovieModuleManager.SETTINGS.isUseTrailerPreference()) {
+      MovieTrailerQuality desiredQuality = MovieModuleManager.SETTINGS.getTrailerQuality();
+      MovieTrailerSources desiredSource = MovieModuleManager.SETTINGS.getTrailerSource();
 
       // search for quality and provider
       for (MovieTrailer trailer : trailers) {
@@ -1011,7 +1011,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
           }
         }
       }
-    } // end if MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference()
+    } // end if MovieModuleManager.SETTINGS.isUseTrailerPreference()
 
     // if not yet one has been found; sort by quality descending and take the first one
     if (preferredTrailer == null && !trailers.isEmpty()) {
@@ -1039,7 +1039,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       addTrailer(trailer);
     }
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference() && MovieModuleManager.MOVIE_SETTINGS.isAutomaticTrailerDownload()
+    if (MovieModuleManager.SETTINGS.isUseTrailerPreference() && MovieModuleManager.SETTINGS.isAutomaticTrailerDownload()
         && getMediaFiles(MediaFileType.TRAILER).isEmpty() && !trailer.isEmpty()) {
       MovieTrailer trailer = this.trailer.get(0);
       MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, this);
@@ -1160,7 +1160,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
     // actor writing/caching is done somewhere else...
 
-    // if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
     // Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
     //
     // for (MovieActor actor : actors) {
@@ -1336,7 +1336,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void writeActorImages() {
     // check if actor images shall be written
-    if (!MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages() || isMultiMovieDir()) {
+    if (!MovieModuleManager.SETTINGS.isWriteActorImages() || isMultiMovieDir()) {
       return;
     }
 
@@ -1348,14 +1348,14 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Write nfo.
    */
   public void writeNFO() {
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().isEmpty()) {
+    if (MovieModuleManager.SETTINGS.getMovieNfoFilenames().isEmpty()) {
       LOGGER.info("Not writing any NFO file, because NFO filename preferences were empty...");
       return;
     }
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
+    if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       MovieToMpNfoConnector.setData(this);
     }
-    else if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
+    else if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
       MovieToXbmcNfoConnector.setData(this);
     }
     else {
@@ -1706,7 +1706,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     // actor image files
-    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
+    if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
       for (MovieActor actor : actors) {
         Path imagePath = actor.getStoragePath();
         if (imagePath != null) {
@@ -1822,7 +1822,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
+    if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       writeNFO();
     }
   }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -27,11 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.tinymediamanager.core.AbstractModelObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
@@ -41,10 +47,18 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
  * The Class MovieSettings.
  */
 @XmlRootElement(name = "MovieSettings")
-public class MovieSettings extends AbstractModelObject {
+public class MovieSettings extends AbstractSettings {
+  private static final Logger           LOGGER                                   = LoggerFactory.getLogger(MovieSettings.class);
+  private final static String           CONFIG_FILE                              = "movies.xml";
+
   public final static String            DEFAULT_RENAMER_FOLDER_PATTERN           = "$T { - $U }($Y)";
   public final static String            DEFAULT_RENAMER_FILE_PATTERN             = "$T { - $U }($Y) $V $A";
 
+  private static MovieSettings          instance;
+
+  /**
+   * Constants mainly for events
+   */
   private final static String           PATH                                     = "path";
   private final static String           FILENAME                                 = "filename";
   private final static String           MOVIE_DATA_SOURCE                        = "movieDataSource";
@@ -140,10 +154,10 @@ public class MovieSettings extends AbstractModelObject {
   private final List<String>            movieTableHiddenColumns                  = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
-  private boolean                         detectMovieMultiDir                      = false;
-  private boolean                         buildImageCacheOnImport                  = false;
-  private MovieConnectors                 movieConnector                           = MovieConnectors.KODI;
-  private CertificationStyle              movieCertificationStyle                  = CertificationStyle.LARGE;
+  private boolean                       detectMovieMultiDir                      = false;
+  private boolean                       buildImageCacheOnImport                  = false;
+  private MovieConnectors               movieConnector                           = MovieConnectors.KODI;
+  private CertificationStyle            movieCertificationStyle                  = CertificationStyle.LARGE;
 
   // renamer
   private boolean                       movieRenameAfterScrape                   = false;
@@ -162,6 +176,7 @@ public class MovieSettings extends AbstractModelObject {
   private CountryCode                   certificationCountry                     = CountryCode.US;
   private double                        scraperThreshold                         = 0.75;
   private boolean                       scraperFallback                          = false;
+  private MovieScraperMetadataConfig    movieScraperMetadataConfig               = null;
 
   // artwork scraper
   private PosterSizes                   imagePosterSize                          = PosterSizes.BIG;
@@ -210,6 +225,85 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       storeUiFilters                           = false;
 
   public MovieSettings() {
+    addPropertyChangeListener(evt -> setDirty());
+    movieScraperMetadataConfig = new MovieScraperMetadataConfig();
+    movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
+  }
+
+  /**
+   * Gets the single instance of MovieSettings.
+   *
+   * @return single instance of MovieSettings
+   */
+  public synchronized static MovieSettings getInstance() {
+    return getInstance(Settings.getInstance().getSettingsFolder());
+  }
+
+  /**
+   * Override our settings folder (defaults to "data")<br>
+   * <b>Should only be used for unit testing et all!</b><br>
+   *
+   * @return single instance of MovieSettings
+   */
+  public synchronized static MovieSettings getInstance(String folder) {
+    if (instance == null) {
+      instance = (MovieSettings) getInstance(folder, CONFIG_FILE, MovieSettings.class);
+    }
+    return instance;
+  }
+
+  @Override
+  protected String getConfigFilename() {
+    return CONFIG_FILE;
+  }
+
+  @Override
+  protected Logger getLogger() {
+    return LOGGER;
+  }
+
+  @Override
+  protected void writeDefaultSettings() {
+    movieNfoFilenames.clear();
+    addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+
+    moviePosterFilenames.clear();
+    addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+    addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+
+    movieFanartFilenames.clear();
+    addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+    addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+
+    // activate default scrapers
+    movieArtworkScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
+      addMovieArtworkScraper(ms.getId());
+    }
+
+    movieTrailerScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
+      addMovieTrailerScraper(ms.getId());
+    }
+
+    movieSubtitleScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
+      addMovieSubtitleScraper(ms.getId());
+    }
+
+    // set default languages based on java instance
+    String defaultLang = Locale.getDefault().getLanguage();
+    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
+    if (cc != null) {
+      setCertificationCountry(cc);
+    }
+    for (MediaLanguages ml : MediaLanguages.values()) {
+      if (ml.name().equals(defaultLang)) {
+        setScraperLanguage(ml);
+      }
+    }
+
+    saveSettings();
   }
 
   public void addMovieDataSources(String path) {
@@ -981,5 +1075,14 @@ public class MovieSettings extends AbstractModelObject {
     LanguageStyle oldValue = this.movieRenamerLanguageStyle;
     this.movieRenamerLanguageStyle = newValue;
     firePropertyChange("movieRenamerLanguageStyle", oldValue, newValue);
+  }
+
+  public MovieScraperMetadataConfig getMovieScraperMetadataConfig() {
+    return movieScraperMetadataConfig;
+  }
+
+  public void setMovieScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
+    this.movieScraperMetadataConfig = scraperMetadataConfig;
+    this.movieScraperMetadataConfig.addPropertyChangeListener(evt -> setDirty());
   }
 }

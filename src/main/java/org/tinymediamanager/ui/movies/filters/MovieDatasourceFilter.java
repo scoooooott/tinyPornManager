@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
@@ -36,7 +36,7 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
  * @author Manuel Laggner
  */
 public class MovieDatasourceFilter extends AbstractMovieUIFilter {
-  private MovieSettings     movieSettings = Settings.getInstance().getMovieSettings();
+  private MovieSettings     movieSettings = MovieModuleManager.SETTINGS;
 
   private JComboBox<String> comboBox;
 

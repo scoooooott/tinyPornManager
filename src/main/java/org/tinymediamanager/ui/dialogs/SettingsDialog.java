@@ -36,6 +36,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -182,6 +184,8 @@ public class SettingsDialog extends TmmDialog {
   public void setVisible(boolean visible) {
     if (!visible) {
       Globals.settings.saveSettings();
+      MovieModuleManager.SETTINGS.saveSettings();
+      TvShowModuleManager.SETTINGS.saveSettings();
     }
     super.setVisible(visible);
   }

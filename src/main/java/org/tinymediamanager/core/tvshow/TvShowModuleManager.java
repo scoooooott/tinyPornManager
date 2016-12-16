@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class TvShowModuleManager implements ITmmModule {
-  public static final TvShowSettings SETTINGS     = Globals.settings.getTvShowSettings();
+  public static final TvShowSettings SETTINGS     = TvShowSettings.getInstance();
 
   private static final String        MODULE_TITLE = "TV show management";
   private static final String        TV_SHOW_DB   = "tvshows.db";
@@ -88,12 +88,8 @@ public class TvShowModuleManager implements ITmmModule {
 
     // configure database
     mvStore = new MVStore.Builder().fileName(Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB).toString()).compressHigh()
-        .backgroundExceptionHandler(new Thread.UncaughtExceptionHandler() {
-          @Override
-          public void uncaughtException(Thread t, Throwable e) {
-            LOGGER.error("Error in the background thread of the persistent cache", e);
-          }
-        }).autoCommitBufferSize(4096).open();
+        .backgroundExceptionHandler((t, e) -> LOGGER.error("Error in the background thread of the persistent cache", e)).autoCommitBufferSize(4096)
+        .open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);

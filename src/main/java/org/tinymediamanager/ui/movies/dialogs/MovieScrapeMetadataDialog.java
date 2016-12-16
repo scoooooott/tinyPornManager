@@ -31,7 +31,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -81,7 +80,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     setMinimumSize(new Dimension(getWidth(), getHeight()));
 
     // copy the values
-    MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
+    MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
 
     MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
     scraperMetadataConfig.setTitle(settings.isTitle());
@@ -170,13 +169,13 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // set data
 
     // metadataprovider
-    MediaScraper defaultScraper = MediaScraper.getMediaScraperById(MovieModuleManager.MOVIE_SETTINGS.getMovieScraper(), ScraperType.MOVIE);
+    MediaScraper defaultScraper = MediaScraper.getMediaScraperById(MovieModuleManager.SETTINGS.getMovieScraper(), ScraperType.MOVIE);
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork scraper
     List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
     for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
         selectedArtworkScrapers.add(artworkScraper);
       }
     }
@@ -187,7 +186,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // trailer scraper
     List<MediaScraper> selectedTrailerScrapers = new ArrayList<>();
     for (MediaScraper trailerScraper : MovieList.getInstance().getAvailableTrailerScrapers()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieTrailerScrapers().contains(trailerScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getMovieTrailerScrapers().contains(trailerScraper.getId())) {
         selectedTrailerScrapers.add(trailerScraper);
       }
     }

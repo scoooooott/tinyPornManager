@@ -236,7 +236,7 @@ public class MoviePanel extends JPanel {
         JMenuItem item = new JMenuItem(actionUpdateDataSources2);
         buttonUpdateDatasource.getPopupMenu().add(item);
         buttonUpdateDatasource.getPopupMenu().addSeparator();
-        for (String ds : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
+        for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new MovieUpdateSingleDatasourceAction(ds)));
         }
 
@@ -425,9 +425,9 @@ public class MoviePanel extends JPanel {
     init();
 
     // filter
-    // if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+    // if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
     // movieList.searchDuplicates();
-    // movieSelectionModel.filterMovies(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
+    // movieSelectionModel.filterMovies(MovieModuleManager.SETTINGS.getUiFilters());
     // }
   }
 
@@ -453,7 +453,7 @@ public class MoviePanel extends JPanel {
       public void menuSelected(MenuEvent arg0) {
         menuUpdateDatasources.removeAll();
         menuFindMissingMovies.removeAll();
-        for (String ds : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
+        for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
           JMenuItem item = new JMenuItem(new MovieUpdateSingleDatasourceAction(ds));
           menuUpdateDatasources.add(item);
 
@@ -671,31 +671,31 @@ public class MoviePanel extends JPanel {
     }
 
     // hide columns if needed
-    if (!MovieModuleManager.MOVIE_SETTINGS.isYearColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isYearColumnVisible()) {
       table.hideColumn("year"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isRatingColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isRatingColumnVisible()) {
       table.hideColumn("rating"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isDateAddedColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isDateAddedColumnVisible()) {
       table.hideColumn("dateadded"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isNfoColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isNfoColumnVisible()) {
       table.hideColumn("nfo"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isMetadataColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isMetadataColumnVisible()) {
       table.hideColumn("metadata"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isImageColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isImageColumnVisible()) {
       table.hideColumn("images"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isTrailerColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isTrailerColumnVisible()) {
       table.hideColumn("trailer"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isSubtitleColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isSubtitleColumnVisible()) {
       table.hideColumn("subtitle"); //$NON-NLS-1$
     }
-    if (!MovieModuleManager.MOVIE_SETTINGS.isWatchedColumnVisible()) {
+    if (!MovieModuleManager.SETTINGS.isWatchedColumnVisible()) {
       table.hideColumn("watched"); //$NON-NLS-1$
     }
 
@@ -745,7 +745,7 @@ public class MoviePanel extends JPanel {
       }
     };
 
-    MovieModuleManager.MOVIE_SETTINGS.addPropertyChangeListener(settingsPropertyChangeListener);
+    MovieModuleManager.SETTINGS.addPropertyChangeListener(settingsPropertyChangeListener);
 
     // initialize filteredCount
     lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));

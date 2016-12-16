@@ -92,14 +92,14 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
     Matcher<Movie> matcher = new MovieMatcher(new HashSet<>(filters));
     fireChanged(matcher);
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+    if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
       Map<String, String> filterValues = new HashMap<>();
       for (IMovieUIFilter filter : filters) {
         if (filter.isActive()) {
           filterValues.put(filter.getId(), filter.getFilterValueAsString());
         }
       }
-      MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filterValues);
+      MovieModuleManager.SETTINGS.setUiFilters(filterValues);
       Globals.settings.saveSettings();
     }
   }
@@ -114,8 +114,8 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
   public void filterMovies(Map<MovieSearchOptions, Object> filter) {
     Matcher<Movie> matcher = new MovieExtendedMatcher(filter);
     fireChanged(matcher);
-    // if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
-    // MovieModuleManager.MOVIE_SETTINGS.setUiFilters(filter);
+    // if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
+    // MovieModuleManager.SETTINGS.setUiFilters(filter);
     // Globals.settings.saveSettings();
     // }
   }

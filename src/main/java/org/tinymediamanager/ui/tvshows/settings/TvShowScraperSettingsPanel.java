@@ -52,7 +52,6 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
@@ -234,7 +233,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       add(lblScraperOptionsT, "cell 0 5 4 1");
     }
     {
-      final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(Settings.getInstance().getTvShowScraperMetadataConfig());
+      final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getTvShowScraperMetadataConfig());
       add(scraperMetadataPanel, "cell 1 6 3 1,grow");
     }
     {

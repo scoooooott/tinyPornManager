@@ -46,8 +46,8 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -829,7 +829,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers());
+    return getSubtitleScrapers(MovieModuleManager.SETTINGS.getMovieSubtitleScrapers());
   }
 
   /**

@@ -854,7 +854,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
+      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
 
@@ -1124,7 +1124,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.saveToDb();
 
       // if configured - sync with trakt.tv
-      if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+      if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
         TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToEdit), null);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }

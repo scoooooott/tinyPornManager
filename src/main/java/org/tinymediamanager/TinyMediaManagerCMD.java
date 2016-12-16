@@ -216,7 +216,7 @@ public class TinyMediaManagerCMD {
           task.run(); // blocking
         }
         else {
-          List<String> dataSources = new ArrayList<>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
+          List<String> dataSources = new ArrayList<>(MovieModuleManager.SETTINGS.getMovieDataSource());
           for (Integer i : updateMovieDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new MovieUpdateDatasourceTask2(dataSources.get(i - 1));

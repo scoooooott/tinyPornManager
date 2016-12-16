@@ -54,7 +54,6 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -81,7 +80,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
-  private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
   /**
@@ -255,7 +254,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       add(lblScraperOptionsT, "cell 0 7 5 1");
     }
     {
-      MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel(Settings.getInstance().getMovieScraperMetadataConfig());
+      MovieScraperMetadataPanel movieScraperMetadataPanel = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
       add(movieScraperMetadataPanel, "cell 1 8 4 1,grow");
     }
     {

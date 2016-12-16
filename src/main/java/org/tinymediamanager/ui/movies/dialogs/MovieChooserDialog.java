@@ -56,7 +56,6 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -149,7 +148,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     setBounds(5, 5, 960, 642);
 
     // copy the values
-    MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
+    MovieScraperMetadataConfig settings = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
     mediaScraper = movieList.getDefaultMediaScraper();
     artworkScrapers = movieList.getDefaultArtworkScrapers();
     trailerScrapers = movieList.getDefaultTrailerScrapers();
@@ -247,7 +246,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         JLabel lblLanguage = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
         panelSearchField.add(lblLanguage, "2, 3, right, default");
         cbLanguage = new JComboBox(MediaLanguages.values());
-        cbLanguage.setSelectedItem(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+        cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
         cbLanguage.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -427,7 +426,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!MovieModuleManager.MOVIE_SETTINGS.isScrapeBestImage()) {
+          if (!MovieModuleManager.SETTINGS.isScrapeBestImage()) {
             md.clearMediaArt();
           }
 
@@ -439,7 +438,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
-            if (!MovieModuleManager.MOVIE_SETTINGS.isScrapeBestImage()) {
+            if (!MovieModuleManager.SETTINGS.isScrapeBestImage()) {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
@@ -475,7 +474,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // banner
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
+              if (MovieModuleManager.SETTINGS.isImageBanner()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -486,7 +485,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // logo
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+              if (MovieModuleManager.SETTINGS.isImageLogo()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.LOGO, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -497,7 +496,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // clearlogo
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+              if (MovieModuleManager.SETTINGS.isImageLogo()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARLOGO, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -508,7 +507,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // clearart
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
+              if (MovieModuleManager.SETTINGS.isImageClearart()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARART, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -519,7 +518,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // discart
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
+              if (MovieModuleManager.SETTINGS.isImageDiscart()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.DISC, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -530,7 +529,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // thumb
-              if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
+              if (MovieModuleManager.SETTINGS.isImageThumb()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.THUMB, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -552,7 +551,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           }
 
           // if configured - sync with trakt.tv
-          if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+          if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
             TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToScrape), null);
             TmmTaskManager.getInstance().addUnnamedTask(task);
           }

@@ -15,19 +15,11 @@
  */
 package org.tinymediamanager.core;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +27,10 @@ import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.io.IOUtils;
@@ -53,17 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.movie.MovieFanartNaming;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
-import org.tinymediamanager.core.movie.MoviePosterNaming;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
-import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.scraper.ScraperType;
-import org.tinymediamanager.scraper.entities.CountryCode;
-import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -73,16 +52,18 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tinyMediaManager")
-public class Settings extends AbstractModelObject {
+public class Settings extends AbstractSettings {
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
-  private final static String         DEFAULT_CONFIG_FOLDER       = "data";
+
+  public final static String     DEFAULT_CONFIG_FOLDER = "data";
+
   private String                      settingsFolder              = DEFAULT_CONFIG_FOLDER;
   private static Settings             instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String         CONFIG_FILE                 = "config.xml";
+  private final static String    CONFIG_FILE           = "tmm.xml";
   private final static String         TITLE_PREFIX                = "titlePrefix";
   private final static String         PREFIX                      = "prefix";
   private final static String         VIDEO_FILE_TYPE             = "videoFileTypes";
@@ -135,51 +116,179 @@ public class Settings extends AbstractModelObject {
 
   private boolean                     imageCache                  = true;
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
-  private boolean                     dirty                       = false;
-  private MovieSettings               movieSettings               = null;
-  private TvShowSettings              tvShowSettings              = null;
-  private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
-  private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
 
   // language 2 char - saved to config
   private String                      language;
   private String                      mediaPlayer                 = "";
 
   private int                         fontSize                    = 12;
-  private String                      fontFamily                  = "DejaVu Sans";
+  private String                 fontFamily            = "Dialog";
 
   private boolean                     deleteTrashOnExit           = false;
   private boolean                     enableAnalytics             = true;
 
   private PropertyChangeListener      propertyChangeListener;
-  @XmlTransient
-  public boolean                      newConfig                   = false;
 
   /**
    * Instantiates a new settings.
    */
   private Settings() {
-    propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        setDirty();
-      }
-    };
+    propertyChangeListener = evt -> setDirty();
     addPropertyChangeListener(propertyChangeListener);
-
-    // default values
-    movieSettings = new MovieSettings();
-    movieSettings.addPropertyChangeListener(propertyChangeListener);
-    tvShowSettings = new TvShowSettings();
-    tvShowSettings.addPropertyChangeListener(propertyChangeListener);
-    movieScraperMetadataConfig = new MovieScraperMetadataConfig();
-    movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-    tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
-    tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
-  public String getSettingsFolder() {
-    return settingsFolder;
+  @Override
+  protected String getConfigFilename() {
+    return CONFIG_FILE;
+  }
+
+  @Override
+  protected Logger getLogger() {
+    return LOGGER;
+  }
+
+  @Override
+  protected void writeDefaultSettings() {
+    version = ReleaseInfo.getVersion();
+
+    // default video file types derived from
+    // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
+    videoFileTypes.clear();
+    addVideoFileTypes(".3gp");
+    addVideoFileTypes(".asf");
+    addVideoFileTypes(".asx");
+    addVideoFileTypes(".avc");
+    addVideoFileTypes(".avi");
+    addVideoFileTypes(".bdmv");
+    addVideoFileTypes(".bin");
+    addVideoFileTypes(".bivx");
+    addVideoFileTypes(".dat");
+    addVideoFileTypes(".divx");
+    addVideoFileTypes(".dv");
+    addVideoFileTypes(".dvr-ms");
+    addVideoFileTypes(".disc"); // video stubs
+    addVideoFileTypes(".fli");
+    addVideoFileTypes(".flv");
+    addVideoFileTypes(".h264");
+    addVideoFileTypes(".img");
+    addVideoFileTypes(".iso");
+    addVideoFileTypes(".mts");
+    addVideoFileTypes(".mt2s");
+    addVideoFileTypes(".m2ts");
+    addVideoFileTypes(".m2v");
+    addVideoFileTypes(".m4v");
+    addVideoFileTypes(".mkv");
+    addVideoFileTypes(".mov");
+    addVideoFileTypes(".mp4");
+    addVideoFileTypes(".mpeg");
+    addVideoFileTypes(".mpg");
+    addVideoFileTypes(".nrg");
+    addVideoFileTypes(".nsv");
+    addVideoFileTypes(".nuv");
+    addVideoFileTypes(".ogm");
+    addVideoFileTypes(".pva");
+    addVideoFileTypes(".qt");
+    addVideoFileTypes(".rm");
+    addVideoFileTypes(".rmvb");
+    addVideoFileTypes(".strm");
+    addVideoFileTypes(".svq3");
+    addVideoFileTypes(".ts");
+    addVideoFileTypes(".ty");
+    addVideoFileTypes(".viv");
+    addVideoFileTypes(".vob");
+    addVideoFileTypes(".vp3");
+    addVideoFileTypes(".wmv");
+    addVideoFileTypes(".xvid");
+    Collections.sort(videoFileTypes);
+
+    audioFileTypes.clear();
+    addAudioFileTypes(".a52");
+    addAudioFileTypes(".aa3");
+    addAudioFileTypes(".aac");
+    addAudioFileTypes(".ac3");
+    addAudioFileTypes(".adt");
+    addAudioFileTypes(".adts");
+    addAudioFileTypes(".aif");
+    addAudioFileTypes(".aiff");
+    addAudioFileTypes(".alac");
+    addAudioFileTypes(".ape");
+    addAudioFileTypes(".at3");
+    addAudioFileTypes(".atrac");
+    addAudioFileTypes(".au");
+    addAudioFileTypes(".dts");
+    addAudioFileTypes(".flac");
+    addAudioFileTypes(".m4a");
+    addAudioFileTypes(".m4b");
+    addAudioFileTypes(".m4p");
+    addAudioFileTypes(".mid");
+    addAudioFileTypes(".midi");
+    addAudioFileTypes(".mka");
+    addAudioFileTypes(".mp3");
+    addAudioFileTypes(".mpa");
+    addAudioFileTypes(".oga");
+    addAudioFileTypes(".ogg");
+    addAudioFileTypes(".pcm");
+    addAudioFileTypes(".ra");
+    addAudioFileTypes(".ram");
+    addAudioFileTypes(".rm");
+    addAudioFileTypes(".tta");
+    addAudioFileTypes(".wav");
+    addAudioFileTypes(".wave");
+    addAudioFileTypes(".wma");
+    Collections.sort(audioFileTypes);
+
+    // default subtitle files
+    subtitleFileTypes.clear();
+    addSubtitleFileTypes(".aqt");
+    addSubtitleFileTypes(".cvd");
+    addSubtitleFileTypes(".dks");
+    addSubtitleFileTypes(".jss");
+    addSubtitleFileTypes(".sub");
+    addSubtitleFileTypes(".ttxt");
+    addSubtitleFileTypes(".mpl");
+    addSubtitleFileTypes(".pjs");
+    addSubtitleFileTypes(".psb");
+    addSubtitleFileTypes(".rt");
+    addSubtitleFileTypes(".srt");
+    addSubtitleFileTypes(".smi");
+    addSubtitleFileTypes(".ssf");
+    addSubtitleFileTypes(".ssa");
+    addSubtitleFileTypes(".svcd");
+    addSubtitleFileTypes(".usf");
+    // addSubtitleFileTypes(".idx"); // not a subtitle! just index for .sub
+    addSubtitleFileTypes(".ass");
+    addSubtitleFileTypes(".pgs");
+    addSubtitleFileTypes(".vobsub");
+    Collections.sort(subtitleFileTypes);
+
+    // default title prefix
+    titlePrefix.clear();
+    addTitlePrefix("A");
+    addTitlePrefix("An");
+    addTitlePrefix("The");
+    addTitlePrefix("Der");
+    addTitlePrefix("Die");
+    addTitlePrefix("Das");
+    addTitlePrefix("Ein");
+    addTitlePrefix("Eine");
+    addTitlePrefix("Le");
+    addTitlePrefix("La");
+    addTitlePrefix("Les");
+    addTitlePrefix("L'");
+    addTitlePrefix("L´");
+    addTitlePrefix("L`");
+    addTitlePrefix("Un");
+    addTitlePrefix("Une");
+    addTitlePrefix("Des");
+    addTitlePrefix("Du");
+    addTitlePrefix("D'");
+    addTitlePrefix("D´");
+    addTitlePrefix("D`");
+    Collections.sort(titlePrefix);
+
+    setProxyFromSystem();
+
+    saveSettings();
   }
 
   /**
@@ -194,78 +303,20 @@ public class Settings extends AbstractModelObject {
   /**
    * Override our settings folder (defaults to "data")<br>
    * <b>Should only be used for unit testing et all!</b><br>
-   * 
+   *
    * @return single instance of Settings
    */
   public synchronized static Settings getInstance(String folder) {
-    if (Settings.instance == null) {
-
-      // upgrade/move into own config dir
-      // need to do here, since this is called quite in the beginning
-
-      Path cfgFolder = Paths.get("config"); // old impl
-      if (Files.isDirectory(cfgFolder)) {
-        try {
-          Utils.moveDirectorySafe(cfgFolder, Paths.get(folder));
-        }
-        catch (IOException e) {
-          LOGGER.warn("error migrating config folder");
-        }
-      }
-
-      cfgFolder = Paths.get(folder);
-      if (!Files.exists(cfgFolder)) {
-        try {
-          Files.createDirectories(cfgFolder);
-        }
-        catch (IOException e) {
-          // ignore
-        }
-      }
-
-      Path oldCfg = Paths.get(CONFIG_FILE);
-      if (Utils.isRegularFile(oldCfg)) {
-        try {
-          Utils.moveFileSafe(oldCfg, cfgFolder.resolve(CONFIG_FILE));
-        }
-        catch (IOException e) {
-          LOGGER.warn("error migrating config.xml");
-        }
-      }
-
-      // try to parse XML
-      JAXBContext context;
-      try {
-        context = JAXBContext.newInstance(Settings.class);
-        Unmarshaller um = context.createUnmarshaller();
-        try {
-          LOGGER.debug("Loading settings from " + folder);
-          Reader in = new InputStreamReader(new FileInputStream(new File(folder, CONFIG_FILE)), "UTF-8");
-          Settings.instance = (Settings) um.unmarshal(in);
-          Settings.instance.settingsFolder = folder;
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not load settings - creating default ones...");
-          Settings.instance = new Settings();
-          Settings.instance.newConfig = true;
-          Settings.instance.settingsFolder = folder;
-          Settings.instance.writeDefaultSettings();
-        }
-        Settings.instance.clearDirty();
-      }
-      catch (Exception e) {
-        LOGGER.error("getInstance", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
-      }
+    if (instance == null) {
+      instance = (Settings) getInstance(folder, CONFIG_FILE, Settings.class);
     }
-    return Settings.instance;
+    return instance;
   }
 
   /**
-   * is our settings file up2date?
+   * is our settings file up to date?
    */
   public boolean isCurrentVersion() {
-    // return ReleaseInfo.getVersion().equals(version);
     return StrgUtils.compareVersion(version, ReleaseInfo.getVersion()) == 0;
   }
 
@@ -282,13 +333,6 @@ public class Settings extends AbstractModelObject {
   public void setCurrentVersion() {
     version = ReleaseInfo.getVersion();
     setDirty();
-  }
-
-  /**
-   * Sets the dirty.
-   */
-  private void setDirty() {
-    dirty = true;
   }
 
   /**
@@ -510,183 +554,6 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Write default settings.
-   */
-  public void writeDefaultSettings() {
-    version = ReleaseInfo.getVersion();
-
-    // default video file types derived from
-    // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
-    addVideoFileTypes(".3gp");
-    addVideoFileTypes(".asf");
-    addVideoFileTypes(".asx");
-    addVideoFileTypes(".avc");
-    addVideoFileTypes(".avi");
-    addVideoFileTypes(".bdmv");
-    addVideoFileTypes(".bin");
-    addVideoFileTypes(".bivx");
-    addVideoFileTypes(".dat");
-    addVideoFileTypes(".divx");
-    addVideoFileTypes(".dv");
-    addVideoFileTypes(".dvr-ms");
-    addVideoFileTypes(".disc"); // video stubs
-    addVideoFileTypes(".fli");
-    addVideoFileTypes(".flv");
-    addVideoFileTypes(".h264");
-    addVideoFileTypes(".img");
-    addVideoFileTypes(".iso");
-    addVideoFileTypes(".mts");
-    addVideoFileTypes(".mt2s");
-    addVideoFileTypes(".m2ts");
-    addVideoFileTypes(".m2v");
-    addVideoFileTypes(".m4v");
-    addVideoFileTypes(".mkv");
-    addVideoFileTypes(".mov");
-    addVideoFileTypes(".mp4");
-    addVideoFileTypes(".mpeg");
-    addVideoFileTypes(".mpg");
-    addVideoFileTypes(".nrg");
-    addVideoFileTypes(".nsv");
-    addVideoFileTypes(".nuv");
-    addVideoFileTypes(".ogm");
-    addVideoFileTypes(".pva");
-    addVideoFileTypes(".qt");
-    addVideoFileTypes(".rm");
-    addVideoFileTypes(".rmvb");
-    addVideoFileTypes(".strm");
-    addVideoFileTypes(".svq3");
-    addVideoFileTypes(".ts");
-    addVideoFileTypes(".ty");
-    addVideoFileTypes(".viv");
-    addVideoFileTypes(".vob");
-    addVideoFileTypes(".vp3");
-    addVideoFileTypes(".wmv");
-    addVideoFileTypes(".xvid");
-    Collections.sort(videoFileTypes);
-
-    addAudioFileTypes(".a52");
-    addAudioFileTypes(".aa3");
-    addAudioFileTypes(".aac");
-    addAudioFileTypes(".ac3");
-    addAudioFileTypes(".adt");
-    addAudioFileTypes(".adts");
-    addAudioFileTypes(".aif");
-    addAudioFileTypes(".aiff");
-    addAudioFileTypes(".alac");
-    addAudioFileTypes(".ape");
-    addAudioFileTypes(".at3");
-    addAudioFileTypes(".atrac");
-    addAudioFileTypes(".au");
-    addAudioFileTypes(".dts");
-    addAudioFileTypes(".flac");
-    addAudioFileTypes(".m4a");
-    addAudioFileTypes(".m4b");
-    addAudioFileTypes(".m4p");
-    addAudioFileTypes(".mid");
-    addAudioFileTypes(".midi");
-    addAudioFileTypes(".mka");
-    addAudioFileTypes(".mp3");
-    addAudioFileTypes(".mpa");
-    addAudioFileTypes(".oga");
-    addAudioFileTypes(".ogg");
-    addAudioFileTypes(".pcm");
-    addAudioFileTypes(".ra");
-    addAudioFileTypes(".ram");
-    addAudioFileTypes(".rm");
-    addAudioFileTypes(".tta");
-    addAudioFileTypes(".wav");
-    addAudioFileTypes(".wave");
-    addAudioFileTypes(".wma");
-    Collections.sort(audioFileTypes);
-
-    // default subtitle files
-    addSubtitleFileTypes(".aqt");
-    addSubtitleFileTypes(".cvd");
-    addSubtitleFileTypes(".dks");
-    addSubtitleFileTypes(".jss");
-    addSubtitleFileTypes(".sub");
-    addSubtitleFileTypes(".ttxt");
-    addSubtitleFileTypes(".mpl");
-    addSubtitleFileTypes(".pjs");
-    addSubtitleFileTypes(".psb");
-    addSubtitleFileTypes(".rt");
-    addSubtitleFileTypes(".srt");
-    addSubtitleFileTypes(".smi");
-    addSubtitleFileTypes(".ssf");
-    addSubtitleFileTypes(".ssa");
-    addSubtitleFileTypes(".svcd");
-    addSubtitleFileTypes(".usf");
-    // addSubtitleFileTypes(".idx"); // not a subtitle! just index for .sub
-    addSubtitleFileTypes(".ass");
-    addSubtitleFileTypes(".pgs");
-    addSubtitleFileTypes(".vobsub");
-    Collections.sort(subtitleFileTypes);
-
-    // default title prefix
-    addTitlePrefix("A");
-    addTitlePrefix("An");
-    addTitlePrefix("The");
-    addTitlePrefix("Der");
-    addTitlePrefix("Die");
-    addTitlePrefix("Das");
-    addTitlePrefix("Ein");
-    addTitlePrefix("Eine");
-    addTitlePrefix("Le");
-    addTitlePrefix("La");
-    addTitlePrefix("Les");
-    addTitlePrefix("L'");
-    addTitlePrefix("L´");
-    addTitlePrefix("L`");
-    addTitlePrefix("Un");
-    addTitlePrefix("Une");
-    addTitlePrefix("Des");
-    addTitlePrefix("Du");
-    addTitlePrefix("D'");
-    addTitlePrefix("D´");
-    addTitlePrefix("D`");
-    Collections.sort(titlePrefix);
-
-    movieSettings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
-    movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
-    movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
-    movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
-    movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
-
-    // activate default scrapers
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
-      movieSettings.addMovieArtworkScraper(ms.getId());
-    }
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
-      movieSettings.addMovieTrailerScraper(ms.getId());
-    }
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
-      movieSettings.addMovieSubtitleScraper(ms.getId());
-      tvShowSettings.addTvShowSubtitleScraper(ms.getId());
-    }
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
-      tvShowSettings.addTvShowArtworkScraper(ms.getId());
-    }
-
-    // set default languages based on java instance
-    String defaultLang = Locale.getDefault().getLanguage();
-    CountryCode cc = CountryCode.getByCode(defaultLang.toUpperCase());
-    if (cc != null) {
-      movieSettings.setCertificationCountry(cc);
-      tvShowSettings.setCertificationCountry(cc);
-    }
-    for (MediaLanguages ml : MediaLanguages.values()) {
-      if (ml.name().equals(defaultLang)) {
-        movieSettings.setScraperLanguage(ml);
-        tvShowSettings.setScraperLanguage(ml);
-      }
-    }
-
-    setProxyFromSystem();
-
-    saveSettings();
-  }
-
-  /**
    * Gets the proxy host.
    * 
    * @return the proxy host
@@ -843,86 +710,6 @@ public class Settings extends AbstractModelObject {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Sets the movie settings.
-   * 
-   * @param movieSettings
-   *          the new movie settings
-   */
-  public void setMovieSettings(MovieSettings movieSettings) {
-    this.movieSettings = movieSettings;
-    this.movieSettings.addPropertyChangeListener(propertyChangeListener);
-  }
-
-  /**
-   * Gets the movie settings.
-   * 
-   * @return the movie settings
-   */
-  public MovieSettings getMovieSettings() {
-    return this.movieSettings;
-  }
-
-  /**
-   * Sets the tv show settings.
-   * 
-   * @param tvShowSettings
-   *          the new tv show settings
-   */
-  public void setTvShowSettings(TvShowSettings tvShowSettings) {
-    this.tvShowSettings = tvShowSettings;
-    this.tvShowSettings.addPropertyChangeListener(propertyChangeListener);
-  }
-
-  /**
-   * Gets the tv show settings.
-   * 
-   * @return the tv show settings
-   */
-  public TvShowSettings getTvShowSettings() {
-    return this.tvShowSettings;
-  }
-
-  /**
-   * Gets the movie scraper metadata config.
-   * 
-   * @return the movie scraper metadata config
-   */
-  public MovieScraperMetadataConfig getMovieScraperMetadataConfig() {
-    return movieScraperMetadataConfig;
-  }
-
-  /**
-   * Sets the movie scraper metadata config.
-   * 
-   * @param scraperMetadataConfig
-   *          the new movie scraper metadata config
-   */
-  public void setMovieScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
-    this.movieScraperMetadataConfig = scraperMetadataConfig;
-    this.movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-  }
-
-  /**
-   * Gets the tv show scraper metadata config.
-   * 
-   * @return the tv show scraper metadata config
-   */
-  public TvShowScraperMetadataConfig getTvShowScraperMetadataConfig() {
-    return tvShowScraperMetadataConfig;
-  }
-
-  /**
-   * Sets the tv show scraper metadata config.
-   * 
-   * @param scraperMetadataConfig
-   *          the new tv show scraper metadata config
-   */
-  public void setTvShowScraperMetadataConfig(TvShowScraperMetadataConfig scraperMetadataConfig) {
-    this.tvShowScraperMetadataConfig = scraperMetadataConfig;
-    this.tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**

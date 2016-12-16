@@ -18,7 +18,6 @@ package org.tinymediamanager.core.tvshow;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaScraper;
 
 /**
@@ -41,7 +40,7 @@ public class TvShowSearchAndScrapeOptions {
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = Globals.settings.getTvShowScraperMetadataConfig();
+    scraperMetadataConfig = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
     scraperMetadataConfig.setEpisodeList(TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes());
 
     // metadata

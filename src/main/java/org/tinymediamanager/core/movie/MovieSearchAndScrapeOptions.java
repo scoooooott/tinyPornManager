@@ -18,7 +18,6 @@ package org.tinymediamanager.core.movie;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaScraper;
 
 /**
@@ -43,7 +42,7 @@ public class MovieSearchAndScrapeOptions {
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = Globals.settings.getMovieScraperMetadataConfig();
+    scraperMetadataConfig = MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig();
     // metadata
     metadataScraper = MovieList.getInstance().getDefaultMediaScraper();
 

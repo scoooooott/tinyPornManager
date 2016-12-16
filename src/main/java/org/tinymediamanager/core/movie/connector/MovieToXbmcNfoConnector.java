@@ -204,7 +204,7 @@ public class MovieToXbmcNfoConnector {
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+      nfonames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
     }
     writeNfoFiles(movie, xbmc, nfonames);
   }
@@ -306,13 +306,13 @@ public class MovieToXbmcNfoConnector {
     // certifications
     if (movie.getCertification() != null) {
       xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
-          MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
-      if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
+          MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+      if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.MOVIE_SETTINGS.getMovieCertificationStyle());
+        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
       }
     }
 

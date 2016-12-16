@@ -76,7 +76,7 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
 
-  private MovieSettings                  settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private MovieSettings                  settings         = MovieModuleManager.SETTINGS;
   private List<TrailerScraper>           scrapers         = ObservableCollections.observableList(new ArrayList<TrailerScraper>());
   private JTable                         tableTrailerScraper;
   private JTextPane                      tpScraperDescription;

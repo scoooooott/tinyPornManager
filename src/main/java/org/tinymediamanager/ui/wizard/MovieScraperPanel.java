@@ -74,7 +74,7 @@ class MovieScraperPanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
-  private final MovieSettings         settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
   private final List<MovieScraper>    scrapers         = ObservableCollections.observableList(new ArrayList<MovieScraper>());
 
   private JTable                      tableScraper;

@@ -195,7 +195,7 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<>(1);
     movies.add(movie);
-    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+    if (MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
     }
 
@@ -234,7 +234,7 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<>(1);
     movies.add(movie);
-    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+    if (MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
       MovieSetArtworkHelper.writeImagesToMovieFolder(this, movies);
     }
 

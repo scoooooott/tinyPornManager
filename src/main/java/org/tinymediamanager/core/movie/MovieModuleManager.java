@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @author Manuel Laggner
  */
 public class MovieModuleManager implements ITmmModule {
-  public static final MovieSettings MOVIE_SETTINGS = Globals.settings.getMovieSettings();
+  public static final MovieSettings SETTINGS     = MovieSettings.getInstance();
 
   private static final String       MODULE_TITLE   = "Movie management";
   private static final String       MOVIE_DB       = "movies.db";
@@ -87,12 +87,8 @@ public class MovieModuleManager implements ITmmModule {
 
     // configure database
     mvStore = new MVStore.Builder().fileName(Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB).toString()).compressHigh()
-        .backgroundExceptionHandler(new Thread.UncaughtExceptionHandler() {
-          @Override
-          public void uncaughtException(Thread t, Throwable e) {
-            LOGGER.error("Error in the background thread of the persistent cache", e);
-          }
-        }).autoCommitBufferSize(4096).open();
+        .backgroundExceptionHandler((t, e) -> LOGGER.error("Error in the background thread of the persistent cache", e)).autoCommitBufferSize(4096)
+        .open();
     mvStore.setAutoCommitDelay(2000); // 2 sec
     mvStore.setRetentionTime(0);
     mvStore.setReuseSpace(true);
@@ -126,7 +122,7 @@ public class MovieModuleManager implements ITmmModule {
     enabled = false;
 
     if (Globals.settings.isDeleteTrashOnExit()) {
-      for (String ds : MOVIE_SETTINGS.getMovieDataSource()) {
+      for (String ds : SETTINGS.getMovieDataSource()) {
         Path file = Paths.get(ds, Constants.BACKUP_FOLDER);
         Utils.deleteDirectoryRecursive(file);
       }
@@ -157,7 +153,7 @@ public class MovieModuleManager implements ITmmModule {
   /**
    * dumps a whole movieset to logfile
    * 
-   * @param movie
+   * @param movieSet
    *          the movieset to make the dump for
    */
   public void dump(MovieSet movieSet) {

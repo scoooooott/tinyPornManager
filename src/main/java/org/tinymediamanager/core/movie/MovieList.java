@@ -121,7 +121,7 @@ public class MovieList extends AbstractModelObject {
       }
     };
 
-    movieSettings = MovieModuleManager.MOVIE_SETTINGS;
+    movieSettings = MovieModuleManager.SETTINGS;
   }
 
   /**

@@ -76,8 +76,8 @@ public class MovieSetArtworkHelper {
    *          the movie set to search artwork for
    */
   private static void findArtworkInArtworkFolder(MovieSet movieSet) {
-    String artworkFolder = MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder();
-    if (!MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder() || StringUtils.isBlank(artworkFolder)) {
+    String artworkFolder = MovieModuleManager.SETTINGS.getMovieSetArtworkFolder();
+    if (!MovieModuleManager.SETTINGS.isEnableMovieSetArtworkFolder() || StringUtils.isBlank(artworkFolder)) {
       return;
     }
 
@@ -133,7 +133,7 @@ public class MovieSetArtworkHelper {
    */
   public static void setArtwork(MovieSet movieSet, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
 
     // poster
     setBestPoster(movieSet, artwork);
@@ -157,12 +157,12 @@ public class MovieSetArtworkHelper {
    * find the "best" poster in the list of artwork, assign it to the movie and download it
    */
   private static void setBestPoster(MovieSet movieSet, List<MediaArtwork> artwork) {
-    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder();
-    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+    int preferredSizeOrder = MovieModuleManager.SETTINGS.getImagePosterSize().getOrder();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().name();
 
     MediaArtwork foundPoster = null;
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+    if (MovieModuleManager.SETTINGS.isImageLanguagePriority()) {
       // language has priority over size.
       // first run: find it with the preferred size
       for (MediaArtwork art : artwork) {
@@ -217,12 +217,12 @@ public class MovieSetArtworkHelper {
    * find the "best" fanart in the list of artwork, assign it to the movie set and download it
    */
   private static void setBestFanart(MovieSet movieSet, List<MediaArtwork> artwork) {
-    int preferredSizeOrder = MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder();
-    String preferredLanguage = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name();
+    int preferredSizeOrder = MovieModuleManager.SETTINGS.getImageFanartSize().getOrder();
+    String preferredLanguage = MovieModuleManager.SETTINGS.getScraperLanguage().name();
 
     MediaArtwork foundfanart = null;
 
-    if (MovieModuleManager.MOVIE_SETTINGS.isImageLanguagePriority()) {
+    if (MovieModuleManager.SETTINGS.isImageLanguagePriority()) {
       // language has priority over size.
       // first run: find it with the preferred size
       for (MediaArtwork art : artwork) {
@@ -320,7 +320,7 @@ public class MovieSetArtworkHelper {
    *          the movies to write the artwork to
    */
   public static void writeImagesToMovieFolder(MovieSet movieSet, List<Movie> movies) {
-    if (!MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
+    if (!MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder()) {
       return;
     }
 
@@ -363,9 +363,9 @@ public class MovieSetArtworkHelper {
       this.writtenArtworkFiles = new ArrayList<>();
       this.movies = new ArrayList<>(movieSet.getMovies());
 
-      this.writeToMovieFolder = MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder();
-      this.artworkFolder = MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder();
-      this.writeToArtworkFolder = MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(artworkFolder);
+      this.writeToMovieFolder = MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder();
+      this.artworkFolder = MovieModuleManager.SETTINGS.getMovieSetArtworkFolder();
+      this.writeToArtworkFolder = MovieModuleManager.SETTINGS.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(artworkFolder);
     }
 
     /**
@@ -387,7 +387,7 @@ public class MovieSetArtworkHelper {
       this.writtenArtworkFiles = new ArrayList<>();
       this.movies = new ArrayList<>(movies);
 
-      this.writeToMovieFolder = MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkMovieFolder();
+      this.writeToMovieFolder = MovieModuleManager.SETTINGS.isEnableMovieSetArtworkMovieFolder();
       this.artworkFolder = "";
       this.writeToArtworkFolder = false;
     }

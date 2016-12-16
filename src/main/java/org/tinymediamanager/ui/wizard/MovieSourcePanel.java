@@ -64,7 +64,7 @@ class MovieSourcePanel extends JPanel {
    */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final MovieSettings         settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
 
   private JList<String>               listDataSources;
   private JComboBox<MovieConnectors>  cbNfoFormat;
@@ -116,7 +116,7 @@ class MovieSourcePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
-          MovieModuleManager.MOVIE_SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
+          MovieModuleManager.SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
         }
       }
     });
@@ -131,14 +131,14 @@ class MovieSourcePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = listDataSources.getSelectedIndex();
         if (row != -1) { // nothing selected
-          String path = MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource().get(row);
+          String path = MovieModuleManager.SETTINGS.getMovieDataSource().get(row);
           String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            MovieModuleManager.MOVIE_SETTINGS.removeMovieDataSources(path);
+            MovieModuleManager.SETTINGS.removeMovieDataSources(path);
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
         }

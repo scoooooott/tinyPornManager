@@ -31,7 +31,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -331,7 +330,7 @@ public class TvShowUIModule implements ITmmUIModule {
         updatePopupMenu.removeAll();
         updatePopupMenu.add(createAndRegisterAction(TvShowUpdateDatasourcesAction.class));
         updatePopupMenu.addSeparator();
-        for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+        for (String ds : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
           updatePopupMenu.add(new TvShowUpdateSingleDatasourceAction(ds));
         }
         updatePopupMenu.addSeparator();

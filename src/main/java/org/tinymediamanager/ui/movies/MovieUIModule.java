@@ -30,7 +30,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.ui.ITmmUIModule;
@@ -175,10 +174,10 @@ public class MovieUIModule implements ITmmUIModule {
 
   private void init() {
     // apply stored UI filters
-    if (MovieModuleManager.MOVIE_SETTINGS.isStoreUiFilters()) {
+    if (MovieModuleManager.SETTINGS.isStoreUiFilters()) {
       SwingUtilities.invokeLater(() -> {
         MovieList.getInstance().searchDuplicates();
-        selectionModel.setFilterValues(MovieModuleManager.MOVIE_SETTINGS.getUiFilters());
+        selectionModel.setFilterValues(MovieModuleManager.SETTINGS.getUiFilters());
       });
     }
   }
@@ -259,7 +258,7 @@ public class MovieUIModule implements ITmmUIModule {
         updatePopupMenu.removeAll();
         updatePopupMenu.add(createAndRegisterAction(MovieUpdateDatasourceAction.class));
         updatePopupMenu.addSeparator();
-        for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
+        for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
           updatePopupMenu.add(new MovieUpdateSingleDatasourceAction(ds));
         }
         updatePopupMenu.pack();

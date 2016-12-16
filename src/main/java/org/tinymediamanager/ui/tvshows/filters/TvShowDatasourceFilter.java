@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
  * @author Manuel Laggner
  */
 public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
-  private TvShowSettings    tvShowSettings = Settings.getInstance().getTvShowSettings();
+  private TvShowSettings    tvShowSettings = TvShowModuleManager.SETTINGS;
 
   private JComboBox<String> comboBox;
 

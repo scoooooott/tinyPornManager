@@ -170,7 +170,7 @@ public class MovieChooserModel extends AbstractModelObject {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
       options.setResult(result);
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
       LOGGER.info("=====================================================");
       LOGGER.info("Scraper metadata with scraper: " + metadataProvider.getMediaProvider().getProviderInfo().getId() + ", "
           + metadataProvider.getMediaProvider().getProviderInfo().getVersion());
@@ -248,9 +248,9 @@ public class MovieChooserModel extends AbstractModelObject {
         options.setTmdbId(0);
       }
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
       // scrape providers till one artwork has been found
       for (MediaScraper artworkScraper : artworkScrapers) {
@@ -301,7 +301,7 @@ public class MovieChooserModel extends AbstractModelObject {
         options.setTmdbId(0);
       }
       options.setLanguage(LocaleUtils.toLocale(language.name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
       // scrape trailers
       for (MediaScraper trailerScraper : trailerScrapers) {

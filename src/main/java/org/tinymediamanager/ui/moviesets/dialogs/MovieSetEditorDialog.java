@@ -127,10 +127,10 @@ public class MovieSetEditorDialog extends TmmDialog {
     movieSetToEdit = movieSet;
     try {
       List<String> enabledScrapers = new ArrayList<>();
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(Constants.TMDB)) {
+      if (MovieModuleManager.SETTINGS.getMovieArtworkScrapers().contains(Constants.TMDB)) {
         enabledScrapers.add(Constants.TMDB);
       }
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieArtworkScrapers().contains(Constants.FANART_TV)) {
+      if (MovieModuleManager.SETTINGS.getMovieArtworkScrapers().contains(Constants.FANART_TV)) {
         enabledScrapers.add(Constants.FANART_TV);
       }
       artworkScrapers.addAll(movieList.getArtworkScrapers(enabledScrapers));
@@ -589,8 +589,8 @@ public class MovieSetEditorDialog extends TmmDialog {
             if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
               options.setTmdbId(movie.getTmdbId());
               options.setImdbId(movie.getImdbId());
-              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-              options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+              options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+              options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
               MediaMetadata md = mp.getMetadata(options);
               if ((int) md.getId(MediaMetadata.TMDB_SET) > 0) {
                 tfTmdbId.setText(String.valueOf(md.getId(MediaMetadata.TMDB_SET)));

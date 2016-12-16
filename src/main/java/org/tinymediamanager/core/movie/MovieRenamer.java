@@ -104,7 +104,7 @@ public class MovieRenamer {
         }
       }
 
-      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
       if (StringUtils.isBlank(lang)) {
         lang = originalLang;
       }
@@ -213,10 +213,10 @@ public class MovieRenamer {
     if (movie.getMovieSet() != null) {
       LOGGER.debug("movieset: " + movie.getMovieSet().getTitle());
     }
-    LOGGER.debug("path expression: " + MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname());
-    LOGGER.debug("file expression: " + MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename());
+    LOGGER.debug("path expression: " + MovieModuleManager.SETTINGS.getMovieRenamerPathname());
+    LOGGER.debug("file expression: " + MovieModuleManager.SETTINGS.getMovieRenamerFilename());
 
-    String newPathname = createDestinationForFoldername(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname(), movie);
+    String newPathname = createDestinationForFoldername(MovieModuleManager.SETTINGS.getMovieRenamerPathname(), movie);
     String oldPathname = movie.getPathNIO().toString();
 
     if (!newPathname.isEmpty()) {
@@ -229,7 +229,7 @@ public class MovieRenamer {
         // re-evaluate multiMovieDir based on renamer settings
         // folder MUST BE UNIQUE, we need at least a T/E-Y combo or IMDBid
         // so if renaming just to a fixed pattern (eg "$S"), movie will downgrade to a MMD
-        if (!isFolderPatternUnique(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname())) {
+        if (!isFolderPatternUnique(MovieModuleManager.SETTINGS.getMovieRenamerPathname())) {
           // FIXME: if we already in a normal dir - keep it?
           newDestIsMultiMovieDir = true;
         }
@@ -459,7 +459,7 @@ public class MovieRenamer {
         cleanup.add(mf);
       }
       else {
-        if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
+        if (MovieModuleManager.SETTINGS.isMovieRenamerNfoCleanup()) {
           cleanup.add(mf);
         }
         else {
@@ -528,7 +528,7 @@ public class MovieRenamer {
     movie.gatherMediaFileInformation(false);
 
     // rewrite NFO if it's a MP NFO and there was a change with poster/fanart
-    if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
+    if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
       movie.writeNFO();
     }
 
@@ -593,7 +593,7 @@ public class MovieRenamer {
     boolean newDestIsMultiMovieDir = movie.isMultiMovieDir();
     String newPathname = "";
 
-    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname();
+    String pattern = MovieModuleManager.SETTINGS.getMovieRenamerPathname();
     // keep MMD setting unless renamer pattern is not empty
     if (!pattern.isEmpty()) {
       // re-evaluate multiMovieDir based on renamer settings
@@ -617,7 +617,7 @@ public class MovieRenamer {
     String newFilename = videoFileName;
     if (newFilename == null || newFilename.isEmpty()) {
       // empty only when first generating basename, so generation here is OK
-      newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
+      newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.SETTINGS.getMovieRenamerFilename(), movie);
     }
 
     if (!isFilePatternValid() && !movie.isDisc()) {
@@ -674,7 +674,7 @@ public class MovieRenamer {
           // internal values
           MediaFileSubtitle mfs = mfsl.get(0);
           if (!mfs.getLanguage().isEmpty()) {
-            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
             if (StringUtils.isBlank(lang)) {
               lang = mfs.getLanguage();
             }
@@ -696,12 +696,12 @@ public class MovieRenamer {
           List<MovieNfoNaming> nfonames = new ArrayList<>();
           if (newDestIsMultiMovieDir) {
             // Fixate the name regardless of setting
-            if (MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames().size() > 1) {
+            if (MovieModuleManager.SETTINGS.getMovieNfoFilenames().size() > 1) {
               nfonames.add(MovieNfoNaming.FILENAME_NFO);
             }
           }
           else {
-            nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+            nfonames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
           }
           for (MovieNfoNaming name : nfonames) {
             String newNfoName = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
@@ -715,7 +715,7 @@ public class MovieRenamer {
         }
         else {
           // not a TMM NFO
-          if (!MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerNfoCleanup()) {
+          if (!MovieModuleManager.SETTINGS.isMovieRenamerNfoCleanup()) {
             newFiles.add(new MediaFile(mf));
           }
 
@@ -779,7 +779,7 @@ public class MovieRenamer {
       // OK, from here we check only the settings
       // *************
       case BANNER:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
+        if (MovieModuleManager.SETTINGS.isImageBanner()) {
           defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
@@ -792,7 +792,7 @@ public class MovieRenamer {
         }
         break;
       case CLEARART:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
+        if (MovieModuleManager.SETTINGS.isImageClearart()) {
           defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
@@ -805,7 +805,7 @@ public class MovieRenamer {
         }
         break;
       case DISCART:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
+        if (MovieModuleManager.SETTINGS.isImageDiscart()) {
           defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
@@ -819,7 +819,7 @@ public class MovieRenamer {
         break;
       case LOGO:
       case CLEARLOGO:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
+        if (MovieModuleManager.SETTINGS.isImageLogo()) {
           defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
@@ -832,7 +832,7 @@ public class MovieRenamer {
         }
         break;
       case THUMB:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
+        if (MovieModuleManager.SETTINGS.isImageThumb()) {
           defaultMFext = defaultMFext.toLowerCase().replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD
           if (newDestIsMultiMovieDir) {
@@ -845,12 +845,12 @@ public class MovieRenamer {
         }
         break;
       case EXTRAFANART:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
+        if (MovieModuleManager.SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
         }
         break;
       case EXTRATHUMB:
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
+        if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
         }
         break;
@@ -880,8 +880,8 @@ public class MovieRenamer {
    */
   private static String getStackingString(MediaFile mf) {
     String delimiter = " ";
-    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
-      delimiter = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();
+    if (MovieModuleManager.SETTINGS.isMovieRenamerSpaceSubstitution()) {
+      delimiter = MovieModuleManager.SETTINGS.getMovieRenamerSpaceReplacement();
     }
     if (!mf.getStackingMarker().isEmpty()) {
       return delimiter + mf.getStackingMarker();
@@ -994,13 +994,13 @@ public class MovieRenamer {
         break;
       case "$M":
         if (movie.getMovieSet() != null
-            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
+            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
           ret = movie.getMovieSet().getTitleSortable();
         }
         break;
       case "$N":
         if (movie.getMovieSet() != null
-            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
+            && (movie.getMovieSet().getMovies().size() > 1 || MovieModuleManager.SETTINGS.isMovieRenamerCreateMoviesetForSingleMovie())) {
           ret = movie.getMovieSet().getTitle();
         }
         break;
@@ -1128,8 +1128,8 @@ public class MovieRenamer {
     newDestination = newDestination.replaceAll(" +", " ").trim();
 
     // replace spaces with underscores if needed
-    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
-      String replacement = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();
+    if (MovieModuleManager.SETTINGS.isMovieRenamerSpaceSubstitution()) {
+      String replacement = MovieModuleManager.SETTINGS.getMovieRenamerSpaceReplacement();
       newDestination = newDestination.replace(" ", replacement);
 
       // also replace now multiple replacements with one to avoid strange looking results;
@@ -1139,7 +1139,7 @@ public class MovieRenamer {
     }
 
     // ASCII replacement
-    if (MovieModuleManager.MOVIE_SETTINGS.isAsciiReplacement()) {
+    if (MovieModuleManager.SETTINGS.isAsciiReplacement()) {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
@@ -1262,7 +1262,7 @@ public class MovieRenamer {
    * @return true/false
    */
   public static boolean isFilePatternValid() {
-    String pattern = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename().toUpperCase().trim();
+    String pattern = MovieModuleManager.SETTINGS.getMovieRenamerFilename().toUpperCase().trim();
 
     if (pattern.contains("$T") || pattern.contains("$E") || pattern.contains("$O")) {
       return true;

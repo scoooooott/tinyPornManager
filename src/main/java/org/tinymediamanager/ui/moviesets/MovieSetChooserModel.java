@@ -151,10 +151,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
           if (scraper.getMediaProvider() != null) {
             MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             options.setTmdbId(mis.tmdbId);
-            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-            options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-            options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+            options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+            options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+            options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+            options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
             try {
               MediaMetadata md = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDB));
@@ -185,8 +185,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
       if (scraper.getMediaProvider() != null) {
         MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
         options.setTmdbId(Integer.parseInt(result.getId()));
-        options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-        options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+        options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+        options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
 
         MediaMetadata info = ((IMovieSetMetadataProvider) scraper.getMediaProvider()).getMetadata(options);
         // if (info != null && StringUtils.isNotBlank(info.getTitle())) {
@@ -271,10 +271,10 @@ public class MovieSetChooserModel extends AbstractModelObject {
       catch (Exception e) {
         options.setTmdbId(0);
       }
-      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
-      options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
-      options.setFanartSize(MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize());
-      options.setPosterSize(MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize());
+      options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
+      options.setCountry(MovieModuleManager.SETTINGS.getCertificationCountry());
+      options.setFanartSize(MovieModuleManager.SETTINGS.getImageFanartSize());
+      options.setPosterSize(MovieModuleManager.SETTINGS.getImagePosterSize());
 
       // scrape providers till one artwork has been found
       for (MediaScraper artworkScraper : MovieList.getInstance().getDefaultArtworkScrapers()) {

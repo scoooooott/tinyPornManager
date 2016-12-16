@@ -50,7 +50,7 @@ public class MovieSettingsPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final MovieSettings         settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
 
   private JButton                     btnClearTraktData;
   private JCheckBox                   chckbxTraktSync;

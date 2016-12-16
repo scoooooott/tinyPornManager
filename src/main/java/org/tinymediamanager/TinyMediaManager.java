@@ -193,7 +193,7 @@ public class TinyMediaManager {
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
     LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
     LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
-    LOGGER.info("Scraper language : " + MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    LOGGER.info("Scraper language : " + MovieModuleManager.SETTINGS.getScraperLanguage());
     LOGGER.info("TV Scraper lang  : " + TvShowModuleManager.SETTINGS.getScraperLanguage());
 
     // start EDT
@@ -336,8 +336,7 @@ public class TinyMediaManager {
             window.setVisible(true);
 
             // wizard for new user
-            if (Globals.settings.newConfig) {
-              Globals.settings.writeDefaultSettings(); // now all plugins are resolved - write again defaults!
+            if (Globals.settings.isNewConfig()) {
               TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
               wizard.setVisible(true);
             }
@@ -461,7 +460,8 @@ public class TinyMediaManager {
           // try LaF font as fallback
           try {
             fontFamily = Font.decode(themeDefaultFont).getFamily();
-          } catch (Exception e1) {
+          }
+          catch (Exception e1) {
             // last resort fallback - default system font
             fontFamily = "Dialog";
           }

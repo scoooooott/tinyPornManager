@@ -107,7 +107,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     selectionModel.setTableComparatorChooser(TableComparatorChooser.install(movieTable, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
 
     // restore hidden columns
-    movieTable.readHiddenColumns(MovieModuleManager.MOVIE_SETTINGS.getMovieTableHiddenColumns());
+    movieTable.readHiddenColumns(MovieModuleManager.SETTINGS.getMovieTableHiddenColumns());
     movieTable.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
       @Override
       public void columnAdded(TableColumnModelEvent e) {
@@ -134,7 +134,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
       private void writeSettings() {
         movieTable.writeHiddenColumns(cols -> {
-          MovieModuleManager.MOVIE_SETTINGS.setMovieTableHiddenColumns(cols);
+          MovieModuleManager.SETTINGS.setMovieTableHiddenColumns(cols);
           Globals.settings.saveSettings();
         });
       }

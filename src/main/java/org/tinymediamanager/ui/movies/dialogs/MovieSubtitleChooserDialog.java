@@ -134,7 +134,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     // Subtitle scraper
     List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
     for (MediaScraper subtitleScraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
-      if (MovieModuleManager.MOVIE_SETTINGS.getMovieSubtitleScrapers().contains(subtitleScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getMovieSubtitleScrapers().contains(subtitleScraper.getId())) {
         selectedSubtitleScrapers.add(subtitleScraper);
       }
     }
@@ -144,7 +144,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
     for (MediaLanguages language : MediaLanguages.values()) {
       cbLanguage.addItem(language);
-      if (language == MovieModuleManager.MOVIE_SETTINGS.getSubtitleScraperLanguage()) {
+      if (language == MovieModuleManager.SETTINGS.getSubtitleScraperLanguage()) {
         cbLanguage.setSelectedItem(language);
       }
     }

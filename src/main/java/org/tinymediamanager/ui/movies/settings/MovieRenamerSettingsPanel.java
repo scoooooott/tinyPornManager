@@ -76,7 +76,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                  settings                   = MovieModuleManager.MOVIE_SETTINGS;
+  private MovieSettings                  settings                   = MovieModuleManager.SETTINGS;
   private List<String>                   separators                 = new ArrayList<>(Arrays.asList("_", ".", "-"));
   private EventList<MovieRenamerExample> exampleEventList           = null;
 

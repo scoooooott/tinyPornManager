@@ -128,7 +128,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
 
     {
       // initializations
-      for (String datasource : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
+      for (String datasource : MovieModuleManager.SETTINGS.getMovieDataSource()) {
         cbDatasource.addItem(datasource);
       }
     }

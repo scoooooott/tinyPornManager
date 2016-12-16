@@ -73,7 +73,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$ @wbp.nls.resourceBundle
 
-  private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
+  private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<SubtitleScraper>       scrapers         = ObservableCollections.observableList(new ArrayList<SubtitleScraper>());
   private JTable                      tableScraper;
   private JTextPane                   tpScraperDescription;

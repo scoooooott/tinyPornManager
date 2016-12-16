@@ -28,7 +28,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -74,7 +73,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     setBounds(5, 5, 533, 280);
 
     // copy the values
-    TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
+    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
 
     TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
     scraperMetadataConfig.setTitle(settings.isTitle());

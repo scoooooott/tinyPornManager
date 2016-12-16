@@ -54,7 +54,6 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -308,7 +307,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET, searchTerm);
-          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name()));
+          options.setLanguage(LocaleUtils.toLocale(MovieModuleManager.SETTINGS.getScraperLanguage().name()));
           List<MediaSearchResult> movieSets = mp.search(options);
           movieSetsFound.clear();
           if (movieSets.size() == 0) {
@@ -398,9 +397,9 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
             movieSetToScrape.saveToDb();
           }
           // get images?
-          if (Globals.settings.getMovieScraperMetadataConfig().isArtwork()) {
+          if (MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig().isArtwork()) {
             // get artwork asynchronous
-            model.startArtworkScrapeTask(movieSetToScrape, Globals.settings.getMovieScraperMetadataConfig());
+            model.startArtworkScrapeTask(movieSetToScrape, MovieModuleManager.SETTINGS.getMovieScraperMetadataConfig());
           }
         }
         setVisible(false);

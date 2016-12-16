@@ -123,7 +123,7 @@ public class YoutubeLinkExtractor {
     VideoQuality desiredQuality = itagMap.get(extractQuality(youtubeUrl));
     if (desiredQuality == null) {
       // try to pick the quality via settings
-      switch (MovieModuleManager.MOVIE_SETTINGS.getTrailerQuality()) {
+      switch (MovieModuleManager.SETTINGS.getTrailerQuality()) {
         case HD_1080:
           desiredQuality = VideoQuality.p1080;
           break;

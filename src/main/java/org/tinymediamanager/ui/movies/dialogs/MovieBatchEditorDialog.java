@@ -209,7 +209,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       panelContent.add(lblCertification, "2, 6, 2, 1, right, default");
 
       final JComboBox cbCertification = new JComboBox();
-      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry())) {
+      for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
       panelContent.add(cbCertification, "5, 6, fill, default");
@@ -440,7 +440,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
               movie.saveToDb();
             }
             // if configured - sync with trakt.tv
-            if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+            if (MovieModuleManager.SETTINGS.getSyncTrakt()) {
               TmmTask task = new SyncTraktTvTask(moviesToEdit, null);
               TmmTaskManager.getInstance().addUnnamedTask(task);
             }
