@@ -49,8 +49,8 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
 @XmlRootElement(name = "MovieSettings")
 public class MovieSettings extends AbstractSettings {
   private static final Logger           LOGGER                                   = LoggerFactory.getLogger(MovieSettings.class);
-  private final static String           CONFIG_FILE                              = "movies.xml";
 
+  public final static String            CONFIG_FILE                              = "movies.xml";
   public final static String            DEFAULT_RENAMER_FOLDER_PATTERN           = "$T { - $U }($Y)";
   public final static String            DEFAULT_RENAMER_FILE_PATTERN             = "$T { - $U }($Y) $V $A";
 

@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.URLEncoder;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +46,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -226,18 +230,21 @@ public class BugReportDialog extends TmmDialog {
       LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
     }
 
-    // attach config file
-    try {
-      ZipEntry ze = new ZipEntry("config.xml");
-      zos.putNextEntry(ze);
-      FileInputStream in = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), "config.xml"));
+    // attach config files
+    List<String> configFiles = Arrays.asList("tmm.xml", MovieModuleManager.SETTINGS.CONFIG_FILE, TvShowModuleManager.SETTINGS.CONFIG_FILE);
+    for (String filename : configFiles) {
+      try {
+        ZipEntry ze = new ZipEntry(filename);
+        zos.putNextEntry(ze);
+        FileInputStream in = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), filename));
 
-      IOUtils.copy(in, zos);
-      in.close();
-      zos.closeEntry();
-    }
-    catch (Exception e) {
-      LOGGER.warn("unable to attach config.xml: " + e.getMessage());
+        IOUtils.copy(in, zos);
+        in.close();
+        zos.closeEntry();
+      }
+      catch (Exception e) {
+        LOGGER.warn("unable to attach " + filename + ": " + e.getMessage());
+      }
     }
 
     zos.close();
