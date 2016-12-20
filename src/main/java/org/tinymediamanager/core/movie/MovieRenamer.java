@@ -105,7 +105,7 @@ public class MovieRenamer {
         }
       }
 
-      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
+      lang = LanguageStyle.getLanguageCodeForStyle(originalLang, MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
       if (StringUtils.isBlank(lang)) {
         lang = originalLang;
       }
@@ -675,7 +675,7 @@ public class MovieRenamer {
           // internal values
           MediaFileSubtitle mfs = mfsl.get(0);
           if (!mfs.getLanguage().isEmpty()) {
-            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
+            String lang = LanguageStyle.getLanguageCodeForStyle(mfs.getLanguage(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
             if (StringUtils.isBlank(lang)) {
               lang = mfs.getLanguage();
             }

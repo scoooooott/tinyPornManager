@@ -46,7 +46,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -99,7 +98,6 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private JTable                          tableExamples;
   private JTextField                      tfTvShowFolder;
   private JTextField                      tfEpisodeFilename;
-  private JComboBox<LanguageStyle>        cbLanguageStyle;
 
   public TvShowRenamerSettingsPanel() {
 
@@ -173,7 +171,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][grow]", "[][][][][][][][20lp][][][][][20lp][][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][15lp,shrink 0][][grow]", "[][][][][][][][20lp][][][][20lp][][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
@@ -247,34 +245,27 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       txtpntAsciiHint.setOpaque(false);
     }
     {
-      JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language"));
-      add(lblLanguageStyle, "flowx,cell 1 11 3 1");
-
-      cbLanguageStyle = new JComboBox(LanguageStyle.values());
-      add(cbLanguageStyle, "cell 1 11 3 1");
-    }
-    {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 13 5 1");
+      add(lblExampleT, "cell 0 12 5 1");
     }
     {
       JLabel lblExampleTvShowT = new JLabel(BUNDLE.getString("metatag.tvshow"));
-      add(lblExampleTvShowT, "cell 1 14 2 1");
+      add(lblExampleTvShowT, "cell 1 13 2 1");
 
       cbTvShowForPreview = new JComboBox();
-      add(cbTvShowForPreview, "cell 3 14,growx");
+      add(cbTvShowForPreview, "cell 3 13,growx");
     }
     {
       JLabel lblExampleEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
-      add(lblExampleEpisodeT, "cell 1 15 2 1");
+      add(lblExampleEpisodeT, "cell 1 14 2 1");
 
       cbEpisodeForPreview = new JComboBox();
-      add(cbEpisodeForPreview, "cell 3 15,growx");
+      add(cbEpisodeForPreview, "cell 3 14,growx");
     }
     {
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 16 3 1");
+      add(lblExample, "cell 1 15 3 1");
       TmmFontHelper.changeFont(lblExample, Font.BOLD);
     }
     {
@@ -283,7 +274,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       tableExamples = new TmmTable(exampleTableModel);
       JScrollPane scrollPane = new JScrollPane(tableExamples);
-      add(scrollPane, "cell 1 17 3 1,grow");
+      add(scrollPane, "cell 1 16 3 1,grow");
       scrollPane.setViewportView(tableExamples);
     }
   }
@@ -521,11 +512,5 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     AutoBinding<TvShowSettings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
     autoBinding_2.bind();
-    //
-    BeanProperty<TvShowSettings, LanguageStyle> tvShowSettingsBeanProperty_4 = BeanProperty.create("tvShowRenamerLanguageStyle");
-    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<TvShowSettings, LanguageStyle, JComboBox, Object> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        tvShowSettingsBeanProperty_4, cbLanguageStyle, jComboBoxBeanProperty);
-    autoBinding_3.bind();
   }
 }

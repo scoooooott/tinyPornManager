@@ -168,7 +168,6 @@ public class MovieSettings extends AbstractSettings {
   private boolean                       movieRenamerNfoCleanup                   = false;
   private boolean                       movieRenamerCreateMoviesetForSingleMovie = false;
   private boolean                       asciiReplacement                         = false;
-  private LanguageStyle                 movieRenamerLanguageStyle                = LanguageStyle.ISO3T;
 
   // meta data scraper
   private String                        movieScraper                             = Constants.TMDB;
@@ -207,6 +206,7 @@ public class MovieSettings extends AbstractSettings {
 
   // subtitle scraper
   private MediaLanguages                subtitleScraperLanguage                  = MediaLanguages.en;
+  private LanguageStyle                 subtitleLanguageStyle                    = LanguageStyle.ISO3T;
 
   // misc
   private boolean                       runtimeFromMediaInfo                     = false;
@@ -1067,14 +1067,14 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("movieCertificationStyle", oldValue, newValue);
   }
 
-  public LanguageStyle getMovieRenamerLanguageStyle() {
-    return movieRenamerLanguageStyle;
+  public LanguageStyle getSubtitleLanguageStyle() {
+    return subtitleLanguageStyle;
   }
 
-  public void setMovieRenamerLanguageStyle(LanguageStyle newValue) {
-    LanguageStyle oldValue = this.movieRenamerLanguageStyle;
-    this.movieRenamerLanguageStyle = newValue;
-    firePropertyChange("movieRenamerLanguageStyle", oldValue, newValue);
+  public void setSubtitleLanguageStyle(LanguageStyle newValue) {
+    LanguageStyle oldValue = this.subtitleLanguageStyle;
+    this.subtitleLanguageStyle = newValue;
+    firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
   }
 
   public MovieScraperMetadataConfig getMovieScraperMetadataConfig() {

@@ -49,6 +49,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
@@ -79,6 +80,7 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JComboBox                   cbScraperLanguage;
+  private JComboBox<LanguageStyle>    cbLanguageStyle;
 
   public TvShowSubtitleSettingsPanel() {
     // UI init
@@ -152,7 +154,7 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][grow][500lp,grow]", "[][200lp][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.subtitle"));// $NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
@@ -189,6 +191,13 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
 
       cbScraperLanguage = new JComboBox(MediaLanguages.values());
       add(cbScraperLanguage, "cell 2 2");
+    }
+    {
+      JLabel lblLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
+      add(lblLanguageStyle, "cell 1 3,alignx trailing");
+
+      cbLanguageStyle = new JComboBox(LanguageStyle.values());
+      add(cbLanguageStyle, "cell 2 3,growx");
     }
   }
 
@@ -292,5 +301,10 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty, cbScraperLanguage, jComboBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSettings, LanguageStyle> tvShowSettingsBeanProperty_1 = BeanProperty.create("subtitleLanguageStyle");
+    AutoBinding<TvShowSettings, LanguageStyle, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_1, cbLanguageStyle, jComboBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

@@ -466,7 +466,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
           // the right language tag from the renamer settings
           String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(),
-              MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
+              MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = model.getLanguage().name();
           }

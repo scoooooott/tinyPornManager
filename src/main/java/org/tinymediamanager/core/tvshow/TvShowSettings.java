@@ -111,7 +111,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                     asciiReplacement               = false;
   private boolean                     renamerSpaceSubstitution       = false;
   private String                      renamerSpaceReplacement        = "_";
-  private LanguageStyle               tvShowRenamerLanguageStyle     = LanguageStyle.ISO3T;
+  private LanguageStyle               subtitleLanguageStyle          = LanguageStyle.ISO3T;
   private boolean                     syncTrakt                      = false;
   private boolean                     dvdOrder                       = false;
   private boolean                     storeUiFilters                 = false;
@@ -427,14 +427,14 @@ public class TvShowSettings extends AbstractSettings {
     return tvShowSubtitleScrapers;
   }
 
-  public LanguageStyle getTvShowRenamerLanguageStyle() {
-    return tvShowRenamerLanguageStyle;
+  public LanguageStyle getSubtitleLanguageStyle() {
+    return subtitleLanguageStyle;
   }
 
-  public void setTvShowRenamerLanguageStyle(LanguageStyle newValue) {
-    LanguageStyle oldValue = this.tvShowRenamerLanguageStyle;
-    this.tvShowRenamerLanguageStyle = newValue;
-    firePropertyChange("tvShowRenamerLanguageStyle", oldValue, newValue);
+  public void setSubtitleLanguageStyle(LanguageStyle newValue) {
+    LanguageStyle oldValue = this.subtitleLanguageStyle;
+    this.subtitleLanguageStyle = newValue;
+    firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
   }
 
   public void setUiFilters(Map<String, String> filters) {

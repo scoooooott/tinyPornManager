@@ -45,10 +45,9 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -79,6 +78,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JComboBox                   cbScraperLanguage;
+  private JComboBox<LanguageStyle>    cbSubtitleLanguageStyle;
 
   public MovieSubtitleSettingsPanel() {
     // UI init
@@ -152,7 +152,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][grow][500lp,grow]", "[][200lp][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.subtitle"));// $NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
@@ -186,10 +186,17 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
 
     {
       JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-      add(lblScraperLanguage, "cell 1 2,alignx right,aligny center");
+      add(lblScraperLanguage, "cell 1 2,alignx right");
 
       cbScraperLanguage = new JComboBox(MediaLanguages.values());
       add(cbScraperLanguage, "cell 2 2");
+    }
+    {
+      JLabel lblSubtitleLanguageStyle = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
+      add(lblSubtitleLanguageStyle, "cell 1 3,alignx trailing");
+
+      cbSubtitleLanguageStyle = new JComboBox(LanguageStyle.values());
+      add(cbSubtitleLanguageStyle, "cell 2 3");
     }
   }
 
@@ -268,30 +275,10 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
   }
 
   protected void initDataBindings() {
-    JTableBinding<SubtitleScraper, List<SubtitleScraper>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE,
-        scrapers, tableScraper);
-    //
-    BeanProperty<SubtitleScraper, Boolean> subtitleScraperBeanProperty = BeanProperty.create("active");
-    jTableBinding.addColumnBinding(subtitleScraperBeanProperty).setColumnName("Active").setColumnClass(Boolean.class);
-    //
-    BeanProperty<SubtitleScraper, Icon> subtitleScraperBeanProperty_1 = BeanProperty.create("scraperLogo");
-    jTableBinding.addColumnBinding(subtitleScraperBeanProperty_1).setColumnName("Logo").setEditable(false).setColumnClass(ImageIcon.class);
-    //
-    BeanProperty<SubtitleScraper, String> subtitleScraperBeanProperty_2 = BeanProperty.create("scraperName");
-    jTableBinding.addColumnBinding(subtitleScraperBeanProperty_2).setColumnName("Name").setEditable(false).setColumnClass(String.class);
-    //
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.scraperDescription");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tableScraper, jTableBeanProperty,
-        tpScraperDescription, jTextPaneBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<MovieSettings, MediaLanguages> movieSettingsBeanProperty = BeanProperty.create("subtitleScraperLanguage");
+    BeanProperty<MovieSettings, LanguageStyle> movieSettingsBeanProperty = BeanProperty.create("subtitleLanguageStyle");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, MediaLanguages, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty, cbScraperLanguage, jComboBoxBeanProperty);
-    autoBinding_1.bind();
+    AutoBinding<MovieSettings, LanguageStyle, JComboBox, Object> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty, cbSubtitleLanguageStyle, jComboBoxBeanProperty);
+    autoBinding.bind();
   }
 }

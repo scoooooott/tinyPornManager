@@ -46,7 +46,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
@@ -99,7 +98,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private JTable                         tableExamples;
   private JLabel                         lblMMDWarning;
   private JLabel                         lblSubtitleLanguage;
-  private JComboBox<LanguageStyle>       cbSubtitleLanguage;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -151,8 +149,6 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       cbSeparator.setSelectedIndex(index);
     }
 
-    // language style
-    cbSubtitleLanguage.setSelectedItem(settings.getMovieRenamerLanguageStyle());
     cbMovieForPreview.addActionListener(actionCreateRenamerExample);
     cbSeparator.addActionListener(arg0 -> {
       checkChanges();
@@ -188,7 +184,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][20lp][][200lp,grow]", "[][][][][][][][15lp][][][][][][20lp][][][][100lp,grow]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][][][20lp][][200lp,grow]", "[][][][][][][][15lp][][][][][20lp][][][][100lp,grow]"));
     {
       final JLabel lblPatternAndOptionsT = new JLabel(BUNDLE.getString("Settings.movie.renamer.title")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblPatternAndOptionsT, 1.16667, Font.BOLD);
@@ -272,34 +268,28 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       chckbxRemoveOtherNfos = new JCheckBox(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
       add(chckbxRemoveOtherNfos, "cell 1 11 5 1");
     }
-    {
-      lblSubtitleLanguage = new JLabel(BUNDLE.getString("Settings.renamer.language")); //$NON-NLS-1$
-      add(lblSubtitleLanguage, "flowx,cell 1 12 5 1");
 
-      cbSubtitleLanguage = new JComboBox(LanguageStyle.values());
-      add(cbSubtitleLanguage, "cell 1 12 5 1");
-    }
     {
       final JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblExampleT, 1.16667, Font.BOLD);
-      add(lblExampleT, "cell 0 14 6 1");
+      add(lblExampleT, "cell 0 13 6 1");
     }
     {
       JLabel lblExampleT = new JLabel(BUNDLE.getString("tmm.movie")); //$NON-NLS-1$
-      add(lblExampleT, "flowx,cell 1 15 5 1");
+      add(lblExampleT, "flowx,cell 1 14 5 1");
 
       cbMovieForPreview = new JComboBox();
-      add(cbMovieForPreview, "cell 1 15 5 1");
+      add(cbMovieForPreview, "cell 1 14 5 1");
 
       lblExample = new JLabel("");
-      add(lblExample, "cell 1 16 5 1");
+      add(lblExample, "cell 1 15 5 1");
       TmmFontHelper.changeFont(lblExample, 0.916, Font.BOLD);
 
       DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
           GlazedListsSwing.swingThreadProxyList(exampleEventList), new MovieRenamerExampleTableFormat());
       tableExamples = new TmmTable(exampleTableModel);
       scrollPaneExamples = new JScrollPane(tableExamples);
-      add(scrollPaneExamples, "cell 1 17 5 1,grow");
+      add(scrollPaneExamples, "cell 1 16 5 1,grow");
     }
   }
 
@@ -532,11 +522,5 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, chckbxAsciiReplacement, jCheckBoxBeanProperty);
     autoBinding_5.bind();
-    //
-    BeanProperty<MovieSettings, LanguageStyle> movieSettingsBeanProperty = BeanProperty.create("movieRenamerLanguageStyle");
-    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, LanguageStyle, JComboBox, Object> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty, cbSubtitleLanguage, jComboBoxBeanProperty);
-    autoBinding_2.bind();
   }
 }
