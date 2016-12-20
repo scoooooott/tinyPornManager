@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -264,6 +265,9 @@ public class MovieSettings extends AbstractSettings {
 
   @Override
   protected void writeDefaultSettings() {
+    // hidden columns
+    setMovieTableHiddenColumns(Arrays.asList("filename", "path", "movieset"));
+
     movieNfoFilenames.clear();
     addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
 

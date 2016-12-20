@@ -32,7 +32,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -135,7 +134,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
       private void writeSettings() {
         movieTable.writeHiddenColumns(cols -> {
           MovieModuleManager.SETTINGS.setMovieTableHiddenColumns(cols);
-          Globals.settings.saveSettings();
+          MovieModuleManager.SETTINGS.saveSettings();
         });
       }
     });

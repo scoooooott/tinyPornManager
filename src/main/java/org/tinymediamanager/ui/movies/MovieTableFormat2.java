@@ -22,8 +22,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.DateTableCellRenderer;
 import org.tinymediamanager.ui.IconManager;
@@ -61,6 +64,42 @@ public class MovieTableFormat2 extends TmmTableFormat<Movie> {
     col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);
     col.setColumnComparator(stringComparator);
     col.setColumnResizeable(false);
+    addColumn(col);
+
+    /*
+     * file name (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.filename"), "filename", movie -> {
+      MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
+      if (mf != null) {
+        return mf.getFilename();
+      }
+      return "";
+    }, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setColumnResizeable(true);
+    addColumn(col);
+
+    /*
+     * folder name (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.path"), "path", MediaEntity::getPathNIO, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setColumnResizeable(true);
+    addColumn(col);
+
+    /*
+     * movie set (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.movieset"), "movieset", movie -> {
+      MovieSet set = movie.getMovieSet();
+      if (set != null) {
+        return set.getTitle();
+      }
+      return "";
+    }, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setColumnResizeable(true);
     addColumn(col);
 
     /*

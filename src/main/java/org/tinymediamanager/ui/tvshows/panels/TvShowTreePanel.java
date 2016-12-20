@@ -30,7 +30,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -101,7 +100,7 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
             }
           }
           TvShowModuleManager.SETTINGS.setUiFilters(filterValues);
-          Globals.settings.saveSettings();
+          TvShowModuleManager.SETTINGS.saveSettings();
         }
       }
     };
