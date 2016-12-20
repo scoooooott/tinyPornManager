@@ -25,6 +25,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
@@ -805,7 +806,7 @@ public class MoviePanel extends JPanel {
           TableModel model = table.getModel();
           for (int i = 0; i < model.getRowCount(); i++) {
             if (model.getValueAt(i, 0) instanceof Movie) {
-              String title = ((Movie) model.getValueAt(i, 0)).getTitleSortable().toLowerCase();
+              String title = ((Movie) model.getValueAt(i, 0)).getTitleSortable().toLowerCase(Locale.ROOT);
               if (title.startsWith(searchTerm)) {
                 ListSelectionModel selectionModel = table.getSelectionModel();
                 selectionModel.setSelectionInterval(i, i);

@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -44,8 +45,8 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
     }
 
     try {
-      StringBuilder sb = new StringBuilder("../images/mediainfo/video/");
-      sb.append(arg0.toLowerCase());
+      StringBuilder sb = new StringBuilder("/images/mediainfo/video/");
+      sb.append(arg0.toLowerCase(Locale.ROOT));
       sb.append(".png");
 
       URL file = MediaInfoVideoCodecConverter.class.getResource(sb.toString());
@@ -66,4 +67,5 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
   public String convertReverse(Icon arg0) {
     return null;
   }
+
 }

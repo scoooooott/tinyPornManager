@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
@@ -28,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.http.StreamingUrl;
@@ -106,7 +107,7 @@ public class DownloadTask extends TmmTask {
   protected void doInBackground() {
     try {
       // verify the url is not empty and starts with at least
-      if (StringUtils.isBlank(url) || !url.toLowerCase().startsWith("http")) {
+      if (StringUtils.isBlank(url) || !url.toLowerCase(Locale.ROOT).startsWith("http")) {
         return;
       }
 

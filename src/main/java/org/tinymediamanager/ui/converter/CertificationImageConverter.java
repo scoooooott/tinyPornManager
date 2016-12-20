@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -49,7 +50,7 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
     // try to find an image for this genre
     try {
       StringBuilder sb = new StringBuilder("/images/certifications/");
-      sb.append(cert.name().toLowerCase());
+      sb.append(cert.name().toLowerCase(Locale.ROOT));
       sb.append(".png");
 
       URL file = MovieGenresPanel.class.getResource(sb.toString());
@@ -57,7 +58,7 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
         // try to find the image without the country name in path
         sb = new StringBuilder("/images/certifications/");
         String certName = cert.name();
-        sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase());
+        sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase(Locale.ROOT));
         sb.append(".png");
         file = MovieGenresPanel.class.getResource(sb.toString());
       }

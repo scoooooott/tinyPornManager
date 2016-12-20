@@ -463,8 +463,13 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         MovieSubtitleChooserModel model = subtitleEventList.get(row);
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
-          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), fileToScrape.getFileAsPath(), model.getLanguage().name(),
-              movieToScrape);
+          // the right language tag from the renamer settings
+          String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(),
+              MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+          if (StringUtils.isBlank(lang)) {
+            lang = model.getLanguage().name();
+          }
+          DownloadTask task = new MovieSubtitleDownloadTask(model.getDownloadUrl(), fileToScrape.getFileAsPath(), lang, movieToScrape);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }
       }

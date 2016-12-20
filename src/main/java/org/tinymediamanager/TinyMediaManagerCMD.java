@@ -18,6 +18,7 @@ package org.tinymediamanager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.SwingWorker;
 
@@ -115,7 +116,7 @@ public class TinyMediaManagerCMD {
       else if (cmd.equalsIgnoreCase("-rename") || cmd.equalsIgnoreCase("-renameNew")) { // "new" deprecated
         rename = true;
       }
-      else if (cmd.toLowerCase().contains("help")) { // -help, --help, help ...
+      else if (cmd.toLowerCase(Locale.ROOT).contains("help")) { // -help, --help, help ...
         printSyntax();
         System.exit(0);
       }

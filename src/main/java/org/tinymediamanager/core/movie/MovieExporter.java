@@ -242,7 +242,7 @@ public class MovieExporter extends MediaEntityExporter {
           continue;
         }
 
-        switch (key.toLowerCase()) {
+        switch (key.toLowerCase(Locale.ROOT)) {
           case "escape":
             parameterMap.put(key, Boolean.parseBoolean(value));
             break;
@@ -373,9 +373,9 @@ public class MovieExporter extends MediaEntityExporter {
           continue;
         }
 
-        switch (key.toLowerCase()) {
+        switch (key.toLowerCase(Locale.ROOT)) {
           case "type":
-            MediaFileType type = MediaFileType.valueOf(value.toUpperCase());
+            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
             if (type != null) {
               parameterMap.put(key, type);
             }

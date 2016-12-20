@@ -323,9 +323,9 @@ public class TvShowExporter extends MediaEntityExporter {
           continue;
         }
 
-        switch (key.toLowerCase()) {
+        switch (key.toLowerCase(Locale.ROOT)) {
           case "type":
-            MediaFileType type = MediaFileType.valueOf(value.toUpperCase());
+            MediaFileType type = MediaFileType.valueOf(value.toUpperCase(Locale.ROOT));
             if (type != null) {
               parameterMap.put(key, type);
             }

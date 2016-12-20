@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -73,6 +74,8 @@ import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
+
+import com.sun.jna.Platform;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -159,8 +162,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         List<Path> rootList = listFilesAndDirs(dsAsPath);
 
         // when there is _nothing_ found in the ds root, it might be offline -
-        // skip further processing
-        if (rootList.isEmpty()) {
+        // skip further processing;
+        // not in Windows since that won't happen there
+        if (rootList.isEmpty() && !Platform.isWindows()) {
           // error - continue with next datasource
           MessageManager.instance
               .pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable", new String[] { ds }));
@@ -351,7 +355,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     if (isDiscFolder) {
       // if inside own DiscFolder, walk backwards till movieRoot folder
       Path relative = dataSource.relativize(movieDir);
-      while (relative.toString().toUpperCase().contains("VIDEO_TS") || relative.toString().toUpperCase().contains("BDMV")) {
+      while (relative.toString().toUpperCase(Locale.ROOT).contains("VIDEO_TS") || relative.toString().toUpperCase(Locale.ROOT).contains("BDMV")) {
         movieDir = movieDir.getParent();
         relative = dataSource.relativize(movieDir);
       }
@@ -833,7 +837,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
     for (MediaFile mf : mediaFiles) {
       if (!current.contains(mf)) { // a new mediafile was found!
-        if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
+        if (mf.getPath().toUpperCase(Locale.ROOT).contains("BDMV") || mf.getPath().toUpperCase(Locale.ROOT).contains("VIDEO_TS") || mf.isDiscFile()) {
           movie.setDisc(true);
           if (movie.getMediaSource() == MediaSource.UNKNOWN) {
             movie.setMediaSource(MediaSource.parseMediaSource(mf.getPath()));
@@ -875,7 +879,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             break;
 
           case FANART:
-            if (mf.getPath().toLowerCase().contains("extrafanart")) {
+            if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrafanart")) {
               // there shouldn't be any files here
               LOGGER.warn("problem: detected media file type FANART in extrafanart folder: " + mf.getPath());
               continue;
@@ -884,7 +888,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             break;
 
           case THUMB:
-            if (mf.getPath().toLowerCase().contains("extrathumbs")) { //
+            if (mf.getPath().toLowerCase(Locale.ROOT).contains("extrathumbs")) { //
               // there shouldn't be any files here
               LOGGER.warn("| problem: detected media file type THUMB in extrathumbs folder: " + mf.getPath());
               continue;
@@ -1103,7 +1107,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
         if (Utils.isRegularFile(path)) {
-          String fn = path.getFileName().toString().toUpperCase();
+          String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
               && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
@@ -1131,7 +1135,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     List<Path> fileNames = new ArrayList<>();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
       for (Path path : directoryStream) {
-        String fn = path.getFileName().toString().toUpperCase();
+        String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
             && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
@@ -1182,7 +1186,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
-              || skipFolders.contains(dir.getFileName().toString().toUpperCase()) || dir.getFileName().toString().matches(skipRegex))
+              || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
           || MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
@@ -1241,7 +1245,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       visFile++;
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         // check for video?
-        if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase())) {
+        if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.toString()).toLowerCase(Locale.ROOT))) {
           if (file.getParent().getFileName().toString().equals("STREAM")) {
             return CONTINUE; // BD folder has an additional parent video folder
                              // - ignore it here
@@ -1255,7 +1259,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       preDir++;
-      String fn = dir.getFileName().toString().toUpperCase();
+      String fn = dir.getFileName().toString().toUpperCase(Locale.ROOT);
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
           || Files.exists(dir.resolve(".nomedia"))
           || MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(dir.toFile().getAbsolutePath())) {

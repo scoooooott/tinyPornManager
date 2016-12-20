@@ -311,7 +311,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * a) available episodes along with<br>
    * b) missing episodes <br>
    * for display in the TV show list
-   * 
+   *
    * @return a list of _all_ episodes
    */
   public List<TvShowEpisode> getEpisodesForDisplay() {
@@ -1297,11 +1297,11 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     // check if there are any NFOs in that directory
     FilenameFilter filter = (dir, name) -> {
       // do not start with .
-      if (name.toLowerCase().startsWith("."))
+      if (name.toLowerCase(Locale.ROOT).startsWith("."))
         return false;
 
       // check if filetype is in our settings
-      if (name.toLowerCase().endsWith("nfo")) {
+      if (name.toLowerCase(Locale.ROOT).endsWith("nfo")) {
         return true;
       }
 

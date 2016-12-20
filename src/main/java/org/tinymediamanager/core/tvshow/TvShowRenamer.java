@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,9 +37,9 @@ import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -484,12 +485,12 @@ public class TvShowRenamer {
         else {
           // detect from filename, if we don't have a MediaFileSubtitle entry!
           // remove the filename of episode from subtitle, to ease parsing
-          String shortname = mf.getBasename().toLowerCase().replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
+          String shortname = mf.getBasename().toLowerCase(Locale.ROOT).replace(eps.get(0).getVideoBasenameWithoutStacking(), "");
           String originalLang = "";
           String lang = "";
           String forced = "";
 
-          if (mf.getFilename().toLowerCase().contains("forced")) {
+          if (mf.getFilename().toLowerCase(Locale.ROOT).contains("forced")) {
             // add "forced" prior language
             forced = ".forced";
             shortname = shortname.replaceAll("\\p{Punct}*forced", "");
@@ -592,7 +593,7 @@ public class TvShowRenamer {
     if (episode.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
       mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
     }
-    switch (token.toUpperCase()) {
+    switch (token.toUpperCase(Locale.ROOT)) {
       // SHOW
       case "$N":
         ret = show.getTitle();

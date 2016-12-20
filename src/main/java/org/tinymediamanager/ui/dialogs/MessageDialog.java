@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -178,7 +179,7 @@ public class MessageDialog extends JDialog {
 
   public static final String toHTML(String s) {
     s = s == null ? "" : s.replaceAll("\n", "<br>");
-    String tmp = s.trim().toLowerCase();
+    String tmp = s.trim().toLowerCase(Locale.ROOT);
 
     StringBuilder sb = new StringBuilder(s);
     if (!tmp.startsWith("<html>"))

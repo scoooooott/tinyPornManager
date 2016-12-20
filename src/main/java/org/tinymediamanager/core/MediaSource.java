@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
@@ -78,7 +79,7 @@ public enum MediaSource {
    * @return Bluray | HDDVD | TV | DVD | VHS
    */
   public static MediaSource parseMediaSource(String filename) {
-    String fn = filename.toLowerCase();
+    String fn = filename.toLowerCase(Locale.ROOT);
     String ext = FilenameUtils.getExtension(fn);
     // http://wiki.xbmc.org/index.php?title=Media_flags#Media_source
 

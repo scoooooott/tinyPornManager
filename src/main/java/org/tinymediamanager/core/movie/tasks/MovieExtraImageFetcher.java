@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -127,7 +128,7 @@ public class MovieExtraImageFetcher implements Runnable {
         filename += "disc." + FilenameUtils.getExtension(artworkUrl);
       }
       else {
-        filename += type.name().toLowerCase() + "." + FilenameUtils.getExtension(artworkUrl);
+        filename += type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(artworkUrl);
       }
       movie.removeAllMediaFiles(type);
 

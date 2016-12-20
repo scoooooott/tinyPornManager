@@ -23,11 +23,13 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -113,8 +115,13 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
               continue;
             }
 
-            TmmTaskManager.getInstance()
-                .addDownloadTask(new MovieSubtitleDownloadTask(firstResult.getUrl(), mf.getFileAsPath(), language.name(), movie));
+            // the right language tag from the renamer settings
+            String lang = LanguageStyle.getLanguageCodeForStyle(language.name(), MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+            if (StringUtils.isBlank(lang)) {
+              lang = language.name();
+            }
+
+            TmmTaskManager.getInstance().addDownloadTask(new MovieSubtitleDownloadTask(firstResult.getUrl(), mf.getFileAsPath(), lang, movie));
           }
           catch (Exception e) {
             LOGGER.error("Error at subtitle searching: " + e.getMessage());
