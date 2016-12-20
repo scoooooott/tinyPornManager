@@ -45,6 +45,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -465,7 +466,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
           // the right language tag from the renamer settings
           String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(),
-              MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+              MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = model.getLanguage().name();
           }

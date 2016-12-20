@@ -116,7 +116,7 @@ public class MovieSubtitleSearchAndDownloadTask extends TmmThreadPool {
             }
 
             // the right language tag from the renamer settings
-            String lang = LanguageStyle.getLanguageCodeForStyle(language.name(), MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerLanguageStyle());
+            String lang = LanguageStyle.getLanguageCodeForStyle(language.name(), MovieModuleManager.SETTINGS.getMovieRenamerLanguageStyle());
             if (StringUtils.isBlank(lang)) {
               lang = language.name();
             }
