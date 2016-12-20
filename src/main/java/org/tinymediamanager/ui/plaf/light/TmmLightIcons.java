@@ -159,7 +159,7 @@ public class TmmLightIcons extends BaseIcons {
 
     @Override
     public int getIconHeight() {
-      return SIZE + 2;
+      return SIZE;
     }
   }
 

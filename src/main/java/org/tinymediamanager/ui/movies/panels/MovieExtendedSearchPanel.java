@@ -29,7 +29,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.UTF8Control;
@@ -40,6 +42,7 @@ import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.filters.MovieAudioCodecFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCastFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCertificationFilter;
+import org.tinymediamanager.ui.movies.filters.MovieCountryFilter;
 import org.tinymediamanager.ui.movies.filters.MovieDatasourceFilter;
 import org.tinymediamanager.ui.movies.filters.MovieDuplicateFilter;
 import org.tinymediamanager.ui.movies.filters.MovieGenreFilter;
@@ -52,10 +55,12 @@ import org.tinymediamanager.ui.movies.filters.MovieNewMoviesFilter;
 import org.tinymediamanager.ui.movies.filters.MovieTagFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideo3DFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideoCodecFilter;
+import org.tinymediamanager.ui.movies.filters.MovieVideoExtrasFilter;
 import org.tinymediamanager.ui.movies.filters.MovieVideoFormatFilter;
 import org.tinymediamanager.ui.movies.filters.MovieWatchedFilter;
 import org.tinymediamanager.ui.movies.filters.MovieYearFilter;
 import org.tinymediamanager.ui.panels.RoundedPanel;
+import org.tinymediamanager.ui.panels.ScrollablePanel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -101,14 +106,17 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblFilterBy);
     add(lblFilterBy, "cell 0 0,growx,aligny top");
 
-    panelFilter = new JPanel();
+    panelFilter = new ScrollablePanel();
     GridBagLayout gbl_panelFilter = new GridBagLayout();
     gbl_panelFilter.columnWidths = new int[] { 0 };
     gbl_panelFilter.rowHeights = new int[] { 0 };
     gbl_panelFilter.columnWeights = new double[] { Double.MIN_VALUE };
     gbl_panelFilter.rowWeights = new double[] { Double.MIN_VALUE };
     panelFilter.setLayout(gbl_panelFilter);
-    add(panelFilter, "cell 0 1 3 1,grow");
+
+    JScrollPane scrollPane = new JScrollPane(panelFilter);
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    add(scrollPane, "cell 0 1 3 1,grow");
 
     addFilter(new MovieNewMoviesFilter());
     addFilter(new MovieDuplicateFilter());
@@ -117,6 +125,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     addFilter(new MovieCertificationFilter());
     addFilter(new MovieYearFilter());
     addFilter(new MovieCastFilter());
+    addFilter(new MovieCountryFilter());
     addFilter(new MovieTagFilter());
     addFilter(new MovieInMovieSetFilter());
     addFilter(new MovieVideoFormatFilter());
@@ -125,6 +134,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     addFilter(new MovieAudioCodecFilter());
     addFilter(new MovieDatasourceFilter());
     addFilter(new MovieMediaSourceFilter());
+    addFilter(new MovieVideoExtrasFilter());
     addFilter(new MovieMissingMetadataFilter());
     addFilter(new MovieMissingArtworkFilter());
     addFilter(new MovieMissingSubtitlesFilter());
@@ -163,7 +173,7 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     gbc.gridx = 0;
-    gbc.ipadx = 2;
+    gbc.ipadx = 20;
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.LINE_START;
     panelFilter.add(filter.getCheckBox(), gbc);
