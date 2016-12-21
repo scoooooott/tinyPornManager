@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -59,7 +60,8 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
+  private final static Logger       LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final List<String> KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
 
   private static void renameSubtitles(Movie m) {
     // build language lists
@@ -319,12 +321,18 @@ public class MovieRenamer {
       cleanup.add(del);
     }
     for (MoviePosterNaming s : MoviePosterNaming.values()) {
-      MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getPosterFilename(s, movie)), MediaFileType.POSTER);
-      cleanup.add(del);
+      for (String ext : KNOWN_IMAGE_FILE_EXTENSIONS) {
+        MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getBasePosterFilename(s, movie) + "." + ext),
+            MediaFileType.POSTER);
+        cleanup.add(del);
+      }
     }
     for (MovieFanartNaming s : MovieFanartNaming.values()) {
-      MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getFanartFilename(s, movie)), MediaFileType.FANART);
-      cleanup.add(del);
+      for (String ext : KNOWN_IMAGE_FILE_EXTENSIONS) {
+        MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getBaseFanartFilename(s, movie) + "." + ext),
+            MediaFileType.FANART);
+        cleanup.add(del);
+      }
     }
     // cleanup ALL MFs
     for (MediaFile del : movie.getMediaFiles()) {
@@ -723,8 +731,9 @@ public class MovieRenamer {
 
       case POSTER:
         for (MoviePosterNaming name : MovieArtworkHelper.getPosterNamesForMovie(movie)) {
-          String newPosterName = MovieArtworkHelper.getPosterFilename(name, movie, newFilename);
-          if (newPosterName != null && !newPosterName.isEmpty()) {
+          String newBasePosterName = MovieArtworkHelper.getBasePosterFilename(name, movie, newFilename);
+          String newPosterName = "";
+          if (StringUtils.isNotEmpty(newBasePosterName)) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
             if (curExt.equalsIgnoreCase("tbn")) {
               String cont = mf.getContainerFormat();
@@ -735,10 +744,7 @@ public class MovieRenamer {
                 curExt = "jpg";
               }
             }
-            if (!curExt.equals(FilenameUtils.getExtension(newPosterName))) {
-              // match extension to not rename PNG to JPG and vice versa
-              continue;
-            }
+            newPosterName = newBasePosterName + "." + curExt;
           }
           if (StringUtils.isNotBlank(newPosterName)) {
             MediaFile pos = new MediaFile(mf);
@@ -750,7 +756,8 @@ public class MovieRenamer {
 
       case FANART:
         for (MovieFanartNaming name : MovieArtworkHelper.getFanartNamesForMovie(movie)) {
-          String newFanartName = MovieArtworkHelper.getFanartFilename(name, movie, newFilename);
+          String newBaseFanartName = MovieArtworkHelper.getBaseFanartFilename(name, movie, newFilename);
+          String newFanartName = "";
           if (newFanartName != null && !newFanartName.isEmpty()) {
             String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
             if (curExt.equalsIgnoreCase("tbn")) {
@@ -762,10 +769,7 @@ public class MovieRenamer {
                 curExt = "jpg";
               }
             }
-            if (!curExt.equals(FilenameUtils.getExtension(newFanartName))) {
-              // match extension to not rename PNG to JPG and vice versa
-              continue;
-            }
+            newFanartName = newBaseFanartName + "." + curExt;
           }
           if (StringUtils.isNotBlank(newFanartName)) {
             MediaFile fan = new MediaFile(mf);

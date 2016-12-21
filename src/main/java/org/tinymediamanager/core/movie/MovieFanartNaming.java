@@ -22,20 +22,15 @@ package org.tinymediamanager.core.movie;
  */
 public enum MovieFanartNaming {
 
-  /** [filename]-fanart.png */
-  FILENAME_FANART_PNG, /** [filename]-fanart.jpg */
-  FILENAME_FANART_JPG, /** [filename].fanart.png */
-  FILENAME_FANART2_PNG, /** [filename].fanart.jpg */
-  FILENAME_FANART2_JPG, /** [filename]-fanart.tbn */
-  @Deprecated FILENAME_FANART_TBN,
+  /** [filename]-fanart.* */
+  FILENAME_FANART,
+
+  /** [filename].fanart.* */
+  FILENAME_FANART2,
 
   /** [moviename]-fanart.png */
-  MOVIENAME_FANART_PNG, /** [moviename]-fanart.jpg */
-  MOVIENAME_FANART_JPG, /** [moviename]-fanart.tbn */
-  @Deprecated MOVIENAME_FANART_TBN,
+  MOVIENAME_FANART,
 
   /** fanart.png */
-  FANART_PNG, /** fanart.jpg */
-  FANART_JPG, /** fanart.tbn */
-  @Deprecated FANART_TBN;
+  FANART
 }

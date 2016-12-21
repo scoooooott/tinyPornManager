@@ -160,7 +160,8 @@ public class MovieArtworkHelper {
    * and if not, take some default (since we want fanarts)
    * 
    * @param movie
-   * @return List of MovieFanartNaming (can be ampty!)
+   *          the movie to get the fanart names for
+   * @return List of MovieFanartNaming (can be empty!)
    */
   public static List<MovieFanartNaming> getFanartNamesForMovie(Movie movie) {
     List<MovieFanartNaming> fanartnames = new ArrayList<>();
@@ -168,22 +169,18 @@ public class MovieArtworkHelper {
       return fanartnames;
     }
     if (movie.isMultiMovieDir()) {
-      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART)) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART);
       }
-      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART2_JPG);
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART2_PNG);
+      if (MovieModuleManager.SETTINGS.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2)) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART2);
       }
-      if (fanartnames.isEmpty()) {
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      if (fanartnames.isEmpty() || !MovieModuleManager.SETTINGS.getMovieFanartFilenames().isEmpty()) {
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART);
       }
     }
     else if (movie.isDisc()) {
-      fanartnames.add(MovieFanartNaming.FANART_JPG);
-      fanartnames.add(MovieFanartNaming.FANART_PNG);
+      fanartnames.add(MovieFanartNaming.FANART);
     }
     else {
       fanartnames = MovieModuleManager.SETTINGS.getMovieFanartFilenames();
@@ -200,21 +197,21 @@ public class MovieArtworkHelper {
     int i = 0;
     for (MovieFanartNaming name : getFanartNamesForMovie(movie)) {
       boolean firstImage = false;
-      String filename = getFanartFilename(name, movie);
+      String baseFilename = getBaseFanartFilename(name, movie);
 
-      // only store .png as png and .jpg as jpg; .tbn will be stored as .jpg
-      String generatedFiletype = FilenameUtils.getExtension(filename);
-      String providedFiletype = FilenameUtils.getExtension(fanartUrl);
-      if ("tbn".equals(providedFiletype)) {
-        providedFiletype = "jpg";
-      }
-      if (!generatedFiletype.equals(providedFiletype)) {
+      if (StringUtils.isBlank(fanartUrl) || StringUtils.isBlank(baseFilename)) {
         continue;
       }
 
-      if (StringUtils.isBlank(fanartUrl) || StringUtils.isBlank(filename)) {
-        continue;
+      String ext = FilenameUtils.getExtension(fanartUrl);
+      if (StringUtils.isBlank(ext)) {
+        // no extension? fall back to jpg
+        ext = "jpg";
       }
+      else if ("tbn".equals(ext)) {
+        ext = "jpg";
+      }
+      String filename = baseFilename + "." + ext;
 
       if (++i == 1) {
         firstImage = true;
@@ -232,6 +229,7 @@ public class MovieArtworkHelper {
    * and if not, take some default (since we want posters)
    * 
    * @param movie
+   *          the movie to get the poster names for
    * @return list of MoviePosterNaming (can be empty!)
    */
   public static List<MoviePosterNaming> getPosterNamesForMovie(Movie movie) {
@@ -240,35 +238,27 @@ public class MovieArtworkHelper {
       return posternames;
     }
     if (movie.isMultiMovieDir()) {
-      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_POSTER)) {
+        posternames.add(MoviePosterNaming.FILENAME_POSTER);
       }
-      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
-        posternames.add(MoviePosterNaming.FILENAME_JPG);
-        posternames.add(MoviePosterNaming.FILENAME_PNG);
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME)) {
+        posternames.add(MoviePosterNaming.FILENAME);
       }
-      if (posternames.isEmpty()) {
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      if (posternames.isEmpty() && !MovieModuleManager.SETTINGS.getMoviePosterFilenames().isEmpty()) {
+        posternames.add(MoviePosterNaming.FILENAME_POSTER);
       }
     }
     else if (movie.isDisc()) {
-      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER_JPG)) {
-        posternames.add(MoviePosterNaming.FOLDER_JPG);
-        posternames.add(MoviePosterNaming.FOLDER_PNG);
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.FOLDER)) {
+        posternames.add(MoviePosterNaming.FOLDER);
       }
-      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER_JPG) || posternames.isEmpty()) {
-        posternames.add(MoviePosterNaming.POSTER_JPG);
-        posternames.add(MoviePosterNaming.POSTER_PNG);
-      }
-      if (posternames.isEmpty()) {
-        posternames.add(MoviePosterNaming.FOLDER_JPG);
-        posternames.add(MoviePosterNaming.FOLDER_PNG);
+      if (MovieModuleManager.SETTINGS.getMoviePosterFilenames().contains(MoviePosterNaming.POSTER)
+          || (posternames.isEmpty() && !MovieModuleManager.SETTINGS.getMoviePosterFilenames().isEmpty())) {
+        posternames.add(MoviePosterNaming.POSTER);
       }
     }
     else {
-      posternames = MovieModuleManager.SETTINGS.getMoviePosterFilenames();
+      posternames.addAll(MovieModuleManager.SETTINGS.getMoviePosterFilenames());
     }
     return posternames;
   }
@@ -282,18 +272,21 @@ public class MovieArtworkHelper {
     int i = 0;
     for (MoviePosterNaming name : getPosterNamesForMovie(movie)) {
       boolean firstImage = false;
-      String filename = getPosterFilename(name, movie);
+      String baseFilename = getBasePosterFilename(name, movie);
 
-      // only store .png as png and .jpg as jpg
-      String generatedFiletype = FilenameUtils.getExtension(filename);
-      String providedFiletype = FilenameUtils.getExtension(posterUrl);
-      if (!generatedFiletype.equals(providedFiletype)) {
+      if (StringUtils.isBlank(posterUrl) || StringUtils.isBlank(baseFilename)) {
         continue;
       }
 
-      if (StringUtils.isBlank(posterUrl) || StringUtils.isBlank(filename)) {
-        continue;
+      String ext = FilenameUtils.getExtension(posterUrl);
+      if (StringUtils.isBlank(ext)) {
+        // no extension? fall back to jpg
+        ext = "jpg";
       }
+      else if ("tbn".equals(ext)) {
+        ext = "jpg";
+      }
+      String filename = baseFilename + "." + ext;
 
       if (++i == 1) {
         firstImage = true;
@@ -320,53 +313,32 @@ public class MovieArtworkHelper {
    *          the movie
    * @return the fanart filename
    */
-  public static String getFanartFilename(MovieFanartNaming fanart, Movie movie) {
+  public static String getBaseFanartFilename(MovieFanartNaming fanart, Movie movie) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getFanartFilename(fanart, movie, movie.getVideoBasenameWithoutStacking());
+      return getBaseFanartFilename(fanart, movie, movie.getVideoBasenameWithoutStacking());
     }
     else {
-      return getFanartFilename(fanart, movie, ""); // no video files
+      return getBaseFanartFilename(fanart, movie, ""); // no video files
     }
   }
 
-  public static String getFanartFilename(MovieFanartNaming fanart, Movie movie, String newMovieFilename) {
+  public static String getBaseFanartFilename(MovieFanartNaming fanart, Movie movie, String newMovieFilename) {
     String filename = "";
     String mediafile = newMovieFilename;
 
     switch (fanart) {
-      case FANART_PNG:
-        filename += "fanart.png";
+      case FANART:
+        filename += "fanart";
         break;
-      case FANART_JPG:
-        filename += "fanart.jpg";
+      case FILENAME_FANART:
+        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart";
         break;
-      case FANART_TBN:
-        filename += "fanart.tbn";
+      case FILENAME_FANART2:
+        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart";
         break;
-      case FILENAME_FANART_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.png";
-        break;
-      case FILENAME_FANART_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.jpg";
-        break;
-      case FILENAME_FANART2_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.png";
-        break;
-      case FILENAME_FANART2_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.jpg";
-        break;
-      case FILENAME_FANART_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.tbn";
-        break;
-      case MOVIENAME_FANART_PNG:
-        filename += movie.getTitle() + "-fanart.png";
-        break;
-      case MOVIENAME_FANART_JPG:
-        filename += movie.getTitle() + "-fanart.jpg";
-        break;
-      case MOVIENAME_FANART_TBN:
-        filename += movie.getTitle() + "-fanart.tbn";
+      case MOVIENAME_FANART:
+        filename += movie.getTitle() + "-fanart";
         break;
       default:
         filename = "";
@@ -384,74 +356,38 @@ public class MovieArtworkHelper {
    *          the movie
    * @return the poster filename
    */
-  public static String getPosterFilename(MoviePosterNaming poster, Movie movie) {
+  public static String getBasePosterFilename(MoviePosterNaming poster, Movie movie) {
     List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return getPosterFilename(poster, movie, movie.getVideoBasenameWithoutStacking());
+      return getBasePosterFilename(poster, movie, movie.getVideoBasenameWithoutStacking());
     }
     else {
-      return getPosterFilename(poster, movie, ""); // no video files
+      return getBasePosterFilename(poster, movie, ""); // no video files
     }
   }
 
-  public static String getPosterFilename(MoviePosterNaming poster, Movie movie, String newMovieFilename) {
+  public static String getBasePosterFilename(MoviePosterNaming poster, Movie movie, String newMovieFilename) {
     String filename = "";
     String mediafile = newMovieFilename;
 
     switch (poster) {
-      case MOVIENAME_POSTER_PNG:
-        filename += movie.getTitle() + ".png";
+      case MOVIENAME_POSTER:
+        filename += movie.getTitle();
         break;
-      case MOVIENAME_POSTER_JPG:
-        filename += movie.getTitle() + ".jpg";
+      case FILENAME_POSTER:
+        filename += mediafile.isEmpty() ? "" : mediafile + "-poster";
         break;
-      case MOVIENAME_POSTER_TBN:
-        filename += movie.getTitle() + ".tbn";
+      case FILENAME:
+        filename += mediafile.isEmpty() ? "" : mediafile;
         break;
-      case FILENAME_POSTER_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.png";
+      case MOVIE:
+        filename += "movie";
         break;
-      case FILENAME_POSTER_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.jpg";
+      case POSTER:
+        filename += "poster";
         break;
-      case FILENAME_POSTER_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.tbn";
-        break;
-      case FILENAME_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".png";
-        break;
-      case FILENAME_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".jpg";
-        break;
-      case FILENAME_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".tbn";
-        break;
-      case MOVIE_PNG:
-        filename += "movie.png";
-        break;
-      case MOVIE_JPG:
-        filename += "movie.jpg";
-        break;
-      case MOVIE_TBN:
-        filename += "movie.tbn";
-        break;
-      case POSTER_PNG:
-        filename += "poster.png";
-        break;
-      case POSTER_JPG:
-        filename += "poster.jpg";
-        break;
-      case POSTER_TBN:
-        filename += "poster.tbn";
-        break;
-      case FOLDER_PNG:
-        filename += "folder.png";
-        break;
-      case FOLDER_JPG:
-        filename += "folder.jpg";
-        break;
-      case FOLDER_TBN:
-        filename += "folder.tbn";
+      case FOLDER:
+        filename += "folder";
         break;
       default:
         filename = "";

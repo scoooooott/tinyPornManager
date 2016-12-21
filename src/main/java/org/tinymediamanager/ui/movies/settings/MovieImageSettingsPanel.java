@@ -207,31 +207,31 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
 
     // poster filenames
     List<MoviePosterNaming> moviePosterFilenames = settings.getMoviePosterFilenames();
-    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_JPG)) {
+    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE)) {
       cbMoviePosterFilename2.setSelected(true);
     }
-    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER_JPG)) {
+    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER)) {
       cbMoviePosterFilename4.setSelected(true);
     }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FOLDER_JPG)) {
+    if (moviePosterFilenames.contains(MoviePosterNaming.FOLDER)) {
       cbMoviePosterFilename6.setSelected(true);
     }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_JPG)) {
+    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME)) {
       cbMoviePosterFilename7.setSelected(true);
     }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
+    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_POSTER)) {
       cbMoviePosterFilename8.setSelected(true);
     }
 
     // fanart filenames
     List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
-    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
+    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART)) {
       cbMovieFanartFilename1.setSelected(true);
     }
-    if (movieFanartFilenames.contains(MovieFanartNaming.FANART_JPG)) {
+    if (movieFanartFilenames.contains(MovieFanartNaming.FANART)) {
       cbMovieFanartFilename2.setSelected(true);
     }
-    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
+    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART2)) {
       cbMovieFanartFilename3.setSelected(true);
     }
 
@@ -417,39 +417,31 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     settings.clearMoviePosterFilenames();
 
     if (cbMoviePosterFilename2.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
-      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE);
     }
     if (cbMoviePosterFilename4.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
-      settings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.POSTER);
     }
     if (cbMoviePosterFilename6.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
-      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER);
     }
     if (cbMoviePosterFilename7.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME);
     }
     if (cbMoviePosterFilename8.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER);
     }
 
     // set fanart filenames
     settings.clearMovieFanartFilenames();
     if (cbMovieFanartFilename1.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART);
     }
     if (cbMovieFanartFilename2.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
-      settings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FANART);
     }
     if (cbMovieFanartFilename3.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2);
     }
   }
 

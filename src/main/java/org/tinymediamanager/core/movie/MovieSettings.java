@@ -272,12 +272,10 @@ public class MovieSettings extends AbstractSettings {
     addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
 
     moviePosterFilenames.clear();
-    addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
-    addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+    addMoviePosterFilename(MoviePosterNaming.POSTER);
 
     movieFanartFilenames.clear();
-    addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
-    addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+    addMovieFanartFilename(MovieFanartNaming.FANART);
 
     // activate default scrapers
     movieArtworkScrapers.clear();

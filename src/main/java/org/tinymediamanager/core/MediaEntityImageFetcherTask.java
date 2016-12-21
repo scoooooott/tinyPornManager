@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.http.Url;
 
@@ -167,6 +168,11 @@ public class MediaEntityImageFetcherTask implements Runnable {
             default:
               return;
           }
+        }
+        else {
+          MediaFile artwork = new MediaFile(destFile, MediaFileType.getMediaFileType(type));
+          artwork.gatherMediaInformation();
+          entity.addToMediaFiles(artwork);
         }
       }
 
