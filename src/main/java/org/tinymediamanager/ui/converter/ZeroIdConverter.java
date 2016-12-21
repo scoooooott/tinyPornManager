@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.converter;
 
-import java.util.Locale;
+package org.tinymediamanager.ui.converter;
 
 import org.jdesktop.beansbinding.Converter;
 
 /**
- * The Class VoteCountConverter.
+ * The Class ZeroIdConvertert. Do not output a 0 - Id
  * 
  * @author Manuel Laggner
  */
-public class VoteCountConverter extends Converter<Integer, String> {
-
-  private Locale locale = Locale.getDefault();
+public class ZeroIdConverter extends Converter<Integer, String> {
 
   @Override
   public String convertForward(Integer arg0) {
-    if (arg0 instanceof Integer && (int) arg0 > 0) {
-      StringBuilder sb = new StringBuilder("(");
-      sb.append(String.format(locale, "%,d", arg0));
-      sb.append(" votes)");
-      return sb.toString();
+    if (arg0 instanceof Integer && arg0.equals(0)) {
+      return "";
     }
-    return "";
+    return String.valueOf(arg0);
   }
 
   @Override

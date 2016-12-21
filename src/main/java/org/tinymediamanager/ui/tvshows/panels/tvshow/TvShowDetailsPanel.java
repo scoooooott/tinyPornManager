@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +37,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -70,6 +69,7 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblStatus;
   private JLabel                      lblYear;
   private JLabel                      lblTags;
+  private LinkLabel                   lblTraktTvId;
 
   /**
    * Instantiates a new tv show details panel.
@@ -115,17 +115,15 @@ public class TvShowDetailsPanel extends JPanel {
     add(lblImdbIdT, "6, 4");
 
     lblImdbId = new LinkLabel("");
-    lblImdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to imdbid", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblImdbId.addActionListener(arg0 -> {
+      String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(lblImdbId, "8, 4");
@@ -143,17 +141,15 @@ public class TvShowDetailsPanel extends JPanel {
     add(lblThetvdbIdT, "6, 6");
 
     lblThetvdbId = new LinkLabel("");
-    lblThetvdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to thetvdb", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblThetvdbId.addActionListener(arg0 -> {
+      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to thetvdb", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(lblThetvdbId, "8, 6");
@@ -165,7 +161,27 @@ public class TvShowDetailsPanel extends JPanel {
     lblCertificationT.setLabelFor(lblCertification);
 
     lblCertification = new JLabel("");
-    add(lblCertification, "4, 8, 5, 1");
+    add(lblCertification, "4, 8");
+    {
+      JLabel lblTrakttvIdT = new JLabel(BUNDLE.getString("metatag.trakt")); //$NON-NLS-1$
+      setBoldLabel(lblTrakttvIdT);
+      add(lblTrakttvIdT, "6, 8");
+    }
+    {
+      lblTraktTvId = new LinkLabel("");
+      lblTraktTvId.addActionListener(arg0 -> {
+        String url = "https://trakt.tv/shows/" + lblTraktTvId.getNormalText();
+        try {
+          TmmUIHelper.browseUrl(url);
+        }
+        catch (Exception e) {
+          LOGGER.error("browse to traktid", e);
+          MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+        }
+      });
+      add(lblTraktTvId, "8, 8");
+    }
 
     JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     setBoldLabel(lblGenresT);
@@ -189,22 +205,20 @@ public class TvShowDetailsPanel extends JPanel {
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
-    lblPath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblPath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblPath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblPath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+        // get the location from the label
+        Path path = Paths.get(lblPath.getNormalText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });
@@ -267,5 +281,12 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_9, lblTags, jLabelBeanProperty);
     autoBinding_9.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_10 = BeanProperty.create("selectedTvShow.traktId");
+    BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowSelectionModel, Integer, LinkLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_10, lblTraktTvId, linkLabelBeanProperty);
+    autoBinding_10.setConverter(new ZeroIdConverter());
+    autoBinding_10.bind();
   }
 }
