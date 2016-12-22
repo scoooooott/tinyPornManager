@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -100,7 +99,7 @@ public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
         }
       }
       MovieModuleManager.SETTINGS.setUiFilters(filterValues);
-      Globals.settings.saveSettings();
+      MovieModuleManager.SETTINGS.saveSettings();
     }
   }
 

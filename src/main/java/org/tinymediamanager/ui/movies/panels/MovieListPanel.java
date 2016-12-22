@@ -181,7 +181,8 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
     if (MovieList.getInstance().getMovies() != null && MovieList.getInstance().getMovies().size() > 0) {
       ListSelectionModel selectionModel = movieTable.getSelectionModel();
       if (selectionModel.isSelectionEmpty()) {
-        selectionModel.setSelectionInterval(0, 0);
+        int selectionIndex = movieTable.convertRowIndexToModel(0);
+        selectionModel.setSelectionInterval(selectionIndex, selectionIndex);
       }
     }
   }

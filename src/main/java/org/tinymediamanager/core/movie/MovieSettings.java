@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import static org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -111,6 +113,9 @@ public class MovieSettings extends AbstractSettings {
   private final static String           SCRAPER_FALLBACK                         = "scraperFallback";
   private final static String           UI_FILTERS                               = "uiFilters";
   private final static String           STORE_UI_FILTERS                         = "storeUiFilters";
+  private final static String           STORE_UI_SORTING                         = "storeUiSorting";
+  private final static String           SORT_COLUMN                              = "sortColumn";
+  private final static String           SORT_ASCENDING                           = "sortAscending";
   private final static String           MOVIE_SKIP_FOLDERS                       = "movieSkipFolders";
   private final static String           MOVIE_TABLE_HIDDEN_COLUMNS               = "movieTableHiddenColumns";
 
@@ -214,16 +219,29 @@ public class MovieSettings extends AbstractSettings {
   private boolean                       syncTrakt                                = false;
 
   // UI settings
+  @Deprecated
   private boolean                       yearColumnVisible                        = true;
+  @Deprecated
   private boolean                       ratingColumnVisible                      = false;
+  @Deprecated
   private boolean                       nfoColumnVisible                         = true;
+  @Deprecated
   private boolean                       metadataColumnVisible                    = true;
+  @Deprecated
   private boolean                       dateAddedColumnVisible                   = false;
+  @Deprecated
   private boolean                       imageColumnVisible                       = true;
+  @Deprecated
   private boolean                       trailerColumnVisible                     = true;
+  @Deprecated
   private boolean                       subtitleColumnVisible                    = true;
+  @Deprecated
   private boolean                       watchedColumnVisible                     = true;
+
   private boolean                       storeUiFilters                           = false;
+  private boolean                       storeUiSorting                           = false;
+  private SortColumn                    sortColumn                               = SortColumn.TITLE;
+  private boolean                       sortAscending                            = true;
 
   public MovieSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -694,8 +712,38 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange(STORE_UI_FILTERS, oldValue, newValue);
   }
 
+  public boolean isStoreUiSorting() {
+    return storeUiSorting;
+  }
+
+  public void setStoreUiSorting(boolean newValue) {
+    boolean oldValue = this.storeUiSorting;
+    this.storeUiSorting = newValue;
+    firePropertyChange(STORE_UI_SORTING, oldValue, newValue);
+  }
+
   public boolean isStoreUiFilters() {
     return storeUiFilters;
+  }
+
+  public SortColumn getSortColumn() {
+    return sortColumn;
+  }
+
+  public void setSortColumn(SortColumn newValue) {
+    SortColumn oldValue = this.sortColumn;
+    this.sortColumn = newValue;
+    firePropertyChange(SORT_COLUMN, oldValue, newValue);
+  }
+
+  public boolean isSortAscending() {
+    return sortAscending;
+  }
+
+  public void setSortAscending(boolean newValue) {
+    boolean oldValue = this.sortAscending;
+    this.sortAscending = newValue;
+    firePropertyChange(SORT_ASCENDING, oldValue, newValue);
   }
 
   public boolean isWriteActorImages() {

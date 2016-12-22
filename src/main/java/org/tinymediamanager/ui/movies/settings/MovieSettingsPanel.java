@@ -58,6 +58,7 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                   chckbxPersistUiFilters;
   private JCheckBox                   chckbxBuildImageCache;
   private JCheckBox                   chckbxRuntimeFromMi;
+  private JCheckBox                   chckbxPersistUiSorting;
 
   public MovieSettingsPanel() {
     // UI initializations
@@ -81,7 +82,7 @@ public class MovieSettingsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][]", "[][][20lp][][][][20lp:n][][][]"));
+    setLayout(new MigLayout("", "[25lp:n][]", "[][][][20lp][][][][20lp:n][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
@@ -92,44 +93,48 @@ public class MovieSettingsPanel extends JPanel {
       add(chckbxPersistUiFilters, "cell 1 1");
     }
     {
+      chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
+      add(chckbxPersistUiSorting, "cell 1 2");
+    }
+    {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 3 2 1");
+      add(lblAutomaticTasksT, "cell 0 4 2 1");
     }
     {
       chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
-      add(chckbxRenameAfterScrape, "flowx,cell 1 4");
+      add(chckbxRenameAfterScrape, "flowx,cell 1 5");
     }
     {
       JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
       lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
-      add(lblAutomaticRenameHint, "cell 1 4");
+      add(lblAutomaticRenameHint, "cell 1 5");
     }
     {
       chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
-      add(chckbxTraktSync, "flowx,cell 1 5");
+      add(chckbxTraktSync, "flowx,cell 1 6");
     }
     {
       btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
-      add(btnClearTraktData, "cell 1 5");
+      add(btnClearTraktData, "cell 1 6");
     }
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 7 2 1");
+      add(lblMiscT, "cell 0 8 2 1");
     }
     {
       chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxBuildImageCache, "flowx,cell 1 8");
+      add(chckbxBuildImageCache, "flowx,cell 1 9");
     }
     {
       JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 8");
+      add(lblBuildImageCacheHint, "cell 1 9");
     }
     {
       chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
-      add(chckbxRuntimeFromMi, "cell 1 9");
+      add(chckbxRuntimeFromMi, "cell 1 10");
     }
   }
 
@@ -159,5 +164,10 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_4, chckbxRuntimeFromMi, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_5 = BeanProperty.create("storeUiSorting");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_5, chckbxPersistUiSorting, jCheckBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }

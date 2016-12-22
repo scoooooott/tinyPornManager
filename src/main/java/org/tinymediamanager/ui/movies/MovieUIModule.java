@@ -150,7 +150,6 @@ public class MovieUIModule implements ITmmUIModule {
     layeredPane.add(filterPanel, "1, 1, fill, fill");
     layeredPane.setLayer(filterPanel, 1);
 
-    listPanel.setInitialSelection();
     settingsPanel = new MovieSettingsContainerPanel();
 
     createActions();
@@ -170,6 +169,8 @@ public class MovieUIModule implements ITmmUIModule {
 
     // further initializations
     init();
+
+    listPanel.setInitialSelection();
   }
 
   private void init() {
@@ -179,6 +180,10 @@ public class MovieUIModule implements ITmmUIModule {
         MovieList.getInstance().searchDuplicates();
         selectionModel.setFilterValues(MovieModuleManager.SETTINGS.getUiFilters());
       });
+    }
+    // apply sorting
+    if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
+      selectionModel.sortMovies(MovieModuleManager.SETTINGS.getSortColumn(), MovieModuleManager.SETTINGS.isSortAscending());
     }
   }
 

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 
@@ -39,32 +39,15 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
  * @author Manuel Laggner
  */
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
-
-  /** The Constant SELECTED_MOVIE. */
   private static final String               SELECTED_MOVIE = "selectedMovie";
 
-  /** The selected movies. */
   private List<Movie>                       selectedMovies;
-
-  /** The selected movie. */
   private Movie                             selectedMovie;
-
-  /** The initial movie. */
   private Movie                             initialMovie   = new Movie();
-
-  /** The selection model. */
   private DefaultEventSelectionModel<Movie> selectionModel;
-
-  /** The matcher editor. */
   private MovieMatcherEditor                matcherEditor;
-
-  /** The table comparator chooser. */
   private TableComparatorChooser<Movie>     tableComparatorChooser;
-
-  /** The sorted list. */
   private SortedList<Movie>                 sortedList;
-
-  /** The property change listener. */
   private PropertyChangeListener            propertyChangeListener;
 
   /**
@@ -84,12 +67,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     this.matcherEditor = matcher;
     this.selectedMovies = selectionModel.getSelected();
 
-    propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() == selectedMovie) {
-          firePropertyChange(evt);
-        }
+    propertyChangeListener = evt -> {
+      if (evt.getSource() == selectedMovie) {
+        firePropertyChange(evt);
       }
     };
   }
@@ -145,11 +125,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     return selectionModel;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event. ListSelectionEvent)
-   */
   /**
    * Value changed.
    * 
@@ -259,6 +234,13 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   public void sortMovies(MovieExtendedComparator.SortColumn column, boolean ascending) {
     Comparator<Movie> comparator = new MovieExtendedComparator(column, ascending);
     sortedList.setComparator(comparator);
+
+    // store sorting
+    if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
+      MovieModuleManager.SETTINGS.setSortColumn(column);
+      MovieModuleManager.SETTINGS.setSortAscending(ascending);
+      MovieModuleManager.SETTINGS.saveSettings();
+    }
   }
 
   /**
