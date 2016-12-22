@@ -786,11 +786,7 @@ public class TvShow extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    Object obj = ids.get(IMDB);
-    if (obj == null) {
-      return "";
-    }
-    return obj.toString();
+    return this.getIdAsString(IMDB);
   }
 
   /**
@@ -800,9 +796,7 @@ public class TvShow extends MediaEntity {
    *          the new imdb id
    */
   public void setImdbId(String newValue) {
-    String oldValue = getImdbId();
-    ids.put(IMDB, newValue);
-    firePropertyChange("imdbId", oldValue, newValue);
+    this.setId(IMDB, newValue);
   }
 
   /**
@@ -811,11 +805,7 @@ public class TvShow extends MediaEntity {
    * @return the tvdb id
    */
   public String getTvdbId() {
-    Object obj = ids.get(TVDB);
-    if (obj == null) {
-      return "";
-    }
-    return obj.toString();
+    return this.getIdAsString(TVDB);
   }
 
   /**
@@ -825,9 +815,7 @@ public class TvShow extends MediaEntity {
    *          the new tvdb id
    */
   public void setTvdbId(String newValue) {
-    String oldValue = getTvdbId();
-    ids.put(TVDB, newValue);
-    firePropertyChange("tvdbId", oldValue, newValue);
+    this.setId(TVDB, newValue);
   }
 
   /**
@@ -836,14 +824,7 @@ public class TvShow extends MediaEntity {
    * @return the TraktTV id
    */
   public int getTraktId() {
-    int id = 0;
-    try {
-      id = Integer.parseInt(String.valueOf(ids.get(TRAKT)));
-    }
-    catch (Exception e) {
-      return 0;
-    }
-    return id;
+    return this.getIdAsInt(TRAKT);
   }
 
   /**
@@ -853,9 +834,7 @@ public class TvShow extends MediaEntity {
    *          the new TraktTV id
    */
   public void setTraktId(int newValue) {
-    int oldValue = getTraktId();
-    ids.put(TRAKT, newValue);
-    firePropertyChange("traktId", oldValue, newValue);
+    this.setId(TRAKT, newValue);
   }
 
   /**

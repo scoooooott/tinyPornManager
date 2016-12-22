@@ -755,9 +755,10 @@ public class TvShowEditorDialog extends TmmDialog {
       // first round -> add existing ids
       for (MediaId id : ids) {
         // only process non empty ids
-        if (StringUtils.isAnyBlank(id.key, id.value)) {
-          continue;
-        }
+        // changed; if empty/0/null value gets set, it is removed in setter ;)
+        // if (StringUtils.isAnyBlank(id.key, id.value)) {
+        // continue;
+        // }
         // first try to cast it into an Integer
         try {
           Integer value = Integer.parseInt(id.value);

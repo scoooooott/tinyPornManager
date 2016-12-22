@@ -21,7 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +36,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieList;
@@ -410,6 +414,64 @@ public class UpgradeTasks {
         }
       }
     }
+
+    // upgrade to v2.9.2
+    if (StrgUtils.compareVersion(v, "2.9.2") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9.2");
+
+      for (Movie movie : movieList.getMovies()) {
+        boolean changed = removeEmptyIds(movie);
+        if (changed) {
+          movie.saveToDb();
+        }
+      }
+      for (TvShow show : tvShowList.getTvShows()) {
+        boolean changed = removeEmptyIds(show);
+        if (changed) {
+          show.saveToDb();
+        }
+        for (TvShowEpisode episode : show.getEpisodes()) {
+          changed = removeEmptyIds(episode);
+          if (changed) {
+            episode.saveToDb();
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Cleanup; removes all empty IDs from MediaEntities
+   * 
+   * @param me
+   * @return
+   */
+  private static boolean removeEmptyIds(MediaEntity me) {
+    boolean changed = false;
+
+    Map<String, Object> ids = me.getIds();
+    Iterator<Entry<String, Object>> it = ids.entrySet().iterator();
+    while (it.hasNext()) {
+      Entry<String, Object> pair = it.next();
+      if (pair.getValue() instanceof Integer) {
+        Integer i = (Integer) pair.getValue();
+        if (i == null || i == 0) {
+          LOGGER.debug("Removing empty ID: " + pair.getKey() + " (" + me.getTitle() + ")");
+          it.remove();
+          changed = true;
+        }
+      }
+      else if (pair.getValue() instanceof String) {
+        String i = (String) pair.getValue();
+        if (StringUtils.isEmpty(i)) {
+          LOGGER.debug("Removing empty ID: " + pair.getKey() + " (" + me.getTitle() + ")");
+          it.remove();
+          changed = true;
+        }
+      }
+    }
+
+    return changed;
   }
 
   /**

@@ -309,7 +309,9 @@ public class MovieToKodiNfoConnector {
     }
 
     kodi.id = movie.getImdbId();
-    kodi.tmdbId = movie.getTmdbId();
+    if (movie.getTmdbId() != 0) {
+      kodi.tmdbId = movie.getTmdbId();
+    }
 
     kodi.ids.putAll(movie.getIds());
 
@@ -597,7 +599,7 @@ public class MovieToKodiNfoConnector {
       if (StringUtils.isBlank(movie.getImdbId())) {
         movie.setImdbId(kodi.id);
       }
-      if (movie.getTmdbId() == 0) {
+      if (movie.getTmdbId() == 0 && kodi.tmdbId != 0) {
         movie.setTmdbId(kodi.tmdbId);
       }
 
