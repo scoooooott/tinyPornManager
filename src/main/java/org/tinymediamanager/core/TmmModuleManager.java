@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 
 /**
  * The class TmmModuleManager. Used to manage all modules inside tmm
@@ -99,6 +100,24 @@ public class TmmModuleManager {
       }
       catch (Exception e) {
         LOGGER.error("problem shutting down " + module.getModuleTitle() + ": " + e.getMessage());
+      }
+    }
+  }
+
+  /**
+   * trigger saveSettings for tmm and all modules
+   */
+  public void saveSettings() {
+    Globals.settings.saveSettings();
+
+    for (ITmmModule module : modules) {
+      try {
+        if (module.isEnabled()) {
+          module.saveSettings();
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("saving settings " + module.getModuleTitle() + ": " + e.getMessage());
       }
     }
   }

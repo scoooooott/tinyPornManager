@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -185,6 +186,8 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
         selectionModel.setSelectionInterval(selectionIndex, selectionIndex);
       }
     }
+
+    SwingUtilities.invokeLater(() -> movieTable.requestFocus());
   }
 
   @Override

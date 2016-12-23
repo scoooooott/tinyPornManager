@@ -26,7 +26,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -117,7 +117,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
   @Override
   public void setVisible(boolean visible) {
     if (!visible) {
-      Globals.settings.saveSettings();
+      TmmModuleManager.getInstance().saveSettings();
     }
     super.setVisible(visible);
   }

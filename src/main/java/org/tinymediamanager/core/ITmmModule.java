@@ -31,4 +31,6 @@ public interface ITmmModule {
   public void shutDown() throws Exception;
 
   public void initializeDatabase() throws Exception;
+
+  public void saveSettings() throws Exception;
 }

@@ -29,15 +29,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -82,29 +82,6 @@ public class SettingsDialog extends TmmDialog {
 
     initComponents();
 
-    //
-    // JPanel containerPanel = new JPanel();
-    // containerPanel.putClientProperty("class", "rootPanel");
-    // getContentPane().add(containerPanel, BorderLayout.CENTER);
-    // containerPanel
-    // .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("12dlu"), ColumnSpec.decode("default:grow"), ColumnSpec.decode("12dlu"), },
-    // new RowSpec[] { RowSpec.decode("12dlu"), RowSpec.decode("default:grow"), }));
-    // {
-    // // JPanel panelSettings = new SettingsPanel();
-    // // getContentPane().add(panelSettings, BorderLayout.CENTER);
-    // MainTabbedPane panelSettings = new MainTabbedPane();
-    // containerPanel.add(panelSettings, "2, 2, fill, fill");
-    //
-    // // General settings
-    // panelSettings.addTab(BUNDLE.getString("Settings.general"), new TmmSettingsContainerPanel()); //$NON-NLS-1$
-    //
-    // // Movie settings
-    // panelSettings.addTab(BUNDLE.getString("Settings.movies"), MovieUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
-    //
-    // // TV show settings
-    // panelSettings.addTab(BUNDLE.getString("Settings.tvshow"), TvShowUIModule.getInstance().getSettingsPanel()); //$NON-NLS-1$
-    // }
-
     tree.addFilter(tfFilter);
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
@@ -121,6 +98,14 @@ public class SettingsDialog extends TmmDialog {
           revalidate();
         }
       }
+    });
+
+    // select first node on creation
+    SwingUtilities.invokeLater(() -> {
+      DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
+      tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) firstLeaf.getParent()).getPath()));
+      tree.setSelectionPath(new TreePath(firstLeaf.getPath()));
+      tree.requestFocus();
     });
   }
 
@@ -183,9 +168,7 @@ public class SettingsDialog extends TmmDialog {
   @Override
   public void setVisible(boolean visible) {
     if (!visible) {
-      Globals.settings.saveSettings();
-      MovieModuleManager.SETTINGS.saveSettings();
-      TvShowModuleManager.SETTINGS.saveSettings();
+      TmmModuleManager.getInstance().saveSettings();
     }
     super.setVisible(visible);
   }

@@ -188,4 +188,9 @@ public class TvShowModuleManager implements ITmmModule {
   public void initializeDatabase() throws Exception {
     Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), TV_SHOW_DB));
   }
+
+  @Override
+  public void saveSettings() throws Exception {
+    SETTINGS.saveSettings();
+  }
 }

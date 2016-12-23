@@ -361,7 +361,7 @@ public class TinyMediaManager {
               // send shutdown signal
               TmmTaskManager.getInstance().shutdown();
               // save unsaved settings
-              Globals.settings.saveSettings();
+              TmmModuleManager.getInstance().saveSettings();
               // hard kill
               TmmTaskManager.getInstance().shutdownNow();
               // close database connection

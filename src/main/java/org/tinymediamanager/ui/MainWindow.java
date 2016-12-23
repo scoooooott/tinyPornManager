@@ -54,8 +54,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.SwingWorker.StateValue;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -67,12 +67,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
@@ -513,7 +513,7 @@ public class MainWindow extends JFrame {
         // send shutdown signal
         TmmTaskManager.getInstance().shutdown();
         // save unsaved settings
-        Globals.settings.saveSettings();
+        TmmModuleManager.getInstance().saveSettings();
         // hard kill
         TmmTaskManager.getInstance().shutdownNow();
         // close database connection

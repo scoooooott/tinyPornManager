@@ -48,9 +48,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class MovieModuleManager implements ITmmModule {
   public static final MovieSettings SETTINGS     = MovieSettings.getInstance();
 
-  private static final String       MODULE_TITLE   = "Movie management";
-  private static final String       MOVIE_DB       = "movies.db";
-  private static final Logger       LOGGER         = LoggerFactory.getLogger(MovieModuleManager.class);
+  private static final String       MODULE_TITLE = "Movie management";
+  private static final String       MOVIE_DB     = "movies.db";
+  private static final Logger       LOGGER       = LoggerFactory.getLogger(MovieModuleManager.class);
   private static MovieModuleManager instance;
 
   private boolean                   enabled;
@@ -195,5 +195,10 @@ public class MovieModuleManager implements ITmmModule {
   @Override
   public void initializeDatabase() throws Exception {
     Utils.deleteFileSafely(Paths.get(Settings.getInstance().getSettingsFolder(), MOVIE_DB));
+  }
+
+  @Override
+  public void saveSettings() throws Exception {
+    SETTINGS.saveSettings();
   }
 }
