@@ -47,6 +47,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -173,6 +174,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       panelFilename.add(lblFilenameT, "2, 2, left, top");
 
       lblFilename = new JLabel("");
+      lblFilename.putClientProperty("clipPosition", SwingConstants.LEFT);
+      lblFilename.updateUI();
       TmmFontHelper.changeFont(lblFilename, 1.166, Font.BOLD);
       panelFilename.add(lblFilename, "5, 2, left, top");
     }

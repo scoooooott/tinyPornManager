@@ -71,6 +71,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.LeftDotTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
@@ -704,6 +705,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     tableEpisodes.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(1).setCellRenderer(new LeftDotTableCellRenderer());
     tableEpisodes.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$

@@ -31,7 +31,6 @@ import com.jtattoo.plaf.BaseCheckBoxMenuItemUI;
 import com.jtattoo.plaf.BaseDesktopPaneUI;
 import com.jtattoo.plaf.BaseFileChooserUI;
 import com.jtattoo.plaf.BaseFormattedTextFieldUI;
-import com.jtattoo.plaf.BaseLabelUI;
 import com.jtattoo.plaf.BaseMenuBarUI;
 import com.jtattoo.plaf.BaseMenuItemUI;
 import com.jtattoo.plaf.BaseMenuUI;
@@ -201,7 +200,6 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     // @formatter:off
     Object[] uiDefaults = {
             // BaseLookAndFeel classes
-            "LabelUI", BaseLabelUI.class.getName(),
             "SeparatorUI", BaseSeparatorUI.class.getName(),
             "ToolTipUI", BaseToolTipUI.class.getName(),
             "SliderUI", BaseSliderUI.class.getName(),
@@ -218,6 +216,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
             "RootPaneUI", BaseRootPaneUI.class.getName(),
 
             // TmmLookAndFeel classes
+            "LabelUI", TmmLightLabelUI.class.getName(),
             "PanelUI", TmmLightPanelUI.class.getName(),
             "ScrollBarUI", TmmLightScrollBarUI.class.getName(),
             "TabbedPaneUI", TmmLightTabbedPaneUI.class.getName(),

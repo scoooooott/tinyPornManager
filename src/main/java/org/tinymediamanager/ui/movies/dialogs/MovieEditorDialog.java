@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -191,14 +192,16 @@ public class MovieEditorDialog extends TmmDialog {
       JPanel panelPath = new JPanel();
       getContentPane().add(panelPath, BorderLayout.NORTH);
       panelPath.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-              FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("15px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("50dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.LINE_GAP_ROWSPEC, RowSpec.decode("15px"), FormSpecs.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       panelPath.add(lblMoviePathT, "2, 2, left, top");
 
       lblMoviePath = new JLabel("");
+      lblMoviePath.putClientProperty("clipPosition", SwingConstants.LEFT);
+      lblMoviePath.updateUI();
       TmmFontHelper.changeFont(lblMoviePath, 1.166, Font.BOLD);
       panelPath.add(lblMoviePath, "5, 2, left, top");
     }
