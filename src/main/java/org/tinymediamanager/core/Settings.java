@@ -132,7 +132,7 @@ public class Settings extends AbstractSettings {
   /**
    * Instantiates a new settings.
    */
-  private Settings() {
+  public Settings() {
     propertyChangeListener = evt -> setDirty();
     addPropertyChangeListener(propertyChangeListener);
   }
