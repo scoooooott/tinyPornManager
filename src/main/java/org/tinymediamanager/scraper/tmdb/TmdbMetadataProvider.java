@@ -76,7 +76,7 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
   private static synchronized void initAPI() throws Exception {
     // create a new instance of the tmdb api
     if (api == null) {
-      api = new Tmdb(ApiKey.decryptApikey("8XAdwmcn1zEWLdbc30Kco2ZvOIKyxNxGeiL5kpQlEbXMHwhWBCWKzbNZQ/LINTKb")) {
+      api = new Tmdb(ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO")) {
         // tell the tmdb api to use our OkHttp client
 
         @Override
