@@ -229,8 +229,9 @@ public class MediaInfoXMLParser {
           p = p.resolve("/iso/dummy.vob");
         }
         MediaFile mf = new MediaFile(p);
-        if (mf.getType() != MediaFileType.VIDEO) {
-          // invalid file - ignore duration et all
+        if (mf.getType() != MediaFileType.VIDEO && !mf.getExtension().equalsIgnoreCase("mpls")) {
+          // MI seems to write/parse MPLS into xml...? tread that as valid.
+          // all other are invalid files - ignore duration et all
           snapshot = new EnumMap<>(StreamKind.class);
           duration = 0;
         }

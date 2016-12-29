@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Mediainfo version="0.7.91">
+<File>
+<track type="General">
+<Count>322</Count>
+<Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+<Kind_of_stream>General</Kind_of_stream>
+<Kind_of_stream>General</Kind_of_stream>
+<Stream_identifier>0</Stream_identifier>
+<Count_of_video_streams>1</Count_of_video_streams>
+<Count_of_audio_streams>4</Count_of_audio_streams>
+<Count_of_text_streams>7</Count_of_text_streams>
+<Count_of_menu_streams>1</Count_of_menu_streams>
+<Video_Format_List>AVC</Video_Format_List>
+<Video_Format_WithHint_List>AVC</Video_Format_WithHint_List>
+<Codecs_Video>AVC</Codecs_Video>
+<Audio_Format_List>DTS / AC-3 / AC-3 / AC-3</Audio_Format_List>
+<Audio_Format_WithHint_List>DTS / AC-3 / AC-3 / AC-3</Audio_Format_WithHint_List>
+<Audio_codecs>DTS-HD / AC3 / AC3 / AC3</Audio_codecs>
+<Audio_Language_List>English / French / Spanish / Portuguese</Audio_Language_List>
+<Text_Format_List>PGS / PGS / PGS / PGS / PGS / PGS / PGS</Text_Format_List>
+<Text_Format_WithHint_List>PGS / PGS / PGS / PGS / PGS / PGS / PGS</Text_Format_WithHint_List>
+<Text_codecs>PGS / PGS / PGS / PGS / PGS / PGS / PGS</Text_codecs>
+<Text_Language_List>English / French / Spanish / Portuguese / French / Spanish / Portuguese</Text_Language_List>
+<Complete_name>/media/mnt7/MOUNTED/BDMV/PLAYLIST/00100.mpls</Complete_name>
+<Folder_name>/media/mnt7/MOUNTED/BDMV/PLAYLIST</Folder_name>
+<File_name>00100</File_name>
+<File_extension>mpls</File_extension>
+<Format>Blu-ray Playlist</Format>
+<Format>Blu-ray Playlist</Format>
+<Format_Extensions_usually_used>mpls</Format_Extensions_usually_used>
+<Commercial_name>Blu-ray Playlist</Commercial_name>
+<Codec>Blu-ray Playlist</Codec>
+<Codec>Blu-ray Playlist</Codec>
+<Codec_Extensions_usually_used>mpls</Codec_Extensions_usually_used>
+<File_size>702</File_size>
+<File_size>702 Bytes</File_size>
+<File_size>702 Bytes</File_size>
+<File_size>702 Bytes</File_size>
+<File_size>702 Bytes</File_size>
+<File_size>702.0 Bytes</File_size>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:45;21</Duration>
+<Duration>01:33:44.493 (01:33:45;21)</Duration>
+<Overall_bit_rate_mode>VBR</Overall_bit_rate_mode>
+<Overall_bit_rate_mode>Variable</Overall_bit_rate_mode>
+<Overall_bit_rate>1</Overall_bit_rate>
+<Overall_bit_rate>1 b/s</Overall_bit_rate>
+<Frame_rate>23.976</Frame_rate>
+<Frame_rate>23.976 FPS</Frame_rate>
+<Frame_count>134853</Frame_count>
+<File_last_modification_date>UTC 2013-01-31 18:16:05</File_last_modification_date>
+<File_last_modification_date__local_>2013-01-31 18:16:05</File_last_modification_date__local_>
+</track>
+
+<track type="Video">
+<Count>336</Count>
+<Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+<Kind_of_stream>Video</Kind_of_stream>
+<Kind_of_stream>Video</Kind_of_stream>
+<Stream_identifier>0</Stream_identifier>
+<ID>4114 / 4113</ID>
+<ID>4114 (0x1012) / 4113 (0x1011)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>AVC</Format>
+<Format_Info>Advanced Video Codec</Format_Info>
+<Format_Url>http://developers.videolan.org/x264.html</Format_Url>
+<Commercial_name>AVC</Commercial_name>
+<Format_profile>Stereo High@L4.1 / High@L4.1</Format_profile>
+<Format_settings>CABAC / 2 Ref Frames</Format_settings>
+<Format_settings__CABAC>Yes</Format_settings__CABAC>
+<Format_settings__CABAC>Yes</Format_settings__CABAC>
+<Format_settings__ReFrames>2</Format_settings__ReFrames>
+<Format_settings__ReFrames>2 frames</Format_settings__ReFrames>
+<Internet_media_type>video/H264</Internet_media_type>
+<Codec_ID>27</Codec_ID>
+<Codec>AVC</Codec>
+<Codec>AVC</Codec>
+<Codec_Family>AVC</Codec_Family>
+<Codec_Info>Advanced Video Codec</Codec_Info>
+<Codec_Url>http://developers.videolan.org/x264.html</Codec_Url>
+<Codec_profile>High@L4.1</Codec_profile>
+<Codec_settings>CABAC / 2 Ref Frames</Codec_settings>
+<Codec_settings__CABAC>Yes</Codec_settings__CABAC>
+<Codec_Settings_RefFrames>2</Codec_Settings_RefFrames>
+<Duration>5624494</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 494 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.494</Duration>
+<Duration>01:33:45;21</Duration>
+<Duration>01:33:44.494 (01:33:45;21)</Duration>
+<Bit_rate_mode>VBR</Bit_rate_mode>
+<Bit_rate_mode>Variable</Bit_rate_mode>
+<Width>1920</Width>
+<Width>1 920 pixels</Width>
+<Height>1080</Height>
+<Height>1 080 pixels</Height>
+<Stored_Height>1088</Stored_Height>
+<Sampled_Width>1920</Sampled_Width>
+<Sampled_Height>1080</Sampled_Height>
+<Pixel_aspect_ratio>1.000</Pixel_aspect_ratio>
+<Display_aspect_ratio>1.778</Display_aspect_ratio>
+<Display_aspect_ratio>16:9</Display_aspect_ratio>
+<Frame_rate>23.976</Frame_rate>
+<Frame_rate>23.976 (24000/1001) FPS</Frame_rate>
+<FrameRate_Num>24000</FrameRate_Num>
+<FrameRate_Den>1001</FrameRate_Den>
+<Frame_count>134853</Frame_count>
+<Resolution>8</Resolution>
+<Resolution>8 bits</Resolution>
+<Colorimetry>4:2:0</Colorimetry>
+<Color_space>YUV</Color_space>
+<Chroma_subsampling>4:2:0</Chroma_subsampling>
+<Chroma_subsampling>4:2:0</Chroma_subsampling>
+<Bit_depth>8</Bit_depth>
+<Bit_depth>8 bits</Bit_depth>
+<Scan_type>Progressive</Scan_type>
+<Scan_type>Progressive</Scan_type>
+<Interlacement>PPF</Interlacement>
+<Interlacement>Progressive</Interlacement>
+<Delay>11650.667</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>00:00:11.651</Delay>
+<Delay__origin>Container</Delay__origin>
+<Delay__origin>Container</Delay__origin>
+<Buffer_size>30000000 / 30000000</Buffer_size>
+<format_identifier>HDMV</format_identifier>
+<Source>00007.m2ts / 00006.m2ts</Source>
+</track>
+
+<track type="Audio" typeorder="1">
+<Count>273</Count>
+<Count_of_stream_of_this_kind>4</Count_of_stream_of_this_kind>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Stream_identifier>0</Stream_identifier>
+<Stream_identifier>1</Stream_identifier>
+<ID>4352</ID>
+<ID>4352 (0x1100)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>DTS</Format>
+<Format_Info>Digital Theater Systems</Format_Info>
+<Commercial_name>DTS</Commercial_name>
+<Format_profile>MA / Core</Format_profile>
+<Mode>16</Mode>
+<Format_settings__Endianness>Big</Format_settings__Endianness>
+<Muxing_mode>Stream extension</Muxing_mode>
+<Codec_ID>134</Codec_ID>
+<Codec>DTS-HD</Codec>
+<Codec>DTS-HD</Codec>
+<Duration>5624490</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 490 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.490</Duration>
+<Duration>00:31:09:79</Duration>
+<Duration>01:33:44.490 (00:31:09:79)</Duration>
+<Bit_rate_mode>VBR / CBR</Bit_rate_mode>
+<Bit_rate_mode>Variable / Constant</Bit_rate_mode>
+<Bit_rate>Unknown / 1509000</Bit_rate>
+<Bit_rate>Unknown / 1 509 kb/s</Bit_rate>
+<Channel_s_>8 / 6</Channel_s_>
+<Channel_s_>8 channels / 6 channels</Channel_s_>
+<Channel_positions>Front: L C R, Side: L R, Back: L R, LFE / Front: L C R, Side: L R, LFE</Channel_positions>
+<Channel_positions>3/2/2.1 / 3/2/0.1</Channel_positions>
+<ChannelLayout> / C L R Ls Rs LFE</ChannelLayout>
+<Samples_per_frame>512</Samples_per_frame>
+<Sampling_rate>48000</Sampling_rate>
+<Sampling_rate>48.0 kHz</Sampling_rate>
+<Samples_count>269975520</Samples_count>
+<Frame_rate>93.750</Frame_rate>
+<Frame_rate>93.750 FPS (512 spf)</Frame_rate>
+<Frame_count>175765</Frame_count>
+<Resolution>24</Resolution>
+<Resolution>24 bits</Resolution>
+<Bit_depth>24</Bit_depth>
+<Bit_depth>24 bits</Bit_depth>
+<Compression_mode>Lossless / Lossy</Compression_mode>
+<Compression_mode>Lossless / Lossy</Compression_mode>
+<Delay>11650.667</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>00:00:11.651</Delay>
+<Delay__origin>Container</Delay__origin>
+<Delay__origin>Container</Delay__origin>
+<Delay_relative_to_video>0</Delay_relative_to_video>
+<Delay_relative_to_video>00:00:00.000</Delay_relative_to_video>
+<Video0_delay>0</Video0_delay>
+<Video0_delay>00:00:00.000</Video0_delay>
+<Language>en</Language>
+<Language>English</Language>
+<Language>English</Language>
+<Language>en</Language>
+<Language>eng</Language>
+<Language>en</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Audio" typeorder="2">
+<Count>295</Count>
+<Count_of_stream_of_this_kind>4</Count_of_stream_of_this_kind>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Stream_identifier>1</Stream_identifier>
+<Stream_identifier>2</Stream_identifier>
+<ID>4353</ID>
+<ID>4353 (0x1101)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>AC-3</Format>
+<Format_Info>Audio Coding 3</Format_Info>
+<Commercial_name>AC-3</Commercial_name>
+<Mode_extension>CM (complete main)</Mode_extension>
+<Format_settings__Endianness>Big</Format_settings__Endianness>
+<Codec_ID>129</Codec_ID>
+<Codec>AC3</Codec>
+<Codec>AC3</Codec>
+<Duration>5624512</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 512 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.512</Duration>
+<Duration>01:34:29:27</Duration>
+<Duration>01:33:44.512 (01:34:29:27)</Duration>
+<Bit_rate_mode>CBR</Bit_rate_mode>
+<Bit_rate_mode>Constant</Bit_rate_mode>
+<Bit_rate>448000</Bit_rate>
+<Bit_rate>448 kb/s</Bit_rate>
+<Channel_s_>6</Channel_s_>
+<Channel_s_>6 channels</Channel_s_>
+<Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+<Channel_positions>3/2/0.1</Channel_positions>
+<ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+<Samples_per_frame>1536</Samples_per_frame>
+<Sampling_rate>48000</Sampling_rate>
+<Sampling_rate>48.0 kHz</Sampling_rate>
+<Samples_count>269976576</Samples_count>
+<Frame_rate>31.250</Frame_rate>
+<Frame_rate>31.250 FPS (1536 spf)</Frame_rate>
+<Frame_count>175766</Frame_count>
+<Resolution>16</Resolution>
+<Resolution>16 bits</Resolution>
+<Bit_depth>16</Bit_depth>
+<Bit_depth>16 bits</Bit_depth>
+<Compression_mode>Lossy</Compression_mode>
+<Compression_mode>Lossy</Compression_mode>
+<Delay>11650.667</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>00:00:11.651</Delay>
+<Delay__origin>Container</Delay__origin>
+<Delay__origin>Container</Delay__origin>
+<Delay_relative_to_video>0</Delay_relative_to_video>
+<Delay_relative_to_video>00:00:00.000</Delay_relative_to_video>
+<Video0_delay>0</Video0_delay>
+<Video0_delay>00:00:00.000</Video0_delay>
+<Stream_size>314972672</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300.4 MiB</Stream_size>
+<Language>fr</Language>
+<Language>French</Language>
+<Language>French</Language>
+<Language>fr</Language>
+<Language>fra</Language>
+<Language>fr</Language>
+<bsid>6</bsid>
+<dialnorm>-27</dialnorm>
+<dialnorm>-27 dB</dialnorm>
+<compr>-0.28</compr>
+<compr>-0.28 dB</compr>
+<acmod>7</acmod>
+<lfeon>1</lfeon>
+<dialnorm_Average>-27</dialnorm_Average>
+<dialnorm_Average>-27 dB</dialnorm_Average>
+<dialnorm_Minimum>-27</dialnorm_Minimum>
+<dialnorm_Minimum>-27 dB</dialnorm_Minimum>
+<dialnorm_Maximum>-27</dialnorm_Maximum>
+<dialnorm_Maximum>-27 dB</dialnorm_Maximum>
+<dialnorm_Count>733</dialnorm_Count>
+<compr_Average>-0.59</compr_Average>
+<compr_Average>-0.59 dB</compr_Average>
+<compr_Minimum>-11.51</compr_Minimum>
+<compr_Minimum>-11.51 dB</compr_Minimum>
+<compr_Maximum>3.52</compr_Maximum>
+<compr_Maximum>3.52 dB</compr_Maximum>
+<compr_Count>733</compr_Count>
+<format_identifier>AC-3</format_identifier>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Audio" typeorder="3">
+<Count>295</Count>
+<Count_of_stream_of_this_kind>4</Count_of_stream_of_this_kind>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Stream_identifier>2</Stream_identifier>
+<Stream_identifier>3</Stream_identifier>
+<ID>4354</ID>
+<ID>4354 (0x1102)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>AC-3</Format>
+<Format_Info>Audio Coding 3</Format_Info>
+<Commercial_name>AC-3</Commercial_name>
+<Mode_extension>CM (complete main)</Mode_extension>
+<Format_settings__Endianness>Big</Format_settings__Endianness>
+<Codec_ID>129</Codec_ID>
+<Codec>AC3</Codec>
+<Codec>AC3</Codec>
+<Duration>5624512</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 512 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.512</Duration>
+<Duration>01:34:29:27</Duration>
+<Duration>01:33:44.512 (01:34:29:27)</Duration>
+<Bit_rate_mode>CBR</Bit_rate_mode>
+<Bit_rate_mode>Constant</Bit_rate_mode>
+<Bit_rate>448000</Bit_rate>
+<Bit_rate>448 kb/s</Bit_rate>
+<Channel_s_>6</Channel_s_>
+<Channel_s_>6 channels</Channel_s_>
+<Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+<Channel_positions>3/2/0.1</Channel_positions>
+<ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+<Samples_per_frame>1536</Samples_per_frame>
+<Sampling_rate>48000</Sampling_rate>
+<Sampling_rate>48.0 kHz</Sampling_rate>
+<Samples_count>269976576</Samples_count>
+<Frame_rate>31.250</Frame_rate>
+<Frame_rate>31.250 FPS (1536 spf)</Frame_rate>
+<Frame_count>175766</Frame_count>
+<Resolution>16</Resolution>
+<Resolution>16 bits</Resolution>
+<Bit_depth>16</Bit_depth>
+<Bit_depth>16 bits</Bit_depth>
+<Compression_mode>Lossy</Compression_mode>
+<Compression_mode>Lossy</Compression_mode>
+<Delay>11650.667</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>00:00:11.651</Delay>
+<Delay__origin>Container</Delay__origin>
+<Delay__origin>Container</Delay__origin>
+<Delay_relative_to_video>0</Delay_relative_to_video>
+<Delay_relative_to_video>00:00:00.000</Delay_relative_to_video>
+<Video0_delay>0</Video0_delay>
+<Video0_delay>00:00:00.000</Video0_delay>
+<Stream_size>314972672</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300.4 MiB</Stream_size>
+<Language>es</Language>
+<Language>Spanish</Language>
+<Language>Spanish</Language>
+<Language>es</Language>
+<Language>spa</Language>
+<Language>es</Language>
+<bsid>6</bsid>
+<dialnorm>-27</dialnorm>
+<dialnorm>-27 dB</dialnorm>
+<compr>-0.28</compr>
+<compr>-0.28 dB</compr>
+<acmod>7</acmod>
+<lfeon>1</lfeon>
+<dialnorm_Average>-27</dialnorm_Average>
+<dialnorm_Average>-27 dB</dialnorm_Average>
+<dialnorm_Minimum>-27</dialnorm_Minimum>
+<dialnorm_Minimum>-27 dB</dialnorm_Minimum>
+<dialnorm_Maximum>-27</dialnorm_Maximum>
+<dialnorm_Maximum>-27 dB</dialnorm_Maximum>
+<dialnorm_Count>733</dialnorm_Count>
+<compr_Average>-0.35</compr_Average>
+<compr_Average>-0.35 dB</compr_Average>
+<compr_Minimum>-11.51</compr_Minimum>
+<compr_Minimum>-11.51 dB</compr_Minimum>
+<compr_Maximum>3.88</compr_Maximum>
+<compr_Maximum>3.88 dB</compr_Maximum>
+<compr_Count>733</compr_Count>
+<format_identifier>AC-3</format_identifier>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Audio" typeorder="4">
+<Count>295</Count>
+<Count_of_stream_of_this_kind>4</Count_of_stream_of_this_kind>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Kind_of_stream>Audio</Kind_of_stream>
+<Stream_identifier>3</Stream_identifier>
+<Stream_identifier>4</Stream_identifier>
+<ID>4355</ID>
+<ID>4355 (0x1103)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>AC-3</Format>
+<Format_Info>Audio Coding 3</Format_Info>
+<Commercial_name>AC-3</Commercial_name>
+<Mode_extension>CM (complete main)</Mode_extension>
+<Format_settings__Endianness>Big</Format_settings__Endianness>
+<Codec_ID>129</Codec_ID>
+<Codec>AC3</Codec>
+<Codec>AC3</Codec>
+<Duration>5624512</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 512 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.512</Duration>
+<Duration>01:34:29:27</Duration>
+<Duration>01:33:44.512 (01:34:29:27)</Duration>
+<Bit_rate_mode>CBR</Bit_rate_mode>
+<Bit_rate_mode>Constant</Bit_rate_mode>
+<Bit_rate>448000</Bit_rate>
+<Bit_rate>448 kb/s</Bit_rate>
+<Channel_s_>6</Channel_s_>
+<Channel_s_>6 channels</Channel_s_>
+<Channel_positions>Front: L C R, Side: L R, LFE</Channel_positions>
+<Channel_positions>3/2/0.1</Channel_positions>
+<ChannelLayout>L C R LFE Ls Rs</ChannelLayout>
+<Samples_per_frame>1536</Samples_per_frame>
+<Sampling_rate>48000</Sampling_rate>
+<Sampling_rate>48.0 kHz</Sampling_rate>
+<Samples_count>269976576</Samples_count>
+<Frame_rate>31.250</Frame_rate>
+<Frame_rate>31.250 FPS (1536 spf)</Frame_rate>
+<Frame_count>175766</Frame_count>
+<Resolution>16</Resolution>
+<Resolution>16 bits</Resolution>
+<Bit_depth>16</Bit_depth>
+<Bit_depth>16 bits</Bit_depth>
+<Compression_mode>Lossy</Compression_mode>
+<Compression_mode>Lossy</Compression_mode>
+<Delay>11650.667</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>11 s 651 ms</Delay>
+<Delay>00:00:11.651</Delay>
+<Delay__origin>Container</Delay__origin>
+<Delay__origin>Container</Delay__origin>
+<Delay_relative_to_video>0</Delay_relative_to_video>
+<Delay_relative_to_video>00:00:00.000</Delay_relative_to_video>
+<Video0_delay>0</Video0_delay>
+<Video0_delay>00:00:00.000</Video0_delay>
+<Stream_size>314972672</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300 MiB</Stream_size>
+<Stream_size>300.4 MiB</Stream_size>
+<Language>pt</Language>
+<Language>Portuguese</Language>
+<Language>Portuguese</Language>
+<Language>pt</Language>
+<Language>por</Language>
+<Language>pt</Language>
+<bsid>6</bsid>
+<dialnorm>-27</dialnorm>
+<dialnorm>-27 dB</dialnorm>
+<compr>-0.28</compr>
+<compr>-0.28 dB</compr>
+<acmod>7</acmod>
+<lfeon>1</lfeon>
+<dialnorm_Average>-27</dialnorm_Average>
+<dialnorm_Average>-27 dB</dialnorm_Average>
+<dialnorm_Minimum>-27</dialnorm_Minimum>
+<dialnorm_Minimum>-27 dB</dialnorm_Minimum>
+<dialnorm_Maximum>-27</dialnorm_Maximum>
+<dialnorm_Maximum>-27 dB</dialnorm_Maximum>
+<dialnorm_Count>733</dialnorm_Count>
+<compr_Average>-0.47</compr_Average>
+<compr_Average>-0.47 dB</compr_Average>
+<compr_Minimum>-12.04</compr_Minimum>
+<compr_Minimum>-12.04 dB</compr_Minimum>
+<compr_Maximum>3.88</compr_Maximum>
+<compr_Maximum>3.88 dB</compr_Maximum>
+<compr_Count>733</compr_Count>
+<format_identifier>AC-3</format_identifier>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="1">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>0</Stream_identifier>
+<Stream_identifier>1</Stream_identifier>
+<ID>4608</ID>
+<ID>4608 (0x1200)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>en</Language>
+<Language>English</Language>
+<Language>English</Language>
+<Language>en</Language>
+<Language>eng</Language>
+<Language>en</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="2">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>1</Stream_identifier>
+<Stream_identifier>2</Stream_identifier>
+<ID>4609</ID>
+<ID>4609 (0x1201)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>fr</Language>
+<Language>French</Language>
+<Language>French</Language>
+<Language>fr</Language>
+<Language>fra</Language>
+<Language>fr</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="3">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>2</Stream_identifier>
+<Stream_identifier>3</Stream_identifier>
+<ID>4610</ID>
+<ID>4610 (0x1202)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>es</Language>
+<Language>Spanish</Language>
+<Language>Spanish</Language>
+<Language>es</Language>
+<Language>spa</Language>
+<Language>es</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="4">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>3</Stream_identifier>
+<Stream_identifier>4</Stream_identifier>
+<ID>4611</ID>
+<ID>4611 (0x1203)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>pt</Language>
+<Language>Portuguese</Language>
+<Language>Portuguese</Language>
+<Language>pt</Language>
+<Language>por</Language>
+<Language>pt</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="5">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>4</Stream_identifier>
+<Stream_identifier>5</Stream_identifier>
+<ID>4612</ID>
+<ID>4612 (0x1204)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>fr</Language>
+<Language>French</Language>
+<Language>French</Language>
+<Language>fr</Language>
+<Language>fra</Language>
+<Language>fr</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="6">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>5</Stream_identifier>
+<Stream_identifier>6</Stream_identifier>
+<ID>4613</ID>
+<ID>4613 (0x1205)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>es</Language>
+<Language>Spanish</Language>
+<Language>Spanish</Language>
+<Language>es</Language>
+<Language>spa</Language>
+<Language>es</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Text" typeorder="7">
+<Count>235</Count>
+<Count_of_stream_of_this_kind>7</Count_of_stream_of_this_kind>
+<Kind_of_stream>Text</Kind_of_stream>
+<Kind_of_stream>Text</Kind_of_stream>
+<Stream_identifier>6</Stream_identifier>
+<Stream_identifier>7</Stream_identifier>
+<ID>4614</ID>
+<ID>4614 (0x1206)</ID>
+<Menu_ID>1</Menu_ID>
+<Menu_ID>1 (0x1)</Menu_ID>
+<Format>PGS</Format>
+<Commercial_name>PGS</Commercial_name>
+<Codec_ID>144</Codec_ID>
+<Codec>PGS</Codec>
+<Codec>PGS</Codec>
+<Duration>5624493</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>1 h 33 min 44 s 493 ms</Duration>
+<Duration>1 h 33 min</Duration>
+<Duration>01:33:44.493</Duration>
+<Duration>01:33:44.493</Duration>
+<Language>pt</Language>
+<Language>Portuguese</Language>
+<Language>Portuguese</Language>
+<Language>pt</Language>
+<Language>por</Language>
+<Language>pt</Language>
+<Source>00006.m2ts</Source>
+</track>
+
+<track type="Menu">
+<Count>109</Count>
+<Count_of_stream_of_this_kind>1</Count_of_stream_of_this_kind>
+<Kind_of_stream>Menu</Kind_of_stream>
+<Kind_of_stream>Menu</Kind_of_stream>
+<Stream_identifier>0</Stream_identifier>
+<Chapters_Pos_Begin>90</Chapters_Pos_Begin>
+<Chapters_Pos_End>109</Chapters_Pos_End>
+<_00_00_00000>Chapter 1</_00_00_00000>
+<_00_08_51531>Chapter 2</_00_08_51531>
+<_00_12_58903>Chapter 3</_00_12_58903>
+<_00_16_34618>Chapter 4</_00_16_34618>
+<_00_20_50666>Chapter 5</_00_20_50666>
+<_00_25_09007>Chapter 6</_00_25_09007>
+<_00_33_14409>Chapter 7</_00_33_14409>
+<_00_38_26804>Chapter 8</_00_38_26804>
+<_00_43_40367>Chapter 9</_00_43_40367>
+<_00_50_12300>Chapter 10</_00_50_12300>
+<_00_55_16938>Chapter 11</_00_55_16938>
+<_00_57_04838>Chapter 12</_00_57_04838>
+<_01_07_51984>Chapter 13</_01_07_51984>
+<_01_12_11368>Chapter 14</_01_12_11368>
+<_01_16_03559>Chapter 15</_01_16_03559>
+<_01_22_06463>Chapter 16</_01_22_06463>
+<_01_28_49991>Chapter 17</_01_28_49991>
+<_01_32_03518>Chapter 18</_01_32_03518>
+<_01_33_44243>Chapter 19</_01_33_44243>
+</track>
+
+</File>
+</Mediainfo>
