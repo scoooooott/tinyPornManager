@@ -267,11 +267,18 @@ public class MovieRenamer {
           // ## 2) MMD movie -> normal movie (upgrade)
           // ######################################################################
           LOGGER.trace("Upgrading movie into it's own dir :) " + newPathname);
-          try {
-            Files.createDirectories(destDir);
+          if (!Files.exists(destDir)) {
+            try {
+              Files.createDirectories(destDir);
+            }
+            catch (Exception e) {
+              LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+              // well, better not to rename
+              return;
+            }
           }
-          catch (Exception e) {
-            LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+          else {
+            LOGGER.error("Directory already exists! '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
             // well, better not to rename
             return;
           }
