@@ -19,39 +19,11 @@ you will find the latest release at [http://release.tinymediamanager.org](http:/
 [http://www.tinymediamanager.org/index.php/changelog/](http://www.tinymediamanager.org/index.php/changelog/)
 
 ##Screenshots##
-more screenshots at [http://www.tinymediamanager.org/index.php/screenshots/](http://www.tinymediamanager.org/index.php/screenshots/)
-
-###Main panel for movies
-
-[![Movie panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movie_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movie_panel_main.jpg)
-
-###Main panel for moviesets
-
-[![Movie set panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieset_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieset_panel_main.jpg)
-
-###Search for a movie
-
-[![Movie search](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviechooser_dialog.jpg)
-
-###Search for a movieset
-
-[![Movie set search](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviesetchooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/moviesetchooser_dialog.jpg)
-
-###Edit movie metadata
-
-[![Edit movie](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieeditor_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/movieeditor_dialog.jpg)
-
-###Main panel for TV shows
-
-[![TV show panel](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/tvshow_panel_main_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/tvshow_panel_main.jpg)
-
-###Change artwork
-
-[![Image chooser](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog_thumb.jpg)](https://github.com/tinyMediaManager/tinyMediaManager/raw/master/screenshots/imagechooser_dialog.jpg)
-
-
+[http://www.tinymediamanager.org/index.php/screenshots/](http://www.tinymediamanager.org/index.php/screenshots/)
 
 ## Developer info:
+Please provide your pull requests against our **devel** branch.
+
 To work with the SNAPSHOTs, you need to add following repository to your ~/.m2/settings.xml
 
 ```
