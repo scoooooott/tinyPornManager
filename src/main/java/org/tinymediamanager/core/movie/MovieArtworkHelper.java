@@ -62,7 +62,7 @@ public class MovieArtworkHelper {
       case BANNER:
       case CLEARART:
       case THUMB:
-      case DISCART:
+      case DISC:
         downloadExtraArtwork(movie, type);
         break;
 
@@ -120,7 +120,7 @@ public class MovieArtworkHelper {
               downloadExtraArtwork(movie, mft);
             }
             break;
-          case DISCART:
+          case DISC:
             if (MovieModuleManager.SETTINGS.isImageDiscart() || force) {
               downloadExtraArtwork(movie, mft);
             }

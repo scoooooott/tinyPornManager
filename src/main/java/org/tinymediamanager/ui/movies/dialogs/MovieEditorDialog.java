@@ -884,7 +884,7 @@ public class MovieEditorDialog extends TmmDialog {
       lblClearlogo.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.CLEARLOGO));
       lblClearart.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.THUMB));
-      lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISCART));
+      lblDisc.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.DISC));
       lblBanner.setImagePath(movieToEdit.getArtworkFilename(MediaFileType.BANNER));
 
       for (MovieActor origCast : movieToEdit.getActors()) {
@@ -1064,9 +1064,9 @@ public class MovieEditorDialog extends TmmDialog {
         movieToEdit.downloadArtwork(MediaFileType.THUMB);
       }
 
-      if (!StringUtils.isEmpty(lblDisc.getImageUrl()) && !lblDisc.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.DISCART))) {
-        movieToEdit.setArtworkUrl(lblDisc.getImageUrl(), MediaFileType.DISCART);
-        movieToEdit.downloadArtwork(MediaFileType.DISCART);
+      if (!StringUtils.isEmpty(lblDisc.getImageUrl()) && !lblDisc.getImageUrl().equals(movieToEdit.getArtworkUrl(MediaFileType.DISC))) {
+        movieToEdit.setArtworkUrl(lblDisc.getImageUrl(), MediaFileType.DISC);
+        movieToEdit.downloadArtwork(MediaFileType.DISC);
       }
 
       // set extrathumbs

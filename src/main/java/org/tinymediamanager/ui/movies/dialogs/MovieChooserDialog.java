@@ -524,8 +524,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
                     MediaType.MOVIE);
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
-                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.DISCART);
-                movieToScrape.downloadArtwork(MediaFileType.DISCART);
+                movieToScrape.setArtworkUrl(lblImage.getImageUrl(), MediaFileType.DISC);
+                movieToScrape.downloadArtwork(MediaFileType.DISC);
               }
 
               // thumb

@@ -779,7 +779,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           case EXTRAFANART:
           case EXTRATHUMB:
           case AUDIO:
-          case DISCART:
+          case DISC:
           case BANNER:
           case CLEARART:
           case LOGO:

@@ -807,7 +807,7 @@ public class MovieRenamer {
           newFiles.add(defaultMF);
         }
         break;
-      case DISCART:
+      case DISC:
         if (MovieModuleManager.SETTINGS.isImageDiscart()) {
           defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
           // reset filename: type.ext on single, <filename>-type.ext on MMD

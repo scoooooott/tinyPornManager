@@ -71,7 +71,7 @@ public class MovieExtraImageFetcher implements Runnable {
         case BANNER:
         case CLEARART:
         case THUMB:
-        case DISCART:
+        case DISC:
           downloadArtwork(type, base);
           break;
         default:
@@ -123,13 +123,8 @@ public class MovieExtraImageFetcher implements Runnable {
 
     try {
       String oldFilename = movie.getArtworkFilename(type);
-      // we are lucky and have chosen our enums wisely - except the discart :(
-      if (type == MediaFileType.DISCART) {
-        filename += "disc." + FilenameUtils.getExtension(artworkUrl);
-      }
-      else {
-        filename += type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(artworkUrl);
-      }
+      // we are lucky and have chosen our enums wisely
+      filename += type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(artworkUrl);
       movie.removeAllMediaFiles(type);
 
       // debug message

@@ -103,15 +103,16 @@ public class TvShowArtworkHelper {
           case POSTER:
           case BANNER:
           case CLEARART:
-          case DISCART:
+          case DISC:
+          case THUMB:
           case LOGO:
           case CLEARLOGO:
-          case THUMB:
           case EXTRAFANART:
           case EXTRATHUMB:
             url = show.getArtworkUrl(mft);
             filename = mft.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(url);
             break;
+
           case SEASON_POSTER: // TODO: valid? can't find it elsewhere
           default:
             break;
@@ -122,7 +123,6 @@ public class TvShowArtworkHelper {
         MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(mft), filename, true);
         TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
-
     }
   }
 

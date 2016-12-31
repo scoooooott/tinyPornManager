@@ -270,7 +270,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       case BANNER:
       case THUMB:
       case CLEARART:
-      case DISCART:
+      case DISC:
       case LOGO:
       case CLEARLOGO:
         artworkUrlMap.put(type, url);

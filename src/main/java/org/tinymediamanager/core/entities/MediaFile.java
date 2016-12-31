@@ -419,10 +419,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.CLEARLOGO;
     }
 
-    // discart.*
+    // discart.* / disc.*
     matcher = discartPattern.matcher(name);
     if (matcher.matches()) {
-      return MediaFileType.DISCART;
+      return MediaFileType.DISC;
     }
 
     return MediaFileType.GRAPHIC;
@@ -456,7 +456,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case SEASON_POSTER:
       case EXTRAFANART:
       case EXTRATHUMB:
-      case DISCART:
+      case DISC:
         return true;
 
       default:
@@ -1633,7 +1633,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case LOGO:
       case CLEARLOGO:
       case CLEARART:
-      case DISCART:
+      case DISC:
       case EXTRATHUMB:
         height = getMediaInfo(StreamKind.Image, 0, "Height");
         // scanType = getMediaInfo(StreamKind.Image, 0, "ScanType"); // no scantype on graphics
