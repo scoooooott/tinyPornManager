@@ -15,15 +15,24 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.BaseTableUI;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.CellRendererPane;
+import javax.swing.JComponent;
+import javax.swing.JTable;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ComponentUI;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.jtattoo.plaf.BaseTableUI;
 
 /**
  * Class TmmLightTableUI
@@ -66,7 +75,7 @@ public class TmmLightTableUI extends BaseTableUI {
 
         // look if there are any non drawable borders defined
         Object prop = table.getClientProperty("borderNotToDraw");
-        List<Integer> colsNotToDraw = new ArrayList<Integer>();
+        List<Integer> colsNotToDraw = new ArrayList<>();
         if (prop != null && prop instanceof List<?>) {
           try {
             colsNotToDraw.addAll((List) prop);

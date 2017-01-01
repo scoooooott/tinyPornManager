@@ -43,13 +43,11 @@ import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.components.tree.TmmTreeTextFilter;
 import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
-import org.tinymediamanager.ui.tvshows.TvShowTreeCellRenderer;
 import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
@@ -108,9 +106,9 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         }
       }
     };
-    tree.setDefaultRenderer(Object.class, new TvShowTreeCellRenderer());
     tree.addFilter(searchField);
-    JScrollPane scrollPane = TmmTable.createJScrollPane(tree, new int[] { 0, 1 });
+    JScrollPane scrollPane = new JScrollPane(tree);
+    tree.configureScrollPane(scrollPane, new int[] { 0 });
     add(scrollPane, "1, 3, 5, 1, fill, fill");
     tree.adjustColumnPreferredWidths(3);
     tvShowSelectionModel.setTreeTable(tree);
