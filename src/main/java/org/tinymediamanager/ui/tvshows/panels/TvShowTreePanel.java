@@ -16,6 +16,9 @@
 package org.tinymediamanager.ui.tvshows.panels;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -49,6 +52,7 @@ import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 import org.tinymediamanager.ui.tvshows.TvShowTreeCellRenderer;
 import org.tinymediamanager.ui.tvshows.TvShowTreeDataProvider;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
+import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -160,6 +164,17 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
         }
       });
     }
+
+    // add double click listener
+    MouseListener mouseListener = new MouseAdapter() {
+      @Override
+      public void mousePressed(MouseEvent e) {
+        if (e.getClickCount() == 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+          new TvShowEditAction().actionPerformed(new ActionEvent(e, 0, ""));
+        }
+      }
+    };
+    tree.addMouseListener(mouseListener);
   }
 
   @Override
