@@ -671,34 +671,34 @@ public class MoviePanel extends JPanel {
       }
     }
 
-    // hide columns if needed
-    if (!MovieModuleManager.SETTINGS.isYearColumnVisible()) {
-      table.hideColumn("year"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isRatingColumnVisible()) {
-      table.hideColumn("rating"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isDateAddedColumnVisible()) {
-      table.hideColumn("dateadded"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isNfoColumnVisible()) {
-      table.hideColumn("nfo"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isMetadataColumnVisible()) {
-      table.hideColumn("metadata"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isImageColumnVisible()) {
-      table.hideColumn("images"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isTrailerColumnVisible()) {
-      table.hideColumn("trailer"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isSubtitleColumnVisible()) {
-      table.hideColumn("subtitle"); //$NON-NLS-1$
-    }
-    if (!MovieModuleManager.SETTINGS.isWatchedColumnVisible()) {
-      table.hideColumn("watched"); //$NON-NLS-1$
-    }
+    // // hide columns if needed
+    // if (!MovieModuleManager.SETTINGS.isYearColumnVisible()) {
+    // table.hideColumn("year"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isRatingColumnVisible()) {
+    // table.hideColumn("rating"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isDateAddedColumnVisible()) {
+    // table.hideColumn("dateadded"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isNfoColumnVisible()) {
+    // table.hideColumn("nfo"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isMetadataColumnVisible()) {
+    // table.hideColumn("metadata"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isImageColumnVisible()) {
+    // table.hideColumn("images"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isTrailerColumnVisible()) {
+    // table.hideColumn("trailer"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isSubtitleColumnVisible()) {
+    // table.hideColumn("subtitle"); //$NON-NLS-1$
+    // }
+    // if (!MovieModuleManager.SETTINGS.isWatchedColumnVisible()) {
+    // table.hideColumn("watched"); //$NON-NLS-1$
+    // }
 
     // and add a propertychangelistener to the columnhider
     PropertyChangeListener settingsPropertyChangeListener = new PropertyChangeListener() {

@@ -48,8 +48,8 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
@@ -108,7 +108,7 @@ class MovieScraperPanel extends JPanel {
 
     // init data after UI init
     // NFO filenames
-    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieNfoFilenames();
+    List<MovieNfoNaming> movieNfoFilenames = settings.getNfoFilenames();
     if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
       cbMovieNfoFilename1.setSelected(true);
     }
@@ -308,15 +308,15 @@ class MovieScraperPanel extends JPanel {
 
   private void checkChanges() {
     // set NFO filenames
-    settings.clearMovieNfoFilenames();
+    settings.clearNfoFilenames();
     if (cbMovieNfoFilename1.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+      settings.addNfoFilename(MovieNfoNaming.FILENAME_NFO);
     }
     if (cbMovieNfoFilename2.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+      settings.addNfoFilename(MovieNfoNaming.MOVIE_NFO);
     }
     if (cbMovieNfoFilename3.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
+      settings.addNfoFilename(MovieNfoNaming.DISC_NFO);
     }
   }
 }

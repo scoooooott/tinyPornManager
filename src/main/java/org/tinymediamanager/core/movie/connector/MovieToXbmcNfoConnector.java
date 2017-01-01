@@ -70,7 +70,6 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -78,6 +77,7 @@ import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -204,7 +204,7 @@ public class MovieToXbmcNfoConnector {
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfonames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
+      nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();
     }
     writeNfoFiles(movie, xbmc, nfonames);
   }

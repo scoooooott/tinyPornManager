@@ -42,9 +42,9 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -92,7 +92,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
 
     // data init
     // NFO filenames
-    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieNfoFilenames();
+    List<MovieNfoNaming> movieNfoFilenames = settings.getNfoFilenames();
     if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
       cbMovieNfoFilename1.setSelected(true);
     }
@@ -328,15 +328,15 @@ public class MovieDatasourceSettingsPanel extends JPanel {
    */
   private void checkChanges() {
     // set NFO filenames
-    settings.clearMovieNfoFilenames();
+    settings.clearNfoFilenames();
     if (cbMovieNfoFilename1.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+      settings.addNfoFilename(MovieNfoNaming.FILENAME_NFO);
     }
     if (cbMovieNfoFilename2.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+      settings.addNfoFilename(MovieNfoNaming.MOVIE_NFO);
     }
     if (cbMovieNfoFilename3.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.DISC_NFO);
+      settings.addNfoFilename(MovieNfoNaming.DISC_NFO);
     }
 
     CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();

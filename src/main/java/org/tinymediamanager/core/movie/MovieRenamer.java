@@ -49,6 +49,15 @@ import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieDiscartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
+import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.LanguageUtils;
@@ -411,12 +420,18 @@ public class MovieRenamer {
     }
 
     // ######################################################################
-    // ## rename POSTER, FANART (copy 1:N)
+    // ## rename POSTER, FANART, BANNER, CLEARART, THUMB, LOGO, CLEARLOGO, DISCART (copy 1:N)
     // ######################################################################
     // we can have multiple ones, just get the newest one and copy(overwrite) them to all needed
     ArrayList<MediaFile> mfs = new ArrayList<>();
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.FANART));
     mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.POSTER));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.BANNER));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.CLEARART));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.THUMB));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.LOGO));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.CLEARLOGO));
+    mfs.add(movie.getNewestMediaFilesOfType(MediaFileType.DISC));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
@@ -708,7 +723,7 @@ public class MovieRenamer {
             nfonames.add(MovieNfoNaming.FILENAME_NFO);
           }
           else {
-            nfonames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
+            nfonames = MovieModuleManager.SETTINGS.getNfoFilenames();
           }
           for (MovieNfoNaming name : nfonames) {
             String newNfoName = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
@@ -731,20 +746,10 @@ public class MovieRenamer {
 
       case POSTER:
         for (MoviePosterNaming name : MovieArtworkHelper.getPosterNamesForMovie(movie)) {
-          String newBasePosterName = MovieArtworkHelper.getBasePosterFilename(name, movie, newFilename);
+          String newBasePosterName = MovieArtworkHelper.getBasePosterFilename(name, newFilename);
           String newPosterName = "";
           if (StringUtils.isNotEmpty(newBasePosterName)) {
-            String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
-            if (curExt.equalsIgnoreCase("tbn")) {
-              String cont = mf.getContainerFormat();
-              if (cont.equalsIgnoreCase("PNG")) {
-                curExt = "png";
-              }
-              else if (cont.equalsIgnoreCase("JPEG")) {
-                curExt = "jpg";
-              }
-            }
-            newPosterName = newBasePosterName + "." + curExt;
+            newPosterName = newBasePosterName + "." + getArtworkExtension(mf);
           }
           if (StringUtils.isNotBlank(newPosterName)) {
             MediaFile pos = new MediaFile(mf);
@@ -756,20 +761,10 @@ public class MovieRenamer {
 
       case FANART:
         for (MovieFanartNaming name : MovieArtworkHelper.getFanartNamesForMovie(movie)) {
-          String newBaseFanartName = MovieArtworkHelper.getBaseFanartFilename(name, movie, newFilename);
+          String newBaseFanartName = MovieArtworkHelper.getBaseFanartFilename(name, newFilename);
           String newFanartName = "";
-          if (newFanartName != null && !newFanartName.isEmpty()) {
-            String curExt = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
-            if (curExt.equalsIgnoreCase("tbn")) {
-              String cont = mf.getContainerFormat();
-              if (cont.equalsIgnoreCase("PNG")) {
-                curExt = "png";
-              }
-              else if (cont.equalsIgnoreCase("JPEG")) {
-                curExt = "jpg";
-              }
-            }
-            newFanartName = newBaseFanartName + "." + curExt;
+          if (StringUtils.isNotEmpty(newBaseFanartName)) {
+            newFanartName = newBaseFanartName + "." + getArtworkExtension(mf);
           }
           if (StringUtils.isNotBlank(newFanartName)) {
             MediaFile fan = new MediaFile(mf);
@@ -778,75 +773,93 @@ public class MovieRenamer {
           }
         }
         break;
-      // *************
-      // OK, from here we check only the settings
-      // *************
       case BANNER:
-        if (MovieModuleManager.SETTINGS.isImageBanner()) {
-          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
-          // reset filename: type.ext on single, <filename>-type.ext on MMD
-          if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+        for (MovieBannerNaming name : MovieArtworkHelper.getBannerNamesForMovie(movie)) {
+          String newBaseBannerName = MovieArtworkHelper.getBaseBannerFilename(name, newFilename);
+          String newBannerName = "";
+          if (StringUtils.isNotEmpty(newBaseBannerName)) {
+            newBannerName = newBaseBannerName + "." + getArtworkExtension(mf);
           }
-          else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+          if (StringUtils.isNotBlank(newBannerName)) {
+            MediaFile banner = new MediaFile(mf);
+            banner.setFile(newMovieDir.resolve(newBannerName));
+            newFiles.add(banner);
           }
-          newFiles.add(defaultMF);
         }
         break;
       case CLEARART:
-        if (MovieModuleManager.SETTINGS.isImageClearart()) {
-          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
-          // reset filename: type.ext on single, <filename>-type.ext on MMD
-          if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+        for (MovieClearartNaming name : MovieArtworkHelper.getClearartNamesForMovie(movie)) {
+          String newBaseClearartName = MovieArtworkHelper.getBaseClearartFilename(name, newFilename);
+          String newClearartName = "";
+          if (StringUtils.isNotEmpty(newBaseClearartName)) {
+            newClearartName = newBaseClearartName + "." + getArtworkExtension(mf);
           }
-          else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+          if (StringUtils.isNotBlank(newClearartName)) {
+            MediaFile clearart = new MediaFile(mf);
+            clearart.setFile(newMovieDir.resolve(newClearartName));
+            newFiles.add(clearart);
           }
-          newFiles.add(defaultMF);
         }
         break;
       case DISC:
-        if (MovieModuleManager.SETTINGS.isImageDiscart()) {
-          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
-          // reset filename: type.ext on single, <filename>-type.ext on MMD
-          if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-disc" + defaultMFext);
+        for (MovieDiscartNaming name : MovieArtworkHelper.getDiscartNamesForMovie(movie)) {
+          String newBaseDiscartName = MovieArtworkHelper.getBaseDiscartFilename(name, newFilename);
+          String newDiscartName = "";
+          if (StringUtils.isNotEmpty(newBaseDiscartName)) {
+            newDiscartName = newBaseDiscartName + "." + getArtworkExtension(mf);
           }
-          else {
-            defaultMF.setFilename("disc" + defaultMFext);
+          if (StringUtils.isNotBlank(newDiscartName)) {
+            MediaFile discart = new MediaFile(mf);
+            discart.setFile(newMovieDir.resolve(newDiscartName));
+            newFiles.add(discart);
           }
-          newFiles.add(defaultMF);
         }
         break;
       case LOGO:
+        for (MovieLogoNaming name : MovieArtworkHelper.getLogoNamesForMovie(movie)) {
+          String newBaseLogoName = MovieArtworkHelper.getBaseLogoFilename(name, newFilename);
+          String newLogoName = "";
+          if (StringUtils.isNotEmpty(newBaseLogoName)) {
+            newLogoName = newBaseLogoName + "." + getArtworkExtension(mf);
+          }
+          if (StringUtils.isNotBlank(newLogoName)) {
+            MediaFile logo = new MediaFile(mf);
+            logo.setFile(newMovieDir.resolve(newLogoName));
+            newFiles.add(logo);
+          }
+        }
+        break;
       case CLEARLOGO:
-        if (MovieModuleManager.SETTINGS.isImageLogo()) {
-          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
-          // reset filename: type.ext on single, <filename>-type.ext on MMD
-          if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+        for (MovieClearlogoNaming name : MovieArtworkHelper.getClearlogoNamesForMovie(movie)) {
+          String newBaseClearlogoName = MovieArtworkHelper.getBaseClearlogoFilename(name, newFilename);
+          String newClearlogoName = "";
+          if (StringUtils.isNotEmpty(newBaseClearlogoName)) {
+            newClearlogoName = newBaseClearlogoName + "." + getArtworkExtension(mf);
           }
-          else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+          if (StringUtils.isNotBlank(newClearlogoName)) {
+            MediaFile clearlogo = new MediaFile(mf);
+            clearlogo.setFile(newMovieDir.resolve(newClearlogoName));
+            newFiles.add(clearlogo);
           }
-          newFiles.add(defaultMF);
         }
         break;
       case THUMB:
-        if (MovieModuleManager.SETTINGS.isImageThumb()) {
-          defaultMFext = defaultMFext.toLowerCase(Locale.ROOT).replaceAll("jpeg", "jpg"); // don't write jpeg -> write jpg
-          // reset filename: type.ext on single, <filename>-type.ext on MMD
-          if (newDestIsMultiMovieDir) {
-            defaultMF.setFilename(newFilename + "-" + mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+        for (MovieThumbNaming name : MovieArtworkHelper.getThumbNamesForMovie(movie)) {
+          String newBaseThumbName = MovieArtworkHelper.getBaseThumbFilename(name, newFilename);
+          String newThumbName = "";
+          if (StringUtils.isNotEmpty(newBaseThumbName)) {
+            newThumbName = newBaseThumbName + "." + getArtworkExtension(mf);
           }
-          else {
-            defaultMF.setFilename(mf.getType().name().toLowerCase(Locale.ROOT) + defaultMFext);
+          if (StringUtils.isNotBlank(newThumbName)) {
+            MediaFile thumb = new MediaFile(mf);
+            thumb.setFile(newMovieDir.resolve(newThumbName));
+            newFiles.add(thumb);
           }
-          newFiles.add(defaultMF);
         }
         break;
+      // *************
+      // OK, from here we check only the settings
+      // *************
       case EXTRAFANART:
         if (MovieModuleManager.SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
@@ -872,6 +885,20 @@ public class MovieRenamer {
     }
 
     return newFiles;
+  }
+
+  private static String getArtworkExtension(MediaFile mf) {
+    String ext = mf.getExtension().replaceAll("jpeg", "jpg"); // we only have one constant and only write jpg
+    if (ext.equalsIgnoreCase("tbn")) {
+      String cont = mf.getContainerFormat();
+      if (cont.equalsIgnoreCase("PNG")) {
+        ext = "png";
+      }
+      else if (cont.equalsIgnoreCase("JPEG")) {
+        ext = "jpg";
+      }
+    }
+    return ext;
   }
 
   /**

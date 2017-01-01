@@ -156,7 +156,7 @@ public class MovieInformationPanel extends JPanel {
 
   private void initComponents() {
     putClientProperty("class", "roundedPanel");
-    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 250]", "[][][][][]"));
+    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 250]", "[][][shrink 0][][]"));
 
     {
       JPanel panelLeft = new JPanel();
@@ -184,7 +184,7 @@ public class MovieInformationPanel extends JPanel {
     {
       JPanel panelTopRight = new JPanel();
       add(panelTopRight, "cell 1 0,grow");
-      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow]", "[][][][][][][][][][][][]"));
+      panelTopRight.setLayout(new MigLayout("insets 0 n n n", "[grow]", "[][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][]"));
 
       {
         lblMovieName = new JLabel("");
@@ -192,7 +192,7 @@ public class MovieInformationPanel extends JPanel {
         TmmFontHelper.changeFont(lblMovieName, 1.33, Font.BOLD);
       }
       {
-        panelTopRight.add(new JSeparator(), "cell 0 1,growx,aligny center");
+        panelTopRight.add(new JSeparator(), "cell 0 1,growx");
       }
 
       {
@@ -298,7 +298,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 3,growx,aligny center");
+        panelTopRight.add(new JSeparator(), "cell 0 3,growx");
       }
 
       {
@@ -314,7 +314,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 5,growx,aligny center");
+        panelTopRight.add(new JSeparator(), "cell 0 5,growx");
       }
 
       {
@@ -323,7 +323,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        panelTopRight.add(new JSeparator(), "cell 0 7,growx,aligny center");
+        panelTopRight.add(new JSeparator(), "cell 0 7,growx");
       }
 
       {
@@ -353,7 +353,7 @@ public class MovieInformationPanel extends JPanel {
       }
     }
     {
-      add(new JSeparator(), "cell 1 2,growx,aligny center");
+      add(new JSeparator(), "cell 1 2,growx");
     }
 
     {

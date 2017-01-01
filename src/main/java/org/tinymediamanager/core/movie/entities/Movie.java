@@ -85,7 +85,6 @@ import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
@@ -94,6 +93,7 @@ import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -1348,7 +1348,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Write nfo.
    */
   public void writeNFO() {
-    if (MovieModuleManager.SETTINGS.getMovieNfoFilenames().isEmpty()) {
+    if (MovieModuleManager.SETTINGS.getNfoFilenames().isEmpty()) {
       LOGGER.info("Not writing any NFO file, because NFO filename preferences were empty...");
       return;
     }

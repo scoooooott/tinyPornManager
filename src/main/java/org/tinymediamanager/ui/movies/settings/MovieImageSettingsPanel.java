@@ -56,11 +56,17 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieDiscartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieFanartNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieLogoNaming;
+import org.tinymediamanager.core.movie.filenaming.MoviePosterNaming;
+import org.tinymediamanager.core.movie.filenaming.MovieThumbNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
@@ -89,13 +95,13 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
 
   private JComboBox                   cbImagePosterSize;
   private JComboBox                   cbImageFanartSize;
-  private JCheckBox                   cbMoviePosterFilename2;
-  private JCheckBox                   cbMoviePosterFilename4;
-  private JCheckBox                   cbMoviePosterFilename6;
-  private JCheckBox                   cbMoviePosterFilename7;
-  private JCheckBox                   cbMovieFanartFilename1;
-  private JCheckBox                   cbMovieFanartFilename2;
-  private JCheckBox                   cbMoviePosterFilename8;
+  private JCheckBox                   chckbxMoviePosterFilename2;
+  private JCheckBox                   chckbxMoviePosterFilename4;
+  private JCheckBox                   chckbxMoviePosterFilename6;
+  private JCheckBox                   chckbxMoviePosterFilename7;
+  private JCheckBox                   chckbxMovieFanartFilename1;
+  private JCheckBox                   chckbxMovieFanartFilename2;
+  private JCheckBox                   chckbxMoviePosterFilename8;
   private JCheckBox                   cbActorImages;
   private JTextPane                   tpFileNamingHint;
   private JCheckBox                   chckbxEnableExtrathumbs;
@@ -110,16 +116,25 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   private JTextField                  tfMovieSetArtworkFolder;
   private JLabel                      lblFoldername;
   private JButton                     btnSelectFolder;
-  private JCheckBox                   cbMovieFanartFilename3;
-  private JCheckBox                   chckbxBanner;
-  private JCheckBox                   chckbxLogo;
-  private JCheckBox                   chckbxThumb;
-  private JCheckBox                   chckbxDiscArt;
-  private JCheckBox                   chckbxClearArt;
+  private JCheckBox                   chckbxMovieFanartFilename3;
   private JCheckBox                   chckbxMovieSetArtwork;
   private JTable                      tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
+  private JCheckBox                   chckbxBanner1;
+  private JCheckBox                   chckbxBanner2;
+  private JCheckBox                   chckbxClearart1;
+  private JCheckBox                   chckbxClearart2;
+  private JCheckBox                   chckbxThumb1;
+  private JCheckBox                   chckbxThumb2;
+  private JCheckBox                   chckbxThumb3;
+  private JCheckBox                   chckbxThumb4;
+  private JCheckBox                   chckbxLogo1;
+  private JCheckBox                   chckbxLogo2;
+  private JCheckBox                   chckbxClearlogo1;
+  private JCheckBox                   chckbxClearlogo2;
+  private JCheckBox                   chckbxDiscart1;
+  private JCheckBox                   chckbxDiscart2;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -177,18 +192,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       }
     });
 
-    // listen to changes of the checkboxes
-    ItemListener listener = e -> checkChanges();
-    cbMovieFanartFilename2.addItemListener(listener);
-    cbMovieFanartFilename3.addItemListener(listener);
-
-    cbMovieFanartFilename1.addItemListener(listener);
-    cbMoviePosterFilename2.addItemListener(listener);
-    cbMoviePosterFilename4.addItemListener(listener);
-    cbMoviePosterFilename7.addItemListener(listener);
-    cbMoviePosterFilename8.addItemListener(listener);
-    cbMoviePosterFilename6.addItemListener(listener);
-
     // add a CSS rule to force body tags to use the default label font
     // instead of the value in javax.swing.text.html.default.csss
     Font font = UIManager.getFont("Label.font");
@@ -206,34 +209,150 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     });
 
     // poster filenames
-    List<MoviePosterNaming> moviePosterFilenames = settings.getMoviePosterFilenames();
-    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE)) {
-      cbMoviePosterFilename2.setSelected(true);
-    }
-    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER)) {
-      cbMoviePosterFilename4.setSelected(true);
-    }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FOLDER)) {
-      cbMoviePosterFilename6.setSelected(true);
-    }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME)) {
-      cbMoviePosterFilename7.setSelected(true);
-    }
-    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_POSTER)) {
-      cbMoviePosterFilename8.setSelected(true);
+    for (MoviePosterNaming poster : settings.getPosterFilenames()) {
+      switch (poster) {
+        case FILENAME:
+          chckbxMoviePosterFilename7.setSelected(true);
+          break;
+        case FILENAME_POSTER:
+          chckbxMoviePosterFilename8.setSelected(true);
+          break;
+        case FOLDER:
+          chckbxMoviePosterFilename6.setSelected(true);
+          break;
+        case MOVIE:
+          chckbxMoviePosterFilename2.setSelected(true);
+          break;
+        case POSTER:
+          chckbxMoviePosterFilename4.setSelected(true);
+          break;
+      }
     }
 
     // fanart filenames
-    List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
-    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART)) {
-      cbMovieFanartFilename1.setSelected(true);
+    for (MovieFanartNaming fanart : settings.getFanartFilenames()) {
+      switch (fanart) {
+        case FANART:
+          chckbxMovieFanartFilename2.setSelected(true);
+          break;
+        case FILENAME_FANART:
+          chckbxMovieFanartFilename1.setSelected(true);
+          break;
+        case FILENAME_FANART2:
+          chckbxMovieFanartFilename3.setSelected(true);
+          break;
+      }
     }
-    if (movieFanartFilenames.contains(MovieFanartNaming.FANART)) {
-      cbMovieFanartFilename2.setSelected(true);
+
+    // banner filenames
+    for (MovieBannerNaming banner : settings.getBannerFilenames()) {
+      switch (banner) {
+        case BANNER:
+          chckbxBanner2.setSelected(true);
+          break;
+        case FILENAME_BANNER:
+          chckbxBanner1.setSelected(true);
+          break;
+      }
     }
-    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART2)) {
-      cbMovieFanartFilename3.setSelected(true);
+
+    // clearart filenames
+    for (MovieClearartNaming clearart : settings.getClearartFilenames()) {
+      switch (clearart) {
+        case CLEARART:
+          chckbxClearart2.setSelected(true);
+          break;
+        case FILENAME_CLEARART:
+          chckbxClearart1.setSelected(true);
+          break;
+      }
     }
+
+    // thumb filenames
+    for (MovieThumbNaming thumb : settings.getThumbFilenames()) {
+      switch (thumb) {
+        case THUMB:
+          chckbxThumb2.setSelected(true);
+          break;
+        case FILENAME_THUMB:
+          chckbxThumb1.setSelected(true);
+          break;
+        case LANDSCAPE:
+          chckbxThumb4.setSelected(true);
+          break;
+        case FILENAME_LANDSCAPE:
+          chckbxThumb3.setSelected(true);
+          break;
+      }
+    }
+
+    // logo filenames
+    for (MovieLogoNaming logo : settings.getLogoFilenames()) {
+      switch (logo) {
+        case LOGO:
+          chckbxLogo2.setSelected(true);
+          break;
+        case FILENAME_LOGO:
+          chckbxLogo1.setSelected(true);
+          break;
+      }
+    }
+
+    // clearlogo filenames
+    for (MovieClearlogoNaming clearlogo : settings.getClearlogoFilenames()) {
+      switch (clearlogo) {
+        case CLEARLOGO:
+          chckbxClearlogo2.setSelected(true);
+          break;
+        case FILENAME_CLEARLOGO:
+          chckbxClearlogo1.setSelected(true);
+          break;
+      }
+    }
+
+    // discart filenames
+    for (MovieDiscartNaming discart : settings.getDiscartFilenames()) {
+      switch (discart) {
+        case DISC:
+          chckbxDiscart2.setSelected(true);
+          break;
+        case FILENAME_DISC:
+          chckbxDiscart1.setSelected(true);
+          break;
+      }
+    }
+
+    // listen to changes of the checkboxes
+    ItemListener listener = e -> checkChanges();
+    chckbxMovieFanartFilename2.addItemListener(listener);
+    chckbxMovieFanartFilename3.addItemListener(listener);
+
+    chckbxMovieFanartFilename1.addItemListener(listener);
+    chckbxMoviePosterFilename2.addItemListener(listener);
+    chckbxMoviePosterFilename4.addItemListener(listener);
+    chckbxMoviePosterFilename7.addItemListener(listener);
+    chckbxMoviePosterFilename8.addItemListener(listener);
+    chckbxMoviePosterFilename6.addItemListener(listener);
+
+    chckbxBanner1.addItemListener(listener);
+    chckbxBanner2.addItemListener(listener);
+
+    chckbxClearart1.addItemListener(listener);
+    chckbxClearart2.addItemListener(listener);
+
+    chckbxClearlogo1.addItemListener(listener);
+    chckbxClearlogo2.addItemListener(listener);
+
+    chckbxLogo1.addItemListener(listener);
+    chckbxLogo2.addItemListener(listener);
+
+    chckbxThumb1.addItemListener(listener);
+    chckbxThumb2.addItemListener(listener);
+    chckbxThumb3.addItemListener(listener);
+    chckbxThumb4.addItemListener(listener);
+
+    chckbxDiscart1.addItemListener(listener);
+    chckbxDiscart2.addItemListener(listener);
 
     // select default artwork scraper
     if (selectedIndex < 0) {
@@ -302,37 +421,37 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       panelFileNaming.setLayout(new MigLayout("insets 0", "[][][][]", "[][][][]"));
 
       JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming"));//$NON-NLS-1$
-      panelFileNaming.add(lblPosterFilename, "cell 0 0,growx,aligny center");
+      panelFileNaming.add(lblPosterFilename, "cell 0 0");
 
-      cbMoviePosterFilename7 = new JCheckBox("<dynamic>.ext");
-      panelFileNaming.add(cbMoviePosterFilename7, "cell 1 0,growx,aligny top");
+      chckbxMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
+      panelFileNaming.add(chckbxMoviePosterFilename8, "cell 2 0");
 
-      cbMoviePosterFilename4 = new JCheckBox("poster.ext");
-      panelFileNaming.add(cbMoviePosterFilename4, "cell 2 0,growx,aligny top");
+      chckbxMoviePosterFilename2 = new JCheckBox("movie.ext");
+      panelFileNaming.add(chckbxMoviePosterFilename2, "cell 3 0");
 
-      cbMoviePosterFilename2 = new JCheckBox("movie.ext");
-      panelFileNaming.add(cbMoviePosterFilename2, "cell 3 0,growx,aligny top");
+      chckbxMoviePosterFilename7 = new JCheckBox("<dynamic>.ext");
+      panelFileNaming.add(chckbxMoviePosterFilename7, "cell 2 1");
 
-      cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext");
-      panelFileNaming.add(cbMoviePosterFilename8, "cell 1 1,alignx left,aligny top");
+      chckbxMoviePosterFilename4 = new JCheckBox("poster.ext");
+      panelFileNaming.add(chckbxMoviePosterFilename4, "cell 1 0");
 
-      cbMoviePosterFilename6 = new JCheckBox("folder.ext");
-      panelFileNaming.add(cbMoviePosterFilename6, "cell 2 1,alignx left,aligny top");
+      chckbxMoviePosterFilename6 = new JCheckBox("folder.ext");
+      panelFileNaming.add(chckbxMoviePosterFilename6, "cell 1 1");
 
       JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming"));//$NON-NLS-1$
-      panelFileNaming.add(lblFanartFileNaming, "cell 0 2,alignx left,aligny center");
+      panelFileNaming.add(lblFanartFileNaming, "cell 0 2");
 
-      cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename1, "cell 1 2,alignx left,aligny top");
+      chckbxMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext");
+      panelFileNaming.add(chckbxMovieFanartFilename1, "cell 2 2");
 
-      cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename3, "cell 2 2,alignx left,aligny top");
+      chckbxMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");
+      panelFileNaming.add(chckbxMovieFanartFilename3, "cell 3 2");
 
-      cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
-      panelFileNaming.add(cbMovieFanartFilename2, "cell 3 2,alignx left,aligny top");
+      chckbxMovieFanartFilename2 = new JCheckBox("fanart.ext");
+      panelFileNaming.add(chckbxMovieFanartFilename2, "cell 1 2");
 
       tpFileNamingHint = new JTextPane();
-      panelFileNaming.add(tpFileNamingHint, "cell 0 3 4 1,grow");
+      panelFileNaming.add(tpFileNamingHint, "cell 0 3 4 1");
       tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
       tpFileNamingHint.setOpaque(false);
       tpFileNamingHint.setEditable(false);
@@ -344,24 +463,80 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       add(lblExtraArtworkT, "cell 0 8 4 1");
     }
     {
-      chckbxBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
-      add(chckbxBanner, "flowx,cell 1 9 3 1");
+      JPanel panelExtraArtwork = new JPanel();
+      add(panelExtraArtwork, "cell 1 9 3 1");
+      panelExtraArtwork.setLayout(new MigLayout("insets 0", "[][][]", "[][][][][][][][]"));
 
-      chckbxClearArt = new JCheckBox(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
-      add(chckbxClearArt, "cell 1 9");
+      JLabel lblBannerNamingT = new JLabel(BUNDLE.getString("image.banner.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblBannerNamingT, "cell 0 0");
 
-      chckbxThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-      add(chckbxThumb, "cell 1 9");
+      chckbxBanner2 = new JCheckBox("banner.ext");
+      panelExtraArtwork.add(chckbxBanner2, "cell 1 0");
 
-      chckbxLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
-      add(chckbxLogo, "cell 1 9");
+      chckbxBanner1 = new JCheckBox("<dynamic>-banner.ext");
+      panelExtraArtwork.add(chckbxBanner1, "cell 2 0");
 
-      chckbxDiscArt = new JCheckBox(BUNDLE.getString("mediafiletype.discart")); //$NON-NLS-1$
-      add(chckbxDiscArt, "cell 1 9");
+      JLabel lblClearartNamingT = new JLabel(BUNDLE.getString("image.clearart.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblClearartNamingT, "cell 0 1");
+
+      chckbxClearart2 = new JCheckBox("clearart.ext");
+      panelExtraArtwork.add(chckbxClearart2, "cell 1 1");
+
+      chckbxClearart1 = new JCheckBox("<dynamic>-clearart.ext");
+      panelExtraArtwork.add(chckbxClearart1, "cell 2 1");
+
+      JLabel lblThumbNamingT = new JLabel(BUNDLE.getString("image.thumb.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblThumbNamingT, "cell 0 2");
+
+      chckbxThumb2 = new JCheckBox("thumb.ext");
+      panelExtraArtwork.add(chckbxThumb2, "cell 1 2");
+
+      chckbxThumb1 = new JCheckBox("<dynamic>-thumb.ext");
+      panelExtraArtwork.add(chckbxThumb1, "cell 2 2");
+
+      chckbxThumb4 = new JCheckBox("landscape.ext");
+      panelExtraArtwork.add(chckbxThumb4, "cell 1 3");
+
+      chckbxThumb3 = new JCheckBox("<dynamic>-landscape.ext");
+      panelExtraArtwork.add(chckbxThumb3, "cell 2 3");
+
+      JLabel lblLogoNamingT = new JLabel(BUNDLE.getString("image.logo.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblLogoNamingT, "cell 0 4");
+
+      chckbxLogo2 = new JCheckBox("logo.ext");
+      panelExtraArtwork.add(chckbxLogo2, "cell 1 4");
+
+      chckbxLogo1 = new JCheckBox("<dynamic>-logo.ext");
+      panelExtraArtwork.add(chckbxLogo1, "cell 2 4");
+
+      JLabel lblClearlogoNamingT = new JLabel(BUNDLE.getString("image.clearlogo.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblClearlogoNamingT, "cell 0 5");
+
+      chckbxClearlogo2 = new JCheckBox("clearlogo.ext");
+      panelExtraArtwork.add(chckbxClearlogo2, "cell 1 5");
+
+      chckbxClearlogo1 = new JCheckBox("<dynamic>-clearlogo.ext");
+      panelExtraArtwork.add(chckbxClearlogo1, "cell 2 5");
+
+      JLabel lblDiscartNamingT = new JLabel(BUNDLE.getString("image.discart.naming"));//$NON-NLS-1$
+      panelExtraArtwork.add(lblDiscartNamingT, "cell 0 6");
+
+      chckbxDiscart2 = new JCheckBox("disc.ext");
+      panelExtraArtwork.add(chckbxDiscart2, "cell 1 6");
+
+      chckbxDiscart1 = new JCheckBox("<dynamic>-disc.ext");
+      panelExtraArtwork.add(chckbxDiscart1, "cell 2 6");
+
+      JTextPane tpFileNamingHint = new JTextPane();
+      tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
+      tpFileNamingHint.setOpaque(false);
+      tpFileNamingHint.setEditable(false);
+      TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
+      panelExtraArtwork.add(tpFileNamingHint, "cell 0 7 3 1");
     }
     {
       JPanel panelExtraArtwork = new JPanel();
-      add(panelExtraArtwork, "cell 1 10 3 1,grow");
+      add(panelExtraArtwork, "cell 1 10 3 1");
       panelExtraArtwork.setLayout(new MigLayout("insets 0", "[][][][][]", "[][][][][15lp][][15lp][][][]"));
 
       chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));//$NON-NLS-1$
@@ -414,34 +589,94 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
    */
   public void checkChanges() {
     // set poster filenames
-    settings.clearMoviePosterFilenames();
+    settings.clearPosterFilenames();
 
-    if (cbMoviePosterFilename2.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE);
+    if (chckbxMoviePosterFilename2.isSelected()) {
+      settings.addPosterFilename(MoviePosterNaming.MOVIE);
     }
-    if (cbMoviePosterFilename4.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.POSTER);
+    if (chckbxMoviePosterFilename4.isSelected()) {
+      settings.addPosterFilename(MoviePosterNaming.POSTER);
     }
-    if (cbMoviePosterFilename6.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER);
+    if (chckbxMoviePosterFilename6.isSelected()) {
+      settings.addPosterFilename(MoviePosterNaming.FOLDER);
     }
-    if (cbMoviePosterFilename7.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME);
+    if (chckbxMoviePosterFilename7.isSelected()) {
+      settings.addPosterFilename(MoviePosterNaming.FILENAME);
     }
-    if (cbMoviePosterFilename8.isSelected()) {
-      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER);
+    if (chckbxMoviePosterFilename8.isSelected()) {
+      settings.addPosterFilename(MoviePosterNaming.FILENAME_POSTER);
     }
 
     // set fanart filenames
-    settings.clearMovieFanartFilenames();
-    if (cbMovieFanartFilename1.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART);
+    settings.clearFanartFilenames();
+    if (chckbxMovieFanartFilename1.isSelected()) {
+      settings.addFanartFilename(MovieFanartNaming.FILENAME_FANART);
     }
-    if (cbMovieFanartFilename2.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FANART);
+    if (chckbxMovieFanartFilename2.isSelected()) {
+      settings.addFanartFilename(MovieFanartNaming.FANART);
     }
-    if (cbMovieFanartFilename3.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2);
+    if (chckbxMovieFanartFilename3.isSelected()) {
+      settings.addFanartFilename(MovieFanartNaming.FILENAME_FANART2);
+    }
+
+    // set banner filenames
+    settings.clearBannerFilenames();
+    if (chckbxBanner1.isSelected()) {
+      settings.addBannerFilename(MovieBannerNaming.FILENAME_BANNER);
+    }
+    if (chckbxBanner2.isSelected()) {
+      settings.addBannerFilename(MovieBannerNaming.BANNER);
+    }
+
+    // set clearart filenames
+    settings.clearClearartFilenames();
+    if (chckbxClearart1.isSelected()) {
+      settings.addClearartFilename(MovieClearartNaming.FILENAME_CLEARART);
+    }
+    if (chckbxClearart2.isSelected()) {
+      settings.addClearartFilename(MovieClearartNaming.CLEARART);
+    }
+
+    // set thumb filenames
+    settings.clearThumbFilenames();
+    if (chckbxThumb1.isSelected()) {
+      settings.addThumbFilename(MovieThumbNaming.FILENAME_THUMB);
+    }
+    if (chckbxThumb2.isSelected()) {
+      settings.addThumbFilename(MovieThumbNaming.THUMB);
+    }
+    if (chckbxThumb3.isSelected()) {
+      settings.addThumbFilename(MovieThumbNaming.FILENAME_LANDSCAPE);
+    }
+    if (chckbxThumb4.isSelected()) {
+      settings.addThumbFilename(MovieThumbNaming.LANDSCAPE);
+    }
+
+    // set logo filenames
+    settings.clearLogoFilenames();
+    if (chckbxLogo1.isSelected()) {
+      settings.addLogoFilename(MovieLogoNaming.FILENAME_LOGO);
+    }
+    if (chckbxLogo2.isSelected()) {
+      settings.addLogoFilename(MovieLogoNaming.LOGO);
+    }
+
+    // set clearlogo filenames
+    settings.clearClearlogoFilenames();
+    if (chckbxClearlogo1.isSelected()) {
+      settings.addClearlogoFilename(MovieClearlogoNaming.FILENAME_CLEARLOGO);
+    }
+    if (chckbxClearlogo2.isSelected()) {
+      settings.addClearlogoFilename(MovieClearlogoNaming.CLEARLOGO);
+    }
+
+    // set discart filenames
+    settings.clearDiscartFilenames();
+    if (chckbxDiscart1.isSelected()) {
+      settings.addDiscartFilename(MovieDiscartNaming.FILENAME_DISC);
+    }
+    if (chckbxDiscart2.isSelected()) {
+      settings.addDiscartFilename(MovieDiscartNaming.DISC);
     }
   }
 
@@ -596,31 +831,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, chckbxEnableExtrathumbs,
         jCheckBoxBeanProperty, spExtrathumbWidth, jSpinnerBeanProperty);
     autoBinding_9.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_7 = BeanProperty.create("imageBanner");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_7, chckbxBanner, jCheckBoxBeanProperty);
-    autoBinding_6.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_14 = BeanProperty.create("imageClearart");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_14, chckbxClearArt, jCheckBoxBeanProperty);
-    autoBinding_18.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_15 = BeanProperty.create("imageThumb");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_15, chckbxThumb, jCheckBoxBeanProperty);
-    autoBinding_19.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_16 = BeanProperty.create("imageLogo");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_16, chckbxLogo, jCheckBoxBeanProperty);
-    autoBinding_20.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> settingsBeanProperty_17 = BeanProperty.create("imageDiscart");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_17, chckbxDiscArt, jCheckBoxBeanProperty);
-    autoBinding_21.bind();
     //
     BeanProperty<MovieSettings, Boolean> settingsBeanProperty_18 = BeanProperty.create("enableMovieSetArtworkMovieFolder");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,

@@ -474,7 +474,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // banner
-              if (MovieModuleManager.SETTINGS.isImageBanner()) {
+              if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.BANNER, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -485,7 +485,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // logo
-              if (MovieModuleManager.SETTINGS.isImageLogo()) {
+              if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.LOGO, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -496,7 +496,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // clearlogo
-              if (MovieModuleManager.SETTINGS.isImageLogo()) {
+              if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARLOGO, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -507,7 +507,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // clearart
-              if (MovieModuleManager.SETTINGS.isImageClearart()) {
+              if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.CLEARART, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -518,7 +518,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // discart
-              if (MovieModuleManager.SETTINGS.isImageDiscart()) {
+              if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.DISC, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);
@@ -529,7 +529,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
               }
 
               // thumb
-              if (MovieModuleManager.SETTINGS.isImageThumb()) {
+              if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.THUMB, artworkScrapers, lblImage, null, null,
                     MediaType.MOVIE);

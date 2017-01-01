@@ -64,7 +64,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.MovieSets;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Producer;
@@ -72,6 +71,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
@@ -178,7 +178,7 @@ public class MovieToMpNfoConnector {
       nfoNames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfoNames = MovieModuleManager.SETTINGS.getMovieNfoFilenames();
+      nfoNames = MovieModuleManager.SETTINGS.getNfoFilenames();
     }
     writeNfoFiles(movie, mp, nfoNames);
   }
