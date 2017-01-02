@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTable;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -43,7 +42,7 @@ import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowSeasonSelectionModel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -87,7 +86,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
   private JSeparator                            separator;
   private JLabel                                lblEpisodelistT;
   private JScrollPane                           scrollPaneEpisodes;
-  private JTable                                tableEpisodes;
+  private TmmTable                              tableEpisodes;
 
   /**
    * Instantiates a new tv show information panel.
@@ -97,7 +96,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
    */
   public TvShowSeasonInformationPanel(TvShowSeasonSelectionModel tvShowSeasonSelectionModel) {
     this.tvShowSeasonSelectionModel = tvShowSeasonSelectionModel;
-    episodeEventList = new ObservableElementList<TvShowEpisode>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisode>()),
+    episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()),
         GlazedLists.beanConnector(TvShowEpisode.class));
 
     setLayout(new FormLayout(
@@ -149,9 +148,10 @@ public class TvShowSeasonInformationPanel extends JPanel {
     lblEpisodelistT = new JLabel(BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
     panelTop.add(lblEpisodelistT, "2, 7, 3, 1");
 
-    episodeTableModel = new DefaultEventTableModel<TvShowEpisode>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeTableFormat());
+    episodeTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeTableFormat());
     tableEpisodes = new TmmTable(episodeTableModel);
-    scrollPaneEpisodes = TmmTable.createJScrollPane(tableEpisodes);
+    JScrollPane scrollPaneEpisodes = new JScrollPane(tableEpisodes);
+    tableEpisodes.configureScrollPane(scrollPaneEpisodes);
     panelTop.add(scrollPaneEpisodes, "2, 9, 3, 1, fill, fill");
     scrollPaneEpisodes.setViewportView(tableEpisodes);
 

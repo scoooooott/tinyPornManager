@@ -33,7 +33,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
@@ -94,10 +93,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private JCheckBox                      chckbxMoviesetSingleMovie;
 
   private ActionListener                 actionCreateRenamerExample = e -> createRenamerExample();
-  private JScrollPane                    scrollPaneExamples;
-  private JTable                         tableExamples;
+  private TmmTable                       tableExamples;
   private JLabel                         lblMMDWarning;
-  private JLabel                         lblSubtitleLanguage;
 
   public MovieRenamerSettingsPanel() {
     exampleEventList = GlazedLists
@@ -288,7 +285,8 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
       DefaultEventTableModel<MovieRenamerExample> exampleTableModel = new DefaultEventTableModel<>(
           GlazedListsSwing.swingThreadProxyList(exampleEventList), new MovieRenamerExampleTableFormat());
       tableExamples = new TmmTable(exampleTableModel);
-      scrollPaneExamples = new JScrollPane(tableExamples);
+      JScrollPane scrollPaneExamples = new JScrollPane(tableExamples);
+      tableExamples.configureScrollPane(scrollPaneExamples);
       add(scrollPaneExamples, "cell 1 16 5 1,grow");
     }
   }

@@ -270,23 +270,6 @@ public class TmmTable extends JTable {
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
   }
 
-  @Deprecated
-  public static JScrollPane createJScrollPane(JTable table, int[] columnsWithoutRightVerticalGrid) {
-    JScrollPane scrollPane = new JScrollPane(table);
-    scrollPane.setViewport(new TmmViewport(table, columnsWithoutRightVerticalGrid));
-    scrollPane.getViewport().setView(table);
-    scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, TABLE_GRID_COLOR));
-    // scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
-    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    return scrollPane;
-  }
-
-  @Deprecated
-  public static JScrollPane createJScrollPane(JTable table) {
-    int[] columnsWithoutRightVerticalGrid = {};
-    return createJScrollPane(table, columnsWithoutRightVerticalGrid);
-  }
-
   protected static class BottomBorderHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 7963585655106103415L;
 

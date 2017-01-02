@@ -31,7 +31,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
@@ -57,6 +56,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
@@ -74,7 +74,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<SubtitleScraper>       scrapers         = ObservableCollections.observableList(new ArrayList<SubtitleScraper>());
-  private JTable                      tableScraper;
+  private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JComboBox                   cbScraperLanguage;
@@ -159,12 +159,12 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
       add(lblScraperT, "cell 0 0 4 1");
     }
     {
-      JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 2 1,growy");
-
-      tableScraper = new JTable();
+      tableScraper = new TmmTable();
       tableScraper.setRowHeight(29);
-      scrollPaneScraper.setViewportView(tableScraper);
+
+      JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
+      tableScraper.configureScrollPane(scrollPaneScraper);
+      add(scrollPaneScraper, "cell 1 1 2 1,growy");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();

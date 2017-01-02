@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,7 +38,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
-import org.tinymediamanager.ui.components.TmmTable;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -72,7 +71,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
   /**
    * UI elements
    */
-  private JTable                              tableActors;
+  private TmmTable                            tableActors;
   private ImageLabel                          lblActorImage;
   private JLabel                              lblDirector;
   private JLabel                              lblWriter;
@@ -118,7 +117,8 @@ public class TvShowEpisodeCastPanel extends JPanel {
     add(lblActorsT, "2, 6, right, top");
 
     tableActors = new TmmTable(actorTableModel);
-    JScrollPane scrollPaneActors = TmmTable.createJScrollPane(tableActors);
+    JScrollPane scrollPaneActors = new JScrollPane(tableActors);
+    tableActors.configureScrollPane(scrollPaneActors);
     scrollPaneActors.setViewportView(tableActors);
     add(scrollPaneActors, "6, 6, fill, fill");
 

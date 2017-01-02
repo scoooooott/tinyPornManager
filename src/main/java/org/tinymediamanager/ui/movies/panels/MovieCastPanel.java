@@ -26,12 +26,11 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -73,8 +72,8 @@ public class MovieCastPanel extends JPanel {
   private JLabel                                lblDirector;
   private JLabel                                lblWriter;
   private ActorImageLabel                       lblActorThumb;
-  private JTable                                tableProducer;
-  private JTable                                tableActors;
+  private TmmTable                              tableProducer;
+  private TmmTable                              tableActors;
 
   public MovieCastPanel(MovieSelectionModel model) {
     selectionModel = model;
@@ -159,6 +158,7 @@ public class MovieCastPanel extends JPanel {
 
       tableProducer = new TmmTable(producerTableModel);
       JScrollPane scrollPaneMovieProducer = new JScrollPane(tableProducer);
+      tableProducer.configureScrollPane(scrollPaneMovieProducer);
       add(scrollPaneMovieProducer, "cell 1 2,grow");
       scrollPaneMovieProducer.setViewportView(tableProducer);
     }
@@ -169,6 +169,7 @@ public class MovieCastPanel extends JPanel {
 
       tableActors = new TmmTable(actorTableModel);
       JScrollPane scrollPaneMovieActors = new JScrollPane(tableActors);
+      tableActors.configureScrollPane(scrollPaneMovieActors);
       add(scrollPaneMovieActors, "cell 1 3,grow");
       scrollPaneMovieActors.setViewportView(tableActors);
     }

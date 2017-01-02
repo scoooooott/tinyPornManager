@@ -33,7 +33,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -95,7 +94,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private JComboBox                       cbSpaceReplacement;
   private JHintCheckBox                   chckbxSpaceReplacement;
   private JComboBox                       cbEpisodeForPreview;
-  private JTable                          tableExamples;
+  private TmmTable                        tableExamples;
   private JTextField                      tfTvShowFolder;
   private JTextField                      tfEpisodeFilename;
 
@@ -274,6 +273,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       tableExamples = new TmmTable(exampleTableModel);
       JScrollPane scrollPane = new JScrollPane(tableExamples);
+      tableExamples.configureScrollPane(scrollPane);
       add(scrollPane, "cell 1 16 3 1,grow");
       scrollPane.setViewportView(tableExamples);
     }

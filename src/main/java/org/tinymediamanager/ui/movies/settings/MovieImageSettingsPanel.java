@@ -75,6 +75,7 @@ import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
@@ -118,7 +119,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   private JButton                     btnSelectFolder;
   private JCheckBox                   chckbxMovieFanartFilename3;
   private JCheckBox                   chckbxMovieSetArtwork;
-  private JTable                      tableScraper;
+  private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
   private JCheckBox                   chckbxBanner1;
@@ -371,12 +372,11 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       add(lblScraperT, "cell 0 0 4 1");
     }
     {
-      JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
-
-      tableScraper = new JTable();
+      tableScraper = new TmmTable();
       tableScraper.setRowHeight(29);
-      scrollPaneScraper.setViewportView(tableScraper);
+      JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
+      tableScraper.configureScrollPane(scrollPaneScraper);
+      add(scrollPaneScraper, "cell 1 1 2 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();

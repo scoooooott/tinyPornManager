@@ -64,6 +64,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
@@ -95,7 +96,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
   private JCheckBox                   chckbxImageLanguage;
 
-  private JTable                      tableScraper;
+  private TmmTable                    tableScraper;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -189,10 +190,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
       add(lblMetadataScraper, "cell 0 0 5 1");
     }
     {
-      JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 3 1,grow");
-
-      tableScraper = new JTable() {
+      tableScraper = new TmmTable() {
         private static final long serialVersionUID = -144223066269069772L;
 
         @Override
@@ -211,7 +209,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         }
       };
       tableScraper.setRowHeight(29);
-      scrollPaneScraper.setViewportView(tableScraper);
+      JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
+      tableScraper.configureScrollPane(scrollPaneScraper);
+      add(scrollPaneScraper, "cell 1 1 3 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();

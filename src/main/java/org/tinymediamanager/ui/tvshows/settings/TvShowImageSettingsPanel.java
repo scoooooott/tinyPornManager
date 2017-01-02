@@ -62,6 +62,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 
@@ -83,8 +84,7 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
   private JRadioButton                rdbtnThumbWithPostfix;
   private JRadioButton                rdbtnThumbWoPostfix;
   private ButtonGroup                 btnGroupThumbFilenaming;
-  private JScrollPane                 scrollPaneArtworkScraper;
-  private JTable                      tableArtworkScraper;
+  private TmmTable                    tableArtworkScraper;
   private JTextPane                   tpArtworkScraperDescription;
   private JPanel                      panelArtworkScraperOptions;
   private JRadioButton                rdbtnThumbTbn;
@@ -188,12 +188,12 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
       add(lblScraperT, "cell 0 0 6 1");
     }
     {
-      scrollPaneArtworkScraper = new JScrollPane();
-      add(scrollPaneArtworkScraper, "cell 1 1 2 1,grow");
-
-      tableArtworkScraper = new JTable();
+      tableArtworkScraper = new TmmTable();
       tableArtworkScraper.setRowHeight(29);
-      scrollPaneArtworkScraper.setViewportView(tableArtworkScraper);
+
+      JScrollPane scrollPaneArtworkScraper = new JScrollPane(tableArtworkScraper);
+      tableArtworkScraper.configureScrollPane(scrollPaneArtworkScraper);
+      add(scrollPaneArtworkScraper, "cell 1 1 2 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();

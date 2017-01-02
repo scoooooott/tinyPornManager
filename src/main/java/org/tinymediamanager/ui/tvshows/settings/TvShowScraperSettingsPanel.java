@@ -62,6 +62,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
@@ -85,7 +86,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbScraperLanguage;
   private JComboBox                   cbCertificationCountry;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
-  private JTable                      tableScraper;
+  private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
   private JPanel                      panelScraperOptions;
 
@@ -171,10 +172,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       add(lblMetadataScraper, "cell 0 0 4 1");
     }
     {
-      JScrollPane scrollPaneScraper = new JScrollPane();
-      add(scrollPaneScraper, "cell 1 1 2 1,grow");
-
-      tableScraper = new JTable() {
+      tableScraper = new TmmTable() {
         private static final long serialVersionUID = -144223066269069772L;
 
         @Override
@@ -193,7 +191,10 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         }
       };
       tableScraper.setRowHeight(29);
-      scrollPaneScraper.setViewportView(tableScraper);
+
+      JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);
+      tableScraper.configureScrollPane(scrollPaneScraper);
+      add(scrollPaneScraper, "cell 1 1 2 1,grow");
     }
     {
       JScrollPane scrollPaneScraperDetails = new JScrollPane();
