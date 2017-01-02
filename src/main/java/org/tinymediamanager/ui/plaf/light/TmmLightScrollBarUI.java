@@ -15,12 +15,21 @@
  */
 package org.tinymediamanager.ui.plaf.light;
 
-import com.jtattoo.plaf.AbstractLookAndFeel;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JScrollBar;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.*;
+
+import com.jtattoo.plaf.AbstractLookAndFeel;
 
 /**
  * The Class TmmLightScrollBarUI.
@@ -113,8 +122,15 @@ public class TmmLightScrollBarUI extends BasicScrollBarUI {
   protected void layoutVScrollbar(JScrollBar sb) {
     super.layoutVScrollbar(sb);
 
+    // special case: no scrolling is needed; the logic above will paint the thumb at bottom;
+    // paint it on top
+    if (sb.getValue() == 0) {
+      thumbRect.setBounds(thumbRect.x, -1 + GAP, thumbRect.width, thumbRect.height - 2 * GAP);
+    }
+    else {
+      thumbRect.setBounds(thumbRect.x, thumbRect.y + GAP, thumbRect.width, thumbRect.height - 2 * GAP);
+    }
     trackRect.setBounds(trackRect.x, trackRect.y + GAP, trackRect.width, trackRect.height - 2 * GAP);
-    thumbRect.setBounds(thumbRect.x, thumbRect.y + GAP, thumbRect.width, thumbRect.height - 2 * GAP);
   }
 
   @Override
