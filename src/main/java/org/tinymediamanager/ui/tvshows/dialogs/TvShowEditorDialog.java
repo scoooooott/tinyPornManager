@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -33,8 +35,10 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -44,6 +48,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
@@ -94,6 +99,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
 
 /**
  * The Class TvShowEditor.
@@ -135,14 +141,16 @@ public class TvShowEditorDialog extends TmmDialog {
   private ImageLabel                                                                              lblBanner;
   private JSpinner                                                                                spRuntime;
   private JTextField                                                                              tfStudio;
-  private JList                                                                                   listGenres;
-  private JComboBox                                                                               cbGenres;
+  private JList<MediaGenres>                                                                      listGenres;
+  private AutocompleteComboBox<MediaGenres>                                                       cbGenres;
+  private AutoCompleteSupport<MediaGenres>                                                        cbGenresAutoCompleteSupport;
   private JSpinner                                                                                spRating;
   private JComboBox                                                                               cbCertification;
   private JComboBox                                                                               cbStatus;
   // private JTable tableTrailer;
-  private JComboBox                                                                               cbTags;
-  private JList                                                                                   listTags;
+  private AutocompleteComboBox<String>                                                            cbTags;
+  private AutoCompleteSupport<String>                                                             cbTagsAutoCompleteSupport;
+  private JList<String>                                                                           listTags;
   private JSpinner                                                                                spDateAdded;
   private DatePicker                                                                              dpPremiered;
   private JTable                                                                                  tableEpisodes;
@@ -402,7 +410,7 @@ public class TvShowEditorDialog extends TmmDialog {
       JScrollPane scrollPaneGenres = new JScrollPane();
       details2Panel.add(scrollPaneGenres, "8, 2, 1, 5");
       {
-        listGenres = new JList();
+        listGenres = new JList<MediaGenres>();
         scrollPaneGenres.setViewportView(listGenres);
       }
     }
@@ -429,8 +437,11 @@ public class TvShowEditorDialog extends TmmDialog {
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
-      cbGenres = new AutocompleteComboBox(MediaGenres.values());
-      cbGenres.setEditable(true);
+      cbGenres = new AutocompleteComboBox<MediaGenres>(MediaGenres.values());
+      cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
+      InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+      cbGenres.getActionMap().put(enterAction, new AddGenreAction());
       details2Panel.add(cbGenres, "8,8");
     }
     {
@@ -440,7 +451,7 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JScrollPane scrollPaneTags = new JScrollPane();
       details2Panel.add(scrollPaneTags, "4, 10, 1, 5");
-      listTags = new JList();
+      listTags = new JList<String>();
       scrollPaneTags.setViewportView(listTags);
     }
     {
@@ -458,8 +469,11 @@ public class TvShowEditorDialog extends TmmDialog {
       details2Panel.add(btnRemoveTag, "2, 14, right, top");
     }
     {
-      cbTags = new AutocompleteComboBox(tvShowList.getTagsInTvShows().toArray());
-      cbTags.setEditable(true);
+      cbTags = new AutocompleteComboBox<String>(tvShowList.getTagsInTvShows());
+      cbTagsAutoCompleteSupport = cbTags.getAutoCompleteSupport();
+      InputMap im = cbTags.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+      cbTags.getActionMap().put(enterAction, new AddTagAction());
       details2Panel.add(cbTags, "4, 16");
     }
 
@@ -988,6 +1002,20 @@ public class TvShowEditorDialog extends TmmDialog {
       MediaGenres newGenre = null;
       Object item = cbGenres.getSelectedItem();
 
+      // check, if text is selected (from auto completion), in this case we just
+      // remove the selection
+      Component editorComponent = cbGenres.getEditor().getEditorComponent();
+      if (editorComponent instanceof JTextField) {
+        JTextField tf = (JTextField) editorComponent;
+        String selectedText = tf.getSelectedText();
+        if (selectedText != null) {
+          tf.setSelectionStart(0);
+          tf.setSelectionEnd(0);
+          tf.setCaretPosition(tf.getText().length());
+          return;
+        }
+      }
+
       // genre
       if (item instanceof MediaGenres) {
         newGenre = (MediaGenres) item;
@@ -1001,6 +1029,13 @@ public class TvShowEditorDialog extends TmmDialog {
       // add genre if it is not already in the list
       if (newGenre != null && !genres.contains(newGenre)) {
         genres.add(newGenre);
+
+        // set text combobox text input to ""
+        if (editorComponent instanceof JTextField) {
+          cbGenresAutoCompleteSupport.setFirstItem(null);
+          cbGenres.setSelectedIndex(0);
+          cbGenresAutoCompleteSupport.removeFirstItem();
+        }
       }
     }
   }
@@ -1014,10 +1049,9 @@ public class TvShowEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
-      // remove genre
-      if (newGenre != null) {
-        genres.remove(newGenre);
+      List<MediaGenres> selectedGenres = (List<MediaGenres>) listGenres.getSelectedValuesList();
+      for (MediaGenres genre : selectedGenres) {
+        genres.remove(genre);
       }
     }
   }
@@ -1062,9 +1096,22 @@ public class TvShowEditorDialog extends TmmDialog {
         return;
       }
 
-      boolean tagFound = false;
+      // check, if text is selected (from auto completion), in this case we just
+      // remove the selection
+      Component editorComponent = cbTags.getEditor().getEditorComponent();
+      if (editorComponent instanceof JTextField) {
+        JTextField tf = (JTextField) editorComponent;
+        String selectedText = tf.getSelectedText();
+        if (selectedText != null) {
+          tf.setSelectionStart(0);
+          tf.setSelectionEnd(0);
+          tf.setCaretPosition(tf.getText().length());
+          return;
+        }
+      }
 
       // search if this tag already has been added
+      boolean tagFound = false;
       for (String tag : tags) {
         if (tag.equals(newTag)) {
           tagFound = true;
@@ -1075,6 +1122,13 @@ public class TvShowEditorDialog extends TmmDialog {
       // add tag
       if (!tagFound) {
         tags.add(newTag);
+
+        // set text combobox text input to ""
+        if (editorComponent instanceof JTextField) {
+          cbTagsAutoCompleteSupport.setFirstItem("");
+          cbTags.setSelectedIndex(0);
+          cbTagsAutoCompleteSupport.removeFirstItem();
+        }
       }
     }
   }
@@ -1119,8 +1173,10 @@ public class TvShowEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      String tag = (String) listTags.getSelectedValue();
-      tags.remove(tag);
+      List<String> selectedTags = listTags.getSelectedValuesList();
+      for (String tag : selectedTags) {
+        tags.remove(tag);
+      }
     }
   }
 
