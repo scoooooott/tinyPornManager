@@ -198,6 +198,11 @@ public class TvShowSeasonInformationPanel extends JPanel {
   }
 
   private void setPoster(TvShowSeason season) {
+    // only reset if there was a real change
+    if (season.getPoster().equals(lblTvShowPoster.getImagePath())) {
+      return;
+    }
+
     lblTvShowPoster.clearImage();
     lblTvShowPoster.setImagePath(season.getPoster());
     Dimension posterSize = season.getPosterSize();

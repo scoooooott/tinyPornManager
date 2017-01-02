@@ -265,6 +265,11 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setPoster(TvShow tvShow) {
+    // only reset if there was a real change
+    if (tvShow.getArtworkFilename(MediaFileType.POSTER).equals(lblTvShowPoster.getImagePath())) {
+      return;
+    }
+
     lblTvShowPoster.clearImage();
     lblTvShowPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
     Dimension posterSize = tvShow.getArtworkDimension(MediaFileType.POSTER);
@@ -277,6 +282,11 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setFanart(TvShow tvShow) {
+    // only reset if there was a real change
+    if (tvShow.getArtworkFilename(MediaFileType.FANART).equals(lblTvShowBackground.getImagePath())) {
+      return;
+    }
+
     lblTvShowBackground.clearImage();
     lblTvShowBackground.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
     Dimension fanartSize = tvShow.getArtworkDimension(MediaFileType.FANART);
@@ -289,6 +299,11 @@ public class TvShowInformationPanel extends JPanel {
   }
 
   private void setBanner(TvShow tvShow) {
+    // only reset if there was a real change
+    if (tvShow.getArtworkFilename(MediaFileType.BANNER).equals(lblTvShowBanner.getImagePath())) {
+      return;
+    }
+
     lblTvShowBanner.clearImage();
     lblTvShowBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
     Dimension bannerSize = tvShow.getArtworkDimension(MediaFileType.BANNER);

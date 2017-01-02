@@ -26,7 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,9 +44,6 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 import org.tinymediamanager.ui.components.StarRater;
-import org.tinymediamanager.ui.converter.MediaInfoAudioCodecConverter;
-import org.tinymediamanager.ui.converter.MediaInfoVideoCodecConverter;
-import org.tinymediamanager.ui.converter.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -79,9 +75,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JTextPane                   tpOverview;
   private MediaInformationLogosPanel  panelLogos;
   private JPanel                      panelDetails;
-  private JLabel                      lblMediaLogoResolution;
-  private JLabel                      lblMediaLogoVideoCodec;
-  private JLabel                      lblMediaLogoAudio;
 
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
   private JPanel                      panelLeft;
@@ -233,6 +226,11 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   }
 
   private void setSeasonPoster(TvShowEpisode tvShowEpisode) {
+    // only reset if there was a real change
+    if (tvShowEpisode.getTvShowSeason().getPoster().equals(lblSeasonPoster.getImagePath())) {
+      return;
+    }
+
     lblSeasonPoster.clearImage();
     lblSeasonPoster.setImagePath(tvShowEpisode.getTvShowSeason().getPoster());
     Dimension posterSize = tvShowEpisode.getTvShowSeason().getPosterSize();
@@ -245,6 +243,11 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   }
 
   private void setEpisodeThumb(TvShowEpisode tvShowEpisode) {
+    // only reset if there was a real change
+    if (tvShowEpisode.getArtworkFilename(MediaFileType.THUMB).equals(lblEpisodeThumb.getImagePath())) {
+      return;
+    }
+
     lblEpisodeThumb.clearImage();
     lblEpisodeThumb.setImagePath(tvShowEpisode.getArtworkFilename(MediaFileType.THUMB));
     Dimension thumbSize = tvShowEpisode.getArtworkDimension(MediaFileType.THUMB);
@@ -286,26 +289,5 @@ public class TvShowEpisodeInformationPanel extends JPanel {
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, lblRating, jLabelBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty
-        .create("selectedTvShowEpisode.mediaInfoVideoFormat");
-    BeanProperty<JLabel, Icon> jLabelBeanProperty_1 = BeanProperty.create("icon");
-    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_6, lblMediaLogoResolution, jLabelBeanProperty_1);
-    autoBinding_7.setConverter(new MediaInfoVideoFormatConverter());
-    autoBinding_7.bind();
-    //
-    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_7 = BeanProperty
-        .create("selectedTvShowEpisode.mediaInfoVideoCodec");
-    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_7, lblMediaLogoVideoCodec, jLabelBeanProperty_1);
-    autoBinding_8.setConverter(new MediaInfoVideoCodecConverter());
-    autoBinding_8.bind();
-    //
-    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_8 = BeanProperty
-        .create("selectedTvShowEpisode.mediaInfoAudioCodecAndChannels");
-    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_8, lblMediaLogoAudio, jLabelBeanProperty_1);
-    autoBinding_9.setConverter(new MediaInfoAudioCodecConverter());
-    autoBinding_9.bind();
   }
 }
