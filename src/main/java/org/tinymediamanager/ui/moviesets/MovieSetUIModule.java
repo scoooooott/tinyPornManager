@@ -148,11 +148,6 @@ public class MovieSetUIModule implements ITmmUIModule {
   }
 
   @Override
-  public JPanel getSettingsPanel() {
-    return null;
-  }
-
-  @Override
   public TmmSettingsNode getSettingsNode() {
     return null;
   }

@@ -32,8 +32,6 @@ import org.tinymediamanager.ui.ButtonBarButtonUI;
 import org.tinymediamanager.ui.ButtonBarUI;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
  * The Class SettingsPanel.
@@ -78,19 +76,19 @@ public class SettingsPanel extends JPanel {
     addButton(BUNDLE.getString("Settings.general"), //$NON-NLS-1$
         null, panelTmmSettings);
 
-    /*
-     * Movie settings
-     */
-    panelMovieSettings = MovieUIModule.getInstance().getSettingsPanel();
-    addButton(BUNDLE.getString("Settings.movies"), null, //$NON-NLS-1$
-        panelMovieSettings);
-
-    /*
-     * TV show settings
-     */
-    panelTvShowSettings = TvShowUIModule.getInstance().getSettingsPanel();
-    addButton(BUNDLE.getString("Settings.tvshow"), null, //$NON-NLS-1$
-        panelTvShowSettings);
+    // /*
+    // * Movie settings
+    // */
+    // panelMovieSettings = MovieUIModule.getInstance().getSettingsPanel();
+    // addButton(BUNDLE.getString("Settings.movies"), null, //$NON-NLS-1$
+    // panelMovieSettings);
+    //
+    // /*
+    // * TV show settings
+    // */
+    // panelTvShowSettings = TvShowUIModule.getInstance().getSettingsPanel();
+    // addButton(BUNDLE.getString("Settings.tvshow"), null, //$NON-NLS-1$
+    // panelTvShowSettings);
 
   }
 

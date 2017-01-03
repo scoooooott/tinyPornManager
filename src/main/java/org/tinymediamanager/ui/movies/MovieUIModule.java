@@ -69,7 +69,6 @@ import org.tinymediamanager.ui.movies.settings.MovieDatasourceSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieImageSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieRenamerSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieScraperSettingsPanel;
-import org.tinymediamanager.ui.movies.settings.MovieSettingsContainerPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieSubtitleSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieTrailerSettingsPanel;
@@ -91,7 +90,6 @@ public class MovieUIModule implements ITmmUIModule {
 
   private MovieListPanel                 listPanel;
   private JPanel                         detailPanel;
-  private JPanel                         settingsPanel;
   private final MovieExtendedSearchPanel filterPanel;
 
   private final MovieSelectionModel      selectionModel;
@@ -149,8 +147,6 @@ public class MovieUIModule implements ITmmUIModule {
     filterPanel.setVisible(false);
     layeredPane.add(filterPanel, "1, 1, fill, fill");
     layeredPane.setLayer(filterPanel, 1);
-
-    settingsPanel = new MovieSettingsContainerPanel();
 
     createActions();
     createPopupMenu();
@@ -374,14 +370,6 @@ public class MovieUIModule implements ITmmUIModule {
   @Override
   public Action getExportAction() {
     return exportAction;
-  }
-
-  @Override
-  public JPanel getSettingsPanel() {
-    if (settingsPanel == null) {
-      settingsPanel = new MovieSettingsContainerPanel();
-    }
-    return settingsPanel;
   }
 
   @Override

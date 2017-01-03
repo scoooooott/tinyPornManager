@@ -50,8 +50,5 @@ public interface ITmmUIModule {
 
   Action getExportAction();
 
-  @Deprecated
-  JPanel getSettingsPanel();
-
   TmmSettingsNode getSettingsNode();
 }

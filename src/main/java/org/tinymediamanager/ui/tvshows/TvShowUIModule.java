@@ -77,7 +77,6 @@ import org.tinymediamanager.ui.tvshows.settings.TvShowDatasourceSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowImageSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowRenamerSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel;
-import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsContainerPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
 
@@ -94,7 +93,6 @@ public class TvShowUIModule implements ITmmUIModule {
   final TvShowSeasonSelectionModel        tvShowSeasonSelectionModel;
   final TvShowEpisodeSelectionModel       tvShowEpisodeSelectionModel;
 
-  private final JPanel                    settingsPanel;
   private final TvShowTreePanel           listPanel;
   private final JPanel                    detailPanel;
   private final JTabbedPane               tvShowDetailPanel;
@@ -172,8 +170,6 @@ public class TvShowUIModule implements ITmmUIModule {
     createActions();
     createPopupMenu();
     registerAccelerators();
-
-    settingsPanel = new TvShowSettingsContainerPanel();
 
     // build settings node
     settingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.tvshow"), new TvShowSettingsPanel());//$NON-NLS-1$
@@ -264,11 +260,6 @@ public class TvShowUIModule implements ITmmUIModule {
 
   public TvShowSelectionModel getSelectionModel() {
     return tvShowSelectionModel;
-  }
-
-  @Override
-  public JPanel getSettingsPanel() {
-    return settingsPanel;
   }
 
   @Override
