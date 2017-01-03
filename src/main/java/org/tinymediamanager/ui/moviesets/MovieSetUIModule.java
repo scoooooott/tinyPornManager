@@ -50,8 +50,6 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   private final MovieSetTreePanel      listPanel;
   private final JPanel                 detailPanel;
-  private final JTabbedPane            movieSetDetailPanel;
-  private final JTabbedPane            movieDetailPanel;
 
   private final Action                 actionSearchMovieSet = new MovieSetSearchAction(false);
   private final Action                 actionEditMovieSet   = new MovieSetEditAction(false);
@@ -66,12 +64,12 @@ public class MovieSetUIModule implements ITmmUIModule {
     detailPanel.setLayout(new CardLayout());
 
     // panel for movie sets
-    movieSetDetailPanel = new MainTabbedPane();
+    JTabbedPane movieSetDetailPanel = new MainTabbedPane();
     movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));//$NON-NLS-1$
     detailPanel.add(movieSetDetailPanel, "movieSet");
 
     // panel for movies
-    movieDetailPanel = new MainTabbedPane();
+    JTabbedPane movieDetailPanel = new MainTabbedPane();
     movieDetailPanel.addTab("Details", new MovieInformationPanel(movieSelectionModel));
     movieDetailPanel.addTab("Cast", new MovieCastPanel(movieSelectionModel));
     movieDetailPanel.addTab("Media files", new MovieMediaInformationPanel(movieSelectionModel));

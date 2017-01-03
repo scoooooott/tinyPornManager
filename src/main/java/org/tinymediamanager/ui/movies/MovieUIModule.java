@@ -74,9 +74,7 @@ import org.tinymediamanager.ui.movies.settings.MovieSubtitleSettingsPanel;
 import org.tinymediamanager.ui.movies.settings.MovieTrailerSettingsPanel;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class MovieUIModule is the general access point to all movie related UI operations
@@ -116,36 +114,37 @@ public class MovieUIModule implements ITmmUIModule {
 
     detailPanel = new JPanel();
     detailPanel.setOpaque(false);
-    detailPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec.decode("default:grow") }));
+    detailPanel.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
     // layeredpane for displaying the filter dialog at the top
     JLayeredPane layeredPane = new JLayeredPane();
-    layeredPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") },
-        new RowSpec[] { RowSpec.decode("default"), RowSpec.decode("default:grow") }));
-    detailPanel.add(layeredPane, "1, 1, fill, fill");
+    layeredPane.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
+    detailPanel.add(layeredPane, "cell 0 0, grow");
 
     // tabbed pane containing the movie data
     JTabbedPane tabbedPane = new MainTabbedPane() {
-      private static final long serialVersionUID = 9041548865608767661L;
-
-      @Override
-      public void updateUI() {
-        putClientProperty("leftBorder", Boolean.FALSE);
-        super.updateUI();
-      }
+      // private static final long serialVersionUID = 9041548865608767661L;
+      //
+      // @Override
+      // public void updateUI() {
+      // putClientProperty("leftBorder", Boolean.FALSE);
+      // super.updateUI();
+      // }
     };
     tabbedPane.addTab(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(selectionModel)); //$NON-NLS-1$
     tabbedPane.addTab(BUNDLE.getString("metatag.trailer"), new MovieTrailerPanel(selectionModel)); //$NON-NLS-1$
-    layeredPane.add(tabbedPane, "1, 1, 2, 2, fill, fill");
+
+    layeredPane.add(tabbedPane, "cell 0 0, grow");
     layeredPane.setLayer(tabbedPane, 0);
 
     // glass pane for searching/filtering
     filterPanel = new MovieExtendedSearchPanel(selectionModel);
     filterPanel.setVisible(false);
-    layeredPane.add(filterPanel, "1, 1, fill, fill");
+
+    layeredPane.add(filterPanel, "pos 0 0");
     layeredPane.setLayer(filterPanel, 1);
 
     createActions();

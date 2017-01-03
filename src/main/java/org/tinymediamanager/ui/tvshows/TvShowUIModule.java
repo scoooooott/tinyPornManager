@@ -80,9 +80,7 @@ import org.tinymediamanager.ui.tvshows.settings.TvShowScraperSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsPanel;
 import org.tinymediamanager.ui.tvshows.settings.TvShowSubtitleSettingsPanel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 public class TvShowUIModule implements ITmmUIModule {
   private final static ResourceBundle     BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -95,9 +93,6 @@ public class TvShowUIModule implements ITmmUIModule {
 
   private final TvShowTreePanel           listPanel;
   private final JPanel                    detailPanel;
-  private final JTabbedPane               tvShowDetailPanel;
-  private final JTabbedPane               tvShowSeasonDetailPanel;
-  private final JTabbedPane               tvShowEpisodeDetailPanel;
   private final JPanel                    dataPanel;
   private final TvShowExtendedSearchPanel filterPanel;
 
@@ -125,19 +120,18 @@ public class TvShowUIModule implements ITmmUIModule {
     listPanel = new TvShowTreePanel(tvShowSelectionModel);
 
     detailPanel = new JPanel();
-    detailPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec.decode("default:grow") }));
+    detailPanel.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
     // layeredpane for displaying the filter dialog at the top
     JLayeredPane layeredPane = new JLayeredPane();
-    layeredPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") },
-        new RowSpec[] { RowSpec.decode("default"), RowSpec.decode("default:grow") }));
-    detailPanel.add(layeredPane, "1, 1, fill, fill");
+    layeredPane.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
+    detailPanel.add(layeredPane, "cell 0 0, grow");
 
     dataPanel = new JPanel();
     dataPanel.setLayout(new CardLayout());
 
     // panel for TV shows
-    tvShowDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowDetailPanel = new MainTabbedPane();
     tvShowDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowInformationPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowCastPanel(tvShowSelectionModel));//$NON-NLS-1$
     tvShowDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowMediaInformationPanel(tvShowSelectionModel));//$NON-NLS-1$
@@ -145,25 +139,25 @@ public class TvShowUIModule implements ITmmUIModule {
     dataPanel.add(tvShowDetailPanel, "tvShow");
 
     // panel for seasons
-    tvShowSeasonDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowSeasonDetailPanel = new MainTabbedPane();
     tvShowSeasonDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowSeasonInformationPanel(tvShowSeasonSelectionModel));//$NON-NLS-1$
     tvShowSeasonDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowSeasonMediaFilesPanel(tvShowSeasonSelectionModel)); //$NON-NLS-1$
     dataPanel.add(tvShowSeasonDetailPanel, "tvShowSeason");
 
     // panel for episodes
-    tvShowEpisodeDetailPanel = new MainTabbedPane();
+    JTabbedPane tvShowEpisodeDetailPanel = new MainTabbedPane();
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.details"), new TvShowEpisodeInformationPanel(tvShowEpisodeSelectionModel));//$NON-NLS-1$
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.cast"), new TvShowEpisodeCastPanel(tvShowEpisodeSelectionModel)); //$NON-NLS-1$
     tvShowEpisodeDetailPanel.add(BUNDLE.getString("metatag.mediafiles"), new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel));//$NON-NLS-1$
     dataPanel.add(tvShowEpisodeDetailPanel, "tvShowEpisode");
 
-    layeredPane.add(dataPanel, "1, 1, 2, 2, fill, fill");
+    layeredPane.add(dataPanel, "cell 0 0, grow");
     layeredPane.setLayer(dataPanel, 0);
 
     // glass pane for searching/filtering
     filterPanel = new TvShowExtendedSearchPanel(listPanel.getTreeTable());
     filterPanel.setVisible(false);
-    layeredPane.add(filterPanel, "1, 1, fill, fill");
+    layeredPane.add(filterPanel, "pos 0 0");
     layeredPane.setLayer(filterPanel, 1);
 
     // create actions and menus
