@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -26,8 +25,6 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -41,11 +38,6 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -53,6 +45,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEpisodeCastPanel.
@@ -84,62 +77,26 @@ public class TvShowEpisodeCastPanel extends JPanel {
    */
   public TvShowEpisodeCastPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    actorEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<TvShowActor>(new BasicEventList<TvShowActor>(), GlazedLists.beanConnector(TvShowActor.class)));
-    actorTableModel = new DefaultEventTableModel<TvShowActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(TvShowActor.class)));
+    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("100dlu"), FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
-
-    JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
-    add(lblDirectorT, "2, 2, right, default");
-
-    lblDirector = new JLabel("");
-    add(lblDirector, "6, 2");
-
-    JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
-    add(lblWriterT, "2, 4, right, default");
-
-    lblWriter = new JLabel("");
-    add(lblWriter, "6, 4");
-
-    lblActorImage = new ImageLabel();
-    add(lblActorImage, "8, 2, 1, 5");
-
-    JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
-    add(lblActorsT, "2, 6, right, top");
-
-    tableActors = new TmmTable(actorTableModel);
-    JScrollPane scrollPaneActors = new JScrollPane(tableActors);
-    tableActors.configureScrollPane(scrollPaneActors);
-    scrollPaneActors.setViewportView(tableActors);
-    add(scrollPaneActors, "6, 6, fill, fill");
-
+    initComponents();
     initDataBindings();
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of an episode
-        if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
-            || (source.getClass() == TvShowEpisode.class && ACTORS.equals(property))) {
-          actorEventList.clear();
-          actorEventList.addAll(selectionModel.getSelectedTvShowEpisode().getActors());
-          if (actorEventList.size() > 0) {
-            tableActors.getSelectionModel().setSelectionInterval(0, 0);
-          }
-          else {
-            lblActorImage.setImageUrl("");
-          }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of an episode
+      if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
+          || (source.getClass() == TvShowEpisode.class && ACTORS.equals(property))) {
+        actorEventList.clear();
+        actorEventList.addAll(selectionModel.getSelectedTvShowEpisode().getActors());
+        if (actorEventList.size() > 0) {
+          tableActors.getSelectionModel().setSelectionInterval(0, 0);
+        }
+        else {
+          lblActorImage.setImageUrl("");
         }
       }
     };
@@ -147,23 +104,52 @@ public class TvShowEpisodeCastPanel extends JPanel {
     selectionModel.addPropertyChangeListener(propertyChangeListener);
 
     // selectionlistener for the selected actor
-    tableActors.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent arg0) {
-        if (!arg0.getValueIsAdjusting()) {
-          int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
-          if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-            TvShowActor actor = actorEventList.get(selectedRow);
-            lblActorImage.setImageUrl(actor.getThumb());
-          }
+    tableActors.getSelectionModel().addListSelectionListener(arg0 -> {
+      if (!arg0.getValueIsAdjusting()) {
+        int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
+        if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
+          TvShowActor actor = actorEventList.get(selectedRow);
+          lblActorImage.setImageUrl(actor.getThumbUrl());
         }
       }
     });
   }
 
-  /**
-   * Inits the data bindings.
-   */
+  private void initComponents() {
+    setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][200lp,grow][grow]"));
+    {
+      JLabel lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblDirectorT, Font.BOLD);
+      add(lblDirectorT, "cell 0 0,alignx right");
+
+      lblDirector = new JLabel("");
+      add(lblDirector, "cell 1 0 2 1");
+    }
+    {
+      JLabel lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblWriterT, Font.BOLD);
+      add(lblWriterT, "cell 0 1,alignx right");
+
+      lblWriter = new JLabel("");
+      add(lblWriter, "cell 1 1 2 1");
+    }
+    {
+      JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
+      add(lblActorsT, "cell 0 2,alignx right,aligny top");
+
+      tableActors = new TmmTable(actorTableModel);
+      JScrollPane scrollPaneActors = new JScrollPane(tableActors);
+      tableActors.configureScrollPane(scrollPaneActors);
+      scrollPaneActors.setViewportView(tableActors);
+      add(scrollPaneActors, "cell 1 2 1 2,grow");
+    }
+    {
+      lblActorImage = new ImageLabel();
+      add(lblActorImage, "cell 2 2,grow");
+    }
+  }
+
   protected void initDataBindings() {
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty.create("selectedTvShowEpisode.director");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");

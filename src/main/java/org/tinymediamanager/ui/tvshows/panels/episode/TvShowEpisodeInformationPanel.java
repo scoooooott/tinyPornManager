@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 import static org.tinymediamanager.core.Constants.SEASON_POSTER;
 import static org.tinymediamanager.core.Constants.THUMB;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
@@ -47,11 +46,7 @@ import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEpisodeInformationPanel.
@@ -63,8 +58,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
+
   /** UI components */
-  private JPanel                      panelTop;
   private StarRater                   panelRatingStars;
   private JLabel                      lblTvShowName;
   private JLabel                      lblRating;
@@ -75,14 +71,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   private JTextPane                   tpOverview;
   private MediaInformationLogosPanel  panelLogos;
   private JPanel                      panelDetails;
-
-  private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
-  private JPanel                      panelLeft;
   private JLabel                      lblSeasonPosterSize;
   private JLabel                      lblEpisodeThumbSize;
-  private JSeparator                  separator;
   private JLabel                      lblPlot;
-  private JSeparator                  separator_1;
 
   /**
    * Instantiates a new tv show information panel.
@@ -92,111 +83,8 @@ public class TvShowEpisodeInformationPanel extends JPanel {
    */
   public TvShowEpisodeInformationPanel(TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel) {
     this.tvShowEpisodeSelectionModel = tvShowEpisodeSelectionModel;
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("70dlu:grow"), FormSpecs.UNRELATED_GAP_COLSPEC,
-            ColumnSpec.decode("200dlu:grow(2)"), FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
-    panelLeft = new JPanel();
-    panelLeft.setLayout(new ColumnLayout());
-    add(panelLeft, "2, 2, fill, fill");
-
-    lblSeasonPoster = new ImageLabel(false, false, true);
-    lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
-    panelLeft.add(lblSeasonPoster);
-    lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
-    lblSeasonPoster.enableLightbox();
-
-    lblSeasonPosterSize = new JLabel(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
-    panelLeft.add(lblSeasonPosterSize);
-    panelLeft.add(Box.createVerticalStrut(20));
-
-    lblEpisodeThumb = new ImageLabel(false, false, true);
-    lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
-    panelLeft.add(lblEpisodeThumb);
-    lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
-    lblEpisodeThumb.enableLightbox();
-
-    lblEpisodeThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
-    panelLeft.add(lblEpisodeThumbSize);
-
-    panelTop = new JPanel();
-    panelTop.setBorder(null);
-    add(panelTop, "4, 2, fill, fill");
-    panelTop.setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            FormSpecs.DEFAULT_COLSPEC, },
-        new RowSpec[] { RowSpec.decode("fill:default"), FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, RowSpec.decode("top:50px:grow(2)"), }));
-
-    JPanel panelTvShowHeader = new JPanel();
-    panelTop.add(panelTvShowHeader, "2, 1, 3, 1, fill, top");
-    panelTvShowHeader.setBorder(null);
-    panelTvShowHeader.setLayout(new BorderLayout(0, 0));
-
-    JPanel panelMovieTitle = new JPanel();
-    panelTvShowHeader.add(panelMovieTitle, BorderLayout.NORTH);
-    panelMovieTitle.setLayout(new BorderLayout(0, 0));
-    lblTvShowName = new JLabel("");
-    panelMovieTitle.add(lblTvShowName);
-    TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
-
-    lblEpisodeTitle = new JLabel();
-    panelTop.add(lblEpisodeTitle, "2, 2");
-
-    separator = new JSeparator();
-    panelTop.add(separator, "2, 4, 3, 1");
-
-    panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
-    panelTop.add(panelDetails, "2, 6, 3, 1");
-
-    separator_1 = new JSeparator();
-    panelTop.add(separator_1, "2, 8");
-
-    JPanel panelRatingTagline = new JPanel();
-    panelTop.add(panelRatingTagline, "2, 10");
-    panelRatingTagline
-        .setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC, ColumnSpec.decode("default:grow"), },
-            new RowSpec[] { RowSpec.decode("24px"), }));
-
-    lblRating = new JLabel("");
-    panelRatingTagline.add(lblRating, "2, 1, left, center");
-
-    lblVoteCount = new JLabel("");
-    panelRatingTagline.add(lblVoteCount, "3, 1, left, center");
-
-    panelRatingStars = new StarRater(10, 1);
-    panelRatingTagline.add(panelRatingStars, "1, 1, left, top");
-    panelRatingStars.setEnabled(false);
-
-    panelTop.add(new JSeparator(), "2, 12, 3, 1");
-
-    panelLogos = new MediaInformationLogosPanel();
-    panelTop.add(panelLogos, "2, 14, 3, 1, left, default");
-
-    panelTop.add(new JSeparator(), "2, 16, 3, 1");
-
-    lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-    lblPlot.setFont(lblPlot.getFont().deriveFont(Font.BOLD));
-    panelTop.add(lblPlot, "2, 18");
-
-    JScrollPane scrollPaneOverview = new JScrollPane();
-    scrollPaneOverview.setBorder(null);
-    tpOverview = new JTextPane();
-    tpOverview.setOpaque(false);
-    tpOverview.setEditable(false);
-    scrollPaneOverview.setViewportView(tpOverview);
-
-    JPanel panelOverview = new JPanel();
-    panelTop.add(panelOverview, "2, 19, 3, 1, fill, fill");
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
-    panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
-
-    // beansbinding init
+    initComponents();
     initDataBindings();
 
     // manual coded binding
@@ -223,6 +111,93 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     };
 
     this.tvShowEpisodeSelectionModel.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 250]", "[grow]"));
+    {
+      JPanel panelLeft = new JPanel();
+      panelLeft.setLayout(new ColumnLayout());
+      add(panelLeft, "cell 0 0,grow");
+
+      lblSeasonPoster = new ImageLabel(false, false, true);
+      lblSeasonPoster.setDesiredAspectRatio(2 / 3.0f);
+      panelLeft.add(lblSeasonPoster);
+      lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
+      lblSeasonPoster.enableLightbox();
+
+      lblSeasonPosterSize = new JLabel(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
+      panelLeft.add(lblSeasonPosterSize);
+      panelLeft.add(Box.createVerticalStrut(20));
+
+      lblEpisodeThumb = new ImageLabel(false, false, true);
+      lblEpisodeThumb.setDesiredAspectRatio(16 / 9.0f);
+      panelLeft.add(lblEpisodeThumb);
+      lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
+      lblEpisodeThumb.enableLightbox();
+
+      lblEpisodeThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+      panelLeft.add(lblEpisodeThumbSize);
+    }
+    {
+      JPanel panelRight = new JPanel();
+      panelRight.setLayout(new MigLayout("", "[grow]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][]"));
+      add(panelRight, "cell 1 0,grow");
+
+      {
+        lblTvShowName = new JLabel("");
+        panelRight.add(lblTvShowName, "flowx,cell 0 0");
+        TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
+      }
+      {
+        lblEpisodeTitle = new JLabel();
+        panelRight.add(lblEpisodeTitle, "cell 0 1");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 2,growx");
+      }
+      {
+        panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
+        panelRight.add(panelDetails, "cell 0 3,growx");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 4,growx");
+      }
+      {
+        panelRatingStars = new StarRater(10, 1);
+        panelRight.add(panelRatingStars, "flowx,cell 0 5");
+        panelRatingStars.setEnabled(false);
+
+        lblVoteCount = new JLabel("");
+        panelRight.add(lblVoteCount, "cell 0 5");
+
+        lblRating = new JLabel("");
+        panelRight.add(lblRating, "cell 0 5");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 6,growx");
+      }
+      {
+        panelLogos = new MediaInformationLogosPanel();
+        panelRight.add(panelLogos, "cell 0 7");
+      }
+      {
+        panelRight.add(new JSeparator(), "cell 0 8,growx");
+      }
+      {
+        lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        lblPlot.setFont(lblPlot.getFont().deriveFont(Font.BOLD));
+        panelRight.add(lblPlot, "cell 0 9");
+
+        JScrollPane scrollPanePlot = new JScrollPane();
+        scrollPanePlot.setBorder(null);
+        tpOverview = new JTextPane();
+        tpOverview.setOpaque(false);
+        tpOverview.setEditable(false);
+        scrollPanePlot.setViewportView(tpOverview);
+        panelRight.add(scrollPanePlot, "cell 0 10,grow");
+      }
+    }
   }
 
   private void setSeasonPoster(TvShowEpisode tvShowEpisode) {

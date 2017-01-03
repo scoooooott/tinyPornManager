@@ -42,7 +42,6 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ColumnLayout;
-import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -241,14 +240,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
           finally {
             mediaFileEventList.getReadWriteLock().writeLock().unlock();
           }
-
-          try {
-            panelMediaFiles.adjustColumns();
-            TableColumnResizer.adjustColumnPreferredWidths(tableEpisodes, 6);
-          }
-          catch (Exception e) {
-          }
-
+          panelMediaFiles.adjustColumns();
         }
         if ((source.getClass() == TvShowSeason.class && POSTER.equals(property))) {
           TvShowSeason season = (TvShowSeason) source;

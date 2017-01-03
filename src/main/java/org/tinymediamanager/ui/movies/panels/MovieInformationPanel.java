@@ -73,6 +73,7 @@ public class MovieInformationPanel extends JPanel {
   private final ImageIcon             imageEmtpy       = new ImageIcon();
   private ImageIcon                   imageUnwatched;
 
+  /** UI components */
   private StarRater                   starRater;
   private JLabel                      lblMovieName;
   private JLabel                      lblRating;

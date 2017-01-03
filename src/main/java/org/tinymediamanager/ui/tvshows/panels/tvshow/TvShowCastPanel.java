@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.tvshows.panels.tvshow;
 import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -26,8 +25,6 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -37,11 +34,6 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -49,6 +41,7 @@ import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowCastPanel, to display the cast for this tv show.
@@ -78,45 +71,25 @@ public class TvShowCastPanel extends JPanel {
    */
   public TvShowCastPanel(TvShowSelectionModel model) {
     selectionModel = model;
-    actorEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<TvShowActor>(new BasicEventList<TvShowActor>(), GlazedLists.beanConnector(TvShowActor.class)));
-    actorTableModel = new DefaultEventTableModel<TvShowActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(TvShowActor.class)));
+    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.MIN_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100dlu"),
-            FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
-
-    JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
-    add(lblActorsT, "2, 2, right, top");
-
-    lblActorImage = new ImageLabel();
-    add(lblActorImage, "8, 2");
-
-    tableActors = new TmmTable(actorTableModel);
-    JScrollPane scrollPaneActors = new JScrollPane(tableActors);
-    tableActors.configureScrollPane(scrollPaneActors);
-    scrollPaneActors.setViewportView(tableActors);
-    add(scrollPaneActors, "6, 2, fill, fill");
+    initComponents();
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a tv show
-        if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
-            || (source.getClass() == TvShow.class && ACTORS.equals(property))) {
-          actorEventList.clear();
-          actorEventList.addAll(selectionModel.getSelectedTvShow().getActors());
-          if (actorEventList.size() > 0) {
-            tableActors.getSelectionModel().setSelectionInterval(0, 0);
-          }
-          else {
-            lblActorImage.setImageUrl("");
-          }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a tv show
+      if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
+          || (source.getClass() == TvShow.class && ACTORS.equals(property))) {
+        actorEventList.clear();
+        actorEventList.addAll(selectionModel.getSelectedTvShow().getActors());
+        if (actorEventList.size() > 0) {
+          tableActors.getSelectionModel().setSelectionInterval(0, 0);
+        }
+        else {
+          lblActorImage.setImageUrl("");
         }
       }
     };
@@ -124,44 +97,34 @@ public class TvShowCastPanel extends JPanel {
     selectionModel.addPropertyChangeListener(propertyChangeListener);
 
     // selectionlistener for the selected actor
-    tableActors.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent arg0) {
-        if (!arg0.getValueIsAdjusting()) {
-          int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
-          if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-            TvShowActor actor = actorEventList.get(selectedRow);
-            lblActorImage.setImageUrl(actor.getThumb());
-          }
+    tableActors.getSelectionModel().addListSelectionListener(arg0 -> {
+      if (!arg0.getValueIsAdjusting()) {
+        int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
+        if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
+          TvShowActor actor = actorEventList.get(selectedRow);
+          lblActorImage.setImageUrl(actor.getThumbUrl());
         }
       }
     });
   }
 
-  // /**
-  // * further initializations
-  // */
-  // void init() {
-  // if (tableActors.getModel().getRowCount() > 0) {
-  // tableActors.getSelectionModel().setSelectionInterval(0, 0);
-  // }
-  // else {
-  // lblActorImage.setImageUrl("");
-  // }
-  //
-  // // changes upon movie selection
-  // tableActors.getModel().addTableModelListener(new TableModelListener() {
-  // public void tableChanged(TableModelEvent e) {
-  // // change to the first actor on movie change
-  // if (tableActors.getModel().getRowCount() > 0) {
-  // tableActors.getSelectionModel().setSelectionInterval(0, 0);
-  // }
-  // else {
-  // lblActorImage.setImageUrl("");
-  // }
-  // }
-  // });
-  // }
+  private void initComponents() {
+    setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[200lp,grow][grow]"));
+    {
+      JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
+      add(lblActorsT, "cell 0 0,aligny top");
+
+      lblActorImage = new ImageLabel();
+      add(lblActorImage, "cell 2 0,grow");
+
+      tableActors = new TmmTable(actorTableModel);
+      JScrollPane scrollPaneActors = new JScrollPane(tableActors);
+      tableActors.configureScrollPane(scrollPaneActors);
+      scrollPaneActors.setViewportView(tableActors);
+      add(scrollPaneActors, "cell 1 0 1 2,grow");
+    }
+  }
 
   private static class ActorTableFormat implements AdvancedTableFormat<TvShowActor> {
     @Override

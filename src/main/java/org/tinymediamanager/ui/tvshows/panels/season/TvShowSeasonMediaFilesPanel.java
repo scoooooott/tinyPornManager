@@ -15,9 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.season;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
@@ -27,15 +26,11 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSeasonSelectionModel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * the class TvShowSeasonMediaFilesPanel. to display all episodes belonging to a season
@@ -43,53 +38,50 @@ import ca.odell.glazedlists.ObservableElementList;
  * @author Manuel Laggner
  */
 public class TvShowSeasonMediaFilesPanel extends JPanel {
-  private static final long serialVersionUID = -1895363438194617002L;
+  private static final long    serialVersionUID = -1895363438194617002L;
+
+  private EventList<MediaFile> mediaFileEventList;
+  private MediaFilesPanel      panelMediaFiles;
 
   public TvShowSeasonMediaFilesPanel(final TvShowSeasonSelectionModel selectionModel) {
-    final EventList<MediaFile> mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
-        GlazedLists.beanConnector(MediaFile.class));
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
 
-    setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC }));
-
-    final MediaFilesPanel panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "2, 2, fill, fill");
+    initComponents();
 
     // manual coded binding
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        if (source instanceof TvShowSeasonSelectionModel || (source instanceof TvShowSeason && (MEDIA_FILES.equals(property)))) {
-          TvShowSeason selectedSeason;
-          if (source instanceof TvShowSeasonSelectionModel) {
-            TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;
-            selectedSeason = model.getSelectedTvShowSeason();
-          }
-          else {
-            selectedSeason = (TvShowSeason) source;
-          }
-          try {
-            mediaFileEventList.getReadWriteLock().writeLock().lock();
-            mediaFileEventList.clear();
-            mediaFileEventList.addAll(selectedSeason.getMediaFiles());
-          }
-          catch (Exception e) {
-          }
-          finally {
-            mediaFileEventList.getReadWriteLock().writeLock().unlock();
-          }
-
-          try {
-            panelMediaFiles.adjustColumns();
-          }
-          catch (Exception e) {
-          }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      if (source instanceof TvShowSeasonSelectionModel || (source instanceof TvShowSeason && (MEDIA_FILES.equals(property)))) {
+        TvShowSeason selectedSeason;
+        if (source instanceof TvShowSeasonSelectionModel) {
+          TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;
+          selectedSeason = model.getSelectedTvShowSeason();
         }
+        else {
+          selectedSeason = (TvShowSeason) source;
+        }
+        try {
+          mediaFileEventList.getReadWriteLock().writeLock().lock();
+          mediaFileEventList.clear();
+          mediaFileEventList.addAll(selectedSeason.getMediaFiles());
+        }
+        catch (Exception ignored) {
+        }
+        finally {
+          mediaFileEventList.getReadWriteLock().writeLock().unlock();
+        }
+        panelMediaFiles.adjustColumns();
       }
     };
     selectionModel.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[grow]", "[grow]"));
+    {
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+      add(panelMediaFiles, "cell 0 0,grow");
+    }
   }
 }

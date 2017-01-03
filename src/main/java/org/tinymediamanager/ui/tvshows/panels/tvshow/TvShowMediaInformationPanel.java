@@ -44,15 +44,11 @@ import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowMediaInformationPanel.
@@ -77,30 +73,9 @@ public class TvShowMediaInformationPanel extends JPanel {
     this.selectionModel = model;
     mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, }));
+    initComponents();
+    initDataBindings();
 
-    JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-    add(lblDateAddedT, "2, 2");
-
-    lblDateAdded = new JLabel("");
-    add(lblDateAdded, "4, 2");
-
-    JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-    add(lblWatchedT, "6, 2");
-
-    cbWatched = new JCheckBox("");
-    cbWatched.setEnabled(false);
-    add(cbWatched, "8, 2");
-
-    JLabel lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblTvShowPathT, "2, 4");
-
-    lblTvShowPath = new LinkLabel("");
     lblTvShowPath.addActionListener(arg0 -> {
       if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
         // get the location from the label
@@ -118,14 +93,6 @@ public class TvShowMediaInformationPanel extends JPanel {
         }
       }
     });
-    lblTvShowPathT.setLabelFor(lblTvShowPath);
-    lblTvShowPathT.setLabelFor(lblTvShowPath);
-    add(lblTvShowPath, "4, 4, 5, 1");
-
-    panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "2, 6, 9, 1, fill, fill");
-
-    initDataBindings();
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
@@ -144,15 +111,41 @@ public class TvShowMediaInformationPanel extends JPanel {
         finally {
           mediaFileEventList.getReadWriteLock().writeLock().unlock();
         }
-        try {
-          panelMediaFiles.adjustColumns();
-        }
-        catch (Exception ignored) {
-        }
+        panelMediaFiles.adjustColumns();
       }
     };
 
     selectionModel.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[][80lp:n][43px][grow]", "[21px][14px][80lp,grow]"));
+    {
+      JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+      add(lblDateAddedT, "cell 0 0");
+
+      lblDateAdded = new JLabel("");
+      add(lblDateAdded, "cell 1 0");
+    }
+    {
+      JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      add(lblWatchedT, "cell 2 0");
+
+      cbWatched = new JCheckBox("");
+      cbWatched.setEnabled(false);
+      add(cbWatched, "cell 3 0");
+    }
+    {
+      JLabel lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      add(lblTvShowPathT, "cell 0 1");
+
+      lblTvShowPath = new LinkLabel("");
+      add(lblTvShowPath, "cell 1 1 3 1");
+    }
+    {
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+      add(panelMediaFiles, "cell 0 2 4 1,grow");
+    }
   }
 
   protected void initDataBindings() {

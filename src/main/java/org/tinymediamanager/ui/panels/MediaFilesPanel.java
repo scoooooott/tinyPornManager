@@ -55,37 +55,46 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MediaFilesPanel extends JPanel {
-  private static final long                 serialVersionUID    = -4929581173434859034L;
-  private static final Logger               LOGGER              = LoggerFactory.getLogger(MediaFilesPanel.class);
-  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long                 serialVersionUID = -4929581173434859034L;
+  private static final Logger               LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private JScrollPane                       scrollPaneFiles;
   private TmmTable                          tableFiles;
 
   private EventList<MediaFile>              mediaFileEventList;
-  private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
+  private DefaultEventTableModel<MediaFile> mediaFileTableModel;
 
   public MediaFilesPanel(EventList<MediaFile> mediaFiles) {
     this.mediaFileEventList = mediaFiles;
-
     mediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
-    tableFiles = new TmmTable(mediaFileTableModel);
-    tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-    LinkListener linkListener = new LinkListener();
-    tableFiles.addMouseListener(linkListener);
-    tableFiles.addMouseMotionListener(linkListener);
+    initComponents();
+  }
+
+  private void initComponents() {
     setLayout(new MigLayout("insets 0", "[450lp,grow]", "[300lp,grow]"));
+    {
+      tableFiles = new TmmTable(mediaFileTableModel);
+      tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-    scrollPaneFiles = new JScrollPane(tableFiles);
-    tableFiles.configureScrollPane(scrollPaneFiles);
-    add(scrollPaneFiles, "cell 0 0,grow");
+      LinkListener linkListener = new LinkListener();
+      tableFiles.addMouseListener(linkListener);
+      tableFiles.addMouseMotionListener(linkListener);
 
-    scrollPaneFiles.setViewportView(tableFiles);
+      JScrollPane scrollPaneFiles = new JScrollPane(tableFiles);
+      tableFiles.configureScrollPane(scrollPaneFiles);
+      add(scrollPaneFiles, "cell 0 0,grow");
+
+      scrollPaneFiles.setViewportView(tableFiles);
+    }
   }
 
   public void adjustColumns() {
-    TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
+    try {
+      TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
+    }
+    catch (Exception ignored) {
+    }
   }
 
   private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {

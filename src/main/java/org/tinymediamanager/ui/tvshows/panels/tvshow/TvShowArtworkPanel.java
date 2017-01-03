@@ -15,9 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.panels.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +28,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.panels.ImagePanel;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class TvShowArtworkPanel. To display all artwork from a TV show in the UI
@@ -40,37 +36,42 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowArtworkPanel extends JPanel {
-  private static final long serialVersionUID = -8105505340634141604L;
+  private static final long     serialVersionUID = -8105505340634141604L;
+
+  private final List<MediaFile> mediaFiles;
+  private ImagePanel            imagePanel;
 
   public TvShowArtworkPanel(final TvShowSelectionModel selectionModel) {
-    setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC, }));
-    final List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
-    final ImagePanel imagePanel = new ImagePanel(mediaFiles);
+    mediaFiles = new ArrayList<>();
 
-    imagePanel.setMaxWidth(500);
-    imagePanel.setMaxHeight(200);
-    add(imagePanel, "2, 2");
+    initComponents();
 
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        if (source instanceof TvShowSelectionModel || (source instanceof TvShow && MEDIA_FILES.equals(property))) {
-          synchronized (mediaFiles) {
-            mediaFiles.clear();
-            for (MediaFile mediafile : new ArrayList<MediaFile>(selectionModel.getSelectedTvShow().getMediaFiles())) {
-              if (mediafile.isGraphic()) {
-                mediaFiles.add(mediafile);
-              }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      if (source instanceof TvShowSelectionModel || (source instanceof TvShow && MEDIA_FILES.equals(property))) {
+        synchronized (mediaFiles) {
+          mediaFiles.clear();
+          for (MediaFile mediafile : new ArrayList<>(selectionModel.getSelectedTvShow().getMediaFiles())) {
+            if (mediafile.isGraphic()) {
+              mediaFiles.add(mediafile);
             }
-            imagePanel.rebuildPanel();
           }
+          imagePanel.rebuildPanel();
         }
       }
     };
     selectionModel.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("", "[grow]", "[grow]"));
+    {
+      imagePanel = new ImagePanel(mediaFiles);
+
+      imagePanel.setMaxWidth(500);
+      imagePanel.setMaxHeight(200);
+      add(imagePanel, "cell 0 0,grow");
+    }
   }
 }

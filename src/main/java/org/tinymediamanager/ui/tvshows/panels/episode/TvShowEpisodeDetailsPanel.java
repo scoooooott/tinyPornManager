@@ -16,14 +16,11 @@
 package org.tinymediamanager.ui.tvshows.panels.episode;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -34,22 +31,16 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEpisodeDetailsPanel.
@@ -69,7 +60,6 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   private JLabel                            lblSeason;
   private JLabel                            lblEpisode;
   private JLabel                            lblAired;
-  private JButton                           btnPlay;
   private JLabel                            lblTags;
   private JLabel                            lblDateAdded;
 
@@ -81,95 +71,81 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
    */
   public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, ColumnSpec.decode("25px"),
-            ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-    JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
-    add(lblSeasonT, "2, 1");
-
-    lblSeason = new JLabel("");
-    TmmFontHelper.changeFont(lblSeason, 1.166);
-    add(lblSeason, "4, 1");
-
-    btnPlay = new JButton("");
-    btnPlay.setIcon(IconManager.PLAY);
-    btnPlay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MediaFile mf = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
-        try {
-          TmmUIHelper.openFile(mf.getFileAsPath());
-        }
-        catch (Exception e) {
-          LOGGER.error("open file", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
-        }
-      }
-    });
-    add(btnPlay, "6, 1, 1, 4");
-
-    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-    TmmFontHelper.changeFont(lblEpisodeT, 1.166, Font.BOLD);
-    add(lblEpisodeT, "2, 2");
-
-    lblEpisode = new JLabel("");
-    TmmFontHelper.changeFont(lblEpisode, 1.166);
-    add(lblEpisode, "4, 2");
-
-    JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-    lblAiredT.setFont(lblAiredT.getFont().deriveFont(Font.BOLD));
-    add(lblAiredT, "2, 4");
-
-    lblAired = new JLabel("");
-    add(lblAired, "4, 4");
-
-    JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-    lblTagsT.setFont(lblTagsT.getFont().deriveFont(Font.BOLD));
-    add(lblTagsT, "2, 6");
-
-    lblTags = new JLabel("");
-    add(lblTags, "4, 6");
-
-    JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-    lblDateAddedT.setFont(lblDateAddedT.getFont().deriveFont(Font.BOLD));
-    add(lblDateAddedT, "2, 8");
-
-    lblDateAdded = new JLabel("");
-    add(lblDateAdded, "4, 8");
-
-    JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    lblPathT.setFont(lblPathT.getFont().deriveFont(Font.BOLD));
-    add(lblPathT, "2, 10");
-
-    lblPath = new LinkLabel("");
-    lblPathT.setLabelFor(lblPath);
-    lblPath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblPath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblPath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
-          }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
-        }
-      }
-    });
-    add(lblPath, "2, 12, 5, 1");
+    initComponents();
     initDataBindings();
+
+    lblPath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+        // get the location from the label
+        Path path = Paths.get(lblPath.getNormalText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
+          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
+        }
+      }
+    });
+  }
+
+  private void initComponents() {
+    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    {
+      JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
+      add(lblSeasonT, "cell 0 0");
+
+      lblSeason = new JLabel("");
+      TmmFontHelper.changeFont(lblSeason, 1.166);
+      add(lblSeason, "cell 2 0");
+    }
+    {
+      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblEpisodeT, 1.166, Font.BOLD);
+      add(lblEpisodeT, "cell 0 1");
+
+      lblEpisode = new JLabel("");
+      TmmFontHelper.changeFont(lblEpisode, 1.166);
+      add(lblEpisode, "cell 2 1");
+    }
+    {
+      JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
+      lblAiredT.setFont(lblAiredT.getFont().deriveFont(Font.BOLD));
+      add(lblAiredT, "cell 0 2");
+
+      lblAired = new JLabel("");
+      add(lblAired, "cell 2 2");
+    }
+    {
+      JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      lblTagsT.setFont(lblTagsT.getFont().deriveFont(Font.BOLD));
+      add(lblTagsT, "cell 0 3");
+
+      lblTags = new JLabel("");
+      add(lblTags, "cell 2 3");
+    }
+    {
+      JLabel lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+      lblDateAddedT.setFont(lblDateAddedT.getFont().deriveFont(Font.BOLD));
+      add(lblDateAddedT, "cell 0 4");
+
+      lblDateAdded = new JLabel("");
+      add(lblDateAdded, "cell 2 4");
+    }
+    {
+      JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      lblPathT.setFont(lblPathT.getFont().deriveFont(Font.BOLD));
+      add(lblPathT, "cell 0 5");
+
+      lblPath = new LinkLabel("");
+      add(lblPath, "cell 2 5,growx");
+    }
   }
 
   protected void initDataBindings() {

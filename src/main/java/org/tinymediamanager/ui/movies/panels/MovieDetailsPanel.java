@@ -55,6 +55,7 @@ public class MovieDetailsPanel extends JPanel {
 
   private MovieSelectionModel         movieSelectionModel;
 
+  /** UI components */
   private JLabel                      lblOriginalTitle;
   private JLabel                      lblProduction;
   private JLabel                      lblTags;

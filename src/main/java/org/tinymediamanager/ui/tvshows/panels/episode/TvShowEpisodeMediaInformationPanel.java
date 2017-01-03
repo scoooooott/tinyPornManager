@@ -19,6 +19,7 @@ package org.tinymediamanager.ui.tvshows.panels.episode;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
@@ -29,25 +30,23 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class TvShowEpisodeMediaInformationPanel.
@@ -79,6 +78,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
   public TvShowEpisodeMediaInformationPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
     mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(MediaFile.class));
+
     initComponents();
 
     // install the propertychangelistener
@@ -100,99 +100,100 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
           mediaFileEventList.clear();
           mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
         finally {
           mediaFileEventList.getReadWriteLock().writeLock().unlock();
         }
-        try {
-          panelMediaFiles.adjustColumns();
-        }
-        catch (Exception e) {
-        }
+        panelMediaFiles.adjustColumns();
       }
     };
     selectionModel.addPropertyChangeListener(propertyChangeListener);
-
   }
 
   private void initComponents() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("25px"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("100px:grow"), FormSpecs.UNRELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("50dlu:grow"),
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("", "[][][][][][][grow]", "[][][][][][shrink 0][80lp,grow]"));
+    {
+      JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblRuntimeT, Font.BOLD);
+      add(lblRuntimeT, "cell 0 0");
 
-    JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    add(lblRuntimeT, "2, 2");
+      lblRuntime = new JLabel("");
+      add(lblRuntime, "cell 2 0");
+    }
+    {
+      JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblWatchedT, Font.BOLD);
+      add(lblWatchedT, "cell 4 0");
 
-    lblRuntime = new JLabel("");
-    add(lblRuntime, "6, 2");
+      chckbxWatched = new JCheckBox("");
+      add(chckbxWatched, "cell 6 0");
+    }
+    {
+      lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblSourceT, Font.BOLD);
+      add(lblSourceT, "cell 0 1");
 
-    JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-    add(lblWatchedT, "10, 2");
+      lblSource = new JLabel("");
+      add(lblSource, "cell 2 1 3 1");
+    }
+    {
+      JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblVideoT, Font.BOLD);
+      add(lblVideoT, "cell 0 2");
 
-    chckbxWatched = new JCheckBox("");
-    add(chckbxWatched, "14, 2");
+      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      add(lblEpisodeT, "cell 2 2");
 
-    JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
-    add(lblVideoT, "2, 4");
+      panelVideoStreamDetails = new JPanel();
+      panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
+      add(panelVideoStreamDetails, "cell 4 2 3 1,growx");
 
-    JLabel lblMovie = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-    add(lblMovie, "6, 4");
+      lblVideoCodec = new JLabel("");
+      panelVideoStreamDetails.add(lblVideoCodec);
 
-    panelVideoStreamDetails = new JPanel();
-    panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
-    add(panelVideoStreamDetails, "10, 4, 7, 1, fill, top");
+      lblVideoResolution = new JLabel("");
+      panelVideoStreamDetails.add(lblVideoResolution);
 
-    lblVideoCodec = new JLabel("");
-    panelVideoStreamDetails.add(lblVideoCodec);
+      lblVideoBitrate = new JLabel("");
+      panelVideoStreamDetails.add(lblVideoBitrate);
 
-    lblVideoResolution = new JLabel("");
-    panelVideoStreamDetails.add(lblVideoResolution);
+      // to create the same spacing as in audio
+      panelVideoStreamDetails.add(new JLabel(""));
+    }
+    {
+      JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblAudioT, Font.BOLD);
+      add(lblAudioT, "cell 0 3");
 
-    lblVideoBitrate = new JLabel("");
-    panelVideoStreamDetails.add(lblVideoBitrate);
+      panelAudioStreamT = new JPanel();
+      panelAudioStreamT.setLayout(new GridLayout(0, 1));
+      add(panelAudioStreamT, "cell 2 3");
 
-    // to create the same spacing as in audio
-    panelVideoStreamDetails.add(new JLabel(""));
+      panelAudioStreamDetails = new JPanel();
+      panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
+      add(panelAudioStreamDetails, "cell 4 3 3 1");
+    }
+    {
+      JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblSubtitle, Font.BOLD);
+      add(lblSubtitle, "cell 0 4");
 
-    lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-    add(lblSourceT, "6, 6");
+      panelSubtitleT = new JPanel();
+      panelSubtitleT.setLayout(new GridLayout(0, 1));
+      add(panelSubtitleT, "cell 2 4");
 
-    lblSource = new JLabel("");
-    add(lblSource, "10, 6");
-
-    JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-    add(lblAudioT, "2, 8, default, top");
-
-    panelAudioStreamT = new JPanel();
-    panelAudioStreamT.setLayout(new GridLayout(0, 1));
-    add(panelAudioStreamT, "6, 8, left, top");
-
-    panelAudioStreamDetails = new JPanel();
-    panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-    add(panelAudioStreamDetails, "10, 8, 7, 1, fill, top");
-
-    JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-    add(lblSubtitle, "2, 10, default, top");
-
-    panelSubtitleT = new JPanel();
-    panelSubtitleT.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleT, "6, 10, left, top");
-
-    panelSubtitleDetails = new JPanel();
-    panelSubtitleDetails.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleDetails, "10, 10, 5, 1, left, top");
-
+      panelSubtitleDetails = new JPanel();
+      panelSubtitleDetails.setLayout(new GridLayout(0, 1));
+      add(panelSubtitleDetails, "cell 4 4");
+    }
+    {
+      JSeparator separator = new JSeparator();
+      add(separator, "cell 0 5 7 1,growx");
+    }
     {
       panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-      add(panelMediaFiles, "2, 12, 15, 1, fill, fill");
+      add(panelMediaFiles, "cell 0 6 7 1,grow");
     }
   }
 
