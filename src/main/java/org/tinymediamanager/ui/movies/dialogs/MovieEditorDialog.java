@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
@@ -33,9 +35,11 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -45,6 +49,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
@@ -100,6 +105,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
 
 /**
  * The Class MovieEditor.
@@ -142,16 +148,18 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                                                tfWriter;
   private JSpinner                                                  spRuntime;
   private JTextPane                                                 tfProductionCompanies;
-  private JList                                                     listGenres;
-  private JComboBox<MediaGenres>                                    cbGenres;
+  private JList<MediaGenres>                                        listGenres;
+  private AutocompleteComboBox<MediaGenres>                         cbGenres;
+  private AutoCompleteSupport<MediaGenres>                          cbGenresAutoCompleteSupport;
   private JSpinner                                                  spRating;
   private JComboBox                                                 cbCertification;
   private JCheckBox                                                 cbWatched;
   private JTextPane                                                 tpTagline;
   private JTable                                                    tableTrailer;
   private JTable                                                    tableProducers;
-  private JComboBox<String>                                         cbTags;
-  private JList                                                     listTags;
+  private AutocompleteComboBox<String>                              cbTags;
+  private AutoCompleteSupport<String>                               cbTagsAutoCompleteSupport;
+  private JList<String>                                             listTags;
   private JSpinner                                                  spDateAdded;
   private JComboBox                                                 cbMovieSet;
   private JTextField                                                tfSorttitle;
@@ -659,11 +667,19 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(btnRemoveTag, "6, 18, right, top");
       }
       {
-        cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        cbGenres = new AutocompleteComboBox<MediaGenres>(MediaGenres.values());
+        cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
+        InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+        cbGenres.getActionMap().put(enterAction, new AddGenreAction());
         details2Panel.add(cbGenres, "4, 20");
       }
       {
-        cbTags = new AutocompleteComboBox(movieList.getTagsInMovies());
+        cbTags = new AutocompleteComboBox<String>(movieList.getTagsInMovies());
+        cbTagsAutoCompleteSupport = cbTags.getAutoCompleteSupport();
+        InputMap im = cbTags.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+        cbTags.getActionMap().put(enterAction, new AddTagAction());
         details2Panel.add(cbTags, "8, 20");
       }
 
@@ -1280,6 +1296,20 @@ public class MovieEditorDialog extends TmmDialog {
       MediaGenres newGenre = null;
       Object item = cbGenres.getSelectedItem();
 
+      // check, if text is selected (from auto completion), in this case we just
+      // remove the selection
+      Component editorComponent = cbGenres.getEditor().getEditorComponent();
+      if (editorComponent instanceof JTextField) {
+        JTextField tf = (JTextField) editorComponent;
+        String selectedText = tf.getSelectedText();
+        if (selectedText != null) {
+          tf.setSelectionStart(0);
+          tf.setSelectionEnd(0);
+          tf.setCaretPosition(tf.getText().length());
+          return;
+        }
+      }
+
       // genre
       if (item instanceof MediaGenres) {
         newGenre = (MediaGenres) item;
@@ -1293,6 +1323,13 @@ public class MovieEditorDialog extends TmmDialog {
       // add genre if it is not already in the list
       if (newGenre != null && !genres.contains(newGenre)) {
         genres.add(newGenre);
+
+        // set text combobox text input to ""
+        if (editorComponent instanceof JTextField) {
+          cbGenresAutoCompleteSupport.setFirstItem(null);
+          cbGenres.setSelectedIndex(0);
+          cbGenresAutoCompleteSupport.removeFirstItem();
+        }
       }
     }
   }
@@ -1306,10 +1343,9 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
-      // remove genre
-      if (newGenre != null) {
-        genres.remove(newGenre);
+      List<MediaGenres> selectedGenres = (List<MediaGenres>) listGenres.getSelectedValuesList();
+      for (MediaGenres genre : selectedGenres) {
+        genres.remove(genre);
       }
     }
   }
@@ -1370,18 +1406,28 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       String newTag = (String) cbTags.getSelectedItem();
-      if (StringUtils.isBlank(newTag)) {
-        return;
-      }
-
-      boolean tagFound = false;
 
       // do not continue with empty tags
       if (StringUtils.isBlank(newTag)) {
         return;
       }
 
+      // check, if text is selected (from auto completion), in this case we just
+      // remove the selection
+      Component editorComponent = cbTags.getEditor().getEditorComponent();
+      if (editorComponent instanceof JTextField) {
+        JTextField tf = (JTextField) editorComponent;
+        String selectedText = tf.getSelectedText();
+        if (selectedText != null) {
+          tf.setSelectionStart(0);
+          tf.setSelectionEnd(0);
+          tf.setCaretPosition(tf.getText().length());
+          return;
+        }
+      }
+
       // search if this tag already has been added
+      boolean tagFound = false;
       for (String tag : tags) {
         if (tag.equals(newTag)) {
           tagFound = true;
@@ -1392,6 +1438,13 @@ public class MovieEditorDialog extends TmmDialog {
       // add tag
       if (!tagFound) {
         tags.add(newTag);
+
+        // set text combobox text input to ""
+        if (editorComponent instanceof JTextField) {
+          cbTagsAutoCompleteSupport.setFirstItem("");
+          cbTags.setSelectedIndex(0);
+          cbTagsAutoCompleteSupport.removeFirstItem();
+        }
       }
     }
   }
@@ -1405,8 +1458,10 @@ public class MovieEditorDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      String tag = (String) listTags.getSelectedValue();
-      tags.remove(tag);
+      List<String> selectedTags = listTags.getSelectedValuesList();
+      for (String tag : selectedTags) {
+        tags.remove(tag);
+      }
     }
   }
 

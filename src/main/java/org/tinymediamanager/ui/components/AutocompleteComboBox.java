@@ -30,9 +30,10 @@ import ca.odell.glazedlists.swing.AutoCompleteSupport;
  * @author Manuel Laggner
  */
 public class AutocompleteComboBox<E> extends JComboBox<E> {// implements JComboBox.KeySelectionManager {
-  private static final long serialVersionUID = 6366300597464784607L;
+  private static final long      serialVersionUID = 6366300597464784607L;
 
-  private EventList<E>      items;
+  private EventList<E>           items;
+  private AutoCompleteSupport<E> autoCompleteSupport;
 
   public AutocompleteComboBox(Collection<E> items) {
     super();
@@ -49,6 +50,10 @@ public class AutocompleteComboBox<E> extends JComboBox<E> {// implements JComboB
 
   private void init() {
     setEditable(true);
-    AutoCompleteSupport.install(this, items);
+    this.autoCompleteSupport = AutoCompleteSupport.install(this, items);
+  }
+
+  public AutoCompleteSupport<E> getAutoCompleteSupport() {
+    return autoCompleteSupport;
   }
 }
