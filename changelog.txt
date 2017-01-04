@@ -1,6 +1,7 @@
 Version 2.9.2
 =======================
 + added shortcut (CTRL - F) to jump to the search field (thx @hampelratte)
++ improved user interaction for tags and genres (thx @hampelratte)
 
 
 Version 2.9.1
