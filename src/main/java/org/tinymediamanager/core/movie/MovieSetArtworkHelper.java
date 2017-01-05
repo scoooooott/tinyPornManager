@@ -407,13 +407,15 @@ public class MovieSetArtworkHelper {
         byte[] bytes = IOUtils.toByteArray(is);
         is.close();
 
+        String extension = FilenameUtils.getExtension(urlToArtwork);
+
         // and then write it to the desired files
         movieSet.removeAllMediaFiles(type);
         if (writeToArtworkFolder) {
-          writeImageToArtworkFolder(bytes);
+          writeImageToArtworkFolder(bytes, extension);
         }
         if (writeToMovieFolder) {
-          writeImageToMovieFolders(bytes);
+          writeImageToMovieFolders(bytes, extension);
         }
         if (!writeToArtworkFolder && !writeToMovieFolder) {
           // at least cache it
@@ -435,7 +437,7 @@ public class MovieSetArtworkHelper {
       }
     }
 
-    private void writeImageToArtworkFolder(byte[] bytes) {
+    private void writeImageToArtworkFolder(byte[] bytes, String extension) {
       Path artworkFolder = Paths.get(this.artworkFolder);
 
       // check if folder exists
@@ -450,23 +452,35 @@ public class MovieSetArtworkHelper {
 
       // write files
       try {
-        String providedFiletype = FilenameUtils.getExtension(urlToArtwork);
-        writeImage(bytes, artworkFolder
-            .resolve(
-                MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-" + type.name().toLowerCase(Locale.ROOT) + "." + providedFiletype));
+        String filename = MovieRenamer.replaceInvalidCharacters(movieSet.getTitle()) + "-";
+        // we are lucky and have chosen our enums wisely - except the discart :(
+        if (type == MediaFileType.DISCART) {
+          filename += "disc" + extension;
+        }
+        else {
+          filename += type.name().toLowerCase(Locale.ROOT) + "." + extension;
+        }
+        writeImage(bytes, artworkFolder.resolve(filename));
       }
       catch (Exception e) {
         LOGGER.warn("could not write file", e);
       }
     }
 
-    private void writeImageToMovieFolders(byte[] bytes) {
+    private void writeImageToMovieFolders(byte[] bytes, String extension) {
       // check for empty strings or movies
       if (movies.isEmpty()) {
         return;
       }
 
-      String filename = "movieset-" + type.name().toLowerCase(Locale.ROOT) + ".jpg";
+      String filename = "movieset-";
+      // we are lucky and have chosen our enums wisely - except the discart :(
+      if (type == MediaFileType.DISCART) {
+        filename += "disc." + extension;
+      }
+      else {
+        filename += type.name().toLowerCase(Locale.ROOT) + "." + extension;
+      }
 
       // write image for all movies
       for (Movie movie : movies) {
