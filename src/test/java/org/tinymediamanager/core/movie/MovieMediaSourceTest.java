@@ -13,7 +13,10 @@ public class MovieMediaSourceTest {
     Assert.assertEquals(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.BDRip.x264"));
     Assert.assertEquals(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.BRRip.x264"));
     Assert.assertEquals(MediaSource.BLURAY, MediaSource.parseMediaSource("/media/movies/Night.on.Earth.1991.German.Subbed.BDRip.x264"));
-    Assert.assertEquals(MediaSource.BLURAY, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.HDRIP.x264"));
+
+    // hdrip
+    Assert.assertEquals(MediaSource.HDRIP, MediaSource.parseMediaSource("Night.on.Earth.1991.German.Subbed.HDRIP.x264"));
+    Assert.assertEquals(MediaSource.HDRIP, MediaSource.parseMediaSource("Arsenal.2017.HDRip.XviD.AC3.avi"));
 
     // dvd/dvdrip
     Assert.assertEquals(MediaSource.DVD, MediaSource.parseMediaSource("DrugStore.Cowboy.1989.German.AC3.DVDRiP.x264"));
