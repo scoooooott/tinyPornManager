@@ -765,14 +765,14 @@ public class MovieSettings extends AbstractSettings {
     return subtitleScrapers;
   }
 
-  public void addMovieSkipFolder(String newValue) {
+  public void addSkipFolder(String newValue) {
     if (!skipFolders.contains(newValue)) {
       skipFolders.add(newValue);
       firePropertyChange(SKIP_FOLDERS, null, skipFolders);
     }
   }
 
-  public void removeMovieSkipFolder(String newValue) {
+  public void removeSkipFolder(String newValue) {
     if (skipFolders.contains(newValue)) {
       skipFolders.remove(newValue);
       firePropertyChange(SKIP_FOLDERS, null, skipFolders);

@@ -18,15 +18,12 @@ package org.tinymediamanager.ui.movies.settings;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ItemListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -35,17 +32,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -60,37 +53,26 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieDatasourceSettingsPanel extends JPanel {
-  private static final long                    serialVersionUID = -7580437046944123496L;
+  private static final long           serialVersionUID = -7580437046944123496L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSettings                        settings         = MovieModuleManager.SETTINGS;
-  private JComboBox<MovieConnectors>           cbNfoFormat;
-  private JCheckBox                            cbMovieNfoFilename1;
-  private JCheckBox                            cbMovieNfoFilename2;
-  private JCheckBox                            cbMovieNfoFilename3;
-  private JTextField                           tfAddBadword;
-  private JList<String>                        listBadWords;
-  private JList<String>                        listDataSources;
-  private JList<String>                        listIgnore;
-  private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
-  private JButton                              btnRemoveDatasource;
-  private JButton                              btnAddDatasource;
-  private JButton                              btnAddIgnore;
-  private JButton                              btnRemoveIgnore;
-  private JButton                              btnRemoveBadWord;
-  private JButton                              btnAddBadWord;
-
-  private ItemListener                         checkBoxListener;
-  private ItemListener                         comboBoxListener;
+  private MovieSettings               settings         = MovieModuleManager.SETTINGS;
+  private JTextField                  tfAddBadword;
+  private JList<String>               listBadWords;
+  private JList<String>               listDataSources;
+  private JList<String>               listIgnore;
+  private JButton                     btnRemoveDatasource;
+  private JButton                     btnAddDatasource;
+  private JButton                     btnAddIgnore;
+  private JButton                     btnRemoveIgnore;
+  private JButton                     btnRemoveBadWord;
+  private JButton                     btnAddBadWord;
 
   /**
    * Instantiates a new movie settings panel.
    */
   public MovieDatasourceSettingsPanel() {
-    checkBoxListener = e -> checkChanges();
-    comboBoxListener = e -> checkChanges();
-
     // UI initializations
     initComponents();
     initDataBindings();
@@ -122,7 +104,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
     btnAddIgnore.addActionListener(e -> {
       Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
-        settings.addMovieSkipFolder(file.toAbsolutePath().toString());
+        settings.addSkipFolder(file.toAbsolutePath().toString());
       }
     });
 
@@ -130,7 +112,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       int row = listIgnore.getSelectedIndex();
       if (row != -1) { // nothing selected
         String ingore = settings.getSkipFolders().get(row);
-        settings.removeMovieSkipFolder(ingore);
+        settings.removeSkipFolder(ingore);
       }
     });
 
@@ -148,85 +130,6 @@ public class MovieDatasourceSettingsPanel extends JPanel {
         MovieModuleManager.SETTINGS.removeBadWord(badWord);
       }
     });
-
-    // set default certification style when changing NFO style
-    cbNfoFormat.addItemListener(e -> {
-      if (cbNfoFormat.getSelectedItem() == MovieConnectors.MP) {
-        for (int i = 0; i < cbCertificationStyle.getItemCount(); i++) {
-          CertificationStyleWrapper wrapper = cbCertificationStyle.getItemAt(i);
-          if (wrapper.style == CertificationStyle.TECHNICAL) {
-            cbCertificationStyle.setSelectedItem(wrapper);
-            break;
-          }
-        }
-      }
-      else if (cbNfoFormat.getSelectedItem() == MovieConnectors.XBMC) {
-        for (int i = 0; i < cbCertificationStyle.getItemCount(); i++) {
-          CertificationStyleWrapper wrapper = cbCertificationStyle.getItemAt(i);
-          if (wrapper.style == CertificationStyle.LARGE) {
-            cbCertificationStyle.setSelectedItem(wrapper);
-            break;
-          }
-        }
-      }
-    });
-
-    // implement checkBoxListener for preset events
-    settings.addPropertyChangeListener(evt -> {
-      if ("preset".equals(evt.getPropertyName())) {
-        buildCheckBoxes();
-        buildComboBoxes();
-      }
-    });
-
-    buildCheckBoxes();
-    buildComboBoxes();
-  }
-
-  private void buildCheckBoxes() {
-    cbMovieNfoFilename1.removeItemListener(checkBoxListener);
-    cbMovieNfoFilename2.removeItemListener(checkBoxListener);
-    cbMovieNfoFilename3.removeItemListener(checkBoxListener);
-    clearSelection(cbMovieNfoFilename1, cbMovieNfoFilename2, cbMovieNfoFilename3);
-
-    // NFO filenames
-    List<MovieNfoNaming> movieNfoFilenames = settings.getNfoFilenames();
-    if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
-      cbMovieNfoFilename1.setSelected(true);
-    }
-    if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
-      cbMovieNfoFilename2.setSelected(true);
-    }
-    if (movieNfoFilenames.contains(MovieNfoNaming.DISC_NFO)) {
-      cbMovieNfoFilename3.setSelected(true);
-    }
-
-    cbMovieNfoFilename1.addItemListener(checkBoxListener);
-    cbMovieNfoFilename2.addItemListener(checkBoxListener);
-    cbMovieNfoFilename3.addItemListener(checkBoxListener);
-  }
-
-  private void clearSelection(JCheckBox... checkBoxes) {
-    for (JCheckBox checkBox : checkBoxes) {
-      checkBox.setSelected(false);
-    }
-  }
-
-  private void buildComboBoxes() {
-    cbCertificationStyle.removeItemListener(comboBoxListener);
-    cbCertificationStyle.removeAllItems();
-
-    // certification examples
-    for (CertificationStyle style : CertificationStyle.values()) {
-      CertificationStyleWrapper wrapper = new CertificationStyleWrapper();
-      wrapper.style = style;
-      cbCertificationStyle.addItem(wrapper);
-      if (style == settings.getCertificationStyle()) {
-        cbCertificationStyle.setSelectedItem(wrapper);
-      }
-    }
-
-    cbCertificationStyle.addItemListener(comboBoxListener);
   }
 
   private void initComponents() {
@@ -319,63 +222,6 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       btnAddBadWord.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
       btnAddBadWord.setMargin(new Insets(2, 2, 2, 2));
     }
-    {
-      JLabel lblNfoT = new JLabel(BUNDLE.getString("Settings.nfo")); //$NON-NLS-1$
-      TmmFontHelper.changeFont(lblNfoT, 1.16667, Font.BOLD);
-      add(lblNfoT, "cell 0 6 2 1");
-    }
-    {
-
-      JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-      add(lblNfoFormat, "flowx,cell 1 7");
-      {
-        JPanel panelNfoFormat = new JPanel();
-        add(panelNfoFormat, "cell 1 8,grow");
-        panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][][]"));
-
-        JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
-        panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
-
-        cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename1, "cell 1 0");
-
-        cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
-
-        cbMovieNfoFilename3 = new JCheckBox(BUNDLE.getString("Settings.nfo.discstyle")); //$NON-NLS-1$
-        panelNfoFormat.add(cbMovieNfoFilename3, "cell 1 2");
-      }
-
-      JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
-      add(lblCertificationStyle, "flowx,cell 1 9 3 1");
-
-      cbCertificationStyle = new JComboBox();
-      add(cbCertificationStyle, "cell 1 9 3 1");
-    }
-    cbNfoFormat = new JComboBox(MovieConnectors.values());
-    add(cbNfoFormat, "cell 1 7 3 1");
-  }
-
-  /**
-   * check changes of checkboxes
-   */
-  private void checkChanges() {
-    // set NFO filenames
-    settings.clearNfoFilenames();
-    if (cbMovieNfoFilename1.isSelected()) {
-      settings.addNfoFilename(MovieNfoNaming.FILENAME_NFO);
-    }
-    if (cbMovieNfoFilename2.isSelected()) {
-      settings.addNfoFilename(MovieNfoNaming.MOVIE_NFO);
-    }
-    if (cbMovieNfoFilename3.isSelected()) {
-      settings.addNfoFilename(MovieNfoNaming.DISC_NFO);
-    }
-
-    CertificationStyleWrapper wrapper = (CertificationStyleWrapper) cbCertificationStyle.getSelectedItem();
-    if (wrapper != null && settings.getCertificationStyle() != wrapper.style) {
-      settings.setCertificationStyle(wrapper.style);
-    }
   }
 
   /*
@@ -392,12 +238,6 @@ public class MovieDatasourceSettingsPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSettings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
-    BeanProperty<JComboBox<MovieConnectors>, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<MovieSettings, MovieConnectors, JComboBox<MovieConnectors>, Object> autoBinding_9 = Bindings
-        .createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
-    autoBinding_9.bind();
-    //
     BeanProperty<MovieSettings, List<String>> settingsBeanProperty_6 = BeanProperty.create("badWords");
     JListBinding<String, MovieSettings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, listBadWords);
@@ -408,7 +248,7 @@ public class MovieDatasourceSettingsPanel extends JPanel {
         settingsBeanProperty_4, listDataSources);
     jListBinding_1.bind();
     //
-    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_12 = BeanProperty.create("movieSkipFolders");
+    BeanProperty<MovieSettings, List<String>> settingsBeanProperty_12 = BeanProperty.create("skipFolders");
     JListBinding<String, MovieSettings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, listIgnore);
     jListBinding_2.bind();
