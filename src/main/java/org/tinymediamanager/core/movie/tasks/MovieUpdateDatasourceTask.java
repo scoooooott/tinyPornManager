@@ -150,7 +150,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               String directoryName = file.getName();
               // check against unwanted dirs
               if (skipFolders.contains(directoryName.toUpperCase(Locale.ROOT)) || directoryName.matches(skipFoldersRegex)
-                  || MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
+                  || MovieModuleManager.SETTINGS.getSkipFolders().contains(file.getAbsolutePath())) {
                 LOGGER.info("ignoring directory " + directoryName);
                 continue;
               }
@@ -624,7 +624,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       else {
         // ignore .folders, well known unwanted folders and configured skip folders
         if (!skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
-            && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
+            && !MovieModuleManager.SETTINGS.getSkipFolders().contains(file.getAbsolutePath())) {
           dirs.add(file);
         }
       }
@@ -697,7 +697,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       else {
         // ignore .folders, well known unwanted folders and configured skip folders
         if (!skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
-            && !MovieModuleManager.SETTINGS.getMovieSkipFolders().contains(file.getAbsolutePath())) {
+            && !MovieModuleManager.SETTINGS.getSkipFolders().contains(file.getAbsolutePath())) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }

@@ -829,7 +829,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(MovieModuleManager.SETTINGS.getMovieSubtitleScrapers());
+    return getSubtitleScrapers(MovieModuleManager.SETTINGS.getSubtitleScrapers());
   }
 
   /**

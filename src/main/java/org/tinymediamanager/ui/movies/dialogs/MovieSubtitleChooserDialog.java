@@ -135,7 +135,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     // Subtitle scraper
     List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
     for (MediaScraper subtitleScraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {
-      if (MovieModuleManager.SETTINGS.getMovieSubtitleScrapers().contains(subtitleScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getSubtitleScrapers().contains(subtitleScraper.getId())) {
         selectedSubtitleScrapers.add(subtitleScraper);
       }
     }

@@ -306,13 +306,13 @@ public class MovieToXbmcNfoConnector {
     // certifications
     if (movie.getCertification() != null) {
       xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
-          MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+          MovieModuleManager.SETTINGS.getCertificationStyle());
       if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+        xbmc.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle());
       }
     }
 

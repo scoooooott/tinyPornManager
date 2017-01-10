@@ -331,13 +331,13 @@ public class MovieToKodiNfoConnector {
     // certifications
     if (movie.getCertification() != null) {
       kodi.certification = CertificationStyle.formatCertification(movie.getCertification(),
-          MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+          MovieModuleManager.SETTINGS.getCertificationStyle());
       if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         kodi.mpaa = Certification.getMPAAString(movie.getCertification());
       }
       else {
-        kodi.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+        kodi.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle());
       }
     }
 

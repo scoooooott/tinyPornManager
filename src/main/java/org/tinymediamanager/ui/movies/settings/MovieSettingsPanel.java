@@ -59,6 +59,11 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                   chckbxBuildImageCache;
   private JCheckBox                   chckbxRuntimeFromMi;
   private JCheckBox                   chckbxPersistUiSorting;
+  private JButton                     btnPresetKodi;
+  private JButton                     btnPresetXbmc;
+  private JButton                     btnPresetMediaPortal1;
+  private JButton                     btnPresetMediaPortal2;
+  private JButton                     btnPresetPlex;
 
   public MovieSettingsPanel() {
     // UI initializations
@@ -79,62 +84,95 @@ public class MovieSettingsPanel extends JPanel {
         }
       });
     }
+
+    btnPresetXbmc.addActionListener(evt -> settings.setDefaultSettingsForXbmc());
+    btnPresetKodi.addActionListener(evt -> settings.setDefaultSettingsForKodi());
+    btnPresetMediaPortal1.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal1());
+    btnPresetMediaPortal2.addActionListener(evt -> settings.setDefaultSettingsForMediaPortal2());
+    btnPresetPlex.addActionListener(evt -> settings.setDefaultSettingsForPlex());
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp:n][]", "[][][][20lp][][][][20lp:n][][][]"));
+    setLayout(new MigLayout("", "[25lp:n][][][]", "[][][][20lp][][][][20lp][][][][20lp][][][][][]"));
     {
       JLabel lblUiT = new JLabel(BUNDLE.getString("Settings.ui")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblUiT, 1.16667, Font.BOLD);
-      add(lblUiT, "cell 0 0 2 1");
+      add(lblUiT, "cell 0 0 4 1");
     }
     {
       chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
-      add(chckbxPersistUiFilters, "cell 1 1");
+      add(chckbxPersistUiFilters, "cell 1 1 3 1");
     }
     {
       chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
-      add(chckbxPersistUiSorting, "cell 1 2");
+      add(chckbxPersistUiSorting, "cell 1 2 3 1");
     }
     {
       JLabel lblAutomaticTasksT = new JLabel(BUNDLE.getString("Settings.automatictasks")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblAutomaticTasksT, 1.16667, Font.BOLD);
-      add(lblAutomaticTasksT, "cell 0 4 2 1");
+      add(lblAutomaticTasksT, "cell 0 4 4 1");
     }
     {
       chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
-      add(chckbxRenameAfterScrape, "flowx,cell 1 5");
+      add(chckbxRenameAfterScrape, "flowx,cell 1 5 3 1");
     }
     {
       JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
       lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
-      add(lblAutomaticRenameHint, "cell 1 5");
+      add(lblAutomaticRenameHint, "cell 1 5 3 1");
     }
     {
       chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
-      add(chckbxTraktSync, "flowx,cell 1 6");
+      add(chckbxTraktSync, "flowx,cell 1 6 3 1");
     }
     {
       btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
-      add(btnClearTraktData, "cell 1 6");
+      add(btnClearTraktData, "cell 1 6 3 1");
     }
     {
       JLabel lblMiscT = new JLabel(BUNDLE.getString("Settings.misc")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblMiscT, 1.16667, Font.BOLD);
-      add(lblMiscT, "cell 0 8 2 1");
+      add(lblMiscT, "cell 0 8 4 1");
     }
     {
       chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      add(chckbxBuildImageCache, "flowx,cell 1 9");
+      add(chckbxBuildImageCache, "flowx,cell 1 9 3 1");
     }
     {
       JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
       lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      add(lblBuildImageCacheHint, "cell 1 9");
+      add(lblBuildImageCacheHint, "cell 1 9 3 1");
     }
     {
       chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
-      add(chckbxRuntimeFromMi, "cell 1 10");
+      add(chckbxRuntimeFromMi, "cell 1 10 3 1");
+    }
+    {
+      JLabel lblPresetT = new JLabel(BUNDLE.getString("Settings.preset")); //$NON-NLS-1$
+      TmmFontHelper.changeFont(lblPresetT, 1.16667, Font.BOLD);
+      add(lblPresetT, "cell 0 12 4 1");
+    }
+    {
+      JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
+      add(lblPresetHintT, "cell 1 13 3 1");
+    }
+    {
+      btnPresetKodi = new JButton("Kodi v17+");
+      add(btnPresetKodi, "flowx,cell 1 14,growx");
+
+      btnPresetXbmc = new JButton("XBMC/Kodi <v17");
+      add(btnPresetXbmc, "cell 2 14,growx");
+    }
+    {
+      btnPresetMediaPortal1 = new JButton("MediaPortal 1.x");
+      add(btnPresetMediaPortal1, "flowx,cell 1 15,growx");
+
+      btnPresetMediaPortal2 = new JButton("MediaPortal 2.x");
+      add(btnPresetMediaPortal2, "cell 2 15,growx");
+    }
+    {
+      btnPresetPlex = new JButton("Plex");
+      add(btnPresetPlex, "cell 1 16,growx");
     }
   }
 

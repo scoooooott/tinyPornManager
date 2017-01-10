@@ -659,7 +659,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getDefaultArtworkScrapers() {
-    return getArtworkScrapers(movieSettings.getMovieArtworkScrapers());
+    return getArtworkScrapers(movieSettings.getArtworkScrapers());
   }
 
   /**
@@ -680,7 +680,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified trailer scrapers
    */
   public List<MediaScraper> getDefaultTrailerScrapers() {
-    return getTrailerScrapers(movieSettings.getMovieTrailerScrapers());
+    return getTrailerScrapers(movieSettings.getTrailerScrapers());
   }
 
   /**
@@ -723,7 +723,7 @@ public class MovieList extends AbstractModelObject {
    * @return the specified subtitle scrapers
    */
   public List<MediaScraper> getDefaultSubtitleScrapers() {
-    return getSubtitleScrapers(movieSettings.getMovieSubtitleScrapers());
+    return getSubtitleScrapers(movieSettings.getSubtitleScrapers());
   }
 
   /**

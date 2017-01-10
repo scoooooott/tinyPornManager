@@ -140,7 +140,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     });
 
     // space separator
-    String replacement = settings.getMovieRenamerSpaceReplacement();
+    String replacement = settings.getRenamerSpaceReplacement();
     int index = separators.indexOf(replacement);
     if (index >= 0) {
       cbSeparator.setSelectedIndex(index);
@@ -361,7 +361,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
   private void checkChanges() {
     // separator
     String separator = (String) cbSeparator.getSelectedItem();
-    settings.setMovieRenamerSpaceReplacement(separator);
+    settings.setRenamerSpaceReplacement(separator);
   }
 
   @Override

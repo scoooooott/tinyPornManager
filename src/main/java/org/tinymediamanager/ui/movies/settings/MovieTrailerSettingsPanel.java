@@ -93,7 +93,7 @@ public class MovieTrailerSettingsPanel extends ScrollablePanel {
     initDataBindings();
 
     // data init
-    List<String> enabledTrailerProviders = settings.getMovieTrailerScrapers();
+    List<String> enabledTrailerProviders = settings.getTrailerScrapers();
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : MovieList.getInstance().getAvailableTrailerScrapers()) {

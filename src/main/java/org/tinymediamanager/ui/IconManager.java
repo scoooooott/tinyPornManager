@@ -120,7 +120,7 @@ public class IconManager {
   // OBSOLETE ICONS (will be dropped when legacy code is removed)
   public final static ImageIcon            EXIT                   = loadImage("exit.png");
 
-  private static ImageIcon loadImage(String name) {
+  public static ImageIcon loadImage(String name) {
     URL file = IconManager.class.getResource("images/interface/" + name);
     if (file != null) {
       return new ImageIcon(file);

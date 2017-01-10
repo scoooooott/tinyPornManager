@@ -260,7 +260,7 @@ public class MovieToMpNfoConnector {
     // certification
     if (movie.getCertification() != null) {
       // mp.mpaa = movie.getCertification().name();
-      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getMovieCertificationStyle());
+      mp.mpaa = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle());
     }
 
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {

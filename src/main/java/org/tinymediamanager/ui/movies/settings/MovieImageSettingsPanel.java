@@ -136,17 +136,20 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxClearlogo2;
   private JCheckBox                   chckbxDiscart1;
   private JCheckBox                   chckbxDiscart2;
+  private ItemListener                checkBoxListener;
 
   /**
    * Instantiates a new movie image settings panel.
    */
   public MovieImageSettingsPanel() {
+    checkBoxListener = e -> checkChanges();
+
     // UI init
     initComponents();
     initDataBindings();
 
     // data init
-    List<String> enabledArtworkProviders = settings.getMovieArtworkScrapers();
+    List<String> enabledArtworkProviders = settings.getArtworkScrapers();
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
@@ -181,7 +184,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
       }
     });
 
-    // implement selection listener to load settings
+    // implement selection checkBoxListener to load settings
     tableScraper.getSelectionModel().addListSelectionListener(e -> {
       int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
       if (index > -1) {
@@ -208,6 +211,65 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
       }
     });
+
+    // select default artwork scraper
+    if (selectedIndex < 0) {
+      selectedIndex = 0;
+    }
+    if (counter > 0) {
+      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+    }
+
+    // implement checkBoxListener for preset events
+    settings.addPropertyChangeListener(evt -> {
+      if ("preset".equals(evt.getPropertyName())) {
+        buildCheckBoxes();
+      }
+    });
+
+    buildCheckBoxes();
+  }
+
+  private void buildCheckBoxes() {
+    // initialize
+    chckbxMovieFanartFilename1.removeItemListener(checkBoxListener);
+    chckbxMovieFanartFilename2.removeItemListener(checkBoxListener);
+    chckbxMovieFanartFilename3.removeItemListener(checkBoxListener);
+    clearSelection(chckbxMovieFanartFilename1, chckbxMovieFanartFilename2, chckbxMovieFanartFilename3);
+
+    chckbxMoviePosterFilename2.removeItemListener(checkBoxListener);
+    chckbxMoviePosterFilename4.removeItemListener(checkBoxListener);
+    chckbxMoviePosterFilename7.removeItemListener(checkBoxListener);
+    chckbxMoviePosterFilename8.removeItemListener(checkBoxListener);
+    chckbxMoviePosterFilename6.removeItemListener(checkBoxListener);
+    clearSelection(chckbxMoviePosterFilename2, chckbxMoviePosterFilename4, chckbxMoviePosterFilename6, chckbxMoviePosterFilename7,
+        chckbxMoviePosterFilename8);
+
+    chckbxBanner1.removeItemListener(checkBoxListener);
+    chckbxBanner2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxBanner1, chckbxBanner2);
+
+    chckbxClearart1.removeItemListener(checkBoxListener);
+    chckbxClearart2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxClearart1, chckbxClearart2);
+
+    chckbxClearlogo1.removeItemListener(checkBoxListener);
+    chckbxClearlogo2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxClearlogo1, chckbxClearlogo2);
+
+    chckbxLogo1.removeItemListener(checkBoxListener);
+    chckbxLogo2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxLogo1, chckbxLogo2);
+
+    chckbxThumb1.removeItemListener(checkBoxListener);
+    chckbxThumb2.removeItemListener(checkBoxListener);
+    chckbxThumb3.removeItemListener(checkBoxListener);
+    chckbxThumb4.removeItemListener(checkBoxListener);
+    clearSelection(chckbxThumb1, chckbxThumb2, chckbxThumb3, chckbxThumb4);
+
+    chckbxDiscart1.removeItemListener(checkBoxListener);
+    chckbxDiscart2.removeItemListener(checkBoxListener);
+    clearSelection(chckbxDiscart1, chckbxDiscart2);
 
     // poster filenames
     for (MoviePosterNaming poster : settings.getPosterFilenames()) {
@@ -324,43 +386,40 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     }
 
     // listen to changes of the checkboxes
-    ItemListener listener = e -> checkChanges();
-    chckbxMovieFanartFilename2.addItemListener(listener);
-    chckbxMovieFanartFilename3.addItemListener(listener);
+    chckbxMovieFanartFilename2.addItemListener(checkBoxListener);
+    chckbxMovieFanartFilename3.addItemListener(checkBoxListener);
 
-    chckbxMovieFanartFilename1.addItemListener(listener);
-    chckbxMoviePosterFilename2.addItemListener(listener);
-    chckbxMoviePosterFilename4.addItemListener(listener);
-    chckbxMoviePosterFilename7.addItemListener(listener);
-    chckbxMoviePosterFilename8.addItemListener(listener);
-    chckbxMoviePosterFilename6.addItemListener(listener);
+    chckbxMovieFanartFilename1.addItemListener(checkBoxListener);
+    chckbxMoviePosterFilename2.addItemListener(checkBoxListener);
+    chckbxMoviePosterFilename4.addItemListener(checkBoxListener);
+    chckbxMoviePosterFilename7.addItemListener(checkBoxListener);
+    chckbxMoviePosterFilename8.addItemListener(checkBoxListener);
+    chckbxMoviePosterFilename6.addItemListener(checkBoxListener);
 
-    chckbxBanner1.addItemListener(listener);
-    chckbxBanner2.addItemListener(listener);
+    chckbxBanner1.addItemListener(checkBoxListener);
+    chckbxBanner2.addItemListener(checkBoxListener);
 
-    chckbxClearart1.addItemListener(listener);
-    chckbxClearart2.addItemListener(listener);
+    chckbxClearart1.addItemListener(checkBoxListener);
+    chckbxClearart2.addItemListener(checkBoxListener);
 
-    chckbxClearlogo1.addItemListener(listener);
-    chckbxClearlogo2.addItemListener(listener);
+    chckbxClearlogo1.addItemListener(checkBoxListener);
+    chckbxClearlogo2.addItemListener(checkBoxListener);
 
-    chckbxLogo1.addItemListener(listener);
-    chckbxLogo2.addItemListener(listener);
+    chckbxLogo1.addItemListener(checkBoxListener);
+    chckbxLogo2.addItemListener(checkBoxListener);
 
-    chckbxThumb1.addItemListener(listener);
-    chckbxThumb2.addItemListener(listener);
-    chckbxThumb3.addItemListener(listener);
-    chckbxThumb4.addItemListener(listener);
+    chckbxThumb1.addItemListener(checkBoxListener);
+    chckbxThumb2.addItemListener(checkBoxListener);
+    chckbxThumb3.addItemListener(checkBoxListener);
+    chckbxThumb4.addItemListener(checkBoxListener);
 
-    chckbxDiscart1.addItemListener(listener);
-    chckbxDiscart2.addItemListener(listener);
+    chckbxDiscart1.addItemListener(checkBoxListener);
+    chckbxDiscart2.addItemListener(checkBoxListener);
+  }
 
-    // select default artwork scraper
-    if (selectedIndex < 0) {
-      selectedIndex = 0;
-    }
-    if (counter > 0) {
-      tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkBox : checkBoxes) {
+      checkBox.setSelected(false);
     }
   }
 

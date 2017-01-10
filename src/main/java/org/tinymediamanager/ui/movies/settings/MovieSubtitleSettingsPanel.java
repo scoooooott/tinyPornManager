@@ -86,7 +86,7 @@ public class MovieSubtitleSettingsPanel extends ScrollablePanel {
     initDataBindings();
 
     // data init
-    List<String> enabledSubtitleProviders = settings.getMovieSubtitleScrapers();
+    List<String> enabledSubtitleProviders = settings.getSubtitleScrapers();
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : MovieList.getInstance().getAvailableSubtitleScrapers()) {

@@ -958,7 +958,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     saveToDb();
 
     // rename the movie if that has been chosen in the settings
-    if (MovieModuleManager.SETTINGS.isMovieRenameAfterScrape()) {
+    if (MovieModuleManager.SETTINGS.isRenameAfterScrape()) {
       MovieRenamer.renameMovie(this);
     }
   }

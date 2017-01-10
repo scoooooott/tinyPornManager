@@ -175,7 +175,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // artwork scraper
     List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
     for (MediaScraper artworkScraper : MovieList.getInstance().getAvailableArtworkScrapers()) {
-      if (MovieModuleManager.SETTINGS.getMovieArtworkScrapers().contains(artworkScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getArtworkScrapers().contains(artworkScraper.getId())) {
         selectedArtworkScrapers.add(artworkScraper);
       }
     }
@@ -186,7 +186,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
     // trailer scraper
     List<MediaScraper> selectedTrailerScrapers = new ArrayList<>();
     for (MediaScraper trailerScraper : MovieList.getInstance().getAvailableTrailerScrapers()) {
-      if (MovieModuleManager.SETTINGS.getMovieTrailerScrapers().contains(trailerScraper.getId())) {
+      if (MovieModuleManager.SETTINGS.getTrailerScrapers().contains(trailerScraper.getId())) {
         selectedTrailerScrapers.add(trailerScraper);
       }
     }
