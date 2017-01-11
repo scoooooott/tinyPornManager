@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -369,11 +368,7 @@ public class MovieToMpNfoConnector {
       movie.setRating(mp.rating);
       movie.setVotes(mp.votes);
       movie.setYear(mp.year);
-      try {
-        movie.setReleaseDate(mp.premiered);
-      }
-      catch (ParseException e) {
-      }
+      movie.setReleaseDate(mp.premiered);
       movie.setPlot(mp.plot);
       movie.setTagline(mp.tagline);
       try {

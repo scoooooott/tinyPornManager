@@ -1860,8 +1860,12 @@ public class Movie extends MediaEntity {
   /**
    * convenient method to set the release date (parsed from string).
    */
-  public void setReleaseDate(String dateAsString) throws ParseException {
-    setReleaseDate(StrgUtils.parseDate(dateAsString));
+  public void setReleaseDate(String dateAsString) {
+    try {
+      setReleaseDate(StrgUtils.parseDate(dateAsString));
+    }
+    catch (ParseException e) {
+    }
   }
 
   public Date getLastWatched() {

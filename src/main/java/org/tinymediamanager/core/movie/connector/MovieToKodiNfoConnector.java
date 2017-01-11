@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -551,11 +550,7 @@ public class MovieToKodiNfoConnector {
       else {
         movie.setTop250(0);
       }
-      try {
-        movie.setReleaseDate(kodi.premiered);
-      }
-      catch (ParseException e) {
-      }
+      movie.setReleaseDate(kodi.premiered);
       movie.setPlot(kodi.plot);
       movie.setTagline(kodi.tagline);
       try {

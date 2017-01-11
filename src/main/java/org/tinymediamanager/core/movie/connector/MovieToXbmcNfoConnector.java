@@ -27,7 +27,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -540,11 +539,7 @@ public class MovieToXbmcNfoConnector {
       else {
         movie.setTop250(0);
       }
-      try {
-        movie.setReleaseDate(xbmc.premiered);
-      }
-      catch (ParseException e) {
-      }
+      movie.setReleaseDate(xbmc.premiered);
       movie.setPlot(xbmc.plot);
       movie.setTagline(xbmc.tagline);
       try {

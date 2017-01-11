@@ -51,8 +51,6 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +71,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -288,24 +287,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * 
    * @param aired
    *          the new first aired
-   * @throws ParseException
-   *           if string cannot be parsed!
    */
-  public void setFirstAired(String aired) throws ParseException {
-    Pattern date = Pattern.compile("([0-9]{2})[_\\.-]([0-9]{2})[_\\.-]([0-9]{4})");
-    Matcher m = date.matcher(aired);
-    if (m.find()) {
-      this.firstAired = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+  public void setFirstAired(String aired) {
+    try {
+      this.firstAired = StrgUtils.parseDate(aired);
     }
-    else {
-      date = Pattern.compile("([0-9]{4})[_\\.-]([0-9]{2})[_\\.-]([0-9]{2})");
-      m = date.matcher(aired);
-      if (m.find()) {
-        this.firstAired = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
-      }
-      else {
-        throw new ParseException("could not parse date from: " + aired, 0);
-      }
+    catch (ParseException e) {
     }
   }
 

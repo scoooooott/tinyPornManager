@@ -22,7 +22,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -436,12 +435,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
         writer += wri;
       }
       episode.setWriter(writer);
-
-      try {
-        episode.setFirstAired(xbmc.getAired());
-      }
-      catch (ParseException e) {
-      }
+      episode.setFirstAired(xbmc.getAired());
 
       // now there is the complicated part: tv show actors should be on the tv show level
       // episode "guests" should be on the episode level
