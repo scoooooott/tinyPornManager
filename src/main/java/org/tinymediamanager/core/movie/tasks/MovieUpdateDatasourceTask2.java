@@ -73,6 +73,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.thirdparty.VSMeta;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.sun.jna.Platform;
@@ -462,8 +463,22 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           }
         }
       } // end NFO
-
     } // end MFs
+
+    if (movie == null) {
+      movie = new Movie();
+    }
+    for (MediaFile mf : mfs) {
+      if (mf.getType().equals(MediaFileType.VIDEO)) {
+        // parse Synology VSMETA file
+        Path meta = Paths.get(mf.getFileAsPath().toString() + ".vsmeta");
+        if (Files.exists(meta)) {
+          VSMeta vsmeta = new VSMeta();
+          vsmeta.parseFile(meta);
+          movie.merge(vsmeta.getMovie());
+        }
+      }
+    }
 
     return movie;
   }

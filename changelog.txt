@@ -1,5 +1,6 @@
 Version 2.9.2
 =======================
++ added parsing of Synology VSMETA files
 + added shortcut (CTRL - F) to jump to the search field (thx @hampelratte)
 + improved user interaction for tags and genres (thx @hampelratte)
 + get a list of video files for TV show export with episode.videoFiles
