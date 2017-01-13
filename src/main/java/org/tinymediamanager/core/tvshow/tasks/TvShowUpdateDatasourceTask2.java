@@ -533,17 +533,18 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         else {
           // normal episode file - get all same named files
           String basename = FilenameUtils.getBaseName(mf.getFilenameWithoutStacking());
+          LOGGER.trace("UDS: basename: " + basename);
           for (MediaFile em : mfs) {
             String emBasename = FilenameUtils.getBaseName(em.getFilename());
             String epNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
             // same named files or thumb files
             if (emBasename.equals(basename) || emBasename.matches(epNameRegexp)) {
-              // we found some graphics named like the episode - define them as
-              // thumb here
+              // we found some graphics named like the episode - define them as thumb here
               if (em.getType() == MediaFileType.GRAPHIC) {
                 em.setType(MediaFileType.THUMB);
               }
               epFiles.add(em);
+              LOGGER.trace("UDS: found matching MF: " + em);
             }
           }
         }
@@ -736,7 +737,23 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // remove all used episode MFs, rest must be show MFs ;)
       // ******************************
       mfs.removeAll(tvShow.getEpisodesMediaFiles()); // remove EP files
-      tvShow.addToMediaFiles(mfs); // add remaining
+
+      // tvShow.addToMediaFiles(mfs); // add remaining
+      // not so fast - try to parse S/E from remaining first!
+      for (MediaFile mf : mfs) {
+        String relativePath = showDir.relativize(mf.getFileAsPath()).toString();
+        EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
+        if (result.season > 0 && !result.episodes.isEmpty()) {
+          for (int epnr : result.episodes) {
+            TvShowEpisode ep = tvShow.getEpisode(result.season, epnr);
+            if (ep != null && mf.getType() != MediaFileType.SEASON_POSTER) {
+              ep.addToMediaFiles(mf);
+            }
+          }
+        }
+      }
+      mfs.removeAll(tvShow.getEpisodesMediaFiles()); // remove EP files
+      tvShow.addToMediaFiles(mfs); // now add remaining
 
       // fill season posters map
       for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_POSTER)) {
