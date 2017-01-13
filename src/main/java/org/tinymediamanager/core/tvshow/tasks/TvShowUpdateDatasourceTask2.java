@@ -61,6 +61,7 @@ import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.thirdparty.VSMeta;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.sun.jna.Platform;
@@ -559,6 +560,15 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           // STEP 2.1.1 - parse EP NFO (has precedence over files)
           // ******************************
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
+
+          TvShowEpisode vsMetaEP = null;
+          Path meta = Paths.get(mf.getFileAsPath().toString() + ".vsmeta");
+          if (Files.exists(meta)) {
+            VSMeta vsmeta = new VSMeta();
+            vsmeta.parseFile(meta);
+            vsMetaEP = vsmeta.getTvShowEpisode();
+          }
+
           if (epNfo != null) {
             LOGGER.info("found episode NFO - try to parse '" + showDir.relativize(epNfo.getFileAsPath()) + "'");
             List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(epNfo);
@@ -594,13 +604,16 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 else {
                   episode.setMultiEpisode(false);
                 }
+                if (vsMetaEP != null) {
+                  episode.merge(vsMetaEP); // merge VSmeta infos
+                }
 
                 episode.saveToDb();
                 tvShow.addEpisode(episode);
               }
               continue; // with next video MF
             }
-          }
+          } // end parse NFO
 
           // ******************************
           // STEP 2.1.2 - no NFO? try to parse episode/season
@@ -671,6 +684,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               else {
                 episode.setMultiEpisode(false);
               }
+              if (vsMetaEP != null) {
+                episode.merge(vsMetaEP); // merge VSmeta infos
+              }
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -708,6 +724,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
             }
             episode.setNewlyAdded(true);
+            if (vsMetaEP != null) {
+              episode.merge(vsMetaEP); // merge VSmeta infos
+            }
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }
