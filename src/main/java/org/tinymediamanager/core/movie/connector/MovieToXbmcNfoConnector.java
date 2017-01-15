@@ -50,6 +50,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -82,6 +83,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.w3c.dom.Document;
 
 /**
  * The Class MovieToXbmcNfoConnector. This class is the interface between tinyMediaManager and the Kodi/XBMC style NFO files
@@ -94,6 +96,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
     "runtime", "thumb", "fanart", "mpaa", "certification", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
     "keywords", "poster", "url", "languages", "source", "unsupportedElements" })
+@Deprecated
 public class MovieToXbmcNfoConnector {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");
@@ -305,8 +308,7 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
-      xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(),
-          MovieModuleManager.SETTINGS.getCertificationStyle());
+      xbmc.certification = CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle());
       if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
@@ -434,6 +436,14 @@ public class MovieToXbmcNfoConnector {
 
     // add all unsupported tags again
     xbmc.unsupportedElements.addAll(unsupportedTags);
+
+    try {
+      Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+      xbmc.unsupportedElements.add(document.createElement("foo"));
+    }
+    catch (Exception e) {
+    }
 
     return xbmc;
   }

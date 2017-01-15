@@ -41,6 +41,7 @@ public class MovieToNfoConnectorTest {
   @Test
   public void testXbmcNfo() {
     FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));
+
     try {
       Movie movie = createXbmcMovie();
 

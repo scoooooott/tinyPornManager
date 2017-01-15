@@ -524,6 +524,28 @@ public class ParserUtils {
     return rate;
   }
 
+  /**
+   * parse a String for its integer value<br />
+   * this method can parse normal integer values (e.g. 2001) as well as the style with digit separators (e.g. 2.001 or 2,001)
+   * 
+   * @param intAsString
+   *          the String to be parsed
+   * @return the integer
+   * @throws NumberFormatException
+   *           an exception if none of the parsing methods worked
+   */
+  public static int parseInt(String intAsString) throws NumberFormatException {
+    // first try to parse that with the interal parsing logic
+    try {
+      return Integer.parseInt(intAsString);
+    }
+    catch (NumberFormatException e) {
+      // did not work; try to remove digit separators
+      // since we do not know for which locale the separators has been written, remove . and ,
+      return Integer.parseInt(intAsString.replaceAll("[,\\.]*", ""));
+    }
+  }
+
   public static class ParserInfo {
     public String name  = "";
     public String year  = "";

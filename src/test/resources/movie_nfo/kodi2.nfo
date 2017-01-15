@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-01-01 16:56:32 - tinyMediaManager SVN -->
+<movie>
+    <title>9</title>
+    <originaltitle>9</originaltitle>
+    <sorttitle>9</sorttitle>
+    <rating>6.5</rating>
+    <ratings>
+        <rating name="default" max="10" default="true">
+            <value>5.800000</value>
+            <votes>2100</votes>
+        </rating>
+        <rating name="imdb">
+            <value>8.9</value>
+            <votes>12345</votes>
+        </rating>
+        <rating name="metascore" max="100">
+            <value>67</value>
+            <votes>5</votes>
+        </rating>
+    </ratings>
+    <year>2009</year>
+    <set>
+        <name>Tim Burton Collection</name>
+        <overview>Tim Burton movies</overview>
+    </set>
+    <top250>250</top250>
+    <votes>846</votes>
+    <outline>When 9 first comes to life, he finds himself in a post-apocalyptic world. All humans are gone, and it is
+        only by chance that he discovers a small community of others like him taking refuge from fearsome...
+    </outline>
+    <plot>When 9 first comes to life, he finds himself in a post-apocalyptic world. All humans are gone, and it is only
+        by chance that he discovers a small community of others like him taking refuge from fearsome machines that roam
+        the earth intent on their extinction. Despite being the neophyte of the group, 9 convinces the others that
+        hiding will do them no good.
+    </plot>
+    <tagline>When our world ended their mission began.</tagline>
+    <runtime>79</runtime>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/70yzeQUerxKRxeVE61ob9DlDFjv.jpg">
+        http://image.tmdb.org/t/p/original/70yzeQUerxKRxeVE61ob9DlDFjv.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/rrPWYcAJjx7svXgaoEfTAAxx2Id.jpg">
+        http://image.tmdb.org/t/p/original/rrPWYcAJjx7svXgaoEfTAAxx2Id.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/mXSbp5V3j3Ad7vGrGfFN7xv6cCz.jpg">
+        http://image.tmdb.org/t/p/original/mXSbp5V3j3Ad7vGrGfFN7xv6cCz.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/KY66hTL8YLesWguF1eFhnws9y8.jpg">
+        http://image.tmdb.org/t/p/original/KY66hTL8YLesWguF1eFhnws9y8.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/r8iKqZuYfOGecljTMBGbD4YE9X1.jpg">
+        http://image.tmdb.org/t/p/original/r8iKqZuYfOGecljTMBGbD4YE9X1.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/39z52cy41YViM6tbIohfWYZVi7a.jpg">
+        http://image.tmdb.org/t/p/original/39z52cy41YViM6tbIohfWYZVi7a.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/u6SdQz8Bd45mcuCZdyAFrRCL2AN.jpg">
+        http://image.tmdb.org/t/p/original/u6SdQz8Bd45mcuCZdyAFrRCL2AN.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/1Tco0tfGzXLXTbGZlsyG2L1ME6j.jpg">
+        http://image.tmdb.org/t/p/original/1Tco0tfGzXLXTbGZlsyG2L1ME6j.jpg
+    </thumb>
+    <thumb aspect="poster" preview="http://image.tmdb.org/t/p/w500/jMQYcE5ayaQOQUtDQyaDhTa1RL3.jpg">
+        http://image.tmdb.org/t/p/original/jMQYcE5ayaQOQUtDQyaDhTa1RL3.jpg
+    </thumb>
+    <fanart>
+        <thumb preview="http://image.tmdb.org/t/p/w780/nbIrDhOtUpdD9HKDBRy02a8VhpV.jpg">
+            http://image.tmdb.org/t/p/original/nbIrDhOtUpdD9HKDBRy02a8VhpV.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/n1y094tVDFATSzkTnFxoGZ1qNsG.jpg">
+            http://image.tmdb.org/t/p/original/n1y094tVDFATSzkTnFxoGZ1qNsG.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/4HgqwYTpmrDtafRvjRJ2aOwH69e.jpg">
+            http://image.tmdb.org/t/p/original/4HgqwYTpmrDtafRvjRJ2aOwH69e.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/3P7mVFxpMLblLbVewybYOaNqEHT.jpg">
+            http://image.tmdb.org/t/p/original/3P7mVFxpMLblLbVewybYOaNqEHT.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/mnUbzbYxaaHpaTqFhjl7HwSod7o.jpg">
+            http://image.tmdb.org/t/p/original/mnUbzbYxaaHpaTqFhjl7HwSod7o.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/dfjj7QZBo9JAuMYSbCdIzUWQsr3.jpg">
+            http://image.tmdb.org/t/p/original/dfjj7QZBo9JAuMYSbCdIzUWQsr3.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/iWFx9LVcSQ54TBubh5Fw9G2KrsA.jpg">
+            http://image.tmdb.org/t/p/original/iWFx9LVcSQ54TBubh5Fw9G2KrsA.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/3q7PX4xGF4YkDzOpcQXLCIYXHFK.jpg">
+            http://image.tmdb.org/t/p/original/3q7PX4xGF4YkDzOpcQXLCIYXHFK.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/l5003rpuMgaqzkw6QpZ1F3k9pKA.jpg">
+            http://image.tmdb.org/t/p/original/l5003rpuMgaqzkw6QpZ1F3k9pKA.jpg
+        </thumb>
+        <thumb preview="http://image.tmdb.org/t/p/w780/iPlhdbPq2CwoOtD2bKDAACoSmGV.jpg">
+            http://image.tmdb.org/t/p/original/iPlhdbPq2CwoOtD2bKDAACoSmGV.jpg
+        </thumb>
+    </fanart>
+    <mpaa>ab 12</mpaa>
+    <certification>ab 12</certification>
+    <id>tt0472033</id>
+    <ids>
+        <entry>
+            <key>tmdb</key>
+            <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">12244
+            </value>
+        </entry>
+        <entry>
+            <key>imdb</key>
+            <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">tt0472033
+            </value>
+        </entry>
+        <entry>
+            <key>trakt</key>
+            <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">7146
+            </value>
+        </entry>
+    </ids>
+    <tmdbId>12244</tmdbId>
+    <country>United States of America</country>
+    <premiered>19-08-2009</premiered>
+    <watched>true</watched>
+    <playcount>6</playcount>
+    <genre>Animation</genre>
+    <genre>Science Fiction</genre>
+    <genre>Action</genre>
+    <genre>Adventure</genre>
+    <genre>Thriller</genre>
+    <studio>Focus Films</studio>
+    <studio>Starz Animation</studio>
+    <studio>Relativity Media</studio>
+    <studio>Tim Burton Productions</studio>
+    <studio>Arc Productions</studio>
+    <credits>Shane Acker</credits>
+    <credits>Pamela Pettler</credits>
+    <credits>Callan Brunker</credits>
+    <credits>Nathan Chew</credits>
+    <credits>Aaron Clark</credits>
+    <credits>Tom De Rosier</credits>
+    <credits>Jun Falkenstein</credits>
+    <credits>Stephan Franck</credits>
+    <credits>Alex Hillkurtz</credits>
+    <credits>Warren Leonhardt</credits>
+    <credits>Angelo Libutti</credits>
+    <credits>Troy Quane</credits>
+    <credits>Kevin Altieri</credits>
+    <credits>Gaëtan Brizzi</credits>
+    <credits>Paul Brizzi</credits>
+    <credits>Regis Camargo</credits>
+    <director>Shane Acker</director>
+    <director>Pamela Pettler</director>
+    <tag>PIXAR</tag>
+    <tag>Tim Burton</tag>
+    <actor>
+        <name>Elijah Wood</name>
+        <role>9 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/qwWrgijNw23w3nVcHyP1O1SRhi7.jpg</thumb>
+    </actor>
+    <actor>
+        <name>John C. Reilly</name>
+        <role>5 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/kUo2TPQp4kOWWvijvkjLl0v9PQB.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Jennifer Connelly</name>
+        <role>7 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/6ZwYn5C08Nd2p9RCtUWfOB3dMiS.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Christopher Plummer</name>
+        <role>1 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/fauMGxa6dc86nHNenQ8X6DlE6YV.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Crispin Glover</name>
+        <role>6 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/thA5rOv5XE1oFpxD9DSp0tDrIIR.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Martin Landau</name>
+        <role>2 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/ylT7pqkcPNsHloe2dJsePFSoIkE.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Fred Tatasciore</name>
+        <role>8 (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/lNe4zn9fJ302GehQVaFk5BNcGGM.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Alan Oppenheimer</name>
+        <role>Scientist (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/va1bmZNM4A7OuRGtVcr7LXO7Of.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Tom Kane</name>
+        <role>Dictator (voice)</role>
+        <thumb>http://image.tmdb.org/t/p/w185/hAyEHNuhD6PqbPdCNR7iUyM271I.jpg</thumb>
+    </actor>
+    <producer>
+        <name>Timur Bekmambetov</name>
+        <role>Producer</role>
+        <thumb>http://image.tmdb.org/t/p/w185/7XQsDvrshgbFYvQN0KgUmI691uF.jpg</thumb>
+    </producer>
+    <producer>
+        <name>Tim Burton</name>
+        <role>Producer</role>
+        <thumb>http://image.tmdb.org/t/p/w185/sLjHif5QL1uqDudnHDbnXc6I5G6.jpg</thumb>
+    </producer>
+    <producer>
+        <name>Dana Ginsburg</name>
+        <role>Producer</role>
+    </producer>
+    <producer>
+        <name>Mary Clayton</name>
+        <role>Producer</role>
+    </producer>
+    <producer>
+        <name>Jinko Gotoh</name>
+        <role>Producer</role>
+    </producer>
+    <producer>
+        <name>Jim Lemley</name>
+        <role>Producer</role>
+    </producer>
+    <producer>
+        <name>Marci Levine</name>
+        <role>Producer</role>
+    </producer>
+    <producer>
+        <name>Mindy Marin</name>
+        <role>Casting</role>
+        <thumb>http://image.tmdb.org/t/p/w185/iJZbEHwE8bcqn2XzKo4JTTYlvOu.jpg</thumb>
+    </producer>
+    <producer>
+        <name>Ambroise Gayet</name>
+        <role>Location Manager</role>
+    </producer>
+    <languages>English</languages>
+    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=nFD4f1_eZno</trailer>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>hdmv</codec>
+                <aspect>1.777778</aspect>
+                <width>1920</width>
+                <height>1080</height>
+                <durationinseconds>6217</durationinseconds>
+                <stereomode>SBS</stereomode>
+            </video>
+            <audio>
+                <codec>dtshd_ma</codec>
+                <language>eng</language>
+                <channels>6</channels>
+            </audio>
+            <audio>
+                <codec>dca</codec>
+                <language>fra</language>
+                <channels>6</channels>
+            </audio>
+            <audio>
+                <codec>dca</codec>
+                <language>spa</language>
+                <channels>6</channels>
+            </audio>
+            <audio>
+                <codec>dca</codec>
+                <language>deu</language>
+                <channels>6</channels>
+            </audio>
+            <subtitle>
+                <language>eng</language>
+            </subtitle>
+            <subtitle>
+                <language>fra</language>
+            </subtitle>
+            <subtitle>
+                <language>spa</language>
+            </subtitle>
+            <subtitle>
+                <language>deu</language>
+            </subtitle>
+            <subtitle>
+                <language>fra</language>
+            </subtitle>
+            <subtitle>
+                <language>spa</language>
+            </subtitle>
+            <subtitle>
+                <language>deu</language>
+            </subtitle>
+            <subtitle>
+                <language>eng</language>
+            </subtitle>
+            <subtitle>
+                <language>fre</language>
+            </subtitle>
+            <subtitle>
+                <language>spa</language>
+            </subtitle>
+            <subtitle>
+                <language>ger</language>
+            </subtitle>
+            <subtitle>
+                <language>fre</language>
+            </subtitle>
+            <subtitle>
+                <language>spa</language>
+            </subtitle>
+            <subtitle>
+                <language>ger</language>
+            </subtitle>
+        </streamdetails>
+    </fileinfo>
+</movie>

@@ -98,6 +98,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
     "runtime", "thumb", "fanart", "mpaa", "certification", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
     "keywords", "poster", "url", "languages", "source", "unsupportedElements" })
+@Deprecated
 public class MovieToKodiNfoConnector {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToKodiNfoConnector.class);
   private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");

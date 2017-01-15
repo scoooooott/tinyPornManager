@@ -65,7 +65,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
-    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "fileinfo",
+    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studios", "actors", "fileinfo",
     "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
@@ -81,7 +81,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private float               rating         = 0;
   private int                 votes          = 0;
   private String              plot           = "";
-  @XmlElement(name = "studio")
+  @XmlElement(name = "studios")
   private List<String>        studio         = null;
   private String              mpaa           = "";
   private String              aired          = "";

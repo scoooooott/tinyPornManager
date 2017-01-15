@@ -85,6 +85,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "set", "rating", "year", "votes", "outline", "plot", "tagline", "runtime",
     "thumb", "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors",
     "producers", "watched", "playcount", "source" })
+@Deprecated
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
