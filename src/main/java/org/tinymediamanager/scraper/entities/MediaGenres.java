@@ -83,8 +83,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War");
   public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western");
 
-  private String   name;
-  private String[] alternateNames;
+  private String                  name;
+  private String[]                alternateNames;
 
   /**
    * Instantiates a new genres.
@@ -109,6 +109,15 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
 
   public String dump() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  /**
+   * get the (english) name of this genre
+   * 
+   * @return the name
+   */
+  public String getName() {
+    return name;
   }
 
   /**
