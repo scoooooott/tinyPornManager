@@ -676,6 +676,38 @@ public class MovieRenamer {
         newFiles.add(sample);
         break;
 
+      case MEDIAINFO:
+        MediaFile mi = new MediaFile(mf);
+        if (movie.isDisc()) {
+          // hmm.. dunno, keep at least 1:1
+          mi.setFile(newMovieDir.resolve(mi.getFilename()));
+          newFiles.add(mi);
+        }
+        else {
+          newFilename += getStackingString(mf);
+          newFilename += "-mediainfo." + mf.getExtension();
+          mi.setFile(newMovieDir.resolve(newFilename));
+          newFiles.add(mi);
+        }
+        break;
+
+      case VSMETA:
+        MediaFile meta = new MediaFile(mf);
+        if (movie.isDisc()) {
+          // hmm.. no vsmeta created? keep 1:1 (although this will be never called)
+          meta.setFile(newMovieDir.resolve(meta.getFilename()));
+          newFiles.add(meta);
+        }
+        else {
+          newFilename += getStackingString(mf);
+          // HACK: get video extension from "old" name, eg video.avi.vsmeta
+          String videoExt = FilenameUtils.getExtension(mf.getFilename());
+          newFilename += "." + videoExt + ".vsmeta";
+          meta.setFile(newMovieDir.resolve(newFilename));
+          newFiles.add(meta);
+        }
+        break;
+
       case SUBTITLE:
         List<MediaFileSubtitle> mfsl = mf.getSubtitles();
 

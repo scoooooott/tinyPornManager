@@ -559,16 +559,15 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           // ******************************
           // STEP 2.1.1 - parse EP NFO (has precedence over files)
           // ******************************
-          MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
-
+          MediaFile meta = getMediaFile(epFiles, MediaFileType.VSMETA);
           TvShowEpisode vsMetaEP = null;
-          Path meta = Paths.get(mf.getFileAsPath().toString() + ".vsmeta");
-          if (Files.exists(meta)) {
+          if (meta != null) {
             VSMeta vsmeta = new VSMeta();
-            vsmeta.parseFile(meta);
+            vsmeta.parseFile(meta.getFileAsPath());
             vsMetaEP = vsmeta.getTvShowEpisode();
           }
 
+          MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
           if (epNfo != null) {
             LOGGER.info("found episode NFO - try to parse '" + showDir.relativize(epNfo.getFileAsPath()) + "'");
             List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(epNfo);
@@ -604,9 +603,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 else {
                   episode.setMultiEpisode(false);
                 }
-                if (vsMetaEP != null) {
-                  episode.merge(vsMetaEP); // merge VSmeta infos
-                }
+                episode.merge(vsMetaEP); // merge VSmeta infos
 
                 episode.saveToDb();
                 tvShow.addEpisode(episode);
@@ -684,9 +681,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               else {
                 episode.setMultiEpisode(false);
               }
-              if (vsMetaEP != null) {
-                episode.merge(vsMetaEP); // merge VSmeta infos
-              }
+              episode.merge(vsMetaEP); // merge VSmeta infos
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -724,9 +719,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
             }
             episode.setNewlyAdded(true);
-            if (vsMetaEP != null) {
-              episode.merge(vsMetaEP); // merge VSmeta infos
-            }
+            episode.merge(vsMetaEP); // merge VSmeta infos
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }

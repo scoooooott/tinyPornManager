@@ -466,17 +466,13 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     } // end MFs
 
     for (MediaFile mf : mfs) {
-      if (mf.getType().equals(MediaFileType.VIDEO)) {
-        // parse Synology VSMETA file
-        Path meta = Paths.get(mf.getFileAsPath().toString() + ".vsmeta");
-        if (Files.exists(meta)) {
-          if (movie == null) {
-            movie = new Movie();
-          }
-          VSMeta vsmeta = new VSMeta();
-          vsmeta.parseFile(meta);
-          movie.merge(vsmeta.getMovie());
+      if (mf.getType().equals(MediaFileType.VSMETA)) {
+        if (movie == null) {
+          movie = new Movie();
         }
+        VSMeta vsmeta = new VSMeta();
+        vsmeta.parseFile(mf.getFileAsPath());
+        movie.merge(vsmeta.getMovie());
       }
     }
 
@@ -909,6 +905,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           case CLEARART:
           case LOGO:
           case CLEARLOGO:
+          case MEDIAINFO:
+          case VSMETA:
             movie.addToMediaFiles(mf);
             break;
 

@@ -455,6 +455,14 @@ public class TvShowRenamer {
       if (mf.getType().equals(MediaFileType.TRAILER)) {
         filename = filename + "-trailer";
       }
+      if (mf.getType().equals(MediaFileType.MEDIAINFO)) {
+        filename = filename + "-mediainfo";
+      }
+      if (mf.getType().equals(MediaFileType.VSMETA)) {
+        // HACK: get video extension from "old" name, eg video.avi.vsmeta
+        String ext = FilenameUtils.getExtension(mf.getFilename());
+        filename = filename + "." + ext;
+      }
       if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {
         String name = mf.getBasename();
         Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");

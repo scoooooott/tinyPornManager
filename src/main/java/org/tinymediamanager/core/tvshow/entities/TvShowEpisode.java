@@ -141,6 +141,45 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * Overwrites all null/empty elements with "other" value (but might be also empty)<br>
+   * For lists, check with 'contains' and add.<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * 
+   * @param other
+   */
+
+  public void merge(TvShowEpisode other) {
+    if (other == null) {
+      return;
+    }
+    super.merge(other);
+
+    this.episode = this.episode < 0 ? other.getEpisode() : this.episode;
+    this.season = this.season < 0 ? other.getSeason() : this.season;
+    this.dvdSeason = this.dvdSeason < 0 ? other.getDvdSeason() : this.dvdSeason;
+    this.dvdEpisode = this.dvdEpisode < 0 ? other.getDvdEpisode() : this.dvdEpisode;
+    this.displaySeason = this.displaySeason < 0 ? other.getDisplaySeason() : this.displaySeason;
+    this.displayEpisode = this.displayEpisode < 0 ? other.getDisplayEpisode() : this.displayEpisode;
+
+    this.firstAired = this.firstAired == null ? other.getFirstAired() : this.firstAired;
+    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : MediaSource.UNKNOWN;
+
+    this.director = StringUtils.isEmpty(this.director) ? other.getDirector() : this.director;
+    this.writer = StringUtils.isEmpty(this.writer) ? other.getWriter() : this.writer;
+
+    for (String key : other.getTags()) {
+      if (!this.tags.contains(key)) {
+        this.tags.add(key);
+      }
+    }
+    for (TvShowActor actor : other.getActors()) {
+      if (!this.actors.contains(actor)) {
+        this.actors.add(actor);
+      }
+    }
+  }
+
+  /**
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>

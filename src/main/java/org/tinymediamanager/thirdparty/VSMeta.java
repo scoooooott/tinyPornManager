@@ -37,7 +37,6 @@ import com.google.gson.stream.JsonReader;
  *
  */
 public class VSMeta {
-  // TODO: base64 decode images and write to file system
 
   private static final Logger     LOGGER        = LoggerFactory.getLogger(VSMeta.class);
 
@@ -49,6 +48,7 @@ public class VSMeta {
   private String                  json          = "";
   private MovieSet                movieSet      = null;
   private float                   rating        = 0.0f;
+  private String                  year          = "";
   /** yyyy-mm-dd **/
   private String                  date          = "";
   private Certification           certification = Certification.NOT_RATED;
@@ -68,96 +68,100 @@ public class VSMeta {
   public void parseFile(Path file) {
     try {
       fileArray = Files.readAllBytes(file);
-    }
-    catch (IOException e) {
-      LOGGER.warn("SYNO: Error parsing file", e);
-      return;
-    }
-    if (fileArray.length < 30) {
-      LOGGER.warn("SYNO: Invalid file", file);
-      return;
-    }
-    LOGGER.debug("SYNO: found valid .vsmeta - try to parse metadata...");
+      if (fileArray.length < 30) {
+        LOGGER.warn("SYNO: Invalid file", file);
+        return;
+      }
+      LOGGER.debug("SYNO: found valid .vsmeta - try to parse metadata...");
 
-    int maxLength = fileArray.length > 5000 ? 5000 : fileArray.length - 1;
+      int maxLength = fileArray.length > 5000 ? 5000 : fileArray.length - 1;
 
-    for (currentpos = 0; currentpos < maxLength; currentpos++) {
-      int b = fileArray[currentpos] & 0xff; // unsigned int
+      for (currentpos = 0; currentpos < maxLength; currentpos++) {
+        int b = fileArray[currentpos] & 0xff; // unsigned int
 
-      // =================================================
-      // get the values from VSMETA file
-      // =================================================
-      String ret = "";
-      switch (b) {
-        case 0x12: // Show/Movie Title
-        case 0x1A: // Season Title
-        case 0x22: // Episode Title/MoviePlot
-        case 0x32: // first aired
-        case 0x42: // desc
-        case 0x4A: // json
-        case 0x5A: // certification
-          ret = parseLengthString();
-          break;
+        // =================================================
+        // get the values from VSMETA file
+        // =================================================
+        String ret = "";
+        switch (b) {
+          case 0x12: // Show/Movie Title
+          case 0x1A: // Season Title
+          case 0x22: // Episode Title/MoviePlot
+          case 0x32: // first aired / release
+          case 0x42: // desc
+          case 0x4A: // json
+          case 0x5A: // certification
+            ret = parseLengthString();
+            break;
 
-        case 0x52: // length of cast+genre array
-          ret = parseLengthString();
-          parseCaseGenre(ret.getBytes());
-          break;
+          case 0x52: // length of cast+genre array
+            ret = parseLengthString();
+            parseCaseGenre(ret.getBytes());
+            break;
 
-        // skip 1 or 2 bytes
-        case 0x28: // before aired date
-          currentpos++;
-          int length = getLength(fileArray[currentpos], fileArray[currentpos + 1]);
-          if (length > 127) {
+          case 0x28: // year
             currentpos++;
-          }
-          break;
+            int length = getLength(fileArray[currentpos], fileArray[currentpos + 1]);
+            if (length > 127) {
+              currentpos++;
+            }
+            ret = String.valueOf(length);
+            break;
 
-        case 0x60:
-          // here comes the graphics base64 decoding - step out here
-          currentpos = maxLength + 1; // haa-haa
-          break;
+          case 0x60:
+            // TODO: base64 decode images and write to file system
+            // here comes the graphics base64 decoding - step out here
+            currentpos = maxLength + 1; // haa-haa
+            break;
 
-        default:
-          break;
-      }
+          default:
+            LOGGER.trace("*** skip " + currentpos);
+            break;
+        }
+
+        // =================================================
+        // set the value into correct object
+        // =================================================
+        switch (b) {
+          case 0x12:// show/movie title
+            title1 = ret;
+            break;
+          case 0x1A:// season title
+            title2 = ret;
+            break;
+          case 0x22: // episode title / movie plot
+            title3 = ret;
+            break;
+          case 0x28: // year
+            year = ret;
+            break;
+          case 0x32: // first aired
+            date = ret;
+            break;
+          case 0x42: // desc
+            description = ret;
+            break;
+          case 0x4A: // json
+            json = ret;
+            break;
+          case 0x5A: // certification
+            certification = Certification.findCertification(ret);
+            break;
+
+          default:
+            break;
+        }
+
+      } // end loop
+      fileArray = null;
 
       // =================================================
-      // set the value into correct object
+      parseJSON();
       // =================================================
-      switch (b) {
-        case 0x12:// show/movie title
-          title1 = ret;
-          break;
-        case 0x1A:// season title
-          title2 = ret;
-          break;
-        case 0x22: // episode title / movie plot
-          title3 = ret;
-          break;
-        case 0x32: // first aired
-          date = ret;
-          break;
-        case 0x42: // desc
-          description = ret;
-          break;
-        case 0x4A: // json
-          json = ret;
-          break;
-        case 0x5A: // certification
-          certification = Certification.findCertification(ret);
-          break;
-
-        default:
-          break;
-      }
-
-    } // end loop
-    fileArray = null;
-
-    // =================================================
-    parseJSON();
-    // =================================================
+    }
+    catch (Exception e) {
+      LOGGER.warn("SYNO: Error parsing file", e);
+    }
   }
 
   /**
@@ -193,7 +197,7 @@ public class VSMeta {
     int length = 0;
     String ret = "";
 
-    for (int i = 0; i < array.length; i++) {
+    for (int i = 0; i < array.length - 1; i++) {
       int b = array[i] & 0xff; // unsigned int
 
       LOGGER.trace("SYNO: Pos: " + currentpos + " Byt: 0x" + Integer.toHexString(fileArray[currentpos]));
@@ -205,9 +209,6 @@ public class VSMeta {
         i++;
       }
       ret = new String(Arrays.copyOfRange(array, i, i + length));
-      if ("null".equals(ret)) {
-        ret = "";
-      }
       i += length - 1;
       LOGGER.trace("SYNO: " + ret);
 
@@ -370,6 +371,7 @@ public class VSMeta {
     m.setTagline(title3);
     m.setPlot(description);
     m.setReleaseDate(date);
+    m.setYear(year);
     m.setRating(rating);
     m.setCertification(certification);
 
@@ -420,6 +422,7 @@ public class VSMeta {
 
     ep.setPlot(description);
     ep.setFirstAired(date);
+    ep.setYear(year);
     ep.setRating(rating);
     // tv.setCertification(certification);
 

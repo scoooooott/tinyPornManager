@@ -300,7 +300,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.NFO;
     }
 
-    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn")) {
+    if (ext.equals("vsmeta")) {
+      return MediaFileType.VSMETA;
+    }
+
+    if (basename.endsWith("-mediainfo") && "xml".equals(ext)) {
+      return MediaFileType.MEDIAINFO;
+    }
+
+    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn") || ext.equals("gif")) {
       return parseImageType();
     }
 
