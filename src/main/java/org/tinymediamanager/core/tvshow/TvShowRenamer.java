@@ -460,7 +460,7 @@ public class TvShowRenamer {
       }
       if (mf.getType().equals(MediaFileType.VSMETA)) {
         // HACK: get video extension from "old" name, eg video.avi.vsmeta
-        String ext = FilenameUtils.getExtension(mf.getFilename());
+        String ext = FilenameUtils.getExtension(FilenameUtils.getBaseName(mf.getFilename()));
         filename = filename + "." + ext;
       }
       if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {

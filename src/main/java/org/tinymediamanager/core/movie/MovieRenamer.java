@@ -680,7 +680,7 @@ public class MovieRenamer {
         MediaFile mi = new MediaFile(mf);
         if (movie.isDisc()) {
           // hmm.. dunno, keep at least 1:1
-          mi.setFile(newMovieDir.resolve(mi.getFilename()));
+          mi.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
           newFiles.add(mi);
         }
         else {
@@ -701,7 +701,7 @@ public class MovieRenamer {
         else {
           newFilename += getStackingString(mf);
           // HACK: get video extension from "old" name, eg video.avi.vsmeta
-          String videoExt = FilenameUtils.getExtension(mf.getFilename());
+          String videoExt = FilenameUtils.getExtension(FilenameUtils.getBaseName(mf.getFilename()));
           newFilename += "." + videoExt + ".vsmeta";
           meta.setFile(newMovieDir.resolve(newFilename));
           newFiles.add(meta);
