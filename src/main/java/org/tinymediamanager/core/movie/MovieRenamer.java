@@ -1070,6 +1070,10 @@ public class MovieRenamer {
           ret = String.valueOf(movie.getRating());
         }
         break;
+      case "$K":
+        if (!movie.getTags().isEmpty()) {
+          ret = movie.getTags().get(0);
+        }
       default:
         break;
     }

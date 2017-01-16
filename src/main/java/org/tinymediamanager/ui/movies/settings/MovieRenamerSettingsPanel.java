@@ -45,9 +45,9 @@ import javax.swing.event.DocumentListener;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
@@ -324,6 +324,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     exampleEventList.add(new MovieRenamerExample("$#"));
     exampleEventList.add(new MovieRenamerExample("$3"));
     exampleEventList.add(new MovieRenamerExample("$U"));
+    exampleEventList.add(new MovieRenamerExample("$K"));
   }
 
   private void buildAndInstallMovieArray() {
