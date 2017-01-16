@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -421,6 +423,16 @@ public class UpgradeTasks {
 
       for (Movie movie : movieList.getMovies()) {
         boolean changed = removeEmptyIds(movie);
+
+        // removing movieset artwork from movie mfs
+        List<MediaFile> mfs = new ArrayList<>(movie.getMediaFiles());
+        for (MediaFile mf : mfs) {
+          if (mf.isGraphic() && mf.getFilename().startsWith("movieset-")) {
+            movie.removeFromMediaFiles(mf);
+            changed = true;
+          }
+        }
+
         if (changed) {
           movie.saveToDb();
         }
