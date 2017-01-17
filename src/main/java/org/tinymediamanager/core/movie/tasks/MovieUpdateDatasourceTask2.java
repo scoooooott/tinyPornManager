@@ -73,6 +73,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.thirdparty.VSMeta;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.sun.jna.Platform;
@@ -387,6 +388,98 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   }
 
   /**
+   * Parses ALL NFO MFs (merged together) and create a movie<br>
+   *
+   * @param mfs
+   * @return Movie or NULL
+   */
+  private Movie parseNFOs(List<MediaFile> mfs) {
+    Movie movie = null;
+    for (MediaFile mf : mfs) {
+
+      if (mf.getType().equals(MediaFileType.NFO)) {
+        LOGGER.info("| parsing NFO " + mf.getFileAsPath());
+        Movie nfo = null;
+        switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
+          case XBMC:
+            nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+            if (nfo == null) {
+              // try the other
+              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
+            }
+            if (nfo == null) {
+              // try the other
+              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
+            }
+            break;
+
+          case KODI:
+            nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
+            // not needed at the moment since kodi is downwards compatible
+            // if (nfo == null) {
+            // // try the other
+            // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+            // }
+            if (nfo == null) {
+              // try the other
+              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
+            }
+            break;
+
+          case MP:
+            nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
+            if (nfo == null) {
+              // try the other
+              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
+            }
+            // not needed at the moment since kodi is downwards compatible
+            // if (nfo == null) {
+            // // try the other
+            // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
+            // }
+            break;
+        }
+
+        // take first nfo 1:1
+        if (movie == null) {
+          movie = nfo;
+        }
+        else {
+          movie.merge(nfo);
+        }
+
+        // was NFO, but parsing exception. try to find at least imdb id within
+        if (movie != null && movie.getImdbId().isEmpty()) {
+          try {
+            String imdb = Utils.readFileToString(mf.getFileAsPath());
+            imdb = ParserUtils.detectImdbId(imdb);
+            if (!imdb.isEmpty()) {
+              LOGGER.debug("| Found IMDB id: " + imdb);
+              nfo.setImdbId(imdb);
+            }
+          }
+          catch (IOException e) {
+            LOGGER.warn("| couldn't read NFO " + mf);
+          }
+        }
+      } // end NFO
+    } // end MFs
+
+    for (MediaFile mf : mfs) {
+      if (mf.getType().equals(MediaFileType.VSMETA)) {
+        if (movie == null) {
+          movie = new Movie();
+        }
+        VSMeta vsmeta = new VSMeta();
+        vsmeta.parseFile(mf.getFileAsPath());
+        movie.merge(vsmeta.getMovie());
+      }
+    }
+
+    return movie;
+  }
+
+  /**
    * for SingleMovie or DiscFolders
    *
    * @param dataSource
@@ -426,109 +519,49 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
     allFiles.clear();
 
+    // ***************************************************************
+    // first round - try to parse NFO(s) first
+    // ***************************************************************
     if (movie == null) {
       LOGGER.debug("| movie not found; looking for NFOs");
-      movie = new Movie();
-      String bdinfoTitle = ""; // title parsed out of BDInfo
-      String videoName = ""; // title from file
-
-      // ***************************************************************
-      // first round - try to parse NFO(s) first
-      // ***************************************************************
-      // TODO: add movie.addMissingMetaData(otherMovie) to get merged movie from
-      // multiple NFOs ;)
-      for (MediaFile mf : mfs) {
-
-        if (mf.getType().equals(MediaFileType.NFO)) {
-          // PathMatcher matcher =
-          // FileSystems.getDefault().getPathMatcher("glob:*.[nN][fF][oO]");
-          LOGGER.info("| parsing NFO " + mf.getFileAsPath());
-          Movie nfo = null;
-          switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
-            case XBMC:
-              nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-              if (nfo == null) {
-                // try the other
-                nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-              }
-              if (nfo == null) {
-                // try the other
-                nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-              }
-              break;
-
-            case KODI:
-              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-              // not needed at the moment since kodi is downwards compatible
-              // if (nfo == null) {
-              // // try the other
-              // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-              // }
-              if (nfo == null) {
-                // try the other
-                nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-              }
-              break;
-
-            case MP:
-              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-              if (nfo == null) {
-                // try the other
-                nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-              }
-              // not needed at the moment since kodi is downwards compatible
-              // if (nfo == null) {
-              // // try the other
-              // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-              // }
-              break;
-          }
-          if (nfo != null) {
-            movie = nfo;
-          }
-          // was NFO, but parsing exception. try to find at least imdb id within
-          if (movie.getImdbId().isEmpty()) {
-            try {
-              String imdb = Utils.readFileToString(mf.getFileAsPath());
-              imdb = ParserUtils.detectImdbId(imdb);
-              if (!imdb.isEmpty()) {
-                LOGGER.debug("| Found IMDB id: " + imdb);
-                movie.setImdbId(imdb);
-              }
-            }
-            catch (IOException e) {
-              LOGGER.warn("| couldn't read NFO " + mf);
-            }
-          }
-
-        } // end NFO
-        else if (mf.getType().equals(MediaFileType.TEXT)) {
-          try {
-            String txtFile = Utils.readFileToString(mf.getFileAsPath());
-
-            String bdinfo = StrgUtils.substr(txtFile, ".*Disc Title:\\s+(.*?)[\\n\\r]");
-            if (!bdinfo.isEmpty()) {
-              LOGGER.debug("| Found Disc Title in BDInfo.txt: " + bdinfo);
-              bdinfoTitle = WordUtils.capitalizeFully(bdinfo);
-            }
-
-            String imdb = ParserUtils.detectImdbId(txtFile);
-            if (!imdb.isEmpty()) {
-              LOGGER.debug("| Found IMDB id: " + imdb);
-              movie.setImdbId(imdb);
-            }
-          }
-          catch (Exception e) {
-            LOGGER.warn("| couldn't read TXT " + mf.getFilename());
-          }
-        }
-        else if (mf.getType().equals(MediaFileType.VIDEO)) {
-          videoName = mf.getBasename();
-        }
-      } // end NFO MF loop
+      movie = parseNFOs(mfs);
+      if (movie == null) {
+        movie = new Movie();
+      }
       movie.setNewlyAdded(true);
       movie.setDateAdded(new Date());
-    } // end first round - we might have a filled movie
+    }
+
+    // ***************************************************************
+    // second round - try to parse additional files
+    // ***************************************************************
+    String bdinfoTitle = ""; // title parsed out of BDInfo
+    String videoName = ""; // title from file
+    for (MediaFile mf : mfs) {
+      if (mf.getType().equals(MediaFileType.TEXT)) {
+        try {
+          String txtFile = Utils.readFileToString(mf.getFileAsPath());
+
+          String bdinfo = StrgUtils.substr(txtFile, ".*Disc Title:\\s+(.*?)[\\n\\r]");
+          if (!bdinfo.isEmpty()) {
+            LOGGER.debug("| Found Disc Title in BDInfo.txt: " + bdinfo);
+            bdinfoTitle = WordUtils.capitalizeFully(bdinfo);
+          }
+
+          String imdb = ParserUtils.detectImdbId(txtFile);
+          if (!imdb.isEmpty()) {
+            LOGGER.debug("| Found IMDB id: " + imdb);
+            movie.setImdbId(imdb);
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("| couldn't read TXT " + mf.getFilename());
+        }
+      }
+      else if (mf.getType().equals(MediaFileType.VIDEO)) {
+        videoName = mf.getBasename();
+      }
+    }
 
     if (movie.getTitle().isEmpty()) {
       // get the "cleaner" name/year combo
@@ -567,12 +600,12 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     }
 
     // ***************************************************************
-    // second round - now add all the other known files
+    // third round - now add all the other known files
     // ***************************************************************
     addMediafilesToMovie(movie, mfs);
 
     // ***************************************************************
-    // third round - try to match unknown graphics like title.ext or
+    // fourth round - try to match unknown graphics like title.ext or
     // filename.ext as poster
     // ***************************************************************
     if (movie.getArtworkFilename(MediaFileType.POSTER).isEmpty()) {
@@ -636,9 +669,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
    *          just use this files, do not list again
    */
   private void createMultiMovieFromDir(Path dataSource, Path movieDir, List<Path> allFiles) {
-    LOGGER.info("Parsing multi  movie directory: " + movieDir); // double space
-                                                                // is for log
-                                                                // alignment ;)
+    LOGGER.info("Parsing multi  movie directory: " + movieDir); // double space is for log alignment ;)
 
     List<Movie> movies = movieList.getMoviesByPath(movieDir);
 
@@ -665,6 +696,22 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       Movie movie = null;
       String basename = FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename()));
 
+      // get all MFs with same basename
+      List<MediaFile> sameName = new ArrayList<>();
+      LOGGER.trace("UDS: basename: " + basename);
+      for (MediaFile sm : mfs) {
+        String smBasename = FilenameUtils.getBaseName(sm.getFilename());
+        String smNameRegexp = Pattern.quote(basename) + "[\\s.,_-].*";
+        if (smBasename.equals(basename) || smBasename.matches(smNameRegexp)) {
+          if (sm.getType() == MediaFileType.GRAPHIC) {
+            // same named graphics (unknown, not detected without postfix) treated as posters
+            sm.setType(MediaFileType.POSTER);
+          }
+          sameName.add(sm);
+          LOGGER.trace("UDS: found matching MF: " + sm);
+        }
+      }
+
       // 1) check if MF is already assigned to a movie within path
       for (Movie m : movies) {
         if (m.getMediaFiles(MediaFileType.VIDEO).contains(mf)) {
@@ -677,12 +724,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           // try to match like if we would create a new movie
           String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mfile.getFilename())));
           String[] mfTY = ParserUtils.detectCleanMovienameAndYear(FilenameUtils.getBaseName(Utils.cleanStackingMarkers(mf.getFilename())));
-          if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title
-                                                                          // AND
-                                                                          // year
-                                                                          // (even
-                                                                          // empty)
-                                                                          // match
+          if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title AND year (even empty) match
             LOGGER.debug("| found possible movie '" + m.getTitle() + "' from filename " + mf);
             movie = m;
             break;
@@ -691,57 +733,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
       if (movie == null) {
         // 2) create if not found
-        // check for NFO
-        Path nfoFile = movieDir.resolve(basename + ".nfo");
-        if (allFiles.contains(nfoFile)) {
-          MediaFile nfo = new MediaFile(nfoFile, MediaFileType.NFO);
-          // from NFO?
-          LOGGER.debug("| found NFO '" + nfo + "' - try to parse");
-          switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
-            case XBMC:
-              movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
-              if (movie == null) {
-                // try the other
-                movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
-              }
-              if (movie == null) {
-                // try the other
-                movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
-              }
-              break;
+        movie = parseNFOs(sameName);
 
-            case KODI:
-              movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
-              // not needed at the moment since kodi is downwards compatible
-              // if (movie == null) {
-              // // try the other
-              // movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
-              // }
-              if (movie == null) {
-                // try the other
-                movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
-              }
-              break;
-
-            case MP:
-              movie = MovieToMpNfoConnector.getData(nfo.getFileAsPath());
-              if (movie == null) {
-                // try the other
-                movie = MovieToKodiNfoConnector.getData(nfo.getFileAsPath());
-              }
-              // not needed at the moment since kodi is downwards compatible
-              // if (movie == null) {
-              // // try the other
-              // movie = MovieToXbmcNfoConnector.getData(nfo.getFileAsPath());
-              // }
-              break;
-          }
-          if (movie != null) {
-            // valid NFO found, so add itself as MF
-            LOGGER.debug("| NFO valid - add it");
-            movie.addToMediaFiles(nfo);
-          }
-        }
         if (movie == null) {
           // still NULL, create new movie movie from file
           LOGGER.debug("| Create new movie from file: " + mf);
@@ -776,34 +769,36 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
-      movie.addToMediaFiles(mf);
+      // movie.addToMediaFiles(mf);
       movie.setDateAddedFromMediaFile(mf);
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
-      List<MediaFile> existingMediaFiles = new ArrayList<>(movie.getMediaFiles());
-      List<MediaFile> foundMediaFiles = new ArrayList<>();
-      for (int i = allFiles.size() - 1; i >= 0; i--) {
-        Path fileInDir = allFiles.get(i);
-        if (fileInDir.getFileName().toString().startsWith(basename)) { // need
-                                                                       // toString
-                                                                       // b/c of
-                                                                       // possible
-                                                                       // spaces!!
-          MediaFile mediaFile = new MediaFile(fileInDir);
-          if (!existingMediaFiles.contains(mediaFile)) {
-            if (mediaFile.getType() == MediaFileType.GRAPHIC) {
-              // same named graphics (unknown, not detected without postfix)
-              // treated as posters
-              mediaFile.setType(MediaFileType.POSTER);
-            }
-            foundMediaFiles.add(mediaFile);
-          }
-          // started with basename, so remove it for others
-          allFiles.remove(i);
-        }
-      }
-      addMediafilesToMovie(movie, foundMediaFiles);
+      // List<MediaFile> existingMediaFiles = new ArrayList<>(movie.getMediaFiles());
+      // List<MediaFile> foundMediaFiles = new ArrayList<>();
+      // for (int i = allFiles.size() - 1; i >= 0; i--) {
+      // Path fileInDir = allFiles.get(i);
+      // if (fileInDir.getFileName().toString().startsWith(basename)) { // need
+      // // toString
+      // // b/c of
+      // // possible
+      // // spaces!!
+      // MediaFile mediaFile = new MediaFile(fileInDir);
+      // if (!existingMediaFiles.contains(mediaFile)) {
+      // if (mediaFile.getType() == MediaFileType.GRAPHIC) {
+      // // same named graphics (unknown, not detected without postfix)
+      // // treated as posters
+      // mediaFile.setType(MediaFileType.POSTER);
+      // }
+      // foundMediaFiles.add(mediaFile);
+      // }
+      // // started with basename, so remove it for others
+      // allFiles.remove(i);
+      // }
+      // }
+      // addMediafilesToMovie(movie, foundMediaFiles);
+      addMediafilesToMovie(movie, sameName);
+      mfs.removeAll(sameName);
 
       // check if that movie is an offline movie
       boolean isOffline = false;
@@ -823,7 +818,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       }
 
       movie.saveToDb();
-    } // end foreach MF
+    } // end foreach VIDEO MF
 
     // check stacking on all movie from this dir (it might have changed!)
     for (Movie m : movieList.getMoviesByPath(movieDir)) {
@@ -910,6 +905,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           case CLEARART:
           case LOGO:
           case CLEARLOGO:
+          case MEDIAINFO:
+          case VSMETA:
             movie.addToMediaFiles(mf);
             break;
 

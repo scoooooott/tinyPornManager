@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -69,6 +70,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.IconTableCellRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.RequestFocusAction;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
@@ -294,6 +296,9 @@ public class MoviePanel extends JPanel {
     textField = EnhancedTextField.createSearchTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(13);
+    // register global short cut for the search field
+    getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK), "search");
+    getActionMap().put("search", new RequestFocusAction(textField));
 
     // table = new JTable();
     // build JTable

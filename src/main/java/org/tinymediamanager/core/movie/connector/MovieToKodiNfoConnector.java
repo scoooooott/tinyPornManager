@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -310,7 +309,9 @@ public class MovieToKodiNfoConnector {
     }
 
     kodi.id = movie.getImdbId();
-    kodi.tmdbId = movie.getTmdbId();
+    if (movie.getTmdbId() != 0) {
+      kodi.tmdbId = movie.getTmdbId();
+    }
 
     kodi.ids.putAll(movie.getIds());
 
@@ -550,11 +551,7 @@ public class MovieToKodiNfoConnector {
       else {
         movie.setTop250(0);
       }
-      try {
-        movie.setReleaseDate(kodi.premiered);
-      }
-      catch (ParseException e) {
-      }
+      movie.setReleaseDate(kodi.premiered);
       movie.setPlot(kodi.plot);
       movie.setTagline(kodi.tagline);
       try {
@@ -598,7 +595,7 @@ public class MovieToKodiNfoConnector {
       if (StringUtils.isBlank(movie.getImdbId())) {
         movie.setImdbId(kodi.id);
       }
-      if (movie.getTmdbId() == 0) {
+      if (movie.getTmdbId() == 0 && kodi.tmdbId != 0) {
         movie.setTmdbId(kodi.tmdbId);
       }
 

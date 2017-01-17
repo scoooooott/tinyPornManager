@@ -49,6 +49,8 @@ public enum MediaFileType {
   EXTRAFANART, // gfx
   EXTRATHUMB, // gfx
   GRAPHIC, // NO gfx (since not a searchable type)
+  MEDIAINFO, // xxx-mediainfo.xml
+  VSMETA, // xxx.ext.vsmeta Synology
   TEXT, // various text infos, like BDinfo.txt or others...
   UNKNOWN;
   // @formatter:on

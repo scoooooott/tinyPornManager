@@ -278,11 +278,18 @@ public class MovieRenamer {
           // ## 2) MMD movie -> normal movie (upgrade)
           // ######################################################################
           LOGGER.trace("Upgrading movie into it's own dir :) " + newPathname);
-          try {
-            Files.createDirectories(destDir);
+          if (!Files.exists(destDir)) {
+            try {
+              Files.createDirectories(destDir);
+            }
+            catch (Exception e) {
+              LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+              // well, better not to rename
+              return;
+            }
           }
-          catch (Exception e) {
-            LOGGER.error("Could not create destination '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
+          else {
+            LOGGER.error("Directory already exists! '" + destDir + "' - NOT renaming folder ('upgrade' movie)");
             // well, better not to rename
             return;
           }
@@ -690,6 +697,38 @@ public class MovieRenamer {
         newFiles.add(sample);
         break;
 
+      case MEDIAINFO:
+        MediaFile mi = new MediaFile(mf);
+        if (movie.isDisc()) {
+          // hmm.. dunno, keep at least 1:1
+          mi.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
+          newFiles.add(mi);
+        }
+        else {
+          newFilename += getStackingString(mf);
+          newFilename += "-mediainfo." + mf.getExtension();
+          mi.setFile(newMovieDir.resolve(newFilename));
+          newFiles.add(mi);
+        }
+        break;
+
+      case VSMETA:
+        MediaFile meta = new MediaFile(mf);
+        if (movie.isDisc()) {
+          // hmm.. no vsmeta created? keep 1:1 (although this will be never called)
+          meta.setFile(newMovieDir.resolve(meta.getFilename()));
+          newFiles.add(meta);
+        }
+        else {
+          newFilename += getStackingString(mf);
+          // HACK: get video extension from "old" name, eg video.avi.vsmeta
+          String videoExt = FilenameUtils.getExtension(FilenameUtils.getBaseName(mf.getFilename()));
+          newFilename += "." + videoExt + ".vsmeta";
+          meta.setFile(newMovieDir.resolve(newFilename));
+          newFiles.add(meta);
+        }
+        break;
+
       case SUBTITLE:
         List<MediaFileSubtitle> mfsl = mf.getSubtitles();
 
@@ -1092,6 +1131,10 @@ public class MovieRenamer {
           ret = String.valueOf(movie.getRating());
         }
         break;
+      case "$K":
+        if (!movie.getTags().isEmpty()) {
+          ret = movie.getTags().get(0);
+        }
       default:
         break;
     }

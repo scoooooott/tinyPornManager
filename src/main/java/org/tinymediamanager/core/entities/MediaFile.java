@@ -78,7 +78,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final List<String>                  PLEX_EXTRA_FOLDERS = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
       "deletedscenes", "featurettes", "interviews", "scenes", "shorts", "trailers");
 
-  private static Pattern                             moviesetPattern    = Pattern.compile("(?i)(movieset-poster|movieset-fanart)\\..{2,4}");
+  private static Pattern                             moviesetPattern    = Pattern
+      .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
   private static Pattern                             posterPattern      = Pattern
       .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
   private static Pattern                             fanartPattern      = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
@@ -301,7 +302,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.NFO;
     }
 
-    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn")) {
+    if (ext.equals("vsmeta")) {
+      return MediaFileType.VSMETA;
+    }
+
+    if (basename.endsWith("-mediainfo") && "xml".equals(ext)) {
+      return MediaFileType.MEDIAINFO;
+    }
+
+    if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tbn") || ext.equals("gif")) {
       return parseImageType();
     }
 

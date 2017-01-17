@@ -199,6 +199,72 @@ public class Movie extends MediaEntity implements IMediaInformation {
     super();
   }
 
+  /**
+   * Overwrites all null/empty elements with "other" value (but might be also empty)<br>
+   * For lists, check with 'contains' and add.<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * 
+   * @param other
+   */
+
+  public void merge(Movie other) {
+    if (other == null) {
+      return;
+    }
+    super.merge(other);
+
+    this.sortTitle = StringUtils.isEmpty(this.sortTitle) ? other.getSortTitle() : this.sortTitle;
+    this.tagline = StringUtils.isEmpty(this.tagline) ? other.getTagline() : this.tagline;
+    this.director = StringUtils.isEmpty(this.director) ? other.getDirector() : this.director;
+    this.writer = StringUtils.isEmpty(this.writer) ? other.getWriter() : this.writer;
+    this.spokenLanguages = StringUtils.isEmpty(this.spokenLanguages) ? other.getSpokenLanguages() : this.spokenLanguages;
+    this.country = StringUtils.isEmpty(this.country) ? other.getCountry() : this.country;
+    this.titleSortable = StringUtils.isEmpty(this.titleSortable) ? other.getTitleSortable() : this.titleSortable;
+
+    this.runtime = this.runtime == 0 ? other.getRuntime() : this.runtime;
+    this.top250 = this.top250 == 0 ? other.getTop250() : this.top250;
+    this.releaseDate = this.releaseDate == null ? other.getReleaseDate() : this.releaseDate;
+    this.movieSet = this.movieSet == null ? other.getMovieSet() : this.movieSet;
+    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : MediaSource.UNKNOWN;
+    this.certification = this.certification == Certification.NOT_RATED ? other.getCertification() : Certification.NOT_RATED;
+    this.edition = this.edition == MovieEdition.NONE ? other.getEdition() : MovieEdition.NONE;
+
+    for (MediaGenres genre : other.getGenres()) {
+      addGenre(genre); // already checks dupes
+    }
+    for (MovieActor actor : other.getActors()) {
+      if (!this.actors.contains(actor)) {
+        this.actors.add(actor);
+      }
+    }
+    for (MovieProducer prod : other.getProducers()) {
+      if (!this.producers.contains(prod)) {
+        this.producers.add(prod);
+      }
+    }
+    for (MovieTrailer trail : other.getTrailer()) {
+      if (!this.trailer.contains(trail)) {
+        this.trailer.add(trail);
+      }
+    }
+
+    for (String key : other.getTags()) {
+      if (!this.tags.contains(key)) {
+        this.tags.add(key);
+      }
+    }
+    for (String key : other.getExtraThumbs()) {
+      if (!this.extraThumbs.contains(key)) {
+        this.extraThumbs.add(key);
+      }
+    }
+    for (String key : other.getExtraFanarts()) {
+      if (!this.extraFanarts.contains(key)) {
+        this.extraFanarts.add(key);
+      }
+    }
+  }
+
   @Override
   protected Comparator<MediaFile> getMediaFileComparator() {
     return MEDIA_FILE_COMPARATOR;
@@ -581,11 +647,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the imdb id
    */
   public String getImdbId() {
-    Object obj = ids.get(IMDB);
-    if (obj == null || !Utils.isValidImdbId(obj.toString())) {
-      return "";
-    }
-    return obj.toString();
+    return this.getIdAsString(IMDB);
   }
 
   /**
@@ -594,14 +656,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the tmdb id
    */
   public int getTmdbId() {
-    int id = 0;
-    try {
-      id = Integer.parseInt(String.valueOf(ids.get(TMDB)));
-    }
-    catch (Exception e) {
-      return 0;
-    }
-    return id;
+    return this.getIdAsInt(TMDB);
   }
 
   /**
@@ -611,9 +666,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    *          the new tmdb id
    */
   public void setTmdbId(int newValue) {
-    int oldValue = getTmdbId();
-    ids.put(TMDB, newValue);
-    firePropertyChange("tmdbId", oldValue, newValue);
+    this.setId(TMDB, newValue);
   }
 
   /**
@@ -622,14 +675,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the TraktTV id
    */
   public int getTraktId() {
-    int id = 0;
-    try {
-      id = Integer.parseInt(String.valueOf(ids.get(TRAKT)));
-    }
-    catch (Exception e) {
-      return 0;
-    }
-    return id;
+    return this.getIdAsInt(TRAKT);
   }
 
   /**
@@ -639,9 +685,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    *          the new TraktTV id
    */
   public void setTraktId(int newValue) {
-    int oldValue = getTraktId();
-    ids.put(TRAKT, newValue);
-    firePropertyChange("traktId", oldValue, newValue);
+    this.setId(TRAKT, newValue);
   }
 
   /**
@@ -756,12 +800,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    *          the new imdb id
    */
   public void setImdbId(String newValue) {
-    if (!Utils.isValidImdbId(newValue)) {
-      newValue = "";
-    }
-    String oldValue = getImdbId();
-    ids.put(IMDB, newValue);
-    firePropertyChange("imdbId", oldValue, newValue);
+    this.setId(IMDB, newValue);
   }
 
   /**
@@ -1796,8 +1835,12 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * convenient method to set the release date (parsed from string).
    */
-  public void setReleaseDate(String dateAsString) throws ParseException {
-    setReleaseDate(StrgUtils.parseDate(dateAsString));
+  public void setReleaseDate(String dateAsString) {
+    try {
+      setReleaseDate(StrgUtils.parseDate(dateAsString));
+    }
+    catch (ParseException e) {
+    }
   }
 
   public Date getLastWatched() {

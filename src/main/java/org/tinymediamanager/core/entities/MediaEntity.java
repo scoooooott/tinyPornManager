@@ -110,6 +110,39 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
+   * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
+   * For lists, check with 'contains' and add.<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   * 
+   * @param other
+   */
+  public void merge(MediaEntity other) {
+    if (other == null) {
+      return;
+    }
+
+    this.title = StringUtils.isEmpty(this.title) ? other.getTitle() : this.title;
+    this.originalTitle = StringUtils.isEmpty(this.originalTitle) ? other.getOriginalTitle() : this.originalTitle;
+    this.year = StringUtils.isEmpty(this.year) ? other.getYear() : this.year;
+    this.plot = StringUtils.isEmpty(this.plot) ? other.getPlot() : this.plot;
+    this.productionCompany = StringUtils.isEmpty(this.productionCompany) ? other.getProductionCompany() : this.productionCompany;
+
+    this.votes = this.votes == 0 ? other.getVotes() : this.votes;
+    this.rating = Float.compare(this.rating, 0f) == 0 ? other.getRating() : this.rating;
+
+    for (String key : other.getIds().keySet()) {
+      if (!this.ids.containsKey(key)) {
+        this.ids.put(key, other.getId(key));
+      }
+    }
+    for (MediaFileType key : other.getArtworkUrls().keySet()) {
+      if (!this.artworkUrlMap.containsKey(key)) {
+        this.artworkUrlMap.put(key, other.getArtworkUrl(key));
+      }
+    }
+  }
+
+  /**
    * Initialize after loading from database.
    */
   public void initializeAfterLoading() {
@@ -406,7 +439,15 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void setId(String key, Object value) {
-    ids.put(key, value);
+    // remove ID, if empty/0/null
+    // if we only skipped it, the existing entry will stay although someone changed it to empty.
+    String v = String.valueOf(value);
+    if ("".equals(v) || "0".equals(v) || "null".equals(v)) {
+      ids.remove(key);
+    }
+    else {
+      ids.put(key, value);
+    }
     firePropertyChange(key, null, value);
 
     // fire special events for our well known IDs

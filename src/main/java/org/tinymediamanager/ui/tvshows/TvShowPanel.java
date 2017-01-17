@@ -34,6 +34,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -73,6 +74,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TreePopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.actions.RequestFocusAction;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.JSplitButton;
 import org.tinymediamanager.ui.components.JSplitButton.SplitButtonActionListener;
@@ -235,6 +237,9 @@ public class TvShowPanel extends JPanel {
         filteredModel.filter(tree);
       }
     });
+    // register global short cut for the search field
+    getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK), "search");
+    getActionMap().put("search", new RequestFocusAction(textField));
 
     final JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
     btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$

@@ -34,6 +34,7 @@ public enum MediaSource {
   HDDVD("HDDVD"), 
   BLURAY("Bluray"), 
   // other sources
+  HDRIP("HDRip"),
   CAM("Cam"),
   TS("Telesync"),
   TC("Telecine"),
@@ -47,7 +48,8 @@ public enum MediaSource {
 
   // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
   private static Pattern blurayPattern = Pattern
-      .compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|hdrip|blu\\-ray)[ .\\-_/\\\\\\]\\)]?");
+      .compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)[ .\\-_/\\\\\\]\\)]?");
+  private static Pattern hdripPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdrip)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern hddvdPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hddvd|hddvdrip)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern dvdPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvd|video_ts|dvdrip|dvdr|r5)[ .\\-_/\\\\\\]\\)]?");
   private static Pattern tvPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)[ .\\-_/\\\\\\]\\)]?");
@@ -85,6 +87,9 @@ public enum MediaSource {
 
     if (blurayPattern.matcher(fn).find()) {
       return MediaSource.BLURAY; // yes!
+    }
+    else if (hdripPattern.matcher(fn).find()) {
+      return MediaSource.HDRIP;
     }
     else if (dvdPattern.matcher(fn).find()) {
       return MediaSource.DVD;

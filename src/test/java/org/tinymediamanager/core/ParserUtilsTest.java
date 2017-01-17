@@ -10,6 +10,9 @@ public class ParserUtilsTest {
 
   @Test
   public void testNamingDetection() {
+
+    assertEqual("Harry Potter 7 Part 1", detectTY("Harry Potter 7 - Part 1.mkv")); // PartX is NOT removed
+    assertEqual("Harry Potter 7 Part 2", detectTY("Harry Potter 7 - Part 2 CD1.mkv"));
     assertEqual("Safety Not Guaranteed", detectTY("Safety ,,Not Guaranteed.mkv"));
     assertEqual("Safety Not Guaranteed", detectTY("Safety divx Not Guaranteed.mkv"));
     assertEqual("Safety Not Guaranteed | 2012", detectTY("Safety Not Guaranteed [2012, HEVC-1080p].mkv"));
