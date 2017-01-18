@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- created on 2017-01-18 14:29:28 - tinyMediaManager 2.9.2-SNAPSHOT -->
+<!-- created on 2017-01-18 14:33:52 - tinyMediaManager 2.9.2-SNAPSHOT -->
 <movie>
     <title>Movie With Set Graphics</title>
     <originaltitle></originaltitle>
+    <set>
+        <name>MovieWithSetGraphicsCollection</name>
+        <overview></overview>
+    </set>
     <sorttitle></sorttitle>
     <rating>0.0</rating>
     <year></year>
