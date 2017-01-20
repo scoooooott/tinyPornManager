@@ -9,6 +9,7 @@ Version 2.9.2
 + movie renamer: added $K token (first tag)
 x fixed detection/renaming of movieset artwork in movie folders
 x do not remove movie set artwork when removing movies from tmm
+x do not remove movie sets when removing movies/data sources from tmm
 x increased max memory setting for 64bit users to 2560MB
 x updated MediaInfo to 0.7.91
 x fixed parsing of media source

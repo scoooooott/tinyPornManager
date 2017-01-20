@@ -238,13 +238,6 @@ public class MovieList extends AbstractModelObject {
       }
     }
 
-    // and now check if any of the modified moviesets are worth for deleting
-    for (MovieSet movieSet : modifiedMovieSets) {
-      if (movieSet.getMovies().isEmpty()) {
-        removeMovieSet(movieSet);
-      }
-    }
-
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
@@ -279,11 +272,6 @@ public class MovieList extends AbstractModelObject {
       catch (Exception e) {
         LOGGER.error("Error removing movie from DB: " + e.getMessage());
       }
-    }
-
-    // and now check if any of the modified moviesets are worth for deleting
-    for (MovieSet movieSet : modifiedMovieSets) {
-      removeMovieSet(movieSet);
     }
 
     firePropertyChange("movies", null, movieList);
