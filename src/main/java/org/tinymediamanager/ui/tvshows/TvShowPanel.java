@@ -34,7 +34,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -87,6 +86,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowDownloadMissingArtworkAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
@@ -168,6 +168,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionChangeToDvdOrder           = new TvShowChangeToDvdOrderAction();
   private final Action                actionChangeToAiredOrder         = new TvShowChangeToAiredOrderAction();
   private final Action                actionDownloadSubtitles          = new TvShowSubtitleDownloadAction();
+  private final Action                actionDownloadMissingArtwork     = new TvShowDownloadMissingArtworkAction();
   private final Action                actionSearchAndDownloadSubtitles = new TvShowSubtitleSearchAction();
   private final Action                debugDumpShow                    = new DebugDumpShow();
 
@@ -643,6 +644,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionExport);
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
+    popupMenu.add(actionDownloadMissingArtwork);
     popupMenu.add(actionDownloadSubtitles);
     popupMenu.add(actionSearchAndDownloadSubtitles);
     popupMenu.addSeparator();

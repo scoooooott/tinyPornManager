@@ -40,7 +40,31 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   private boolean artwork       = true;
   private boolean episodes      = true;
 
+  /**
+   * default constructor - true for all fields
+   */
   public TvShowScraperMetadataConfig() {
+  }
+
+  /**
+   * custom constructor - set all fields to the given value
+   *
+   * @param value
+   *          the value to set all fields to
+   */
+  public TvShowScraperMetadataConfig(boolean value) {
+    title = value;
+    plot = value;
+    rating = value;
+    runtime = value;
+    year = value;
+    aired = value;
+    status = value;
+    certification = value;
+    cast = value;
+    genres = value;
+    artwork = value;
+    episodes = value;
   }
 
   public boolean isTitle() {
