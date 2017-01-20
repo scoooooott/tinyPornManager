@@ -386,7 +386,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
               if (movie.getMovieSet() != null) {
                 // unassign movie from set
                 MovieSet mSet = movie.getMovieSet();
-                mSet.removeMovie(movie);
+                mSet.removeMovie(movie, true);
               }
 
               movie.setMovieSet(movieSetToScrape);

@@ -1649,7 +1649,7 @@ public class Movie extends MediaEntity {
    */
   public void removeFromMovieSet() {
     if (movieSet != null) {
-      movieSet.removeMovie(this);
+      movieSet.removeMovie(this, true);
     }
     setMovieSet(null);
   }

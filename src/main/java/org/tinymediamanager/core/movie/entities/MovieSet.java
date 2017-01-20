@@ -247,10 +247,14 @@ public class MovieSet extends MediaEntity {
    * 
    * @param movie
    *          the movie
+   * @param doCleanup
+   *          do an artwork cleanup or not
    */
-  public void removeMovie(Movie movie) {
+  public void removeMovie(Movie movie, boolean doCleanup) {
     // clean images files
-    MovieSetArtworkHelper.cleanMovieSetArtworkInMovieFolder(movie);
+    if (doCleanup) {
+      MovieSetArtworkHelper.cleanMovieSetArtworkInMovieFolder(movie);
+    }
 
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
@@ -262,7 +266,9 @@ public class MovieSet extends MediaEntity {
       movieIds.remove(movie.getDbId());
 
       // update artwork
-      MovieSetArtworkHelper.updateArtwork(this);
+      if (doCleanup) {
+        MovieSetArtworkHelper.updateArtwork(this);
+      }
 
       saveToDb();
     }
