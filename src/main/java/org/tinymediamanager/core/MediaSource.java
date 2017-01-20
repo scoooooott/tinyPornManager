@@ -46,23 +46,26 @@ public enum MediaSource {
   // and our fallback
   UNKNOWN("Unknown");  // @formatter:on
 
-  // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
-  private static Pattern blurayPattern = Pattern
-      .compile("[ .\\-_/\\\\\\[\\(](bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern hdripPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdrip)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern hddvdPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](hddvd|hddvdrip)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern dvdPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvd|video_ts|dvdrip|dvdr|r5)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern tvPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern vhsPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](vhs)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern camPattern    = Pattern.compile("[ .\\-_/\\\\\\[\\(](cam)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern tsPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](ts|telesync|hdts|ht\\-ts)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern tcPattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](tc|telecine|hdtc|ht\\-tc)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern dvdscrPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](dvdscr)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern r5Pattern     = Pattern.compile("[ .\\-_/\\\\\\[\\(](r5)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern webripPattern = Pattern.compile("[ .\\-_/\\\\\\[\\(](webrip)[ .\\-_/\\\\\\]\\)]?");
-  private static Pattern webdlPattern  = Pattern.compile("[ .\\-_/\\\\\\[\\(](web-dl|webdl)[ .\\-_/\\\\\\]\\)]?");
+  private static final String START_TOKEN   = "[ .\\-_/\\\\\\[\\(]";
+  private static final String END_TOKEN     = "([ .\\-_/\\\\\\]\\)]|$)";
 
-  private String         title;
+  // tokens taken from http://en.wikipedia.org/wiki/Pirated_movie_release_types
+  private static Pattern      blurayPattern = Pattern
+      .compile(START_TOKEN + "(bluray|blueray|bdrip|brrip|dbrip|bd25|bd50|bdmv|blu\\-ray)" + END_TOKEN);
+  private static Pattern      hdripPattern  = Pattern.compile(START_TOKEN + "(hdrip)" + END_TOKEN);
+  private static Pattern      hddvdPattern  = Pattern.compile(START_TOKEN + "(hddvd|hddvdrip)" + END_TOKEN);
+  private static Pattern      dvdPattern    = Pattern.compile(START_TOKEN + "(dvd|video_ts|dvdrip|dvdr|r5)" + END_TOKEN);
+  private static Pattern      tvPattern     = Pattern.compile(START_TOKEN + "(hdtv|pdtv|dsr|dtv|hdtvrip|tvrip|dvbrip)" + END_TOKEN);
+  private static Pattern      vhsPattern    = Pattern.compile(START_TOKEN + "(vhs)" + END_TOKEN);
+  private static Pattern      camPattern    = Pattern.compile(START_TOKEN + "(cam)" + END_TOKEN);
+  private static Pattern      tsPattern     = Pattern.compile(START_TOKEN + "(ts|telesync|hdts|ht\\-ts)" + END_TOKEN);
+  private static Pattern      tcPattern     = Pattern.compile(START_TOKEN + "(tc|telecine|hdtc|ht\\-tc)" + END_TOKEN);
+  private static Pattern      dvdscrPattern = Pattern.compile(START_TOKEN + "(dvdscr)" + END_TOKEN);
+  private static Pattern      r5Pattern     = Pattern.compile(START_TOKEN + "(r5)" + END_TOKEN);
+  private static Pattern      webripPattern = Pattern.compile(START_TOKEN + "(webrip)" + END_TOKEN);
+  private static Pattern      webdlPattern  = Pattern.compile(START_TOKEN + "(web-dl|webdl)" + END_TOKEN);
+
+  private String              title;
 
   MediaSource(String title) {
     this.title = title;

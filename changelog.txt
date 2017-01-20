@@ -9,6 +9,7 @@ Version 2.9.2
 x fixed detection/renaming of movieset artwork in movie folders
 x increased max memory setting for 64bit users to 2560MB
 x updated MediaInfo to 0.7.91
+x fixed parsing of media source
 
 
 Version 2.9.1
