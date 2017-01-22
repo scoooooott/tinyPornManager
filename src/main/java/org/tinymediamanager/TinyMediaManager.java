@@ -19,6 +19,7 @@ package org.tinymediamanager;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -26,7 +27,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -484,6 +484,9 @@ public class TinyMediaManager {
 
         // extract templates, if GD has not already done
         Utils.extractTemplates();
+
+        // clean old log files
+        Utils.cleanOldLogs();
 
         // check if a .desktop file exists
         if (Platform.isLinux()) {

@@ -44,8 +44,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1137,7 +1139,7 @@ public class Utils {
    * @param keep
    *          keep last X versions
    */
-  public static final void deleteOldBackupFile(Path file, int keep) {
+  public static void deleteOldBackupFile(Path file, int keep) {
     ArrayList<Path> al = new ArrayList<>();
     String fname = file.getFileName().toString();
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("backup"))) {
@@ -1437,6 +1439,7 @@ public class Utils {
    * @param text
    *          the text to be written into the file
    * @throws IOException
+   *           any {@link IOException} thrown
    */
   public static void writeStringToFile(Path file, String text) throws IOException {
     byte[] buf = text.getBytes(StandardCharsets.UTF_8);
@@ -1450,6 +1453,7 @@ public class Utils {
    *          the file to read the string from
    * @return the read string
    * @throws IOException
+   *           any {@link IOException} thrown
    */
   public static String readFileToString(Path file) throws IOException {
     byte[] fileArray = Files.readAllBytes(file);
@@ -1464,6 +1468,7 @@ public class Utils {
    * @param to
    *          destination
    * @throws IOException
+   *           any {@link IOException} thrown
    */
   public static void copyDirectoryRecursive(Path from, Path to) throws IOException {
     LOGGER.info("Copyin complete directory from " + from + " to " + to);
@@ -1505,6 +1510,35 @@ public class Utils {
     }
     else {
       Collections.sort(list, comparator);
+    }
+  }
+
+  /**
+   * logback does not clean older log files than 32 days in the past. We have to clean the log files too
+   */
+  public static void cleanOldLogs() {
+    Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.DATE, -30);
+    Date dateBefore30Days = cal.getTime();
+
+    // the log file pattern is logs/tmm.%d.%i.log.gz
+    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("logs"))) {
+      for (Path path : directoryStream) {
+        Matcher matcher = pattern.matcher(path.getFileName().toString());
+        if (matcher.find()) {
+          try {
+            Date date = StrgUtils.parseDate(matcher.group());
+            if (dateBefore30Days.after(date)) {
+              Utils.deleteFileSafely(path);
+            }
+          }
+          catch (Exception ignored) {
+          }
+        }
+      }
+    }
+    catch (IOException ex) {
     }
   }
 
