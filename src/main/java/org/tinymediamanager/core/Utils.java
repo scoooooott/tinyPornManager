@@ -969,22 +969,22 @@ public class Utils {
   public static boolean deleteDirectorySafely(Path folder, String datasource) {
     folder = folder.toAbsolutePath();
     String fn = folder.toAbsolutePath().toString();
+
+    Path ds = Paths.get(datasource);
+
     if (!Files.isDirectory(folder)) {
       LOGGER.warn("Will not delete folder '" + folder + "': folder is a file, NOT a directory!");
       return false;
     }
-    if (!folder.toString().startsWith(datasource)) { // safety
+    if (!folder.startsWith(ds)) { // safety
       LOGGER.warn("Will not delete folder '" + folder + "': datasource '" + datasource + "' does not match");
       return false;
     }
 
-    // inject backup path
-    fn = fn.replace(datasource, datasource + FileSystems.getDefault().getSeparator() + Constants.BACKUP_FOLDER);
-
     // backup
     try {
       // create path
-      Path backup = Paths.get(fn);
+      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(folder).toString());
       if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
