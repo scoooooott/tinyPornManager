@@ -17,6 +17,7 @@ package org.tinymediamanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
@@ -50,6 +52,7 @@ import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -446,6 +449,38 @@ public class UpgradeTasks {
           changed = removeEmptyIds(episode);
           if (changed) {
             episode.saveToDb();
+          }
+        }
+      }
+
+      // delete all abandoned trash folder
+      if (Globals.settings.isDeleteTrashOnExit()) {
+        for (String datasource : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
+          Path ds = Paths.get(datasource);
+          if (Files.exists(ds)) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(ds)) {
+              for (Path path : directoryStream) {
+                if (Files.isDirectory(path) && ds.relativize(path).toString().startsWith(Constants.BACKUP_FOLDER)) {
+                  Utils.deleteDirectoryRecursive(path);
+                }
+              }
+            }
+            catch (IOException ex) {
+            }
+          }
+        }
+        for (String datasource : TvShowModuleManager.SETTINGS.getTvShowDataSource()) {
+          Path ds = Paths.get(datasource);
+          if (Files.exists(ds)) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(ds)) {
+              for (Path path : directoryStream) {
+                if (Files.isDirectory(path) && ds.relativize(path).toString().startsWith(Constants.BACKUP_FOLDER)) {
+                  Utils.deleteDirectoryRecursive(path);
+                }
+              }
+            }
+            catch (IOException ex) {
+            }
           }
         }
       }
