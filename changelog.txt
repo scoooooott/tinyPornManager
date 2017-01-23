@@ -7,6 +7,7 @@ Version 2.9.2
 + get a list of video files for TV show export with episode.videoFiles
 + added HDRip as an own media source
 + movie renamer: added $K token (first tag)
+x fixed localized artwork loading for brazilian users
 x fixed deleting of backup folder in windows #120
 x fixed detection/renaming of movieset artwork in movie folders #111
 x do not remove movie set artwork when removing movies from tmm #111
