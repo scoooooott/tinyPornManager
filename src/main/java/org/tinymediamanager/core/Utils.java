@@ -903,23 +903,21 @@ public class Utils {
    * @return true/false if successful
    */
   public static boolean deleteFileWithBackup(Path file, String datasource) {
-    String fn = file.toAbsolutePath().toString();
-    if (!fn.startsWith(datasource)) { // safety
-      LOGGER.warn("could not delete file '" + fn + "': datasource '" + datasource + "' does not match");
+    Path ds = Paths.get(datasource);
+
+    if (!file.startsWith(ds)) { // safety
+      LOGGER.warn("could not delete file '" + file + "': datasource '" + datasource + "' does not match");
       return false;
     }
     if (Files.isDirectory(file)) {
-      LOGGER.warn("could not delete file '" + fn + "': file is a directory!");
+      LOGGER.warn("could not delete file '" + file + "': file is a directory!");
       return false;
     }
-
-    // inject backup path
-    fn = fn.replace(datasource, datasource + FileSystems.getDefault().getSeparator() + Constants.BACKUP_FOLDER);
 
     // backup
     try {
       // create path
-      Path backup = Paths.get(fn);
+      Path backup = Paths.get(ds.toAbsolutePath().toString(), Constants.BACKUP_FOLDER, ds.relativize(file).toString());
       if (!Files.exists(backup.getParent())) {
         Files.createDirectories(backup.getParent());
       }
@@ -970,8 +968,6 @@ public class Utils {
    */
   public static boolean deleteDirectorySafely(Path folder, String datasource) {
     folder = folder.toAbsolutePath();
-    String fn = folder.toAbsolutePath().toString();
-
     Path ds = Paths.get(datasource);
 
     if (!Files.isDirectory(folder)) {
