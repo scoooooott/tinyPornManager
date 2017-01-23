@@ -55,6 +55,15 @@ public enum MediaLanguages {
     this.title = title;
   }
 
+  /**
+   * return the first 2 letters which is the language part
+   * 
+   * @return the language
+   */
+  public String getLanguage() {
+    return name().substring(0, 2);
+  }
+
   @Override
   public String toString() {
     return title;
