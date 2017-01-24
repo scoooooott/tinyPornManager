@@ -506,12 +506,14 @@ class TmdbMovieMetadataProvider {
     md.setVoteCount(movie.vote_count);
 
     // Poster
-    MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
-    ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + movie.poster_path);
-    ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
-    ma.setLanguage(options.getLanguage().getLanguage());
-    ma.setTmdbId(movie.id);
-    md.addMediaArt(ma);
+    if (StringUtils.isNotBlank(movie.poster_path)) {
+      MediaArtwork ma = new MediaArtwork(TmdbMetadataProvider.providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
+      ma.setPreviewUrl(TmdbMetadataProvider.configuration.images.base_url + "w185" + movie.poster_path);
+      ma.setDefaultUrl(TmdbMetadataProvider.configuration.images.base_url + "w342" + movie.poster_path);
+      ma.setLanguage(options.getLanguage().getLanguage());
+      ma.setTmdbId(movie.id);
+      md.addMediaArt(ma);
+    }
 
     for (SpokenLanguage lang : ListUtils.nullSafe(movie.spoken_languages)) {
       if (TmdbMetadataProvider.providerInfo.getConfig().getValueAsBool("scrapeLanguageNames")) {
