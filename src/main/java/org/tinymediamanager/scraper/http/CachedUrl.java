@@ -58,6 +58,9 @@ public class CachedUrl extends Url {
       Url url = new Url(this.url);
       url.headersRequest = headersRequest;
       InputStream is = url.getInputStream();
+      if (is == null) {
+        return null;
+      }
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
       IOUtils.copy(is, gzip);
