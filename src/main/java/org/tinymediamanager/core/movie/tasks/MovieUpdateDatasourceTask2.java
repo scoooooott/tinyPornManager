@@ -549,7 +549,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           }
 
           String imdb = ParserUtils.detectImdbId(txtFile);
-          if (!imdb.isEmpty()) {
+          if (movie.getImdbId().isEmpty() && !imdb.isEmpty()) {
             LOGGER.debug("| Found IMDB id: " + imdb);
             movie.setImdbId(imdb);
           }
