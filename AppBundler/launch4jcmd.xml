@@ -22,6 +22,7 @@
     <initialHeapSize>128</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Xss512k</opt>
+    <opt>-Dsun.java2d.d3d=false</opt>
     <opt>-Djava.awt.headless=true</opt>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Dfile.encoding=UTF-8</opt>
