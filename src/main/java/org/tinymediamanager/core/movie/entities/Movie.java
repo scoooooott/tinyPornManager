@@ -501,18 +501,36 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public void setTags(List<String> newTags) {
     // two way sync of tags
 
-    // first, add new ones
-    for (String tag : newTags) {
-      if (!this.tags.contains(tag)) {
-        this.tags.add(tag);
+    // first remove unused
+    for (int i = tags.size() - 1; i >= 0; i--) {
+      String tag = tags.get(i);
+      if (!newTags.contains(tag)) {
+        tags.remove(tag);
       }
     }
 
-    // second remove old ones
-    for (int i = this.tags.size() - 1; i >= 0; i--) {
-      String tag = this.tags.get(i);
-      if (!newTags.contains(tag)) {
-        this.tags.remove(tag);
+    // second, add new ones in the right order
+    for (int i = 0; i < newTags.size(); i++) {
+      String tag = newTags.get(i);
+      if (!tags.contains(tag)) {
+        try {
+          tags.add(i, tag);
+        }
+        catch (IndexOutOfBoundsException e) {
+          tags.add(tag);
+        }
+      }
+      else {
+        int indexOldList = tags.indexOf(tag);
+        if (i != indexOldList) {
+          String oldTag = tags.remove(indexOldList);
+          try {
+            tags.add(i, oldTag);
+          }
+          catch (IndexOutOfBoundsException e) {
+            tags.add(oldTag);
+          }
+        }
       }
     }
 
@@ -1456,30 +1474,50 @@ public class Movie extends MediaEntity implements IMediaInformation {
   /**
    * Sets the genres.
    * 
-   * @param genres
+   * @param newGenres
    *          the new genres
    */
   @JsonSetter
-  public void setGenres(List<MediaGenres> genres) {
+  public void setGenres(List<MediaGenres> newGenres) {
     // two way sync of genres
 
-    // first, add new ones
-    for (MediaGenres genre : genres) {
-      if (!this.genresForAccess.contains(genre)) {
-        this.genresForAccess.add(genre);
-        if (!this.genres.contains(genre.name())) {
-          this.genres.add(genre.name());
+    // first remove old ones
+    for (int i = genresForAccess.size() - 1; i >= 0; i--) {
+      MediaGenres genre = genresForAccess.get(i);
+      if (!newGenres.contains(genre)) {
+        genresForAccess.remove(genre);
+      }
+    }
+
+    // second, add new ones in the right order
+    for (int i = 0; i < newGenres.size(); i++) {
+      MediaGenres genre = newGenres.get(i);
+      if (!genresForAccess.contains(genre)) {
+        try {
+          genresForAccess.add(i, genre);
+        }
+        catch (IndexOutOfBoundsException e) {
+          genresForAccess.add(genre);
+        }
+      }
+      else {
+        int indexOldList = genresForAccess.indexOf(genre);
+        if (i != indexOldList) {
+          MediaGenres oldGenre = genresForAccess.remove(indexOldList);
+          try {
+            genresForAccess.add(i, oldGenre);
+          }
+          catch (IndexOutOfBoundsException e) {
+            genresForAccess.add(oldGenre);
+          }
         }
       }
     }
 
-    // second remove old ones
-    for (int i = this.genresForAccess.size() - 1; i >= 0; i--) {
-      MediaGenres genre = this.genresForAccess.get(i);
-      if (!genres.contains(genre)) {
-        this.genresForAccess.remove(genre);
-        this.genres.remove(genre.name());
-      }
+    // third, build new genre as string list
+    genres.clear();
+    for (MediaGenres genre : genresForAccess) {
+      genres.add(genre.name());
     }
 
     firePropertyChange(GENRE, null, genres);
@@ -1650,7 +1688,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void removeFromMovieSet() {
     if (movieSet != null) {
-      movieSet.removeMovie(this);
+      movieSet.removeMovie(this, true);
     }
     setMovieSet(null);
   }

@@ -247,17 +247,15 @@ public class MovieSet extends MediaEntity {
    * 
    * @param movie
    *          the movie
+   * @param doCleanup
+   *          do an artwork cleanup or not
    */
-  public void removeMovie(Movie movie) {
-    // remove images from movie folder
-    Path imageFile = movie.getPathNIO().resolve("movieset-fanart.jpg");
-    if (Files.exists(imageFile)) {
-      Utils.deleteFileSafely(imageFile);
+  public void removeMovie(Movie movie, boolean doCleanup) {
+    // clean images files
+    if (doCleanup) {
+      MovieSetArtworkHelper.cleanMovieSetArtworkInMovieFolder(movie);
     }
-    imageFile = movie.getPathNIO().resolve("movieset-poster.jpg");
-    if (Files.exists(imageFile)) {
-      Utils.deleteFileSafely(imageFile);
-    }
+
     if (movie.getMovieSet() != null) {
       movie.setMovieSet(null);
       movie.saveToDb();
@@ -268,7 +266,9 @@ public class MovieSet extends MediaEntity {
       movieIds.remove(movie.getDbId());
 
       // update artwork
-      MovieSetArtworkHelper.updateArtwork(this);
+      if (doCleanup) {
+        MovieSetArtworkHelper.updateArtwork(this);
+      }
 
       saveToDb();
     }
@@ -305,14 +305,8 @@ public class MovieSet extends MediaEntity {
     // remove images from movie folder
     synchronized (movies) {
       for (Movie movie : movies) {
-        Path imageFile = movie.getPathNIO().resolve("movieset-fanart.jpg");
-        if (Files.exists(imageFile)) {
-          Utils.deleteFileSafely(imageFile);
-        }
-        imageFile = movie.getPathNIO().resolve("movieset-poster.jpg");
-        if (Files.exists(imageFile)) {
-          Utils.deleteFileSafely(imageFile);
-        }
+        // clean images files
+        MovieSetArtworkHelper.cleanMovieSetArtworkInMovieFolder(movie);
 
         if (movie.getMovieSet() != null) {
           movie.setMovieSet(null);

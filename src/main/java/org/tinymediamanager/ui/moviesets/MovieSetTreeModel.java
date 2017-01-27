@@ -365,7 +365,7 @@ public class MovieSetTreeModel implements TreeModel {
         Movie movie = (Movie) node.getUserObject();
         MovieSet movieSet = movie.getMovieSet();
         if (movieSet != null) {
-          movieSet.removeMovie(movie);
+          movieSet.removeMovie(movie, true);
         }
 
         nodeMap.remove(movie);

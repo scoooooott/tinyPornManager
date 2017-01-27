@@ -7,64 +7,25 @@ tinyMediaManager is free and will stay free. If you appreciate all the effort th
 [![Donate][1]][2]
 
 [1]: https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
-[2]: http://www.tinymediamanager.org/donate.php
+[2]: http://www.tinymediamanager.org/donate/
 
 ##Features##
-[http://www.tinymediamanager.org/index.php/features/](http://www.tinymediamanager.org/index.php/features/)
+[http://www.tinymediamanager.org/features/](http://www.tinymediamanager.org/features/)
 
 ## Release
 you will find the latest release at [http://release.tinymediamanager.org](http://release.tinymediamanager.org)
 
 ## Changelog
-[http://www.tinymediamanager.org/index.php/changelog/](http://www.tinymediamanager.org/index.php/changelog/)
+[http://www.tinymediamanager.org/changelog](http://www.tinymediamanager.org/changelog)
 
 ##Screenshots##
-[http://www.tinymediamanager.org/index.php/screenshots/](http://www.tinymediamanager.org/index.php/screenshots/)
+[http://www.tinymediamanager.org/screenshots/](http://www.tinymediamanager.org/screenshots/)
 
 ## Developer info:
 Please provide your pull requests against our **devel** branch.
 
-To work with the SNAPSHOTs, you need to add following repository to your ~/.m2/settings.xml
-
-```
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-          http://maven.apache.org/xsd/settings-1.0.0.xsd">
-  <localRepository/>
-  <interactiveMode/>
-  <usePluginRegistry/>
-  <offline/>
-  <pluginGroups/>
-  <servers/>
-  <mirrors/>
-  <proxies />
-  <profiles>
-    <profile>
-	  <id>allow-snapshots</id>
-	  <activation>
-	    <activeByDefault>true</activeByDefault>
-	  </activation>
-	  <repositories>
-	    <repository>
-	      <id>snapshots-repo</id>
-		  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		  <releases>
-		    <enabled>false</enabled>
-		  </releases>
-		  <snapshots>
-		    <enabled>true</enabled>
-		  </snapshots>
-		</repository>
-	  </repositories>
-	</profile>
-  </profiles>
-  <activeProfiles/>
-</settings>
-```
-
-## How to build tinyMediaManager yourself
-tinyMediaManager is being built with maven, so you need to have maven (and git of course) installed. If you are getting any errors that maven does not find SNAPSHOT artifcats, please add the maven settings from above.
+### How to build tinyMediaManager yourself
+tinyMediaManager is being built with maven, so you need to have maven (and git of course) installed.
 
 1. get tinyMediaManager from GitHub
 

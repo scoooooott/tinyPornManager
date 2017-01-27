@@ -222,31 +222,24 @@ public class MovieEditorDialog extends TmmDialog {
      */
     {
       details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-      details1Panel
-          .setLayout(
-              new FormLayout(
-                  new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
-                      FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-                      FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-                      ColumnSpec.decode("24dlu"),
-                      FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec
-                          .decode("7dlu:grow"),
-                      FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-                      FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-                      FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
-                  new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-                      RowSpec.decode("15dlu"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-                      FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
-                      RowSpec.decode("fill:default:grow"), }));
+      details1Panel.setLayout(new FormLayout(
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("25dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("24dlu"), FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("7dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              FormSpecs.UNRELATED_GAP_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100dlu:grow(2)"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("50px:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu"),
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:50dlu:grow"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+              RowSpec.decode("50px"), FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
       {
         JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -517,17 +510,18 @@ public class MovieEditorDialog extends TmmDialog {
       tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
       details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
       details2Panel.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-              ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-              FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
+          new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("50px:grow"), FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
+              ColumnSpec.decode("100px:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+              FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
       {
         JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
         details2Panel.add(lblActors, "2, 2, right, default");
@@ -612,7 +606,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         JScrollPane scrollPaneGenres = new JScrollPane();
-        details2Panel.add(scrollPaneGenres, "4, 14, 1, 5");
+        details2Panel.add(scrollPaneGenres, "4, 14, 1, 9");
         {
           listGenres = new JList();
           scrollPaneGenres.setViewportView(listGenres);
@@ -624,7 +618,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
       {
         JScrollPane scrollPaneTags = new JScrollPane();
-        details2Panel.add(scrollPaneTags, "8, 14, 1, 5");
+        details2Panel.add(scrollPaneTags, "8, 14, 1, 9");
         listTags = new JList();
         scrollPaneTags.setViewportView(listTags);
       }
@@ -651,6 +645,13 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(btnRemoveGenre, "2, 18, right, top");
       }
       {
+        cbGenres = new AutocompleteComboBox(MediaGenres.values());
+        cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
+        InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+        cbGenres.getActionMap().put(enterAction, new AddGenreAction());
+      }
+      {
         JButton btnRemoveTag = new JButton("");
         btnRemoveTag.setAction(new RemoveTagAction());
         btnRemoveTag.setIcon(IconManager.REMOVE_INV);
@@ -658,29 +659,51 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(btnRemoveTag, "6, 18, right, top");
       }
       {
-        cbGenres = new AutocompleteComboBox<MediaGenres>(MediaGenres.values());
-        cbGenresAutoCompleteSupport = cbGenres.getAutoCompleteSupport();
-        InputMap im = cbGenres.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
-        cbGenres.getActionMap().put(enterAction, new AddGenreAction());
-        details2Panel.add(cbGenres, "4, 20");
+        JButton btnMoveGenreUp = new JButton((String) null);
+        btnMoveGenreUp.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveGenreUp.setAction(new MoveGenreUpAction());
+        btnMoveGenreUp.setIcon(IconManager.ARROW_UP_INV);
+        details2Panel.add(btnMoveGenreUp, "2, 20, right, top");
       }
+      {
+        JButton btnMoveTagUp = new JButton((String) null);
+        btnMoveTagUp.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveTagUp.setAction(new MoveTagUpAction());
+        btnMoveTagUp.setIcon(IconManager.ARROW_UP_INV);
+        details2Panel.add(btnMoveTagUp, "6, 20, right, top");
+      }
+      {
+        JButton btnMoveGenreDown = new JButton((String) null);
+        btnMoveGenreDown.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveGenreDown.setAction(new MoveGenreDownAction());
+        btnMoveGenreDown.setIcon(IconManager.ARROW_DOWN_INV);
+        details2Panel.add(btnMoveGenreDown, "2, 22, right, top");
+      }
+      {
+        JButton btnMoveTagDown = new JButton((String) null);
+        btnMoveTagDown.setMargin(new Insets(2, 2, 2, 2));
+        btnMoveTagDown.setAction(new MoveTagDownAction());
+        btnMoveTagDown.setIcon(IconManager.ARROW_DOWN_INV);
+        details2Panel.add(btnMoveTagDown, "6, 22, right, top");
+      }
+      details2Panel.add(cbGenres, "4, 24");
+
       {
         cbTags = new AutocompleteComboBox<String>(movieList.getTagsInMovies());
         cbTagsAutoCompleteSupport = cbTags.getAutoCompleteSupport();
         InputMap im = cbTags.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         Object enterAction = im.get(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         cbTags.getActionMap().put(enterAction, new AddTagAction());
-        details2Panel.add(cbTags, "8, 20");
+        details2Panel.add(cbTags, "8, 24");
       }
 
       {
         JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-        details2Panel.add(lblTrailer, "2, 22, right, default");
+        details2Panel.add(lblTrailer, "2, 26, right, default");
       }
       {
         JScrollPane scrollPaneTrailer = new JScrollPane();
-        details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
+        details2Panel.add(scrollPaneTrailer, "4, 26, 5, 5");
         tableTrailer = new JTable();
         tableTrailer.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         scrollPaneTrailer.setViewportView(tableTrailer);
@@ -690,14 +713,14 @@ public class MovieEditorDialog extends TmmDialog {
         btnAddTrailer.setAction(new AddTrailerAction());
         btnAddTrailer.setIcon(IconManager.ADD_INV);
         btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
-        details2Panel.add(btnAddTrailer, "2, 24, right, top");
+        details2Panel.add(btnAddTrailer, "2, 28, right, top");
       }
       {
         JButton btnRemoveTrailer = new JButton("");
         btnRemoveTrailer.setAction(new RemoveTrailerAction());
         btnRemoveTrailer.setIcon(IconManager.REMOVE_INV);
         btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
-        details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
+        details2Panel.add(btnRemoveTrailer, "2, 30, right, top");
       }
     }
 
@@ -1529,6 +1552,74 @@ public class MovieEditorDialog extends TmmDialog {
       if (row < producers.size() - 1) {
         Collections.rotate(producers.subList(row, row + 2), -1);
         tableProducers.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+      }
+    }
+  }
+
+  private class MoveGenreUpAction extends AbstractAction {
+    private static final long serialVersionUID = -6855661707692602266L;
+
+    public MoveGenreUpAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenreup")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = listGenres.getSelectedIndex();
+      if (row > 0) {
+        Collections.rotate(genres.subList(row - 1, row + 1), 1);
+        listGenres.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+      }
+    }
+  }
+
+  private class MoveGenreDownAction extends AbstractAction {
+    private static final long serialVersionUID = -1135108943010008069L;
+
+    public MoveGenreDownAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenredown")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = listGenres.getSelectedIndex();
+      if (row < genres.size() - 1) {
+        Collections.rotate(genres.subList(row, row + 2), -1);
+        listGenres.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+      }
+    }
+  }
+
+  private class MoveTagUpAction extends AbstractAction {
+    private static final long serialVersionUID = -6855661707692602266L;
+
+    public MoveTagUpAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagup")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = listTags.getSelectedIndex();
+      if (row > 0) {
+        Collections.rotate(tags.subList(row - 1, row + 1), 1);
+        listTags.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+      }
+    }
+  }
+
+  private class MoveTagDownAction extends AbstractAction {
+    private static final long serialVersionUID = -1135108943010008069L;
+
+    public MoveTagDownAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagdown")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = listTags.getSelectedIndex();
+      if (row < tags.size() - 1) {
+        Collections.rotate(tags.subList(row, row + 2), -1);
+        listTags.getSelectionModel().setSelectionInterval(row + 1, row + 1);
       }
     }
   }

@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.tinymediamanager</groupId>
-		<artifactId>tmm-parent</artifactId>
-		<version>1.0</version>
-	</parent>
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <parent>
+        <groupId>org.tinymediamanager</groupId>
+        <artifactId>tmm-parent</artifactId>
+        <version>1.0</version>
+    </parent>
 
 	<artifactId>tinyMediaManager</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<name>tinyMediaManager</name>
 
-	<scm>
-		<url>https://github.com/tinyMediaManager/${project.artifactId}</url>
-		<connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+    <scm>
+        <url>https://github.com/tinyMediaManager/${project.artifactId}</url>
+        <connection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
 	<properties>
 		<transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
@@ -26,22 +40,27 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
-	<dependencies>
-		<!-- TMM dependencies -->
-		<dependency>
-			<groupId>org.tinymediamanager</groupId>
-			<artifactId>api-scraper</artifactId>
-			<version>2.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<!-- own patched artifacts -->
-			<!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
-				-Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
-				-DartifactId=JTattoo -Dversion=1.6.12.1 -->
-			<groupId>org.tinymediamanager</groupId>
-			<artifactId>JTattoo</artifactId>
-			<version>1.6.12.1</version>
-		</dependency>
+    <dependencies>
+        <!-- TMM dependencies -->
+        <dependency>
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>api-scraper</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>resources</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <!-- own patched artifacts -->
+            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true
+                -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager
+                -DartifactId=JTattoo -Dversion=1.6.12.1 -->
+            <groupId>org.tinymediamanager</groupId>
+            <artifactId>JTattoo</artifactId>
+            <version>1.6.12.1</version>
+        </dependency>
 
 		<!-- our plugins - all provided for dependency resolution -->
 		<dependency>
@@ -103,13 +122,13 @@
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-tmdb</artifactId>
-			<version>1.7</version>
+			<version>1.8</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.tinymediamanager.plugins</groupId>
 			<artifactId>scraper-trakt</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -124,7 +143,7 @@
 			<version>1.6</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> 
+		<!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId>
 			<version>1.0-SNAPSHOT</version> </dependency> -->
 		<dependency>
 			<groupId>com.uwetrottmann.trakt5</groupId>
@@ -180,6 +199,7 @@
 			<groupId>net.sf.jtidy</groupId>
 			<artifactId>jtidy</artifactId>
 			<version>r938</version>
+
 		</dependency>
 		<dependency>
 			<groupId>com.github.stephenc.java-iso-tools</groupId>
@@ -188,234 +208,235 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<resources>
-			<resource>
-				<includes>
-					<include>eclipse.properties</include>
-				</includes>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<excludes>
-					<exclude>eclipse.properties</exclude>
-				</excludes>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<!-- get SVN/GIT revision numbers -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-						<configuration>
-							<shortRevisionLength>7</shortRevisionLength>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- generate a timestamp -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.12</version>
-				<executions>
-					<execution>
-						<id>timestamp-property</id>
-						<goals>
-							<goal>timestamp-property</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<name>timestamp</name>
-							<pattern>yyyy-MM-dd HH:mm</pattern>
-							<timeZone>GMT+1</timeZone>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>de.thetaphi</groupId>
-				<artifactId>forbiddenapis</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<!-- if the used Java version is too new, don't fail, just do nothing: -->
-					<failOnUnsupportedJava>false</failOnUnsupportedJava>
-					<failOnViolation>false</failOnViolation>
-					<!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
-					<bundledSignatures>
-						<!-- This will automatically choose the right signatures based on 'maven.compiler.target': -->
-						<bundledSignature>jdk-deprecated</bundledSignature>
-						<bundledSignature>jdk-non-portable</bundledSignature>
-						<bundledSignature>jdk-system-out</bundledSignature>
-						<bundledSignature>jdk-internal</bundledSignature>
-						<bundledSignature>jdk-reflection</bundledSignature>
-						<bundledSignature>commons-io-unsafe-2.5</bundledSignature>
-						<!-- bundledSignature>jdk-unsafe</bundledSignature -->
-					</bundledSignatures>
-					<signaturesFiles>
-						<!-- use ours b/c of resourcebundle without locale -->
-						<signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
-					</signaturesFiles>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>false</addClasspath>
-							<classpathLayoutType>custom</classpathLayoutType>
-							<customClasspathLayout>lib/${artifact.artifactId}.${artifact.extension}</customClasspathLayout>
-							<mainClass>org.tinymediamanager.TinyMediaManager</mainClass>
-						</manifest>
-						<manifestEntries>
-							<SplashScreen-Image>splashscreen.png</SplashScreen-Image>
-							<Build-Nr>${buildNumber}</Build-Nr>
-							<Build-Date>${timestamp}</Build-Date>
-							<Build-By>${user.name}</Build-By>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- copies our dependencies WITHOUT version number for packaging -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-					<execution>
-						<id>copy-tmm-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<excludeGroupIds>org.tinymediamanager.plugins</excludeGroupIds>
-							<excludeArtifactIds>retrofit</excludeArtifactIds>
-							<includeScope>runtime</includeScope>
-							<stripVersion>true</stripVersion>
-						</configuration>
-					</execution>
-					<execution>
-						<!-- workaround for 2 same named retrofit dependencies -->
-						<id>copy-retrofit</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>retrofit</includeArtifactIds>
-							<includeScope>runtime</includeScope>
-							<stripVersion>false</stripVersion>
-						</configuration>
-					</execution>
-					<execution>
-						<!-- our scraper plugins -->
-						<id>copy-tmm-plugins</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeGroupIds>org.tinymediamanager.plugins</includeGroupIds>
-							<stripVersion>true</stripVersion>
-							<outputDirectory>${project.build.directory}/dependency-plugins</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- call our ant file, since it's too complicated to do our packaging 
-					solely in maven -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>dist</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<exportAntProperties>true</exportAntProperties>
-					<target>
-						<property name="tmmName" value="${project.artifactId}" />
-						<property name="tmmVersion" value="${project.version}" />
-						<property name="tmmRevision" value="${buildNumber}" />
-						<property name="tmmTimestamp" value="${timestamp}" />
+    <build>
+        <resources>
+            <resource>
+                <includes>
+                    <include>eclipse.properties</include>
+                </includes>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <excludes>
+                    <exclude>eclipse.properties</exclude>
+                </excludes>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <!-- get SVN/GIT revision numbers -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <shortRevisionLength>7</shortRevisionLength>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- generate a timestamp -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.12</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <name>timestamp</name>
+                            <pattern>yyyy-MM-dd HH:mm</pattern>
+                            <timeZone>GMT+1</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>de.thetaphi</groupId>
+                <artifactId>forbiddenapis</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <!-- if the used Java version is too new, don't fail, just do nothing: -->
+                    <failOnUnsupportedJava>false</failOnUnsupportedJava>
+                    <failOnViolation>false</failOnViolation>
+                    <!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
+                    <bundledSignatures>
+                        <!-- This will automatically choose the right signatures based on 'maven.compiler.target': -->
+                        <bundledSignature>jdk-deprecated</bundledSignature>
+                        <bundledSignature>jdk-non-portable</bundledSignature>
+                        <bundledSignature>jdk-system-out</bundledSignature>
+                        <bundledSignature>jdk-internal</bundledSignature>
+                        <bundledSignature>jdk-reflection</bundledSignature>
+                        <bundledSignature>commons-io-unsafe-2.5</bundledSignature>
+                        <!-- bundledSignature>jdk-unsafe</bundledSignature -->
+                    </bundledSignatures>
+                    <signaturesFiles>
+                        <!-- use ours b/c of resourcebundle without locale -->
+                        <signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
+                    </signaturesFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                            <classpathLayoutType>custom</classpathLayoutType>
+                            <customClasspathLayout>lib/${artifact.artifactId}.${artifact.extension}
+                            </customClasspathLayout>
+                            <mainClass>org.tinymediamanager.TinyMediaManager</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <SplashScreen-Image>splashscreen.png</SplashScreen-Image>
+                            <Build-Nr>${buildNumber}</Build-Nr>
+                            <Build-Date>${timestamp}</Build-Date>
+                            <Build-By>${user.name}</Build-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- copies our dependencies WITHOUT version number for packaging -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy-tmm-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeGroupIds>org.tinymediamanager.plugins</excludeGroupIds>
+                            <excludeArtifactIds>retrofit</excludeArtifactIds>
+                            <includeScope>runtime</includeScope>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- workaround for 2 same named retrofit dependencies -->
+                        <id>copy-retrofit</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>retrofit</includeArtifactIds>
+                            <includeScope>runtime</includeScope>
+                            <stripVersion>false</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- our scraper plugins -->
+                        <id>copy-tmm-plugins</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.tinymediamanager.plugins</includeGroupIds>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.directory}/dependency-plugins</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- call our ant file, since it's too complicated to do our packaging
+                    solely in maven -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <exportAntProperties>true</exportAntProperties>
+                    <target>
+                        <property name="tmmName" value="${project.artifactId}"/>
+                        <property name="tmmVersion" value="${project.version}"/>
+                        <property name="tmmRevision" value="${buildNumber}"/>
+                        <property name="tmmTimestamp" value="${timestamp}"/>
 
-						<ant antfile="${project.basedir}/ant-package.xml">
-							<target name="package-app" />
-						</ant>
-					</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                        <ant antfile="${project.basedir}/ant-package.xml">
+                            <target name="package-app"/>
+                        </ant>
+                    </target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.12</version>
-						<executions>
-							<execution>
-								<id>attach-dist</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<file>dist/tmm_${project.version}_${buildNumber}_win.zip</file>
-											<type>zip</type>
-											<classifier>win</classifier>
-										</artifact>
-										<artifact>
-											<file>dist/tmm_${project.version}_${buildNumber}_mac.zip</file>
-											<type>zip</type>
-											<classifier>mac</classifier>
-										</artifact>
-										<artifact>
-											<file>dist/tmm_${project.version}_${buildNumber}_linux.tar.gz</file>
-											<type>tar.gz</type>
-											<classifier>linux</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.12</version>
+                        <executions>
+                            <execution>
+                                <id>attach-dist</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>dist/tmm_${project.version}_${buildNumber}_win.zip</file>
+                                            <type>zip</type>
+                                            <classifier>win</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>dist/tmm_${project.version}_${buildNumber}_mac.zip</file>
+                                            <type>zip</type>
+                                            <classifier>mac</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>dist/tmm_${project.version}_${buildNumber}_linux.tar.gz</file>
+                                            <type>tar.gz</type>
+                                            <classifier>linux</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

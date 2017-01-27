@@ -84,6 +84,7 @@ skip_md5_cache = true
 jvmarg = -Xms64m 
 jvmarg = -Xmx512m
 jvmarg = -Xss512k
+jvmarg = [windows] -Dsun.java2d.d3d=false
 jvmarg = -splash:splashscreen.png
 jvmarg = -Djava.net.preferIPv4Stack=true
 jvmarg = -Dfile.encoding=UTF-8

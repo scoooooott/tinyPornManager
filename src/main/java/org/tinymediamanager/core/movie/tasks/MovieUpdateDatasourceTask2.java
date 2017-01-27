@@ -455,7 +455,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             imdb = ParserUtils.detectImdbId(imdb);
             if (!imdb.isEmpty()) {
               LOGGER.debug("| Found IMDB id: " + imdb);
-              nfo.setImdbId(imdb);
+              movie.setImdbId(imdb);
             }
           }
           catch (IOException e) {
@@ -549,7 +549,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           }
 
           String imdb = ParserUtils.detectImdbId(txtFile);
-          if (!imdb.isEmpty()) {
+          if (movie.getImdbId().isEmpty() && !imdb.isEmpty()) {
             LOGGER.debug("| Found IMDB id: " + imdb);
             movie.setImdbId(imdb);
           }

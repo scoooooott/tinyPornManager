@@ -100,7 +100,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 public class TvShow extends MediaEntity implements IMediaInformation {
   private static final Logger                LOGGER                = LoggerFactory.getLogger(TvShow.class);
   private static final Comparator<MediaFile> MEDIA_FILE_COMPARATOR = new TvShowMediaFileComparator();
-  private static TvShowArtworkHelper         artworkHelper         = new TvShowArtworkHelper();
 
   @JsonProperty
   private String                             dataSource            = "";
@@ -200,7 +199,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
             int season = Integer.parseInt(matcher.group(1));
             seasonPosters.put(season, mf);
           }
-          catch (Exception e) {
+          catch (Exception ignored) {
           }
         }
       }
@@ -732,7 +731,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.POSTER);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.POSTER);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.POSTER);
           break;
         }
       }
@@ -743,7 +742,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.FANART);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.FANART);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.FANART);
           break;
         }
       }
@@ -754,7 +753,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.BANNER);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.BANNER);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.BANNER);
           break;
         }
       }
@@ -765,7 +764,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.LOGO);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.LOGO);
           break;
         }
       }
@@ -776,7 +775,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARLOGO);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.CLEARLOGO);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.CLEARLOGO);
           break;
         }
       }
@@ -787,7 +786,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.CLEARART);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.CLEARART);
           break;
         }
       }
@@ -798,7 +797,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           // set url
           setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
           // and download it
-          artworkHelper.downloadArtwork(this, MediaFileType.THUMB);
+          TvShowArtworkHelper.downloadArtwork(this, MediaFileType.THUMB);
           break;
         }
       }
@@ -811,7 +810,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
           String url = seasonPosters.get(art.getSeason());
           if (StringUtils.isBlank(url)) {
             setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
-            artworkHelper.downloadSeasonPoster(this, art.getSeason());
+            TvShowArtworkHelper.downloadSeasonPoster(this, art.getSeason());
             seasonPosters.put(art.getSeason(), art.getDefaultUrl());
           }
         }
@@ -829,7 +828,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the chosen artwork type to be downloaded
    */
   public void downloadArtwork(MediaFileType type) {
-    artworkHelper.downloadArtwork(this, type);
+    TvShowArtworkHelper.downloadArtwork(this, type);
   }
 
   /**
@@ -839,7 +838,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the season to download the poster for
    */
   public void downloadSeasonPoster(int season) {
-    artworkHelper.downloadSeasonPoster(this, season);
+    TvShowArtworkHelper.downloadSeasonPoster(this, season);
   }
 
   /**
@@ -1374,7 +1373,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param url
    *          the url
    */
-  void setSeasonPosterUrl(int season, String url) {
+  public void setSeasonPosterUrl(int season, String url) {
     seasonPosterUrlMap.put(season, url);
   }
 

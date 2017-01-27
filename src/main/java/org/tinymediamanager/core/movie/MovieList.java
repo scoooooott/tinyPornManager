@@ -83,7 +83,7 @@ public class MovieList extends AbstractModelObject {
 
   private final MovieSettings          movieSettings;
   private ObservableElementList<Movie> movieList;
-  private List<MovieSet>               movieSetList       = new ArrayList<MovieSet>(0);
+  private List<MovieSet>               movieSetList       = new ArrayList<>(0);
   private PropertyChangeListener       tagListener;
   private List<String>                 tagsObservable;
   private List<String>                 videoCodecsObservable;
@@ -226,7 +226,7 @@ public class MovieList extends AbstractModelObject {
       if (movie.getMovieSet() != null) {
         MovieSet movieSet = movie.getMovieSet();
 
-        movieSet.removeMovie(movie);
+        movieSet.removeMovie(movie, false);
         modifiedMovieSets.add(movieSet);
         movie.setMovieSet(null);
       }
@@ -235,13 +235,6 @@ public class MovieList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.error("Error removing movie from DB: " + e.getMessage());
-      }
-    }
-
-    // and now check if any of the modified moviesets are worth for deleting
-    for (MovieSet movieSet : modifiedMovieSets) {
-      if (movieSet.getMovies().isEmpty()) {
-        removeMovieSet(movieSet);
       }
     }
 
@@ -269,7 +262,7 @@ public class MovieList extends AbstractModelObject {
       movieList.remove(movie);
       if (movie.getMovieSet() != null) {
         MovieSet movieSet = movie.getMovieSet();
-        movieSet.removeMovie(movie);
+        movieSet.removeMovie(movie, false);
         modifiedMovieSets.add(movieSet);
         movie.setMovieSet(null);
       }
@@ -279,11 +272,6 @@ public class MovieList extends AbstractModelObject {
       catch (Exception e) {
         LOGGER.error("Error removing movie from DB: " + e.getMessage());
       }
-    }
-
-    // and now check if any of the modified moviesets are worth for deleting
-    for (MovieSet movieSet : modifiedMovieSets) {
-      removeMovieSet(movieSet);
     }
 
     firePropertyChange("movies", null, movieList);

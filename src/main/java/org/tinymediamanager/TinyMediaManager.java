@@ -520,6 +520,9 @@ public class TinyMediaManager {
         // extract templates, if GD has not already done
         Utils.extractTemplates();
 
+        // clean old log files
+        Utils.cleanOldLogs();
+
         // check if a .desktop file exists
         if (Platform.isLinux()) {
           File desktop = new File(TmmOsUtils.DESKTOP_FILE);

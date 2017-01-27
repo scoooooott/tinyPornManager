@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-01-18 14:33:52 - tinyMediaManager 2.9.2-SNAPSHOT -->
+<movie>
+    <title>Movie With Set Graphics</title>
+    <originaltitle></originaltitle>
+    <set>
+        <name>MovieWithSetGraphicsCollection</name>
+        <overview></overview>
+    </set>
+    <sorttitle></sorttitle>
+    <rating>0.0</rating>
+    <year></year>
+    <top250></top250>
+    <votes>0</votes>
+    <outline></outline>
+    <plot></plot>
+    <tagline></tagline>
+    <runtime>0</runtime>
+    <thumb></thumb>
+    <fanart></fanart>
+    <mpaa>NR</mpaa>
+    <certification>NR</certification>
+    <id></id>
+    <ids/>
+    <tmdbId>0</tmdbId>
+    <country></country>
+    <premiered></premiered>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <width>0</width>
+                <height>0</height>
+                <durationinseconds>0</durationinseconds>
+            </video>
+        </streamdetails>
+    </fileinfo>
+    <watched>false</watched>
+    <playcount>0</playcount>
+    <languages></languages>
+</movie>

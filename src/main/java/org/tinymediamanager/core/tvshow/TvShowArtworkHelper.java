@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +38,9 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.http.Url;
 
 /**
@@ -56,7 +59,7 @@ public class TvShowArtworkHelper {
    * @param type
    *          the artwork type to be downloaded
    */
-  public void downloadArtwork(TvShow show, MediaFileType type) {
+  public static void downloadArtwork(TvShow show, MediaFileType type) {
     String url = "";
     String filename = "";
 
@@ -127,6 +130,149 @@ public class TvShowArtworkHelper {
   }
 
   /**
+   * set & download missing artwork for the given TV show
+   *
+   * @param tvShow
+   *          the TV show to set the artwork for
+   * @param artwork
+   *          a list of all artworks to be set
+   */
+  public static void downloadMissingArtwork(TvShow tvShow, List<MediaArtwork> artwork) {
+    // sort artwork once again (langu/rating)
+    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+
+    // poster
+    if (tvShow.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.POSTER);
+    }
+
+    // fanart
+    if (tvShow.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.BACKGROUND);
+    }
+
+    // logo
+    if (tvShow.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.LOGO);
+    }
+
+    // clearlogo
+    if (tvShow.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.CLEARLOGO);
+    }
+
+    // clearart
+    if (tvShow.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.CLEARART);
+    }
+
+    // banner
+    if (tvShow.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.BANNER);
+    }
+
+    // thumb
+    if (tvShow.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.THUMB);
+    }
+
+    // discart
+    if (tvShow.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+      setBestArtwork(tvShow, artwork, MediaArtwork.MediaArtworkType.DISC);
+    }
+
+    for (TvShowSeason season : tvShow.getSeasons()) {
+      if (StringUtils.isBlank(season.getPoster())) {
+        for (MediaArtwork art : artwork) {
+          if (art.getSeason() == season.getSeason()) {
+            tvShow.setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
+            downloadSeasonPoster(tvShow, art.getSeason());
+          }
+        }
+      }
+    }
+
+    // update DB
+    tvShow.saveToDb();
+  }
+
+  /**
+   * choose the best artwork for this tv show
+   *
+   * @param tvShow
+   *          our tv show
+   * @param artwork
+   *          the artwork list
+   * @param type
+   *          the type to download
+   */
+  private static void setBestArtwork(TvShow tvShow, List<MediaArtwork> artwork, MediaArtwork.MediaArtworkType type) {
+    for (MediaArtwork art : artwork) {
+      if (art.getType() == type) {
+        tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
+        downloadArtwork(tvShow, MediaFileType.getMediaFileType(type));
+        break;
+      }
+    }
+  }
+
+  /**
+   * detect if there is missing artwork for the given TV show
+   * 
+   * @param tvShow
+   *          the TV show to check artwork for
+   * @return true/false
+   */
+  public static boolean hasMissingArtwork(TvShow tvShow) {
+    if (tvShow.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.FANART).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.BANNER).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.DISC).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.LOGO).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.CLEARLOGO).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.CLEARART).isEmpty()) {
+      return true;
+    }
+    if (tvShow.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      return true;
+    }
+    for (TvShowSeason season : tvShow.getSeasons()) {
+      if (StringUtils.isBlank(season.getPoster())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * detect if there is missing artwork for the given episode
+   * 
+   * @param episode
+   *          the episode to check artwork for
+   * @return true/false
+   */
+  public static boolean hasMissingArtwork(TvShowEpisode episode) {
+    if (episode.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Download the season poster
    * 
    * @param show
@@ -134,7 +280,7 @@ public class TvShowArtworkHelper {
    * @param season
    *          the season to download the poster for
    */
-  public void downloadSeasonPoster(TvShow show, int season) {
+  public static void downloadSeasonPoster(TvShow show, int season) {
     String seasonPosterUrl = show.getSeasonPosterUrl(season);
 
     TvShowSeason tvShowSeason = null;
@@ -157,7 +303,7 @@ public class TvShowArtworkHelper {
     TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
-  private class SeasonPosterImageFetcher implements Runnable {
+  private static class SeasonPosterImageFetcher implements Runnable {
     private TvShow       tvShow;
     private String       filename;
     private TvShowSeason tvShowSeason;
