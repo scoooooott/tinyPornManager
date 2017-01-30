@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -74,7 +77,9 @@ public class TinyMediaManagerCMD {
    *          an array of params to parse
    */
   static void parseParams(String[] args) {
-    for (String cmd : args) {
+    for (int i = 0; i < args.length; i++) {
+      String cmd = args[i];
+
       if (cmd.equalsIgnoreCase("-updateMovies")) {
         updateMovies = true;
       }
@@ -116,12 +121,30 @@ public class TinyMediaManagerCMD {
       else if (cmd.equalsIgnoreCase("-rename") || cmd.equalsIgnoreCase("-renameNew")) { // "new" deprecated
         rename = true;
       }
+      else if (cmd.equalsIgnoreCase("-config")) {
+        i++;
+        if (i == args.length) { // config is last parameter
+          System.out.println("ERROR: config not specified!");
+          printSyntax();
+          System.exit(0);
+        }
+        String file = args[i];
+        if (Files.exists(Paths.get("data", file))) { // only check in default data path?
+          // load custom settings
+          Settings.getInstance("data", file);
+        }
+        else {
+          System.out.println("ERROR: config file not found! " + file);
+          printSyntax();
+          System.exit(0);
+        }
+      }
       else if (cmd.toLowerCase(Locale.ROOT).contains("help")) { // -help, --help, help ...
         printSyntax();
         System.exit(0);
       }
       else {
-        System.out.println("ERROR: unrecognized command '" + cmd);
+        System.out.println("ERROR: unrecognized command " + cmd);
         printSyntax();
         System.exit(0);
       }
@@ -159,7 +182,7 @@ public class TinyMediaManagerCMD {
         "    -scrapeAll           ALL movies/TvShows/episodes, whether they have already been scraped or not\n" +
         "\n" +
         "    -rename              rename & cleanup all the movies/TvShows/episodes from former scrape command\n" +
-        "\n" +
+        "    -config file.xml     specify an alternative configuration xml file\n" +
         "    -checkFiles          does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
         "\n" +
         "\n" +
