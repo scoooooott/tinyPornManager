@@ -117,7 +117,9 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
         }
 
         // now set & download the artwork
-        MovieArtworkHelper.downloadMissingArtwork(movie, artwork);
+        if (!artwork.isEmpty()) {
+          MovieArtworkHelper.downloadMissingArtwork(movie, artwork);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);

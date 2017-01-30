@@ -807,7 +807,7 @@ public class MovieArtworkHelper {
    */
   private static void setBestArtwork(Movie movie, List<MediaArtwork> artwork, MediaArtworkType type, boolean download) {
     for (MediaArtwork art : artwork) {
-      if (art.getType() == type) {
+      if (art.getType() == type && StringUtils.isNotBlank(art.getDefaultUrl())) {
         movie.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
         if (download) {
           downloadArtwork(movie, MediaFileType.getMediaFileType(type));

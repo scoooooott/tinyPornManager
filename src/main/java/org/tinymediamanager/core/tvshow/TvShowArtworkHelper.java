@@ -208,7 +208,7 @@ public class TvShowArtworkHelper {
    */
   private static void setBestArtwork(TvShow tvShow, List<MediaArtwork> artwork, MediaArtwork.MediaArtworkType type) {
     for (MediaArtwork art : artwork) {
-      if (art.getType() == type) {
+      if (art.getType() == type && StringUtils.isNotBlank(art.getDefaultUrl())) {
         tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
         downloadArtwork(tvShow, MediaFileType.getMediaFileType(type));
         break;

@@ -127,7 +127,9 @@ public class TvShowMissingArtworkDownloadTask extends TmmThreadPool {
         }
 
         // now set & download the artwork
-        TvShowArtworkHelper.downloadMissingArtwork(tvShow, artwork);
+        if (!artwork.isEmpty()) {
+          TvShowArtworkHelper.downloadMissingArtwork(tvShow, artwork);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
