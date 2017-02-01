@@ -590,7 +590,7 @@ public class MovieSetEditorDialog extends TmmDialog {
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           for (Movie movie : moviesInSet) {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
               options.setTmdbId(movie.getTmdbId());
               options.setImdbId(movie.getImdbId());

@@ -1,3 +1,8 @@
+Version 2.9.3
+=======================
+x fixed searching for movie set id in movie set editor
+
+
 Version 2.9.2
 =======================
 + added action: download missing artwork
