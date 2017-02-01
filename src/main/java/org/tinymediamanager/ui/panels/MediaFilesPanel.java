@@ -28,6 +28,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +86,11 @@ public class MediaFilesPanel extends JPanel {
     add(scrollPaneFiles, "1, 1, fill, fill");
 
     scrollPaneFiles.setViewportView(tableFiles);
+
+    // align the runtime to the right
+    DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+    rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+    tableFiles.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);
   }
 
   public void adjustColumns() {
@@ -155,7 +162,7 @@ public class MediaFilesPanel extends JPanel {
           return mediaFile.getVideoResolution();
 
         case 6:
-          return mediaFile.getDurationHM();
+          return mediaFile.getDurationShort();
 
         case 7:
           return mediaFile.getSubtitlesAsString();

@@ -1,5 +1,6 @@
 Version 2.9.3
 =======================
++ changed display of runtime in media files tab to a shorter version with seconds
 x fixed searching for movie set id in movie set editor
 
 

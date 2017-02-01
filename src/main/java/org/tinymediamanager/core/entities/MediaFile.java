@@ -1170,6 +1170,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * returns the duration / runtime formatted - human readable<br>
+   * eg 1:05:12 or 35:12
+   *
+   * @return the duration
+   */
+  public String getDurationShort() {
+    if (this.durationInSecs == 0) {
+      return "";
+    }
+    long h = TimeUnit.SECONDS.toHours(this.durationInSecs);
+    long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
+    long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+    if (h > 0 && m > 0) {
+      return String.format("%d:%02d:%02d", h, m, s);
+    }
+    else if (m > 0) {
+      return String.format("%d:%02d", m, s);
+    }
+    else {
+      return String.format("%d", s);
+    }
+  }
+
+  /**
    * sets the duration / runtime in seconds.
    * 
    * @param newValue
