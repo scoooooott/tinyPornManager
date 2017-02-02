@@ -31,7 +31,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
-import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -52,7 +51,6 @@ import com.uwetrottmann.tmdb2.entities.ProductionCountry;
 import com.uwetrottmann.tmdb2.entities.ReleaseDate;
 import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult;
 import com.uwetrottmann.tmdb2.entities.SpokenLanguage;
-import com.uwetrottmann.tmdb2.entities.Videos;
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem;
 import com.uwetrottmann.tmdb2.enumerations.ExternalSource;
 
@@ -375,104 +373,18 @@ class TmdbMovieMetadataProvider {
    */
   int getTmdbIdFromImdbId(String imdbId) throws Exception {
     TmdbConnectionCounter.trackConnections();
-    FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
-    if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
-      // and now get the full data
-      return findResults.movie_results.get(0).id;
+    try {
+      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
+      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()) {
+        // and now get the full data
+        return findResults.movie_results.get(0).id;
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("failed to get tmdb id: " + e.getMessage());
     }
 
     return 0;
-  }
-
-  /**
-   * get movie trailers
-   * 
-   * @param options
-   *          the scraping options
-   * @return a list of found movie trailers
-   * @throws Exception
-   *           any exception which can be thrown while scraping
-   */
-  List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
-    LOGGER.debug("getTrailers() " + options.toString());
-
-    List<MediaTrailer> trailers = new ArrayList<>();
-
-    int tmdbId = options.getTmdbId();
-    String imdbId = options.getImdbId();
-
-    if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
-      // try to get tmdbId via imdbId
-      tmdbId = getTmdbIdFromImdbId(imdbId);
-    }
-
-    if (tmdbId == 0) {
-      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
-      return trailers;
-    }
-
-    String language = options.getLanguage().getLanguage();
-    if (StringUtils.isNotBlank(options.getLanguage().getCountry())) {
-      language += "-" + options.getLanguage().getCountry();
-    }
-
-    LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
-
-    List<Videos.Video> tmdbTrailers = new ArrayList<>();
-
-    synchronized (api) {
-      // get trailers from tmdb (with specified langu and without)
-      TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
-      if (tmdbVideos != null) {
-        for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
-          if ("Trailer".equals(video.type)) {
-            tmdbTrailers.add(video);
-          }
-        }
-      }
-
-      TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, null).execute().body();
-      if (tmdbVideosWoLang != null) {
-        for (Videos.Video video : ListUtils.nullSafe(tmdbVideos.results)) {
-          if ("Trailer".equals(video.type)) {
-            tmdbTrailers.add(video);
-          }
-        }
-      }
-    }
-
-    for (Videos.Video tmdbTrailer : tmdbTrailers) {
-      if (StringUtils.isBlank(tmdbTrailer.key)) {
-        // no url somehow...?
-        continue;
-      }
-
-      MediaTrailer trailer = new MediaTrailer();
-      trailer.setName(tmdbTrailer.name);
-      trailer.setQuality(Integer.toString(tmdbTrailer.size));
-      trailer.setProvider(tmdbTrailer.site);
-      trailer.setUrl(tmdbTrailer.key);
-
-      // youtube support
-      if ("youtube".equalsIgnoreCase(tmdbTrailer.site)) {
-        // build url for youtube trailer
-        StringBuilder sb = new StringBuilder();
-        sb.append("http://www.youtube.com/watch?v=");
-        sb.append(tmdbTrailer.key);
-        if (tmdbTrailer.size >= 720 && !tmdbTrailer.key.contains("&hd=1")) {
-          sb.append("&hd=1");
-        }
-        trailer.setUrl(sb.toString());
-      }
-
-      if (!trailers.contains(trailer)) {
-        trailers.add(trailer);
-      }
-    }
-
-    return trailers;
   }
 
   private MediaSearchResult morphMovieToSearchResult(Movie movie) {

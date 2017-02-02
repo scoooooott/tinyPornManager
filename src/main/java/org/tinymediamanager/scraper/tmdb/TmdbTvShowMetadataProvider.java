@@ -97,7 +97,12 @@ class TmdbTvShowMetadataProvider {
     TvResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().tv(searchString, 1, language, null, "phrase").execute().body();
+      try {
+        resultsPage = api.searchService().tv(searchString, 1, language, null, "phrase").execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to search: " + e.getMessage());
+      }
     }
 
     if (resultsPage == null || resultsPage.results == null) {
@@ -167,26 +172,31 @@ class TmdbTvShowMetadataProvider {
     // fetch the show summary first and every season afterwards..
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      TvShowComplete complete = api.tvService().tv(tmdbId, language, null).execute().body();
-      if (complete != null) {
-        for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
-          TmdbConnectionCounter.trackConnections();
-          TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, season.season_number, language, null).execute().body();
-          if (fullSeason != null) {
-            for (TvEpisode episode : ListUtils.nullSafe(fullSeason.episodes)) {
-              MediaEpisode ep = new MediaEpisode(TmdbMetadataProvider.providerInfo.getId());
-              ep.episode = episode.episode_number;
-              ep.season = episode.season_number;
-              ep.title = episode.name;
-              if (episode.vote_average != null) {
-                ep.rating = episode.vote_average.floatValue();
+      try {
+        TvShowComplete complete = api.tvService().tv(tmdbId, language, null).execute().body();
+        if (complete != null) {
+          for (TvSeason season : ListUtils.nullSafe(complete.seasons)) {
+            TmdbConnectionCounter.trackConnections();
+            TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, season.season_number, language, null).execute().body();
+            if (fullSeason != null) {
+              for (TvEpisode episode : ListUtils.nullSafe(fullSeason.episodes)) {
+                MediaEpisode ep = new MediaEpisode(TmdbMetadataProvider.providerInfo.getId());
+                ep.episode = episode.episode_number;
+                ep.season = episode.season_number;
+                ep.title = episode.name;
+                if (episode.vote_average != null) {
+                  ep.rating = episode.vote_average.floatValue();
+                }
+                ep.voteCount = episode.vote_count;
+                ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
+                episodes.add(ep);
               }
-              ep.voteCount = episode.vote_count;
-              ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
-              episodes.add(ep);
             }
           }
         }
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get episode list: " + e.getMessage());
       }
     }
 
@@ -243,10 +253,15 @@ class TmdbTvShowMetadataProvider {
     TvShowComplete complete = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      complete = api.tvService()
-          .tv(tmdbId, language,
-              new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS, AppendToResponseItem.CONTENT_RATINGS))
-          .execute().body();
+      try {
+        complete = api.tvService()
+            .tv(tmdbId, language,
+                new AppendToResponse(AppendToResponseItem.CREDITS, AppendToResponseItem.EXTERNAL_IDS, AppendToResponseItem.CONTENT_RATINGS))
+            .execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
+      }
     }
 
     if (complete == null) {
@@ -367,14 +382,19 @@ class TmdbTvShowMetadataProvider {
     synchronized (api) {
       // get episode via season listing -> improves caching performance
       TmdbConnectionCounter.trackConnections();
-      TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null).execute().body();
-      if (fullSeason != null) {
-        for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
-          if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
-            episode = ep;
-            break;
+      try {
+        TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null).execute().body();
+        if (fullSeason != null) {
+          for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
+            if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
+              episode = ep;
+              break;
+            }
           }
         }
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
       }
     }
 

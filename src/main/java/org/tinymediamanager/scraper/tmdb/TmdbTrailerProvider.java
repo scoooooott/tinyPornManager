@@ -74,42 +74,47 @@ class TmdbTrailerProvider {
 
     LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
 
+    List<Video> videos = new ArrayList<>();
     synchronized (api) {
       // get trailers from tmdb (with specified langu and without)
       TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
-      TmdbConnectionCounter.trackConnections();
-      Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "").execute().body();
+      try {
+        Videos tmdbVideos = api.moviesService().videos(tmdbId, language).execute().body();
+        TmdbConnectionCounter.trackConnections();
+        Videos tmdbVideosWoLang = api.moviesService().videos(tmdbId, "").execute().body();
 
-      List<Video> videos = new ArrayList<>();
-      videos.addAll(tmdbVideos.results);
-      videos.addAll(tmdbVideosWoLang.results);
+        videos.addAll(tmdbVideos.results);
+        videos.addAll(tmdbVideosWoLang.results);
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get trailer: " + e.getMessage());
+      }
+    }
 
-      for (Video video : ListUtils.nullSafe(videos)) {
-        if (!"trailer".equalsIgnoreCase(video.type)) {
-          continue;
+    for (Video video : ListUtils.nullSafe(videos)) {
+      if (!"trailer".equalsIgnoreCase(video.type)) {
+        continue;
+      }
+      MediaTrailer trailer = new MediaTrailer();
+      trailer.setName(video.name);
+      trailer.setQuality(String.valueOf(video.size) + "p");
+      trailer.setProvider(video.site);
+      trailer.setUrl(video.key);
+
+      // youtube support
+      if ("youtube".equalsIgnoreCase(video.site)) {
+        // build url for youtube trailer
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://www.youtube.com/watch?v=");
+        sb.append(video.key);
+        if (video.size >= 720) {
+          sb.append("&hd=1");
         }
-        MediaTrailer trailer = new MediaTrailer();
-        trailer.setName(video.name);
-        trailer.setQuality(String.valueOf(video.size) + "p");
-        trailer.setProvider(video.site);
-        trailer.setUrl(video.key);
+        trailer.setUrl(sb.toString());
+      }
 
-        // youtube support
-        if ("youtube".equalsIgnoreCase(video.site)) {
-          // build url for youtube trailer
-          StringBuilder sb = new StringBuilder();
-          sb.append("http://www.youtube.com/watch?v=");
-          sb.append(video.key);
-          if (video.size >= 720) {
-            sb.append("&hd=1");
-          }
-          trailer.setUrl(sb.toString());
-        }
-
-        if (!trailers.contains(trailer)) {
-          trailers.add(trailer);
-        }
+      if (!trailers.contains(trailer)) {
+        trailers.add(trailer);
       }
     }
 

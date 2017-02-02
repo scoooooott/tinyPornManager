@@ -79,7 +79,12 @@ class TmdbMovieSetMetadataProvider {
     CollectionResultsPage resultsPage = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
+      try {
+        resultsPage = api.searchService().collection(searchString, 1, language).execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to search: " + e.getMessage());
+      }
     }
 
     if (resultsPage == null) {
@@ -139,20 +144,25 @@ class TmdbMovieSetMetadataProvider {
     Collection collection = null;
     synchronized (api) {
       TmdbConnectionCounter.trackConnections();
-      collection = api.collectionService().summary(tmdbId, language, null).execute().body();
+      try {
+        collection = api.collectionService().summary(tmdbId, language, null).execute().body();
 
-      // if collection title/overview is not availbale, rescrape in en
-      if (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) {
-        TmdbConnectionCounter.trackConnections();
-        Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null).execute().body();
+        // if collection title/overview is not availbale, rescrape in en
+        if (StringUtils.isBlank(collection.overview) || StringUtils.isBlank(collection.name)) {
+          TmdbConnectionCounter.trackConnections();
+          Collection collectionInEn = api.collectionService().summary(tmdbId, "en", null).execute().body();
 
-        if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInEn.name)) {
-          collection.name = collectionInEn.name;
+          if (StringUtils.isBlank(collection.name) && StringUtils.isNotBlank(collectionInEn.name)) {
+            collection.name = collectionInEn.name;
+          }
+
+          if (StringUtils.isBlank(collection.overview) && StringUtils.isNotBlank(collectionInEn.overview)) {
+            collection.overview = collectionInEn.overview;
+          }
         }
-
-        if (StringUtils.isBlank(collection.overview) && StringUtils.isNotBlank(collectionInEn.overview)) {
-          collection.overview = collectionInEn.overview;
-        }
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
       }
     }
 
