@@ -132,7 +132,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         images = api.getMovieService().getMovieImages(imdbId);
       }
       catch (Exception e) {
-        LOGGER.debug("failed to search artwork: " + e.getMessage());
+        LOGGER.debug("failed to get artwork: " + e.getMessage());
       }
     }
 
@@ -142,7 +142,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
         images = api.getMovieService().getMovieImages(Integer.toString(tmdbId));
       }
       catch (Exception e) {
-        LOGGER.debug("failed to search artwork: " + e.getMessage());
+        LOGGER.debug("failed to get artwork: " + e.getMessage());
       }
     }
 
@@ -185,7 +185,13 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     }
 
     if (tvdbId > 0) {
-      images = api.getTvShowService().getTvShowImages(tvdbId);
+      try {
+        LOGGER.debug("getArtwork with TVDB id: " + tvdbId);
+        images = api.getTvShowService().getTvShowImages(tvdbId);
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get artwork: " + e.getMessage());
+      }
     }
     else {
       LOGGER.warn("not tvdbId set");
@@ -347,7 +353,7 @@ public class FanartTvMetadataProvider implements IMovieArtworkProvider, ITvShowA
     MOVIEDISC(1000, 1000, MediaArtworkType.DISC, FanartSizes.MEDIUM.getOrder());
     // @formatter:on
 
-    private ImageType(int width, int height, MediaArtworkType type, int sizeOrder) {
+    ImageType(int width, int height, MediaArtworkType type, int sizeOrder) {
       this.width = width;
       this.height = height;
       this.type = type;
