@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import static org.tinymediamanager.scraper.MediaMetadata.*;
+import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,11 +90,16 @@ class TraktTVShowMetadataProvider {
     List<SearchResult> searchResults = null;
 
     synchronized (api) {
-      if (year != 0) {
-        searchResults = api.search().textQuery(searchString, Type.SHOW, year, 1, 25).execute().body();
+      try {
+        if (year != 0) {
+          searchResults = api.search().textQuery(searchString, Type.SHOW, year, 1, 25).execute().body();
+        }
+        else {
+          searchResults = api.search().textQuery(searchString, Type.SHOW, null, 1, 25).execute().body();
+        }
       }
-      else {
-        searchResults = api.search().textQuery(searchString, Type.SHOW, null, 1, 25).execute().body();
+      catch (Exception e) {
+        LOGGER.debug("failed to search: " + e.getMessage());
       }
     }
 
@@ -134,34 +141,39 @@ class TraktTVShowMetadataProvider {
 
     // the API does not provide a complete access to all episodes, so we have to
     // fetch the show summary first and every season afterwards..
+    List<Season> seasons = null;
     synchronized (api) {
-      List<Season> seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+      try {
+        seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get episode list: " + e.getMessage());
+      }
+    }
 
-      for (Season season : ListUtils.nullSafe(seasons)) {
-        for (Episode episode : season.episodes) {
-          MediaEpisode ep = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
-          ep.episode = episode.number;
-          ep.season = episode.season;
-          ep.title = episode.title;
-          if (episode.rating != null) {
-            ep.rating = episode.rating.floatValue();
-          }
-          ep.voteCount = episode.votes;
+    for (Season season : ListUtils.nullSafe(seasons)) {
+      for (Episode episode : season.episodes) {
+        MediaEpisode ep = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
+        ep.episode = episode.number;
+        ep.season = episode.season;
+        ep.title = episode.title;
+        if (episode.rating != null) {
+          ep.rating = episode.rating.floatValue();
+        }
+        ep.voteCount = episode.votes;
 
-          ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
-          if (episode.ids.tvdb > 0) {
-            ep.ids.put(TVDB, episode.ids.tvdb);
-          }
-          if (episode.ids.tmdb > 0) {
-            ep.ids.put(TMDB, episode.ids.tmdb);
-          }
-          if (StringUtils.isNotBlank(episode.ids.imdb)) {
-            ep.ids.put(IMDB, episode.ids.imdb);
-          }
-
-          episodes.add(ep);
+        ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
+        if (episode.ids.tvdb > 0) {
+          ep.ids.put(TVDB, episode.ids.tvdb);
+        }
+        if (episode.ids.tmdb > 0) {
+          ep.ids.put(TMDB, episode.ids.tmdb);
+        }
+        if (StringUtils.isNotBlank(episode.ids.imdb)) {
+          ep.ids.put(IMDB, episode.ids.imdb);
         }
 
+        episodes.add(ep);
       }
     }
 
@@ -201,8 +213,13 @@ class TraktTVShowMetadataProvider {
     Show show = null;
     Credits credits = null;
     synchronized (api) {
-      show = api.shows().summary(id, Extended.FULL).execute().body();
-      credits = api.shows().people(id).execute().body();
+      try {
+        show = api.shows().summary(id, Extended.FULL).execute().body();
+        credits = api.shows().people(id).execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
+      }
     }
 
     if (show == null) {
@@ -334,19 +351,25 @@ class TraktTVShowMetadataProvider {
 
     // fetch all episode data - this results in less connections, but the initial connection is _bigger_
     Episode episode = null;
+    List<Season> seasons = null;
     synchronized (api) {
-      List<Season> seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+      try {
+        seasons = api.seasons().summary(id, Extended.FULLEPISODES).execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
+      }
+    }
 
-      for (Season season : ListUtils.nullSafe(seasons)) {
-        for (Episode ep : season.episodes) {
-          if (ep.season == seasonNr && ep.number == episodeNr) {
-            episode = ep;
-            break;
-          }
-        }
-        if (episode != null) {
+    for (Season season : ListUtils.nullSafe(seasons)) {
+      for (Episode ep : season.episodes) {
+        if (ep.season == seasonNr && ep.number == episodeNr) {
+          episode = ep;
           break;
         }
+      }
+      if (episode != null) {
+        break;
       }
     }
 

@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.scraper.trakt;
 
-import static org.tinymediamanager.scraper.MediaMetadata.*;
+import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,8 +149,13 @@ class TraktMovieMetadataProvider {
     Movie movie = null;
     Credits credits = null;
     synchronized (api) {
-      movie = api.movies().summary(id, Extended.FULL).execute().body();
-      credits = api.movies().people(id).execute().body();
+      try {
+        movie = api.movies().summary(id, Extended.FULL).execute().body();
+        credits = api.movies().people(id).execute().body();
+      }
+      catch (Exception e) {
+        LOGGER.debug("failed to get meta data: " + e.getMessage());
+      }
     }
 
     if (movie == null) {
