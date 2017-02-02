@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.util;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * The class ListUtils is a helper class, providing some special functions for Lists
@@ -34,5 +35,53 @@ public class ListUtils {
    */
   public static <T> Iterable<T> nullSafe(Iterable<T> it) {
     return it != null ? it : Collections.<T> emptySet();
+  }
+
+  /**
+   * merges the entries from newItems into the baseList<br />
+   * this implementation does adopt items from the baseList to the newItems in the same order<br />
+   * - without creating a new list<br />
+   * - without touching existing entries (which should not be removed)<br />
+   * <br />
+   * This implementation only works if .equals() of the type T is implemented in a proper way
+   * 
+   * @param baseList
+   *          the base list which will be altered
+   * @param newItems
+   *          the new entries which should be merged into the the existing list
+   */
+  public static <T> void mergeLists(List<T> baseList, List<T> newItems) {
+    // first remove old ones
+    for (int i = baseList.size() - 1; i >= 0; i--) {
+      T entry = baseList.get(i);
+      if (!newItems.contains(entry)) {
+        baseList.remove(entry);
+      }
+    }
+
+    // second, add new ones in the right order
+    for (int i = 0; i < newItems.size(); i++) {
+      T entry = newItems.get(i);
+      if (!baseList.contains(entry)) {
+        try {
+          baseList.add(i, entry);
+        }
+        catch (IndexOutOfBoundsException e) {
+          baseList.add(entry);
+        }
+      }
+      else {
+        int indexOldList = baseList.indexOf(entry);
+        if (i != indexOldList) {
+          T oldEntry = baseList.remove(indexOldList);
+          try {
+            baseList.add(i, oldEntry);
+          }
+          catch (IndexOutOfBoundsException e) {
+            baseList.add(oldEntry);
+          }
+        }
+      }
+    }
   }
 }
