@@ -86,6 +86,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.ListUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -541,25 +542,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
-
-    // first, add new ones
-    for (MediaGenres genre : genres) {
-      if (!this.genresForAccess.contains(genre)) {
-        this.genresForAccess.add(genre);
-        if (!this.genres.contains(genre.name())) {
-          this.genres.add(genre.name());
-        }
-      }
-    }
-
-    // second remove old ones
-    for (int i = this.genresForAccess.size() - 1; i >= 0; i--) {
-      MediaGenres genre = this.genresForAccess.get(i);
-      if (!genres.contains(genre)) {
-        this.genresForAccess.remove(genre);
-        this.genres.remove(genre.name());
-      }
-    }
+    ListUtils.mergeLists(genresForAccess, genres);
 
     firePropertyChange(GENRE, null, genres);
     firePropertyChange(GENRES_AS_STRING, null, genres);
@@ -1049,21 +1032,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
-
-    // first, add new ones
-    for (String tag : newTags) {
-      if (!this.tags.contains(tag)) {
-        this.tags.add(tag);
-      }
-    }
-
-    // second remove old ones
-    for (int i = this.tags.size() - 1; i >= 0; i--) {
-      String tag = this.tags.get(i);
-      if (!newTags.contains(tag)) {
-        this.tags.remove(tag);
-      }
-    }
+    ListUtils.mergeLists(tags, newTags);
 
     firePropertyChange(TAG, null, newTags);
     firePropertyChange(TAGS_AS_STRING, null, newTags);
@@ -1203,21 +1172,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
-
-    // first add the new ones
-    for (TvShowActor actor : newActors) {
-      if (!actors.contains(actor)) {
-        actors.add(actor);
-      }
-    }
-
-    // second remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actors.get(i);
-      if (!newActors.contains(actor)) {
-        actors.remove(actor);
-      }
-    }
+    ListUtils.mergeLists(actors, newActors);
 
     // and re-set TV show path to the actors
     for (TvShowActor actor : actors) {

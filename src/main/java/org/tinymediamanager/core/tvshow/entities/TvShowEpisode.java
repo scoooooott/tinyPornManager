@@ -76,6 +76,7 @@ import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -731,28 +732,16 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   @JsonSetter
   public void setActors(List<TvShowActor> newActors) {
-    // two way sync of actors
-    List<TvShowActor> tvShowActors = new ArrayList<>();
-
+    // do not add actors which are in the TV show itself
     // tvShow is null while loading
     if (getTvShow() != null) {
-      tvShowActors.addAll(getTvShow().getActors());
-    }
-
-    // first add the new ones
-    for (TvShowActor actor : newActors) {
-      if (!tvShowActors.contains(actor) && !actors.contains(actor)) {
-        actors.add(actor);
+      for (TvShowActor actor : getTvShow().getActors()) {
+        newActors.remove(actor);
       }
     }
 
-    // second remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actors.get(i);
-      if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
-        actors.remove(actor);
-      }
-    }
+    // two way sync of actors
+    ListUtils.mergeLists(actors, newActors);
 
     // and re-set episode path to the actors
     for (TvShowActor actor : actors) {
@@ -1043,21 +1032,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
-
-    // first, add new ones
-    for (String tag : newTags) {
-      if (!this.tags.contains(tag)) {
-        this.tags.add(tag);
-      }
-    }
-
-    // second remove old ones
-    for (int i = this.tags.size() - 1; i >= 0; i--) {
-      String tag = this.tags.get(i);
-      if (!newTags.contains(tag)) {
-        this.tags.remove(tag);
-      }
-    }
+    ListUtils.mergeLists(tags, newTags);
 
     firePropertyChange(TAG, null, newTags);
     firePropertyChange(TAGS_AS_STRING, null, newTags);

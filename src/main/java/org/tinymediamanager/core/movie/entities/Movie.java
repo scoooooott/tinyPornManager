@@ -108,6 +108,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -500,39 +501,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setTags(List<String> newTags) {
     // two way sync of tags
-
-    // first remove unused
-    for (int i = tags.size() - 1; i >= 0; i--) {
-      String tag = tags.get(i);
-      if (!newTags.contains(tag)) {
-        tags.remove(tag);
-      }
-    }
-
-    // second, add new ones in the right order
-    for (int i = 0; i < newTags.size(); i++) {
-      String tag = newTags.get(i);
-      if (!tags.contains(tag)) {
-        try {
-          tags.add(i, tag);
-        }
-        catch (IndexOutOfBoundsException e) {
-          tags.add(tag);
-        }
-      }
-      else {
-        int indexOldList = tags.indexOf(tag);
-        if (i != indexOldList) {
-          String oldTag = tags.remove(indexOldList);
-          try {
-            tags.add(i, oldTag);
-          }
-          catch (IndexOutOfBoundsException e) {
-            tags.add(oldTag);
-          }
-        }
-      }
-    }
+    ListUtils.mergeLists(tags, newTags);
 
     Utils.removeEmptyStringsFromList(tags);
 
@@ -1172,39 +1141,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
-
-    // first remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      MovieActor actor = actors.get(i);
-      if (!newActors.contains(actor)) {
-        actors.remove(actor);
-      }
-    }
-
-    // second add the new ones
-    for (int i = 0; i < newActors.size(); i++) {
-      MovieActor actor = newActors.get(i);
-      if (!actors.contains(actor)) {
-        try {
-          actors.add(i, actor);
-        }
-        catch (IndexOutOfBoundsException e) {
-          actors.add(actor);
-        }
-      }
-      else {
-        int indexOldList = actors.indexOf(actor);
-        if (i != indexOldList) {
-          MovieActor oldActor = actors.remove(indexOldList);
-          try {
-            actors.add(i, oldActor);
-          }
-          catch (IndexOutOfBoundsException e) {
-            actors.add(oldActor);
-          }
-        }
-      }
-    }
+    ListUtils.mergeLists(actors, newActors);
 
     // and re-set movie path to the actors
     for (MovieActor actor : actors) {
@@ -1480,39 +1417,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setGenres(List<MediaGenres> newGenres) {
     // two way sync of genres
-
-    // first remove old ones
-    for (int i = genresForAccess.size() - 1; i >= 0; i--) {
-      MediaGenres genre = genresForAccess.get(i);
-      if (!newGenres.contains(genre)) {
-        genresForAccess.remove(genre);
-      }
-    }
-
-    // second, add new ones in the right order
-    for (int i = 0; i < newGenres.size(); i++) {
-      MediaGenres genre = newGenres.get(i);
-      if (!genresForAccess.contains(genre)) {
-        try {
-          genresForAccess.add(i, genre);
-        }
-        catch (IndexOutOfBoundsException e) {
-          genresForAccess.add(genre);
-        }
-      }
-      else {
-        int indexOldList = genresForAccess.indexOf(genre);
-        if (i != indexOldList) {
-          MediaGenres oldGenre = genresForAccess.remove(indexOldList);
-          try {
-            genresForAccess.add(i, oldGenre);
-          }
-          catch (IndexOutOfBoundsException e) {
-            genresForAccess.add(oldGenre);
-          }
-        }
-      }
-    }
+    ListUtils.mergeLists(genresForAccess, newGenres);
 
     // third, build new genre as string list
     genres.clear();
@@ -1968,39 +1873,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
-    // first remove unused
-    for (int i = producers.size() - 1; i >= 0; i--) {
-      MovieProducer producer = producers.get(i);
-      if (!newProducers.contains(producer)) {
-        producers.remove(producer);
-      }
-    }
-
-    // second add the new ones
-    for (int i = 0; i < newProducers.size(); i++) {
-      MovieProducer producer = newProducers.get(i);
-      if (!producers.contains(producer)) {
-        // new producer
-        try {
-          producers.add(i, producer);
-        }
-        catch (IndexOutOfBoundsException e) {
-          producers.add(producer);
-        }
-      }
-      else {
-        int indexOldList = producers.indexOf(producer);
-        if (i != indexOldList) {
-          MovieProducer oldProducer = producers.remove(indexOldList);
-          try {
-            producers.add(i, oldProducer);
-          }
-          catch (IndexOutOfBoundsException e) {
-            producers.add(oldProducer);
-          }
-        }
-      }
-    }
+    ListUtils.mergeLists(producers, newProducers);
 
     // and re-set movie path to the producers
     for (MovieProducer producer : producers) {
