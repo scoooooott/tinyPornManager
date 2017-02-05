@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.CustomNullStringSerializerProvider;
 import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
@@ -105,6 +106,7 @@ public class MovieModuleManager implements ITmmModule {
     objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
     objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+    objectMapper.setSerializerProvider(new CustomNullStringSerializerProvider());
 
     movieObjectWriter = objectMapper.writerFor(Movie.class);
     movieSetObjectWriter = objectMapper.writerFor(MovieSet.class);
@@ -157,7 +159,7 @@ public class MovieModuleManager implements ITmmModule {
   /**
    * dumps a whole movieset to logfile
    * 
-   * @param movie
+   * @param movieSet
    *          the movieset to make the dump for
    */
   public void dump(MovieSet movieSet) {

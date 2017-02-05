@@ -485,6 +485,26 @@ public class UpgradeTasks {
         }
       }
     }
+
+    // upgrade to v2.9.3
+    if (StrgUtils.compareVersion(v, "2.9.3") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 2.9.3");
+
+      // rewrite all NFOs to get rid of null strings
+      for (Movie movie : movieList.getMovies()) {
+        movie.saveToDb();
+      }
+      for (MovieSet movieSet : movieList.getMovieSetList()) {
+        movieSet.saveToDb();
+      }
+
+      for (TvShow show : tvShowList.getTvShows()) {
+        show.saveToDb();
+        for (TvShowEpisode episode : show.getEpisodes()) {
+          episode.saveToDb();
+        }
+      }
+    }
   }
 
   /**
