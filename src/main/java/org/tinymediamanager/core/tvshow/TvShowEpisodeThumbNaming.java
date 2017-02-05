@@ -20,6 +20,7 @@ package org.tinymediamanager.core.tvshow;
  * 
  * @author Manuel Laggner
  */
+@Deprecated
 public enum TvShowEpisodeThumbNaming {
 
   FILENAME_THUMB, // [filename].jpg

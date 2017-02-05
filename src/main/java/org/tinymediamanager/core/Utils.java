@@ -58,6 +58,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1536,6 +1537,18 @@ public class Utils {
     }
     catch (IOException ex) {
     }
+  }
+
+  public static String getArtworkExtension(String url) {
+    String ext = FilenameUtils.getExtension(url);
+    if (StringUtils.isBlank(ext)) {
+      // no extension? fall back to jpg
+      ext = "jpg";
+    }
+    else if ("tbn".equals(ext)) {
+      ext = "jpg";
+    }
+    return ext.toLowerCase(Locale.ROOT);
   }
 
   /*

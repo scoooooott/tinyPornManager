@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
@@ -375,7 +375,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(fanartUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(fanartUrl);
 
       if (++i == 1) {
         firstImage = true;
@@ -385,18 +385,6 @@ public class MovieArtworkHelper {
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, fanartUrl, MediaArtworkType.BACKGROUND, filename, firstImage);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
-  }
-
-  private static String getArtworkExtension(String url) {
-    String ext = FilenameUtils.getExtension(url);
-    if (StringUtils.isBlank(ext)) {
-      // no extension? fall back to jpg
-      ext = "jpg";
-    }
-    else if ("tbn".equals(ext)) {
-      ext = "jpg";
-    }
-    return ext;
   }
 
   /**
@@ -454,7 +442,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(posterUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(posterUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -480,7 +468,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(bannerUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(bannerUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -543,7 +531,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(clearartUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(clearartUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -606,7 +594,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(discartUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(discartUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -669,7 +657,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(logoUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(logoUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -732,7 +720,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(clearlogoUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(clearlogoUrl);
       if (++i == 1) {
         firstImage = true;
       }
@@ -795,7 +783,7 @@ public class MovieArtworkHelper {
         continue;
       }
 
-      String filename = baseFilename + "." + getArtworkExtension(thumbUrl);
+      String filename = baseFilename + "." + Utils.getArtworkExtension(thumbUrl);
       if (++i == 1) {
         firstImage = true;
       }

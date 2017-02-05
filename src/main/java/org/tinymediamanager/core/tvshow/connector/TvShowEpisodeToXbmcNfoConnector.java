@@ -64,7 +64,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
-    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studios", "actors", "fileinfo",
+    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "fileinfo",
     "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
@@ -356,7 +356,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
       FileUtils.write(nfoFile, outputXml, "UTF-8");
       for (TvShowEpisode e : tvShowEpisodes) {
         e.removeAllMediaFiles(MediaFileType.NFO);
-        e.addToMediaFiles(new MediaFile(nfoFile));
+        MediaFile nfo = new MediaFile(nfoFile);
+        nfo.gatherMediaInformation(true); // force to update filedate
+        e.addToMediaFiles(nfo);
       }
     }
     catch (Exception e) {

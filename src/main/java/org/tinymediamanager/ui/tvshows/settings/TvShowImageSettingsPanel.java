@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows.settings;
 
-import static org.tinymediamanager.core.tvshow.TvShowEpisodeThumbNaming.FILENAME_THUMB_POSTFIX;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -28,12 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
@@ -53,10 +50,10 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -81,18 +78,22 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private List<ArtworkScraper>        artworkScrapers  = ObservableCollections.observableList(new ArrayList<ArtworkScraper>());
 
-  private JRadioButton                rdbtnThumbWithPostfix;
-  private JRadioButton                rdbtnThumbWoPostfix;
-  private ButtonGroup                 btnGroupThumbFilenaming;
   private TmmTable                    tableArtworkScraper;
   private JTextPane                   tpArtworkScraperDescription;
   private JPanel                      panelArtworkScraperOptions;
-  private JRadioButton                rdbtnThumbTbn;
+  private JCheckBox                   chckbxEpisodeThumb1;
+  private JCheckBox                   chckbxEpisodeThumb2;
+  private JCheckBox                   chckbxEpisodeThumb3;
+  private JCheckBox                   chckbxEpisodeThumb4;
+
+  private ItemListener                checkBoxListener;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public TvShowImageSettingsPanel() {
+    checkBoxListener = e -> checkChanges();
+
     // UI init
     initComponents();
     initDataBindings();
@@ -156,32 +157,11 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
       tableArtworkScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
 
-    switch (settings.getTvShowEpisodeThumbFilename()) {
-      case FILENAME_THUMB_POSTFIX:
-        rdbtnThumbWithPostfix.setSelected(true);
-        break;
-
-      case FILENAME_THUMB:
-        rdbtnThumbWoPostfix.setSelected(true);
-        break;
-
-      case FILENAME_THUMB_TBN:
-        rdbtnThumbTbn.setSelected(true);
-        break;
-
-      default:
-        break;
-    }
-
-    ItemListener itemListener = e -> checkChanges();
-    rdbtnThumbWithPostfix.addItemListener(itemListener);
-    rdbtnThumbWoPostfix.addItemListener(itemListener);
-    rdbtnThumbTbn.addItemListener(itemListener);
-
+    buildCheckBoxes();
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp,shrink 0][][][500lp,grow]", "[][200lp][][][]"));
+    setLayout(new MigLayout("", "[25lp,shrink 0][grow][][500lp,grow]", "[][200lp][20lp][][][][][]"));
     {
       final JLabel lblScraperT = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblScraperT, 1.16667, Font.BOLD);
@@ -215,37 +195,86 @@ public class TvShowImageSettingsPanel extends ScrollablePanel {
       panelScraperDetails.add(panelArtworkScraperOptions, "cell 0 1,growx");
     }
     {
-      JLabel lblThumbNaming = new JLabel(BUNDLE.getString("image.thumb.naming")); //$NON-NLS-1$
-      add(lblThumbNaming, "cell 1 2");
+      JLabel lblExtraArtworkT = new JLabel(BUNDLE.getString("Settings.extraartwork"));//$NON-NLS-1$
+      TmmFontHelper.changeFont(lblExtraArtworkT, 1.16667, Font.BOLD);
+      add(lblExtraArtworkT, "cell 0 3 3 1");
+    }
+    {
+      JPanel panel = new JPanel();
+      add(panel, "cell 1 4 3 1,grow");
+      panel.setLayout(new MigLayout("", "[][][]", "[][]"));
+      JLabel lblThumbNaming = new JLabel(BUNDLE.getString("image.episodethumb.naming"));
+      panel.add(lblThumbNaming, "cell 0 0");
 
-      btnGroupThumbFilenaming = new ButtonGroup();
+      chckbxEpisodeThumb1 = new JCheckBox("<dynamic>-thumb.ext");
+      panel.add(chckbxEpisodeThumb1, "cell 1 0");
 
-      rdbtnThumbWithPostfix = new JRadioButton("<dynamic>-thumb.ext");
-      add(rdbtnThumbWithPostfix, "cell 2 2");
-      btnGroupThumbFilenaming.add(rdbtnThumbWithPostfix);
+      chckbxEpisodeThumb2 = new JCheckBox("<dynamic>-landscape.ext");
+      panel.add(chckbxEpisodeThumb2, "cell 2 0");
 
-      rdbtnThumbWoPostfix = new JRadioButton("<dynamic>.ext");
-      add(rdbtnThumbWoPostfix, "cell 2 3");
-      btnGroupThumbFilenaming.add(rdbtnThumbWoPostfix);
+      chckbxEpisodeThumb3 = new JCheckBox("<dynamic>.ext");
+      panel.add(chckbxEpisodeThumb3, "cell 1 1");
 
-      rdbtnThumbTbn = new JRadioButton("<dynamic>.tbn");
-      add(rdbtnThumbTbn, "cell 2 4");
-      btnGroupThumbFilenaming.add(rdbtnThumbTbn);
+      chckbxEpisodeThumb4 = new JCheckBox("<dynamic>.tbn");
+      panel.add(chckbxEpisodeThumb4, "cell 2 1");
+    }
+  }
+
+  private void buildCheckBoxes() {
+    chckbxEpisodeThumb1.removeItemListener(checkBoxListener);
+    chckbxEpisodeThumb2.removeItemListener(checkBoxListener);
+    chckbxEpisodeThumb3.removeItemListener(checkBoxListener);
+    chckbxEpisodeThumb4.removeItemListener(checkBoxListener);
+    clearSelection(chckbxEpisodeThumb1, chckbxEpisodeThumb2, chckbxEpisodeThumb3, chckbxEpisodeThumb4);
+
+    for (TvShowEpisodeThumbNaming thumbNaming : TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames()) {
+      switch (thumbNaming) {
+        case FILENAME_THUMB:
+          chckbxEpisodeThumb1.setSelected(true);
+          break;
+
+        case FILENAME_LANDSCAPE:
+          chckbxEpisodeThumb2.setSelected(true);
+          break;
+
+        case FILENAME:
+          chckbxEpisodeThumb3.setSelected(true);
+          break;
+
+        case FILENAME_TBN:
+          chckbxEpisodeThumb4.setSelected(true);
+          break;
+      }
+    }
+
+    chckbxEpisodeThumb1.addItemListener(checkBoxListener);
+    chckbxEpisodeThumb2.addItemListener(checkBoxListener);
+    chckbxEpisodeThumb3.addItemListener(checkBoxListener);
+    chckbxEpisodeThumb4.addItemListener(checkBoxListener);
+  }
+
+  private void clearSelection(JCheckBox... checkBoxes) {
+    for (JCheckBox checkBox : checkBoxes) {
+      checkBox.setSelected(false);
     }
   }
 
   /**
    * Check changes.
    */
-  public void checkChanges() {
-    if (rdbtnThumbWithPostfix.isSelected()) {
-      settings.setTvShowEpisodeThumbFilename(FILENAME_THUMB_POSTFIX);
+  private void checkChanges() {
+    settings.clearEpisodeThumbFilenames();
+    if (chckbxEpisodeThumb1.isSelected()) {
+      settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
     }
-    if (rdbtnThumbWoPostfix.isSelected()) {
-      settings.setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB);
+    if (chckbxEpisodeThumb2.isSelected()) {
+      settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_LANDSCAPE);
     }
-    if (rdbtnThumbTbn.isSelected()) {
-      settings.setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_THUMB_TBN);
+    if (chckbxEpisodeThumb3.isSelected()) {
+      settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME);
+    }
+    if (chckbxEpisodeThumb4.isSelected()) {
+      settings.addEpisodeThumbFilename(TvShowEpisodeThumbNaming.FILENAME_TBN);
     }
   }
 

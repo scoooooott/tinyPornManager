@@ -71,6 +71,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -469,42 +470,31 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void writeThumbImage() {
     String thumbUrl = getArtworkUrl(MediaFileType.THUMB);
-    if (StringUtils.isNotEmpty(thumbUrl)) {
-      boolean firstImage = true;
-      // create correct filename
+    if (StringUtils.isNotBlank(thumbUrl)) {
+      boolean firstImage = false;
 
+      // create correct filename
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
-      String filename;
       String basename = FilenameUtils.getBaseName(mf.getFilename());
       if (isDisc()) {
         basename = "VIDEO_TS"; // FIXME: BluRay?
       }
 
-      switch (TvShowModuleManager.SETTINGS.getTvShowEpisodeThumbFilename()) {
-        case FILENAME_THUMB_POSTFIX:
-          filename = basename + "-thumb." + FilenameUtils.getExtension(thumbUrl);
-          break;
+      int i = 0;
+      for (TvShowEpisodeThumbNaming thumbNaming : TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames()) {
+        String filename = thumbNaming.getFilename(basename, Utils.getArtworkExtension(thumbUrl));
+        if (StringUtils.isBlank(filename)) {
+          continue;
+        }
 
-        case FILENAME_THUMB:
-          filename = basename + "." + FilenameUtils.getExtension(thumbUrl);
-          break;
+        if (++i == 1) {
+          firstImage = true;
+        }
 
-        case FILENAME_THUMB_TBN:
-          filename = basename + ".tbn";
-          break;
-
-        default:
-          filename = "";
-          break;
+        // get image in thread
+        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, thumbUrl, MediaArtworkType.THUMB, filename, firstImage);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
-
-      if (StringUtils.isBlank(thumbUrl) || StringUtils.isBlank(filename)) {
-        return;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, thumbUrl, MediaArtworkType.THUMB, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
 

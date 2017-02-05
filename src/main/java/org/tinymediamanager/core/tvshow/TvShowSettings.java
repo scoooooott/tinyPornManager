@@ -34,6 +34,7 @@ import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
 import org.tinymediamanager.scraper.entities.CountryCode;
@@ -46,77 +47,83 @@ import org.tinymediamanager.scraper.entities.MediaLanguages;
  */
 @XmlRootElement(name = "TvShowSettings")
 public class TvShowSettings extends AbstractSettings {
-  private static final Logger         LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
+  private static final Logger                  LOGGER                         = LoggerFactory.getLogger(TvShowSettings.class);
 
-  public final static String          CONFIG_FILE                    = "tvShows.xml";
-  public final static String          DEFAULT_RENAMER_FOLDER_PATTERN = "$N ($Y)";
-  public final static String          DEFAULT_RENAMER_SEASON_PATTERN = "Season $1";
-  public final static String          DEFAULT_RENAMER_FILE_PATTERN   = "$N - S$2E$E - $T";
+  public final static String                   CONFIG_FILE                    = "tvShows.xml";
+  public final static String                   DEFAULT_RENAMER_FOLDER_PATTERN = "$N ($Y)";
+  public final static String                   DEFAULT_RENAMER_SEASON_PATTERN = "Season $1";
+  public final static String                   DEFAULT_RENAMER_FILE_PATTERN   = "$N - S$2E$E - $T";
 
-  private static TvShowSettings       instance;
+  private static TvShowSettings                instance;
 
   /**
    * Constants mainly for events
    */
-  private final static String         TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
-  private final static String         TV_SHOW_SCRAPER                = "tvShowScraper";
-  private final static String         TV_SHOW_ARTWORK_SCRAPERS       = "tvShowArtworkScrapers";
-  private final static String         PATH                           = "path";
-  private final static String         SCRAPE_BEST_IMAGE              = "scrapeBestImage";
-  private final static String         SCRAPER_LANGU                  = "scraperLanguage";
-  private final static String         SUBTITLE_SCRAPER_LANGU         = "subtitleScraperLanguage";
-  private final static String         CERTIFICATION_COUNTRY          = "certificationCountry";
-  private final static String         RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
-  private final static String         BUILD_IMAGE_CACHE_ON_IMPORT    = "buildImageCacheOnImport";
-  private final static String         ASCII_REPLACEMENT              = "asciiReplacement";
-  private final static String         BAD_WORDS                      = "badWords";
-  private final static String         ENTRY                          = "entry";
-  private final static String         TV_SHOW_SKIP_FOLDERS           = "tvShowSkipFolders";
-  private final static String         TV_SHOW_SUBTITLE_SCRAPERS      = "tvShowSubtitleScrapers";
-  private final static String         UI_FILTERS                     = "uiFilters";
-  private final static String         STORE_UI_FILTERS               = "storeUiFilters";
+  private final static String                  PATH                           = "path";
+  private final static String                  FILENAME                       = "filename";
+  private final static String                  TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
+  private final static String                  TV_SHOW_SCRAPER                = "tvShowScraper";
+  private final static String                  TV_SHOW_ARTWORK_SCRAPERS       = "tvShowArtworkScrapers";
+
+  private final static String                  SCRAPE_BEST_IMAGE              = "scrapeBestImage";
+  private final static String                  SCRAPER_LANGU                  = "scraperLanguage";
+  private final static String                  SUBTITLE_SCRAPER_LANGU         = "subtitleScraperLanguage";
+  private final static String                  CERTIFICATION_COUNTRY          = "certificationCountry";
+  private final static String                  RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
+  private final static String                  BUILD_IMAGE_CACHE_ON_IMPORT    = "buildImageCacheOnImport";
+  private final static String                  ASCII_REPLACEMENT              = "asciiReplacement";
+  private final static String                  BAD_WORDS                      = "badWords";
+  private final static String                  ENTRY                          = "entry";
+  private final static String                  TV_SHOW_SKIP_FOLDERS           = "tvShowSkipFolders";
+  private final static String                  TV_SHOW_SUBTITLE_SCRAPERS      = "tvShowSubtitleScrapers";
+  private final static String                  UI_FILTERS                     = "uiFilters";
+  private final static String                  STORE_UI_FILTERS               = "storeUiFilters";
+  private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>          tvShowDataSources              = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowDataSources              = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = BAD_WORDS)
   @XmlElement(name = ENTRY)
-  private final List<String>          badWords                       = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   badWords                       = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_ARTWORK_SCRAPERS)
   @XmlElement(name = ENTRY)
-  private final List<String>          tvShowArtworkScrapers          = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowArtworkScrapers          = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
-  private final List<String>          tvShowSkipFolders              = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowSkipFolders              = ObservableCollections.observableList(new ArrayList<String>());
 
   @XmlElementWrapper(name = TV_SHOW_SUBTITLE_SCRAPERS)
   @XmlElement(name = ENTRY)
-  private final List<String>          tvShowSubtitleScrapers         = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>                   tvShowSubtitleScrapers         = ObservableCollections.observableList(new ArrayList<String>());
 
-  private Map<String, String>         uiFilters                      = new HashMap<>();
+  @XmlElementWrapper(name = EPISODE_THUMB_FILENAME)
+  @XmlElement(name = FILENAME)
+  private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
-  private String                      tvShowScraper                  = Constants.TVDB;
-  private boolean                     scrapeBestImage                = true;
-  private MediaLanguages              scraperLanguage                = MediaLanguages.en;
-  private MediaLanguages              subtitleScraperLanguage        = MediaLanguages.en;
-  private CountryCode                 certificationCountry           = CountryCode.US;
-  private String                      renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
-  private String                      renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
-  private String                      renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
-  private TvShowEpisodeThumbNaming    tvShowEpisodeThumbFilename     = TvShowEpisodeThumbNaming.FILENAME_THUMB_POSTFIX;
-  private boolean                     buildImageCacheOnImport        = false;
-  private boolean                     asciiReplacement               = false;
-  private boolean                     renamerSpaceSubstitution       = false;
-  private String                      renamerSpaceReplacement        = "_";
-  private LanguageStyle               subtitleLanguageStyle          = LanguageStyle.ISO3T;
-  private boolean                     syncTrakt                      = false;
-  private boolean                     dvdOrder                       = false;
-  private boolean                     storeUiFilters                 = false;
-  private boolean                     displayMissingEpisodes         = false;
-  private TvShowScraperMetadataConfig tvShowScraperMetadataConfig    = null;
+  private Map<String, String>                  uiFilters                      = new HashMap<>();
+
+  private String                               tvShowScraper                  = Constants.TVDB;
+  private boolean                              scrapeBestImage                = true;
+  private MediaLanguages                       scraperLanguage                = MediaLanguages.en;
+  private MediaLanguages                       subtitleScraperLanguage        = MediaLanguages.en;
+  private CountryCode                          certificationCountry           = CountryCode.US;
+  private String                               renamerTvShowFoldername        = DEFAULT_RENAMER_FOLDER_PATTERN;
+  private String                               renamerSeasonFoldername        = DEFAULT_RENAMER_SEASON_PATTERN;
+  private String                               renamerFilename                = DEFAULT_RENAMER_FILE_PATTERN;
+  private boolean                              buildImageCacheOnImport        = false;
+  private boolean                              asciiReplacement               = false;
+  private boolean                              renamerSpaceSubstitution       = false;
+  private String                               renamerSpaceReplacement        = "_";
+  private LanguageStyle                        subtitleLanguageStyle          = LanguageStyle.ISO3T;
+  private boolean                              syncTrakt                      = false;
+  private boolean                              dvdOrder                       = false;
+  private boolean                              storeUiFilters                 = false;
+  private boolean                              displayMissingEpisodes         = false;
+  private TvShowScraperMetadataConfig          tvShowScraperMetadataConfig    = null;
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -177,6 +184,8 @@ public class TvShowSettings extends AbstractSettings {
         setScraperLanguage(ml);
       }
     }
+
+    episodeThumbFilenames.add(TvShowEpisodeThumbNaming.FILENAME);
 
     saveSettings();
   }
@@ -399,14 +408,20 @@ public class TvShowSettings extends AbstractSettings {
     return badWords;
   }
 
-  public TvShowEpisodeThumbNaming getTvShowEpisodeThumbFilename() {
-    return tvShowEpisodeThumbFilename;
+  public void addEpisodeThumbFilename(TvShowEpisodeThumbNaming filename) {
+    if (!episodeThumbFilenames.contains(filename)) {
+      episodeThumbFilenames.add(filename);
+      firePropertyChange(EPISODE_THUMB_FILENAME, null, episodeThumbFilenames);
+    }
   }
 
-  public void setTvShowEpisodeThumbFilename(TvShowEpisodeThumbNaming newValue) {
-    TvShowEpisodeThumbNaming oldValue = this.tvShowEpisodeThumbFilename;
-    this.tvShowEpisodeThumbFilename = newValue;
-    firePropertyChange("tvShowEpisodeThumbFilename", oldValue, newValue);
+  public void clearEpisodeThumbFilenames() {
+    episodeThumbFilenames.clear();
+    firePropertyChange(EPISODE_THUMB_FILENAME, null, episodeThumbFilenames);
+  }
+
+  public List<TvShowEpisodeThumbNaming> getEpisodeThumbFilenames() {
+    return new ArrayList<>(this.episodeThumbFilenames);
   }
 
   public void addTvShowSubtitleScraper(String newValue) {

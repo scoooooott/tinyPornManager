@@ -294,7 +294,10 @@ public class TvShowToXbmcNfoConnector {
         tvShow.addToTags(tag);
       }
 
-      tvShow.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));
+      tvShow.removeAllMediaFiles(MediaFileType.NFO);
+      MediaFile mf = new MediaFile(nfo, MediaFileType.NFO);
+      mf.gatherMediaInformation(true); // force to update filedate
+      tvShow.addToMediaFiles(mf);
     }
     catch (UnmarshalException e) {
       LOGGER.error("failed to parse " + nfo.getAbsolutePath() + " " + e.getMessage());

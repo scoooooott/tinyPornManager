@@ -503,8 +503,8 @@ public class MovieRenamer {
     // ## rename all other types (copy 1:1)
     // ######################################################################
     mfs = new ArrayList<>();
-    mfs.addAll(
-        movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.SUBTITLE));
+    mfs.addAll(movie.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
+        MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
     mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
@@ -1247,7 +1247,7 @@ public class MovieRenamer {
   }
 
   /**
-   * MOVIES file.
+   * moves a file.
    * 
    * @param oldFilename
    *          the old filename
@@ -1279,7 +1279,7 @@ public class MovieRenamer {
   }
 
   /**
-   * copies file.
+   * copies a file.
    * 
    * @param oldFilename
    *          the old filename

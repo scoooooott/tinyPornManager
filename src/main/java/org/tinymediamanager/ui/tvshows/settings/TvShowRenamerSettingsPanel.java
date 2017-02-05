@@ -341,8 +341,9 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
 
       if (tvShow != null && episode != null) {
         String tvShowDir = TvShowRenamer.generateTvShowDir(tfTvShowFolder.getText(), tvShow);
-        String filename = TvShowRenamer.generateFilename(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
-        String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
+        String filename = TvShowRenamer
+            .generateEpisodeFilenames(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0)).get(0).getFilename();
+        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFoldername.getText(), episode);
         if (StringUtils.isBlank(seasonDir)) {
           lblExample.setText(tvShowDir + File.separator + filename);
         }
