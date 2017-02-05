@@ -84,4 +84,26 @@ public class ListUtils {
       }
     }
   }
+
+  /**
+   * checks whether a list is null or empty
+   * 
+   * @param list
+   *          the list to check
+   * @return true if the list is null or empty
+   */
+  public static <T> boolean isEmpty(List<T> list) {
+    return list == null || list.isEmpty();
+  }
+
+  /**
+   * checks whether a list contains at least one entry
+   *
+   * @param list
+   *          the list to check
+   * @return true if the list is not null and not empty
+   */
+  public static <T> boolean isNotEmpty(List<T> list) {
+    return list != null && !list.isEmpty();
+  }
 }
