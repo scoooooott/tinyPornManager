@@ -1,10 +1,17 @@
 package org.tinymediamanager.core.tvshow;
 
-import java.io.File;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -144,4 +151,159 @@ public class TvShowRenamerTest {
     }
   }
 
+  @Test
+  public void testRename() {
+    TvShowSettings settings = TvShowSettings.getInstance("target/settings");
+
+    testSimpleEpisode();
+    testMultiEpisode();
+  }
+
+  /**
+   * just a test of a simple episode (one EP file with some extra files)
+   */
+  private void testSimpleEpisode() {
+    // copy over the test files to a new folder
+    Path source = Paths.get("target/test-classes/testtvshows/renamer_test/simple");
+    Path destination = Paths.get("target/test-classes/tv_show_renamer_simple/ShowForRenamer");
+    try {
+      FileUtils.deleteDirectory(destination.getParent().toFile());
+      FileUtils.copyDirectory(source.toFile(), destination.toFile());
+    }
+    catch (Exception e) {
+      Assertions.fail(e.getMessage());
+    }
+
+    TvShow show = new TvShow();
+    show.setTitle("Breaking Bad");
+    show.setYear("2008");
+    show.setDataSource(destination.getParent().toAbsolutePath().toString());
+    show.setPath(destination.toAbsolutePath().toString());
+
+    // classical single file episode
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle("Pilot");
+    ep.setSeason(1);
+    ep.setEpisode(1);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(1);
+    ep.setPath(destination.toAbsolutePath().toString());
+    MediaFile mf = new MediaFile(destination.resolve("S01E01.jpg").toAbsolutePath(), MediaFileType.THUMB);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01.nfo").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01.de.srt").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    TvShowRenamer.renameTvShowRoot(show);
+    TvShowRenamer.renameEpisode(ep);
+
+    Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
+    assertThat(showDir).exists();
+
+    Path seasonDir = showDir.resolve("Season 1");
+    assertThat(seasonDir).exists();
+
+    Path video = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.mkv");
+    assertThat(video).exists();
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.jpg");
+    assertThat(thumb).exists();
+    Path nfo = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.nfo");
+    assertThat(nfo).exists();
+    Path sub = seasonDir.resolve("Breaking Bad - S01E01 - Pilot.deu.srt");
+    assertThat(sub).exists();
+  }
+
+  /**
+   * multi episode file test
+   */
+  private void testMultiEpisode() {
+    // copy over the test files to a new folder
+    Path source = Paths.get("target/test-classes/testtvshows/renamer_test/multi");
+    Path destination = Paths.get("target/test-classes/tv_show_renamer_multi/ShowForRenamer");
+    try {
+      FileUtils.deleteDirectory(destination.getParent().toFile());
+      FileUtils.copyDirectory(source.toFile(), destination.toFile());
+    }
+    catch (Exception e) {
+      Assertions.fail(e.getMessage());
+    }
+
+    TvShow show = new TvShow();
+    show.setTitle("Breaking Bad");
+    show.setYear("2008");
+    show.setDataSource(destination.getParent().toAbsolutePath().toString());
+    show.setPath(destination.toAbsolutePath().toString());
+
+    // multi episode file
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle("Pilot");
+    ep.setSeason(1);
+    ep.setEpisode(1);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(1);
+    ep.setPath(destination.toAbsolutePath().toString());
+    MediaFile mf = new MediaFile(destination.resolve("S01E01E02.jpg").toAbsolutePath(), MediaFileType.THUMB);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.nfo").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.de.srt").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    ep = new TvShowEpisode();
+    ep.setTitle("Pilot 2");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.setDvdSeason(1);
+    ep.setDvdEpisode(2);
+    ep.setPath(destination.toAbsolutePath().toString());
+    mf = new MediaFile(destination.resolve("S01E01E02.jpg").toAbsolutePath(), MediaFileType.THUMB);
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.mkv").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.nfo").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    mf = new MediaFile(destination.resolve("S01E01E02.de.srt").toAbsolutePath());
+    mf.gatherMediaInformation();
+    ep.addToMediaFiles(mf);
+    ep.setTvShow(show);
+    show.addEpisode(ep);
+
+    TvShowRenamer.renameTvShowRoot(show);
+    TvShowRenamer.renameEpisode(ep);
+
+    Path showDir = destination.getParent().resolve("Breaking Bad (2008)");
+    assertThat(showDir).exists();
+
+    Path seasonDir = showDir.resolve("Season 1");
+    assertThat(seasonDir).exists();
+
+    Path video = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.mkv");
+    assertThat(video).exists();
+    Path thumb = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.jpg");
+    assertThat(thumb).exists();
+    Path nfo = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.nfo");
+    assertThat(nfo).exists();
+    Path sub = seasonDir.resolve("Breaking Bad - S01E01 S01E02 - Pilot - Pilot 2.deu.srt");
+    assertThat(sub).exists();
+  }
 }
