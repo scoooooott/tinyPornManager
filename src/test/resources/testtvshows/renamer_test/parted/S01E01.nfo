@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-02-06 08:21:19 - tinyMediaManager 3.0-SNAPSHOT -->
+<episodedetails>
+    <title>Pilot</title>
+    <showtitle>Breaking Bad</showtitle>
+    <rating>7.7</rating>
+    <votes>436</votes>
+    <season>1</season>
+    <episode>1</episode>
+    <uniqueid>349232</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to
+        team up with a former student and create a top of the line crystal meth in a used RV, to provide for his family
+        once he is gone.
+    </plot>
+    <thumb></thumb>
+    <mpaa>TV-MA</mpaa>
+    <playcount>0</playcount>
+    <watched>false</watched>
+    <credits>Vince Gilligan</credits>
+    <director>Vince Gilligan</director>
+    <aired>2008-01-20</aired>
+    <premiered>2008-01-20</premiered>
+    <studios>AMC</studios>
+    <actor>
+        <name>Aaron Hill</name>
+    </actor>
+    <actor>
+        <name>Gregory Chase</name>
+    </actor>
+    <actor>
+        <name>John Koyama</name>
+    </actor>
+    <actor>
+        <name>Max Arciniega Jr.</name>
+    </actor>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <width>0</width>
+                <height>0</height>
+                <durationinseconds>0</durationinseconds>
+            </video>
+        </streamdetails>
+    </fileinfo>
+    <studio>AMC</studio>
+</episodedetails>

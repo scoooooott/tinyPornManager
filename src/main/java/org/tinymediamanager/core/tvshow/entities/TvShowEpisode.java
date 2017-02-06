@@ -127,6 +127,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private UUID                               tvShowId              = null;
   @JsonProperty
   private MediaSource                        mediaSource           = MediaSource.UNKNOWN;                         // DVD, Bluray, etc
+  @JsonProperty
+  private boolean                            stacked               = false;
 
   @JsonProperty
   private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
@@ -1242,5 +1244,40 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setDummy(boolean dummy) {
     this.dummy = dummy;
+  }
+
+  /**
+   * Is the epsiode "stacked" (more than one video file)
+   *
+   * @return true if the episode is stacked; false otherwise
+   */
+  public boolean isStacked() {
+    return stacked;
+  }
+
+  public void setStacked(boolean stacked) {
+    this.stacked = stacked;
+  }
+
+  /**
+   * ok, we might have detected some stacking MFs.<br>
+   * But if we only have ONE video file, reset stacking markers in this case<br>
+   */
+  public void reEvaluateStacking() {
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs.size() > 1 && !isDisc()) {
+      // ok, more video files means stacking (if not a disc folder)
+      this.setStacked(true);
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
+        mf.detectStackingInformation();
+      }
+    }
+    else {
+      // only ONE video? remove any stacking markers from MFs
+      this.setStacked(false);
+      for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO, MediaFileType.AUDIO, MediaFileType.SUBTITLE)) {
+        mf.removeStackingInformation();
+      }
+    }
   }
 }

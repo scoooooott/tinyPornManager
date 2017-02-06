@@ -492,7 +492,6 @@ public class TvShowRenamer {
     else {
       newFilename = createDestination(template, tvShow, eps);
     }
-    // newFilename += getStackingString(mf); // ToDo
 
     String seasonFoldername = getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), eps.get(0));
     Path seasonFolder = tvShow.getPathNIO();
@@ -521,6 +520,7 @@ public class TvShowRenamer {
       ////////////////////////////////////////////////////////////////////////
       case VIDEO:
         MediaFile video = new MediaFile(mf);
+        newFilename += getStackingString(mf); // ToDo
         newFilename += "." + mf.getExtension();
         video.setFile(seasonFolder.resolve(newFilename));
         newFiles.add(video);
@@ -1129,5 +1129,23 @@ public class TvShowRenamer {
     else { // file is the same, return true to keep file
       return true;
     }
+  }
+
+  /**
+   * returns "delimiter + stackingString" for use in filename
+   *
+   * @param mf
+   *          a mediaFile
+   * @return eg ".CD1" dependent of settings
+   */
+  private static String getStackingString(MediaFile mf) {
+    String delimiter = ".";
+    if (!mf.getStackingMarker().isEmpty()) {
+      return delimiter + mf.getStackingMarker();
+    }
+    else if (mf.getStacking() != 0) {
+      return delimiter + "CD" + mf.getStacking();
+    }
+    return "";
   }
 }
