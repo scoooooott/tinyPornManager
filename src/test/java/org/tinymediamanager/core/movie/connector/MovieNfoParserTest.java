@@ -32,6 +32,404 @@ public class MovieNfoParserTest {
 
   @Test
   public void testMovieParser() {
+    // prepared NFOs with test data
+    testKodi1();
+    testKodi2();
+
+    testMediaPortal();
+
+    // live NFOs from different Kodi versions
+    testKodi14_2();
+    testKodi15_2();
+    testKodi16_1();
+    testKodi17_0();
+  }
+
+  private void testKodi17_0() {
+    // Kodi version 16.1
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi17.0.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(4990);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.year).isEqualTo(2005);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).hasSize(23);
+      for (String poster : parser.posters) {
+        assertThat(poster).isNotEmpty();
+      }
+      assertThat(parser.fanarts).hasSize(19);
+      for (String fanart : parser.fanarts) {
+        assertThat(fanart).isNotEmpty();
+      }
+      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
+      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.releaseDate).isEqualTo("2005-06-14");
+      assertThat(parser.watched).isEqualTo(false);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.CRIME, MediaGenres.DRAMA);
+      assertThat(parser.studios).hasSize(1);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(2);
+      for (String credit : parser.credits) {
+        assertThat(credit).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (String director : parser.directors) {
+        assertThat(director).isNotEmpty();
+      }
+      assertThat(parser.tags).hasSize(0);
+
+      assertThat(parser.actors).hasSize(113);
+      assertThat(parser.actors.get(0).thumb).isNotEmpty();
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+        assertThat(actor.thumb).isNotNull();
+      }
+      assertThat(parser.producers).hasSize(0);
+
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).hasSize(2);
+      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<uniqueid type=\"unknown\" default=\"true\">tt0372784</uniqueid>");
+      assertThat(parser.unsupportedElements.get(1)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
+      assertThat(parser.trailer).isNotEmpty();
+
+      // xbmc tags
+      assertThat(parser.epbookmark).isEmpty();
+      assertThat(parser.lastplayed).isNull();
+      assertThat(parser.dateadded).isNotNull();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  private void testKodi16_1() {
+    // Kodi version 16.1
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi16.1.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.year).isEqualTo(2005);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).hasSize(23);
+      for (String poster : parser.posters) {
+        assertThat(poster).isNotEmpty();
+      }
+      assertThat(parser.fanarts).hasSize(19);
+      for (String fanart : parser.fanarts) {
+        assertThat(fanart).isNotEmpty();
+      }
+      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
+      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.releaseDate).isNull();
+      assertThat(parser.watched).isEqualTo(false);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.CRIME, MediaGenres.DRAMA);
+      assertThat(parser.studios).hasSize(1);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(2);
+      for (String credit : parser.credits) {
+        assertThat(credit).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (String director : parser.directors) {
+        assertThat(director).isNotEmpty();
+      }
+      assertThat(parser.tags).hasSize(0);
+
+      assertThat(parser.actors).hasSize(113);
+      assertThat(parser.actors.get(0).thumb).isNotEmpty();
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+        assertThat(actor.thumb).isNotNull();
+      }
+      assertThat(parser.producers).hasSize(0);
+
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).hasSize(1);
+      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
+      assertThat(parser.trailer).isNotEmpty();
+
+      // xbmc tags
+      assertThat(parser.epbookmark).isNotEmpty();
+      assertThat(parser.lastplayed).isNull();
+      assertThat(parser.dateadded).isNotNull();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  private void testKodi15_2() {
+    // Kodi version 15.2
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi15.2.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.year).isEqualTo(2005);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).hasSize(23);
+      for (String poster : parser.posters) {
+        assertThat(poster).isNotEmpty();
+      }
+      assertThat(parser.fanarts).hasSize(19);
+      for (String fanart : parser.fanarts) {
+        assertThat(fanart).isNotEmpty();
+      }
+      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
+      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.releaseDate).isNull();
+      assertThat(parser.watched).isEqualTo(false);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.CRIME, MediaGenres.DRAMA);
+      assertThat(parser.studios).hasSize(1);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(2);
+      for (String credit : parser.credits) {
+        assertThat(credit).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (String director : parser.directors) {
+        assertThat(director).isNotEmpty();
+      }
+      assertThat(parser.tags).hasSize(0);
+
+      assertThat(parser.actors).hasSize(113);
+      assertThat(parser.actors.get(0).thumb).isNotEmpty();
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+        assertThat(actor.thumb).isNotNull();
+      }
+      assertThat(parser.producers).hasSize(0);
+
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).hasSize(1);
+      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
+      assertThat(parser.trailer).isNotEmpty();
+
+      // xbmc tags
+      assertThat(parser.epbookmark).isNotEmpty();
+      assertThat(parser.lastplayed).isNull();
+      assertThat(parser.dateadded).isNotNull();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  private void testKodi14_2() {
+    // Kodi version 14.2
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi14.2.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(7.4f);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(4949);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.year).isEqualTo(2005);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).hasSize(23);
+      for (String poster : parser.posters) {
+        assertThat(poster).isNotEmpty();
+      }
+      assertThat(parser.fanarts).hasSize(19);
+      for (String fanart : parser.fanarts) {
+        assertThat(fanart).isNotEmpty();
+      }
+      assertThat(parser.certification).isEqualTo(Certification.US_PG13);
+      assertThat(parser.ids).contains(entry("imdb", "tt0372784"));
+      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.releaseDate).isNull();
+      assertThat(parser.watched).isEqualTo(false);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.ACTION, MediaGenres.CRIME, MediaGenres.DRAMA);
+      assertThat(parser.studios).hasSize(1);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(2);
+      for (String credit : parser.credits) {
+        assertThat(credit).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (String director : parser.directors) {
+        assertThat(director).isNotEmpty();
+      }
+      assertThat(parser.tags).hasSize(0);
+
+      assertThat(parser.actors).hasSize(113);
+      assertThat(parser.actors.get(0).thumb).isNotEmpty();
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+        assertThat(actor.thumb).isNotNull();
+      }
+      assertThat(parser.producers).hasSize(0);
+
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).hasSize(1);
+      assertThat(parser.unsupportedElements.get(0)).isEqualTo("<resume><position>0.000000</position><total>0.000000</total></resume>");
+      assertThat(parser.trailer).isNotEmpty();
+
+      // xbmc tags
+      assertThat(parser.epbookmark).isNotEmpty();
+      assertThat(parser.lastplayed).isNull();
+      assertThat(parser.dateadded).isNotNull();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  private void testMediaPortal() {
+    // MediaPortal
+    try {
+      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
+
+      assertThat(parser).isNotNull();
+      assertThat(parser.title).isNotEmpty();
+      assertThat(parser.originaltitle).isNotEmpty();
+      assertThat(parser.sorttitle).isNotEmpty();
+
+      assertThat(parser.ratings).hasSize(1);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(6.5f);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(846);
+      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
+
+      assertThat(parser.set).isNotNull();
+      assertThat(parser.set.name).isNotEmpty();
+      assertThat(parser.set.overview).isEmpty();
+      assertThat(parser.year).isEqualTo(2009);
+      assertThat(parser.top250).isEqualTo(0);
+      assertThat(parser.plot).isNotEmpty();
+      assertThat(parser.outline).isNotEmpty();
+      assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
+      assertThat(parser.posters).isEmpty();
+      assertThat(parser.fanarts).isEmpty();
+      assertThat(parser.certification).isEqualTo(Certification.DE_FSK18);
+      assertThat(parser.ids).isNotEmpty();
+      assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
+      assertThat(parser.country).isNotEmpty();
+      assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
+      assertThat(parser.watched).isEqualTo(false);
+      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.genres).contains(MediaGenres.ANIMATION, MediaGenres.ACTION, MediaGenres.SCIENCE_FICTION, MediaGenres.ADVENTURE,
+          MediaGenres.THRILLER);
+      assertThat(parser.studios).hasSize(5);
+      for (String studio : parser.studios) {
+        assertThat(studio).isNotEmpty();
+      }
+      assertThat(parser.credits).hasSize(16);
+      for (String credit : parser.credits) {
+        assertThat(credit).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(3);
+      for (String director : parser.directors) {
+        assertThat(director).isNotEmpty();
+      }
+      assertThat(parser.tags).isEmpty();
+      assertThat(parser.actors).hasSize(9);
+      for (MovieNfoParser.Person actor : parser.actors) {
+        assertThat(actor.name).isNotEmpty();
+        assertThat(actor.role).isNotEmpty();
+        assertThat(actor.thumb).isNotEmpty();
+      }
+      assertThat(parser.producers).hasSize(9);
+      assertThat(parser.producers.get(0).thumb).isNotEmpty();
+      for (MovieNfoParser.Person producer : parser.producers) {
+        assertThat(producer.name).isNotEmpty();
+        assertThat(producer.role).isNotEmpty();
+      }
+      assertThat(parser.fileinfo).isNull();
+      assertThat(parser.unsupportedElements).isEmpty();
+      assertThat(parser.trailer).isNotEmpty();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  private void testKodi1() {
     // Kodi 1
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi.nfo"));
@@ -55,6 +453,7 @@ public class MovieNfoParserTest {
       assertThat(parser.plot).isNotEmpty();
       assertThat(parser.outline).isNotEmpty();
       assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
       assertThat(parser.posters).hasSize(1);
       for (String poster : parser.posters) {
         assertThat(poster).isNotEmpty();
@@ -118,7 +517,9 @@ public class MovieNfoParserTest {
       e.printStackTrace();
       Assertions.fail(e.getMessage());
     }
+  }
 
+  private void testKodi2() {
     // Kodi 2
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi2.nfo"));
@@ -150,6 +551,7 @@ public class MovieNfoParserTest {
       assertThat(parser.plot).isNotEmpty();
       assertThat(parser.outline).isNotEmpty();
       assertThat(parser.tagline).isNotEmpty();
+      assertThat(parser.runtime).isGreaterThan(0);
       assertThat(parser.posters).hasSize(9);
       for (String poster : parser.posters) {
         assertThat(poster).isNotEmpty();
@@ -217,74 +619,6 @@ public class MovieNfoParserTest {
       assertThat(parser.unsupportedElements).isEmpty();
       assertThat(parser.trailer).isNotEmpty();
 
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      Assertions.fail(e.getMessage());
-    }
-
-    // MediaPortal
-    try {
-      MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/mediaportal.nfo"));
-
-      assertThat(parser).isNotNull();
-      assertThat(parser.title).isNotEmpty();
-      assertThat(parser.originaltitle).isNotEmpty();
-      assertThat(parser.sorttitle).isNotEmpty();
-
-      assertThat(parser.ratings).hasSize(1);
-      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).id).isEqualTo(MovieNfoParser.Rating.DEFAULT);
-      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).rating).isEqualTo(6.5f);
-      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).votes).isEqualTo(846);
-      assertThat(parser.ratings.get(MovieNfoParser.Rating.DEFAULT).maxValue).isEqualTo(10);
-
-      assertThat(parser.set).isNotNull();
-      assertThat(parser.set.name).isNotEmpty();
-      assertThat(parser.set.overview).isEmpty();
-      assertThat(parser.year).isEqualTo(2009);
-      assertThat(parser.top250).isEqualTo(0);
-      assertThat(parser.plot).isNotEmpty();
-      assertThat(parser.outline).isNotEmpty();
-      assertThat(parser.tagline).isNotEmpty();
-      assertThat(parser.posters).isEmpty();
-      assertThat(parser.fanarts).isEmpty();
-      assertThat(parser.certification).isEqualTo(Certification.DE_FSK18);
-      assertThat(parser.ids).isNotEmpty();
-      assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
-      assertThat(parser.country).isNotEmpty();
-      assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
-      assertThat(parser.watched).isEqualTo(false);
-      assertThat(parser.playcount).isEqualTo(0);
-      assertThat(parser.genres).contains(MediaGenres.ANIMATION, MediaGenres.ACTION, MediaGenres.SCIENCE_FICTION, MediaGenres.ADVENTURE,
-          MediaGenres.THRILLER);
-      assertThat(parser.studios).hasSize(5);
-      for (String studio : parser.studios) {
-        assertThat(studio).isNotEmpty();
-      }
-      assertThat(parser.credits).hasSize(16);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
-      }
-      assertThat(parser.directors).hasSize(3);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
-      }
-      assertThat(parser.tags).isEmpty();
-      assertThat(parser.actors).hasSize(9);
-      for (MovieNfoParser.Person actor : parser.actors) {
-        assertThat(actor.name).isNotEmpty();
-        assertThat(actor.role).isNotEmpty();
-        assertThat(actor.thumb).isNotEmpty();
-      }
-      assertThat(parser.producers).hasSize(9);
-      assertThat(parser.producers.get(0).thumb).isNotEmpty();
-      for (MovieNfoParser.Person producer : parser.producers) {
-        assertThat(producer.name).isNotEmpty();
-        assertThat(producer.role).isNotEmpty();
-      }
-      assertThat(parser.fileinfo).isNull();
-      assertThat(parser.unsupportedElements).isEmpty();
-      assertThat(parser.trailer).isNotEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();

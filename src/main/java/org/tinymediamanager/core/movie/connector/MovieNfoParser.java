@@ -239,6 +239,7 @@ public class MovieNfoParser {
    */
   private void parseRatingAndVotes() {
     supportedElements.add("rating");
+    supportedElements.add("userrating");
     supportedElements.add("ratings");
     supportedElements.add("votes");
 
@@ -264,6 +265,22 @@ public class MovieNfoParser {
       }
       if (r.rating > 0) {
         ratings.put(r.id, r);
+      }
+    }
+
+    // user rating
+    // <userrating>8</userrating>
+    element = getSingleElement(root, "userrating");
+    if (element != null) {
+      try {
+        Rating r = new Rating();
+        r.id = Rating.USER;
+        r.rating = Float.parseFloat(element.ownText());
+        if (r.rating > 0) {
+          ratings.put(r.id, r);
+        }
+      }
+      catch (Exception ignored) {
       }
     }
 
@@ -589,6 +606,7 @@ public class MovieNfoParser {
    */
   private void parseReleaseDate() {
     supportedElements.add("premiered");
+    supportedElements.add("aired");
 
     Element element = getSingleElement(root, "premiered");
     if (element != null) {
@@ -600,6 +618,21 @@ public class MovieNfoParser {
         }
       }
       catch (ParseException ignored) {
+      }
+    }
+    // also look if there is an aired date
+    if (releaseDate == null) {
+      element = getSingleElement(root, "aired");
+      if (element != null) {
+        // parse a date object out of the string
+        try {
+          Date date = StrgUtils.parseDate(element.ownText());
+          if (date != null) {
+            releaseDate = date;
+          }
+        }
+        catch (ParseException ignored) {
+        }
       }
     }
   }
@@ -1239,6 +1272,7 @@ public class MovieNfoParser {
 
   public static class Rating {
     public static final String DEFAULT  = "default";
+    public static final String USER     = "user";
 
     public String              id       = "";
     public float               rating   = 0;
