@@ -100,6 +100,9 @@ public class Settings extends AbstractModelObject {
   private final static String         WOL_DEVICES                 = "wolDevices";
   private final static String         ENABLE_ANALYTICS            = "enableAnalytics";
 
+  private final static String         UPNP_SHARE_LIBRARY          = "upnpShareLibrary";
+  private final static String         UPNP_PLAY_ON_REMOTE         = "upnpRemotePlay";
+
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
   private final List<String>          titlePrefix                 = ObservableCollections.observableList(new ArrayList<String>());
@@ -155,6 +158,9 @@ public class Settings extends AbstractModelObject {
   private PropertyChangeListener      propertyChangeListener;
   @XmlTransient
   public boolean                      newConfig                   = false;
+
+  private boolean                     upnpShareLibrary            = false;
+  private boolean                     upnpRemotePlay              = false;
 
   /**
    * Instantiates a new settings.
@@ -979,6 +985,42 @@ public class Settings extends AbstractModelObject {
     CacheType oldValue = this.imageCacheType;
     this.imageCacheType = newValue;
     firePropertyChange(IMAGE_CACHE_TYPE, oldValue, newValue);
+  }
+
+  /**
+   * is our library shared via UPNP?
+   * 
+   * @return
+   */
+  public boolean isUpnpShareLibrary() {
+    return upnpShareLibrary;
+  }
+
+  /**
+   * share library via UPNP?
+   * 
+   * @param upnpShareLibrary
+   */
+  public void setUpnpShareLibrary(boolean upnpShareLibrary) {
+    this.upnpShareLibrary = upnpShareLibrary;
+  }
+
+  /**
+   * should we search for rendering devices like Kodi, TVs, et all?
+   * 
+   * @return
+   */
+  public boolean isUpnpRemotePlay() {
+    return upnpRemotePlay;
+  }
+
+  /**
+   * should we search for rendering devices like Kodi, TVs, et all?
+   * 
+   * @param upnpRemotePlay
+   */
+  public void setUpnpRemotePlay(boolean upnpRemotePlay) {
+    this.upnpRemotePlay = upnpRemotePlay;
   }
 
   /**

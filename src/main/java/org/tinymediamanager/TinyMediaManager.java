@@ -60,6 +60,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
+import org.tinymediamanager.thirdparty.upnp.Upnp;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUILogCollector;
@@ -285,7 +286,6 @@ public class TinyMediaManager {
             updateProgress(g2, "loading TV show module", 40);
             splash.update();
           }
-
           TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
           TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
 
@@ -293,11 +293,26 @@ public class TinyMediaManager {
             updateProgress(g2, "loading plugins", 50);
             splash.update();
           }
-
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
           if (ReleaseInfo.isSvnBuild()) {
             PluginManager.loadClasspathPlugins();
+          }
+
+          if (g2 != null) {
+            updateProgress(g2, "starting services", 60);
+            splash.update();
+          }
+          Upnp u = Upnp.getInstance();
+          if (Globals.settings.isUpnpShareLibrary()) {
+            u.startWebServer();
+            u.createUpnpService();
+            u.startMediaServer();
+          }
+          if (Globals.settings.isUpnpRemotePlay()) {
+            u.createUpnpService();
+            u.sendPlayerSearchRequest();
+            u.startWebServer();
           }
 
           // do upgrade tasks after database loading
