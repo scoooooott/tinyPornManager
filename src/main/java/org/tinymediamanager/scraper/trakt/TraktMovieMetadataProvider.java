@@ -41,6 +41,7 @@ import com.uwetrottmann.trakt5.entities.CastMember;
 import com.uwetrottmann.trakt5.entities.Credits;
 import com.uwetrottmann.trakt5.entities.CrewMember;
 import com.uwetrottmann.trakt5.entities.Movie;
+import com.uwetrottmann.trakt5.entities.MovieTranslation;
 import com.uwetrottmann.trakt5.entities.SearchResult;
 import com.uwetrottmann.trakt5.enums.Extended;
 
@@ -84,14 +85,16 @@ class TraktMovieMetadataProvider {
 
     List<MediaSearchResult> results = new ArrayList<>();
     List<SearchResult> searchResults = null;
+    String lang = options.getLanguage().getLanguage();
+    lang = lang + ",en"; // fallback search
 
     try {
       Response<List<SearchResult>> response;
       if (year != 0) {
-        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, null, null, null, null, null, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, lang, null, null, null, null, 1, 25).execute();
       }
       else {
-        response = api.search().textQueryMovie(searchString, null, null, null, null, null, null, null, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, null, null, lang, null, null, null, null, 1, 25).execute();
       }
       searchResults = response.body();
     }
@@ -145,11 +148,18 @@ class TraktMovieMetadataProvider {
     // scrape
     LOGGER.debug("Trakt.tv: getMetadata: id = " + id);
 
+    String lang = options.getLanguage().getLanguage();
+    List<MovieTranslation> translations = null;
+
     Movie movie = null;
     Credits credits = null;
     synchronized (api) {
       try {
         movie = api.movies().summary(id, Extended.FULL).execute().body();
+        if (!"en".equals(lang)) {
+          // only call translation when we're not already EN ;)
+          translations = api.movies().translation(id, lang).execute().body();
+        }
         credits = api.movies().people(id).execute().body();
       }
       catch (Exception e) {
@@ -161,13 +171,22 @@ class TraktMovieMetadataProvider {
       return md;
     }
 
-    md.setTitle(movie.title);
-    md.setTagline(movie.tagline);
+    // if foreign language, get new values and overwrite
+    MovieTranslation trans = translations == null ? null : translations.get(0);
+    if (trans != null) {
+      md.setTitle(trans.title.isEmpty() ? movie.title : trans.title);
+      md.setTagline(trans.tagline.isEmpty() ? movie.tagline : trans.tagline);
+      md.setPlot(trans.overview.isEmpty() ? movie.overview : trans.overview);
+    }
+    else {
+      md.setTitle(movie.title);
+      md.setTagline(movie.tagline);
+      md.setPlot(movie.overview);
+    }
+
     md.setYear(movie.year);
-    md.setPlot(movie.overview);
     md.setRuntime(movie.runtime);
     md.addCertification(Certification.findCertification(movie.certification));
-
     md.setReleaseDate(movie.released.toDate());
     md.setRating(movie.rating);
     md.setVoteCount(movie.votes);

@@ -46,6 +46,7 @@ import com.uwetrottmann.trakt5.entities.Episode;
 import com.uwetrottmann.trakt5.entities.SearchResult;
 import com.uwetrottmann.trakt5.entities.Season;
 import com.uwetrottmann.trakt5.entities.Show;
+import com.uwetrottmann.trakt5.entities.Translation;
 import com.uwetrottmann.trakt5.enums.Extended;
 
 /**
@@ -87,15 +88,17 @@ class TraktTVShowMetadataProvider {
 
     List<MediaSearchResult> results = new ArrayList<>();
     List<SearchResult> searchResults = null;
+    String lang = options.getLanguage().getLanguage();
+    lang = lang + ",en"; // fallback search
 
     synchronized (api) {
       try {
         if (year != 0) {
-          searchResults = api.search().textQueryShow(searchString, String.valueOf(year), null, null, null, null, null, null, null, null, 1, 25)
+          searchResults = api.search().textQueryShow(searchString, String.valueOf(year), null, lang, null, null, null, null, null, null, 1, 25)
               .execute().body();
         }
         else {
-          searchResults = api.search().textQueryShow(searchString, null, null, null, null, null, null, null, null, null, 1, 25).execute().body();
+          searchResults = api.search().textQueryShow(searchString, null, null, lang, null, null, null, null, null, null, 1, 25).execute().body();
         }
       }
       catch (Exception e) {
@@ -210,11 +213,17 @@ class TraktTVShowMetadataProvider {
       return md;
     }
 
+    String lang = options.getLanguage().getLanguage();
+    List<Translation> translations = null;
     Show show = null;
     Credits credits = null;
     synchronized (api) {
       try {
         show = api.shows().summary(id, Extended.FULL).execute().body();
+        if (!"en".equals(lang)) {
+          // only call translation when we're not already EN ;)
+          translations = api.shows().translation(id, lang).execute().body();
+        }
         credits = api.shows().people(id).execute().body();
       }
       catch (Exception e) {
@@ -238,8 +247,17 @@ class TraktTVShowMetadataProvider {
       md.setId(IMDB, show.ids.imdb);
     }
 
-    md.setTitle(show.title);
-    md.setPlot(show.overview);
+    // if foreign language, get new values and overwrite
+    Translation trans = translations == null ? null : translations.get(0);
+    if (trans != null) {
+      md.setTitle(trans.title.isEmpty() ? show.title : trans.title);
+      md.setPlot(trans.overview.isEmpty() ? show.overview : trans.overview);
+    }
+    else {
+      md.setTitle(show.title);
+      md.setPlot(show.overview);
+    }
+
     md.setYear(show.year);
     md.setRating(show.rating);
     md.setVoteCount(show.votes);
