@@ -43,7 +43,6 @@ import com.uwetrottmann.trakt5.entities.CrewMember;
 import com.uwetrottmann.trakt5.entities.Movie;
 import com.uwetrottmann.trakt5.entities.SearchResult;
 import com.uwetrottmann.trakt5.enums.Extended;
-import com.uwetrottmann.trakt5.enums.Type;
 
 import retrofit2.Response;
 
@@ -89,10 +88,10 @@ class TraktMovieMetadataProvider {
     try {
       Response<List<SearchResult>> response;
       if (year != 0) {
-        response = api.search().textQuery(searchString, Type.MOVIE, year, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, null, null, null, null, null, 1, 25).execute();
       }
       else {
-        response = api.search().textQuery(searchString, Type.MOVIE, null, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, null, null, null, null, null, null, null, 1, 25).execute();
       }
       searchResults = response.body();
     }

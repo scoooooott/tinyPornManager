@@ -47,7 +47,6 @@ import com.uwetrottmann.trakt5.entities.SearchResult;
 import com.uwetrottmann.trakt5.entities.Season;
 import com.uwetrottmann.trakt5.entities.Show;
 import com.uwetrottmann.trakt5.enums.Extended;
-import com.uwetrottmann.trakt5.enums.Type;
 
 /**
  * The class TraktTvShowMetadataProvider is used to provide metadata for movies from trakt.tv
@@ -92,10 +91,11 @@ class TraktTVShowMetadataProvider {
     synchronized (api) {
       try {
         if (year != 0) {
-          searchResults = api.search().textQuery(searchString, Type.SHOW, year, 1, 25).execute().body();
+          searchResults = api.search().textQueryShow(searchString, String.valueOf(year), null, null, null, null, null, null, null, null, 1, 25)
+              .execute().body();
         }
         else {
-          searchResults = api.search().textQuery(searchString, Type.SHOW, null, 1, 25).execute().body();
+          searchResults = api.search().textQueryShow(searchString, null, null, null, null, null, null, null, null, null, 1, 25).execute().body();
         }
       }
       catch (Exception e) {
