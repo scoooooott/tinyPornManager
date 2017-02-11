@@ -17,16 +17,29 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MovieBannerNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieBannerNaming {
+public enum MovieBannerNaming implements IFileNaming {
 
   /** [filename]-banner.* */
-  FILENAME_BANNER,
+  FILENAME_BANNER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-banner." + extension : "";
+    }
+  },
 
   /** banner.png */
-  BANNER
+  BANNER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "banner." + extension;
+    }
+  }
 }

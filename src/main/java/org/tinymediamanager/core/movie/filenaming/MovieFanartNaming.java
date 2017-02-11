@@ -17,19 +17,37 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MovieFanartNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieFanartNaming {
+public enum MovieFanartNaming implements IFileNaming {
 
   /** [filename]-fanart.* */
-  FILENAME_FANART,
+  FILENAME_FANART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-fanart." + extension : "";
+    }
+  },
 
   /** [filename].fanart.* */
-  FILENAME_FANART2,
+  FILENAME_FANART2 {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + ".fanart." + extension : "";
+    }
+  },
 
-  /** fanart.png */
-  FANART
+  /** fanart.* */
+  FANART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "fanart." + extension;
+    }
+  }
 }

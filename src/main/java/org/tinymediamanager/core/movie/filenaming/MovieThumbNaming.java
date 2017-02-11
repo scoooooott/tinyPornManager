@@ -17,22 +17,45 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MovieThumbNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieThumbNaming {
+public enum MovieThumbNaming implements IFileNaming {
 
   /** [filename]-thumb.* */
-  FILENAME_THUMB,
+  FILENAME_THUMB {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-thumb." + extension : "";
+    }
+  },
 
   /** [filename]-landscape.* */
-  FILENAME_LANDSCAPE,
+  FILENAME_LANDSCAPE {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-landscape." + extension : "";
+    }
+  },
 
-  /** thumb.png */
-  THUMB,
+  /** thumb.* */
+  THUMB {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "thumb." + extension;
+    }
+  },
 
-  /** landscape.png */
-  LANDSCAPE
+  /** landscape.* */
+  LANDSCAPE {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "landscape." + extension;
+    }
+  }
 }

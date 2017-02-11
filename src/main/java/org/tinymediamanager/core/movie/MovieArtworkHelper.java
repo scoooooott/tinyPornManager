@@ -16,10 +16,10 @@
 package org.tinymediamanager.core.movie;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -54,46 +54,71 @@ public class MovieArtworkHelper {
    *          the type of artwork to be downloaded
    */
   public static void downloadArtwork(Movie movie, MediaFileType type) {
+    String url = movie.getArtworkUrl(type);
+    if (StringUtils.isBlank(url)) {
+      return;
+    }
+
+    List<IFileNaming> fileNamings = new ArrayList<>();
+
     switch (type) {
       case FANART:
-        downloadFanart(movie);
+        fileNamings.addAll(getFanartNamesForMovie(movie));
         break;
 
       case POSTER:
-        downloadPoster(movie);
+        fileNamings.addAll(getPosterNamesForMovie(movie));
         break;
 
       case LOGO:
-        downloadLogo(movie);
+        fileNamings.addAll(getLogoNamesForMovie(movie));
         break;
 
       case CLEARLOGO:
-        downloadClearlogo(movie);
+        fileNamings.addAll(getClearlogoNamesForMovie(movie));
         break;
 
       case BANNER:
-        downloadBanner(movie);
+        fileNamings.addAll(getBannerNamesForMovie(movie));
         break;
 
       case CLEARART:
-        downloadClearart(movie);
+        fileNamings.addAll(getClearartNamesForMovie(movie));
         break;
 
       case THUMB:
-        downloadThumb(movie);
+        fileNamings.addAll(getThumbNamesForMovie(movie));
         break;
 
       case DISC:
-        downloadDiscart(movie);
+        fileNamings.addAll(getDiscartNamesForMovie(movie));
         break;
 
       case EXTRAFANART:
       case EXTRATHUMB:
         downloadExtraArtwork(movie, type);
-        break;
+        return;
 
       default:
-        break;
+        return;
+    }
+
+    int i = 0;
+    for (IFileNaming fileNaming : fileNamings) {
+      boolean firstImage = false;
+
+      String filename = getArtworkFilename(movie, fileNaming, Utils.getArtworkExtension(url));
+      if (StringUtils.isBlank(filename)) {
+        continue;
+      }
+
+      if (++i == 1) {
+        firstImage = true;
+      }
+
+      // get image in thread
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, url, MediaFileType.getMediaArtworkType(type), filename, firstImage);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
 
@@ -124,70 +149,75 @@ public class MovieArtworkHelper {
 
       List<MediaFile> mfs = movie.getMediaFiles(mft);
       if (mfs.isEmpty()) {
+        boolean download = false;
         // not in our list? get'em!
         switch (mft) {
           case FANART:
             if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() || force) {
-              downloadFanart(movie);
+              download = true;
             }
             break;
 
           case POSTER:
             if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() || force) {
-              downloadPoster(movie);
+              download = true;
             }
             break;
 
           case BANNER:
             if (!MovieModuleManager.SETTINGS.getBannerFilenames().isEmpty() || force) {
-              downloadBanner(movie);
+              download = true;
             }
             break;
 
           case CLEARART:
             if (!MovieModuleManager.SETTINGS.getClearartFilenames().isEmpty() || force) {
-              downloadClearart(movie);
+              download = true;
             }
             break;
 
           case DISC:
             if (!MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty() || force) {
-              downloadDiscart(movie);
+              download = true;
             }
             break;
 
           case LOGO:
             if (!MovieModuleManager.SETTINGS.getLogoFilenames().isEmpty() || force) {
-              downloadLogo(movie);
+              download = true;
             }
             break;
 
           case CLEARLOGO:
             if (!MovieModuleManager.SETTINGS.getClearlogoFilenames().isEmpty() || force) {
-              downloadClearlogo(movie);
+              download = true;
             }
             break;
 
           case THUMB:
             if (!MovieModuleManager.SETTINGS.getThumbFilenames().isEmpty() || force) {
-              downloadThumb(movie);
+              download = true;
             }
             break;
 
           case EXTRAFANART:
             if (MovieModuleManager.SETTINGS.isImageExtraFanart() || force) {
-              downloadExtraArtwork(movie, mft);
+              download = true;
             }
             break;
 
           case EXTRATHUMB:
             if (MovieModuleManager.SETTINGS.isImageExtraThumbs() || force) {
-              downloadExtraArtwork(movie, mft);
+              download = true;
             }
             break;
 
           default:
             break;
+        }
+
+        if (download) {
+          downloadArtwork(movie, mft);
         }
       }
     }
@@ -203,7 +233,7 @@ public class MovieArtworkHelper {
    */
   public static void downloadMissingArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
 
     // poster
     if (movie.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
@@ -326,6 +356,16 @@ public class MovieArtworkHelper {
     return false;
   }
 
+  public static String getArtworkFilename(Movie movie, IFileNaming fileNaming, String extension) {
+    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      return fileNaming.getFilename(movie.getVideoBasenameWithoutStacking(), extension);
+    }
+    else {
+      return fileNaming.getFilename("", extension); // no video files
+    }
+  }
+
   /**
    * Fanart format is not empty, so we want at least one ;)<br>
    * Idea is, to check whether the preferred format is set in settings<br>
@@ -358,33 +398,6 @@ public class MovieArtworkHelper {
       fanartnames = MovieModuleManager.SETTINGS.getFanartFilenames();
     }
     return fanartnames;
-  }
-
-  private static void downloadFanart(Movie movie) {
-    String fanartUrl = movie.getArtworkUrl(MediaFileType.FANART);
-    if (StringUtils.isBlank(fanartUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieFanartNaming name : getFanartNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseFanartFilename(name, movie);
-
-      if (StringUtils.isBlank(fanartUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(fanartUrl);
-
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, fanartUrl, MediaArtworkType.BACKGROUND, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
   }
 
   /**
@@ -427,58 +440,6 @@ public class MovieArtworkHelper {
     return posternames;
   }
 
-  private static void downloadPoster(Movie movie) {
-    String posterUrl = movie.getArtworkUrl(MediaFileType.POSTER);
-    if (StringUtils.isBlank(posterUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MoviePosterNaming name : getPosterNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBasePosterFilename(name, movie);
-
-      if (StringUtils.isBlank(posterUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(posterUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, posterUrl, MediaArtworkType.POSTER, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
-  private static void downloadBanner(Movie movie) {
-    String bannerUrl = movie.getArtworkUrl(MediaFileType.BANNER);
-    if (StringUtils.isBlank(bannerUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieBannerNaming name : getBannerNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseBannerFilename(name, movie);
-
-      if (StringUtils.isBlank(bannerUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(bannerUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, bannerUrl, MediaArtworkType.BANNER, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
   /**
    * Banner format is not empty, so we want at least one ;)<br>
    * Idea is, to check whether the preferred format is set in settings<br>
@@ -514,32 +475,6 @@ public class MovieArtworkHelper {
       bannernames.addAll(MovieModuleManager.SETTINGS.getBannerFilenames());
     }
     return bannernames;
-  }
-
-  private static void downloadClearart(Movie movie) {
-    String clearartUrl = movie.getArtworkUrl(MediaFileType.CLEARART);
-    if (StringUtils.isBlank(clearartUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieClearartNaming name : getClearartNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseClearartFilename(name, movie);
-
-      if (StringUtils.isBlank(clearartUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(clearartUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, clearartUrl, MediaArtworkType.CLEARART, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
   }
 
   /**
@@ -579,32 +514,6 @@ public class MovieArtworkHelper {
     return clearartnames;
   }
 
-  private static void downloadDiscart(Movie movie) {
-    String discartUrl = movie.getArtworkUrl(MediaFileType.DISC);
-    if (StringUtils.isBlank(discartUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieDiscartNaming name : getDiscartNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseDiscartFilename(name, movie);
-
-      if (StringUtils.isBlank(discartUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(discartUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, discartUrl, MediaArtworkType.DISC, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
   /**
    * Discart format is not empty, so we want at least one ;)<br>
    * Idea is, to check whether the preferred format is set in settings<br>
@@ -640,32 +549,6 @@ public class MovieArtworkHelper {
       discartnames.addAll(MovieModuleManager.SETTINGS.getDiscartFilenames());
     }
     return discartnames;
-  }
-
-  private static void downloadLogo(Movie movie) {
-    String logoUrl = movie.getArtworkUrl(MediaFileType.LOGO);
-    if (StringUtils.isBlank(logoUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieLogoNaming name : getLogoNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseLogoFilename(name, movie);
-
-      if (StringUtils.isBlank(logoUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(logoUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, logoUrl, MediaArtworkType.LOGO, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
   }
 
   /**
@@ -705,32 +588,6 @@ public class MovieArtworkHelper {
     return logonames;
   }
 
-  private static void downloadClearlogo(Movie movie) {
-    String clearlogoUrl = movie.getArtworkUrl(MediaFileType.CLEARLOGO);
-    if (StringUtils.isBlank(clearlogoUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieClearlogoNaming name : getClearlogoNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseClearlogoFilename(name, movie);
-
-      if (StringUtils.isBlank(clearlogoUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(clearlogoUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, clearlogoUrl, MediaArtworkType.CLEARLOGO, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
   /**
    * Clearlogo format is not empty, so we want at least one ;)<br>
    * Idea is, to check whether the preferred format is set in settings<br>
@@ -766,32 +623,6 @@ public class MovieArtworkHelper {
       clearlogonames.addAll(MovieModuleManager.SETTINGS.getClearlogoFilenames());
     }
     return clearlogonames;
-  }
-
-  private static void downloadThumb(Movie movie) {
-    String thumbUrl = movie.getArtworkUrl(MediaFileType.THUMB);
-    if (StringUtils.isBlank(thumbUrl)) {
-      return;
-    }
-
-    int i = 0;
-    for (MovieThumbNaming name : getThumbNamesForMovie(movie)) {
-      boolean firstImage = false;
-      String baseFilename = getBaseThumbFilename(name, movie);
-
-      if (StringUtils.isBlank(thumbUrl) || StringUtils.isBlank(baseFilename)) {
-        continue;
-      }
-
-      String filename = baseFilename + "." + Utils.getArtworkExtension(thumbUrl);
-      if (++i == 1) {
-        firstImage = true;
-      }
-
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(movie, thumbUrl, MediaArtworkType.THUMB, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
   }
 
   /**
@@ -852,327 +683,6 @@ public class MovieArtworkHelper {
   }
 
   /**
-   * all XBMC supported fanart names. (without path!)
-   * 
-   * @param fanart
-   *          the fanart
-   * @param movie
-   *          the movie
-   * @return the fanart filename
-   */
-  public static String getBaseFanartFilename(MovieFanartNaming fanart, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseFanartFilename(fanart, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseFanartFilename(fanart, ""); // no video files
-    }
-  }
-
-  public static String getBaseFanartFilename(MovieFanartNaming fanart, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (fanart) {
-      case FANART:
-        filename += "fanart";
-        break;
-      case FILENAME_FANART:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart";
-        break;
-      case FILENAME_FANART2:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-    return filename;
-  }
-
-  /**
-   * all supported poster names. (without path!)
-   *
-   * @param poster
-   *          the poster
-   * @param movie
-   *          the movie
-   * @return the poster filename
-   */
-  public static String getBasePosterFilename(MoviePosterNaming poster, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBasePosterFilename(poster, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBasePosterFilename(poster, ""); // no video files
-    }
-  }
-
-  public static String getBasePosterFilename(MoviePosterNaming poster, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (poster) {
-      case FILENAME_POSTER:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster";
-        break;
-      case FILENAME:
-        filename += mediafile.isEmpty() ? "" : mediafile;
-        break;
-      case MOVIE:
-        filename += "movie";
-        break;
-      case POSTER:
-        filename += "poster";
-        break;
-      case FOLDER:
-        filename += "folder";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported banner names. (without path!)
-   *
-   * @param banner
-   *          the banner
-   * @param movie
-   *          the movie
-   * @return the banner filename
-   */
-  public static String getBaseBannerFilename(MovieBannerNaming banner, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseBannerFilename(banner, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseBannerFilename(banner, ""); // no video files
-    }
-  }
-
-  public static String getBaseBannerFilename(MovieBannerNaming banner, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (banner) {
-      case FILENAME_BANNER:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-banner";
-        break;
-      case BANNER:
-        filename += "banner";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported clearart names. (without path!)
-   *
-   * @param clearart
-   *          the clearart
-   * @param movie
-   *          the movie
-   * @return the clearart filename
-   */
-  public static String getBaseClearartFilename(MovieClearartNaming clearart, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseClearartFilename(clearart, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseClearartFilename(clearart, ""); // no video files
-    }
-  }
-
-  public static String getBaseClearartFilename(MovieClearartNaming clearart, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (clearart) {
-      case FILENAME_CLEARART:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-clearart";
-        break;
-      case CLEARART:
-        filename += "clearart";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported discart names. (without path!)
-   *
-   * @param discart
-   *          the discart
-   * @param movie
-   *          the movie
-   * @return the discart filename
-   */
-  public static String getBaseDiscartFilename(MovieDiscartNaming discart, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseDiscartFilename(discart, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseDiscartFilename(discart, ""); // no video files
-    }
-  }
-
-  public static String getBaseDiscartFilename(MovieDiscartNaming discart, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (discart) {
-      case FILENAME_DISC:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-disc";
-        break;
-      case DISC:
-        filename += "disc";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported logo names. (without path!)
-   *
-   * @param logo
-   *          the logo
-   * @param movie
-   *          the movie
-   * @return the logo filename
-   */
-  public static String getBaseLogoFilename(MovieLogoNaming logo, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseLogoFilename(logo, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseLogoFilename(logo, ""); // no video files
-    }
-  }
-
-  public static String getBaseLogoFilename(MovieLogoNaming logo, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (logo) {
-      case FILENAME_LOGO:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-logo";
-        break;
-      case LOGO:
-        filename += "logo";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported clearlogo names. (without path!)
-   *
-   * @param clearlogo
-   *          the clearlogo
-   * @param movie
-   *          the movie
-   * @return the clearlogo filename
-   */
-  public static String getBaseClearlogoFilename(MovieClearlogoNaming clearlogo, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseClearlogoFilename(clearlogo, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseClearlogoFilename(clearlogo, ""); // no video files
-    }
-  }
-
-  public static String getBaseClearlogoFilename(MovieClearlogoNaming clearlogo, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (clearlogo) {
-      case FILENAME_CLEARLOGO:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-clearlogo";
-        break;
-      case CLEARLOGO:
-        filename += "clearlogo";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all supported thumb names. (without path!)
-   *
-   * @param thumb
-   *          the thumb
-   * @param movie
-   *          the movie
-   * @return the thumb filename
-   */
-  public static String getBaseThumbFilename(MovieThumbNaming thumb, Movie movie) {
-    List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getBaseThumbFilename(thumb, movie.getVideoBasenameWithoutStacking());
-    }
-    else {
-      return getBaseThumbFilename(thumb, ""); // no video files
-    }
-  }
-
-  public static String getBaseThumbFilename(MovieThumbNaming thumb, String newMovieFilename) {
-    String filename = "";
-    String mediafile = newMovieFilename;
-
-    switch (thumb) {
-      case FILENAME_THUMB:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-thumb";
-        break;
-      case THUMB:
-        filename += "thumb";
-        break;
-      case FILENAME_LANDSCAPE:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-landscape";
-        break;
-      case LANDSCAPE:
-        filename += "landscape";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
    * set the found artwork for the given movie
    * 
    * @param movie
@@ -1182,7 +692,7 @@ public class MovieArtworkHelper {
    */
   public static void setArtwork(Movie movie, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(MovieModuleManager.SETTINGS.getScraperLanguage().getLanguage()));
 
     // poster
     setBestPoster(movie, artwork);

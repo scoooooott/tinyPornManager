@@ -18,25 +18,53 @@
 
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MoviePosterNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MoviePosterNaming {
+public enum MoviePosterNaming implements IFileNaming {
 
   /** [filename].* */
-  FILENAME,
+  FILENAME {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "." + extension : "";
+    }
+  },
 
   /** [filename]-poster.* */
-  FILENAME_POSTER,
+  FILENAME_POSTER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-poster." + extension : "";
+    }
+  },
 
   /** movie.* */
-  MOVIE,
+  MOVIE {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "movie." + extension;
+    }
+  },
 
   /** poster.* */
-  POSTER,
+  POSTER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "poster." + extension;
+    }
+  },
 
   /** folder.* */
-  FOLDER
+  FOLDER {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "folder." + extension;
+    }
+  }
 }

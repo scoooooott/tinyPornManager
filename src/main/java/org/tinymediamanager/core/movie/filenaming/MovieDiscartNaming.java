@@ -17,16 +17,29 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MovieDiscartNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieDiscartNaming {
+public enum MovieDiscartNaming implements IFileNaming {
 
   /** [filename]-disc.* */
-  FILENAME_DISC,
+  FILENAME_DISC {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-disc." + extension : "";
+    }
+  },
 
-  /** disc.png */
-  DISC
+  /** disc.* */
+  DISC {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "disc." + extension;
+    }
+  }
 }

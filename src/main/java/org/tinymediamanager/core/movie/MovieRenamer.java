@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.MediaFileType;
@@ -336,20 +337,23 @@ public class MovieRenamer {
       MediaFile del = new MediaFile(movie.getPathNIO().resolve(nfoFilename), MediaFileType.NFO);
       cleanup.add(del);
     }
-    for (MoviePosterNaming s : MoviePosterNaming.values()) {
+    List<IFileNaming> fileNamings = new ArrayList<>();
+    fileNamings.addAll(Arrays.asList(MoviePosterNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieFanartNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieBannerNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieClearartNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieLogoNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieClearlogoNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieThumbNaming.values()));
+    fileNamings.addAll(Arrays.asList(MovieDiscartNaming.values()));
+
+    for (IFileNaming fileNaming : fileNamings) {
       for (String ext : KNOWN_IMAGE_FILE_EXTENSIONS) {
-        MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getBasePosterFilename(s, movie) + "." + ext),
-            MediaFileType.POSTER);
+        MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getArtworkFilename(movie, fileNaming, ext)));
         cleanup.add(del);
       }
     }
-    for (MovieFanartNaming s : MovieFanartNaming.values()) {
-      for (String ext : KNOWN_IMAGE_FILE_EXTENSIONS) {
-        MediaFile del = new MediaFile(movie.getPathNIO().resolve(MovieArtworkHelper.getBaseFanartFilename(s, movie) + "." + ext),
-            MediaFileType.FANART);
-        cleanup.add(del);
-      }
-    }
+
     // cleanup ALL MFs
     for (MediaFile del : movie.getMediaFiles()) {
       cleanup.add(new MediaFile(del));
@@ -785,11 +789,7 @@ public class MovieRenamer {
 
       case POSTER:
         for (MoviePosterNaming name : MovieArtworkHelper.getPosterNamesForMovie(movie)) {
-          String newBasePosterName = MovieArtworkHelper.getBasePosterFilename(name, newFilename);
-          String newPosterName = "";
-          if (StringUtils.isNotEmpty(newBasePosterName)) {
-            newPosterName = newBasePosterName + "." + getArtworkExtension(mf);
-          }
+          String newPosterName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newPosterName)) {
             MediaFile pos = new MediaFile(mf);
             pos.setFile(newMovieDir.resolve(newPosterName));
@@ -800,11 +800,7 @@ public class MovieRenamer {
 
       case FANART:
         for (MovieFanartNaming name : MovieArtworkHelper.getFanartNamesForMovie(movie)) {
-          String newBaseFanartName = MovieArtworkHelper.getBaseFanartFilename(name, newFilename);
-          String newFanartName = "";
-          if (StringUtils.isNotEmpty(newBaseFanartName)) {
-            newFanartName = newBaseFanartName + "." + getArtworkExtension(mf);
-          }
+          String newFanartName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newFanartName)) {
             MediaFile fan = new MediaFile(mf);
             fan.setFile(newMovieDir.resolve(newFanartName));
@@ -814,11 +810,7 @@ public class MovieRenamer {
         break;
       case BANNER:
         for (MovieBannerNaming name : MovieArtworkHelper.getBannerNamesForMovie(movie)) {
-          String newBaseBannerName = MovieArtworkHelper.getBaseBannerFilename(name, newFilename);
-          String newBannerName = "";
-          if (StringUtils.isNotEmpty(newBaseBannerName)) {
-            newBannerName = newBaseBannerName + "." + getArtworkExtension(mf);
-          }
+          String newBannerName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newBannerName)) {
             MediaFile banner = new MediaFile(mf);
             banner.setFile(newMovieDir.resolve(newBannerName));
@@ -828,11 +820,7 @@ public class MovieRenamer {
         break;
       case CLEARART:
         for (MovieClearartNaming name : MovieArtworkHelper.getClearartNamesForMovie(movie)) {
-          String newBaseClearartName = MovieArtworkHelper.getBaseClearartFilename(name, newFilename);
-          String newClearartName = "";
-          if (StringUtils.isNotEmpty(newBaseClearartName)) {
-            newClearartName = newBaseClearartName + "." + getArtworkExtension(mf);
-          }
+          String newClearartName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newClearartName)) {
             MediaFile clearart = new MediaFile(mf);
             clearart.setFile(newMovieDir.resolve(newClearartName));
@@ -842,11 +830,8 @@ public class MovieRenamer {
         break;
       case DISC:
         for (MovieDiscartNaming name : MovieArtworkHelper.getDiscartNamesForMovie(movie)) {
-          String newBaseDiscartName = MovieArtworkHelper.getBaseDiscartFilename(name, newFilename);
-          String newDiscartName = "";
-          if (StringUtils.isNotEmpty(newBaseDiscartName)) {
-            newDiscartName = newBaseDiscartName + "." + getArtworkExtension(mf);
-          }
+          String newDiscartName = name.getFilename(newFilename, getArtworkExtension(mf));
+          ;
           if (StringUtils.isNotBlank(newDiscartName)) {
             MediaFile discart = new MediaFile(mf);
             discart.setFile(newMovieDir.resolve(newDiscartName));
@@ -856,11 +841,8 @@ public class MovieRenamer {
         break;
       case LOGO:
         for (MovieLogoNaming name : MovieArtworkHelper.getLogoNamesForMovie(movie)) {
-          String newBaseLogoName = MovieArtworkHelper.getBaseLogoFilename(name, newFilename);
-          String newLogoName = "";
-          if (StringUtils.isNotEmpty(newBaseLogoName)) {
-            newLogoName = newBaseLogoName + "." + getArtworkExtension(mf);
-          }
+          String newLogoName = name.getFilename(newFilename, getArtworkExtension(mf));
+          ;
           if (StringUtils.isNotBlank(newLogoName)) {
             MediaFile logo = new MediaFile(mf);
             logo.setFile(newMovieDir.resolve(newLogoName));
@@ -870,11 +852,7 @@ public class MovieRenamer {
         break;
       case CLEARLOGO:
         for (MovieClearlogoNaming name : MovieArtworkHelper.getClearlogoNamesForMovie(movie)) {
-          String newBaseClearlogoName = MovieArtworkHelper.getBaseClearlogoFilename(name, newFilename);
-          String newClearlogoName = "";
-          if (StringUtils.isNotEmpty(newBaseClearlogoName)) {
-            newClearlogoName = newBaseClearlogoName + "." + getArtworkExtension(mf);
-          }
+          String newClearlogoName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newClearlogoName)) {
             MediaFile clearlogo = new MediaFile(mf);
             clearlogo.setFile(newMovieDir.resolve(newClearlogoName));
@@ -884,11 +862,7 @@ public class MovieRenamer {
         break;
       case THUMB:
         for (MovieThumbNaming name : MovieArtworkHelper.getThumbNamesForMovie(movie)) {
-          String newBaseThumbName = MovieArtworkHelper.getBaseThumbFilename(name, newFilename);
-          String newThumbName = "";
-          if (StringUtils.isNotEmpty(newBaseThumbName)) {
-            newThumbName = newBaseThumbName + "." + getArtworkExtension(mf);
-          }
+          String newThumbName = name.getFilename(newFilename, getArtworkExtension(mf));
           if (StringUtils.isNotBlank(newThumbName)) {
             MediaFile thumb = new MediaFile(mf);
             thumb.setFile(newMovieDir.resolve(newThumbName));

@@ -17,16 +17,29 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
  * The Enum MovieClearartNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieClearartNaming {
+public enum MovieClearartNaming implements IFileNaming {
 
   /** [filename]-clearart.* */
-  FILENAME_CLEARART,
+  FILENAME_CLEARART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-clearart." + extension : "";
+    }
+  },
 
-  /** clearart.png */
-  CLEARART
+  /** clearart.* */
+  CLEARART {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "clearart." + extension;
+    }
+  }
 }

@@ -17,16 +17,29 @@
  */
 package org.tinymediamanager.core.movie.filenaming;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.IFileNaming;
+
 /**
- * The Enum MovieLogoNaming.
+ * The Enum MovieClearlogoNaming.
  * 
  * @author Manuel Laggner
  */
-public enum MovieClearlogoNaming {
+public enum MovieClearlogoNaming implements IFileNaming {
 
   /** [filename]-clearlogo.* */
-  FILENAME_CLEARLOGO,
+  FILENAME_CLEARLOGO {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return StringUtils.isNotBlank(basename) ? basename + "-clearlogo." + extension : "";
+    }
+  },
 
-  /** clearlogo.png */
-  CLEARLOGO
+  /** clearlogo.* */
+  CLEARLOGO {
+    @Override
+    public String getFilename(String basename, String extension) {
+      return "clearlogo." + extension;
+    }
+  }
 }
