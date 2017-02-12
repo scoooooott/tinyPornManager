@@ -340,10 +340,10 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       }
 
       if (tvShow != null && episode != null) {
-        String tvShowDir = TvShowRenamer.generateTvShowDir(tfTvShowFolder.getText(), tvShow);
+        String tvShowDir = TvShowRenamer.getTvShowFoldername(tfTvShowFolder.getText(), tvShow);
         String filename = TvShowRenamer
             .generateEpisodeFilenames(tfEpisodeFilename.getText(), tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0)).get(0).getFilename();
-        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFoldername.getText(), episode);
+        String seasonDir = TvShowRenamer.getSeasonFoldername(tfSeasonFoldername.getText(), episode.getTvShow(), episode.getSeason());
         if (StringUtils.isBlank(seasonDir)) {
           lblExample.setText(tvShowDir + File.separator + filename);
         }
@@ -437,7 +437,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         example = "";
       }
       else {
-        example = TvShowRenamer.createDestination(token, episode.getTvShow(), Arrays.asList(episode));
+        example = TvShowRenamer.createDestination(token, Arrays.asList(episode));
       }
       firePropertyChange("example", oldValue, example);
     }

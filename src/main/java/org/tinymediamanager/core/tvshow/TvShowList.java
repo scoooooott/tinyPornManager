@@ -374,7 +374,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   public MediaScraper getDefaultMediaScraper() {
-    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.SETTINGS.getTvShowScraper(), ScraperType.TV_SHOW);
+    MediaScraper scraper = MediaScraper.getMediaScraperById(TvShowModuleManager.SETTINGS.getScraper(), ScraperType.TV_SHOW);
     if (scraper == null) {
       scraper = MediaScraper.getMediaScraperById(Constants.TVDB, ScraperType.TV_SHOW);
     }
@@ -430,7 +430,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the specified artwork scrapers
    */
   public List<MediaScraper> getDefaultArtworkScrapers() {
-    return getArtworkScrapers(TvShowModuleManager.SETTINGS.getTvShowArtworkScrapers());
+    return getArtworkScrapers(TvShowModuleManager.SETTINGS.getArtworkScrapers());
   }
 
   /**

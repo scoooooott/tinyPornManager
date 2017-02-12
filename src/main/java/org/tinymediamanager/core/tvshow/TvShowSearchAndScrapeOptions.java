@@ -40,7 +40,7 @@ public class TvShowSearchAndScrapeOptions {
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
+    scraperMetadataConfig = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
     scraperMetadataConfig.setEpisodeList(TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes());
 
     // metadata

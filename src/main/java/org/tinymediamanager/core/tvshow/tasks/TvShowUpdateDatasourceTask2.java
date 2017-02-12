@@ -73,26 +73,27 @@ import com.sun.jna.Platform;
  */
 
 public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
-  private static final Logger         LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
-  private static final ResourceBundle BUNDLE        = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+  private static final Logger         LOGGER               = LoggerFactory.getLogger(TvShowUpdateDatasourceTask2.class);
+  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control());                       //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String>   skipFolders   = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-      "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String>   skipFolders          = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipRegex     = "^[.][\\w@]+.*";
+  private static final String         skipRegex            = "^[.][\\w@]+.*";
 
-  private static final Pattern        seasonPattern = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static final Pattern        seasonPosterPattern1 = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static final Pattern        seasonPosterPattern2 = Pattern.compile("(?i)season[0-9]{0,2}\\..{2,4}");
 
-  private static long                 preDir        = 0;
-  private static long                 postDir       = 0;
-  private static long                 visFile       = 0;
+  private static long                 preDir               = 0;
+  private static long                 postDir              = 0;
+  private static long                 visFile              = 0;
 
   private List<String>                dataSources;
-  private List<Path>                  tvShowFolders = new ArrayList<>();
+  private List<Path>                  tvShowFolders        = new ArrayList<>();
   private TvShowList                  tvShowList;
-  private HashSet<Path>               filesFound    = new HashSet<>();
+  private HashSet<Path>               filesFound           = new HashSet<>();
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -753,6 +754,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       // tvShow.addToMediaFiles(mfs); // add remaining
       // not so fast - try to parse S/E from remaining first!
       for (MediaFile mf : mfs) {
+        // a season poster does not belong to any episode
+        if (mf.getType() == MediaFileType.SEASON_POSTER) {
+          continue;
+        }
+
         String relativePath = showDir.relativize(mf.getFileAsPath()).toString();
         EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
         if (result.season > 0 && !result.episodes.isEmpty()) {
@@ -769,7 +775,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
 
       // fill season posters map
       for (MediaFile mf : getMediaFiles(mfs, MediaFileType.SEASON_POSTER)) {
-        Matcher matcher = seasonPattern.matcher(mf.getFilename());
+        Matcher matcher = seasonPosterPattern1.matcher(mf.getFilename());
+        if (!matcher.matches()) {
+          matcher = seasonPosterPattern2.matcher(mf.getFilename());
+        }
         if (matcher.matches()) {
           try {
             int season = Integer.parseInt(matcher.group(1));
@@ -895,7 +904,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
         if (Utils.isRegularFile(path)) {
           String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
           if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-              && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
+              && !TvShowModuleManager.SETTINGS.getSkipFolders().contains(path.toFile().getAbsolutePath())) {
             fileNames.add(path.toAbsolutePath());
           }
           else {
@@ -923,7 +932,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       for (Path path : directoryStream) {
         String fn = path.getFileName().toString().toUpperCase(Locale.ROOT);
         if (!skipFolders.contains(fn) && !fn.matches(skipRegex)
-            && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(path.toFile().getAbsolutePath())) {
+            && !TvShowModuleManager.SETTINGS.getSkipFolders().contains(path.toFile().getAbsolutePath())) {
           fileNames.add(path.toAbsolutePath());
         }
         else {
@@ -973,7 +982,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
               || skipFolders.contains(dir.getFileName().toString().toUpperCase(Locale.ROOT)) || dir.getFileName().toString().matches(skipRegex))
-          || TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || TvShowModuleManager.SETTINGS.getSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

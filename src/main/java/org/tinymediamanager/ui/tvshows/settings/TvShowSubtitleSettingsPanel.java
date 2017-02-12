@@ -89,7 +89,7 @@ public class TvShowSubtitleSettingsPanel extends ScrollablePanel {
     initDataBindings();
 
     // data init
-    List<String> enabledSubtitleProviders = settings.getTvShowSubtitleScrapers();
+    List<String> enabledSubtitleProviders = settings.getSubtitleScrapers();
     int selectedIndex = -1;
     int counter = 0;
     for (MediaScraper scraper : TvShowList.getInstance().getAvailableSubtitleScrapers()) {

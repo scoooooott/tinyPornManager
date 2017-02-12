@@ -73,7 +73,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     setBounds(5, 5, 533, 280);
 
     // copy the values
-    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
+    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
 
     TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
     scraperMetadataConfig.setTitle(settings.isTitle());
@@ -158,7 +158,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
     // artwork scraper
     List<MediaScraper> selectedArtworkScrapers = new ArrayList<>();
     for (MediaScraper artworkScraper : TvShowList.getInstance().getAvailableArtworkScrapers()) {
-      if (TvShowModuleManager.SETTINGS.getTvShowArtworkScrapers().contains(artworkScraper.getId())) {
+      if (TvShowModuleManager.SETTINGS.getArtworkScrapers().contains(artworkScraper.getId())) {
         selectedArtworkScrapers.add(artworkScraper);
       }
     }

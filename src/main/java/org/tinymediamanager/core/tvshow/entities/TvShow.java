@@ -403,6 +403,22 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
+   * gets the season object for the given season number or null
+   * 
+   * @param seasonNumber
+   *          the season number
+   * @return the TvShowSeason object or null
+   */
+  public TvShowSeason getSeason(int seasonNumber) {
+    for (TvShowSeason season : seasons) {
+      if (season.getSeason() == seasonNumber) {
+        return season;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Gets the data source.
    * 
    * @return the data source

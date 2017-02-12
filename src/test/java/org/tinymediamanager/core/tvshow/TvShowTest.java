@@ -109,7 +109,7 @@ public class TvShowTest {
     // setup done
 
     // display renamed EP name :)
-    System.out.println(TvShowRenamer.createDestination(TvShowModuleManager.SETTINGS.getRenamerFilename(), show, show.getEpisodes()));
+    System.out.println(TvShowRenamer.createDestination(TvShowModuleManager.SETTINGS.getRenamerFilename(), show.getEpisodes()));
     System.out.println(TvShowRenamer.generateEpisodeFilenames(show, dmf).get(0).getFilename());
 
     TvShowModuleManager.getInstance().shutDown();

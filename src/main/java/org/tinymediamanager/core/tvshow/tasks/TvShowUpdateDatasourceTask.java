@@ -90,7 +90,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Pattern        clearlogoPattern2     = Pattern.compile("(?i).*(-|.)clearlogo\\..{2,4}");
   private static final Pattern        thumbPattern1         = Pattern.compile("(?i)thumb\\..{2,4}");
   private static final Pattern        thumbPattern2         = Pattern.compile("(?i).*(-|.)thumb\\..{2,4}");
-  private static final Pattern        seasonPattern         = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static final Pattern        seasonPosterPattern1  = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static final Pattern        seasonPosterPattern2  = Pattern.compile("(?i)season[0-9]{0,2}\\..{2,4}");
 
   private List<String>                dataSources;
   private List<File>                  tvShowFolders         = new ArrayList<>();
@@ -205,7 +206,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         String directoryName = subdir.getName();
         // check against unwanted dirs
         if (skipFolders.contains(directoryName.toUpperCase(Locale.ROOT)) || directoryName.matches(skipFoldersRegex)
-            || TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(subdir.getAbsolutePath())) {
+            || TvShowModuleManager.SETTINGS.getSkipFolders().contains(subdir.getAbsolutePath())) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
         }
@@ -612,58 +613,74 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       filesFound.addAll(completeDirContents);
     }
 
-    // search season posters first (-poster pattern would find season posters)
+    // search season posters first (-poster pattern would find season posters; also find season posters in season folders)
     for (File file : completeDirContents) {
-      Matcher matcher = seasonPattern.matcher(file.getName());
-      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-        LOGGER.debug("found season poster " + file.getPath());
-        try {
-          int season = Integer.parseInt(matcher.group(1));
-          tvShow.setSeasonPoster(season, file);
+      if (file.isDirectory()) {
+        File[] subdirContents = file.listFiles();
+        if (subdirContents == null) {
+          continue;
         }
-        catch (Exception e) {
+
+        for (File subdirFile : subdirContents) {
+          if (subdirFile.isFile()) {
+            Matcher matcher = seasonPosterPattern2.matcher(subdirFile.getName());
+            if (matcher.matches() && !subdirFile.getName().startsWith("._")) {// MacOS ignore
+              LOGGER.debug("found season poster " + subdirFile.getPath());
+              try {
+                int season = Integer.parseInt(matcher.group(1));
+                tvShow.setSeasonPoster(season, subdirFile);
+              }
+              catch (Exception ignored) {
+              }
+            }
+          }
         }
       }
-      else if (file.getName().startsWith("season-specials-poster")) {
-        LOGGER.debug("found season specials poster " + file.getPath());
-        tvShow.setSeasonPoster(-1, file);
+      else {
+        Matcher matcher = seasonPosterPattern1.matcher(file.getName());
+        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+          LOGGER.debug("found season poster " + file.getPath());
+          try {
+            int season = Integer.parseInt(matcher.group(1));
+            tvShow.setSeasonPoster(season, file);
+          }
+          catch (Exception ignored) {
+          }
+        }
+        else if (file.getName().startsWith("season-specials-poster")) {
+          LOGGER.debug("found season specials poster " + file.getPath());
+          tvShow.setSeasonPoster(-1, file);
+        }
       }
     }
 
     // search for poster or download
     findArtwork(tvShow, completeDirContents, posterPattern1, MediaFileType.POSTER);
     findArtwork(tvShow, completeDirContents, posterPattern2, MediaFileType.POSTER);
-    downloadArtwork(tvShow, MediaFileType.POSTER);
 
     // search fanart or download
     findArtwork(tvShow, completeDirContents, fanartPattern1, MediaFileType.FANART);
     findArtwork(tvShow, completeDirContents, fanartPattern2, MediaFileType.FANART);
-    downloadArtwork(tvShow, MediaFileType.FANART);
 
     // search banner or download
     findArtwork(tvShow, completeDirContents, bannerPattern1, MediaFileType.BANNER);
     findArtwork(tvShow, completeDirContents, bannerPattern2, MediaFileType.BANNER);
-    downloadArtwork(tvShow, MediaFileType.BANNER);
 
     // search logo or download
     findArtwork(tvShow, completeDirContents, logoPattern1, MediaFileType.LOGO);
     findArtwork(tvShow, completeDirContents, logoPattern2, MediaFileType.LOGO);
-    downloadArtwork(tvShow, MediaFileType.LOGO);
 
     // search clearlogo or download
     findArtwork(tvShow, completeDirContents, clearlogoPattern1, MediaFileType.CLEARLOGO);
     findArtwork(tvShow, completeDirContents, clearlogoPattern2, MediaFileType.CLEARLOGO);
-    downloadArtwork(tvShow, MediaFileType.CLEARLOGO);
 
     // search clearart or download
     findArtwork(tvShow, completeDirContents, clearartPattern1, MediaFileType.CLEARART);
     findArtwork(tvShow, completeDirContents, clearartPattern2, MediaFileType.CLEARART);
-    downloadArtwork(tvShow, MediaFileType.CLEARART);
 
     // search thumb or download
     findArtwork(tvShow, completeDirContents, thumbPattern1, MediaFileType.THUMB);
     findArtwork(tvShow, completeDirContents, thumbPattern2, MediaFileType.THUMB);
-    downloadArtwork(tvShow, MediaFileType.THUMB);
   }
 
   private void findArtwork(TvShow show, List<File> directoryContents, Pattern searchPattern, MediaFileType type) {
@@ -671,7 +688,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       Matcher matcher = searchPattern.matcher(file.getName());
       if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
         // false positive exclusion: poster regexp would also find season posters..
-        if (type == MediaFileType.POSTER && file.getName().matches(seasonPattern.pattern())) {
+        if (type == MediaFileType.POSTER && file.getName().matches(seasonPosterPattern1.pattern())) {
           continue;
         }
         MediaFile mf = new MediaFile(file, type);
@@ -679,13 +696,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         LOGGER.debug("found " + mf.getType().name().toLowerCase(Locale.ROOT) + ": " + file.getPath());
         break;
       }
-    }
-  }
-
-  private void downloadArtwork(TvShow tvShow, MediaFileType type) {
-    if (StringUtils.isBlank(tvShow.getArtworkFilename(type)) && StringUtils.isNotBlank(tvShow.getArtworkUrl(type))) {
-      tvShow.downloadArtwork(type);
-      LOGGER.debug("got " + type.name().toLowerCase(Locale.ROOT) + " url: " + tvShow.getArtworkUrl(type) + " ; try to download this");
     }
   }
 
@@ -837,7 +847,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       } // end isFile
 
       if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase(Locale.ROOT)) && !file.getName().matches(skipFoldersRegex)
-          && !TvShowModuleManager.SETTINGS.getTvShowSkipFolders().contains(file.getAbsolutePath())) {
+          && !TvShowModuleManager.SETTINGS.getSkipFolders().contains(file.getAbsolutePath())) {
         // check if that directory contains a .tmmignore file
         File tmmIgnore = new File(file, ".tmmignore");
         File tmmIgnore2 = new File(file, "tmmignore");

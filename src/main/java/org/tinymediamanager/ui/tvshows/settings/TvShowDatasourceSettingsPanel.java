@@ -107,7 +107,7 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
     btnRemoveSkipFolder.addActionListener(e -> {
       int row = listExclude.getSelectedIndex();
       if (row != -1) { // nothing selected
-        String ingore = settings.getTvShowSkipFolders().get(row);
+        String ingore = settings.getSkipFolders().get(row);
         settings.removeTvShowSkipFolder(ingore);
       }
     });

@@ -141,7 +141,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     setBounds(5, 5, 985, 586);
 
     // copy the values
-    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getTvShowScraperMetadataConfig();
+    TvShowScraperMetadataConfig settings = TvShowModuleManager.SETTINGS.getScraperMetadataConfig();
     mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
     // trailerProviders = tvShowList.getTrailerProviders();

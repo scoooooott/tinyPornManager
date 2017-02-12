@@ -36,9 +36,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -116,7 +116,7 @@ class TvShowScraperPanel extends JPanel {
           TvShowScraper changedScraper = scrapers.get(row);
           // if flag default scraper was changed, change all other flags
           if (changedScraper.getDefaultScraper()) {
-            settings.setTvShowScraper(changedScraper.getScraperId());
+            settings.setScraper(changedScraper.getScraperId());
             for (TvShowScraper scraper : scrapers) {
               if (scraper != changedScraper) {
                 scraper.setDefaultScraper(Boolean.FALSE);

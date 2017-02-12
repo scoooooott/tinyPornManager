@@ -137,7 +137,7 @@ public class TvShowExporter extends MediaEntityExporter {
           for (TvShowEpisode episode : show.getEpisodes()) {
             List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
             if (!mfs.isEmpty()) {
-              Path seasonDir = showDir.resolve(TvShowRenamer.getSeasonFoldername("", episode));
+              Path seasonDir = showDir.resolve(TvShowRenamer.getSeasonFoldername("", episode.getTvShow(), episode.getSeason()));
               if (!Files.isDirectory(seasonDir)) {
                 Files.createDirectory(seasonDir);
               }
@@ -175,7 +175,7 @@ public class TvShowExporter extends MediaEntityExporter {
 
   private static String getFilename(MediaEntity entity) {
     if (entity instanceof TvShow) {
-      return TvShowRenamer.createDestination("$N ($Y)", (TvShow) entity, new ArrayList<>());
+      return TvShowRenamer.createDestination("$N ($Y)", (TvShow) entity);
     }
     if (entity instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) entity;
@@ -208,7 +208,7 @@ public class TvShowExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof TvShow) {
         TvShow show = (TvShow) o;
-        return TvShowRenamer.generateTvShowDir(show);
+        return TvShowRenamer.getTvShowFoldername(show);
       }
       return null;
     }

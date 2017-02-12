@@ -20,26 +20,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.http.Url;
 
@@ -60,73 +61,138 @@ public class TvShowArtworkHelper {
    *          the artwork type to be downloaded
    */
   public static void downloadArtwork(TvShow show, MediaFileType type) {
-    String url = "";
-    String filename = "";
-
-    switch (type) {
-      case FANART:
-      case POSTER:
-      case BANNER:
-      case EXTRAFANART:
-      case EXTRATHUMB:
-      case LOGO:
-      case CLEARLOGO:
-      case CLEARART:
-      case THUMB:
-        url = show.getArtworkUrl(type);
-        filename = type.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(url);
-        break;
-
-      default:
-        break;
-    }
-
-    if (StringUtils.isBlank(url) || StringUtils.isBlank(filename)) {
+    String url = show.getArtworkUrl(type);
+    if (StringUtils.isBlank(url)) {
       return;
     }
 
-    // get image in thread
-    MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, true);
-    TmmTaskManager.getInstance().addImageDownloadTask(task);
+    List<IFileNaming> fileNamings = new ArrayList<>();
+
+    switch (type) {
+      case FANART:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getFanartFilenames());
+        break;
+
+      case POSTER:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getPosterFilenames());
+        break;
+
+      case BANNER:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getBannerFilenames());
+        break;
+
+      case LOGO:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getLogoFilenames());
+        break;
+
+      case CLEARLOGO:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearlogoFilenames());
+        break;
+
+      case CLEARART:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearartFilenames());
+        break;
+
+      case THUMB:
+        fileNamings.addAll(TvShowModuleManager.SETTINGS.getThumbFilenames());
+        break;
+
+      default:
+        return;
+    }
+
+    int i = 0;
+    for (IFileNaming naming : fileNamings) {
+      boolean firstImage = false;
+      String filename = naming.getFilename("", Utils.getArtworkExtension(url));
+
+      if (StringUtils.isBlank(filename)) {
+        continue;
+      }
+
+      if (++i == 1) {
+        firstImage = true;
+      }
+
+      // get image in thread
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, firstImage);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
+    }
   }
 
   public static void downloadMissingArtwork(TvShow show) {
-    String url = "";
-    String filename = "";
     MediaFileType[] mfts = MediaFileType.getGraphicMediaFileTypes();
 
     // do for all known graphical MediaFileTypes
     for (MediaFileType mft : mfts) {
 
+      // special logix for season posters
+      if (mft == MediaFileType.SEASON_POSTER) {
+        for (TvShowSeason season : show.getSeasons()) {
+          if (StringUtils.isBlank(season.getPoster())) {
+            downloadSeasonPoster(show, season.getSeason());
+          }
+        }
+        continue;
+      }
+
       List<MediaFile> mfs = show.getMediaFiles(mft);
       if (mfs.isEmpty()) {
+        boolean download = false;
         // not in our list? get'em!
         switch (mft) {
           case FANART:
-          case POSTER:
-          case BANNER:
-          case CLEARART:
-          case DISC:
-          case THUMB:
-          case LOGO:
-          case CLEARLOGO:
-          case EXTRAFANART:
-          case EXTRATHUMB:
-            url = show.getArtworkUrl(mft);
-            filename = mft.name().toLowerCase(Locale.ROOT) + "." + FilenameUtils.getExtension(url);
+            if (!TvShowModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+              download = true;
+            }
             break;
 
-          case SEASON_POSTER: // TODO: valid? can't find it elsewhere
+          case POSTER:
+            if (!TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
+          case BANNER:
+            if (!TvShowModuleManager.SETTINGS.getBannerFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
+          case CLEARART:
+            if (!TvShowModuleManager.SETTINGS.getClearartFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
+          case THUMB:
+            if (!TvShowModuleManager.SETTINGS.getThumbFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
+          case LOGO:
+            if (!TvShowModuleManager.SETTINGS.getLogoFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
+          case CLEARLOGO:
+            if (!TvShowModuleManager.SETTINGS.getClearlogoFilenames().isEmpty()) {
+              download = true;
+            }
+            break;
+
           default:
             break;
         }
-        if (StringUtils.isBlank(url) || StringUtils.isBlank(filename)) {
-          continue;
+
+        if (download) {
+          downloadArtwork(show, mft);
         }
-        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(mft), filename, true);
-        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
+
   }
 
   /**
@@ -139,7 +205,7 @@ public class TvShowArtworkHelper {
    */
   public static void downloadMissingArtwork(TvShow tvShow, List<MediaArtwork> artwork) {
     // sort artwork once again (langu/rating)
-    Collections.sort(artwork, new MediaArtwork.MediaArtworkComparator(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
+    artwork.sort(new MediaArtwork.MediaArtworkComparator(TvShowModuleManager.SETTINGS.getScraperLanguage().name()));
 
     // poster
     if (tvShow.getMediaFiles(MediaFileType.POSTER).isEmpty()) {
@@ -292,15 +358,32 @@ public class TvShowArtworkHelper {
       }
     }
 
-    String filename = "";
-    if (season > 0) {
-      filename = String.format(show.getPath() + File.separator + "season%02d-poster." + FilenameUtils.getExtension(seasonPosterUrl), season);
+    for (TvShowSeasonPosterNaming seasonPosterNaming : TvShowModuleManager.SETTINGS.getSeasonPosterFilenames()) {
+      String filename = "";
+      switch (seasonPosterNaming) {
+        case SEASON_POSTER:
+          if (season > 0) {
+            filename = String.format("season%02d-poster", season);
+          }
+          else {
+            filename = "season-specials-poster";
+          }
+          break;
+
+        case SEASON_FOLDER:
+          String seasonFoldername = TvShowRenamer.getSeasonFoldername(show, season);
+          if (StringUtils.isNotBlank(seasonFoldername)) {
+            filename = seasonFoldername + File.separator;
+          }
+          filename += String.format("season%02d", season);
+          break;
+      }
+
+      filename = show.getPath() + File.separator + filename + "." + Utils.getArtworkExtension(seasonPosterUrl);
+
+      SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(show, filename, tvShowSeason, seasonPosterUrl);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
-    else {
-      filename = show.getPath() + File.separator + "season-specials-poster." + FilenameUtils.getExtension(seasonPosterUrl);
-    }
-    SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(show, filename, tvShowSeason, seasonPosterUrl);
-    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   private static class SeasonPosterImageFetcher implements Runnable {

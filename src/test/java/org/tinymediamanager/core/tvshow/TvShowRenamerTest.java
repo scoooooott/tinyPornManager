@@ -132,8 +132,8 @@ public class TvShowRenamerTest {
 
   private String gen(TvShow show, String showPattern, String seasonPattern, String filePattern, boolean recommended) {
     assertEqual(recommended, TvShowRenamer.isRecommended(seasonPattern, filePattern));
-    String sh = TvShowRenamer.generateTvShowDir(showPattern, show);
-    String se = TvShowRenamer.getSeasonFoldername(seasonPattern, show.getEpisodes().get(0));
+    String sh = TvShowRenamer.getTvShowFoldername(showPattern, show);
+    String se = TvShowRenamer.getSeasonFoldername(seasonPattern, show, show.getEpisodes().get(0).getSeason());
     String ep = TvShowRenamer.generateEpisodeFilenames(filePattern, show, show.getEpisodesMediaFiles().get(0)).get(0).getFilename();
     System.out.println(new File(sh, se + File.separator + ep).toString());
     return new File(sh, se + File.separator + ep).toString();

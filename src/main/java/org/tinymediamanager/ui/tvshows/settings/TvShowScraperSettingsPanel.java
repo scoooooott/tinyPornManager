@@ -136,7 +136,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
         TvShowScraper changedScraper = scrapers.get(row);
         // if flag inNFO was changed, change all other trailers flags
         if (changedScraper.getDefaultScraper()) {
-          settings.setTvShowScraper(changedScraper.getScraperId());
+          settings.setScraper(changedScraper.getScraperId());
           for (TvShowScraper scraper : scrapers) {
             if (scraper != changedScraper) {
               scraper.setDefaultScraper(Boolean.FALSE);
@@ -234,7 +234,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       add(lblScraperOptionsT, "cell 0 5 4 1");
     }
     {
-      final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getTvShowScraperMetadataConfig());
+      final TvShowScraperMetadataPanel scraperMetadataPanel = new TvShowScraperMetadataPanel(settings.getScraperMetadataConfig());
       add(scraperMetadataPanel, "cell 1 6 3 1,grow");
     }
     {

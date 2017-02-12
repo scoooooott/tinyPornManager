@@ -130,7 +130,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
     // Subtitle scraper
     List<MediaScraper> selectedSubtitleScrapers = new ArrayList<>();
     for (MediaScraper subtitleScraper : tvShowList.getAvailableSubtitleScrapers()) {
-      if (TvShowModuleManager.SETTINGS.getTvShowSubtitleScrapers().contains(subtitleScraper.getId())) {
+      if (TvShowModuleManager.SETTINGS.getSubtitleScrapers().contains(subtitleScraper.getId())) {
         selectedSubtitleScrapers.add(subtitleScraper);
       }
     }

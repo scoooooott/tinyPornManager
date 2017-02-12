@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,6 +47,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
@@ -91,7 +91,7 @@ public class TvShowRenamer {
   public static void renameTvShowRoot(TvShow show) {
     LOGGER.debug("TV show year: " + show.getYear());
     LOGGER.debug("TV show path: " + show.getPath());
-    String newPathname = generateTvShowDir(SETTINGS.getRenamerTvShowFoldername(), show);
+    String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
     String oldPathname = show.getPath();
 
     if (!newPathname.isEmpty()) {
@@ -153,9 +153,9 @@ public class TvShowRenamer {
     // all the good & needed mediafiles
     ArrayList<MediaFile> needed = new ArrayList<>();
     ArrayList<MediaFile> cleanup = new ArrayList<>(episode.getMediaFiles());
-    cleanup.removeAll(Collections.singleton(null)); // remove all NULL ones!
+    cleanup.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
 
-    String seasonFoldername = getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), episode);
+    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode.getSeason());
     Path seasonFolder = episode.getTvShow().getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = episode.getTvShow().getPathNIO().resolve(seasonFoldername);
@@ -163,7 +163,7 @@ public class TvShowRenamer {
         try {
           Files.createDirectory(seasonFolder);
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
     }
@@ -193,7 +193,7 @@ public class TvShowRenamer {
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.LOGO));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.CLEARLOGO));
     mfs.add(episode.getNewestMediaFilesOfType(MediaFileType.DISC));
-    mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
+    mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile mf : mfs) {
       LOGGER.trace("Rename 1:N " + mf.getType() + " " + mf.getFileAsPath());
       List<MediaFile> newMFs = generateEpisodeFilenames(episode.getTvShow(), mf); // 1:N
@@ -256,12 +256,12 @@ public class TvShowRenamer {
     mfs.addAll(
         episode.getMediaFilesExceptType(MediaFileType.VIDEO, MediaFileType.NFO, MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER,
             MediaFileType.CLEARART, MediaFileType.THUMB, MediaFileType.LOGO, MediaFileType.CLEARLOGO, MediaFileType.DISC, MediaFileType.SUBTITLE));
-    mfs.removeAll(Collections.singleton(null)); // remove all NULL ones!
+    mfs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
     for (MediaFile other : mfs) {
       LOGGER.trace("Rename 1:1 " + other.getType() + " " + other.getFileAsPath());
 
       List<MediaFile> newMFs = generateEpisodeFilenames(episode.getTvShow(), other); // 1:N
-      newMFs.removeAll(Collections.singleton(null)); // remove all NULL ones!
+      newMFs.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
 
       for (MediaFile newMF : newMFs) {
         boolean ok = copyFile(other.getFileAsPath(), newMF.getFileAsPath());
@@ -331,6 +331,7 @@ public class TvShowRenamer {
    * renames the episode as disc
    * 
    * @param episode
+   *          the episode to be renamed
    */
   private static void renameEpisodeAsDisc(TvShowEpisode episode) {
     // get the first MF of this episode
@@ -352,7 +353,7 @@ public class TvShowRenamer {
     }
 
     // create SeasonDir
-    String seasonFoldername = getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), episode);
+    String seasonFoldername = getSeasonFoldername(episode.getTvShow(), episode.getSeason());
     Path seasonFolder = episode.getTvShow().getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = episode.getTvShow().getPathNIO().resolve(seasonFoldername);
@@ -360,7 +361,7 @@ public class TvShowRenamer {
         try {
           Files.createDirectory(seasonFolder);
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
     }
@@ -424,7 +425,7 @@ public class TvShowRenamer {
         return;
       }
     }
-    catch (IOException ex) {
+    catch (IOException ignored) {
     }
 
     // FIXME: recursive backward delete?! why?!
@@ -449,7 +450,7 @@ public class TvShowRenamer {
       return "";
     }
 
-    return createDestination(SETTINGS.getRenamerFilename(), tvShow, eps);
+    return createDestination(SETTINGS.getRenamerFilename(), eps);
   }
 
   /**
@@ -487,13 +488,13 @@ public class TvShowRenamer {
 
     String newFilename;
     if (StringUtils.isBlank(template)) {
-      newFilename = createDestination(SETTINGS.getRenamerFilename(), tvShow, eps);
+      newFilename = createDestination(SETTINGS.getRenamerFilename(), eps);
     }
     else {
-      newFilename = createDestination(template, tvShow, eps);
+      newFilename = createDestination(template, eps);
     }
 
-    String seasonFoldername = getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), eps.get(0));
+    String seasonFoldername = getSeasonFoldername(tvShow, eps.get(0).getSeason());
     Path seasonFolder = tvShow.getPathNIO();
     if (StringUtils.isNotBlank(seasonFoldername)) {
       seasonFolder = tvShow.getPathNIO().resolve(seasonFoldername);
@@ -501,7 +502,7 @@ public class TvShowRenamer {
         try {
           Files.createDirectory(seasonFolder);
         }
-        catch (IOException e) {
+        catch (IOException ignored) {
         }
       }
     }
@@ -668,29 +669,76 @@ public class TvShowRenamer {
     return newFiles;
   }
 
-  public static String getSeasonFoldername(String template, TvShowEpisode episode) {
+  /**
+   * generate the season folder name according to the settings
+   *
+   * @param show
+   *          the TV show to generate the season folder for
+   * @param season
+   *          the season to generate the folder name for
+   * @return the folder name of that season
+   */
+  public static String getSeasonFoldername(TvShow show, int season) {
+    return getSeasonFoldername(SETTINGS.getRenamerSeasonFoldername(), show, season);
+  }
+
+  /**
+   * generate the season folder name with the given template
+   *
+   * @param template
+   *          the given template
+   * @param show
+   *          the TV show to generate the season folder for
+   * @param season
+   *          the season to generate the folder name for
+   * @return the folder name of that season
+   */
+  public static String getSeasonFoldername(String template, TvShow show, int season) {
     String seasonFolderName = template;
+    TvShowSeason tvShowSeason = show.getSeason(season);
+
+    // should not happen, but check it
+    if (tvShowSeason == null) {
+      // return an empty string
+      return "";
+    }
 
     // replace all other tokens
-    seasonFolderName = createDestination(seasonFolderName, episode.getTvShow(), Arrays.asList(episode));
+    seasonFolderName = createDestination(seasonFolderName, tvShowSeason);
 
     // only allow empty season dir if the season is in the filename
     if (StringUtils.isBlank(seasonFolderName) && !(SETTINGS.getRenamerFilename().contains("$1") || SETTINGS.getRenamerFilename().contains("$2")
         || SETTINGS.getRenamerFilename().contains("$3") || SETTINGS.getRenamerFilename().contains("$4"))) {
-      seasonFolderName = "Season " + String.valueOf(episode.getSeason());
+      seasonFolderName = "Season " + String.valueOf(season);
     }
     return seasonFolderName;
   }
 
-  public static String generateTvShowDir(TvShow tvShow) {
-    return generateTvShowDir(SETTINGS.getRenamerTvShowFoldername(), tvShow);
+  /**
+   * generate the TV show folder name according to the settings
+   * 
+   * @param tvShow
+   *          the TV show to generate the folder name for
+   * @return the folder name
+   */
+  public static String getTvShowFoldername(TvShow tvShow) {
+    return getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), tvShow);
   }
 
-  public static String generateTvShowDir(String template, TvShow tvShow) {
+  /**
+   * generate the TV show folder name according to the given template
+   *
+   * @param template
+   *          the template to generate the folder name for
+   * @param tvShow
+   *          the TV show to generate the folder name for
+   * @return the folder name
+   */
+  public static String getTvShowFoldername(String template, TvShow tvShow) {
     String newPathname;
 
     if (StringUtils.isNotBlank(SETTINGS.getRenamerTvShowFoldername())) {
-      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow, null);
+      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow);
     }
     else {
       newPathname = tvShow.getPath();
@@ -782,48 +830,92 @@ public class TvShowRenamer {
   }
 
   /**
-   * Creates the new file/folder name according to template string
-   * 
+   * Creates the new TV show folder name according to template string
+   *
    * @param template
-   *          the template
+   *          the template string
    * @param show
-   *          the TV show
-   * @param episodes
-   *          the TV show episodes; nullable for TV show root foldername
-   * @return the string
+   *          the TV show to generate the folder name for
+   * @return the TV show folder name
    */
-  public static String createDestination(String template, TvShow show, List<TvShowEpisode> episodes) {
-    String newDestination = template;
-    TvShowEpisode firstEp = null;
-
+  public static String createDestination(String template, TvShow show) {
     if (StringUtils.isBlank(template)) {
       return "";
     }
 
-    if (episodes == null || episodes.isEmpty()) {
-      // TV show root folder
+    String newDestination = template;
 
-      // replace all $x parameters
-      Matcher m = token.matcher(template);
-      while (m.find()) {
-        String value = getTokenValue(show, null, m.group(1));
-        newDestination = replaceToken(newDestination, m.group(1), value);
-      }
+    // replace all $x parameters
+    Matcher m = token.matcher(template);
+    while (m.find()) {
+      String value = getTokenValue(show, null, m.group(1));
+      newDestination = replaceToken(newDestination, m.group(1), value);
     }
-    else if (episodes.size() == 1) {
-      // single episode
 
-      firstEp = episodes.get(0);
+    newDestination = cleanupDestination(newDestination);
+    return newDestination;
+  }
+
+  /**
+   * Creates the new season folder name according to template string
+   *
+   * @param template
+   *          the template string
+   * @param season
+   *          the season to generate the folder name for
+   * @return the season folder name
+   */
+  public static String createDestination(String template, TvShowSeason season) {
+    if (StringUtils.isBlank(template)) {
+      return "";
+    }
+
+    String newDestination = template;
+
+    // create a dummy episode to inject the season number
+    TvShowEpisode episode = new TvShowEpisode();
+    episode.setSeason(season.getSeason());
+
+    // replace all $x parameters
+    Matcher m = token.matcher(template);
+    while (m.find()) {
+      String value = getTokenValue(season.getTvShow(), episode, m.group(1));
+      newDestination = replaceToken(newDestination, m.group(1), value);
+    }
+
+    newDestination = cleanupDestination(newDestination);
+    return newDestination;
+  }
+
+  /**
+   * Creates the new file/folder name according to template string
+   * 
+   * @param template
+   *          the template
+   * @param episodes
+   *          the TV show episodes; nullable for TV show root foldername
+   * @return the string
+   */
+  public static String createDestination(String template, List<TvShowEpisode> episodes) {
+    if (StringUtils.isBlank(template)) {
+      return "";
+    }
+
+    String newDestination = template;
+
+    if (episodes.size() == 1) {
+      // single episode
+      TvShowEpisode firstEp = episodes.get(0);
       // replace all $x parameters
       Matcher m = token.matcher(template);
       while (m.find()) {
-        String value = getTokenValue(show, firstEp, m.group(1));
+        String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
         newDestination = replaceToken(newDestination, m.group(1), value);
       }
     }
     else {
       // multi episodes
-      firstEp = episodes.get(0);
+      TvShowEpisode firstEp = episodes.get(0);
       String loopNumbers = "";
 
       // *******************
@@ -857,7 +949,7 @@ public class TvShowRenamer {
         // replace all $x parameters
         Matcher m = token.matcher(episodePart);
         while (m.find()) {
-          String value = getTokenValue(show, episode, m.group(1));
+          String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
           episodePart = replaceToken(episodePart, m.group(1), value);
         }
         episodeParts += " " + episodePart;
@@ -886,7 +978,7 @@ public class TvShowRenamer {
         // replace all $x parameters
         Matcher m = token.matcher(episodePart);
         while (m.find()) {
-          String value = getTokenValue(show, episode, m.group(1));
+          String value = getTokenValue(episode.getTvShow(), episode, m.group(1));
           episodePart = replaceToken(episodePart, m.group(1), value);
         }
 
@@ -904,46 +996,57 @@ public class TvShowRenamer {
       // replace all other $x parameters
       Matcher m = token.matcher(newDestination);
       while (m.find()) {
-        String value = getTokenValue(show, firstEp, m.group(1));
+        String value = getTokenValue(firstEp.getTvShow(), firstEp, m.group(1));
         newDestination = replaceToken(newDestination, m.group(1), value);
       }
 
     } // end multi episodes
 
-    // DEFAULT CLEANUP
+    newDestination = cleanupDestination(newDestination);
+    return newDestination;
+  }
+
+  /**
+   * cleanup the destination (remove empty brackets, space substitution, ..)
+   * 
+   * @param destination
+   *          the string to be cleaned up
+   * @return the cleaned up string
+   */
+  private static String cleanupDestination(String destination) {
     // replace empty brackets
-    newDestination = newDestination.replaceAll("\\(\\)", "");
-    newDestination = newDestination.replaceAll("\\[\\]", "");
+    destination = destination.replaceAll("\\(\\)", "");
+    destination = destination.replaceAll("\\[\\]", "");
 
     // if there are multiple file separators in a row - strip them out
     if (SystemUtils.IS_OS_WINDOWS) {
       // we need to mask it in windows
-      newDestination = newDestination.replaceAll("\\\\{2,}", "\\\\");
-      newDestination = newDestination.replaceAll("^\\\\", "");
+      destination = destination.replaceAll("\\\\{2,}", "\\\\");
+      destination = destination.replaceAll("^\\\\", "");
     }
     else {
-      newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
-      newDestination = newDestination.replaceAll("^" + File.separator, "");
+      destination = destination.replaceAll(File.separator + "{2,}", File.separator);
+      destination = destination.replaceAll("^" + File.separator, "");
     }
 
     // ASCII replacement
     if (SETTINGS.isAsciiReplacement()) {
-      newDestination = StrgUtils.convertToAscii(newDestination, false);
+      destination = StrgUtils.convertToAscii(destination, false);
     }
 
     // trim out unnecessary whitespaces
-    newDestination = newDestination.trim();
-    newDestination = newDestination.replaceAll(" +", " ").trim();
+    destination = destination.trim();
+    destination = destination.replaceAll(" +", " ").trim();
 
     // any whitespace replacements?
     if (SETTINGS.isRenamerSpaceSubstitution()) {
-      newDestination = newDestination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
+      destination = destination.replaceAll(" ", SETTINGS.getRenamerSpaceReplacement());
     }
 
     // replace trailing dots and spaces
-    newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    destination = destination.replaceAll("[ \\.]+$", "");
 
-    return newDestination.trim();
+    return destination.trim();
   }
 
   /**
