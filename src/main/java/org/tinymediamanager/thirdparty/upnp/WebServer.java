@@ -42,10 +42,10 @@ public class WebServer extends NanoHTTPD {
         try {
           UUID uuid = UUID.fromString(path[2]);
           MediaEntity m = null;
-          if ("movie".equals(path[1])) {
+          if ("movies".equals(path[1])) {
             m = MovieList.getInstance().lookupMovie(uuid);
           }
-          else if ("tvshow".equals(path[1])) {
+          else if ("tvshows".equals(path[1])) {
             m = TvShowList.getInstance().lookupTvShow(uuid);
           }
 
