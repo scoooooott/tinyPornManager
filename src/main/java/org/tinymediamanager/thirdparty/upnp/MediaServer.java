@@ -18,6 +18,8 @@ import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.thirdparty.NetworkUtil;
 
 public class MediaServer {
   private static final Logger LOGGER = LoggerFactory.getLogger(MediaServer.class);
@@ -26,8 +28,13 @@ public class MediaServer {
   public static LocalDevice createDevice() throws ValidationException, LocalServiceBindingException, IOException {
     DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("tinyMediaManager"));
     DeviceType type = new UDADeviceType("MediaServer", 1);
-    DeviceDetails details = new DeviceDetails("Test", new ManufacturerDetails("tinyMediaManager", "http://tinymediamanager.org/"),
-        new ModelDetails("BinLight2000", "A demo light with on/off switch.", "v1"));
+    String hostname = NetworkUtil.getMachineHostname();
+    if (hostname == null) {
+      hostname = Upnp.IP;
+    }
+    DeviceDetails details = new DeviceDetails("tinyMediaManager (" + hostname + ")",
+        new ManufacturerDetails("tinyMediaManager", "http://www.tinymediamanager.org/"),
+        new ModelDetails("tinyMediaManager", "tinyMediaManager - Media Server", ReleaseInfo.getVersion()));
 
     LOGGER.info("Hello, i'm " + identity.getUdn().getIdentifierString());
 

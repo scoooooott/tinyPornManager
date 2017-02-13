@@ -9,8 +9,10 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShowList;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
@@ -39,7 +41,14 @@ public class WebServer extends NanoHTTPD {
       if (path.length > 3) {
         try {
           UUID uuid = UUID.fromString(path[2]);
-          org.tinymediamanager.core.movie.entities.Movie m = MovieList.getInstance().lookupMovie(uuid);
+          MediaEntity m = null;
+          if ("movie".equals(path[1])) {
+            m = MovieList.getInstance().lookupMovie(uuid);
+          }
+          else if ("tvshow".equals(path[1])) {
+            m = TvShowList.getInstance().lookupTvShow(uuid);
+          }
+
           if (m != null) {
             String fname = uri.substring(uri.indexOf(path[2]) + path[2].length() + 1);
             MediaFile mf = new MediaFile();

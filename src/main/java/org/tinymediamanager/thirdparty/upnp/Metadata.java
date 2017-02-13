@@ -76,14 +76,15 @@ public class Metadata {
           PersonWithRole[] arr = persons.toArray(new PersonWithRole[persons.size()]);
           m.setProducers(arr);
         }
+
+        for (MediaFile mf : tmmMovie.getMediaFiles(MediaFileType.VIDEO)) {
+          String rel = tmmMovie.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
+          String url = "http://" + Upnp.IP + ":8008/upnp/movies/" + tmmMovie.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
+          Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
+          m.addResource(r);
+        }
       }
 
-      for (MediaFile mf : tmmMovie.getMediaFiles(MediaFileType.VIDEO)) {
-        String rel = tmmMovie.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
-        String url = "http://" + Upnp.IP + ":8008/upnp/movies/" + tmmMovie.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
-        Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
-        m.addResource(r);
-      }
     }
     catch (Exception e) {
       LOGGER.error("Error getting TMM movie", e);
@@ -108,12 +109,11 @@ public class Metadata {
     try {
       // 2/UUID/S/E
       m.setId(Upnp.ID_TVSHOWS + "/" + show.getDbId().toString() + "/" + ep.getSeason() + "/" + ep.getEpisode());
-      m.setParentID(Upnp.ID_TVSHOWS);
+      m.setParentID(Upnp.ID_TVSHOWS + "/" + show.getDbId().toString());
       if (!ep.getYear().isEmpty()) {
         m.addProperty(new DC.DATE(ep.getYear())); // no setDate on Movie (but on other items)???
       }
       m.setTitle("S" + lz(ep.getSeason()) + "E" + lz(ep.getEpisode()) + " " + ep.getTitle());
-      m.setCreator("tmm"); // Primary content creator or owner of the object
 
       if (full) {
         m.setDescription(ep.getPlot());
@@ -136,17 +136,18 @@ public class Metadata {
           PersonWithRole[] arr = persons.toArray(new PersonWithRole[persons.size()]);
           m.setActors(arr);
         }
+
+        for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
+          String rel = show.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
+          String url = "http://" + Upnp.IP + ":8008/upnp/tvshows/" + show.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
+          Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
+          m.addResource(r);
+        }
       }
 
-      for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
-        String rel = show.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
-        String url = "http://" + Upnp.IP + ":8008/upnp/tvshows/" + show.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
-        Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
-        m.addResource(r);
-      }
     }
     catch (Exception e) {
-      LOGGER.error("Error getting TMM movie", e);
+      LOGGER.error("Error getting TMM show", e);
     }
 
     return m;
