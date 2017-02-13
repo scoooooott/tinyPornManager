@@ -144,8 +144,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
    *          the tv show episodes
    */
   public static void setData(List<TvShowEpisode> tvShowEpisodes) {
-    boolean multiEpisode = tvShowEpisodes.size() > 1 ? true : false;
-
     if (context == null) {
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", "Context is null" }));
@@ -230,10 +228,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumbUrl());
       }
 
-      // write thumb url to multi ep NFOs
-      // since the video file contains two or more EPs, we can only store 1 thumb file; in this
-      // case we write the thumb url to the NFOs that Kodi can display the proper one
-      if (multiEpisode && StringUtils.isNotBlank(episode.getArtworkUrl(MediaFileType.THUMB))) {
+      // write thumb url to NFO
+      if (StringUtils.isNotBlank(episode.getArtworkUrl(MediaFileType.THUMB))) {
         xbmc.thumb = episode.getArtworkUrl(MediaFileType.THUMB);
       }
       else {
