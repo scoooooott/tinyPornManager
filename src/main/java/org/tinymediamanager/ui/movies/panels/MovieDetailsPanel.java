@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -59,6 +60,7 @@ public class MovieDetailsPanel extends JPanel {
   private JLabel                      lblOriginalTitle;
   private JLabel                      lblProduction;
   private JLabel                      lblTags;
+  private JLabel                      lblEdition;
   private LinkLabel                   lblMoviePath;
   private JLabel                      lblMovieSet;
   private JLabel                      lblSpokenLanguages;
@@ -97,7 +99,7 @@ public class MovieDetailsPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
     JLabel lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblOriginalTitleT, Font.BOLD);
@@ -141,19 +143,26 @@ public class MovieDetailsPanel extends JPanel {
     lblMovieSet = new JLabel("");
     add(lblMovieSet, "cell 2 5,growx");
 
+    JLabel lblEditionT = new JLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+    TmmFontHelper.changeFont(lblEditionT, Font.BOLD);
+    add(lblEditionT, "cell 0 6");
+
+    lblEdition = new JLabel("");
+    add(lblEdition, "cell 2 6,growx");
+
     JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblTagsT, Font.BOLD);
-    add(lblTagsT, "cell 0 6");
+    add(lblTagsT, "cell 0 7");
 
     lblTags = new JLabel("");
-    add(lblTags, "cell 2 6,growx");
+    add(lblTags, "cell 2 7,growx");
 
     JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblMoviePathT, Font.BOLD);
-    add(lblMoviePathT, "cell 0 7");
+    add(lblMoviePathT, "cell 0 8");
 
     lblMoviePath = new LinkLabel("");
-    add(lblMoviePath, "cell 2 7,growx");
+    add(lblMoviePath, "cell 2 8,growx");
   }
 
   protected void initDataBindings() {
@@ -198,5 +207,10 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_10, lblReleaseDate, jLabelBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<MovieSelectionModel, MovieEdition> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.edition.title");
+    AutoBinding<MovieSelectionModel, MovieEdition, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_9, lblEdition, jLabelBeanProperty);
+    autoBinding_8.bind();
   }
 }

@@ -15,30 +15,41 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.scraper.DynaEnum;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This enum represents all different types of movie editions
  *
  * @author Manuel Laggner
  */
-public enum MovieEdition {
-  NONE("", ""),
-  DIRECTORS_CUT("Director's Cut", ".Director.?s.(Cut|Edition|Version)"),
-  EXTENDED_EDITION("Extended Edition", ".Extended.(Cut|Edition|Version)?"),
-  THEATRICAL_EDITION("Theatrical Edition", ".Theatrical.(Cut|Edition|Version)?"),
-  UNRATED("Unrated", ".Unrated.(Cut|Edition|Version)?"),
-  UNCUT("Uncut", ".Uncut.(Cut|Edition|Version)?"),
-  IMAX("IMAX", "IMAX.(Cut|Edition|Version)?"),
-  SPECIAL_EDITION("Special Edition", ".(Special|Remastered|Collectors|Ultimate).(Cut|Edition|Version)");
+public class MovieEdition extends DynaEnum<MovieEdition> {
+  public final static MovieEdition NONE               = new MovieEdition("NONE", 0, "", "");
+  public final static MovieEdition DIRECTORS_CUT      = new MovieEdition("DIRECTORS_CUT", 1, "Director's Cut", ".Director.?s.(Cut|Edition|Version)");
+  public final static MovieEdition EXTENDED_EDITION   = new MovieEdition("EXTENDED_EDITION", 2, "Extended Edition",
+      ".Extended.(Cut|Edition|Version)?");
+  public final static MovieEdition THEATRICAL_EDITION = new MovieEdition("THEATRICAL_EDITION", 3, "Theatrical Edition",
+      ".Theatrical.(Cut|Edition|Version)?");
+  public final static MovieEdition UNRATED            = new MovieEdition("UNRATED", 4, "Unrated", ".Unrated.(Cut|Edition|Version)?");
+  public final static MovieEdition UNCUT              = new MovieEdition("UNCUT", 5, "Uncut", ".Uncut.(Cut|Edition|Version)?");
+  public final static MovieEdition IMAX               = new MovieEdition("IMAX", 6, "IMAX", "IMAX.(Cut|Edition|Version)?");
+  public final static MovieEdition SPECIAL_EDITION    = new MovieEdition("SPECIAL_EDITION", 7, "Special Edition",
+      ".(Special|Remastered|Collectors|Ultimate).(Cut|Edition|Version)");
 
-  private String  title;
-  private Pattern pattern;
+  private String                   title;
+  private Pattern                  pattern;
 
-  MovieEdition(String title, String pattern) {
+  private MovieEdition(String enumName, int ordinal, String title, String pattern) {
+    super(enumName, ordinal);
     this.title = title;
     if (StringUtils.isBlank(pattern)) {
       this.pattern = null;
@@ -48,32 +59,97 @@ public enum MovieEdition {
     }
   }
 
+  @Override
   public String toString() {
     return title;
   }
 
+  public String getTitle() {
+    return title;
+  }
+
+  @JsonGetter
+  public String getName() {
+    return name();
+  }
+
   /**
-   * Get the right movie edition for the given string
+   * get all movie editions
+   * 
+   * @return an array of all movie editions
+   */
+  public static MovieEdition[] values() {
+    Comparator<MovieEdition> comp = new MovieEditionComparator();
+    MovieEdition[] movieEditions = values(MovieEdition.class);
+    Arrays.sort(movieEditions, comp);
+    return movieEditions;
+  }
+
+  /**
+   * Parse the given string for an appropriate movie edition (via name & regexp)
    * 
    * @param stringToParse
    *          the string to parse out the movie edition
    * @return the found edition
    */
   public static MovieEdition getMovieEditionFromString(String stringToParse) {
-    MovieEdition foundEdition = NONE;
-
     for (MovieEdition edition : MovieEdition.values()) {
-      if (edition == NONE) {
-        continue;
+      if (edition.name().equalsIgnoreCase(stringToParse)) {
+        return edition;
       }
 
-      Matcher matcher = edition.pattern.matcher(stringToParse);
-      if (matcher.find()) {
-        foundEdition = edition;
-        break;
+      if (edition.pattern != null) {
+        Matcher matcher = edition.pattern.matcher(stringToParse);
+        if (matcher.find()) {
+          return edition;
+        }
       }
     }
 
-    return foundEdition;
+    return NONE;
+  }
+
+  /**
+   * Gets the right movie edition for the given string.
+   *
+   * @param name
+   *          the name
+   * @return the genre
+   */
+  @JsonCreator
+  public static MovieEdition getMovieEdition(@JsonProperty("name") String name) {
+    for (MovieEdition edition : values()) {
+      // check if the "enum" name matches
+      if (edition.name().equals(name)) {
+        return edition;
+      }
+      // check if the printable name matches
+      if (edition.title.equalsIgnoreCase(name)) {
+        return edition;
+      }
+    }
+
+    // dynamically create new one
+    return new MovieEdition(name, values().length, name, "");
+  }
+
+  /**
+   * Comparator for sorting our MovieEditions in a localized fashion
+   */
+  public static class MovieEditionComparator implements Comparator<MovieEdition> {
+    @Override
+    public int compare(MovieEdition o1, MovieEdition o2) {
+      // toString is localized name
+      if (o1.toString() == null && o2.toString() == null) {
+        return 0;
+      }
+      if (o1.toString() == null) {
+        return 1;
+      }
+      if (o2.toString() == null) {
+        return -1;
+      }
+      return o1.toString().compareTo(o2.toString());
+    }
   }
 }

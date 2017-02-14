@@ -114,68 +114,68 @@ import ca.odell.glazedlists.swing.AutoCompleteSupport;
  * @author Manuel Laggner
  */
 public class MovieEditorDialog extends TmmDialog {
-  private static final long                 serialVersionUID = -286251957529920347L;
+  private static final long                  serialVersionUID = -286251957529920347L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
+  private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
 
-  private Movie                             movieToEdit;
-  private MovieList                         movieList        = MovieList.getInstance();
-  private List<MovieActor>                  cast             = ObservableCollections.observableList(new ArrayList<MovieActor>());
-  private List<MovieProducer>               producers        = ObservableCollections.observableList(new ArrayList<MovieProducer>());
-  private List<MediaGenres>                 genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MovieTrailer>                trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
-  private List<String>                      tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private EventList<MediaId>                ids              = new BasicEventList<>();
-  private List<MediaFile>                   mediaFiles       = new ArrayList<>();
-  private List<String>                      extrathumbs      = new ArrayList<>();
-  private List<String>                      extrafanarts     = new ArrayList<>();
-  private boolean                           continueQueue    = true;
+  private Movie                              movieToEdit;
+  private MovieList                          movieList        = MovieList.getInstance();
+  private List<MovieActor>                   cast             = ObservableCollections.observableList(new ArrayList<MovieActor>());
+  private List<MovieProducer>                producers        = ObservableCollections.observableList(new ArrayList<MovieProducer>());
+  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
+  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private EventList<MediaId>                 ids              = new BasicEventList<>();
+  private List<MediaFile>                    mediaFiles       = new ArrayList<>();
+  private List<String>                       extrathumbs      = new ArrayList<>();
+  private List<String>                       extrafanarts     = new ArrayList<>();
+  private boolean                            continueQueue    = true;
 
-  private final JPanel                                              details1Panel    = new JPanel();
-  private final JPanel                                              details2Panel    = new JPanel();
-  private JTextField                                                tfTitle;
-  private JTextField                                                tfOriginalTitle;
-  private YearSpinner                                               spYear;
-  private JTextPane                                                 tpPlot;
-  private JTextField                                                tfDirector;
-  private JTable                                                    tableActors;
-  private JLabel                                                    lblMoviePath;
-  private ImageLabel                                                lblPoster;
-  private ImageLabel                                                lblFanart;
-  private JTextField                                                tfWriter;
-  private JSpinner                                                  spRuntime;
-  private JTextPane                                                 tfProductionCompanies;
-  private JList                        <MediaGenres>                             listGenres;
-  private AutocompleteComboBox<MediaGenres>                                    cbGenres;
-  private AutoCompleteSupport<MediaGenres>                          cbGenresAutoCompleteSupport;
-  private JSpinner                                                  spRating;
-  private JComboBox                                                 cbCertification;
-  private JCheckBox                                                 cbWatched;
-  private JTextPane                                                 tpTagline;
-  private JTable                                                    tableTrailer;
-  private JTable                                                    tableProducers;
-  private AutocompleteComboBox<String>                                         cbTags;
-  private AutoCompleteSupport<String>                               cbTagsAutoCompleteSupport;
-  private JList                        <String>                             listTags;
-  private JSpinner                                                  spDateAdded;
-  private JComboBox                                                 cbMovieSet;
-  private JTextField                                                tfSorttitle;
-  private JTextField                                                tfSpokenLanguages;
-  private JTextField                                                tfCountry;
-  private DatePicker                                                dpReleaseDate;
-  private JSpinner                                                  spTop250;
-  private JComboBox                                                 cbSource;
-  private JCheckBox                                                 chckbxVideo3D;
-  private JTable                                                    tableIds;
-  private MediaFileEditorPanel                                      mediaFilesPanel;
-  private JComboBox                                                 cbEdition;
+  private final JPanel                       details1Panel    = new JPanel();
+  private final JPanel                       details2Panel    = new JPanel();
+  private JTextField                         tfTitle;
+  private JTextField                         tfOriginalTitle;
+  private YearSpinner                        spYear;
+  private JTextPane                          tpPlot;
+  private JTextField                         tfDirector;
+  private JTable                             tableActors;
+  private JLabel                             lblMoviePath;
+  private ImageLabel                         lblPoster;
+  private ImageLabel                         lblFanart;
+  private JTextField                         tfWriter;
+  private JSpinner                           spRuntime;
+  private JTextPane                          tfProductionCompanies;
+  private JList<MediaGenres>                 listGenres;
+  private AutocompleteComboBox<MediaGenres>  cbGenres;
+  private AutoCompleteSupport<MediaGenres>   cbGenresAutoCompleteSupport;
+  private JSpinner                           spRating;
+  private JComboBox                          cbCertification;
+  private JCheckBox                          cbWatched;
+  private JTextPane                          tpTagline;
+  private JTable                             tableTrailer;
+  private JTable                             tableProducers;
+  private AutocompleteComboBox<String>       cbTags;
+  private AutoCompleteSupport<String>        cbTagsAutoCompleteSupport;
+  private JList<String>                      listTags;
+  private JSpinner                           spDateAdded;
+  private JComboBox                          cbMovieSet;
+  private JTextField                         tfSorttitle;
+  private JTextField                         tfSpokenLanguages;
+  private JTextField                         tfCountry;
+  private DatePicker                         dpReleaseDate;
+  private JSpinner                           spTop250;
+  private JComboBox                          cbSource;
+  private JCheckBox                          chckbxVideo3D;
+  private JTable                             tableIds;
+  private MediaFileEditorPanel               mediaFilesPanel;
+  private AutocompleteComboBox<MovieEdition> cbEdition;
 
-  private ImageLabel                        lblLogo;
-  private ImageLabel                        lblClearlogo;
-  private ImageLabel                        lblBanner;
-  private ImageLabel                        lblClearart;
-  private ImageLabel                        lblThumb;
-  private ImageLabel                        lblDisc;
+  private ImageLabel                         lblLogo;
+  private ImageLabel                         lblClearlogo;
+  private ImageLabel                         lblBanner;
+  private ImageLabel                         lblClearart;
+  private ImageLabel                         lblThumb;
+  private ImageLabel                         lblDisc;
 
   /**
    * Create the dialog.
@@ -420,6 +420,15 @@ public class MovieEditorDialog extends TmmDialog {
       cbWatched.setSelected(movie.isWatched());
       lblWatched.setLabelFor(cbWatched);
       {
+        JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+        details1Panel.add(lblVideod, "16, 26, right, default");
+      }
+      {
+        chckbxVideo3D = new JCheckBox("");
+        details1Panel.add(chckbxVideo3D, "18, 26");
+      }
+      chckbxVideo3D.setSelected(movie.isVideoIn3D());
+      {
         JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
         details1Panel.add(lblSourceT, "2, 28, right, default");
       }
@@ -433,18 +442,9 @@ public class MovieEditorDialog extends TmmDialog {
         details1Panel.add(lblEditionT, "8, 28, right, default");
       }
       {
-        cbEdition = new JComboBox(MovieEdition.values());
-        details1Panel.add(cbEdition, "10, 28, 3, 1, fill, default");
+        cbEdition = new AutocompleteComboBox(MovieEdition.values());
+        details1Panel.add(cbEdition, "10, 28, 9, 1, fill, default");
       }
-      {
-        JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
-        details1Panel.add(lblVideod, "16, 28, right, default");
-      }
-      {
-        chckbxVideo3D = new JCheckBox("");
-        details1Panel.add(chckbxVideo3D, "18, 28");
-      }
-      chckbxVideo3D.setSelected(movie.isVideoIn3D());
       {
         JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
         details1Panel.add(lblPlot, "2, 30, right, top");
@@ -1033,7 +1033,17 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setMediaSource((MediaSource) cbSource.getSelectedItem());
       movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
-      movieToEdit.setEdition((MovieEdition) cbEdition.getSelectedItem());
+
+      Object movieEdition = cbEdition.getSelectedItem();
+      if (movieEdition instanceof MovieEdition) {
+        movieToEdit.setEdition((MovieEdition) movieEdition);
+      }
+      else if (movieEdition instanceof String) {
+        movieToEdit.setEdition(MovieEdition.getMovieEdition((String) movieEdition));
+      }
+      else {
+        movieToEdit.setEdition(MovieEdition.NONE);
+      }
 
       // sync of media ids
       // first round -> add existing ids
