@@ -89,10 +89,11 @@ import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
+import org.tinymediamanager.core.movie.connector.IMovieConnector;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
-import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
+import org.tinymediamanager.core.movie.connector.MovieToKodiConnector;
+import org.tinymediamanager.core.movie.connector.MovieToMediaportalConnector;
+import org.tinymediamanager.core.movie.connector.MovieToXbmcConnector;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
@@ -1346,16 +1347,26 @@ public class Movie extends MediaEntity implements IMediaInformation {
       LOGGER.info("Not writing any NFO file, because NFO filename preferences were empty...");
       return;
     }
+
+    IMovieConnector connector = null;
+
     if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.MP) {
-      MovieToMpNfoConnector.setData(this);
+      connector = new MovieToMediaportalConnector(this);
+      // MovieToMpNfoConnector.setData(this);
     }
     else if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
-      MovieToXbmcNfoConnector.setData(this);
+      connector = new MovieToXbmcConnector(this);
+      // MovieToXbmcNfoConnector.setData(this);
     }
     else {
-      MovieToKodiNfoConnector.setData(this);
+      connector = new MovieToKodiConnector(this);
+      // MovieToKodiNfoConnector.setData(this);
     }
-    firePropertyChange(HAS_NFO_FILE, false, true);
+
+    if (connector != null) {
+      connector.write(MovieModuleManager.SETTINGS.getNfoFilenames());
+      firePropertyChange(HAS_NFO_FILE, false, true);
+    }
   }
 
   /**

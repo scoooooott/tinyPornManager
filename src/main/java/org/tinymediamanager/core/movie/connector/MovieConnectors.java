@@ -47,40 +47,12 @@ public enum MovieConnectors {
    * @return true/false
    */
   public static boolean isValidNFO(Path nfo) {
-    MovieToKodiNfoConnector kodi = null;
     try {
-      kodi = MovieToKodiNfoConnector.parseNFO(nfo);
+      MovieNfoParser movieNfoParser = MovieNfoParser.parseNfo(nfo);
+      return movieNfoParser.isValidNfo();
     }
     catch (Exception e) {
+      return false;
     }
-
-    if (kodi != null) {
-      return true;
-    }
-
-    // at this moment the Kodi connector is able to parse the old XBMC and Plex NFOs
-    // MovieToXbmcNfoConnector xbmc = null;
-    // try {
-    // xbmc = MovieToXbmcNfoConnector.parseNFO(nfo);
-    // }
-    // catch (Exception e) {
-    // }
-    //
-    // if (xbmc != null) {
-    // return true;
-    // }
-
-    MovieToMpNfoConnector mp = null;
-    try {
-      mp = MovieToMpNfoConnector.parseNFO(nfo);
-    }
-    catch (Exception e) {
-    }
-
-    if (mp != null) {
-      return true;
-    }
-
-    return false;
   }
 }

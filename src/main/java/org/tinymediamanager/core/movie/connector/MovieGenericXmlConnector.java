@@ -156,6 +156,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addProducers();
         addLanguages();
         addTrailer();
+        addSource();
 
         // add connector specific tags
         addOwnTags();
@@ -537,6 +538,15 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
       }
     }
     root.appendChild(trailer);
+  }
+
+  /**
+   * add the media source <source>xxx</source>
+   */
+  protected void addSource() {
+    Element source = document.createElement("source");
+    source.setTextContent(movie.getMediaSource().name());
+    root.appendChild(source);
   }
 
   /**

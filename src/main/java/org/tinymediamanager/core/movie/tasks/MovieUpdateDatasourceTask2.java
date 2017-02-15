@@ -62,9 +62,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.connector.MovieToKodiNfoConnector;
-import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
-import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
+import org.tinymediamanager.core.movie.connector.MovieNfoParser;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -400,44 +398,14 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       if (mf.getType().equals(MediaFileType.NFO)) {
         LOGGER.info("| parsing NFO " + mf.getFileAsPath());
         Movie nfo = null;
-        switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
-          case XBMC:
-            nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-            if (nfo == null) {
-              // try the other
-              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-            }
-            if (nfo == null) {
-              // try the other
-              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-            }
-            break;
-
-          case KODI:
-            nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-            // not needed at the moment since kodi is downwards compatible
-            // if (nfo == null) {
-            // // try the other
-            // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-            // }
-            if (nfo == null) {
-              // try the other
-              nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-            }
-            break;
-
-          case MP:
-            nfo = MovieToMpNfoConnector.getData(mf.getFileAsPath());
-            if (nfo == null) {
-              // try the other
-              nfo = MovieToKodiNfoConnector.getData(mf.getFileAsPath());
-            }
-            // not needed at the moment since kodi is downwards compatible
-            // if (nfo == null) {
-            // // try the other
-            // nfo = MovieToXbmcNfoConnector.getData(mf.getFileAsPath());
-            // }
-            break;
+        try {
+          MovieNfoParser movieNfoParser = MovieNfoParser.parseNfo(mf.getFileAsPath());
+          if (movieNfoParser.isValidNfo()) {
+            nfo = movieNfoParser.toMovie();
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("problem parsing NFO: " + e.getMessage());
         }
 
         // take first nfo 1:1
@@ -1258,8 +1226,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       preDir++;
       String fn = dir.getFileName().toString().toUpperCase(Locale.ROOT);
       if (skipFolders.contains(fn) || fn.matches(skipRegex) || Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore"))
-          || Files.exists(dir.resolve(".nomedia"))
-          || MovieModuleManager.SETTINGS.getSkipFolders().contains(dir.toFile().getAbsolutePath())) {
+          || Files.exists(dir.resolve(".nomedia")) || MovieModuleManager.SETTINGS.getSkipFolders().contains(dir.toFile().getAbsolutePath())) {
         LOGGER.debug("Skipping dir: " + dir);
         return SKIP_SUBTREE;
       }

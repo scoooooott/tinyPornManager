@@ -188,6 +188,24 @@ public class MovieNfoParser {
     return new MovieNfoParser(Jsoup.parse(content, "", Parser.xmlParser()));
   }
 
+  /**
+   * determines whether this was a valid NFO or not<br />
+   * we use several fields which should be filled in a valid NFO for decision
+   * 
+   * @return true/false
+   */
+  public boolean isValidNfo() {
+    if (StringUtils.isBlank(title)) {
+      return false;
+    }
+
+    if (year <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
   private Element getSingleElement(Element parent, String tag) {
     Elements elements = parent.select(parent.tagName() + " > " + tag);
     if (elements.size() != 1) {
@@ -587,6 +605,22 @@ public class MovieNfoParser {
       }
     }
     // iterate over our internal id store (new style)
+    element = getSingleElement(root, "ids");
+    if (element != null) {
+      Elements children = element.children();
+      for (Element entry : children) {
+        if (StringUtils.isNoneBlank(entry.tagName(), entry.ownText())) {
+          // check whether the id is an integer
+          try {
+            ids.put(entry.tagName(), ParserUtils.parseInt(entry.ownText()));
+          }
+          catch (Exception e) {
+            // store as string
+            ids.put(entry.tagName(), entry.ownText());
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -1210,7 +1244,7 @@ public class MovieNfoParser {
     movie.setMediaSource(source);
 
     // movieset
-    if (StringUtils.isNotEmpty(set.name)) {
+    if (set != null && StringUtils.isNotEmpty(set.name)) {
       // search for that movieset
       MovieList movieList = MovieList.getInstance();
       MovieSet movieSet = movieList.getMovieSet(set.name, 0);
