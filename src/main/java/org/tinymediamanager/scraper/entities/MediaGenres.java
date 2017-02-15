@@ -37,54 +37,55 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * @since 1.0
  */
 public class MediaGenres extends DynaEnum<MediaGenres> {
+  private final static Comparator<MediaGenres> COMPARATOR      = new MediaGenres.MediaGenresComparator();
 
-  public final static MediaGenres ACTION          = new MediaGenres("ACTION", 0, "Action");
-  public final static MediaGenres ADVENTURE       = new MediaGenres("ADVENTURE", 1, "Adventure");
-  public final static MediaGenres ANIMATION       = new MediaGenres("ANIMATION", 2, "Animation");
-  public final static MediaGenres ANIME           = new MediaGenres("ANIME", -1, "Anime");
-  public final static MediaGenres ANIMAL          = new MediaGenres("ANIMAL", 3, "Animal");
-  public final static MediaGenres BIOGRAPHY       = new MediaGenres("BIOGRAPHY", 4, "Biography");
-  public final static MediaGenres COMEDY          = new MediaGenres("COMEDY", 5, "Comedy");
-  public final static MediaGenres CRIME           = new MediaGenres("CRIME", 6, "Crime");
-  public final static MediaGenres DISASTER        = new MediaGenres("DISASTER", 7, "Disaster");
-  public final static MediaGenres DOCUMENTARY     = new MediaGenres("DOCUMENTARY", 8, "Documentary");
-  public final static MediaGenres DRAMA           = new MediaGenres("DRAMA", 9, "Drama");
-  public final static MediaGenres EASTERN         = new MediaGenres("EASTERN", 10, "Eastern");
-  public final static MediaGenres EROTIC          = new MediaGenres("EROTIC", 11, "Erotic");
-  public final static MediaGenres FAMILY          = new MediaGenres("FAMILY", 12, "Family");
-  public final static MediaGenres FAN_FILM        = new MediaGenres("FAN_FILM", 13, "Fan Film");
-  public final static MediaGenres FANTASY         = new MediaGenres("FANTASY", 14, "Fantasy");
-  public final static MediaGenres FILM_NOIR       = new MediaGenres("FILM_NOIR", 15, "Film Noir");
-  public final static MediaGenres FOREIGN         = new MediaGenres("FOREIGN", 16, "Foreign");
-  public final static MediaGenres GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow");
-  public final static MediaGenres HISTORY         = new MediaGenres("HISTORY", 18, "History");
-  public final static MediaGenres HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday");
-  public final static MediaGenres HORROR          = new MediaGenres("HORROR", 20, "Horror");
-  public final static MediaGenres INDIE           = new MediaGenres("INDIE", 21, "Indie");
-  public final static MediaGenres MUSIC           = new MediaGenres("MUSIC", 22, "Music");
-  public final static MediaGenres MUSICAL         = new MediaGenres("MUSICAL", 23, "Musical");
-  public final static MediaGenres MYSTERY         = new MediaGenres("MYSTERY", 24, "Mystery");
-  public final static MediaGenres NEO_NOIR        = new MediaGenres("NEO_NOIR", 25, "Neo Noir");
-  public final static MediaGenres NEWS            = new MediaGenres("NEWS", 26, "News");
-  public final static MediaGenres REALITY_TV      = new MediaGenres("REALITY_TV", 27, "Reality TV");
-  public final static MediaGenres ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie");
-  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance");
-  public final static MediaGenres SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction");
-  public final static MediaGenres SERIES          = new MediaGenres("SERIES", 31, "Series");
-  public final static MediaGenres SHORT           = new MediaGenres("SHORT", 32, "Short");
-  public final static MediaGenres SILENT_MOVIE    = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie");
-  public final static MediaGenres SPORT           = new MediaGenres("SPORT", 34, "Sport");
-  public final static MediaGenres SPORTING_EVENT  = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event");
-  public final static MediaGenres SPORTS_FILM     = new MediaGenres("SPORTS_FILM", 36, "Sports Film");
-  public final static MediaGenres SUSPENSE        = new MediaGenres("SUSPENSE", 37, "Suspense");
-  public final static MediaGenres TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show");
-  public final static MediaGenres TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie");
-  public final static MediaGenres THRILLER        = new MediaGenres("THRILLER", 40, "Thriller");
-  public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War");
-  public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western");
+  public final static MediaGenres              ACTION          = new MediaGenres("ACTION", 0, "Action");
+  public final static MediaGenres              ADVENTURE       = new MediaGenres("ADVENTURE", 1, "Adventure");
+  public final static MediaGenres              ANIMATION       = new MediaGenres("ANIMATION", 2, "Animation");
+  public final static MediaGenres              ANIME           = new MediaGenres("ANIME", -1, "Anime");
+  public final static MediaGenres              ANIMAL          = new MediaGenres("ANIMAL", 3, "Animal");
+  public final static MediaGenres              BIOGRAPHY       = new MediaGenres("BIOGRAPHY", 4, "Biography");
+  public final static MediaGenres              COMEDY          = new MediaGenres("COMEDY", 5, "Comedy");
+  public final static MediaGenres              CRIME           = new MediaGenres("CRIME", 6, "Crime");
+  public final static MediaGenres              DISASTER        = new MediaGenres("DISASTER", 7, "Disaster");
+  public final static MediaGenres              DOCUMENTARY     = new MediaGenres("DOCUMENTARY", 8, "Documentary");
+  public final static MediaGenres              DRAMA           = new MediaGenres("DRAMA", 9, "Drama");
+  public final static MediaGenres              EASTERN         = new MediaGenres("EASTERN", 10, "Eastern");
+  public final static MediaGenres              EROTIC          = new MediaGenres("EROTIC", 11, "Erotic");
+  public final static MediaGenres              FAMILY          = new MediaGenres("FAMILY", 12, "Family");
+  public final static MediaGenres              FAN_FILM        = new MediaGenres("FAN_FILM", 13, "Fan Film");
+  public final static MediaGenres              FANTASY         = new MediaGenres("FANTASY", 14, "Fantasy");
+  public final static MediaGenres              FILM_NOIR       = new MediaGenres("FILM_NOIR", 15, "Film Noir");
+  public final static MediaGenres              FOREIGN         = new MediaGenres("FOREIGN", 16, "Foreign");
+  public final static MediaGenres              GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow");
+  public final static MediaGenres              HISTORY         = new MediaGenres("HISTORY", 18, "History");
+  public final static MediaGenres              HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday");
+  public final static MediaGenres              HORROR          = new MediaGenres("HORROR", 20, "Horror");
+  public final static MediaGenres              INDIE           = new MediaGenres("INDIE", 21, "Indie");
+  public final static MediaGenres              MUSIC           = new MediaGenres("MUSIC", 22, "Music");
+  public final static MediaGenres              MUSICAL         = new MediaGenres("MUSICAL", 23, "Musical");
+  public final static MediaGenres              MYSTERY         = new MediaGenres("MYSTERY", 24, "Mystery");
+  public final static MediaGenres              NEO_NOIR        = new MediaGenres("NEO_NOIR", 25, "Neo Noir");
+  public final static MediaGenres              NEWS            = new MediaGenres("NEWS", 26, "News");
+  public final static MediaGenres              REALITY_TV      = new MediaGenres("REALITY_TV", 27, "Reality TV");
+  public final static MediaGenres              ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie");
+  public final static MediaGenres              ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance");
+  public final static MediaGenres              SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction");
+  public final static MediaGenres              SERIES          = new MediaGenres("SERIES", 31, "Series");
+  public final static MediaGenres              SHORT           = new MediaGenres("SHORT", 32, "Short");
+  public final static MediaGenres              SILENT_MOVIE    = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie");
+  public final static MediaGenres              SPORT           = new MediaGenres("SPORT", 34, "Sport");
+  public final static MediaGenres              SPORTING_EVENT  = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event");
+  public final static MediaGenres              SPORTS_FILM     = new MediaGenres("SPORTS_FILM", 36, "Sports Film");
+  public final static MediaGenres              SUSPENSE        = new MediaGenres("SUSPENSE", 37, "Suspense");
+  public final static MediaGenres              TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show");
+  public final static MediaGenres              TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie");
+  public final static MediaGenres              THRILLER        = new MediaGenres("THRILLER", 40, "Thriller");
+  public final static MediaGenres              WAR             = new MediaGenres("WAR", 41, "War");
+  public final static MediaGenres              WESTERN         = new MediaGenres("WESTERN", 42, "Western");
 
-  private String                  name;
-  private String[]                alternateNames;
+  private String                               name;
+  private String[]                             alternateNames;
 
   /**
    * Instantiates a new genres.
@@ -174,9 +175,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the media genres2[]
    */
   public static MediaGenres[] values() {
-    Comparator<MediaGenres> comp = new MediaGenres.MediaGenresComparator();
     MediaGenres[] mg = values(MediaGenres.class);
-    Arrays.sort(mg, comp);
+    Arrays.sort(mg, COMPARATOR);
     return mg;
   }
 
