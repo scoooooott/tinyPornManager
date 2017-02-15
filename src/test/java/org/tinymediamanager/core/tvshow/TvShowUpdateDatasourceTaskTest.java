@@ -15,7 +15,6 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 
 public class TvShowUpdateDatasourceTaskTest {
@@ -62,7 +61,7 @@ public class TvShowUpdateDatasourceTaskTest {
     FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), destDir);
     TvShowModuleManager.SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
 
-    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
+    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
     task.run();
 
     TvShowList tvShowList = TvShowList.getInstance();

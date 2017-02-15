@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
@@ -46,19 +45,6 @@ public class MovieUpdateDatasourceTaskTest {
     TvShowModuleManager.getInstance().shutDown();
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
-  }
-
-  @SuppressWarnings("deprecation")
-  @Test
-  public void udsOld() throws Exception {
-    // clean DB & settings
-    FileUtils.deleteQuietly(new File("target/udsOldSettings"));
-    Settings.getInstance("target/udsOldSettings");
-    setUpBeforeClass();
-
-    MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
-    task.run();
-    showEntries();
   }
 
   @Test
