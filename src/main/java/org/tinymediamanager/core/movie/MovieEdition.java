@@ -33,20 +33,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Manuel Laggner
  */
 public class MovieEdition extends DynaEnum<MovieEdition> {
-  public final static MovieEdition NONE               = new MovieEdition("NONE", 0, "", "");
-  public final static MovieEdition DIRECTORS_CUT      = new MovieEdition("DIRECTORS_CUT", 1, "Director's Cut", ".Director.?s.(Cut|Edition|Version)");
-  public final static MovieEdition EXTENDED_EDITION   = new MovieEdition("EXTENDED_EDITION", 2, "Extended Edition",
+  private final static Comparator<MovieEdition> COMPARATOR         = new MovieEditionComparator();
+
+  public final static MovieEdition              NONE               = new MovieEdition("NONE", 0, "", "");
+  public final static MovieEdition              DIRECTORS_CUT      = new MovieEdition("DIRECTORS_CUT", 1, "Director's Cut",
+      ".Director.?s.(Cut|Edition|Version)");
+  public final static MovieEdition              EXTENDED_EDITION   = new MovieEdition("EXTENDED_EDITION", 2, "Extended Edition",
       ".Extended.(Cut|Edition|Version)?");
-  public final static MovieEdition THEATRICAL_EDITION = new MovieEdition("THEATRICAL_EDITION", 3, "Theatrical Edition",
+  public final static MovieEdition              THEATRICAL_EDITION = new MovieEdition("THEATRICAL_EDITION", 3, "Theatrical Edition",
       ".Theatrical.(Cut|Edition|Version)?");
-  public final static MovieEdition UNRATED            = new MovieEdition("UNRATED", 4, "Unrated", ".Unrated.(Cut|Edition|Version)?");
-  public final static MovieEdition UNCUT              = new MovieEdition("UNCUT", 5, "Uncut", ".Uncut.(Cut|Edition|Version)?");
-  public final static MovieEdition IMAX               = new MovieEdition("IMAX", 6, "IMAX", "IMAX.(Cut|Edition|Version)?");
-  public final static MovieEdition SPECIAL_EDITION    = new MovieEdition("SPECIAL_EDITION", 7, "Special Edition",
+  public final static MovieEdition              UNRATED            = new MovieEdition("UNRATED", 4, "Unrated", ".Unrated.(Cut|Edition|Version)?");
+  public final static MovieEdition              UNCUT              = new MovieEdition("UNCUT", 5, "Uncut", ".Uncut.(Cut|Edition|Version)?");
+  public final static MovieEdition              IMAX               = new MovieEdition("IMAX", 6, "IMAX", "IMAX.(Cut|Edition|Version)?");
+  public final static MovieEdition              SPECIAL_EDITION    = new MovieEdition("SPECIAL_EDITION", 7, "Special Edition",
       ".(Special|Remastered|Collectors|Ultimate).(Cut|Edition|Version)");
 
-  private String                   title;
-  private Pattern                  pattern;
+  private String                                title;
+  private Pattern                               pattern;
 
   private MovieEdition(String enumName, int ordinal, String title, String pattern) {
     super(enumName, ordinal);
@@ -79,9 +82,8 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
    * @return an array of all movie editions
    */
   public static MovieEdition[] values() {
-    Comparator<MovieEdition> comp = new MovieEditionComparator();
     MovieEdition[] movieEditions = values(MovieEdition.class);
-    Arrays.sort(movieEditions, comp);
+    Arrays.sort(movieEditions, COMPARATOR);
     return movieEditions;
   }
 
