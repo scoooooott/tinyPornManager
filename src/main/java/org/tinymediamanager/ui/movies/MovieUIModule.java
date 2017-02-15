@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.CardLayout;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -122,24 +123,22 @@ public class MovieUIModule implements ITmmUIModule {
     layeredPane.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
     detailPanel.add(layeredPane, "cell 0 0, grow");
 
-    // tabbed pane containing the movie data
-    JTabbedPane tabbedPane = new MainTabbedPane() {
-      // private static final long serialVersionUID = 9041548865608767661L;
-      //
-      // @Override
-      // public void updateUI() {
-      // putClientProperty("leftBorder", Boolean.FALSE);
-      // super.updateUI();
-      // }
-    };
-    tabbedPane.addTab(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.addTab(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.addTab(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.addTab(BUNDLE.getString("metatag.trailer"), new MovieTrailerPanel(selectionModel)); //$NON-NLS-1$
+    // need this panel for layouting
+    JPanel dataPanel = new JPanel();
+    dataPanel.setOpaque(false);
+    dataPanel.setLayout(new CardLayout());
 
-    layeredPane.add(tabbedPane, "cell 0 0, grow");
-    layeredPane.setLayer(tabbedPane, 0);
+    // tabbed pane containing the movie data
+    JTabbedPane tabbedPane = new MainTabbedPane();
+    tabbedPane.add(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
+    tabbedPane.add(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
+    tabbedPane.add(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$
+    tabbedPane.add(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(selectionModel)); //$NON-NLS-1$
+    tabbedPane.add(BUNDLE.getString("metatag.trailer"), new MovieTrailerPanel(selectionModel)); //$NON-NLS-1$
+    dataPanel.add(tabbedPane);
+
+    layeredPane.add(dataPanel, "cell 0 0, grow");
+    layeredPane.setLayer(dataPanel, 0);
 
     // glass pane for searching/filtering
     filterPanel = new MovieExtendedSearchPanel(selectionModel);

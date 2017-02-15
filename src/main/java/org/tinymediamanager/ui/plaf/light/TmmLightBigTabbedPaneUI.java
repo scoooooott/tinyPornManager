@@ -39,7 +39,6 @@ import com.jtattoo.plaf.JTattooUtilities;
  */
 public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
   protected static int BORDER_RADIUS = 15;
-  protected static int TAB_GAP       = 0;
 
   private boolean      rightBorder   = true;
   private boolean      leftBorder    = true;
@@ -180,6 +179,11 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
       g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, savedRenderingHint);
     }
 
+  }
+
+  @Override
+  protected int getTabLabelShiftY(int tabPlacement, int tabIndex, boolean isSelected) {
+    return 0;
   }
 
   @Override

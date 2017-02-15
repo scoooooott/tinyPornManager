@@ -120,6 +120,7 @@ public class TvShowUIModule implements ITmmUIModule {
     listPanel = new TvShowTreePanel(tvShowSelectionModel);
 
     detailPanel = new JPanel();
+    detailPanel.setOpaque(false);
     detailPanel.setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
     // layeredpane for displaying the filter dialog at the top
@@ -128,6 +129,7 @@ public class TvShowUIModule implements ITmmUIModule {
     detailPanel.add(layeredPane, "cell 0 0, grow");
 
     dataPanel = new JPanel();
+    dataPanel.setOpaque(false);
     dataPanel.setLayout(new CardLayout());
 
     // panel for TV shows
