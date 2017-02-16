@@ -29,6 +29,8 @@ import org.tinymediamanager.scraper.ApiResourceBundle;
 import org.tinymediamanager.scraper.DynaEnum;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The class/dynaenum MediaGenres. This class stores all default known genres along with some different parsing informations
@@ -121,6 +123,11 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     return name;
   }
 
+  @JsonGetter
+  public String getEnumName() {
+    return name();
+  }
+
   /**
    * Iterates over all found languages and gets the "alternative name" of specified property
    * 
@@ -188,7 +195,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the genre
    */
   @JsonCreator
-  public static MediaGenres getGenre(String name) {
+  public static MediaGenres getGenre(@JsonProperty("enumName") String name) {
     String cleanedName = name.replaceAll("[._-]", " ");
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
