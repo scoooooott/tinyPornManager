@@ -19,9 +19,15 @@ import org.fourthline.cling.registry.RegistrationException;
 import org.fourthline.cling.support.avtransport.callback.Play;
 import org.fourthline.cling.support.avtransport.callback.SetAVTransportURI;
 import org.fourthline.cling.support.avtransport.callback.Stop;
+import org.fourthline.cling.support.contentdirectory.DIDLParser;
+import org.fourthline.cling.support.model.DIDLContent;
 import org.fourthline.cling.transport.RouterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.thirdparty.NetworkUtil;
 
 public class Upnp {
@@ -88,7 +94,8 @@ public class Upnp {
   }
 
   /**
-   * Sets a device as our player for play/stop and other services
+   * Sets a device as our player for play/stop and other services<br>
+   * Use getAvailablePlayers() for a list of them.
    * 
    * @param device
    *          device for playing
@@ -105,15 +112,37 @@ public class Upnp {
    * 
    * @param url
    */
-  public void playFile(org.tinymediamanager.core.movie.entities.Movie tmmMovie, String url) {
+  public void playFile(MediaEntity me, MediaFile mf) {
     if (this.playerService == null) {
-      LOGGER.warn("No player set - did you call setPlayer() ?");
+      LOGGER.warn("No player set - did you call setPlayer(Device) ?");
+      return;
+    }
+    if (me == null || mf == null) {
+      LOGGER.warn("parameters empty!");
       return;
     }
 
+    String url = "";
     String meta = "NO METADATA";
-    if (tmmMovie != null) {
 
+    try {
+      DIDLContent didl = new DIDLContent();
+      DIDLParser dip = new DIDLParser();
+      if (me instanceof Movie) {
+        didl.addItem(Metadata.getUpnpMovie((Movie) me, true));
+      }
+      else if (me instanceof TvShowEpisode) {
+        didl.addItem(Metadata.getUpnpTvShowEpisode(((TvShowEpisode) me).getTvShow(), (TvShowEpisode) me, true));
+      }
+
+      // get url from didl, no need to regenerate this
+      url = didl.getItems().get(0).getResources().get(0).getValue();
+
+      meta = dip.generate(didl);
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not generate metadata / url");
+      return;
     }
 
     ActionCallback setAVTransportURIAction = new SetAVTransportURI(this.playerService, url, meta) {
