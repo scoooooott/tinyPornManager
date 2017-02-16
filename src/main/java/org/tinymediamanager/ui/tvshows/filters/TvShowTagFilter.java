@@ -16,11 +16,10 @@
 package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -28,6 +27,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
@@ -36,9 +36,9 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
  * @author Manuel Laggner
  */
 public class TvShowTagFilter extends AbstractTvShowUIFilter {
-  private TvShowList        tvShowList = TvShowList.getInstance();
+  private TvShowList               tvShowList = TvShowList.getInstance();
 
-  private JComboBox<String> comboBox;
+  private TmmCheckComboBox<String> checkComboBox;
 
   public TvShowTagFilter() {
     super();
@@ -55,7 +55,7 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
   @Override
   public String getFilterValueAsString() {
     try {
-      return (String) comboBox.getSelectedItem();
+      return objectMapper.writeValueAsString(checkComboBox.getSelectedItems());
     }
     catch (Exception e) {
       return null;
@@ -64,12 +64,28 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
+    try {
+      List<String> selectedItems = objectMapper.readValue((String) value,
+          objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+      checkComboBox.setSelectedItems(selectedItems);
+    }
+    catch (Exception ignored) {
+    }
   }
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    // TODO Auto-generated method stub
+    List<String> tags = checkComboBox.getSelectedItems();
+    if (tvShow.getTags().containsAll(tags)) {
+      return true;
+    }
+
+    for (TvShowEpisode episode : episodes) {
+      if (episode.getTags().containsAll(tags)) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -80,23 +96,21 @@ public class TvShowTagFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
+    checkComboBox = new TmmCheckComboBox<>();
+    return checkComboBox;
   }
 
   private void buildAndInstallTagsArray() {
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
+    List<String> selectedItems = checkComboBox.getSelectedItems();
 
-    Set<String> tags = new TreeSet<String>(tvShowList.getTagsInTvShows());
+    List<String> tags = new ArrayList<>(tvShowList.getTagsInTvShows());
     tags.addAll(tvShowList.getTagsInEpisodes());
-    for (String tag : tags) {
-      comboBox.addItem(tag);
-    }
+    Collections.sort(tags);
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
+    checkComboBox.setItems(tags);
+
+    if (!selectedItems.isEmpty()) {
+      checkComboBox.setSelectedItems(selectedItems);
     }
   }
-
 }

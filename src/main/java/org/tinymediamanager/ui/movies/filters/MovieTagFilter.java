@@ -16,15 +16,17 @@
 package org.tinymediamanager.ui.movies.filters;
 
 import java.beans.PropertyChangeListener;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -33,9 +35,9 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
  * @author Manuel Laggner
  */
 public class MovieTagFilter extends AbstractMovieUIFilter {
-  private MovieList         movieList = MovieList.getInstance();
+  private MovieList                movieList = MovieList.getInstance();
 
-  private JComboBox<String> comboBox;
+  private TmmCheckComboBox<String> checkComboBox;
 
   public MovieTagFilter() {
     super();
@@ -52,7 +54,7 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
   @Override
   public String getFilterValueAsString() {
     try {
-      return (String) comboBox.getSelectedItem();
+      return objectMapper.writeValueAsString(checkComboBox.getSelectedItems());
     }
     catch (Exception e) {
       return null;
@@ -61,13 +63,19 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
+    try {
+      List<String> selectedItems = objectMapper.readValue((String) value,
+          objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+      checkComboBox.setSelectedItems(selectedItems);
+    }
+    catch (Exception ignored) {
+    }
   }
 
   @Override
   public boolean accept(Movie movie) {
-    String tag = (String) comboBox.getSelectedItem();
-    if (movie.getTags().contains(tag)) {
+    List<String> tags = checkComboBox.getSelectedItems();
+    if (movie.getTags().containsAll(tags)) {
       return true;
     }
 
@@ -81,20 +89,20 @@ public class MovieTagFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
+    checkComboBox = new TmmCheckComboBox<>();
+    return checkComboBox;
   }
 
   private void buildAndInstallTagsArray() {
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
+    List<String> selectedItems = checkComboBox.getSelectedItems();
 
-    for (String tag : new HashSet<String>(movieList.getTagsInMovies())) {
-      comboBox.addItem(tag);
-    }
+    List<String> tags = new ArrayList<>(movieList.getTagsInMovies());
+    Collections.sort(tags);
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
+    checkComboBox.setItems(tags);
+
+    if (!selectedItems.isEmpty()) {
+      checkComboBox.setSelectedItems(selectedItems);
     }
   }
 }

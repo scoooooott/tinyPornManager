@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -28,6 +27,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -36,9 +36,9 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
  * @author Manuel Laggner
  */
 public class MovieDatasourceFilter extends AbstractMovieUIFilter {
-  private MovieSettings     movieSettings = MovieModuleManager.SETTINGS;
+  private MovieSettings            movieSettings = MovieModuleManager.SETTINGS;
 
-  private JComboBox<String> comboBox;
+  private TmmCheckComboBox<String> checkComboBox;
 
   public MovieDatasourceFilter() {
     super();
@@ -55,7 +55,7 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
   @Override
   public String getFilterValueAsString() {
     try {
-      return (String) comboBox.getSelectedItem();
+      return objectMapper.writeValueAsString(checkComboBox.getSelectedItems());
     }
     catch (Exception e) {
       return null;
@@ -64,13 +64,19 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    comboBox.setSelectedItem(value);
+    try {
+      List<String> selectedItems = objectMapper.readValue((String) value,
+          objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+      checkComboBox.setSelectedItems(selectedItems);
+    }
+    catch (Exception ignored) {
+    }
   }
 
   @Override
   public boolean accept(Movie movie) {
-    String datasource = (String) comboBox.getSelectedItem();
-    if (datasource.equals(movie.getDataSource())) {
+    List<String> datasources = checkComboBox.getSelectedItems();
+    if (datasources.contains(movie.getDataSource())) {
       return true;
     }
 
@@ -84,22 +90,20 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>();
-    return comboBox;
+    checkComboBox = new TmmCheckComboBox<>();
+    return checkComboBox;
   }
 
   private void buildAndInstallDatasourceArray() {
-    String oldValue = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
+    List<String> selectedItems = checkComboBox.getSelectedItems();
 
     List<String> datasources = new ArrayList<>(movieSettings.getMovieDataSource());
     Collections.sort(datasources);
-    for (String datasource : datasources) {
-      comboBox.addItem(datasource);
-    }
 
-    if (oldValue != null) {
-      comboBox.setSelectedItem(oldValue);
+    checkComboBox.setItems(datasources);
+
+    if (!selectedItems.isEmpty()) {
+      checkComboBox.setSelectedItems(selectedItems);
     }
   }
 }

@@ -15,12 +15,15 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import javax.swing.JComboBox;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -29,7 +32,7 @@ import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
  * @author Manuel Laggner
  */
 public class MovieGenreFilter extends AbstractMovieUIFilter {
-  private JComboBox<MediaGenres> combobox;
+  private TmmCheckComboBox<MediaGenres> checkComboBox;
 
   @Override
   public String getId() {
@@ -38,8 +41,12 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
 
   @Override
   public String getFilterValueAsString() {
+    List<String> values = new ArrayList<>();
+    for (MediaGenres genre : checkComboBox.getSelectedItems()) {
+      values.add(genre.name());
+    }
     try {
-      return ((MediaGenres) combobox.getSelectedItem()).name();
+      return objectMapper.writeValueAsString(values);
     }
     catch (Exception e) {
       return null;
@@ -48,24 +55,27 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-    if (value instanceof MediaGenres) {
-      combobox.setSelectedItem(value);
-    }
-    else if (value instanceof String) {
-      MediaGenres mediaGenres = MediaGenres.getGenre((String) value);
-      if (mediaGenres != null) {
-        combobox.setSelectedItem(mediaGenres);
+    List<MediaGenres> selectedItems = new ArrayList<>();
+
+    try {
+      List<String> values = objectMapper.readValue((String) value, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+
+      for (String genre : values) {
+        MediaGenres mediaGenres = MediaGenres.getGenre(genre);
+        selectedItems.add(mediaGenres);
       }
+
     }
+    catch (Exception ignored) {
+    }
+
+    checkComboBox.setSelectedItems(selectedItems);
   }
 
   @Override
   public boolean accept(Movie movie) {
-    MediaGenres genre = (MediaGenres) combobox.getSelectedItem();
-    if (movie.getGenres().contains(genre)) {
+    List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
+    if (movie.getGenres().containsAll(selectedItems)) {
       return true;
     }
 
@@ -79,7 +89,7 @@ public class MovieGenreFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    combobox = new JComboBox<>(MediaGenres.values());
-    return combobox;
+    checkComboBox = new TmmCheckComboBox<>(MediaGenres.values());
+    return checkComboBox;
   }
 }

@@ -15,15 +15,16 @@
  */
 package org.tinymediamanager.ui.tvshows.filters;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.ui.components.combobox.TmmCheckComboBox;
 import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
 
 /**
@@ -32,7 +33,7 @@ import org.tinymediamanager.ui.tvshows.AbstractTvShowUIFilter;
  * @author Manuel Laggner
  */
 public class TvShowGenreFilter extends AbstractTvShowUIFilter {
-  private JComboBox<MediaGenres> comboBox;
+  private TmmCheckComboBox<MediaGenres> checkComboBox;
 
   @Override
   public String getId() {
@@ -41,8 +42,12 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
 
   @Override
   public String getFilterValueAsString() {
+    List<String> values = new ArrayList<>();
+    for (MediaGenres genre : checkComboBox.getSelectedItems()) {
+      values.add(genre.name());
+    }
     try {
-      return ((MediaGenres) comboBox.getSelectedItem()).name();
+      return objectMapper.writeValueAsString(values);
     }
     catch (Exception e) {
       return null;
@@ -51,23 +56,27 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
 
   @Override
   public void setFilterValue(Object value) {
-    if (value == null) {
-      return;
-    }
-    if (value instanceof MediaGenres) {
-      comboBox.setSelectedItem(value);
-    }
-    else if (value instanceof String) {
-      MediaGenres mediaGenres = MediaGenres.getGenre((String) value);
-      if (mediaGenres != null) {
-        comboBox.setSelectedItem(mediaGenres);
+    List<MediaGenres> selectedItems = new ArrayList<>();
+
+    try {
+      List<String> values = objectMapper.readValue((String) value, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+
+      for (String genre : values) {
+        MediaGenres mediaGenres = MediaGenres.getGenre(genre);
+        selectedItems.add(mediaGenres);
       }
+
     }
+    catch (Exception ignored) {
+    }
+
+    checkComboBox.setSelectedItems(selectedItems);
   }
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes) {
-    if (tvShow.getGenres().contains(comboBox.getSelectedItem())) {
+    List<MediaGenres> selectedItems = checkComboBox.getSelectedItems();
+    if (tvShow.getGenres().containsAll(selectedItems)) {
       return true;
     }
 
@@ -81,7 +90,7 @@ public class TvShowGenreFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JComponent createFilterComponent() {
-    comboBox = new JComboBox<>(MediaGenres.values());
-    return comboBox;
+    checkComboBox = new TmmCheckComboBox<>(MediaGenres.values());
+    return checkComboBox;
   }
 }

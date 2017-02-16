@@ -357,6 +357,7 @@ public class MovieSettings extends AbstractSettings {
     if (!movieDataSources.contains(path)) {
       movieDataSources.add(path);
       firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
+      firePropertyChange(Constants.DATA_SOURCE, null, movieDataSources);
     }
   }
 
@@ -365,6 +366,7 @@ public class MovieSettings extends AbstractSettings {
     movieList.removeDatasource(path);
     movieDataSources.remove(path);
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
+    firePropertyChange(Constants.DATA_SOURCE, null, movieDataSources);
   }
 
   public List<String> getMovieDataSource() {

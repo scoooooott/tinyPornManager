@@ -26,10 +26,13 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.SwingPropertyChangeSupport;
 import javax.swing.text.JTextComponent;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * An abstract implementation for easier usage of the ITmmUIFilter
@@ -38,6 +41,10 @@ import javax.swing.text.JTextComponent;
  */
 public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
   protected static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /**
+   * an object mapper which can be used to transform filters via/to JSON
+   */
+  protected static ObjectMapper         objectMapper          = new ObjectMapper();
 
   protected final JCheckBox             checkBox;
   protected final JLabel                label;
@@ -118,7 +125,7 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
    * delegate the filter changed event to our listeners
    */
   protected void filterChanged() {
-    firePropertyChange(ITmmUIFilter.FILTER_CHANGED, false, true);
+    SwingUtilities.invokeLater(() -> firePropertyChange(ITmmUIFilter.FILTER_CHANGED, false, true));
   }
 
   /**

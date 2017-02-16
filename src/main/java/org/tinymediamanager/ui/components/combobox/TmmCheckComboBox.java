@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -54,10 +55,10 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
   protected Object                                  nullObject       = new Object();
 
   /**
-   * for using window builder
+   * create the CheckComboBox without any items
    */
-  @Deprecated
   public TmmCheckComboBox() {
+    this(new HashSet<>(), false);
   }
 
   /**
@@ -67,7 +68,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
    *          a list of initial items
    */
   public TmmCheckComboBox(final List<E> items) {
-    this(new HashSet<E>(items), false);
+    this(new LinkedHashSet<>(items), false);
   }
 
   /**
@@ -87,7 +88,17 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
    *          an array of initial items
    */
   public TmmCheckComboBox(final E[] items) {
-    this(new HashSet<E>(Arrays.asList(items)), false);
+    this(new LinkedHashSet<>(Arrays.asList(items)), false);
+  }
+
+  /**
+   * set new items to the CheckComboBox
+   * 
+   * @param items
+   *          the items to be set
+   */
+  public void setItems(List<E> items) {
+    resetObjs(new LinkedHashSet<>(items), false);
   }
 
   protected TmmCheckComboBox(final Set<E> objs, boolean selected) {
@@ -131,7 +142,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
    * @return an array of all checked items
    */
   public List<E> getSelectedItems() {
-    Set<E> ret = new HashSet<>();
+    Set<E> ret = new LinkedHashSet<>();
     for (Map.Entry<E, Boolean> entry : selectedItems.entrySet()) {
       E obj = entry.getKey();
       Boolean selected = entry.getValue();
@@ -141,7 +152,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
       }
     }
 
-    return new ArrayList<E>(ret);
+    return new ArrayList<>(ret);
   }
 
   /**
@@ -180,7 +191,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
     initCheckBoxes();
 
-    this.addItem(new TmmCheckComboBoxItem<E>(""));
+    this.addItem(new TmmCheckComboBoxItem<>(""));
     for (TmmCheckComboBoxItem<E> checkBox : checkBoxes) {
       this.addItem(checkBox);
     }
@@ -197,7 +208,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
   }
 
   protected void initCheckBoxes() {
-    checkBoxes = new Vector<TmmCheckComboBoxItem<E>>();
+    checkBoxes = new Vector<>();
 
     boolean selectedAll = true;
     boolean selectedNone = true;
@@ -214,16 +225,16 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
         selectedAll = false;
       }
 
-      cb = new TmmCheckComboBoxItem<E>(obj);
+      cb = new TmmCheckComboBoxItem<>(obj);
       cb.setSelected(selected);
       checkBoxes.add(cb);
     }
 
-    cb = new TmmCheckComboBoxItem<E>(BUNDLE.getString("Button.selectall")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectall")); //$NON-NLS-1$
     cb.setSelected(selectedAll);
     checkBoxes.add(cb);
 
-    cb = new TmmCheckComboBoxItem<E>(BUNDLE.getString("Button.selectnone")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectnone")); //$NON-NLS-1$
     cb.setSelected(selectedNone);
     checkBoxes.add(cb);
   }
@@ -347,7 +358,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
       String str;
       List<E> objs = getSelectedItems();
-      Vector<String> strs = new Vector<String>();
+      Vector<String> strs = new Vector<>();
       if (objs.isEmpty()) {
         str = BUNDLE.getString("ComboBox.select"); //$NON-NLS-1$
       }
