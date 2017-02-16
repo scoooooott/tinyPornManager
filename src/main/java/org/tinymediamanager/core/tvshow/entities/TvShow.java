@@ -123,7 +123,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private Certification                      certification         = Certification.NOT_RATED;
 
   @JsonProperty
-  private List<String>                       genres                = new CopyOnWriteArrayList<>();
+  private List<MediaGenres>                  genres                = new CopyOnWriteArrayList<>();
   @JsonProperty
   private List<String>                       tags                  = new CopyOnWriteArrayList<>();
   @JsonProperty
@@ -136,7 +136,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   private List<TvShowEpisode>                episodes              = new CopyOnWriteArrayList<>();
   private HashMap<Integer, MediaFile>        seasonPosters         = new HashMap<>(0);
   private List<TvShowSeason>                 seasons               = new CopyOnWriteArrayList<>();
-  private List<MediaGenres>                  genresForAccess       = new CopyOnWriteArrayList<>();
   private String                             titleSortable         = "";
   private Date                               lastWatched           = null;
 
@@ -171,12 +170,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     // remove empty tag and null values
     Utils.removeEmptyStringsFromList(tags);
-    Utils.removeEmptyStringsFromList(genres);
-
-    // load genres
-    for (String genre : new ArrayList<>(genres)) {
-      addGenre(MediaGenres.getGenre(genre));
-    }
 
     // load dummy episodes
     if (TvShowModuleManager.SETTINGS.isDisplayMissingEpisodes()) {
@@ -529,7 +522,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the genres
    */
   public List<MediaGenres> getGenres() {
-    return genresForAccess;
+    return genres;
   }
 
   /**
@@ -539,11 +532,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the new value
    */
   public void addGenre(MediaGenres newValue) {
-    if (!genresForAccess.contains(newValue)) {
-      genresForAccess.add(newValue);
-      if (!genres.contains(newValue.name())) {
-        genres.add(newValue.name());
-      }
+    if (!genres.contains(newValue)) {
+      genres.add(newValue);
       firePropertyChange(GENRE, null, newValue);
       firePropertyChange(GENRES_AS_STRING, null, newValue);
     }
@@ -558,7 +548,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonSetter
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
-    ListUtils.mergeLists(genresForAccess, genres);
+    ListUtils.mergeLists(genres, genres);
 
     firePropertyChange(GENRE, null, genres);
     firePropertyChange(GENRES_AS_STRING, null, genres);
@@ -571,9 +561,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the genre
    */
   public void removeGenre(MediaGenres genre) {
-    if (genresForAccess.contains(genre)) {
-      genresForAccess.remove(genre);
-      genres.remove(genre.name());
+    if (genres.contains(genre)) {
+      genres.remove(genre);
       firePropertyChange(GENRE, null, genre);
       firePropertyChange(GENRES_AS_STRING, null, genre);
     }
@@ -586,7 +575,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public String getGenresAsString() {
     StringBuilder sb = new StringBuilder();
-    for (MediaGenres genre : genresForAccess) {
+    for (MediaGenres genre : genres) {
       if (!StringUtils.isEmpty(sb)) {
         sb.append(", ");
       }
