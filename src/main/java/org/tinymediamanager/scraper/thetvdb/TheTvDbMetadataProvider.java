@@ -298,7 +298,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       Date date = StrgUtils.parseDate(show.getFirstAired());
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(date);
-      md.setYear(calendar.get(Calendar.YEAR));
+      int y = calendar.get(Calendar.YEAR);
+      md.setYear(y);
+      if (y != 0 && md.getTitle().contains(String.valueOf(y))) {
+        LOGGER.debug("Weird TVDB entry - removing date " + y + " from title");
+        String t = show.getSeriesName().replaceAll(String.valueOf(y), "").replaceAll("\\(\\)", "").trim();
+        md.setTitle(t);
+      }
     }
     catch (Exception e) {
     }
