@@ -28,7 +28,6 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -71,19 +70,14 @@ public class MovieSettingsPanel extends JPanel {
     initDataBindings();
 
     // logic initializations
-    if (!Globals.isDonator()) {
-      chckbxTraktSync.setSelected(false);
-      chckbxTraktSync.setEnabled(false);
-      btnClearTraktData.setEnabled(false);
-      btnClearTraktData.addActionListener(e -> {
-        int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.clearmovies.hint"),
-            BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
-        if (confirm == JOptionPane.YES_OPTION) {
-          TmmTask task = new ClearTraktTvTask(true, false);
-          TmmTaskManager.getInstance().addUnnamedTask(task);
-        }
-      });
-    }
+    btnClearTraktData.addActionListener(e -> {
+      int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.clearmovies.hint"),
+          BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+      if (confirm == JOptionPane.YES_OPTION) {
+        TmmTask task = new ClearTraktTvTask(true, false);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+    });
 
     btnPresetXbmc.addActionListener(evt -> settings.setDefaultSettingsForXbmc());
     btnPresetKodi.addActionListener(evt -> settings.setDefaultSettingsForKodi());

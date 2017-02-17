@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -32,12 +30,10 @@ import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -86,14 +82,6 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblByManuel, "cell 2 2 3 1,alignx center");
     }
     {
-      if (Globals.isDonator()) {
-        Properties p = License.decrypt();
-        JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user")); //$NON-NLS-1$
-        TmmFontHelper.changeFont(lblRegged, 1.166, Font.BOLD);
-        contentPanel.add(lblRegged, "cell 4 4");
-      }
-    }
-    {
       JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$
       contentPanel.add(lblVersion, "cell 2 4");
     }
@@ -107,16 +95,14 @@ public class AboutDialog extends TmmDialog {
     }
     {
       final LinkLabel lblHomepage = new LinkLabel("http://www.tinymediamanager.org/"); //$NON-NLS-1$
-      lblHomepage.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent arg0) {
-          try {
-            TmmUIHelper.browseUrl(lblHomepage.getNormalText());
-          }
-          catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            MessageManager.instance.pushMessage(
-                new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
-          }
+      lblHomepage.addActionListener(arg0 -> {
+        try {
+          TmmUIHelper.browseUrl(lblHomepage.getNormalText());
+        }
+        catch (Exception e) {
+          LOGGER.error(e.getMessage());
+          MessageManager.instance.pushMessage(
+              new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
         }
       });
       contentPanel.add(lblHomepage, "cell 2 7 3 1");

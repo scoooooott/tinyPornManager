@@ -36,7 +36,6 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -49,7 +48,6 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -172,24 +170,7 @@ public class TvShowScraperSettingsPanel extends ScrollablePanel {
       add(lblMetadataScraper, "cell 0 0 4 1");
     }
     {
-      tableScraper = new TmmTable() {
-        private static final long serialVersionUID = -144223066269069772L;
-
-        @Override
-        public java.awt.Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
-          java.awt.Component comp = super.prepareRenderer(renderer, row, col);
-          String value = getModel().getValueAt(row, 2).toString();
-          if (!Globals.isDonator() && value.startsWith("Kodi")) { // $NON-NLS-1$ // FIXME: use scraper.isEnabled() somehow?
-            // comp.setBackground(Color.lightGray);
-            comp.setEnabled(false);
-          }
-          else {
-            // comp.setBackground(Color.white);
-            comp.setEnabled(true);
-          }
-          return comp;
-        }
-      };
+      tableScraper = new TmmTable();
       tableScraper.setRowHeight(29);
 
       JScrollPane scrollPaneScraper = new JScrollPane(tableScraper);

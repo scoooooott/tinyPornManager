@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
@@ -41,11 +40,6 @@ public class TvShowSyncWatchedTraktTvAction extends AbstractAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctraktwatched.desc")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.SYNC);
     putValue(LARGE_ICON_KEY, IconManager.SYNC);
-
-    if (!Globals.isDonator()) {
-      setEnabled(false);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donatorfunction.hint")); //$NON-NLS-1$
-    }
   }
 
   @Override

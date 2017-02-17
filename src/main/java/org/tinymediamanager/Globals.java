@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager;
 
-import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Settings;
 
 /**
@@ -24,21 +23,9 @@ import org.tinymediamanager.core.Settings;
  * @author Manuel Laggner
  */
 public class Globals {
-  public static final Settings settings = Settings.getInstance();
-
-  @SuppressWarnings("deprecation")
-  private static final boolean DONATOR  = License.isValid();
-
   private static final boolean DEBUG    = Boolean.parseBoolean(System.getProperty("tmm.debug", "false"));
 
-  /**
-   * Have we donated?
-   * 
-   * @return true/false
-   */
-  public static boolean isDonator() {
-    return DONATOR;
-  }
+  public static final Settings settings = Settings.getInstance();
 
   /**
    * are we in our internal debug mode?

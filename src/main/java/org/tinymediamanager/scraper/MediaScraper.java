@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
@@ -174,14 +173,10 @@ public class MediaScraper {
       try {
         for (IMediaProvider p : kodi.getPluginsForType(MediaType.toMediaType(type.name()))) {
           MediaScraper ms = new MediaScraper(type, p);
-          if (!Globals.isDonator()) {
-            ms.enabled = false;
-            ms.description = "<font color=\"red\">" + BUNDLE.getString("tmm.donatorfunction.hint") + "</font><br><br>" + ms.description; //$NON-NLS-1$
-          }
           scraper.add(ms);
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
     }
 

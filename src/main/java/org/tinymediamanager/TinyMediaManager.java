@@ -52,7 +52,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -153,15 +152,9 @@ public class TinyMediaManager {
     LOGGER.info("=== tinyMediaManager (c) 2012-2016 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
-
-    if (Globals.isDonator()) {
-      LOGGER.info("tmm.supporter    : THANKS FOR DONATING - ALL FEATURES UNLOCKED :)");
-    }
-
     LOGGER.info("os.name          : " + System.getProperty("os.name"));
     LOGGER.info("os.version       : " + System.getProperty("os.version"));
     LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
-    LOGGER.trace("network.id       : " + License.getMac());
     LOGGER.info("java.version     : " + System.getProperty("java.version"));
 
     if (Globals.isRunningJavaWebStart()) {

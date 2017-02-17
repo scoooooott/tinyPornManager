@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -54,33 +53,25 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
     initComponents();
 
     // data init
-    if (!Globals.isDonator()) {
-      btnGetTraktPin.setEnabled(false);
-      btnTestTraktConnection.setEnabled(false);
-      lblTraktDonator.setText(BUNDLE.getString("tmm.donatorfunction.hint")); //$NON-NLS-1$
-      lblTraktDonator.setForeground(Color.RED);
+    if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
+      lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.good")); //$NON-NLS-1$
     }
     else {
-      if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
-        lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.good")); //$NON-NLS-1$
-      }
-      else {
-        lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.bad")); //$NON-NLS-1$
-      }
-
-      btnGetTraktPin.addActionListener(e -> getTraktPin());
-      btnTestTraktConnection.addActionListener(e -> {
-        try {
-          TraktTv.refreshAccessToken();
-          JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.good"),
-              BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
-        }
-        catch (Exception e1) {
-          JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.bad"),
-              BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
-        }
-      });
+      lblTraktStatus.setText(BUNDLE.getString("Settings.trakt.status.bad")); //$NON-NLS-1$
     }
+
+    btnGetTraktPin.addActionListener(e -> getTraktPin());
+    btnTestTraktConnection.addActionListener(e -> {
+      try {
+        TraktTv.refreshAccessToken();
+        JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.good"),
+            BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+      }
+      catch (Exception e1) {
+        JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.bad"),
+            BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+      }
+    });
   }
 
   private void getTraktPin() {

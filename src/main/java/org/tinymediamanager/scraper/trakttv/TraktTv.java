@@ -151,10 +151,6 @@ public class TraktTv {
    * @return true/false if trakt could be called
    */
   private boolean isEnabled() {
-    if (!Globals.isDonator()) {
-      LOGGER.warn("Won't spawn TRAKT.TV since you are not a donator!");
-      return false;
-    }
     if (StringUtils.isNoneBlank(Globals.settings.getTraktAccessToken(), Globals.settings.getTraktRefreshToken())) {
       // everything seems fine; also set the access token
       TRAKT.accessToken(Globals.settings.getTraktAccessToken());

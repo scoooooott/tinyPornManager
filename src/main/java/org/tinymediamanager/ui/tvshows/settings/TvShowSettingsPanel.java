@@ -27,7 +27,6 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -66,11 +65,6 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     initDataBindings();
 
     // logic initializations
-    if (!Globals.isDonator()) {
-      chckbxTraktTv.setSelected(false);
-      chckbxTraktTv.setEnabled(false);
-      btnClearTraktTvShows.setEnabled(false);
-    }
     btnClearTraktTvShows.addActionListener(e -> {
       int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.cleartvshows.hint"),
           BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$

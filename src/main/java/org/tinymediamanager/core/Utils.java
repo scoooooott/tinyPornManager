@@ -511,7 +511,6 @@ public class Utils {
                   + "&cd2=" + getEncProp("os.arch") 
                   + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
                   + "&cd4=" + ReleaseInfo.getVersion() // TMM version eg 2.5.5
-                  + "&cd5=" + (Globals.isDonator() ? "1" : "0")
                   + "&z=" + System.currentTimeMillis();
               if (!GraphicsEnvironment.isHeadless()) {
                 ga += "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height; 

@@ -22,7 +22,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.tasks.MovieFindMissingTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -65,10 +64,6 @@ public class MovieFindMissingAction extends AbstractAction {
     }
     else {
       putValue(NAME, BUNDLE.getString("movie.findmissing.all")); //$NON-NLS-1$
-    }
-    if (!Globals.isDonator()) {
-      setEnabled(false);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donatorfunction.hint")); //$NON-NLS-1$
     }
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);

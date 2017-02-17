@@ -15,10 +15,6 @@
  */
 package org.tinymediamanager.ui.wizard;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,9 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -45,7 +38,6 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -120,24 +112,9 @@ class MovieScraperPanel extends JPanel {
     }
 
     // item listener
-    cbMovieNfoFilename1.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbMovieNfoFilename3.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
-    cbMovieNfoFilename2.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    });
+    cbMovieNfoFilename1.addItemListener(e -> checkChanges());
+    cbMovieNfoFilename3.addItemListener(e -> checkChanges());
+    cbMovieNfoFilename2.addItemListener(e -> checkChanges());
 
     // adjust table columns
     // Checkbox and Logo shall have minimal width
@@ -146,20 +123,17 @@ class MovieScraperPanel extends JPanel {
     TableColumnResizer.adjustColumnPreferredWidths(tableScraper, 5);
 
     // implement listener to simulate button group
-    tableScraper.getModel().addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent arg0) {
-        // click on the checkbox
-        if (arg0.getColumn() == 0) {
-          int row = arg0.getFirstRow();
-          MovieScraper changedScraper = scrapers.get(row);
-          // if flag default scraper was changed, change all other flags
-          if (changedScraper.getDefaultScraper()) {
-            settings.setMovieScraper(changedScraper.getScraperId());
-            for (MovieScraper scraper : scrapers) {
-              if (scraper != changedScraper) {
-                scraper.setDefaultScraper(Boolean.FALSE);
-              }
+    tableScraper.getModel().addTableModelListener(arg0 -> {
+      // click on the checkbox
+      if (arg0.getColumn() == 0) {
+        int row = arg0.getFirstRow();
+        MovieScraper changedScraper = scrapers.get(row);
+        // if flag default scraper was changed, change all other flags
+        if (changedScraper.getDefaultScraper()) {
+          settings.setMovieScraper(changedScraper.getScraperId());
+          for (MovieScraper scraper : scrapers) {
+            if (scraper != changedScraper) {
+              scraper.setDefaultScraper(Boolean.FALSE);
             }
           }
         }
@@ -197,24 +171,7 @@ class MovieScraperPanel extends JPanel {
     JScrollPane scrollPaneScraper = new JScrollPane();
     panelMovieScrapers.add(scrollPaneScraper, "2, 4, 5, 1, fill, fill");
 
-    tableScraper = new JTable() {
-      private static final long serialVersionUID = -144223066269069772L;
-
-      @Override
-      public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
-        Component comp = super.prepareRenderer(renderer, row, col);
-        String value = getModel().getValueAt(row, 2).toString();
-        if (!Globals.isDonator() && value.startsWith("Kodi")) {
-          comp.setBackground(Color.lightGray);
-          comp.setEnabled(false);
-        }
-        else {
-          comp.setBackground(Color.white);
-          comp.setEnabled(true);
-        }
-        return comp;
-      }
-    };
+    tableScraper = new JTable();
     tableScraper.setRowHeight(29);
     scrollPaneScraper.setViewportView(tableScraper);
 
