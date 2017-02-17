@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
@@ -54,6 +55,9 @@ public class TmmLightComboBoxUI extends BaseComboBoxUI {
     if (comboBox.getEditor() != null) {
       if (comboBox.getEditor().getEditorComponent() instanceof JTextField) {
         ((JTextField) (comboBox.getEditor().getEditorComponent())).setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
+      }
+      else if (comboBox.getEditor().getEditorComponent() instanceof JLabel) {
+        ((JLabel) (comboBox.getEditor().getEditorComponent())).setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
       }
     }
   }

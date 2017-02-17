@@ -122,7 +122,7 @@ public class MediaScraperCheckComboBox extends TmmCheckComboBox<MediaScraper> {
 
       String str;
       List<MediaScraper> objs = getSelectedItems();
-      Vector<String> strs = new Vector<String>();
+      Vector<String> strs = new Vector<>();
       if (objs.isEmpty()) {
         str = BUNDLE.getString("ComboBox.select.mediascraper"); //$NON-NLS-1$
       }

@@ -29,12 +29,12 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
@@ -66,7 +66,7 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   }
 
   public MediaScraperComboBox(List<MediaScraper> scrapers) {
-    super(new Vector<MediaScraper>(scrapers));
+    super(new Vector<>(scrapers));
     init();
   }
 
@@ -96,8 +96,9 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
 
   private void init() {
     setRenderer(new MediaScraperComboBoxRenderer());
-    setEditable(true);
-    setEditor(new MediaScraperComboBoxEditor());
+    // setEditable(true);
+    // setEditor(new MediaScraperComboBoxEditor());
+    updateUI();
   }
 
   private ImageIcon getIcon(URL url) {
@@ -127,44 +128,9 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     return new ImageIcon(scaledImage);
   }
 
-  class MediaScraperComboBoxEditor extends BasicComboBoxEditor {
-    private JLabel       label = new JLabel("");
-    private MediaScraper selectedItem;
-
-    public MediaScraperComboBoxEditor() {
-      label.setHorizontalAlignment(JLabel.LEFT);
-      label.setVerticalAlignment(JLabel.CENTER);
-      selectedItem = null;
-    }
-
-    @Override
-    public Component getEditorComponent() {
-      return label;
-    }
-
-    @Override
-    public Object getItem() {
-      return selectedItem;
-    }
-
-    @Override
-    public void setItem(Object item) {
-      selectedItem = (MediaScraper) item;
-
-      if (selectedItem == null) {
-        // label.setIcon(null);
-        label.setText("");
-      }
-      else {
-        // ImageIcon logo = getIcon(selectedItem.getLogoURL());
-        // label.setIcon(logo);
-        label.setText(selectedItem.getMediaProvider().getProviderInfo().getName());
-      }
-    }
-  }
-
   class MediaScraperComboBoxRenderer extends JLabel implements ListCellRenderer<MediaScraper> {
-    private static final long serialVersionUID = -4726883292397768525L;
+    protected final DefaultListCellRenderer defaultRenderer  = new DefaultListCellRenderer();
+    private static final long               serialVersionUID = -4726883292397768525L;
 
     public MediaScraperComboBoxRenderer() {
       setOpaque(true);
@@ -180,43 +146,48 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     @Override
     public Component getListCellRendererComponent(JList<? extends MediaScraper> list, MediaScraper scraper, int index, boolean isSelected,
         boolean cellHasFocus) {
-
-      if (isSelected) {
-        setBackground(list.getSelectionBackground());
-        setForeground(list.getSelectionForeground());
-      }
-      else {
-        setBackground(list.getBackground());
-        setForeground(list.getForeground());
-      }
-
-      // calculate the max width of the logo
-      int maxWidth = 0;
-      for (int i = 0; i < list.getModel().getSize(); i++) {
-        MediaScraper ms = list.getModel().getElementAt(i);
-        ImageIcon logo = MediaScraperComboBox.this.getIcon(ms.getLogoURL());
-        maxWidth = Math.max(maxWidth, logo == null ? 0 : logo.getIconWidth());
-        if (!scraper.isEnabled()) {
-          setEnabled(false);
-          setBackground(Color.lightGray);
+      System.out.println(index);
+      if (index > -1) {
+        if (isSelected) {
+          setBackground(list.getSelectionBackground());
+          setForeground(list.getSelectionForeground());
         }
         else {
-          setEnabled(true);
+          setBackground(list.getBackground());
+          setForeground(list.getForeground());
         }
+
+        // calculate the max width of the logo
+        int maxWidth = 0;
+        for (int i = 0; i < list.getModel().getSize(); i++) {
+          MediaScraper ms = list.getModel().getElementAt(i);
+          ImageIcon logo = MediaScraperComboBox.this.getIcon(ms.getLogoURL());
+          maxWidth = Math.max(maxWidth, logo == null ? 0 : logo.getIconWidth());
+          if (!scraper.isEnabled()) {
+            setEnabled(false);
+            setBackground(Color.lightGray);
+          }
+          else {
+            setEnabled(true);
+          }
+        }
+
+        int currentWidth = 0;
+        ImageIcon logo = MediaScraperComboBox.this.getIcon(scraper.getLogoURL());
+        if (logo != null) {
+          currentWidth = logo.getIconWidth();
+        }
+
+        setIcon(logo);
+        setText(scraper.getMediaProvider().getProviderInfo().getName());
+        setFont(list.getFont());
+        setIconTextGap(maxWidth + 4 - currentWidth); // 4 = default iconTextGap
+
+        return this;
       }
 
-      int currentWidth = 0;
-      ImageIcon logo = MediaScraperComboBox.this.getIcon(scraper.getLogoURL());
-      if (logo != null) {
-        currentWidth = logo.getIconWidth();
-      }
-
-      setIcon(logo);
-      setText(scraper.getMediaProvider().getProviderInfo().getName());
-      setFont(list.getFont());
-      setIconTextGap(maxWidth + 4 - currentWidth); // 4 = default iconTextGap
-
-      return this;
+      MediaScraper ms = (MediaScraper) getSelectedItem();
+      return defaultRenderer.getListCellRendererComponent(list, ms.getName(), index, isSelected, cellHasFocus);
     }
   }
 }
