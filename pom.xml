@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-tvdb</artifactId>
-            <version>1.7</version>
+            <version>1.8-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
