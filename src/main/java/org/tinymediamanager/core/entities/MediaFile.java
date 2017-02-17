@@ -925,33 +925,38 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int w = getVideoWidth();
     int h = getVideoHeight();
 
-    // use XBMC implementation https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L514
+    // use XBMC implementation https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L559
     if (w == 0 || h == 0) {
       return "";
     }
-    else if (w <= 720 && h <= 480) {
+    else if (w <= blur(720) && h <= blur(480)) {
       return VIDEO_FORMAT_480P;
     }
     // else if (w <= 768 && h <= 576) {
-    else if (w <= 776 && h <= 592) {
+    else if (w <= blur(776) && h <= blur(592)) {
       // 720x576 (PAL) (handbrake sometimes encode it to a max of 776 x 592)
       return VIDEO_FORMAT_576P;
     }
-    else if (w <= 960 && h <= 544) {
+    else if (w <= blur(960) && h <= blur(544)) {
       // 960x540 (sometimes 544 which is multiple of 16)
       return VIDEO_FORMAT_540P;
     }
-    else if (w <= 1280 && h <= 720) {
+    else if (w <= blur(1280) && h <= blur(720)) {
       return VIDEO_FORMAT_720P;
     }
-    else if (w <= 1920 && h <= 1080) {
+    else if (w <= blur(1920) && h <= blur(1080)) {
       return VIDEO_FORMAT_1080P;
     }
-    else if (w <= 3840 && h <= 2160) {
+    else if (w <= blur(3840) && h <= blur(2160)) {
       return VIDEO_FORMAT_4K;
     }
 
     return VIDEO_FORMAT_8K;
+  }
+
+  // add 1%
+  private int blur(int res) {
+    return res + (res / 100);
   }
 
   /**
