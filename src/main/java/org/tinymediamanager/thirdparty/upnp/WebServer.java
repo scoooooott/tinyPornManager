@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +51,14 @@ public class WebServer extends NanoHTTPD {
           }
 
           if (m != null) {
-            String fname = uri.substring(uri.indexOf(path[2]) + path[2].length() + 1);
             MediaFile mf = new MediaFile();
             mf.setPath(m.getPathNIO().toString());
-            mf.setFilename(fname);
-            return serveFile(session, mf);
+            String fname = uri.substring(uri.indexOf(path[2]) + path[2].length() + 1);
+            String sanitized = FilenameUtils.normalize(fname); // filter path traversal strings
+            if (sanitized != null) {
+              mf.setFilename(sanitized);
+              return serveFile(session, mf);
+            }
           }
         }
         catch (IllegalArgumentException e) {
