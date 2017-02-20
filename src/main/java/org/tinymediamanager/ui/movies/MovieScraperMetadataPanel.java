@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -37,10 +36,7 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class MovieScraperMetadataPanel.
@@ -74,7 +70,6 @@ public class MovieScraperMetadataPanel extends JPanel {
   private JCheckBox                   chckbxCollection;
   private JCheckBox                   chckbxTags;
   private JLabel                      lblMovieSetHint;
-  private JPanel                      panelSelectButtons;
 
   /**
    * Instantiates a new movie scraper metadata panel.
@@ -88,68 +83,57 @@ public class MovieScraperMetadataPanel extends JPanel {
   }
 
   private void initComponents() {
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC,
-            ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC, ColumnSpec.decode("15dlu"), FormSpecs.DEFAULT_COLSPEC,
-            FormSpecs.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("insets 0", "[][][][][]", "[]2lp[]2lp[]2lp[]"));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
-    add(chckbxTitle, "2, 2");
+    add(chckbxTitle, "cell 0 0");
 
     chckbxOriginalTitle = new JCheckBox(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
-    add(chckbxOriginalTitle, "4, 2");
-
-    chckbxTagline = new JCheckBox(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
-    add(chckbxTagline, "6, 2");
-
-    chckbxPlot = new JCheckBox(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-    add(chckbxPlot, "8, 2");
-
-    chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-    add(chckbxRating, "2, 4");
-
-    chckbxRuntime = new JCheckBox(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-    add(chckbxRuntime, "4, 4");
+    add(chckbxOriginalTitle, "cell 1 0");
 
     chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-    add(chckbxYear, "6, 4");
+    add(chckbxYear, "cell 2 0");
+
+    chckbxTagline = new JCheckBox(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
+    add(chckbxTagline, "cell 3 0");
+
+    chckbxPlot = new JCheckBox(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+    add(chckbxPlot, "cell 4 0");
+
+    chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
+    add(chckbxRating, "cell 0 1");
+
+    chckbxRuntime = new JCheckBox(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+    add(chckbxRuntime, "cell 1 1");
 
     chckbxCertification = new JCheckBox(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-    add(chckbxCertification, "8, 4");
-
-    chckbxCast = new JCheckBox(BUNDLE.getString("metatag.cast")); //$NON-NLS-1$
-    add(chckbxCast, "2, 6");
+    add(chckbxCertification, "cell 2 1");
 
     chckbxGenres = new JCheckBox(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-    add(chckbxGenres, "4, 6");
-
-    chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
-    add(chckbxArtwork, "6, 6");
-
-    chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-    add(chckbxTrailer, "8, 6");
-
-    JPanel panelMovieSet = new JPanel();
-    panelMovieSet.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    chckbxCollection = new JCheckBox(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
-    panelMovieSet.add(chckbxCollection);
-
-    lblMovieSetHint = new JLabel(IconManager.HINT);
-    lblMovieSetHint.setToolTipText(BUNDLE.getString("Settings.movieset.scraper.hint")); //$NON-NLS-1$
-    panelMovieSet.add(lblMovieSetHint);
-    add(panelMovieSet, "2, 8");
+    add(chckbxGenres, "cell 3 1");
 
     chckbxTags = new JCheckBox(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-    add(chckbxTags, "4, 8");
+    add(chckbxTags, "cell 4 1");
 
-    panelSelectButtons = new JPanel();
-    add(panelSelectButtons, "2, 10, 3, 1, fill, fill");
-    panelSelectButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    chckbxCast = new JCheckBox(BUNDLE.getString("metatag.cast")); //$NON-NLS-1$
+    add(chckbxCast, "cell 0 2");
+
+    chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
+    add(chckbxArtwork, "cell 1 2");
+
+    chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+    add(chckbxTrailer, "cell 2 2");
+    chckbxCollection = new JCheckBox(BUNDLE.getString("metatag.movieset"));
+    add(chckbxCollection, "flowx,cell 3 2");
+
+    initDataBindings();
+
+    lblMovieSetHint = new JLabel(IconManager.HINT);
+    add(lblMovieSetHint, "cell 3 2");
+    lblMovieSetHint.setToolTipText(BUNDLE.getString("Settings.movieset.scraper.hint"));
 
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
+    add(btnSelectAll, "flowx,cell 0 3 2 1");
     btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
     btnSelectAll.addActionListener(new ActionListener() {
       @Override
@@ -157,9 +141,9 @@ public class MovieScraperMetadataPanel extends JPanel {
         setCheckBoxState(true);
       }
     });
-    panelSelectButtons.add(btnSelectAll);
 
     JButton btnDeSelectAll = new JButton(IconManager.UNCHECK_ALL);
+    add(btnDeSelectAll, "cell 0 3");
     btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
     btnDeSelectAll.addActionListener(new ActionListener() {
       @Override
@@ -167,9 +151,6 @@ public class MovieScraperMetadataPanel extends JPanel {
         setCheckBoxState(false);
       }
     });
-    panelSelectButtons.add(btnDeSelectAll);
-
-    initDataBindings();
   }
 
   private void setCheckBoxState(boolean state) {

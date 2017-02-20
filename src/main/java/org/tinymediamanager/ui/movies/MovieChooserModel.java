@@ -29,6 +29,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -41,6 +42,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -67,12 +69,14 @@ public class MovieChooserModel extends AbstractModelObject {
   private MediaSearchResult             result           = null;
   private MediaMetadata                 metadata         = null;
 
-  private String                        name             = "";
+  private String                        title            = "";
+  private String                        originalTitle    = "";
   private String                        overview         = "";
   private String                        year             = "";
   private String                        combinedName     = "";
   private String                        posterUrl        = "";
   private String                        tagline          = "";
+  private List<Person>                  castMembers      = new ArrayList<>();
   private boolean                       scraped          = false;
 
   public MovieChooserModel(MediaScraper metadataProvider, List<MediaScraper> artworkScrapers, List<MediaScraper> trailerScrapers,
@@ -83,16 +87,11 @@ public class MovieChooserModel extends AbstractModelObject {
     this.result = result;
     this.language = language;
 
-    // name
-    setName(result.getTitle());
-    // year
+    setTitle(result.getTitle());
+    setOriginalTitle(result.getOriginalTitle());
     if (result.getYear() != 0) {
       setYear(Integer.toString(result.getYear()));
     }
-    else {
-      setYear("");
-    }
-    // combined name (name (year))
     setCombinedName();
   }
 
@@ -100,14 +99,20 @@ public class MovieChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieChooserModel() {
-    setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
-    combinedName = name;
+    setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    combinedName = title;
   }
 
-  public void setName(String name) {
-    String oldValue = this.name;
-    this.name = name;
-    firePropertyChange("name", oldValue, name);
+  public void setTitle(String title) {
+    String oldValue = this.title;
+    this.title = title;
+    firePropertyChange("title", oldValue, title);
+  }
+
+  public void setOriginalTitle(String originalTitle) {
+    String oldValue = this.originalTitle;
+    this.originalTitle = originalTitle;
+    firePropertyChange("originalTitle", oldValue, overview);
   }
 
   public void setOverview(String overview) {
@@ -116,12 +121,26 @@ public class MovieChooserModel extends AbstractModelObject {
     firePropertyChange("overview", oldValue, overview);
   }
 
-  public String getName() {
-    return name;
+  public void setCastMembers(List<Person> castMembers) {
+    this.castMembers.clear();
+    this.castMembers.addAll(castMembers);
+    firePropertyChange("castMembers", null, castMembers);
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getOriginalTitle() {
+    return originalTitle;
   }
 
   public String getOverview() {
     return overview;
+  }
+
+  public List<Person> getCastMembers() {
+    return castMembers;
   }
 
   public String getPosterUrl() {
@@ -147,10 +166,10 @@ public class MovieChooserModel extends AbstractModelObject {
   public void setCombinedName() {
     String oldValue = this.combinedName;
     if (StringUtils.isNotBlank(getYear())) {
-      this.combinedName = getName() + " (" + getYear() + ")";
+      this.combinedName = getTitle() + " (" + getYear() + ")";
     }
     else {
-      this.combinedName = getName();
+      this.combinedName = getTitle();
     }
     firePropertyChange("combinedName", oldValue, this.combinedName);
   }
@@ -177,6 +196,48 @@ public class MovieChooserModel extends AbstractModelObject {
       LOGGER.info(options.toString());
       LOGGER.info("=====================================================");
       metadata = ((IMovieMetadataProvider) metadataProvider.getMediaProvider()).getMetadata(options);
+      setOriginalTitle(metadata.getOriginalTitle());
+
+      List<Person> castMembers = new ArrayList<>();
+      int i = 0;
+      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.DIRECTOR)) {
+        Person person = new Person() {
+        };
+
+        person.setName(castMember.getName());
+        person.setRole(castMember.getPart());
+        castMembers.add(person);
+
+        // display at max 2 directors
+        if (++i >= 2) {
+          break;
+        }
+      }
+
+      i = 0;
+      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.PRODUCER)) {
+        Person person = new Person() {
+        };
+
+        person.setName(castMember.getName());
+        person.setRole(castMember.getPart());
+        castMembers.add(person);
+
+        // display at max 2 producers
+        if (++i >= 2) {
+          break;
+        }
+      }
+
+      for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.ACTOR)) {
+        Person person = new Person() {
+        };
+
+        person.setName(castMember.getName());
+        person.setRole(castMember.getCharacter());
+        castMembers.add(person);
+      }
+      setCastMembers(castMembers);
       setOverview(metadata.getPlot());
       setTagline(metadata.getTagline());
 
@@ -258,7 +319,7 @@ public class MovieChooserModel extends AbstractModelObject {
         try {
           artwork.addAll(artworkProvider.getArtwork(options));
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
 
