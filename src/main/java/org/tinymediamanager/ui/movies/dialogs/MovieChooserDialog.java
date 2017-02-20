@@ -713,7 +713,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
             // get metadataProvider from searchresult
           }
         }
-        if (moviesFound.size() == 1) { // only one result
+        if (!moviesFound.isEmpty()) { // only one result
           tableSearchResults.setRowSelectionInterval(0, 0); // select first row
         }
       }

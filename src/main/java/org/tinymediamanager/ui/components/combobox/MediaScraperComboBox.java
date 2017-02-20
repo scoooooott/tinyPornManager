@@ -49,6 +49,8 @@ import org.tinymediamanager.ui.IconManager;
 public class MediaScraperComboBox extends JComboBox<MediaScraper> {
   private static final long   serialVersionUID = 7845502706645523958L;
   private Map<URI, ImageIcon> imageCache;
+  private boolean             layingOut        = false;
+  private int                 listWidth        = 0;
 
   public MediaScraperComboBox() {
     super();
@@ -92,6 +94,42 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
       // only allow to choose scraper when active
       super.setSelectedItem(anObject);
     }
+  }
+
+  /**
+   * Small hack to get pop up menu size bigger enough to show items even though the combo box size could be smaller
+   */
+  @Override
+  public void doLayout() {
+    try {
+      layingOut = true;
+      super.doLayout();
+    }
+    finally {
+      layingOut = false;
+    }
+  }
+
+  @Override
+  public Dimension getSize() {
+    Dimension dim = super.getSize();
+    if (!layingOut) {
+      dim.width = Math.max(dim.width, getPreferredPopupSize().width);
+    }
+    return dim;
+  }
+
+  /**
+   * get the preferred popup size (width of the contents in the popup)
+   * 
+   * @return the preferred popup size
+   */
+  private Dimension getPreferredPopupSize() {
+    Dimension dimension = getPreferredSize();
+    if (listWidth > 0) {
+      dimension.width = listWidth;
+    }
+    return dimension;
   }
 
   private void init() {
@@ -146,7 +184,6 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
     @Override
     public Component getListCellRendererComponent(JList<? extends MediaScraper> list, MediaScraper scraper, int index, boolean isSelected,
         boolean cellHasFocus) {
-      System.out.println(index);
       if (index > -1) {
         if (isSelected) {
           setBackground(list.getSelectionBackground());
@@ -182,6 +219,11 @@ public class MediaScraperComboBox extends JComboBox<MediaScraper> {
         setText(scraper.getMediaProvider().getProviderInfo().getName());
         setFont(list.getFont());
         setIconTextGap(maxWidth + 4 - currentWidth); // 4 = default iconTextGap
+
+        Dimension preferredSize = getPreferredSize();
+        if (listWidth < preferredSize.width) {
+          listWidth = preferredSize.width;
+        }
 
         return this;
       }
