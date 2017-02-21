@@ -5,10 +5,13 @@ appbase = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-V3/ws/b
 ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
 ui.icon = tmm.png
-ui.progress = 22, 272, 440, 21
-ui.progress_text = 000000
-ui.status = 30, 300, 450, 18
-ui.status_text = 000000
+ui.progress = 47, 400, 227, 10
+#ui.progress_text = 868686
+ui.progress_bar = 868686
+ui.hide_progress_text = true
+ui.progress_image = progress.jpg
+ui.status = 50, 380, 200, 18
+ui.status_text = 868686
 ui.mac_dock_icon = ../tmm.icns
 ui.hide_decorations = true
 
@@ -19,6 +22,7 @@ code = tmm.jar
 # strings added to classpath
 plugin = locale/*
 
+resource = progress.jpg
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update

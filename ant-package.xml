@@ -121,6 +121,7 @@
 		<copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
 		<copy file="LICENSE" todir="${build.dir}" />
 		<copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
+		<copy file="AppBundler/progress.jpg" todir="${build.dir}" />
 		<copy file="AppBundler/tmm.png" todir="${build.dir}" />
 		<copy file="AppBundler/env.txt" todir="${build.dir}" />
 		<copy file="target/${tmmName}-${tmmVersion}.jar" tofile="${build.dir}/tmm.jar" />
