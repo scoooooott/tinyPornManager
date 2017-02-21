@@ -1187,8 +1187,10 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
-    // replace trailing dots and spaces
-    newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    // replace trailing dots and spaces (filename only!)
+    if (forFilename) {
+      newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    }
 
     return newDestination.trim();
   }
