@@ -18,6 +18,11 @@
 
 package org.tinymediamanager.core.movie.connector;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -44,8 +49,6 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -1205,26 +1208,6 @@ public class MovieNfoParser {
       movie.setId(entry.getKey(), entry.getValue());
     }
 
-    // convert director to internal format
-    String director = "";
-    for (String dir : directors) {
-      if (!StringUtils.isEmpty(director)) {
-        director += ", ";
-      }
-      director += dir;
-    }
-    movie.setDirector(director);
-
-    // convert writer to internal format
-    String writer = "";
-    for (String wri : credits) {
-      if (StringUtils.isNotEmpty(writer)) {
-        writer += ", ";
-      }
-      writer += wri;
-    }
-    movie.setWriter(writer);
-
     String studio = StringUtils.join(studios, " / ");
     if (studio == null) {
       movie.setProductionCompany("");
@@ -1261,15 +1244,25 @@ public class MovieNfoParser {
     movie.setSortTitle(sorttitle);
 
     for (Person actor : actors) {
-      MovieActor cast = new MovieActor(actor.name, actor.role);
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(ACTOR, actor.name, actor.role);
       cast.setThumbUrl(actor.thumb);
       movie.addActor(cast);
     }
 
     for (Person producer : producers) {
-      MovieProducer cast = new MovieProducer(producer.name, producer.role);
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(PRODUCER, producer.name, producer.role);
       cast.setThumbUrl(producer.thumb);
       movie.addProducer(cast);
+    }
+
+    for (String director : directors) {
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(DIRECTOR, director, "Director");
+      movie.addDirector(cast);
+    }
+
+    for (String writer : credits) {
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(WRITER, writer, "Writer");
+      movie.addWriter(cast);
     }
 
     for (MediaGenres genre : genres) {

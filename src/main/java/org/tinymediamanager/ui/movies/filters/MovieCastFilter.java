@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
@@ -22,9 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.ui.movies.AbstractMovieUIFilter;
 
 /**
@@ -61,28 +61,31 @@ public class MovieCastFilter extends AbstractMovieUIFilter {
     }
 
     Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(name));
-    java.util.regex.Matcher matcher = null;
 
     // director
-    if (StringUtils.isNotEmpty(movie.getDirector())) {
-      matcher = pattern.matcher(movie.getDirector());
-      if (matcher.find()) {
-        return true;
+    for (Person director : movie.getDirectors()) {
+      if (StringUtils.isNotEmpty(director.getName())) {
+        Matcher matcher = pattern.matcher(director.getName());
+        if (matcher.find()) {
+          return true;
+        }
       }
     }
 
     // writer
-    if (StringUtils.isNotEmpty(movie.getWriter())) {
-      matcher = pattern.matcher(movie.getWriter());
-      if (matcher.find()) {
-        return true;
+    for (Person writer : movie.getWriters()) {
+      if (StringUtils.isNotEmpty(writer.getName())) {
+        Matcher matcher = pattern.matcher(writer.getName());
+        if (matcher.find()) {
+          return true;
+        }
       }
     }
 
     // actors
-    for (MovieActor cast : movie.getActors()) {
+    for (Person cast : movie.getActors()) {
       if (StringUtils.isNotEmpty(cast.getName())) {
-        matcher = pattern.matcher(cast.getName());
+        Matcher matcher = pattern.matcher(cast.getName());
         if (matcher.find()) {
           return true;
         }
@@ -90,9 +93,9 @@ public class MovieCastFilter extends AbstractMovieUIFilter {
     }
 
     // producers
-    for (MovieProducer producer : movie.getProducers()) {
+    for (Person producer : movie.getProducers()) {
       if (StringUtils.isNotEmpty(producer.getName())) {
-        matcher = pattern.matcher(producer.getName());
+        Matcher matcher = pattern.matcher(producer.getName());
         if (matcher.find()) {
           return true;
         }

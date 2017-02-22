@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -67,14 +70,13 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
@@ -321,29 +323,23 @@ public class MovieToXbmcNfoConnector {
 
     // support of frodo director tags
     xbmc.director.clear();
-    if (StringUtils.isNotEmpty(movie.getDirector())) {
-      String directors[] = movie.getDirector().split(", ");
-      for (String director : directors) {
-        xbmc.director.add(director);
-      }
+    for (Person director : movie.getDirectors()) {
+      xbmc.director.add(director.getName());
     }
 
     // support of frodo credits tags
     xbmc.credits.clear();
-    if (StringUtils.isNotEmpty(movie.getWriter())) {
-      String writers[] = movie.getWriter().split(", ");
-      for (String writer : writers) {
-        xbmc.credits.add(writer);
-      }
+    for (Person writer : movie.getWriters()) {
+      xbmc.credits.add(writer.getName());
     }
 
     xbmc.actors.clear();
-    for (MovieActor cast : new ArrayList<>(movie.getActors())) {
-      xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
+    for (Person cast : new ArrayList<>(movie.getActors())) {
+      xbmc.addActor(cast.getName(), cast.getRole(), cast.getThumbUrl());
     }
 
     xbmc.producers.clear();
-    for (MovieProducer producer : new ArrayList<>(movie.getProducers())) {
+    for (Person producer : new ArrayList<>(movie.getProducers())) {
       xbmc.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
@@ -582,24 +578,16 @@ public class MovieToXbmcNfoConnector {
       }
 
       // convert director to internal format
-      String director = "";
-      for (String dir : xbmc.director) {
-        if (!StringUtils.isEmpty(director)) {
-          director += ", ";
-        }
-        director += dir;
+      for (String director : xbmc.director) {
+        Person person = new Person(Person.Type.DIRECTOR, director, "Director");
+        movie.addDirector(person);
       }
-      movie.setDirector(director);
 
       // convert writer to internal format
-      String writer = "";
-      for (String wri : xbmc.credits) {
-        if (StringUtils.isNotEmpty(writer)) {
-          writer += ", ";
-        }
-        writer += wri;
+      for (String writer : xbmc.credits) {
+        Person person = new Person(Person.Type.WRITER, writer, "Writer");
+        movie.addWriter(person);
       }
-      movie.setWriter(writer);
 
       movie.setProductionCompany(StringUtils.join(xbmc.studio, " / "));
       movie.setProductionCompany(movie.getProductionCompany().replaceAll("\\s*,\\s*", " / "));
@@ -643,13 +631,13 @@ public class MovieToXbmcNfoConnector {
       movie.setSortTitle(xbmc.sorttitle);
 
       for (Actor actor : xbmc.getActors()) {
-        MovieActor cast = new MovieActor(actor.name, actor.role);
+        Person cast = new Person(ACTOR, actor.name, actor.role);
         cast.setThumbUrl(actor.thumb);
         movie.addActor(cast);
       }
 
       for (Producer producer : xbmc.getProducers()) {
-        MovieProducer cast = new MovieProducer(producer.name, producer.role);
+        Person cast = new Person(PRODUCER, producer.name, producer.role);
         cast.setThumbUrl(producer.thumb);
         movie.addProducer(cast);
       }

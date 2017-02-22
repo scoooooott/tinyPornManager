@@ -201,11 +201,7 @@ public class MovieChooserModel extends AbstractModelObject {
       List<Person> castMembers = new ArrayList<>();
       int i = 0;
       for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.DIRECTOR)) {
-        Person person = new Person() {
-        };
-
-        person.setName(castMember.getName());
-        person.setRole(castMember.getPart());
+        Person person = new Person(Person.Type.DIRECTOR, castMember.getName(), castMember.getPart());
         castMembers.add(person);
 
         // display at max 2 directors
@@ -216,11 +212,7 @@ public class MovieChooserModel extends AbstractModelObject {
 
       i = 0;
       for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.PRODUCER)) {
-        Person person = new Person() {
-        };
-
-        person.setName(castMember.getName());
-        person.setRole(castMember.getPart());
+        Person person = new Person(Person.Type.PRODUCER, castMember.getName(), castMember.getPart());
         castMembers.add(person);
 
         // display at max 2 producers
@@ -230,11 +222,7 @@ public class MovieChooserModel extends AbstractModelObject {
       }
 
       for (MediaCastMember castMember : metadata.getCastMembers(MediaCastMember.CastType.ACTOR)) {
-        Person person = new Person() {
-        };
-
-        person.setName(castMember.getName());
-        person.setRole(castMember.getCharacter());
+        Person person = new Person(Person.Type.ACTOR, castMember.getName(), castMember.getCharacter());
         castMembers.add(person);
       }
       setCastMembers(castMembers);

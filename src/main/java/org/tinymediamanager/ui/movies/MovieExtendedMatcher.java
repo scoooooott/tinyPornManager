@@ -25,10 +25,9 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
@@ -278,23 +277,27 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
       java.util.regex.Matcher matcher = null;
 
       // director
-      if (StringUtils.isNotEmpty(movie.getDirector())) {
-        matcher = pattern.matcher(movie.getDirector());
-        if (matcher.find()) {
-          return true;
+      for (Person director : movie.getDirectors()) {
+        if (StringUtils.isNotEmpty(director.getName())) {
+          matcher = pattern.matcher(director.getName());
+          if (matcher.find()) {
+            return true;
+          }
         }
       }
 
       // writer
-      if (StringUtils.isNotEmpty(movie.getWriter())) {
-        matcher = pattern.matcher(movie.getWriter());
-        if (matcher.find()) {
-          return true;
+      for (Person writer : movie.getWriters()) {
+        if (StringUtils.isNotEmpty(writer.getName())) {
+          matcher = pattern.matcher(writer.getName());
+          if (matcher.find()) {
+            return true;
+          }
         }
       }
 
       // actors
-      for (MovieActor cast : movie.getActors()) {
+      for (Person cast : movie.getActors()) {
         if (StringUtils.isNotEmpty(cast.getName())) {
           matcher = pattern.matcher(cast.getName());
           if (matcher.find()) {
@@ -304,7 +307,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
       }
 
       // producers
-      for (MovieProducer producer : movie.getProducers()) {
+      for (Person producer : movie.getProducers()) {
         if (StringUtils.isNotEmpty(producer.getName())) {
           matcher = pattern.matcher(producer.getName());
           if (matcher.find()) {

@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.tvshows.dialogs;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -71,9 +73,9 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -110,46 +112,46 @@ import ca.odell.glazedlists.swing.AutoCompleteSupport;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-  private static final long           serialVersionUID = 7702248909791283043L;
+  private static final long            serialVersionUID = 7702248909791283043L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static final Logger          LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
+  private static final Date            INITIAL_DATE     = new Date(0);
 
-  private TvShowList                  tvShowList       = TvShowList.getInstance();
-  private TvShowEpisode               episodeToEdit;
-  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>                tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private List<MediaFile>             mediaFiles       = new ArrayList<>();
-  private boolean                     continueQueue    = true;
-  private int                         voteCount        = 0;
+  private TvShowList                   tvShowList       = TvShowList.getInstance();
+  private TvShowEpisode                episodeToEdit;
+  private List<Person>                 cast             = ObservableCollections.observableList(new ArrayList<Person>());
+  private List<String>                 tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<MediaFile>              mediaFiles       = new ArrayList<>();
+  private boolean                      continueQueue    = true;
+  private int                          voteCount        = 0;
 
-  private JTextField                                            tfTitle;
-  private JLabel                                                lblFilename;
-  private JSpinner                                              spEpisode;
-  private JSpinner                                              spSeason;
-  private JSpinner                                              spRating;
-  private JSpinner                                              spDvdSeason;
-  private JSpinner                                              spDvdEpisode;
-  private JCheckBox                                             cbDvdOrder;
-  private JSpinner                                              spDisplaySeason;
-  private JSpinner                                              spDisplayEpisode;
-  private DatePicker                                            dpFirstAired;
-  private JSpinner                                              spDateAdded;
-  private JCheckBox                                             chckbxWatched;
-  private ImageLabel                                            lblThumb;
-  private JTextArea                                             taPlot;
-  private JTextField                                            tfDirector;
-  private JTextField                                            tfWriter;
-  private JTable                                                tableGuests;
-  private AutocompleteComboBox<String>                                             cbTags;
-  private AutoCompleteSupport<String>                           cbTagsAutoCompleteSupport;
-  private JList                          <String>                       listTags;
-  private JComboBox<MediaSource>                                cbMediaSource;
-  private MediaFileEditorPanel                                  mediaFilesPanel;
-  private MediaScraperComboBox                                  cbScraper;
+  private JTextField                   tfTitle;
+  private JLabel                       lblFilename;
+  private JSpinner                     spEpisode;
+  private JSpinner                     spSeason;
+  private JSpinner                     spRating;
+  private JSpinner                     spDvdSeason;
+  private JSpinner                     spDvdEpisode;
+  private JCheckBox                    cbDvdOrder;
+  private JSpinner                     spDisplaySeason;
+  private JSpinner                     spDisplayEpisode;
+  private DatePicker                   dpFirstAired;
+  private JSpinner                     spDateAdded;
+  private JCheckBox                    chckbxWatched;
+  private ImageLabel                   lblThumb;
+  private JTextArea                    taPlot;
+  private JTextField                   tfDirector;
+  private JTextField                   tfWriter;
+  private JTable                       tableGuests;
+  private AutocompleteComboBox<String> cbTags;
+  private AutoCompleteSupport<String>  cbTagsAutoCompleteSupport;
+  private JList<String>                listTags;
+  private JComboBox<MediaSource>       cbMediaSource;
+  private MediaFileEditorPanel         mediaFilesPanel;
+  private MediaScraperComboBox         cbScraper;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
@@ -481,14 +483,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       chckbxWatched.setSelected(episodeToEdit.isWatched());
       taPlot.setText(episodeToEdit.getPlot());
       taPlot.setCaretPosition(0);
-      tfDirector.setText(episodeToEdit.getDirector());
-      tfWriter.setText(episodeToEdit.getWriter());
+      // tfDirector.setText(episodeToEdit.getDirector());
+      // tfWriter.setText(episodeToEdit.getWriter());
       cbMediaSource.setSelectedItem(episodeToEdit.getMediaSource());
 
-      for (TvShowActor origCast : episodeToEdit.getGuests()) {
-        TvShowActor actor = new TvShowActor();
-        actor.setName(origCast.getName());
-        actor.setCharacter(origCast.getCharacter());
+      for (Person origCast : episodeToEdit.getGuests()) {
+        Person actor = new Person(ACTOR, origCast.getName(), origCast.getRole());
         actor.setThumbUrl(origCast.getThumbUrl());
         cast.add(actor);
       }
@@ -544,8 +544,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       episodeToEdit.setFirstAired(dpFirstAired.getDate());
 
       episodeToEdit.setWatched(chckbxWatched.isSelected());
-      episodeToEdit.setDirector(tfDirector.getText());
-      episodeToEdit.setWriter(tfWriter.getText());
+      // episodeToEdit.setDirector(tfDirector.getText());
+      // episodeToEdit.setWriter(tfWriter.getText());
       episodeToEdit.setActors(cast);
 
       if (StringUtils.isNotEmpty(lblThumb.getImageUrl()) && (!lblThumb.getImageUrl().equals(episodeToEdit.getArtworkUrl(MediaFileType.THUMB))
@@ -653,15 +653,13 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           spDisplaySeason.setValue(metadata.getDisplaySeasonNumber());
 
           // cast
-          List<TvShowActor> actors = new ArrayList<>();
+          List<Person> actors = new ArrayList<>();
           String director = "";
           String writer = "";
           for (MediaCastMember member : metadata.getCastMembers()) {
             switch (member.getType()) {
               case ACTOR:
-                TvShowActor actor = new TvShowActor();
-                actor.setName(member.getName());
-                actor.setCharacter(member.getCharacter());
+                Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
                 actor.setThumbUrl(member.getImageUrl());
                 actors.add(actor);
                 break;
@@ -708,12 +706,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   }
 
   protected void initDataBindings() {
-    JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
+    JTableBinding<Person, List<Person>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
     //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
+    BeanProperty<Person, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty);
     //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    BeanProperty<Person, String> movieCastBeanProperty_1 = BeanProperty.create("character");
     jTableBinding.addColumnBinding(movieCastBeanProperty_1);
     //
     bindings.add(jTableBinding);
@@ -814,7 +812,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      TvShowActor actor = new TvShowActor(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
+      Person actor = new Person(ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
       cast.add(0, actor);
     }
   }

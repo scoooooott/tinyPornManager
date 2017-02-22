@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.entities;
 
-import static org.tinymediamanager.core.Constants.CHARACTER;
 import static org.tinymediamanager.core.Constants.NAME;
 import static org.tinymediamanager.core.Constants.ROLE;
 import static org.tinymediamanager.core.Constants.THUMB;
@@ -39,39 +38,92 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Manuel Laggner
  */
-public abstract class Person extends AbstractModelObject {
-  public static final String        ACTOR_DIR  = ".actors";
+public class Person extends AbstractModelObject {
+  public static final String ACTOR_DIR = ".actors";
 
+  public enum Type {
+    ACTOR,
+    DIRECTOR,
+    WRITER,
+    PRODUCER,
+    OTHER
+  }
+
+  @JsonProperty
+  private Type                      type       = Type.OTHER;
   @JsonProperty
   private String                    name       = "";
   @JsonProperty
-  private String                    character  = "";
+  private String                    role       = "";
   @JsonProperty
   private String                    thumbUrl   = "";
-  @Deprecated
-  @JsonProperty
-  private String                    thumbPath  = "";              // MF like
   @JsonProperty
   private String                    entityRoot = "";              // movie or TV show/episode root
-  @JsonProperty
-  private int                       ordering   = 0;
-  @JsonProperty
-  private String                    role       = "";
+
   @JsonProperty
   protected HashMap<String, Object> ids        = new HashMap<>(0);
 
+  /**
+   * JSON constructor - please do not use
+   */
   public Person() {
   }
 
-  public Person(String name) {
+  public Person(Type type) {
+    this.type = type;
+  }
+
+  public Person(Type type, String name) {
+    this.type = type;
     this.name = name;
   }
 
-  public Person(String name, String character) {
+  public Person(Type type, String name, String role) {
+    this.type = type;
     this.name = name;
-    this.character = character;
+    this.role = role;
   }
 
+  /**
+   * copy constructor
+   * 
+   * @param source
+   *          the source to be copied
+   */
+  public Person(Person source) {
+    this.type = source.type;
+    this.name = source.name;
+    this.role = source.role;
+    this.thumbUrl = source.thumbUrl;
+    this.entityRoot = source.entityRoot;
+    this.ids.putAll(source.ids);
+  }
+
+  /**
+   * set the type of that person
+   * 
+   * @param type
+   *          the type of that person
+   */
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  /**
+   * get the type of that person
+   * 
+   * @return the type of that person
+   */
+  public Type getType() {
+    return type;
+  }
+
+  /**
+   * set the name of that person
+   * 
+   * @param newValue
+   *          the new name
+   */
   public void setName(String newValue) {
     // FIXME: check renaming of thumb!!!!
     String oldValue = name;
@@ -79,6 +131,11 @@ public abstract class Person extends AbstractModelObject {
     firePropertyChange(NAME, oldValue, newValue);
   }
 
+  /**
+   * get the name of that person
+   * 
+   * @return the actual name of that person
+   */
   public String getName() {
     return name;
   }
@@ -111,50 +168,52 @@ public abstract class Person extends AbstractModelObject {
     return Paths.get(entityRoot, ACTOR_DIR, getNameForStorage()).toAbsolutePath();
   }
 
-  public String getCharacter() {
-    return character;
-  }
-
-  public void setCharacter(String newValue) {
-    String oldValue = character;
-    character = newValue;
-    firePropertyChange(CHARACTER, oldValue, newValue);
-  }
-
+  /**
+   * get the role of that person (character for actors, role for other ones)
+   * 
+   * @return the actual role
+   */
   public String getRole() {
     return role;
   }
 
+  /**
+   * set the role for that person (character for actors, role for other ones)
+   * 
+   * @param newValue
+   *          the role to be set
+   */
   public void setRole(String newValue) {
     String oldValue = role;
     role = newValue;
     firePropertyChange(ROLE, oldValue, newValue);
   }
 
+  /**
+   * get the thumb url of that person (or an empty string)
+   * 
+   * @return the thumb url or an empty string
+   */
   public String getThumbUrl() {
     return thumbUrl;
   }
 
+  /**
+   * set the thumb url for that person
+   * 
+   * @param newValue
+   *          the new thumb url
+   */
   public void setThumbUrl(String newValue) {
     String oldValue = this.thumbUrl;
     thumbUrl = newValue;
     firePropertyChange(THUMB, oldValue, newValue);
   }
 
-  @Deprecated
-  public String getThumbPath() {
-    return thumbPath;
-  }
-
-  @Deprecated
-  public void setThumbPath(String thumbPath) {
-    this.thumbPath = thumbPath;
-  }
-
   /**
    * The root folder of entity (either movie / tv show/episode path)
    * 
-   * @return
+   * @return the root folder for that entity
    */
   public String getEntityRoot() {
     return entityRoot;
@@ -164,6 +223,7 @@ public abstract class Person extends AbstractModelObject {
    * The root folder of entity (either movie / tv show/episode path)
    * 
    * @param entityRoot
+   *          the root folder for that entity
    */
   public void setEntityRoot(String entityRoot) {
     this.entityRoot = entityRoot;
@@ -191,7 +251,7 @@ public abstract class Person extends AbstractModelObject {
     Person cast = (Person) obj;
 
     // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
       return true;
     }
 
@@ -200,6 +260,6 @@ public abstract class Person extends AbstractModelObject {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(name).append(character).append(thumbUrl).build();
+    return new HashCodeBuilder().append(name).append(role).append(thumbUrl).build();
   }
 }

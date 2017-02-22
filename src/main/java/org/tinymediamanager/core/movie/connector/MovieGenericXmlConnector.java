@@ -46,10 +46,9 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -79,7 +78,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
   /**
    * get the logger for the impl. class
-   * 
+   *
    * @return the logger
    */
   protected abstract Logger getLogger();
@@ -440,11 +439,10 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add credits in <credits>xxx</credits> tags (mulitple)
    */
   protected void addCredits() {
-    List<String> writers = Arrays.asList(movie.getWriter().split("\\s*[,\\/]\\s")); // split on , or / and remove whitespace around
-    for (String writer : writers) {
-      Element credits = document.createElement("credits");
-      credits.setTextContent(writer);
-      root.appendChild(credits);
+    for (Person writer : movie.getWriters()) {
+      Element element = document.createElement("writer");
+      element.setTextContent(writer.getName());
+      root.appendChild(element);
     }
   }
 
@@ -452,11 +450,10 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add directors in <director>xxx</director> tags (mulitple)
    */
   protected void addDirectors() {
-    List<String> directors = Arrays.asList(movie.getDirector().split("\\s*[,\\/]\\s")); // split on , or / and remove whitespace around
-    for (String d : directors) {
-      Element director = document.createElement("director");
-      director.setTextContent(d);
-      root.appendChild(director);
+    for (Person director : movie.getDirectors()) {
+      Element element = document.createElement("director");
+      element.setTextContent(director.getName());
+      root.appendChild(element);
     }
   }
 
@@ -475,7 +472,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add actors in <actor><name>xxx</name><role>xxx</role><thumb>xxx</thumb></actor>
    */
   protected void addActors() {
-    for (MovieActor movieActor : movie.getActors()) {
+    for (Person movieActor : movie.getActors()) {
       Element actor = document.createElement("actor");
 
       Element name = document.createElement("name");
@@ -483,7 +480,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
       actor.appendChild(name);
 
       Element role = document.createElement("role");
-      role.setTextContent(movieActor.getCharacter());
+      role.setTextContent(movieActor.getRole());
       actor.appendChild(role);
 
       Element thumb = document.createElement("thumb");
@@ -498,7 +495,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add producers in <producer><name>xxx</name><role>xxx</role><thumb>xxx</thumb></producer>
    */
   protected void addProducers() {
-    for (MovieProducer movieProducer : movie.getProducers()) {
+    for (Person movieProducer : movie.getProducers()) {
       Element producer = document.createElement("producer");
 
       Element name = document.createElement("name");

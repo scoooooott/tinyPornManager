@@ -18,7 +18,8 @@ package org.tinymediamanager.core.tvshow.entities;
 import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.AIRED_EPISODE;
 import static org.tinymediamanager.core.Constants.AIRED_SEASON;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.DIRECTORS;
+import static org.tinymediamanager.core.Constants.DIRECTORS_AS_STRING;
 import static org.tinymediamanager.core.Constants.DISPLAY_EPISODE;
 import static org.tinymediamanager.core.Constants.DISPLAY_SEASON;
 import static org.tinymediamanager.core.Constants.DVD_EPISODE;
@@ -36,7 +37,9 @@ import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
 import static org.tinymediamanager.core.Constants.TVDB;
 import static org.tinymediamanager.core.Constants.TV_SHOW;
 import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.WRITERS;
+import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -66,6 +69,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -110,10 +114,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date                               firstAired            = null;
   @JsonProperty
-  private String                             director              = "";
-  @JsonProperty
-  private String                             writer                = "";
-  @JsonProperty
   private boolean                            disc                  = false;
   @JsonProperty
   private boolean                            multiEpisode          = false;
@@ -131,7 +131,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private boolean                            stacked               = false;
 
   @JsonProperty
-  private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
+  private List<Person>                       actors                = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<Person>                       directors             = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<Person>                       writers               = new CopyOnWriteArrayList<>();
   @JsonProperty
   private List<String>                       tags                  = new CopyOnWriteArrayList<>();
 
@@ -171,17 +175,24 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     this.firstAired = this.firstAired == null ? other.getFirstAired() : this.firstAired;
     this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : MediaSource.UNKNOWN;
 
-    this.director = StringUtils.isEmpty(this.director) ? other.getDirector() : this.director;
-    this.writer = StringUtils.isEmpty(this.writer) ? other.getWriter() : this.writer;
-
     for (String key : other.getTags()) {
       if (!this.tags.contains(key)) {
         this.tags.add(key);
       }
     }
-    for (TvShowActor actor : other.getActors()) {
+    for (Person actor : other.getActors()) {
       if (!this.actors.contains(actor)) {
         this.actors.add(actor);
+      }
+    }
+    for (Person director : other.getDirectors()) {
+      if (!this.directors.contains(director)) {
+        this.directors.add(director);
+      }
+    }
+    for (Person writer : other.getWriters()) {
+      if (!this.writers.contains(writer)) {
+        this.writers.add(writer);
       }
     }
   }
@@ -230,15 +241,15 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     // clone the rest
-    path = new String(source.path);
-    title = new String(source.title);
-    originalTitle = new String(source.originalTitle);
-    year = new String(source.year);
-    plot = new String(source.plot);
+    path = source.path;
+    title = source.title;
+    originalTitle = source.originalTitle;
+    year = source.year;
+    plot = source.plot;
     rating = source.rating;
 
     for (Entry<MediaFileType, String> entry : source.artworkUrlMap.entrySet()) {
-      artworkUrlMap.put(entry.getKey(), new String(entry.getValue()));
+      artworkUrlMap.put(entry.getKey(), entry.getValue());
     }
 
     dateAdded = new Date(source.dateAdded.getTime());
@@ -255,13 +266,20 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       firstAired = new Date(source.firstAired.getTime());
     }
 
-    director = source.director;
-    writer = source.writer;
     disc = source.disc;
     watched = source.watched;
     votes = source.votes;
     subtitles = source.subtitles;
-    actors.addAll(source.actors);
+
+    for (Person actor : source.getActors()) {
+      actors.add(new Person(actor));
+    }
+    for (Person director : source.getDirectors()) {
+      actors.add(new Person(director));
+    }
+    for (Person writer : source.getWriters()) {
+      actors.add(new Person(writer));
+    }
   }
 
   public Date getFirstAired() {
@@ -529,31 +547,28 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setRating(metadata.getRating());
     setVotes(metadata.getVoteCount());
 
-    List<TvShowActor> actors = new ArrayList<>();
-    String director = "";
-    String writer = "";
+    List<Person> actors = new ArrayList<>();
+    List<Person> directors = new ArrayList<>();
+    List<Person> writers = new ArrayList<>();
+
     for (MediaCastMember member : metadata.getCastMembers()) {
       switch (member.getType()) {
         case ACTOR:
-          TvShowActor actor = new TvShowActor();
-          actor.setName(member.getName());
-          actor.setCharacter(member.getCharacter());
+          Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
           actor.setThumbUrl(member.getImageUrl());
           actors.add(actor);
           break;
 
         case DIRECTOR:
-          if (!StringUtils.isEmpty(director)) {
-            director += ", ";
-          }
-          director += member.getName();
+          Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
+          director.setThumbUrl(member.getImageUrl());
+          directors.add(director);
           break;
 
         case WRITER:
-          if (!StringUtils.isEmpty(writer)) {
-            writer += ", ";
-          }
-          writer += member.getName();
+          Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
+          writer.setThumbUrl(member.getImageUrl());
+          writers.add(writer);
           break;
 
         default:
@@ -561,8 +576,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
     setActors(actors);
-    setDirector(director);
-    setWriter(writer);
+    setDirectors(directors);
+    setWriters(writers);
 
     for (MediaArtwork ma : metadata.getMediaArt(MediaArtworkType.THUMB)) {
       setArtworkUrl(ma.getDefaultUrl(), MediaFileType.THUMB);
@@ -627,70 +642,39 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Gets the writer.
+   * add an actor.
    * 
-   * @return the writer
+   * @param newActor
+   *          the actor to be added
    */
-  public String getWriter() {
-    return writer;
-  }
-
-  /**
-   * Sets the director.
-   * 
-   * @param newValue
-   *          the new director
-   */
-  public void setDirector(String newValue) {
-    String oldValue = this.director;
-    this.director = newValue;
-    firePropertyChange(DIRECTOR, oldValue, newValue);
-  }
-
-  /**
-   * Sets the writer.
-   * 
-   * @param newValue
-   *          the new writer
-   */
-  public void setWriter(String newValue) {
-    String oldValue = this.writer;
-    this.writer = newValue;
-    firePropertyChange(WRITER, oldValue, newValue);
-  }
-
-  /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
-  public String getDirector() {
-    return director;
-  }
-
-  /**
-   * Adds the actor.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addActor(TvShowActor obj) {
+  public void addActor(Person newActor) {
     // and re-set episode path to the actor
-    if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+    if (StringUtils.isBlank(newActor.getEntityRoot())) {
+      newActor.setEntityRoot(getPathNIO().toString());
     }
 
-    actors.add(obj);
+    actors.add(newActor);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
   /**
-   * Gets the actors.
-   * 
-   * @return the actors
+   * remove the given actor.
+   *
+   * @param actor
+   *          the actor to be removed
    */
-  public List<TvShowActor> getActors() {
-    List<TvShowActor> allActors = new ArrayList<>();
+  public void removeActor(Person actor) {
+    actors.remove(actor);
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * get the actors. These are the main actors of the TV show inclusive the guests of this episode
+   * 
+   * @return the actors of this episode
+   */
+  public List<Person> getActors() {
+    List<Person> allActors = new ArrayList<>();
     if (tvShow != null) {
       allActors.addAll(tvShow.getActors());
     }
@@ -698,22 +682,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return allActors;
   }
 
-  public List<TvShowActor> getGuests() {
-    List<TvShowActor> allActors = new ArrayList<>();
-    allActors.addAll(actors);
-    return allActors;
-  }
-
   /**
-   * Removes the actor.
+   * get all guests in this episode
    * 
-   * @param obj
-   *          the obj
+   * @return a list of all guests
    */
-  public void removeActor(TvShowActor obj) {
-    actors.remove(obj);
-
-    firePropertyChange(ACTORS, null, this.getActors());
+  public List<Person> getGuests() {
+    return actors;
   }
 
   /**
@@ -723,11 +698,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the new actors
    */
   @JsonSetter
-  public void setActors(List<TvShowActor> newActors) {
+  public void setActors(List<Person> newActors) {
     // do not add actors which are in the TV show itself
     // tvShow is null while loading
     if (getTvShow() != null) {
-      for (TvShowActor actor : getTvShow().getActors()) {
+      for (Person actor : getTvShow().getActors()) {
         newActors.remove(actor);
       }
     }
@@ -736,13 +711,159 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     ListUtils.mergeLists(actors, newActors);
 
     // and re-set episode path to the actors
-    for (TvShowActor actor : actors) {
+    for (Person actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
         actor.setEntityRoot(getPathNIO().toString());
       }
     }
 
     firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * add a director
+   *
+   * @param director
+   *          the director to be added
+   */
+  public void addDirector(Person director) {
+    // and re-set movie path the directors
+    if (StringUtils.isBlank(director.getEntityRoot())) {
+      director.setEntityRoot(getPathNIO().toString());
+    }
+
+    directors.add(director);
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * remove the given director.
+   *
+   * @param director
+   *          the director to be removed
+   */
+  public void removeDirector(Person director) {
+    directors.remove(director);
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * Sets the directors.
+   *
+   * @param newDirectors
+   *          the new directors
+   */
+  @JsonSetter
+  public void setDirectors(List<Person> newDirectors) {
+    // two way sync of directors
+    ListUtils.mergeLists(directors, newDirectors);
+
+    // and re-set movie path to the actors
+    for (Person director : directors) {
+      if (StringUtils.isBlank(director.getEntityRoot())) {
+        director.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * get the directors.
+   *
+   * @return the directors
+   */
+  public List<Person> getDirectors() {
+    return directors;
+  }
+
+  /**
+   * get the directors as string
+   *
+   * @return a string containing all directors; separated by ,
+   */
+  public String getDirectorsAsString() {
+    List<String> directorNames = new ArrayList<>();
+    for (Person director : directors) {
+      directorNames.add(director.getName());
+    }
+    return StringUtils.join(directorNames, ", ");
+  }
+
+  /**
+   * add a writer
+   *
+   * @param writer
+   *          the writer to be added
+   */
+  public void addWriter(Person writer) {
+    // and re-set movie path the writers
+    if (StringUtils.isBlank(writer.getEntityRoot())) {
+      writer.setEntityRoot(getPathNIO().toString());
+    }
+
+    writers.add(writer);
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * remove the given writer.
+   *
+   * @param writer
+   *          the writer to be removed
+   */
+  public void removeWriter(Person writer) {
+    writers.remove(writer);
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * Sets the writers.
+   *
+   * @param newWriters
+   *          the new writers
+   */
+  @JsonSetter
+  public void setWriters(List<Person> newWriters) {
+    // two way sync of writers
+    ListUtils.mergeLists(writers, newWriters);
+
+    // and re-set movie path to the actors
+    for (Person writer : writers) {
+      if (StringUtils.isBlank(writer.getEntityRoot())) {
+        writer.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * Gets the writers.
+   *
+   * @return the writers
+   */
+  public List<Person> getWriters() {
+    return writers;
+  }
+
+  /**
+   * get the writers as string
+   *
+   * @return a string containing all writers; separated by ,
+   */
+  public String getWritersAsString() {
+    List<String> writerNames = new ArrayList<>();
+    for (Person writer : writers) {
+      writerNames.add(writer.getName());
+    }
+    return StringUtils.join(writerNames, ", ");
   }
 
   /**

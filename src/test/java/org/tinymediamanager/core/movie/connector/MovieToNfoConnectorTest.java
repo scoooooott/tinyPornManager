@@ -21,9 +21,8 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
@@ -159,8 +158,8 @@ public class MovieToNfoConnectorTest {
     assertThat(newMovie.isWatched()).isEqualTo(movie.isWatched());
     assertThat(newMovie.getGenres().size()).isEqualTo(movie.getGenres().size());
     assertThat(newMovie.getGenres().get(0)).isEqualTo(movie.getGenres().get(0));
-    assertThat(newMovie.getWriter()).isEqualTo(movie.getWriter());
-    assertThat(newMovie.getDirector()).isEqualTo(movie.getDirector());
+    assertThat(newMovie.getWriters()).isEqualTo(movie.getWriters());
+    assertThat(newMovie.getDirectors()).isEqualTo(movie.getDirectors());
     assertThat(newMovie.getTags().size()).isEqualTo(movie.getTags().size());
     if (!newMovie.getTags().isEmpty()) {
       assertThat(newMovie.getTags().get(0)).isEqualTo(movie.getTags().get(0));
@@ -233,16 +232,20 @@ public class MovieToNfoConnectorTest {
     movie.setWatched(true);
     movie.addGenre(MediaGenres.ADVENTURE);
     movie.addGenre(MediaGenres.FAMILY);
-    movie.setWriter("Ted Elliott, Terry Rossio, Ron Clements, John Jusker");
-    movie.setDirector("Ron Clements, John Musker");
+    movie.addWriter(new Person(Person.Type.WRITER, "Ted Elliott", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Terry Rossio", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Ron Clements", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "John Jusker", "Writer"));
+    movie.addDirector(new Person(Person.Type.DIRECTOR, "Ron Clements", "Director"));
+    movie.addWriter(new Person(Person.Type.DIRECTOR, "John Jusker", "Director"));
     movie.addToTags("Disney");
     movie.addToTags("Oriental");
 
-    movie.addActor(new MovieActor("Scott Weinger", "Aladdin 'Al' (voice)"));
-    movie.addActor(new MovieActor("Robin Williams", "Genie (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Scott Weinger", "Aladdin 'Al' (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Robin Williams", "Genie (voice)"));
 
-    movie.addProducer(new MovieProducer("Ron Clements", "Producer"));
-    movie.addProducer(new MovieProducer("Donald W. Ernst", "Producer"));
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Ron Clements", "Producer"));
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Donald W. Ernst", "Producer"));
 
     movie.setSpokenLanguages("en");
     movie.setMediaSource(MediaSource.BLURAY);
@@ -300,14 +303,18 @@ public class MovieToNfoConnectorTest {
     movie.setWatched(true);
     movie.addGenre(MediaGenres.ADVENTURE);
     movie.addGenre(MediaGenres.FAMILY);
-    movie.setWriter("Ted Elliott, Terry Rossio, Ron Clements, John Jusker");
-    movie.setDirector("Ron Clements, John Musker");
+    movie.addWriter(new Person(Person.Type.WRITER, "Ted Elliott", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Terry Rossio", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Ron Clements", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "John Jusker", "Writer"));
+    movie.addDirector(new Person(Person.Type.DIRECTOR, "Ron Clements", "Director"));
+    movie.addWriter(new Person(Person.Type.DIRECTOR, "John Jusker", "Director"));
 
-    movie.addActor(new MovieActor("Scott Weinger", "Aladdin 'Al' (voice)"));
-    movie.addActor(new MovieActor("Robin Williams", "Genie (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Scott Weinger", "Aladdin 'Al' (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Robin Williams", "Genie (voice)"));
 
-    movie.addProducer(new MovieProducer("Ron Clements", "Producer"));
-    movie.addProducer(new MovieProducer("Donald W. Ernst", "Producer"));
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Ron Clements", "Producer"));
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Donald W. Ernst", "Producer"));
 
     movie.setMediaSource(MediaSource.BLURAY);
     return movie;

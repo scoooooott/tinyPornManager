@@ -31,9 +31,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -56,32 +55,31 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieCastPanel extends JPanel {
-  private static final long                     serialVersionUID   = 2972207353452870494L;
+  private static final long              serialVersionUID   = 2972207353452870494L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle           BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel                   selectionModel;
-  private EventList<MovieActor>                 actorEventList     = null;
-  private DefaultEventTableModel<MovieActor>    actorTableModel    = null;
-  private EventList<MovieProducer>              producerEventList  = null;
-  private DefaultEventTableModel<MovieProducer> producerTableModel = null;
+  private MovieSelectionModel            selectionModel;
+  private EventList<Person>              actorEventList     = null;
+  private DefaultEventTableModel<Person> actorTableModel    = null;
+  private EventList<Person>              producerEventList  = null;
+  private DefaultEventTableModel<Person> producerTableModel = null;
 
   /**
    * UI elements
    */
-  private JLabel                                lblDirector;
-  private JLabel                                lblWriter;
-  private ActorImageLabel                       lblActorThumb;
-  private TmmTable                              tableProducer;
-  private TmmTable                              tableActors;
+  private JLabel                         lblDirector;
+  private JLabel                         lblWriter;
+  private ActorImageLabel                lblActorThumb;
+  private TmmTable                       tableProducer;
+  private TmmTable                       tableActors;
 
   public MovieCastPanel(MovieSelectionModel model) {
     selectionModel = model;
-    producerEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieProducer.class)));
+    producerEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
     producerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(producerEventList), new ProducerTableFormat());
 
-    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieActor.class)));
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
     actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     initComponents();
@@ -97,7 +95,7 @@ public class MovieCastPanel extends JPanel {
       if (!arg0.getValueIsAdjusting()) {
         int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
         if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-          MovieActor actor = actorEventList.get(selectedRow);
+          Person actor = actorEventList.get(selectedRow);
           lblActorThumb.setActor(actor);
         }
         else {
@@ -157,10 +155,10 @@ public class MovieCastPanel extends JPanel {
       add(lblProducersT, "cell 0 2,alignx right,aligny top");
 
       tableProducer = new TmmTable(producerTableModel);
-      JScrollPane scrollPaneMovieProducer = new JScrollPane(tableProducer);
-      tableProducer.configureScrollPane(scrollPaneMovieProducer);
-      add(scrollPaneMovieProducer, "cell 1 2,grow");
-      scrollPaneMovieProducer.setViewportView(tableProducer);
+      JScrollPane scrollPanePerson = new JScrollPane(tableProducer);
+      tableProducer.configureScrollPane(scrollPanePerson);
+      add(scrollPanePerson, "cell 1 2,grow");
+      scrollPanePerson.setViewportView(tableProducer);
     }
     {
       JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
@@ -168,10 +166,10 @@ public class MovieCastPanel extends JPanel {
       add(lblActorsT, "cell 0 3,alignx right,aligny top");
 
       tableActors = new TmmTable(actorTableModel);
-      JScrollPane scrollPaneMovieActors = new JScrollPane(tableActors);
-      tableActors.configureScrollPane(scrollPaneMovieActors);
-      add(scrollPaneMovieActors, "cell 1 3,grow");
-      scrollPaneMovieActors.setViewportView(tableActors);
+      JScrollPane scrollPanePersons = new JScrollPane(tableActors);
+      tableActors.configureScrollPane(scrollPanePersons);
+      add(scrollPanePersons, "cell 1 3,grow");
+      scrollPanePersons.setViewportView(tableActors);
     }
     {
       lblActorThumb = new ActorImageLabel();
@@ -180,13 +178,13 @@ public class MovieCastPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.director");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.directorsAsString");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSelectionModelBeanProperty, lblDirector, jLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.writer");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.writersAsString");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSelectionModelBeanProperty_1, lblWriter, jLabelBeanProperty);
     autoBinding_1.bind();
@@ -195,7 +193,7 @@ public class MovieCastPanel extends JPanel {
   /**
    * inner class for representing the table
    */
-  private static class ActorTableFormat implements AdvancedTableFormat<MovieActor> {
+  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -214,13 +212,13 @@ public class MovieCastPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MovieActor actor, int column) {
+    public Object getColumnValue(Person actor, int column) {
       switch (column) {
         case 0:
           return actor.getName();
 
         case 1:
-          return actor.getCharacter();
+          return actor.getRole();
       }
       throw new IllegalStateException();
     }
@@ -243,7 +241,7 @@ public class MovieCastPanel extends JPanel {
     }
   }
 
-  private static class ProducerTableFormat implements AdvancedTableFormat<MovieProducer> {
+  private static class ProducerTableFormat implements AdvancedTableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -262,7 +260,7 @@ public class MovieCastPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MovieProducer producer, int column) {
+    public Object getColumnValue(Person producer, int column) {
       switch (column) {
         case 0:
           return producer.getName();

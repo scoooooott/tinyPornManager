@@ -31,8 +31,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
@@ -63,8 +63,8 @@ public class MovieCrewPanel extends JPanel {
   private static final ResourceBundle           BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                   selectionModel;
-  private EventList<MovieProducer>              producerEventList  = null;
-  private DefaultEventTableModel<MovieProducer> ProducerTableModel = null;
+  private EventList<Person>              producerEventList  = null;
+  private DefaultEventTableModel<Person> ProducerTableModel = null;
 
   /**
    * UI elements
@@ -79,7 +79,7 @@ public class MovieCrewPanel extends JPanel {
   public MovieCrewPanel(MovieSelectionModel model) {
     selectionModel = model;
     producerEventList = GlazedLists.threadSafeList(
-        new ObservableElementList<>(new BasicEventList<MovieProducer>(), GlazedLists.beanConnector(MovieProducer.class)));
+        new ObservableElementList<>(new BasicEventList<Person>(), GlazedLists.beanConnector(Person.class)));
     ProducerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(producerEventList), new ProducerTableFormat());
 
     setLayout(new FormLayout(
@@ -133,7 +133,7 @@ public class MovieCrewPanel extends JPanel {
     selectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
-  private static class ProducerTableFormat implements AdvancedTableFormat<MovieProducer> {
+  private static class ProducerTableFormat implements AdvancedTableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -150,7 +150,7 @@ public class MovieCrewPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MovieProducer producer, int column) {
+    public Object getColumnValue(Person producer, int column) {
       switch (column) {
         case 0:
           return producer.getName();

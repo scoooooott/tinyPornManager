@@ -1,5 +1,9 @@
 package org.tinymediamanager.thirdparty;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -16,10 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieSet;
-import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -388,23 +391,18 @@ public class VSMeta {
     for (MediaCastMember mcm : cast) {
       switch (mcm.getType()) {
         case ACTOR:
-          MovieActor actor = new MovieActor();
-          actor.setName(mcm.getName());
+          Person actor = new Person(ACTOR, mcm.getName(), mcm.getCharacter());
           m.addActor(actor);
           break;
 
         case DIRECTOR:
-          if (!StringUtils.isEmpty(m.getDirector())) {
-            m.setDirector(m.getDirector() + ", ");
-          }
-          m.setDirector(m.getDirector() + mcm.getName());
+          Person director = new Person(DIRECTOR, mcm.getName(), "Director");
+          m.addDirector(director);
           break;
 
         case WRITER:
-          if (!StringUtils.isEmpty(m.getWriter())) {
-            m.setWriter(m.getWriter() + ", ");
-          }
-          m.setWriter(m.getWriter() + mcm.getName());
+          Person writer = new Person(WRITER, mcm.getName(), "Writer");
+          m.addDirector(writer);
           break;
 
         default:
@@ -432,23 +430,18 @@ public class VSMeta {
     for (MediaCastMember mcm : cast) {
       switch (mcm.getType()) {
         case ACTOR:
-          TvShowActor actor = new TvShowActor();
-          actor.setName(mcm.getName());
+          Person actor = new Person(ACTOR, mcm.getName(), mcm.getCharacter());
           ep.addActor(actor);
           break;
 
         case DIRECTOR:
-          if (!StringUtils.isEmpty(ep.getDirector())) {
-            ep.setDirector(ep.getDirector() + ", ");
-          }
-          ep.setDirector(ep.getDirector() + mcm.getName());
+          Person director = new Person(DIRECTOR, mcm.getName(), "Director");
+          ep.addDirector(director);
           break;
 
         case WRITER:
-          if (!StringUtils.isEmpty(ep.getWriter())) {
-            ep.setWriter(ep.getWriter() + ", ");
-          }
-          ep.setWriter(ep.getWriter() + mcm.getName());
+          Person writer = new Person(WRITER, mcm.getName(), "Writer");
+          ep.addWriter(writer);
           break;
 
         default:

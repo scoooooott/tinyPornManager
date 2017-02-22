@@ -19,7 +19,8 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.COUNTRY;
 import static org.tinymediamanager.core.Constants.DATA_SOURCE;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.DIRECTORS;
+import static org.tinymediamanager.core.Constants.DIRECTORS_AS_STRING;
 import static org.tinymediamanager.core.Constants.EDITION;
 import static org.tinymediamanager.core.Constants.EDITION_AS_STRING;
 import static org.tinymediamanager.core.Constants.GENRE;
@@ -45,10 +46,9 @@ import static org.tinymediamanager.core.Constants.TRAILER;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
 import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.WRITERS;
+import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -80,6 +80,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
@@ -135,10 +136,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private int                                   runtime                    = 0;
   @JsonProperty
-  private String                                director                   = "";
-  @JsonProperty
-  private String                                writer                     = "";
-  @JsonProperty
   private String                                dataSource                 = "";
   @JsonProperty
   private boolean                               watched                    = false;
@@ -182,9 +179,13 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private List<String>                          extraFanarts               = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieActor>                      actors                     = new CopyOnWriteArrayList<>();
+  private List<Person>                          actors                     = new CopyOnWriteArrayList<>();
   @JsonProperty
-  private List<MovieProducer>                   producers                  = new CopyOnWriteArrayList<>();
+  private List<Person>                          producers                  = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<Person>                          directors                  = new CopyOnWriteArrayList<>();
+  @JsonProperty
+  private List<Person>                          writers                    = new CopyOnWriteArrayList<>();
   @JsonProperty
   private List<MovieTrailer>                    trailer                    = new CopyOnWriteArrayList<>();
 
@@ -206,6 +207,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
    * 
    * @param other
+   *          ther movie to merge in
    */
 
   public void merge(Movie other) {
@@ -216,8 +218,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     this.sortTitle = StringUtils.isEmpty(this.sortTitle) ? other.getSortTitle() : this.sortTitle;
     this.tagline = StringUtils.isEmpty(this.tagline) ? other.getTagline() : this.tagline;
-    this.director = StringUtils.isEmpty(this.director) ? other.getDirector() : this.director;
-    this.writer = StringUtils.isEmpty(this.writer) ? other.getWriter() : this.writer;
     this.spokenLanguages = StringUtils.isEmpty(this.spokenLanguages) ? other.getSpokenLanguages() : this.spokenLanguages;
     this.country = StringUtils.isEmpty(this.country) ? other.getCountry() : this.country;
     this.titleSortable = StringUtils.isEmpty(this.titleSortable) ? other.getTitleSortable() : this.titleSortable;
@@ -233,14 +233,24 @@ public class Movie extends MediaEntity implements IMediaInformation {
     for (MediaGenres genre : other.getGenres()) {
       addGenre(genre); // already checks dupes
     }
-    for (MovieActor actor : other.getActors()) {
+    for (Person actor : other.getActors()) {
       if (!this.actors.contains(actor)) {
         this.actors.add(actor);
       }
     }
-    for (MovieProducer prod : other.getProducers()) {
+    for (Person prod : other.getProducers()) {
       if (!this.producers.contains(prod)) {
         this.producers.add(prod);
+      }
+    }
+    for (Person director : other.getDirectors()) {
+      if (!this.directors.contains(director)) {
+        this.directors.add(director);
+      }
+    }
+    for (Person writer : other.getWriters()) {
+      if (!this.writers.contains(writer)) {
+        this.writers.add(writer);
       }
     }
     for (MovieTrailer trail : other.getTrailer()) {
@@ -409,22 +419,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Adds the actor.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addActor(MovieActor obj) {
-    // and re-set movie path the actors
-    if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
-    }
-
-    actors.add(obj);
-    firePropertyChange(ACTORS, null, this.getActors());
-  }
-
-  /**
    * Gets the trailers
    * 
    * @return the trailers
@@ -574,55 +568,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Searches for actor images, and matches them to our "actors", updating the thumb url
-   * 
-   * @deprecated thumbPath is generated dynamic - no need for storage
-   */
-  @Deprecated
-  public void findActorImages() {
-    if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-      // get all files from the actors path
-      try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(getPathNIO())) {
-        for (Path path : directoryStream) {
-          if (Utils.isRegularFile(path)) {
-
-            for (MovieActor actor : getActors()) {
-              if (StringUtils.isBlank(actor.getThumbPath())) {
-                // yay, actor with empty image
-                String name = actor.getNameForStorage();
-                if (name.equals(path.getFileName().toString())) {
-                  actor.setThumbPath(path.toAbsolutePath().toString());
-                }
-              }
-            }
-
-          }
-        }
-      }
-      catch (IOException ex) {
-      }
-    }
-  }
-
-  /**
-   * Gets the actors.
-   * 
-   * @return the actors
-   */
-  public List<MovieActor> getActors() {
-    return this.actors;
-  }
-
-  /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
-  public String getDirector() {
-    return director;
-  }
-
-  /**
    * Gets the imdb id.
    * 
    * @return the imdb id
@@ -692,15 +637,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the writer.
-   * 
-   * @return the writer
-   */
-  public String getWriter() {
-    return writer;
-  }
-
-  /**
    * Checks for file.
    * 
    * @param filename
@@ -719,17 +655,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     return false;
-  }
-
-  /**
-   * Removes the actor.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void removeActor(MovieActor obj) {
-    actors.remove(obj);
-    firePropertyChange(ACTORS, null, this.getActors());
   }
 
   /**
@@ -856,38 +781,33 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // cast
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      List<MovieActor> actors = new ArrayList<>();
-      List<MovieProducer> producers = new ArrayList<>();
-      String director = "";
-      String writer = "";
+      List<Person> actors = new ArrayList<>();
+      List<Person> producers = new ArrayList<>();
+      List<Person> directors = new ArrayList<>();
+      List<Person> writers = new ArrayList<>();
+
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            MovieActor actor = new MovieActor();
-            actor.setName(member.getName());
-            actor.setCharacter(member.getCharacter());
+            Person actor = new Person(Person.Type.ACTOR, member.getName(), member.getCharacter());
             actor.setThumbUrl(member.getImageUrl());
             actors.add(actor);
             break;
 
           case DIRECTOR:
-            if (!StringUtils.isEmpty(director)) {
-              director += ", ";
-            }
-            director += member.getName();
+            Person director = new Person(Person.Type.DIRECTOR, member.getName(), member.getPart());
+            director.setThumbUrl(member.getImageUrl());
+            directors.add(director);
             break;
 
           case WRITER:
-            if (!StringUtils.isEmpty(writer)) {
-              writer += ", ";
-            }
-            writer += member.getName();
+            Person writer = new Person(Person.Type.WRITER, member.getName(), member.getPart());
+            writer.setThumbUrl(member.getImageUrl());
+            writers.add(writer);
             break;
 
           case PRODUCER:
-            MovieProducer producer = new MovieProducer();
-            producer.setName(member.getName());
-            producer.setRole(member.getPart());
+            Person producer = new Person(Person.Type.PRODUCER, member.getName(), member.getPart());
             producer.setThumbUrl(member.getImageUrl());
             producers.add(producer);
             break;
@@ -897,8 +817,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
         }
       }
       setActors(actors);
-      setDirector(director);
-      setWriter(writer);
+      setDirectors(directors);
+      setWriters(writers);
       setProducers(producers);
       writeActorImages();
     }
@@ -1126,49 +1046,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
   }
 
-  /**
-   * Sets the actors.
-   * 
-   * @param newActors
-   *          the new actors
-   */
-  @JsonSetter
-  public void setActors(List<MovieActor> newActors) {
-    // two way sync of actors
-    ListUtils.mergeLists(actors, newActors);
-
-    // and re-set movie path to the actors
-    for (MovieActor actor : actors) {
-      if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
-      }
-    }
-
-    // third - rename thumbs if needed
-    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
-    // actor writing/caching is done somewhere else...
-
-    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-    // Path actorDir = getPathNIO().resolve(MovieActor.ACTOR_DIR);
-    //
-    // for (MovieActor actor : actors) {
-    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
-    // try {
-    // // build expected filename
-    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
-    // Path oldFile = Paths.get(actor.getThumbPath());
-    // Utils.moveFileSafe(oldFile, actorName);
-    // }
-    // catch (IOException e) {
-    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
-    // }
-    // }
-    // }
-    // }
-
-    firePropertyChange(ACTORS, null, this.getActors());
-  }
-
   @Override
   public void setTitle(String newValue) {
     String oldValue = this.title;
@@ -1360,30 +1237,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
       connector.write(MovieModuleManager.SETTINGS.getNfoFilenames());
       firePropertyChange(HAS_NFO_FILE, false, true);
     }
-  }
-
-  /**
-   * Sets the director.
-   * 
-   * @param newValue
-   *          the new director
-   */
-  public void setDirector(String newValue) {
-    String oldValue = this.director;
-    this.director = newValue;
-    firePropertyChange(DIRECTOR, oldValue, newValue);
-  }
-
-  /**
-   * Sets the writer.
-   * 
-   * @param newValue
-   *          the new writer
-   */
-  public void setWriter(String newValue) {
-    String oldValue = this.writer;
-    this.writer = newValue;
-    firePropertyChange(WRITER, oldValue, newValue);
   }
 
   /**
@@ -1683,7 +1536,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // actor image files
     if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
-      for (MovieActor actor : actors) {
+      for (Person actor : actors) {
         Path imagePath = actor.getStoragePath();
         if (imagePath != null) {
           filesToCache.add(imagePath);
@@ -1848,29 +1701,135 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(TOP250, oldValue, newValue);
   }
 
-  public void addProducer(MovieProducer obj) {
-    // and re-set movie path of the producer
-    if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+  /**
+   * add an actor
+   *
+   * @param actor
+   *          the actor to be added
+   */
+  public void addActor(Person actor) {
+    if (actor.getType() != Person.Type.ACTOR) {
+      return;
     }
 
-    producers.add(obj);
+    // and re-set movie path the actors
+    if (StringUtils.isBlank(actor.getEntityRoot())) {
+      actor.setEntityRoot(getPathNIO().toString());
+    }
 
-    firePropertyChange(PRODUCERS, null, producers);
+    actors.add(actor);
+    firePropertyChange(ACTORS, null, this.getActors());
   }
 
-  public void removeProducer(MovieProducer obj) {
-    producers.remove(obj);
-    firePropertyChange(PRODUCERS, null, producers);
+  /**
+   * remove the given actor.
+   *
+   * @param actor
+   *          the actor to be removed
+   */
+  public void removeActor(Person actor) {
+    actors.remove(actor);
+    firePropertyChange(ACTORS, null, this.getActors());
   }
 
+  /**
+   * set the actors. This will do a two way sync of the list to be added and the given list, to do not re-add existing actors (better for binding)
+   *
+   * @param newActors
+   *          the new actors to be set
+   */
   @JsonSetter
-  public void setProducers(List<MovieProducer> newProducers) {
+  public void setActors(List<Person> newActors) {
+    // two way sync of actors
+    ListUtils.mergeLists(actors, newActors);
+
+    // and re-set movie path to the actors
+    for (Person actor : actors) {
+      if (StringUtils.isBlank(actor.getEntityRoot())) {
+        actor.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
+    // third - rename thumbs if needed
+    // NAH - thumb is always dynamic now - so if name doesnt change, nothing to rename
+    // actor writing/caching is done somewhere else...
+
+    // if (MovieModuleManager.SETTINGS.isWriteActorImages()) {
+    // Path actorDir = getPathNIO().resolve(Person.ACTOR_DIR);
+    //
+    // for (Person actor : actors) {
+    // if (StringUtils.isNotBlank(actor.getThumbPath())) {
+    // try {
+    // // build expected filename
+    // Path actorName = actorDir.resolve(actor.getNameForStorage() + "." + FilenameUtils.getExtension(actor.getThumbPath()));
+    // Path oldFile = Paths.get(actor.getThumbPath());
+    // Utils.moveFileSafe(oldFile, actorName);
+    // }
+    // catch (IOException e) {
+    // LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
+    // }
+    // }
+    // }
+    // }
+
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * get the actors
+   *
+   * @return the actors
+   */
+  public List<Person> getActors() {
+    return this.actors;
+  }
+
+  /**
+   * add a producer
+   * 
+   * @param producer
+   *          the producer to be added
+   */
+  public void addProducer(Person producer) {
+    if (producer.getType() != Person.Type.PRODUCER) {
+      return;
+    }
+
+    // and re-set movie path of the producer
+    if (StringUtils.isBlank(producer.getEntityRoot())) {
+      producer.setEntityRoot(getPathNIO().toString());
+    }
+
+    producers.add(producer);
+
+    firePropertyChange(PRODUCERS, null, producers);
+  }
+
+  /**
+   * remove the given producer
+   * 
+   * @param producer
+   *          the producer to be removed
+   */
+  public void removeProducer(Person producer) {
+    producers.remove(producer);
+    firePropertyChange(PRODUCERS, null, producers);
+  }
+
+  /**
+   * set the producers. This will do a two way sync of the list to be added and the given list, to do not re-add existing producers (better for
+   * binding)
+   *
+   * @param newProducers
+   *          the new producers to be set
+   */
+  @JsonSetter
+  public void setProducers(List<Person> newProducers) {
     // two way sync of producers
     ListUtils.mergeLists(producers, newProducers);
 
     // and re-set movie path to the producers
-    for (MovieProducer producer : producers) {
+    for (Person producer : producers) {
       if (StringUtils.isBlank(producer.getEntityRoot())) {
         producer.setEntityRoot(getPathNIO().toString());
       }
@@ -1879,8 +1838,167 @@ public class Movie extends MediaEntity implements IMediaInformation {
     firePropertyChange(PRODUCERS, null, producers);
   }
 
-  public List<MovieProducer> getProducers() {
+  /**
+   * get the producers
+   * 
+   * @return the producers
+   */
+  public List<Person> getProducers() {
     return this.producers;
+  }
+
+  /**
+   * add a director
+   *
+   * @param director
+   *          the director to be added
+   */
+  public void addDirector(Person director) {
+    if (director.getType() != Person.Type.DIRECTOR) {
+      return;
+    }
+
+    // and re-set movie path the directors
+    if (StringUtils.isBlank(director.getEntityRoot())) {
+      director.setEntityRoot(getPathNIO().toString());
+    }
+
+    directors.add(director);
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * remove the given director.
+   *
+   * @param director
+   *          the director to be removed
+   */
+  public void removeDirector(Person director) {
+    directors.remove(director);
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * Sets the directors.
+   *
+   * @param newDirectors
+   *          the new directors
+   */
+  @JsonSetter
+  public void setDirectors(List<Person> newDirectors) {
+    // two way sync of directors
+    ListUtils.mergeLists(directors, newDirectors);
+
+    // and re-set movie path to the actors
+    for (Person director : directors) {
+      if (StringUtils.isBlank(director.getEntityRoot())) {
+        director.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
+    firePropertyChange(DIRECTORS, null, this.getDirectors());
+    firePropertyChange(DIRECTORS_AS_STRING, null, this.getDirectorsAsString());
+  }
+
+  /**
+   * get the directors.
+   *
+   * @return the directors
+   */
+  public List<Person> getDirectors() {
+    return directors;
+  }
+
+  /**
+   * get the directors as string
+   * 
+   * @return a string containing all directors; separated by ,
+   */
+  public String getDirectorsAsString() {
+    List<String> directorNames = new ArrayList<>();
+    for (Person director : directors) {
+      directorNames.add(director.getName());
+    }
+    return StringUtils.join(directorNames, ", ");
+  }
+
+  /**
+   * add a writer
+   *
+   * @param writer
+   *          the writer to be added
+   */
+  public void addWriter(Person writer) {
+    if (writer.getType() != Person.Type.WRITER) {
+      return;
+    }
+
+    // and re-set movie path the writers
+    if (StringUtils.isBlank(writer.getEntityRoot())) {
+      writer.setEntityRoot(getPathNIO().toString());
+    }
+
+    writers.add(writer);
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * remove the given writer.
+   *
+   * @param writer
+   *          the writer to be removed
+   */
+  public void removeWriter(Person writer) {
+    writers.remove(writer);
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * Sets the writers.
+   *
+   * @param newWriters
+   *          the new writers
+   */
+  @JsonSetter
+  public void setWriters(List<Person> newWriters) {
+    // two way sync of writers
+    ListUtils.mergeLists(writers, newWriters);
+
+    // and re-set movie path to the actors
+    for (Person writer : writers) {
+      if (StringUtils.isBlank(writer.getEntityRoot())) {
+        writer.setEntityRoot(getPathNIO().toString());
+      }
+    }
+
+    firePropertyChange(WRITERS, null, this.getWriters());
+    firePropertyChange(WRITERS_AS_STRING, null, this.getWritersAsString());
+  }
+
+  /**
+   * Gets the writers.
+   *
+   * @return the writers
+   */
+  public List<Person> getWriters() {
+    return writers;
+  }
+
+  /**
+   * get the writers as string
+   *
+   * @return a string containing all writers; separated by ,
+   */
+  public String getWritersAsString() {
+    List<String> writerNames = new ArrayList<>();
+    for (Person writer : writers) {
+      writerNames.add(writer.getName());
+    }
+    return StringUtils.join(writerNames, ", ");
   }
 
   /**

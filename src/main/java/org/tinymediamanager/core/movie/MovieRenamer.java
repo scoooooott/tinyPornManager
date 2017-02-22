@@ -47,9 +47,9 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.filenaming.MovieBannerNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearartNaming;
 import org.tinymediamanager.core.movie.filenaming.MovieClearlogoNaming;
@@ -551,7 +551,7 @@ public class MovieRenamer {
     movie.setPath(newPathname);
 
     // update .actors
-    for (MovieActor actor : movie.getActors()) {
+    for (Person actor : movie.getActors()) {
       actor.setEntityRoot(newPathname);
     }
 
@@ -1073,7 +1073,9 @@ public class MovieRenamer {
         }
         break;
       case "$D":
-        ret = movie.getDirector();
+        if (!movie.getDirectors().isEmpty()) {
+          ret = movie.getDirectors().get(0).getName();
+        }
         break;
       case "$R":
         ret = mf.getVideoResolution();

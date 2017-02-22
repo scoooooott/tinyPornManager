@@ -53,7 +53,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
-import org.tinymediamanager.core.tvshow.entities.TvShowActor;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
@@ -224,8 +224,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
       xbmc.actors.clear();
       // actors for tv show episode (guests)
-      for (TvShowActor actor : episode.getGuests()) {
-        xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumbUrl());
+      for (Person actor : episode.getGuests()) {
+        xbmc.addActor(actor.getName(), actor.getRole(), actor.getThumbUrl());
       }
 
       // write thumb url to NFO
@@ -238,20 +238,14 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
       // support of frodo director tags
       xbmc.director.clear();
-      if (StringUtils.isNotEmpty(episode.getDirector())) {
-        String directors[] = episode.getDirector().split(", ");
-        for (String director : directors) {
-          xbmc.addDirector(director);
-        }
+      for (Person director : episode.getDirectors()) {
+        xbmc.addDirector(director.getName());
       }
 
       // support of frodo credits tags
       xbmc.credits.clear();
-      if (StringUtils.isNotEmpty(episode.getWriter())) {
-        String writers[] = episode.getWriter().split(", ");
-        for (String writer : writers) {
-          xbmc.addCredits(writer);
-        }
+      for (Person writer : episode.getWriters()) {
+        xbmc.addCredits(writer.getName());
       }
 
       xbmc.tags.clear();
@@ -415,31 +409,24 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
 
       // convert director to internal format
-      String director = "";
-      for (String dir : xbmc.getDirector()) {
-        if (!StringUtils.isEmpty(director)) {
-          director += ", ";
-        }
-        director += dir;
+      for (String director : xbmc.getDirector()) {
+        Person person = new Person(Person.Type.DIRECTOR, director, "Director");
+        episode.addDirector(person);
       }
-      episode.setDirector(director);
 
       // convert writer to internal format
-      String writer = "";
-      for (String wri : xbmc.getCredits()) {
-        if (StringUtils.isNotEmpty(writer)) {
-          writer += ", ";
-        }
-        writer += wri;
+      for (String writer : xbmc.getCredits()) {
+        Person person = new Person(Person.Type.WRITER, writer, "Writer");
+        episode.addWriter(person);
       }
-      episode.setWriter(writer);
+
       episode.setFirstAired(xbmc.getAired());
 
       // now there is the complicated part: tv show actors should be on the tv show level
       // episode "guests" should be on the episode level
       // BUT: at this moment there is no information about the tv show, so we parse them all into the episode
       for (Actor actor : xbmc.getActors()) {
-        TvShowActor cast = new TvShowActor(actor.getName(), actor.getRole());
+        Person cast = new Person(Person.Type.ACTOR, actor.getName(), actor.getRole());
         cast.setThumbUrl(actor.getThumb());
         episode.addActor(cast);
       }

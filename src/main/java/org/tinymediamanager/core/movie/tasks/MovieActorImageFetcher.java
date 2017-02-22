@@ -26,8 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -56,7 +56,7 @@ public class MovieActorImageFetcher implements Runnable {
     try {
 
       // check if actors folder exists
-      Path actorsDir = movie.getPathNIO().resolve(MovieActor.ACTOR_DIR);
+      Path actorsDir = movie.getPathNIO().resolve(Person.ACTOR_DIR);
       if (!Files.isDirectory(actorsDir)) {
         Files.createDirectory(actorsDir);
       }
@@ -69,7 +69,7 @@ public class MovieActorImageFetcher implements Runnable {
             boolean found = false;
             // check if there is an actor for this file
             String actorImage = FilenameUtils.getBaseName(path.getFileName().toString()).replace("_", " ");
-            for (MovieActor actor : movie.getActors()) {
+            for (Person actor : movie.getActors()) {
               if (actor.getName().equals(actorImage)) {
                 found = true;
 
@@ -91,7 +91,7 @@ public class MovieActorImageFetcher implements Runnable {
       }
 
       // second download missing images
-      for (MovieActor actor : movie.getActors()) {
+      for (Person actor : movie.getActors()) {
         Path actorImage = actor.getStoragePath();
 
         if (actorImage != null && StringUtils.isNotEmpty(actor.getThumbUrl()) && !Files.exists(actorImage)) {

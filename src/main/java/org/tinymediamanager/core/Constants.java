@@ -40,7 +40,8 @@ public final class Constants {
   public final static String DATA_SOURCE            = "dataSource";
   public final static String DATE_ADDED             = "dateAdded";
   public final static String DATE_ADDED_AS_STRING   = "dateAddedAsString";
-  public final static String DIRECTOR               = "director";
+  public final static String DIRECTORS              = "directors";
+  public final static String DIRECTORS_AS_STRING    = "directorsAsString";
   public final static String DVD_EPISODE            = "dvdEpisode";
   public final static String DVD_ORDER              = "dvdOrder";
   public final static String DVD_SEASON             = "dvdSeason";
@@ -105,7 +106,8 @@ public final class Constants {
   public final static String VIDEO_IN_3D            = "videoIn3D";
   public final static String VOTES                  = "votes";
   public final static String WATCHED                = "watched";
-  public final static String WRITER                 = "writer";
+  public final static String WRITERS                = "writers";
+  public final static String WRITERS_AS_STRING      = "writersAsString";
   public final static String YEAR                   = "year";
 
   // some hardcoded, well known meta data provider IDs

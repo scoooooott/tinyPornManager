@@ -20,7 +20,6 @@ import static org.tinymediamanager.core.Constants.ADDED_EPISODE;
 import static org.tinymediamanager.core.Constants.ADDED_SEASON;
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
 import static org.tinymediamanager.core.Constants.DATA_SOURCE;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
 import static org.tinymediamanager.core.Constants.EPISODE_COUNT;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
@@ -39,7 +38,7 @@ import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.TVDB;
 import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -74,6 +73,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
@@ -105,10 +105,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private String                             dataSource            = "";
   @JsonProperty
-  private String                             director              = "";
-  @JsonProperty
-  private String                             writer                = "";
-  @JsonProperty
   private int                                runtime               = 0;
   @JsonProperty
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -129,7 +125,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @JsonProperty
   private HashMap<Integer, String>           seasonPosterUrlMap    = new HashMap<>(0);
   @JsonProperty
-  private List<TvShowActor>                  actors                = new CopyOnWriteArrayList<>();
+  private List<Person>                       actors                = new CopyOnWriteArrayList<>();
   @JsonProperty
   private List<TvShowEpisode>                dummyEpisodes         = new CopyOnWriteArrayList<>();
 
@@ -646,32 +642,14 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
     if (config.isCast()) {
       setProductionCompany(StringUtils.join(metadata.getProductionCompanies(), ", "));
-      List<TvShowActor> actors = new ArrayList<>();
-      String director = "";
-      String writer = "";
+      List<Person> actors = new ArrayList<>();
 
       for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            TvShowActor actor = new TvShowActor();
-            actor.setName(member.getName());
-            actor.setCharacter(member.getCharacter());
+            Person actor = new Person(ACTOR, member.getName(), member.getCharacter());
             actor.setThumbUrl(member.getImageUrl());
             actors.add(actor);
-            break;
-
-          case DIRECTOR:
-            if (!StringUtils.isEmpty(director)) {
-              director += ", ";
-            }
-            director += member.getName();
-            break;
-
-          case WRITER:
-            if (!StringUtils.isEmpty(writer)) {
-              writer += ", ";
-            }
-            writer += member.getName();
             break;
 
           default:
@@ -679,8 +657,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
         }
       }
       setActors(actors);
-      setDirector(director);
-      setWriter(writer);
       // TODO write actor images for tv shows
       // writeActorImages();
     }
@@ -1069,48 +1045,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
-  public String getDirector() {
-    return director;
-  }
-
-  /**
-   * Gets the writer.
-   * 
-   * @return the writer
-   */
-  public String getWriter() {
-    return writer;
-  }
-
-  /**
-   * Sets the director.
-   * 
-   * @param newValue
-   *          the new director
-   */
-  public void setDirector(String newValue) {
-    String oldValue = this.director;
-    this.director = newValue;
-    firePropertyChange(DIRECTOR, oldValue, newValue);
-  }
-
-  /**
-   * Sets the writer.
-   * 
-   * @param newValue
-   *          the new writer
-   */
-  public void setWriter(String newValue) {
-    String oldValue = this.writer;
-    this.writer = newValue;
-    firePropertyChange(WRITER, oldValue, newValue);
-  }
-
-  /**
    * Gets the runtime.
    * 
    * @return the runtime
@@ -1137,7 +1071,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param obj
    *          the obj
    */
-  public void addActor(TvShowActor obj) {
+  public void addActor(Person obj) {
     // and re-set TV show path to the actor
     if (StringUtils.isBlank(obj.getEntityRoot())) {
       obj.setEntityRoot(getPathNIO().toString());
@@ -1152,7 +1086,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @return the actors
    */
-  public List<TvShowActor> getActors() {
+  public List<Person> getActors() {
     return this.actors;
   }
 
@@ -1162,7 +1096,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param obj
    *          the obj
    */
-  public void removeActor(TvShowActor obj) {
+  public void removeActor(Person obj) {
     actors.remove(obj);
 
     firePropertyChange(ACTORS, null, this.getActors());
@@ -1175,12 +1109,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *          the new actors
    */
   @JsonSetter
-  public void setActors(List<TvShowActor> newActors) {
+  public void setActors(List<Person> newActors) {
     // two way sync of actors
     ListUtils.mergeLists(actors, newActors);
 
     // and re-set TV show path to the actors
-    for (TvShowActor actor : actors) {
+    for (Person actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
         actor.setEntityRoot(getPathNIO().toString());
       }

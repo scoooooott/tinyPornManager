@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import static org.tinymediamanager.core.Constants.ACTORS;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -25,11 +24,9 @@ import java.util.ResourceBundle;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -54,22 +51,21 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  */
 @Deprecated
 public class MovieActorPanel extends JPanel {
-  private static final long                  serialVersionUID = 2972207353452870494L;
+  private static final long              serialVersionUID = 2972207353452870494L;
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel                selectionModel;
-  private EventList<MovieActor>              actorEventList   = null;
-  private DefaultEventTableModel<MovieActor> actorTableModel  = null;
-  private ActorImageLabel                    lblActorThumb;
-  private JTable                             tableCast;
+  private MovieSelectionModel            selectionModel;
+  private EventList<Person>              actorEventList   = null;
+  private DefaultEventTableModel<Person> actorTableModel  = null;
+  private ActorImageLabel                lblActorThumb;
+  private JTable                         tableCast;
 
   public MovieActorPanel(MovieSelectionModel model) {
     selectionModel = model;
-    actorEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<>(new BasicEventList<MovieActor>(), GlazedLists.beanConnector(MovieActor.class)));
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
     actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     setLayout(new FormLayout(
@@ -88,18 +84,16 @@ public class MovieActorPanel extends JPanel {
     initDataBindings();
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a movei
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && ACTORS.equals(property))) {
-          actorEventList.clear();
-          actorEventList.addAll(selectionModel.getSelectedMovie().getActors());
-          if (actorEventList.size() > 0) {
-            tableCast.getSelectionModel().setSelectionInterval(0, 0);
-          }
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of a movie
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+          || (source.getClass() == Movie.class && ACTORS.equals(property))) {
+        actorEventList.clear();
+        actorEventList.addAll(selectionModel.getSelectedMovie().getActors());
+        if (actorEventList.size() > 0) {
+          tableCast.getSelectionModel().setSelectionInterval(0, 0);
         }
       }
     };
@@ -107,24 +101,21 @@ public class MovieActorPanel extends JPanel {
     selectionModel.addPropertyChangeListener(propertyChangeListener);
 
     // selectionlistener for the selected actor
-    tableCast.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent arg0) {
-        if (!arg0.getValueIsAdjusting()) {
-          int selectedRow = tableCast.convertRowIndexToModel(tableCast.getSelectedRow());
-          if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-            MovieActor actor = actorEventList.get(selectedRow);
-            lblActorThumb.setActor(actor);
-          }
-          else {
-            lblActorThumb.setImageUrl("");
-          }
+    tableCast.getSelectionModel().addListSelectionListener(arg0 -> {
+      if (!arg0.getValueIsAdjusting()) {
+        int selectedRow = tableCast.convertRowIndexToModel(tableCast.getSelectedRow());
+        if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
+          Person actor = actorEventList.get(selectedRow);
+          lblActorThumb.setActor(actor);
+        }
+        else {
+          lblActorThumb.setImageUrl("");
         }
       }
     });
   }
 
-  private static class ActorTableFormat implements AdvancedTableFormat<MovieActor> {
+  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -143,13 +134,13 @@ public class MovieActorPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(MovieActor actor, int column) {
+    public Object getColumnValue(Person actor, int column) {
       switch (column) {
         case 0:
           return actor.getName();
 
         case 1:
-          return actor.getCharacter();
+          return actor.getRole();
       }
       throw new IllegalStateException();
     }

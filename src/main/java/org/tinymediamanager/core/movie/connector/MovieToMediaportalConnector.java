@@ -117,7 +117,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   @Override
   protected void addCredits() {
     Element credits = document.createElement("credits");
-    credits.setTextContent(movie.getWriter());
+    credits.setTextContent(movie.getWritersAsString());
     root.appendChild(credits);
   }
 
@@ -127,7 +127,7 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   @Override
   protected void addDirectors() {
     Element director = document.createElement("director");
-    director.setTextContent(movie.getDirector());
+    director.setTextContent(movie.getDirectorsAsString());
     root.appendChild(director);
   }
 }

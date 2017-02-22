@@ -30,8 +30,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -63,8 +63,8 @@ public class TvShowCastPanel extends JPanel {
   private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowSelectionModel          selectionModel;
-  private EventList<TvShowActor>              actorEventList   = null;
-  private DefaultEventTableModel<TvShowActor> actorTableModel  = null;
+  private EventList<Person>              actorEventList   = null;
+  private DefaultEventTableModel<Person> actorTableModel  = null;
 
   /**
    * UI elements
@@ -81,7 +81,7 @@ public class TvShowCastPanel extends JPanel {
   public TvShowCastPanel(TvShowSelectionModel model) {
     selectionModel = model;
     actorEventList = GlazedLists
-        .threadSafeList(new ObservableElementList<>(new BasicEventList<TvShowActor>(), GlazedLists.beanConnector(TvShowActor.class)));
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<Person>(), GlazedLists.beanConnector(Person.class)));
     actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     setLayout(
@@ -128,7 +128,7 @@ public class TvShowCastPanel extends JPanel {
         if (!arg0.getValueIsAdjusting()) {
           int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
           if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
-            TvShowActor actor = actorEventList.get(selectedRow);
+            Person actor = actorEventList.get(selectedRow);
             Path p = ImageCache.getCachedFile(actor.getThumbUrl());
             if (p == null) {
               lblActorImage.setImageUrl(actor.getThumbUrl());
@@ -167,7 +167,7 @@ public class TvShowCastPanel extends JPanel {
   // });
   // }
 
-  private static class ActorTableFormat implements AdvancedTableFormat<TvShowActor> {
+  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -186,13 +186,13 @@ public class TvShowCastPanel extends JPanel {
     }
 
     @Override
-    public Object getColumnValue(TvShowActor actor, int column) {
+    public Object getColumnValue(Person actor, int column) {
       switch (column) {
         case 0:
           return actor.getName();
 
         case 1:
-          return actor.getCharacter();
+          return actor.getRole();
       }
       throw new IllegalStateException();
     }

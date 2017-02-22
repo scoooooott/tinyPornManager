@@ -15,6 +15,11 @@
  */
 package org.tinymediamanager.core.movie.connector;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+import static org.tinymediamanager.core.entities.Person.Type.WRITER;
+
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -60,6 +65,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -67,8 +73,6 @@ import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.MovieSets;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Producer;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieActor;
-import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -267,13 +271,13 @@ public class MovieToMpNfoConnector {
       mp.source = movie.getMediaSource().name();
     }
 
-    mp.director = movie.getDirector();
-    mp.credits = movie.getWriter();
-    for (MovieActor cast : movie.getActors()) {
-      mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
+    mp.director = movie.getDirectorsAsString();
+    mp.credits = movie.getWritersAsString();
+    for (Person cast : movie.getActors()) {
+      mp.addActor(cast.getName(), cast.getRole(), cast.getThumbUrl());
     }
 
-    for (MovieProducer producer : movie.getProducers()) {
+    for (Person producer : movie.getProducers()) {
       mp.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
@@ -402,8 +406,24 @@ public class MovieToMpNfoConnector {
         movie.setImdbId(mp.imdb);
       }
 
-      movie.setDirector(mp.director);
-      movie.setWriter(mp.credits);
+      if (StringUtils.isNotBlank(mp.director)) {
+        String[] directors = mp.director.split(", ");
+        for (String director : directors) {
+          if (StringUtils.isNotBlank(director)) {
+            Person person = new Person(DIRECTOR, director, "Director");
+            movie.addDirector(person);
+          }
+        }
+      }
+      if (StringUtils.isNotBlank(mp.credits)) {
+        String[] writers = mp.credits.split(", ");
+        for (String writer : writers) {
+          if (StringUtils.isNotBlank(writer)) {
+            Person person = new Person(WRITER, writer, "Writer");
+            movie.addWriter(person);
+          }
+        }
+      }
       movie.setProductionCompany(mp.studio);
       movie.setCountry(mp.country);
 
@@ -452,13 +472,13 @@ public class MovieToMpNfoConnector {
       }
 
       for (Actor actor : mp.getActors()) {
-        MovieActor cast = new MovieActor(actor.name, actor.role);
+        Person cast = new Person(ACTOR, actor.name, actor.role);
         cast.setThumbUrl(actor.thumb);
         movie.addActor(cast);
       }
 
       for (Producer producer : mp.getProducers()) {
-        MovieProducer cast = new MovieProducer(producer.name, producer.role);
+        Person cast = new Person(PRODUCER, producer.name, producer.role);
         cast.setThumbUrl(producer.thumb);
         movie.addProducer(cast);
       }
