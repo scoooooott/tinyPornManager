@@ -46,7 +46,7 @@ public class MovieNfoParserTest {
   }
 
   private void testKodi17_0() {
-    // Kodi version 16.1
+    // Kodi version 17.0
     try {
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi17.0.nfo"));
 
@@ -89,13 +89,6 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(2);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
-      }
-      assertThat(parser.directors).hasSize(1);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
-      }
       assertThat(parser.tags).hasSize(0);
 
       assertThat(parser.actors).hasSize(113);
@@ -106,6 +99,13 @@ public class MovieNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
       assertThat(parser.producers).hasSize(0);
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
+      }
 
       assertThat(parser.fileinfo).isNull();
       assertThat(parser.unsupportedElements).hasSize(2);
@@ -168,13 +168,6 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(2);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
-      }
-      assertThat(parser.directors).hasSize(1);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
-      }
       assertThat(parser.tags).hasSize(0);
 
       assertThat(parser.actors).hasSize(113);
@@ -185,6 +178,13 @@ public class MovieNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
       assertThat(parser.producers).hasSize(0);
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
+      }
 
       assertThat(parser.fileinfo).isNull();
       assertThat(parser.unsupportedElements).hasSize(1);
@@ -246,13 +246,6 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(2);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
-      }
-      assertThat(parser.directors).hasSize(1);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
-      }
       assertThat(parser.tags).hasSize(0);
 
       assertThat(parser.actors).hasSize(113);
@@ -263,6 +256,13 @@ public class MovieNfoParserTest {
         assertThat(actor.thumb).isNotNull();
       }
       assertThat(parser.producers).hasSize(0);
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
+      }
+      assertThat(parser.directors).hasSize(1);
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
+      }
 
       assertThat(parser.fileinfo).isNull();
       assertThat(parser.unsupportedElements).hasSize(1);
@@ -324,12 +324,12 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(2);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
       }
       assertThat(parser.directors).hasSize(1);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
       }
       assertThat(parser.tags).hasSize(0);
 
@@ -399,12 +399,12 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(16);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
       }
       assertThat(parser.directors).hasSize(3);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
       }
       assertThat(parser.tags).isEmpty();
       assertThat(parser.actors).hasSize(9);
@@ -466,8 +466,8 @@ public class MovieNfoParserTest {
       assertThat(parser.ids).contains(entry("imdb", "tt0472033"), entry("tmdb", 12244), entry("trakt", 7146));
       assertThat(parser.country).isNotEmpty();
       assertThat(parser.releaseDate).hasSameTimeAs("2009-08-19");
-      assertThat(parser.watched).isEqualTo(false);
-      assertThat(parser.playcount).isEqualTo(0);
+      assertThat(parser.watched).isEqualTo(true);
+      assertThat(parser.playcount).isEqualTo(1);
       assertThat(parser.genres).contains(MediaGenres.ANIMATION, MediaGenres.ACTION, MediaGenres.SCIENCE_FICTION, MediaGenres.ADVENTURE,
           MediaGenres.THRILLER);
       assertThat(parser.studios).hasSize(5);
@@ -475,12 +475,12 @@ public class MovieNfoParserTest {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.credits).hasSize(16);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
       }
       assertThat(parser.directors).hasSize(1);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
       }
       assertThat(parser.tags).hasSize(1);
       for (String tag : parser.tags) {
@@ -498,10 +498,6 @@ public class MovieNfoParserTest {
         assertThat(producer.name).isNotEmpty();
         assertThat(producer.role).isNotEmpty();
       }
-      assertThat(parser.fileinfo).isNotNull(); // not null, but empty
-      assertThat(parser.fileinfo.videos).isEmpty();
-      assertThat(parser.fileinfo.audios).isEmpty();
-      assertThat(parser.fileinfo.subtitles).isEmpty();
       assertThat(parser.unsupportedElements).hasSize(1);
       assertThat(parser.unsupportedElements.get(0)).isEqualTo("<resume><position>754.000000</position><total>6217.000000</total></resume>");
       assertThat(parser.trailer).isNotEmpty();
@@ -512,6 +508,10 @@ public class MovieNfoParserTest {
       assertThat(parser.code).isNotEmpty();
       assertThat(parser.lastplayed).isNotNull();
       assertThat(parser.dateadded).isNotNull();
+      assertThat(parser.fileinfo).isNotNull(); // not null, but empty
+      assertThat(parser.fileinfo.videos).isEmpty();
+      assertThat(parser.fileinfo.audios).isEmpty();
+      assertThat(parser.fileinfo.subtitles).isEmpty();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -570,15 +570,15 @@ public class MovieNfoParserTest {
           MediaGenres.THRILLER);
       assertThat(parser.studios).hasSize(5);
       assertThat(parser.credits).hasSize(16);
-      for (String credit : parser.credits) {
-        assertThat(credit).isNotEmpty();
+      for (MovieNfoParser.Person credit : parser.credits) {
+        assertThat(credit.name).isNotEmpty();
       }
       for (String studio : parser.studios) {
         assertThat(studio).isNotEmpty();
       }
       assertThat(parser.directors).hasSize(2);
-      for (String director : parser.directors) {
-        assertThat(director).isNotEmpty();
+      for (MovieNfoParser.Person director : parser.directors) {
+        assertThat(director.name).isNotEmpty();
       }
       assertThat(parser.tags).hasSize(2);
       for (String tag : parser.tags) {

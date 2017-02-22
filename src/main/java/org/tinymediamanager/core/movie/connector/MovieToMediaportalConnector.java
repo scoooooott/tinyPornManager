@@ -30,6 +30,8 @@ import org.w3c.dom.Element;
 
 /**
  * the class MovieToMediaportalConnector is used to write a classic Mediaportal 1.x compatible NFO file
+ *
+ * @author Manuel Laggner
  */
 public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieToMediaportalConnector.class);

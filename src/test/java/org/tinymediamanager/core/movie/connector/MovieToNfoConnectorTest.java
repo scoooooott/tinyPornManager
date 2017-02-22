@@ -79,14 +79,14 @@ public class MovieToNfoConnectorTest {
     }
 
     try {
-      Movie movie = createXbmcMovie();
+      Movie movie = createKodiMovie();
 
       // write it
       List<MovieNfoNaming> nfoNames = Arrays.asList(MovieNfoNaming.MOVIE_NFO);
       MovieToKodiConnector connector = new MovieToKodiConnector(movie);
       connector.write(nfoNames);
 
-      Path nfoFile = Paths.get("target/test-classes/xbmc_nfo/movie.nfo");
+      Path nfoFile = Paths.get("target/test-classes/kodi_nfo/movie.nfo");
       assertThat(Files.exists(nfoFile)).isTrue();
 
       // unmarshal it
@@ -175,6 +175,86 @@ public class MovieToNfoConnectorTest {
   private Movie createXbmcMovie() throws Exception {
     Movie movie = new Movie();
     movie.setPath("target/test-classes/xbmc_nfo");
+    movie.setTitle("Aladdin");
+    movie.setOriginalTitle("Disneys Aladdin");
+    movie.setSortTitle("Aladdin");
+    movie.setRating(7.2f);
+    movie.setYear("1992");
+    movie.setTop250(199);
+    movie.setVotes(5987);
+    movie.setPlot("Princess Jasmine grows tired of being forced to remain in the...");
+    movie.setTagline("Wish granted");
+    movie.setRuntime(90);
+    movie.setArtworkUrl("http://poster", MediaFileType.POSTER);
+    movie.setArtworkUrl("http://fanart", MediaFileType.FANART);
+    movie.setImdbId("tt0103639");
+    movie.setTmdbId(812);
+    movie.setId("trakt", 655);
+    movie.setProductionCompany("Walt Disney");
+    movie.setCountry("US");
+    movie.setCertification(Certification.US_G);
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    movie.setReleaseDate(sdf.parse("1992-11-25"));
+
+    MovieTrailer trailer = new MovieTrailer();
+    trailer.setUrl("https://trailer");
+    trailer.setInNfo(true);
+    movie.addTrailer(trailer);
+
+    MovieSet movieSet = new MovieSet();
+    movieSet.setTitle("Aladdin Collection");
+    movieSet.setPlot("Aladdin plot");
+    movie.setMovieSet(movieSet);
+
+    // ToDo fileinfo
+    MediaFile mf = new MediaFile();
+    mf.setType(MediaFileType.VIDEO);
+    mf.setFilename("Aladdin.mkv");
+    mf.setVideoCodec("h264");
+    mf.setVideoHeight(720);
+    mf.setVideoWidth(1280);
+    mf.setDuration(3600);
+    mf.setVideo3DFormat(MediaFile.VIDEO_3D_SBS);
+
+    MediaFileAudioStream audio = new MediaFileAudioStream();
+    audio.setCodec("AC3");
+    audio.setLanguage("en");
+    audio.setChannels("6");
+    mf.setAudioStreams(Arrays.asList(audio));
+
+    MediaFileSubtitle sub = new MediaFileSubtitle();
+    sub.setLanguage("de");
+    mf.addSubtitle(sub);
+
+    movie.addToMediaFiles(mf);
+
+    movie.setWatched(true);
+    movie.addGenre(MediaGenres.ADVENTURE);
+    movie.addGenre(MediaGenres.FAMILY);
+    movie.addWriter(new Person(Person.Type.WRITER, "Ted Elliott", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Terry Rossio", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "Ron Clements", "Writer"));
+    movie.addWriter(new Person(Person.Type.WRITER, "John Jusker", "Writer"));
+    movie.addDirector(new Person(Person.Type.DIRECTOR, "Ron Clements", "Director"));
+    movie.addWriter(new Person(Person.Type.DIRECTOR, "John Jusker", "Director"));
+    movie.addToTags("Disney");
+    movie.addToTags("Oriental");
+
+    movie.addActor(new Person(Person.Type.ACTOR, "Scott Weinger", "Aladdin 'Al' (voice)"));
+    movie.addActor(new Person(Person.Type.ACTOR, "Robin Williams", "Genie (voice)"));
+
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Ron Clements", "Producer"));
+    movie.addProducer(new Person(Person.Type.PRODUCER, "Donald W. Ernst", "Producer"));
+
+    movie.setSpokenLanguages("en");
+    movie.setMediaSource(MediaSource.BLURAY);
+    return movie;
+  }
+
+  private Movie createKodiMovie() throws Exception {
+    Movie movie = new Movie();
+    movie.setPath("target/test-classes/kodi_nfo");
     movie.setTitle("Aladdin");
     movie.setOriginalTitle("Disneys Aladdin");
     movie.setSortTitle("Aladdin");

@@ -38,6 +38,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
@@ -63,6 +64,8 @@ import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 
 /**
  * this class is a general XML connector which suits as a base class for most xml based connectors
+ *
+ * @author Manuel Laggner
  */
 public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
@@ -104,12 +107,12 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     List<MediaFile> newNfos = new ArrayList<>(1);
 
     for (MovieNfoNaming nfoNaming : nfoNames) {
-      try {
-        String nfoFilename = movie.getNfoFilename(nfoNaming);
-        if (nfoFilename.isEmpty()) {
-          continue;
-        }
+      String nfoFilename = movie.getNfoFilename(nfoNaming);
+      if (StringUtils.isBlank(nfoFilename)) {
+        continue;
+      }
 
+      try {
         // create the new NFO file according to the specifications
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         document = factory.newDocumentBuilder().newDocument();
@@ -176,7 +179,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write " /* + movie.getPathNIO().resolve(nfoFilename) */, e);
+        getLogger().error("write " + movie.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -440,7 +443,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addCredits() {
     for (Person writer : movie.getWriters()) {
-      Element element = document.createElement("writer");
+      Element element = document.createElement("credits");
       element.setTextContent(writer.getName());
       root.appendChild(element);
     }

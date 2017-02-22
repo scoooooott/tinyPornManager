@@ -24,6 +24,8 @@ import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 
 /**
  * This interface is designed for the movie connectors
+ *
+ * @author Manuel Laggner
  */
 public interface IMovieConnector {
   /**

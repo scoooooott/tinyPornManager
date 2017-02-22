@@ -38,6 +38,8 @@ import org.w3c.dom.Element;
 
 /**
  * the class MovieToKodiConnector is used to write a the most recent Kodi compatible NFO file
+ *
+ * @author Manuel Laggner
  */
 public class MovieToKodiConnector extends MovieGenericXmlConnector {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieToKodiConnector.class);
@@ -55,7 +57,6 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
   protected void addOwnTags() {
     addEpbookmark();
     addTop250();
-    addRatings();
     addLastplayed();
     addStatusAndCode();
     addFileinfo();
@@ -157,7 +158,8 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
    * <ratings> <rating name="default" max="10" default="true"> <value>5.800000</value> <votes>2100</votes> </rating> <rating name="imdb">
    * <value>8.9</value> <votes>12345</votes> </rating> </ratings>
    */
-  protected void addRatings() {
+  @Override
+  protected void addRating() {
     // FIXME change that when we changed the core to the new rating system
     Element ratings = document.createElement("ratings");
 
@@ -175,9 +177,14 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
     rating.appendChild(votes);
 
     ratings.appendChild(rating);
+    root.appendChild(ratings);
+  }
 
-    Element top250 = getSingleElementByTag("top250");
-    root.insertBefore(ratings, top250);
+  /**
+   * votes are now in the ratings tag
+   */
+  @Override
+  protected void addVotes() {
   }
 
   /**

@@ -37,6 +37,8 @@ import org.w3c.dom.Element;
 
 /**
  * the class MovieToXbmcConnector is used to write a classic XBMC/Kodi compatible NFO file
+ *
+ * @author Manuel Laggner
  */
 public class MovieToXbmcConnector extends MovieGenericXmlConnector {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieToXbmcConnector.class);

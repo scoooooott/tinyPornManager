@@ -93,15 +93,15 @@ public class MovieNfoParser {
   public List<String>        fanarts             = new ArrayList<>();
   public List<MediaGenres>   genres              = new ArrayList<>();
   public List<String>        studios             = new ArrayList<>();
-  public List<String>        credits             = new ArrayList<>();
-  public List<String>        directors           = new ArrayList<>();
   public List<String>        tags                = new ArrayList<>();
   public List<Person>        actors              = new ArrayList<>();
   public List<Person>        producers           = new ArrayList<>();
+  public List<Person>        directors           = new ArrayList<>();
+  public List<Person>        credits             = new ArrayList<>();
 
   public List<String>        unsupportedElements = new ArrayList<>();
 
-  /* some xbmc related tag we parse, but do not use internally */
+  /* some xbmc related tags we parse, but do not use internally */
   public Fileinfo            fileinfo            = null;
   public String              epbookmark          = "";
   public Date                lastplayed          = null;
@@ -117,8 +117,8 @@ public class MovieNfoParser {
    */
   private MovieNfoParser(Document document) throws Exception {
     // first check if there is a valid root object
-    Elements elements = document.select(":root");
-    if (elements.isEmpty() || !elements.get(0).tagName().equals("movie")) {
+    Elements elements = document.select("movie");
+    if (elements.isEmpty()) {
       throw new Exception("Unsupported NFO/XML format");
     }
 
@@ -685,8 +685,18 @@ public class MovieNfoParser {
     if (element != null) {
       try {
         watched = Boolean.parseBoolean(element.ownText());
-        element = getSingleElement(root, "playcount");
+      }
+      catch (Exception ignored) {
+      }
+    }
+
+    element = getSingleElement(root, "playcount");
+    if (element != null) {
+      try {
         playcount = ParserUtils.parseInt(element.ownText());
+        if (playcount > 0 && watched == false) {
+          watched = true;
+        }
       }
       catch (Exception ignored) {
       }
@@ -760,7 +770,13 @@ public class MovieNfoParser {
     // if there is exactly one credits tag, split the credits at the comma
     if (elements.size() == 1) {
       try {
-        credits.addAll(Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"))); // split on , or / and remove whitespace around)
+        // split on , or / and remove whitespace around)
+        List<String> creditsNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        for (String credit : creditsNames) {
+          Person person = new Person();
+          person.name = credit;
+          credits.add(person);
+        }
       }
       catch (Exception ignored) {
       }
@@ -768,7 +784,9 @@ public class MovieNfoParser {
     else {
       for (Element element : elements) {
         if (StringUtils.isNotBlank(element.ownText())) {
-          credits.add(element.ownText());
+          Person person = new Person();
+          person.name = element.ownText();
+          credits.add(person);
         }
       }
     }
@@ -786,7 +804,13 @@ public class MovieNfoParser {
     // if there is exactly one director tag, split the directors at the comma
     if (elements.size() == 1) {
       try {
-        directors.addAll(Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"))); // split on , or / and remove whitespace around)
+        // split on , or / and remove whitespace around)
+        List<String> directorNames = Arrays.asList(elements.get(0).ownText().split("\\s*[,\\/]\\s*"));
+        for (String director : directorNames) {
+          Person person = new Person();
+          person.name = director;
+          directors.add(person);
+        }
       }
       catch (Exception ignored) {
       }
@@ -794,7 +818,11 @@ public class MovieNfoParser {
     else {
       for (Element element : elements) {
         if (StringUtils.isNotBlank(element.ownText())) {
-          directors.add(element.ownText());
+          if (StringUtils.isNotBlank(element.ownText())) {
+            Person person = new Person();
+            person.name = element.ownText();
+            directors.add(person);
+          }
         }
       }
     }
@@ -1255,13 +1283,13 @@ public class MovieNfoParser {
       movie.addProducer(cast);
     }
 
-    for (String director : directors) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(DIRECTOR, director, "Director");
+    for (Person director : directors) {
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(DIRECTOR, director.name, "Director");
       movie.addDirector(cast);
     }
 
-    for (String writer : credits) {
-      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(WRITER, writer, "Writer");
+    for (Person writer : credits) {
+      org.tinymediamanager.core.entities.Person cast = new org.tinymediamanager.core.entities.Person(WRITER, writer.name, "Writer");
       movie.addWriter(cast);
     }
 
