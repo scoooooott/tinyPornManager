@@ -90,9 +90,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
   private static long                 preDir         = 0;
   private static long                 postDir        = 0;
   private static long                 visFile        = 0;
-  private static long                 preDir2        = 0;
-  private static long                 postDir2       = 0;
-  private static long                 visFile2       = 0;
+  private static long                 preDirAll      = 0;
+  private static long                 postDirAll     = 0;
+  private static long                 visFileAll     = 0;
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders    = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
@@ -128,6 +128,12 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
       return;
     }
+    preDir = 0;
+    postDir = 0;
+    visFile = 0;
+    preDirAll = 0;
+    postDirAll = 0;
+    visFileAll = 0;
 
     // get existing movie folders
     List<Path> existing = new ArrayList<>();
@@ -247,9 +253,9 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       LOGGER.debug("PreDir " + preDir);
       LOGGER.debug("PostDir " + postDir);
       LOGGER.debug("VisFile " + visFile);
-      LOGGER.debug("PreDir2 " + preDir2);
-      LOGGER.debug("PostDir2 " + postDir2);
-      LOGGER.debug("VisFile2 " + visFile2);
+      LOGGER.debug("PreDirAll " + preDirAll);
+      LOGGER.debug("PostDirAll " + postDirAll);
+      LOGGER.debug("VisFileAll " + visFileAll);
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -844,7 +850,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
         }
 
-        LOGGER.debug("| parsing " + mf.getType().name() + " " + mf.getFilename());
+        LOGGER.debug("| parsing " + mf.getType().name() + " " + mf.getFileAsPath());
         switch (mf.getType()) {
           case VIDEO:
             movie.addToMediaFiles(mf);
@@ -914,7 +920,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           case GRAPHIC:
           case UNKNOWN:
           default:
-            LOGGER.debug("| NOT adding unknown media file type: " + mf.getFilename());
+            LOGGER.debug("| NOT adding unknown media file type: " + mf.getFileAsPath());
             // movie.addToMediaFiles(mf); // DO NOT ADD UNKNOWN
             break;
         } // end switch type
@@ -1169,7 +1175,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-      visFile2++;
+      visFileAll++;
       if (Utils.isRegularFile(attr) && !file.getFileName().toString().matches(skipRegex)) {
         fFound.add(file.toAbsolutePath());
       }
@@ -1180,7 +1186,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-      preDir2++;
+      preDirAll++;
       // getFilename returns null on DS root!
       if (dir.getFileName() != null
           && (Files.exists(dir.resolve(".tmmignore")) || Files.exists(dir.resolve("tmmignore")) || Files.exists(dir.resolve(".nomedia"))
@@ -1194,7 +1200,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-      postDir2++;
+      postDirAll++;
       return CONTINUE;
     }
 

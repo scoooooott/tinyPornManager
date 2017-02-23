@@ -139,6 +139,9 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.nonespecified"));
       return;
     }
+    preDir = 0;
+    postDir = 0;
+    visFile = 0;
 
     try {
       StopWatch stopWatch = new StopWatch();
