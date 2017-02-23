@@ -37,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ui.ITmmUIFilter;
 
 /**
  * The class AbstractSettings is the base class for our settings structure. Loading/saving is handled by this class
@@ -196,5 +197,11 @@ public abstract class AbstractSettings extends AbstractModelObject {
       MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
     }
     return instance;
+  }
+
+  public static class UIFilters {
+    public String                   id          = "";
+    public ITmmUIFilter.FilterState state       = ITmmUIFilter.FilterState.INACTIVE;
+    public String                   filterValue = "";
   }
 }

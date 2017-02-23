@@ -95,6 +95,9 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
   }
 
   private void buildAndInstallDatasourceArray() {
+    // remove the listener to not firing unnecessary events
+    checkComboBox.removeActionListener(actionListener);
+
     List<String> selectedItems = checkComboBox.getSelectedItems();
 
     List<String> datasources = new ArrayList<>(movieSettings.getMovieDataSource());
@@ -105,5 +108,8 @@ public class MovieDatasourceFilter extends AbstractMovieUIFilter {
     if (!selectedItems.isEmpty()) {
       checkComboBox.setSelectedItems(selectedItems);
     }
+
+    // re-add the itemlistener
+    checkComboBox.addActionListener(actionListener);
   }
 }

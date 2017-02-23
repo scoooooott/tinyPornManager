@@ -37,23 +37,26 @@ public abstract class AbstractTvShowUIFilter extends AbstractTmmUIFilter<TmmTree
   @Override
   public boolean accept(TmmTreeNode node) {
     // is this filter active?
-    if (!isActive()) {
+    if (getFilterState() == FilterState.INACTIVE) {
       return true;
     }
+
+    // modifier for negation of the accept value
+    boolean active = getFilterState() == FilterState.ACTIVE;
 
     Object userObject = node.getUserObject();
 
     if (userObject instanceof TvShow) {
       TvShow tvShow = (TvShow) userObject;
-      return accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
+      return active && accept(tvShow, new ArrayList<>(tvShow.getEpisodes()));
     }
     else if (userObject instanceof TvShowSeason) {
       TvShowSeason season = (TvShowSeason) userObject;
-      return accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
+      return active && accept(season.getTvShow(), new ArrayList<>(season.getEpisodes()));
     }
     else if (userObject instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) userObject;
-      return accept(episode.getTvShow(), Arrays.asList(episode));
+      return active && accept(episode.getTvShow(), Arrays.asList(episode));
     }
 
     return true;

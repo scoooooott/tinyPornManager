@@ -19,8 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -33,6 +33,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -92,12 +93,16 @@ public class TvShowTreePanel extends JPanel implements ITmmTabItem {
       @Override
       public void storeFilters() {
         if (TvShowModuleManager.SETTINGS.isStoreUiFilters()) {
-          Map<String, String> filterValues = new HashMap<>();
+          List<AbstractSettings.UIFilters> filterValues = new ArrayList<>();
           for (ITmmTreeFilter<TmmTreeNode> filter : treeFilters) {
             if (filter instanceof ITmmUIFilter) {
               ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
-              if (uiFilter.isActive()) {
-                filterValues.put(uiFilter.getId(), uiFilter.getFilterValueAsString());
+              if (uiFilter.getFilterState() != ITmmUIFilter.FilterState.INACTIVE) {
+                AbstractSettings.UIFilters uiFilters = new AbstractSettings.UIFilters();
+                uiFilters.id = uiFilter.getId();
+                uiFilters.state = uiFilter.getFilterState();
+                uiFilters.filterValue = uiFilter.getFilterValueAsString();
+                filterValues.add(uiFilters);
               }
             }
           }

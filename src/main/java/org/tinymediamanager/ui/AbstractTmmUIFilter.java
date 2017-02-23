@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -27,10 +28,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.SwingPropertyChangeSupport;
 import javax.swing.text.JTextComponent;
+
+import org.tinymediamanager.ui.components.TriStateCheckBox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -46,18 +50,21 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
    */
   protected static ObjectMapper         objectMapper          = new ObjectMapper();
 
-  protected final JCheckBox             checkBox;
+  protected final TriStateCheckBox      checkBox;
   protected final JLabel                label;
   protected final JComponent            filterComponent;
+  protected final ActionListener        actionListener        = e -> filterChanged();
+  protected final ChangeListener        changeListener        = e -> filterChanged();
 
   protected final PropertyChangeSupport propertyChangeSupport = new SwingPropertyChangeSupport(this, true);
 
   public AbstractTmmUIFilter() {
-    this.checkBox = new JCheckBox();
+    this.checkBox = new TriStateCheckBox();
+    this.checkBox.setToolTipText(BUNDLE.getString("filter.hint")); //$NON-NLS-1$
     this.label = createLabel();
     this.filterComponent = createFilterComponent();
 
-    this.checkBox.addActionListener(e -> filterChanged());
+    this.checkBox.addActionListener(actionListener);
 
     if (this.filterComponent != null && this.filterComponent instanceof JTextComponent) {
       ((JTextComponent) this.filterComponent).getDocument().addDocumentListener(new DocumentListener() {
@@ -78,13 +85,13 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
       });
     }
     else if (this.filterComponent != null && this.filterComponent instanceof AbstractButton) {
-      ((AbstractButton) this.filterComponent).addActionListener(e -> filterChanged());
+      ((AbstractButton) this.filterComponent).addActionListener(actionListener);
     }
     else if (this.filterComponent != null && this.filterComponent instanceof JComboBox) {
-      ((JComboBox<?>) this.filterComponent).addActionListener(e -> filterChanged());
+      ((JComboBox<?>) this.filterComponent).addActionListener(actionListener);
     }
     else if (this.filterComponent != null && this.filterComponent instanceof JSpinner) {
-      ((JSpinner) this.filterComponent).addChangeListener(e -> filterChanged());
+      ((JSpinner) this.filterComponent).addChangeListener(changeListener);
     }
   }
 
@@ -108,17 +115,43 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
   protected abstract JComponent createFilterComponent();
 
   /**
-   * is this filter active?
-   * 
-   * @return true or false
+   * get the filter state
+   *
+   * @return the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
    */
-  public boolean isActive() {
-    return checkBox.isSelected();
+  @Override
+  public FilterState getFilterState() {
+    if (checkBox.isMixed()) {
+      return FilterState.ACTIVE_NEGATIVE;
+    }
+    else if (!checkBox.isMixed() && checkBox.isSelected()) {
+      return FilterState.ACTIVE;
+    }
+    return FilterState.INACTIVE;
   }
 
+  /**
+   * set the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
+   *
+   * @param state
+   *          the state
+   */
   @Override
-  public void setActive(boolean active) {
-    checkBox.setSelected(active);
+  public void setFilterState(FilterState state) {
+    switch (state) {
+      case ACTIVE:
+        checkBox.setSelected(true);
+        break;
+
+      case ACTIVE_NEGATIVE:
+        checkBox.setMixed(true);
+        break;
+
+      case INACTIVE:
+      default:
+        checkBox.setSelected(false);
+        break;
+    }
   }
 
   /**

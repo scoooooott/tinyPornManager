@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -259,7 +260,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param values
    *          the values to be set
    */
-  public void setFilterValues(Map<String, String> values) {
+  public void setFilterValues(List<AbstractSettings.UIFilters> values) {
     matcherEditor.setFilterValues(values);
   }
 }

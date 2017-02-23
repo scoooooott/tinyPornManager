@@ -31,6 +31,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.tinymediamanager.ui.components.TriStateCheckBox;
+
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.BaseIcons;
 import com.jtattoo.plaf.JTattooUtilities;
@@ -123,6 +125,7 @@ public class TmmLightIcons extends BaseIcons {
     private static final int   SIZE             = 16;
     private static final Color SHADOW_COLOR     = new Color(208, 208, 208);
     private static final Color BACKGROUND_COLOR = new Color(255, 255, 255);
+    private static final Color STROKE_COLOR     = new Color(141, 165, 179);
 
     private static final Icon  SMALL_CHECK_ICON = new ImageIcon(TmmLightIcons.class.getResource("icons/checkmark.png"));
 
@@ -145,7 +148,11 @@ public class TmmLightIcons extends BaseIcons {
       g.setColor(BACKGROUND_COLOR);
       g.fillRoundRect(x, y, SIZE, SIZE, SIZE / 2, SIZE / 2);
 
-      if (model.isSelected()) {
+      if (model instanceof TriStateCheckBox.TriStateButtonModel && ((TriStateCheckBox.TriStateButtonModel) model).isMixed()) {
+        g.setColor(STROKE_COLOR);
+        g.fillRect(x + 4, y + SIZE / 2 - 1, SIZE - 7, 2);
+      }
+      else if (model.isSelected()) {
         SMALL_CHECK_ICON.paintIcon(c, g, x, y);
       }
 

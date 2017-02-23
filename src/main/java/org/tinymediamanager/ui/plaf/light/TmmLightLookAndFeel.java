@@ -190,7 +190,7 @@ public class TmmLightLookAndFeel extends AbstractLookAndFeel {
     table.put("ProgressBar.border", null);
     table.put("ProgressBar.background", getTheme().getBackgroundColorDark());
     table.put("ProgressBar.foreground", getFocusCellColor());
-
+    table.put("TriStateCheckBox.icon", getIconFactory().getCheckBoxIcon());
     // table.put("Table.foreground", getForegroundColor());
   }
 

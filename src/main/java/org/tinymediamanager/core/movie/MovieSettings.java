@@ -19,11 +19,9 @@ import static org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -182,12 +180,11 @@ public class MovieSettings extends AbstractSettings {
   @XmlElement(name = ENTRY)
   private final List<String>               subtitleScrapers                     = ObservableCollections.observableList(new ArrayList<String>());
 
-  private Map<String, String>              uiFilters                            = new HashMap<>();
-
   @XmlElementWrapper(name = SKIP_FOLDERS)
   @XmlElement(name = ENTRY)
   private final List<String>               skipFolders                          = ObservableCollections.observableList(new ArrayList<String>());
 
+  private final List<UIFilters>            uiFilters                            = new ArrayList<>();
   private final List<String>               movieTableHiddenColumns              = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
@@ -797,17 +794,19 @@ public class MovieSettings extends AbstractSettings {
     return movieTableHiddenColumns;
   }
 
-  public void setUiFilters(Map<String, String> filters) {
-    uiFilters = filters;
+  public void setUiFilters(List<UIFilters> filters) {
+    uiFilters.clear();
+    uiFilters.addAll(filters);
     firePropertyChange(UI_FILTERS, null, uiFilters);
   }
 
-  @XmlElement(name = UI_FILTERS)
-  public Map<String, String> getUiFilters() {
+  @XmlElementWrapper(name = UI_FILTERS)
+  @XmlElement(name = ENTRY)
+  public List<UIFilters> getUiFilters() {
     if (storeUiFilters) {
       return uiFilters;
     }
-    return new HashMap<>();
+    return new ArrayList<>();
   }
 
   public void setStoreUiFilters(boolean newValue) {

@@ -30,6 +30,15 @@ public interface ITmmUIFilter<E> {
   public final static String FILTER_CHANGED = "filterChanged";
 
   /**
+   * the filter state
+   */
+  public enum FilterState {
+    ACTIVE,
+    ACTIVE_NEGATIVE,
+    INACTIVE
+  }
+
+  /**
    * get the id of this filter. Used for storing/loading filters
    * 
    * @return the id of this filter
@@ -70,19 +79,19 @@ public interface ITmmUIFilter<E> {
   public void setFilterValue(Object value);
 
   /**
-   * Is this filter active?
+   * get the filter state
    * 
-   * @return true or false
+   * @return the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
    */
-  public boolean isActive();
+  public FilterState getFilterState();
 
   /**
-   * set this filter active/inactive
+   * set the filter state (ACTIVE, ACTIVE_NEGATIVE, INACTIVE)
    * 
-   * @param active
-   *          the active flag
+   * @param state
+   *          the state
    */
-  public void setActive(boolean active);
+  public void setFilterState(FilterState state);
 
   /**
    * Returns whether the specified object is accepted by this filter or not.

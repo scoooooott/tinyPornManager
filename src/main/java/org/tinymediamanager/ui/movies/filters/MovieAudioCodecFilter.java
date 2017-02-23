@@ -88,6 +88,9 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
   }
 
   private void buildAndInstallCodecArray() {
+    // remove the listener to not firing unnecessary events
+    comboBox.removeActionListener(actionListener);
+
     String oldValue = (String) comboBox.getSelectedItem();
     comboBox.removeAllItems();
 
@@ -100,5 +103,8 @@ public class MovieAudioCodecFilter extends AbstractMovieUIFilter {
     if (oldValue != null) {
       comboBox.setSelectedItem(oldValue);
     }
+
+    // re-add the itemlistener
+    comboBox.addActionListener(actionListener);
   }
 }

@@ -96,6 +96,9 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
   }
 
   private void buildAndInstallDatasourceArray() {
+    // remove the listener to not firing unnecessary events
+    checkComboBox.removeActionListener(actionListener);
+
     List<String> selectedItems = checkComboBox.getSelectedItems();
 
     List<String> datasources = new ArrayList<>(tvShowSettings.getTvShowDataSource());
@@ -106,5 +109,8 @@ public class TvShowDatasourceFilter extends AbstractTvShowUIFilter {
     if (!selectedItems.isEmpty()) {
       checkComboBox.setSelectedItems(selectedItems);
     }
+
+    // re-add the itemlistener
+    checkComboBox.addActionListener(actionListener);
   }
 }

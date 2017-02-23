@@ -100,10 +100,13 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
   }
 
   private void buildAndInstallCertificationArray() {
+    // remove the listener to not firing unnecessary events
+    comboBox.removeActionListener(actionListener);
+
     Certification oldValue = (Certification) comboBox.getSelectedItem();
     comboBox.removeAllItems();
 
-    List<Certification> certifications = new ArrayList<Certification>(movieList.getCertificationsInMovies());
+    List<Certification> certifications = new ArrayList<>(movieList.getCertificationsInMovies());
     Collections.sort(certifications);
     for (Certification cert : certifications) {
       comboBox.addItem(cert);
@@ -112,5 +115,8 @@ public class MovieCertificationFilter extends AbstractMovieUIFilter {
     if (oldValue != null) {
       comboBox.setSelectedItem(oldValue);
     }
+
+    // re-add the itemlistener
+    comboBox.addActionListener(actionListener);
   }
 }

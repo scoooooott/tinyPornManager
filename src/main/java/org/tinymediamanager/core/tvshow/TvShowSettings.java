@@ -16,11 +16,9 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -158,7 +156,7 @@ public class TvShowSettings extends AbstractSettings {
   @XmlElement(name = FILENAME)
   private final List<TvShowEpisodeThumbNaming> episodeThumbFilenames          = new ArrayList<>();
 
-  private Map<String, String>                  uiFilters                      = new HashMap<>();
+  private List<UIFilters>                      uiFilters                      = new ArrayList<>();
 
   private String                               scraper                        = Constants.TVDB;
   private boolean                              scrapeBestImage                = true;
@@ -514,17 +512,17 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange("subtitleLanguageStyle", oldValue, newValue);
   }
 
-  public void setUiFilters(Map<String, String> filters) {
+  public void setUiFilters(List<UIFilters> filters) {
     uiFilters = filters;
     firePropertyChange(UI_FILTERS, null, uiFilters);
   }
 
   @XmlElement(name = UI_FILTERS)
-  public Map<String, String> getUiFilters() {
+  public List<UIFilters> getUiFilters() {
     if (storeUiFilters) {
       return uiFilters;
     }
-    return new HashMap<>();
+    return new ArrayList<>();
   }
 
   public void setStoreUiFilters(boolean newValue) {

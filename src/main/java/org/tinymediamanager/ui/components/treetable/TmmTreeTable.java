@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -45,6 +44,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.ui.ITmmUIFilter;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.tree.ITmmTreeFilter;
@@ -495,19 +495,20 @@ public class TmmTreeTable extends TmmTable {
     storeFilters();
   }
 
-  public void setFilterValues(Map<String, String> values) {
+  public void setFilterValues(List<AbstractSettings.UIFilters> values) {
     boolean fireFilterChanged = false;
 
-    for (Map.Entry<String, String> entry : values.entrySet()) {
-      if (StringUtils.isBlank(entry.getKey())) {
+    for (AbstractSettings.UIFilters uiFilters : values) {
+      if (StringUtils.isBlank(uiFilters.id) || uiFilters.state == ITmmUIFilter.FilterState.INACTIVE) {
         continue;
       }
+
       for (ITmmTreeFilter filter : treeFilters) {
         if (filter instanceof ITmmUIFilter) {
           ITmmUIFilter uiFilter = (ITmmUIFilter) filter;
-          if (uiFilter.getId().equals(entry.getKey())) {
-            uiFilter.setActive(true);
-            uiFilter.setFilterValue(entry.getValue());
+          if (uiFilter.getId().equals(uiFilters.id)) {
+            uiFilter.setFilterState(uiFilters.state);
+            uiFilter.setFilterValue(uiFilters.filterValue);
             fireFilterChanged = true;
           }
         }
