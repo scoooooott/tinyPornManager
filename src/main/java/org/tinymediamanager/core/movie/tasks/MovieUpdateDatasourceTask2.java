@@ -141,6 +141,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       List<Path> imageFiles = new ArrayList<>();
 
       for (String ds : dataSources) {
+        LOGGER.info("Start UDS on datasource: " + ds);
         initThreadPool(3, "update");
         setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
         publishState();

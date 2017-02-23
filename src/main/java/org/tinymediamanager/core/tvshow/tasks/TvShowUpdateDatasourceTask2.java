@@ -157,6 +157,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShowFolders.isEmpty()) {
         // update selected data sources
         for (String ds : dataSources) {
+          LOGGER.info("Start UDS on datasource: " + ds);
           Path dsAsPath = Paths.get(ds);
 
           // first of all check if the DS is available; we can take the
