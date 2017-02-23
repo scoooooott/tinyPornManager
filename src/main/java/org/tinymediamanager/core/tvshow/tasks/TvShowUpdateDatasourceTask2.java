@@ -52,6 +52,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
@@ -437,6 +438,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
   private class FindTvShowTask implements Callable<Object> {
     private Path showDir    = null;
     private Path datasource = null;
+    private long uniqueId;
 
     /**
      * Instantiates a new find tv show task.
@@ -449,10 +451,18 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
     public FindTvShowTask(Path showDir, Path datasource) {
       this.showDir = showDir;
       this.datasource = datasource;
+      this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
     }
 
     @Override
     public String call() throws Exception {
+      String name = Thread.currentThread().getName();
+      if (!name.contains("-G")) {
+        name = name + "-G0";
+      }
+      name = name.replaceAll("\\-G\\d+", "-G" + uniqueId);
+      Thread.currentThread().setName(name);
+
       LOGGER.info("start parsing " + showDir);
       if (showDir.getFileName().toString().matches(skipRegex)) {
         LOGGER.debug("Skipping dir: " + showDir);

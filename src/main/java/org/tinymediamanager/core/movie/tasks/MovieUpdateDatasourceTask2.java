@@ -273,14 +273,23 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
 
     private Path subdir     = null;
     private Path datasource = null;
+    private long uniqueId;
 
     public FindMovieTask(Path subdir, Path datasource) {
       this.subdir = subdir;
       this.datasource = datasource;
+      this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
     }
 
     @Override
     public String call() {
+      String name = Thread.currentThread().getName();
+      if (!name.contains("-G")) {
+        name = name + "-G0";
+      }
+      name = name.replaceAll("\\-G\\d+", "-G" + uniqueId);
+      Thread.currentThread().setName(name);
+
       parseMovieDirectory(subdir, datasource);
       return subdir.toString();
     }

@@ -25,7 +25,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +35,10 @@ import org.slf4j.LoggerFactory;
  * @author Myron Boyle, Manuel Laggner
  */
 public abstract class TmmThreadPool extends TmmTask {
-  private static final Logger       LOGGER        = LoggerFactory.getLogger(TmmThreadPool.class);
+  private static final Logger       LOGGER  = LoggerFactory.getLogger(TmmThreadPool.class);
 
-  private ThreadPoolExecutor        pool          = null;
-  private CompletionService<Object> service       = null;
-  static final AtomicLong           GLOB_THRD_CNT = new AtomicLong(1);
+  private ThreadPoolExecutor        pool    = null;
+  private CompletionService<Object> service = null;
 
   protected String                  poolname;
 
@@ -152,7 +150,7 @@ public abstract class TmmThreadPool extends TmmTask {
 
     @Override
     public Thread newThread(Runnable r) {
-      Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement() + "-G" + GLOB_THRD_CNT.getAndIncrement(), 0);
+      Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
       if (t.isDaemon()) {
         t.setDaemon(false);
       }

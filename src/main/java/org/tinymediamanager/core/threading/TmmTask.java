@@ -36,6 +36,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
   protected int                      workUnits;
   protected int                      progressDone;
   protected boolean                  cancel;
+  private long                       uniqueId;
 
   protected TmmTask(String taskName, int workUnits, TaskType type) {
     this.taskName = taskName;
@@ -43,6 +44,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
     this.taskDescription = "";
     this.progressDone = 0;
     this.type = type;
+    uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
   @Override
@@ -116,6 +118,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
     if (cancel) {
       return;
     }
+    Thread.currentThread().setName(Thread.currentThread().getName() + "-G" + uniqueId);
 
     start();
     try {
