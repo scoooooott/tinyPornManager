@@ -83,7 +83,7 @@ public class Utils {
   private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$",
+  private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <a-d>
@@ -94,11 +94,11 @@ public class Utils {
   private static final Pattern stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
 
   // moviename-1of2.avi, moviename-1 of 2.avi
-  private static final Pattern stackingPattern4      = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$",
+  private static final Pattern stackingPattern4      = Pattern.compile("(.*?)[ \\(_.-]+([1-9][ .]?of[ .]?[1-9])[ \\)_-]?(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
-  // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$",
+  // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N> - must be last part
+  private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})$",
       Pattern.CASE_INSENSITIVE);
 
   /**
@@ -297,7 +297,7 @@ public class Utils {
     if (!StringUtils.isEmpty(filename)) {
       Matcher m = folderStackingPattern.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3); // just return String w/o stacking
+        return m.group(1); // just return String w/o stacking
       }
     }
     return filename;
