@@ -22,13 +22,13 @@ import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
-import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.ScraperType;
+import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -40,7 +40,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
  *
  * @author Manuel Laggner
  */
-public class MediaIdTable extends JTable {
+public class MediaIdTable extends TmmTable {
   private static final long   serialVersionUID = 8010722883277208728L;
 
   private Map<String, Object> idMap;

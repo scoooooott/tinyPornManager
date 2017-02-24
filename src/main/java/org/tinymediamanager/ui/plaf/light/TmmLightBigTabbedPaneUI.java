@@ -42,6 +42,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
 
   private boolean      rightBorder   = true;
   private boolean      leftBorder    = true;
+  private boolean      bottomBorder  = true;
 
   public static ComponentUI createUI(JComponent c) {
     Object prop = c.getClientProperty("class");
@@ -61,6 +62,10 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     if (Boolean.FALSE.equals(c.getClientProperty("leftBorder"))) {
       leftBorder = false;
     }
+
+    if (Boolean.FALSE.equals(c.getClientProperty("bottomBorder"))) {
+      bottomBorder = false;
+    }
   }
 
   @Override
@@ -68,7 +73,7 @@ public class TmmLightBigTabbedPaneUI extends BaseTabbedPaneUI {
     super.installDefaults();
     tabInsets = new Insets(5, 20, 5, 20);
     tabAreaInsets = new Insets(0, leftBorder ? 20 : 0, 15, rightBorder ? 20 : 0);
-    contentBorderInsets = new Insets(0, leftBorder ? 20 : 0, 20 + BORDER_RADIUS, rightBorder ? 20 : 0);
+    contentBorderInsets = new Insets(0, leftBorder ? 20 : 0, bottomBorder ? 20 + BORDER_RADIUS : BORDER_RADIUS, rightBorder ? 20 : 0);
     roundedTabs = false;
   }
 
