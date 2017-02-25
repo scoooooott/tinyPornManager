@@ -711,7 +711,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     BeanProperty<Person, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty);
     //
-    BeanProperty<Person, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    BeanProperty<Person, String> movieCastBeanProperty_1 = BeanProperty.create("role");
     jTableBinding.addColumnBinding(movieCastBeanProperty_1);
     //
     bindings.add(jTableBinding);

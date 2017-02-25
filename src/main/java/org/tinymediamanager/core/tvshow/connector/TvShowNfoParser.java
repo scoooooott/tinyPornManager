@@ -58,7 +58,7 @@ public class TvShowNfoParser {
   private static final List<String> IGNORE              = Arrays.asList("set", "season", "episode", "displayseason", "displayepisode", "epbookmark",
       "resume");
 
-  private final Element             root;
+  private Element                   root;
   private final List<String>        supportedElements   = new ArrayList<>();
 
   public String                     title               = "";
@@ -102,11 +102,11 @@ public class TvShowNfoParser {
    * @param document
    *          the document returned by JSOUP.parse()
    */
-  private TvShowNfoParser(Document document) throws Exception {
+  private TvShowNfoParser(Document document) {
     // first check if there is a valid root object
     Elements elements = document.select("tvshow");
     if (elements.isEmpty()) {
-      throw new Exception("Unsupported NFO/XML format");
+      return;
     }
 
     document.outputSettings().prettyPrint(false);
@@ -944,6 +944,7 @@ public class TvShowNfoParser {
     }
 
     show.setCertification(certification);
+    show.setStatus(status);
 
     show.setWatched(watched);
     if (playcount > 0) {

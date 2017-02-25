@@ -141,6 +141,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         addImdbid();
         addIds();
         addPremiered();
+        addStatus();
         addWatched();
         addPlaycount();
         addGenres();
@@ -368,6 +369,15 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
       premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getFirstAired()));
     }
     root.appendChild(premiered);
+  }
+
+  /**
+   * add the status in <status>xxx</status>
+   */
+  protected void addStatus() {
+    Element status = document.createElement("status");
+    status.setTextContent(tvShow.getStatus());
+    root.appendChild(status);
   }
 
   /**

@@ -43,13 +43,13 @@ import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,7 +80,10 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.connector.ITvShowConnector;
+import org.tinymediamanager.core.tvshow.connector.TvShowToKodiConnector;
+import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcConnector;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
@@ -540,13 +543,13 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   /**
    * Sets the genres.
    * 
-   * @param genres
+   * @param newGenres
    *          the new genres
    */
   @JsonSetter
-  public void setGenres(List<MediaGenres> genres) {
+  public void setGenres(List<MediaGenres> newGenres) {
     // two way sync of genres
-    ListUtils.mergeLists(genres, genres);
+    ListUtils.mergeLists(genres, newGenres);
 
     firePropertyChange(GENRE, null, genres);
     firePropertyChange(GENRES_AS_STRING, null, genres);
@@ -811,7 +814,23 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * Write nfo.
    */
   public void writeNFO() {
-    TvShowToXbmcNfoConnector.setData(this);
+    ITvShowConnector connector = null;
+
+    switch (TvShowModuleManager.SETTINGS.getTvShowConnector()) {
+      case KODI:
+        connector = new TvShowToKodiConnector(this);
+        break;
+
+      case XBMC:
+      default:
+        connector = new TvShowToXbmcConnector(this);
+        break;
+    }
+
+    if (connector != null) {
+      connector.write(Arrays.asList(TvShowNfoNaming.TV_SHOW));
+    }
+
     firePropertyChange(HAS_NFO_FILE, false, true);
   }
 
@@ -1157,49 +1176,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-  }
-
-  /**
-   * Parses the nfo.
-   * 
-   * @param tvShowDirectory
-   *          the tv show directory
-   * @return the tv show
-   */
-  public static TvShow parseNFO(File tvShowDirectory) {
-    LOGGER.debug("try to find a nfo for " + tvShowDirectory.getPath());
-    // check if there are any NFOs in that directory
-    FilenameFilter filter = (dir, name) -> {
-      // do not start with .
-      if (name.toLowerCase(Locale.ROOT).startsWith("."))
-        return false;
-
-      // check if filetype is in our settings
-      if (name.toLowerCase(Locale.ROOT).endsWith("nfo")) {
-        return true;
-      }
-
-      return false;
-    };
-
-    TvShow tvShow = null;
-    File[] nfoFiles = tvShowDirectory.listFiles(filter);
-    if (nfoFiles == null) {
-      return tvShow;
-    }
-
-    for (File file : nfoFiles) {
-      tvShow = TvShowToXbmcNfoConnector.getData(file);
-      if (tvShow != null) {
-        tvShow.setPath(tvShowDirectory.getPath());
-        tvShow.addToMediaFiles(new MediaFile(file, MediaFileType.NFO));
-        break;
-      }
-
-      LOGGER.debug("did not find tv show informations in nfo");
-    }
-
-    return tvShow;
   }
 
   /**

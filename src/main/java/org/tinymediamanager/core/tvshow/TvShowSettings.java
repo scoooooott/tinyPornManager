@@ -33,6 +33,7 @@ import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.tvshow.connector.TvShowConnectors;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearartNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowClearlogoNaming;
@@ -96,6 +97,7 @@ public class TvShowSettings extends AbstractSettings {
   private final static String                  CLEARLOGO_FILENAME             = "clearlogoFilename";
   private final static String                  SEASON_POSTER_FILENAME         = "seasonPosterFilename";
   private final static String                  EPISODE_THUMB_FILENAME         = "episodeThumbFilename";
+  private final static String                  TV_SHOW_CONNECTOR              = "tvShowConnector";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -177,6 +179,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              storeUiFilters                 = false;
   private boolean                              displayMissingEpisodes         = false;
   private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
+  private TvShowConnectors                     tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                   certificationStyle             = CertificationStyle.SHORT;
 
   public TvShowSettings() {
@@ -719,5 +722,16 @@ public class TvShowSettings extends AbstractSettings {
     CertificationStyle oldValue = this.certificationStyle;
     this.certificationStyle = newValue;
     firePropertyChange("certificationStyle", oldValue, newValue);
+  }
+
+  @XmlElement(name = TV_SHOW_CONNECTOR)
+  public TvShowConnectors getTvShowConnector() {
+    return tvShowConnector;
+  }
+
+  public void setTvShowConnector(TvShowConnectors newValue) {
+    TvShowConnectors oldValue = this.tvShowConnector;
+    this.tvShowConnector = newValue;
+    firePropertyChange(TV_SHOW_CONNECTOR, oldValue, newValue);
   }
 }

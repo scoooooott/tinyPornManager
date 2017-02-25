@@ -64,11 +64,11 @@ public class TvShowEpisodeNfoParser {
    * @param document
    *          the document returned by JSOUP.parse()
    */
-  private TvShowEpisodeNfoParser(Document document) throws Exception {
+  private TvShowEpisodeNfoParser(Document document) {
     // first check if there is a valid root object
     Elements elements = document.select("episodedetails");
     if (elements.isEmpty()) {
-      throw new Exception("Unsupported NFO/XML format");
+      return;
     }
 
     document.outputSettings().prettyPrint(false);

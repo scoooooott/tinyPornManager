@@ -133,6 +133,7 @@ public class TvShowToNfoConnectorTest {
     assertThat(newTvShow.getId("trakt")).isEqualTo(tvShow.getId("trakt"));
     assertThat(newTvShow.getFirstAired()).isEqualTo(tvShow.getFirstAired());
     assertThat(newTvShow.isWatched()).isEqualTo(tvShow.isWatched());
+    assertThat(newTvShow.getStatus()).isEqualTo(tvShow.getStatus());
     assertThat(newTvShow.getGenres().size()).isEqualTo(tvShow.getGenres().size());
     assertThat(newTvShow.getGenres().get(0)).isEqualTo(tvShow.getGenres().get(0));
     assertThat(newTvShow.getTags().size()).isEqualTo(tvShow.getTags().size());
@@ -162,6 +163,7 @@ public class TvShowToNfoConnectorTest {
     tvShow.setId("trakt", 655);
     tvShow.setProductionCompany("FOX (US)");
     tvShow.setCertification(Certification.US_TVPG);
+    tvShow.setStatus("Ended");
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     tvShow.setFirstAired(sdf.parse("1987-04-12"));

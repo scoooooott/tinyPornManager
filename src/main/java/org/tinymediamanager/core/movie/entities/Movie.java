@@ -1220,17 +1220,18 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     IMovieConnector connector = null;
 
-    if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.MP) {
-      connector = new MovieToMediaportalConnector(this);
-      // MovieToMpNfoConnector.setData(this);
-    }
-    else if (MovieModuleManager.SETTINGS.getMovieConnector() == MovieConnectors.XBMC) {
-      connector = new MovieToXbmcConnector(this);
-      // MovieToXbmcNfoConnector.setData(this);
-    }
-    else {
-      connector = new MovieToKodiConnector(this);
-      // MovieToKodiNfoConnector.setData(this);
+    switch (MovieModuleManager.SETTINGS.getMovieConnector()) {
+      case MP:
+        connector = new MovieToMediaportalConnector(this);
+        break;
+
+      case KODI:
+        connector = new MovieToKodiConnector(this);
+        break;
+
+      case XBMC:
+      default:
+        connector = new MovieToXbmcConnector(this);
     }
 
     if (connector != null) {

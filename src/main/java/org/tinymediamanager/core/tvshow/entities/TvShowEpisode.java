@@ -28,6 +28,7 @@ import static org.tinymediamanager.core.Constants.DVD_SEASON;
 import static org.tinymediamanager.core.Constants.EPISODE;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED;
 import static org.tinymediamanager.core.Constants.FIRST_AIRED_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
 import static org.tinymediamanager.core.Constants.MEDIA_SOURCE;
 import static org.tinymediamanager.core.Constants.SEASON;
 import static org.tinymediamanager.core.Constants.SEASON_POSTER;
@@ -41,12 +42,12 @@ import static org.tinymediamanager.core.Constants.WRITERS;
 import static org.tinymediamanager.core.Constants.WRITERS_AS_STRING;
 import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +75,9 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.connector.ITvShowEpisodeConnector;
+import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToKodiConnector;
+import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcConnector;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -614,7 +617,24 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
 
-    TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
+    ITvShowEpisodeConnector connector = null;
+
+    switch (TvShowModuleManager.SETTINGS.getTvShowConnector()) {
+      case KODI:
+        connector = new TvShowEpisodeToKodiConnector(episodesInNfo);
+        break;
+
+      case XBMC:
+      default:
+        connector = new TvShowEpisodeToXbmcConnector(episodesInNfo);
+        break;
+    }
+
+    if (connector != null) {
+      connector.write(Arrays.asList(TvShowEpisodeNfoNaming.FILENAME));
+    }
+
+    firePropertyChange(HAS_NFO_FILE, false, true);
   }
 
   /**
@@ -894,33 +914,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setLastWatched(Date lastWatched) {
     this.lastWatched = lastWatched;
-  }
-
-  /**
-   * Parses the nfo.
-   * 
-   * @param episodeFile
-   *          the episode file
-   * @return the list
-   */
-  public static List<TvShowEpisode> parseNFO(File episodeFile) {
-    List<TvShowEpisode> episodes = new ArrayList<>(1);
-    String filename = episodeFile.getParent() + File.separator + FilenameUtils.getBaseName(episodeFile.getName()) + ".nfo";
-    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(new File(filename)));
-    return episodes;
-  }
-
-  /**
-   * Parses the nfo.
-   * 
-   * @param episodeFile
-   *          the episode mediafile
-   * @return the list
-   */
-  public static List<TvShowEpisode> parseNFO(MediaFile episodeFile) {
-    List<TvShowEpisode> episodes = new ArrayList<>(1);
-    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(episodeFile.getFile()));
-    return episodes;
   }
 
   /**

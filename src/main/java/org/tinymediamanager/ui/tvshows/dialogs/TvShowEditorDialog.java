@@ -1234,7 +1234,7 @@ public class TvShowEditorDialog extends TmmDialog {
     BeanProperty<Person, String> castBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(castBeanProperty);
     //
-    BeanProperty<Person, String> castBeanProperty_1 = BeanProperty.create("character");
+    BeanProperty<Person, String> castBeanProperty_1 = BeanProperty.create("role");
     jTableBinding.addColumnBinding(castBeanProperty_1);
     //
     bindings.add(jTableBinding);

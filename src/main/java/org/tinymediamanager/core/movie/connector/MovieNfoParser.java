@@ -64,7 +64,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  */
 public class MovieNfoParser {
-  private final Element      root;
+  private Element            root;
   private final List<String> supportedElements   = new ArrayList<>();
 
   public String              title               = "";
@@ -115,11 +115,11 @@ public class MovieNfoParser {
    * @param document
    *          the document returned by JSOUP.parse()
    */
-  private MovieNfoParser(Document document) throws Exception {
+  private MovieNfoParser(Document document) {
     // first check if there is a valid root object
     Elements elements = document.select("movie");
     if (elements.isEmpty()) {
-      throw new Exception("Unsupported NFO/XML format");
+      return;
     }
 
     document.outputSettings().prettyPrint(false);

@@ -57,7 +57,8 @@ import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
-import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeNfoParser;
+import org.tinymediamanager.core.tvshow.connector.TvShowNfoParser;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.ParserUtils;
@@ -479,7 +480,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       if (tvShow == null) {
         // tvShow did not exist - try to parse a NFO file in parent folder
         if (Files.exists(showNFO.getFileAsPath())) {
-          tvShow = TvShowToXbmcNfoConnector.getData(showNFO.getFileAsPath().toFile());
+          TvShowNfoParser parser = TvShowNfoParser.parseNfo(showNFO.getFileAsPath());
+          if (parser.isValidNfo()) {
+            tvShow = parser.toTvShow();
+          }
         }
         if (tvShow == null) {
           // create new one
@@ -571,7 +575,13 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
           if (epNfo != null) {
             LOGGER.info("found episode NFO - try to parse '" + showDir.relativize(epNfo.getFileAsPath()) + "'");
-            List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(epNfo);
+            List<TvShowEpisode> episodesInNfo = new ArrayList<>();
+
+            TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(epNfo.getFileAsPath());
+            if (parser.isValidNfo()) {
+              episodesInNfo.addAll(parser.toTvShowEpisodes());
+            }
+
             // did we find any episodes in the NFO?
             if (episodesInNfo.size() > 0) {
               // these have priority!
