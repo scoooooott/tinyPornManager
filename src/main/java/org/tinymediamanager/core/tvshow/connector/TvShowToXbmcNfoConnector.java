@@ -68,6 +68,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlRootElement(name = "tvshow")
 @XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "imdbid", "genres", "tags", "premiered",
     "status", "studios", "thumb", "actors", "unsupportedElements" })
+@Deprecated
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);

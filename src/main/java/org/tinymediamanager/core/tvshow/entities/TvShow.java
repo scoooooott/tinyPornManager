@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -87,6 +88,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.MapUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -1242,6 +1244,14 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   public void setLastWatched(Date lastWatched) {
     this.lastWatched = lastWatched;
+  }
+
+  /**
+   * get all season poster urls
+   */
+  public Map<Integer, String> getSeasonPosterUrls() {
+    Map<Integer, String> sortedPosterUrls = MapUtils.sortByKey(seasonPosterUrlMap);
+    return sortedPosterUrls;
   }
 
   /**

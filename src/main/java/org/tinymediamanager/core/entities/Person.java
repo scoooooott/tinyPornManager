@@ -84,6 +84,13 @@ public class Person extends AbstractModelObject {
     this.role = role;
   }
 
+  public Person(Type type, String name, String role, String thumbUrl) {
+    this.type = type;
+    this.name = name;
+    this.role = role;
+    this.thumbUrl = thumbUrl;
+  }
+
   /**
    * copy constructor
    * 

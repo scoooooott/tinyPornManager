@@ -75,6 +75,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeNfoNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowEpisodeThumbNaming;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -1367,6 +1368,18 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     this.dummy = dummy;
   }
 
+  public String getNfoFilename(TvShowEpisodeNfoNaming nfoNaming) {
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    String baseName;
+    if (isDisc()) {
+      baseName = "VIDEO_TS"; // FIXME: BluRay?
+    }
+    else {
+      baseName = mfs.get(0).getBasename();
+    }
+    return nfoNaming.getFilename(baseName, "nfo");
+  }
+
   /**
    * Is the epsiode "stacked" (more than one video file)
    *
@@ -1378,6 +1391,28 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setStacked(boolean stacked) {
     this.stacked = stacked;
+  }
+
+  /**
+   * get the runtime. Just a wrapper to tvShow.getRuntime() until we support separate runtimes for episodes
+   * 
+   * @return the runtime in minutes
+   */
+  public int getRuntime() {
+    return tvShow.getRuntime();
+  }
+
+  /**
+   * return the TV shows production company if no one is filled for this episode
+   * 
+   * @return the production company
+   */
+  @Override
+  public String getProductionCompany() {
+    if (StringUtils.isNotBlank(productionCompany)) {
+      return productionCompany;
+    }
+    return tvShow.getProductionCompany();
   }
 
   /**

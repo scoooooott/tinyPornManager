@@ -29,6 +29,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractSettings;
+import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.LanguageStyle;
 import org.tinymediamanager.core.Settings;
@@ -176,6 +177,7 @@ public class TvShowSettings extends AbstractSettings {
   private boolean                              storeUiFilters                 = false;
   private boolean                              displayMissingEpisodes         = false;
   private TvShowScraperMetadataConfig          scraperMetadataConfig          = null;
+  private CertificationStyle                   certificationStyle             = CertificationStyle.SHORT;
 
   public TvShowSettings() {
     addPropertyChangeListener(evt -> setDirty());
@@ -707,5 +709,15 @@ public class TvShowSettings extends AbstractSettings {
 
   public List<TvShowSeasonPosterNaming> getSeasonPosterFilenames() {
     return new ArrayList<>(this.seasonPosterFilenames);
+  }
+
+  public CertificationStyle getCertificationStyle() {
+    return certificationStyle;
+  }
+
+  public void setCertificationStyle(CertificationStyle newValue) {
+    CertificationStyle oldValue = this.certificationStyle;
+    this.certificationStyle = newValue;
+    firePropertyChange("certificationStyle", oldValue, newValue);
   }
 }

@@ -274,11 +274,19 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
 
         Element stereomode = document.createElement("stereomode");
         // "Spec": https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/StereoscopicsManager.cpp
-        if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_SBS) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HSBS)) {
-          stereomode.setTextContent("left_right");
-        }
-        else if (mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_TAB) || mediaFile.getVideo3DFormat().equals(MediaFile.VIDEO_3D_HTAB)) {
-          stereomode.setTextContent("top_bottom"); // maybe?
+        switch (mediaFile.getVideo3DFormat()) {
+          case MediaFile.VIDEO_3D_SBS:
+          case MediaFile.VIDEO_3D_HSBS:
+            stereomode.setTextContent("left_right");
+            break;
+
+          case MediaFile.VIDEO_3D_TAB:
+          case MediaFile.VIDEO_3D_HTAB:
+            stereomode.setTextContent("top_bottom");
+            break;
+
+          default:
+            break;
         }
         video.appendChild(stereomode);
 
@@ -289,7 +297,7 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
         Element audio = document.createElement("audio");
 
         Element codec = document.createElement("codec");
-        codec.setTextContent(audioStream.getCodec());
+        codec.setTextContent(audioStream.getCodec().replaceAll("-", "_"));
         audio.appendChild(codec);
 
         Element language = document.createElement("language");

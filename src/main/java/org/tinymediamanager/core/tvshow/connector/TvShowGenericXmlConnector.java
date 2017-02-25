@@ -16,7 +16,7 @@
  *
  */
 
-package org.tinymediamanager.core.movie.connector;
+package org.tinymediamanager.core.tvshow.connector;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -48,10 +48,9 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.Person;
-import org.tinymediamanager.core.movie.MovieModuleManager;
-import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.entities.MovieTrailer;
-import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.filenaming.TvShowNfoNaming;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaGenres;
@@ -67,16 +66,15 @@ import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
  *
  * @author Manuel Laggner
  */
-public abstract class MovieGenericXmlConnector implements IMovieConnector {
+public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
+  protected final TvShow    tvShow;
+  protected TvShowNfoParser parser = null;
 
-  protected final Movie    movie;
-  protected MovieNfoParser parser = null;
+  protected Document        document;
+  protected Element         root;
 
-  protected Document       document;
-  protected Element        root;
-
-  public MovieGenericXmlConnector(Movie movie) {
-    this.movie = movie;
+  public TvShowGenericXmlConnector(TvShow tvShow) {
+    this.tvShow = tvShow;
   }
 
   /**
@@ -92,12 +90,11 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   protected abstract void addOwnTags();
 
   @Override
-  public void write(List<MovieNfoNaming> nfoNames) {
-
+  public void write(List<TvShowNfoNaming> nfoNames) {
     // first of all, get the data from a previous written NFO file
-    for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
+    for (MediaFile mf : tvShow.getMediaFiles(MediaFileType.NFO)) {
       try {
-        parser = MovieNfoParser.parseNfo(mf.getFileAsPath());
+        parser = TvShowNfoParser.parseNfo(mf.getFileAsPath());
         break;
       }
       catch (Exception ignored) {
@@ -106,8 +103,8 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
     List<MediaFile> newNfos = new ArrayList<>(1);
 
-    for (MovieNfoNaming nfoNaming : nfoNames) {
-      String nfoFilename = movie.getNfoFilename(nfoNaming);
+    for (TvShowNfoNaming nfoNaming : nfoNames) {
+      String nfoFilename = nfoNaming.getFilename(tvShow.getTitle(), "nfo");
       if (StringUtils.isBlank(nfoFilename)) {
         continue;
       }
@@ -123,42 +120,34 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         String dat = formatter.format(new Date());
         document.appendChild(document.createComment("created on " + dat + " - tinyMediaManager " + Globals.settings.getVersion()));
 
-        root = document.createElement("movie");
+        root = document.createElement("tvshow");
         document.appendChild(root);
 
         // add well known tags
         addTitle();
-        addOriginaltitle();
-        addSorttitle();
+        addShowTitle();
         addYear();
         addRating();
         addVotes();
-        addSet();
         addOutline();
         addPlot();
         addTagline();
         addRuntime();
-        addThumb();
+        addPoster();
+        addSeasonPoster();
         addFanart();
         addMpaa();
-        addCertification();
         addId();
-        addTmdbid();
+        addImdbid();
         addIds();
-        addCountry();
         addPremiered();
         addWatched();
         addPlaycount();
         addGenres();
         addStudios();
-        addCredits();
-        addDirectors();
         addTags();
         addActors();
-        addProducers();
-        addLanguages();
         addTrailer();
-        addSource();
 
         // add connector specific tags
         addOwnTags();
@@ -172,22 +161,22 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         String xml = out.toString().replaceAll("(?<!\r)\n", "\r\n"); // windows conform line endings
 
         // write to file
-        Path f = movie.getPathNIO().resolve(nfoFilename);
+        Path f = tvShow.getPathNIO().resolve(nfoFilename);
         Utils.writeStringToFile(f, xml);
         MediaFile mf = new MediaFile(f);
         mf.gatherMediaInformation(true); // force to update filedate
         newNfos.add(mf);
       }
       catch (Exception e) {
-        getLogger().error("write " + movie.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
+        getLogger().error("write " + tvShow.getPathNIO().resolve(nfoFilename) + " :" + e.getMessage());
         MessageManager.instance
-            .pushMessage(new Message(Message.MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
+            .pushMessage(new Message(Message.MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
     if (newNfos.size() > 0) {
-      movie.removeAllMediaFiles(MediaFileType.NFO);
-      movie.addToMediaFiles(newNfos);
+      tvShow.removeAllMediaFiles(MediaFileType.NFO);
+      tvShow.addToMediaFiles(newNfos);
     }
   }
 
@@ -196,26 +185,17 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addTitle() {
     Element title = document.createElement("title");
-    title.setTextContent(movie.getTitle());
+    title.setTextContent(tvShow.getTitle());
     root.appendChild(title);
   }
 
   /**
-   * add the originaltitle in the form <originaltitle>xxx</originaltitle>
+   * add the showtitle in the form <showtitle>xxx</showtitle>
    */
-  protected void addOriginaltitle() {
-    Element originaltitle = document.createElement("originaltitle");
-    originaltitle.setTextContent(movie.getOriginalTitle());
-    root.appendChild(originaltitle);
-  }
-
-  /**
-   * add the sorttitle in the form <sorttitle>xxx</sorttitle>
-   */
-  protected void addSorttitle() {
-    Element sorttitle = document.createElement("sorttitle");
-    sorttitle.setTextContent(movie.getSortTitle());
-    root.appendChild(sorttitle);
+  protected void addShowTitle() {
+    Element title = document.createElement("showtitle");
+    title.setTextContent(tvShow.getTitle());
+    root.appendChild(title);
   }
 
   /**
@@ -223,7 +203,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addYear() {
     Element year = document.createElement("year");
-    year.setTextContent(movie.getYear());
+    year.setTextContent(tvShow.getYear());
     root.appendChild(year);
   }
 
@@ -232,7 +212,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addRating() {
     Element rating = document.createElement("rating");
-    rating.setTextContent(String.format(Locale.US, "%.1f", movie.getRating()));
+    rating.setTextContent(String.format(Locale.US, "%.1f", tvShow.getRating()));
     root.appendChild(rating);
   }
 
@@ -241,17 +221,8 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addVotes() {
     Element votes = document.createElement("votes");
-    votes.setTextContent(Integer.toString(movie.getVotes()));
+    votes.setTextContent(Integer.toString(tvShow.getVotes()));
     root.appendChild(votes);
-  }
-
-  /**
-   * add the set information in the form <set>xxx</set>
-   */
-  protected void addSet() {
-    Element set = document.createElement("set");
-    set.setTextContent(movie.getMovieSetTitle());
-    root.appendChild(set);
   }
 
   /**
@@ -269,7 +240,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addPlot() {
     Element plot = document.createElement("plot");
-    plot.setTextContent(movie.getPlot());
+    plot.setTextContent(tvShow.getPlot());
     root.appendChild(plot);
   }
 
@@ -278,7 +249,8 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addTagline() {
     Element tagline = document.createElement("tagline");
-    tagline.setTextContent(movie.getTagline());
+    // FIXME tbc how we should fill that field
+    // tagline.setTextContent();
     root.appendChild(tagline);
   }
 
@@ -287,25 +259,54 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addRuntime() {
     Element runtime = document.createElement("runtime");
-    runtime.setTextContent(Integer.toString(movie.getRuntime()));
+    runtime.setTextContent(Integer.toString(tvShow.getRuntime()));
     root.appendChild(runtime);
   }
 
   /**
-   * add the thumb (poster) url in the form <thumb>xxx</thumb>
+   * add the poster in the form <thumb aspect="poster">xxx</thumb> tags
    */
-  protected void addThumb() {
+  protected void addPoster() {
     Element thumb = document.createElement("thumb");
-    thumb.setTextContent(movie.getArtworkUrl(MediaFileType.POSTER));
-    root.appendChild(thumb);
+
+    String posterUrl = tvShow.getArtworkUrl(MediaFileType.POSTER);
+    if (StringUtils.isNotBlank(posterUrl)) {
+      thumb.setAttribute("aspect", "poster");
+      thumb.setTextContent(posterUrl);
+      root.appendChild(thumb);
+    }
   }
 
   /**
-   * add the fanart url in the form <fanart>xxx</fanart>
+   * add the season posters in multiple <thumb aspect="poster" type="season" season="x">xxx</thumb> tags
+   */
+  protected void addSeasonPoster() {
+    for (Map.Entry<Integer, String> entry : tvShow.getSeasonPosterUrls().entrySet()) {
+      Element thumb = document.createElement("thumb");
+      String posterUrl = entry.getValue();
+      if (StringUtils.isNotBlank(posterUrl)) {
+        thumb.setAttribute("aspect", "poster");
+        thumb.setAttribute("type", "season");
+        thumb.setAttribute("season", String.valueOf(entry.getKey()));
+        thumb.setTextContent(posterUrl);
+        root.appendChild(thumb);
+      }
+    }
+  }
+
+  /**
+   * the new fanart in the form <fanart><thumb>xxx</thumb></fanart>
    */
   protected void addFanart() {
     Element fanart = document.createElement("fanart");
-    fanart.setTextContent(movie.getArtworkUrl(MediaFileType.FANART));
+
+    String fanarUrl = tvShow.getArtworkUrl(MediaFileType.FANART);
+    if (StringUtils.isNotBlank(fanarUrl)) {
+      Element thumb = document.createElement("thumb");
+      thumb.setTextContent(fanarUrl);
+      fanart.appendChild(thumb);
+    }
+
     root.appendChild(fanart);
   }
 
@@ -315,47 +316,33 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   protected void addMpaa() {
     Element mpaa = document.createElement("mpaa");
 
-    if (movie.getCertification() != null) {
-      if (MovieModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
+    if (tvShow.getCertification() != null) {
+      if (TvShowModuleManager.SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US certs, write correct "Rated XX" String
-        mpaa.setTextContent(Certification.getMPAAString(movie.getCertification()));
+        mpaa.setTextContent(Certification.getMPAAString(tvShow.getCertification()));
       }
       else {
-        mpaa.setTextContent(CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle()));
+        mpaa.setTextContent(CertificationStyle.formatCertification(tvShow.getCertification(), TvShowModuleManager.SETTINGS.getCertificationStyle()));
       }
     }
     root.appendChild(mpaa);
   }
 
   /**
-   * add the certification in <certification></certification>
-   */
-  protected void addCertification() {
-    Element certification = document.createElement("certification");
-    if (movie.getCertification() != null) {
-      certification
-          .setTextContent(CertificationStyle.formatCertification(movie.getCertification(), MovieModuleManager.SETTINGS.getCertificationStyle()));
-    }
-    root.appendChild(certification);
-  }
-
-  /**
-   * add the imdb id in <id>xxx</id>
+   * add the tvdb id in <id>xxx</id>
    */
   protected void addId() {
     Element id = document.createElement("id");
-    id.setTextContent(movie.getImdbId());
+    id.setTextContent(tvShow.getTvdbId());
     root.appendChild(id);
   }
 
   /**
-   * add the tmdb id in <tmdbid>xxx</tmdbid>
+   * add the imdb id in <imdbid>xxx</imdbid>
    */
-  protected void addTmdbid() {
-    Element tmdbid = document.createElement("tmdbid");
-    if (movie.getTmdbId() > 0) {
-      tmdbid.setTextContent(Integer.toString(movie.getTmdbId()));
-    }
+  protected void addImdbid() {
+    Element tmdbid = document.createElement("imdbid");
+    tmdbid.setTextContent(tvShow.getImdbId());
     root.appendChild(tmdbid);
   }
 
@@ -364,7 +351,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addIds() {
     Element ids = document.createElement("ids");
-    for (Map.Entry<String, Object> entry : movie.getIds().entrySet()) {
+    for (Map.Entry<String, Object> entry : tvShow.getIds().entrySet()) {
       Element id = document.createElement(entry.getKey());
       id.setTextContent(entry.getValue().toString());
       ids.appendChild(id);
@@ -373,21 +360,12 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   }
 
   /**
-   * add the country in <country>xxx</country>
-   */
-  protected void addCountry() {
-    Element country = document.createElement("country");
-    country.setTextContent(movie.getCountry());
-    root.appendChild(country);
-  }
-
-  /**
    * add the premiered date in <premiered>xxx</premiered>
    */
   protected void addPremiered() {
     Element premiered = document.createElement("premiered");
-    if (movie.getReleaseDate() != null) {
-      premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(movie.getReleaseDate()));
+    if (tvShow.getFirstAired() != null) {
+      premiered.setTextContent(new SimpleDateFormat("yyyy-MM-dd").format(tvShow.getFirstAired()));
     }
     root.appendChild(premiered);
   }
@@ -397,7 +375,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addWatched() {
     Element watched = document.createElement("watched");
-    watched.setTextContent(Boolean.toString(movie.isWatched()));
+    watched.setTextContent(Boolean.toString(tvShow.isWatched()));
     root.appendChild(watched);
   }
 
@@ -406,10 +384,10 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addPlaycount() {
     Element playcount = document.createElement("playcount");
-    if (movie.isWatched() && parser != null && parser.playcount > 0) {
+    if (tvShow.isWatched() && parser != null && parser.playcount > 0) {
       playcount.setTextContent(Integer.toString(parser.playcount));
     }
-    else if (movie.isWatched()) {
+    else if (tvShow.isWatched()) {
       playcount.setTextContent("1");
     }
     root.appendChild(playcount);
@@ -419,7 +397,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add genres in <genre>xxx</genre> tags (multiple)
    */
   protected void addGenres() {
-    for (MediaGenres mediaGenre : movie.getGenres()) {
+    for (MediaGenres mediaGenre : tvShow.getGenres()) {
       Element genre = document.createElement("genre");
       genre.setTextContent(mediaGenre.getName());
       root.appendChild(genre);
@@ -430,7 +408,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add studios in <studio>xxx</studio> tags (multiple)
    */
   protected void addStudios() {
-    List<String> studios = Arrays.asList(movie.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
+    List<String> studios = Arrays.asList(tvShow.getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace around
     for (String s : studios) {
       Element studio = document.createElement("studio");
       studio.setTextContent(s);
@@ -439,32 +417,10 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   }
 
   /**
-   * add credits in <credits>xxx</credits> tags (mulitple)
-   */
-  protected void addCredits() {
-    for (Person writer : movie.getWriters()) {
-      Element element = document.createElement("credits");
-      element.setTextContent(writer.getName());
-      root.appendChild(element);
-    }
-  }
-
-  /**
-   * add directors in <director>xxx</director> tags (mulitple)
-   */
-  protected void addDirectors() {
-    for (Person director : movie.getDirectors()) {
-      Element element = document.createElement("director");
-      element.setTextContent(director.getName());
-      root.appendChild(element);
-    }
-  }
-
-  /**
    * add tags in <tag>xxx</tag> tags (multiple)
    */
   protected void addTags() {
-    for (String t : movie.getTags()) {
+    for (String t : tvShow.getTags()) {
       Element tag = document.createElement("tag");
       tag.setTextContent(t);
       root.appendChild(tag);
@@ -475,19 +431,19 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    * add actors in <actor><name>xxx</name><role>xxx</role><thumb>xxx</thumb></actor>
    */
   protected void addActors() {
-    for (Person movieActor : movie.getActors()) {
+    for (Person tvShowActor : tvShow.getActors()) {
       Element actor = document.createElement("actor");
 
       Element name = document.createElement("name");
-      name.setTextContent(movieActor.getName());
+      name.setTextContent(tvShowActor.getName());
       actor.appendChild(name);
 
       Element role = document.createElement("role");
-      role.setTextContent(movieActor.getRole());
+      role.setTextContent(tvShowActor.getRole());
       actor.appendChild(role);
 
       Element thumb = document.createElement("thumb");
-      thumb.setTextContent(movieActor.getThumbUrl());
+      thumb.setTextContent(tvShowActor.getThumbUrl());
       actor.appendChild(thumb);
 
       root.appendChild(actor);
@@ -495,58 +451,14 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
   }
 
   /**
-   * add producers in <producer><name>xxx</name><role>xxx</role><thumb>xxx</thumb></producer>
-   */
-  protected void addProducers() {
-    for (Person movieProducer : movie.getProducers()) {
-      Element producer = document.createElement("producer");
-
-      Element name = document.createElement("name");
-      name.setTextContent(movieProducer.getName());
-      producer.appendChild(name);
-
-      Element role = document.createElement("role");
-      role.setTextContent(movieProducer.getRole());
-      producer.appendChild(role);
-
-      Element thumb = document.createElement("thumb");
-      thumb.setTextContent(movieProducer.getThumbUrl());
-      producer.appendChild(thumb);
-
-      root.appendChild(producer);
-    }
-  }
-
-  /**
-   * add spoken languages in <languages>xxx</languages>
-   */
-  protected void addLanguages() {
-    Element languages = document.createElement("languages");
-    languages.setTextContent(movie.getSpokenLanguages());
-    root.appendChild(languages);
-  }
-
-  /**
    * add the trailer url in <trailer>xxx</trailer>
    */
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    for (MovieTrailer movieTrailer : new ArrayList<>(movie.getTrailer())) {
-      if (movieTrailer.getInNfo() && !movieTrailer.getUrl().startsWith("file")) {
-        trailer.setTextContent(movieTrailer.getDownloadUrl());
-        break;
-      }
+    if (parser != null && StringUtils.isNotBlank(parser.trailer)) {
+      trailer.setTextContent(parser.trailer);
     }
     root.appendChild(trailer);
-  }
-
-  /**
-   * add the media source <source>xxx</source>
-   */
-  protected void addSource() {
-    Element source = document.createElement("source");
-    source.setTextContent(movie.getMediaSource().name());
-    root.appendChild(source);
   }
 
   /**
@@ -570,7 +482,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
   /**
    * get any single element by the tag name
-   * 
+   *
    * @param tag
    *          the tag name
    * @return an element or null
@@ -588,7 +500,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
   /**
    * get the transformer for XML output
-   * 
+   *
    * @return the transformer
    * @throws Exception
    *           any Exception that has been thrown
@@ -606,5 +518,4 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
 
     return transformer;
   }
-
 }
