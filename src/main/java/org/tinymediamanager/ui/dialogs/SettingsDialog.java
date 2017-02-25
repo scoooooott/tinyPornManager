@@ -100,6 +100,11 @@ public class SettingsDialog extends TmmDialog {
       }
     });
 
+    // expand tree nodes
+    for (int i = 0; i < tree.getRowCount(); i++) {
+      tree.expandRow(i);
+    }
+
     // select first node on creation
     SwingUtilities.invokeLater(() -> {
       DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
