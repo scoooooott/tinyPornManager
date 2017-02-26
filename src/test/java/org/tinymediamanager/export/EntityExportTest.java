@@ -98,46 +98,47 @@ public class EntityExportTest {
   }
 
   private void printPropertyEntries(Class clazz, List<String> entities) {
-    try {
-      System.out.println("|" + getCleanedClassname(clazz.getName()) + "||");
-      System.out.println("|---|---|");
-      for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors()) {
-        String line = "|";
-        // propertyEditor.getReadMethod() exposes the getter
-        // btw, this may be null if you have a write-only property
-        Method method = propertyDescriptor.getReadMethod();
-        if (method == null) {
-          continue;
-        }
-
-        if (method.getGenericReturnType() instanceof ParameterizedType) {
-          String returnType = getCleanedClassname(method.getReturnType().getTypeName().toString()) + "\\<";
-
-          ParameterizedType genericReturnType = (ParameterizedType) method.getGenericReturnType();
-          List<String> typeNames = new ArrayList<>();
-          for (Type type : genericReturnType.getActualTypeArguments()) {
-            typeNames.add(getCleanedClassname(type.getTypeName()));
-            if (type.getTypeName().startsWith("org.tinymediamanager") && !entities.contains(type.getTypeName())) {
-              entities.add(type.getTypeName());
-            }
-          }
-
-          line += returnType + StringUtils.join(typeNames, ", ") + "\\>" + "|";
-        }
-        else {
-          line += getCleanedClassname(method.getReturnType().getTypeName().toString()) + "|";
-        }
-
-        line += propertyDescriptor.getDisplayName() + "|";
-        System.out.println(line);
-
-      }
-      System.out.println("");
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      Assertions.fail(e.getMessage());
-    }
+    // deactivated since that won't compile on java7
+    // try {
+    // System.out.println("|" + getCleanedClassname(clazz.getName()) + "||");
+    // System.out.println("|---|---|");
+    // for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors()) {
+    // String line = "|";
+    // // propertyEditor.getReadMethod() exposes the getter
+    // // btw, this may be null if you have a write-only property
+    // Method method = propertyDescriptor.getReadMethod();
+    // if (method == null) {
+    // continue;
+    // }
+    //
+    // if (method.getGenericReturnType() instanceof ParameterizedType) {
+    // String returnType = getCleanedClassname(method.getReturnType().getTypeName().toString()) + "\\<";
+    //
+    // ParameterizedType genericReturnType = (ParameterizedType) method.getGenericReturnType();
+    // List<String> typeNames = new ArrayList<>();
+    // for (Type type : genericReturnType.getActualTypeArguments()) {
+    // typeNames.add(getCleanedClassname(type.getTypeName()));
+    // if (type.getTypeName().startsWith("org.tinymediamanager") && !entities.contains(type.getTypeName())) {
+    // entities.add(type.getTypeName());
+    // }
+    // }
+    //
+    // line += returnType + StringUtils.join(typeNames, ", ") + "\\>" + "|";
+    // }
+    // else {
+    // line += getCleanedClassname(method.getReturnType().getTypeName().toString()) + "|";
+    // }
+    //
+    // line += propertyDescriptor.getDisplayName() + "|";
+    // System.out.println(line);
+    //
+    // }
+    // System.out.println("");
+    // }
+    // catch (Exception e) {
+    // e.printStackTrace();
+    // Assertions.fail(e.getMessage());
+    // }
   }
 
   private String getCleanedClassname(String fullClassname) {
