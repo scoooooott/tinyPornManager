@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.ApiResourceBundle;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * This class is used to represent an artwork for a media
@@ -245,12 +246,7 @@ public class MediaArtwork {
    *          the language
    */
   public void setLanguage(String language) {
-    if (language == null) {
-      this.language = "";
-    }
-    else {
-      this.language = language;
-    }
+    this.language = StrgUtils.getNonNullString(language);
   }
 
   /**
@@ -288,7 +284,7 @@ public class MediaArtwork {
    *          the imdb id
    */
   public void setImdbId(String imdbId) {
-    this.imdbId = imdbId;
+    this.imdbId = StrgUtils.getNonNullString(imdbId);
   }
 
   /**
@@ -441,7 +437,7 @@ public class MediaArtwork {
     public ImageSizeAndUrl(int width, int height, String url) {
       this.width = width;
       this.height = height;
-      this.url = url;
+      this.url = StrgUtils.getNonNullString(url);
     }
 
     public int getWidth() {

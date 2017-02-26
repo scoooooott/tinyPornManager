@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * This class contains the data for a cast member and its role
@@ -38,7 +39,12 @@ public class MediaCastMember {
    * 
    */
   public enum CastType {
-    ACTOR, WRITER, DIRECTOR, OTHER, ALL, PRODUCER
+    ACTOR,
+    WRITER,
+    DIRECTOR,
+    OTHER,
+    ALL,
+    PRODUCER
   }
 
   private String       id;
@@ -70,7 +76,7 @@ public class MediaCastMember {
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.name = StrgUtils.getNonNullString(name);
   }
 
   /**
@@ -89,7 +95,7 @@ public class MediaCastMember {
    *          the new part
    */
   public void setPart(String part) {
-    this.part = part;
+    this.part = StrgUtils.getNonNullString(part);
   }
 
   public String getProviderDataUrl() {
@@ -97,7 +103,7 @@ public class MediaCastMember {
   }
 
   public void setProviderDataUrl(String providerDataUrl) {
-    this.providerDataUrl = providerDataUrl;
+    this.providerDataUrl = StrgUtils.getNonNullString(providerDataUrl);
   }
 
   public CastType getType() {
@@ -109,9 +115,7 @@ public class MediaCastMember {
   }
 
   public void addFanart(String url) {
-    if (url != null) {
-      fanart.add(url.trim());
-    }
+    fanart.add(StrgUtils.getNonNullString(url).trim());
   }
 
   /**
@@ -130,7 +134,7 @@ public class MediaCastMember {
    *          the character name
    */
   public void setCharacter(String character) {
-    this.character = character;
+    this.character = StrgUtils.getNonNullString(character);
   }
 
   public String getImageUrl() {
@@ -138,7 +142,7 @@ public class MediaCastMember {
   }
 
   public void setImageUrl(String imageUrl) {
-    this.imageUrl = imageUrl;
+    this.imageUrl = StrgUtils.getNonNullString(imageUrl);
   }
 
   /**

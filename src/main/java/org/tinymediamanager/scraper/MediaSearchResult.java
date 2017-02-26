@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class MediaSearchResult.
@@ -56,8 +57,8 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public MediaSearchResult(String providerId, MediaType type, String id, String title, int year, float score) {
     this.providerId = providerId;
     this.type = type;
-    this.id = id;
-    this.title = title;
+    this.id = StrgUtils.getNonNullString(id);
+    this.title = StrgUtils.getNonNullString(title);
     this.year = year;
     this.score = score;
   }
@@ -106,9 +107,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the original title
    */
   public void setOriginalTitle(String originalTitle) {
-    if (originalTitle != null) {
-      this.originalTitle = originalTitle;
-    }
+    this.originalTitle = StrgUtils.getNonNullString(originalTitle);
   }
 
   /**
@@ -146,9 +145,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the title
    */
   public void setTitle(String title) {
-    if (title != null) {
-      this.title = title;
-    }
+    this.title = StrgUtils.getNonNullString(title);
   }
 
   /**
@@ -229,9 +226,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the url
    */
   public void setUrl(String url) {
-    if (url != null) {
-      this.url = url;
-    }
+    this.url = StrgUtils.getNonNullString(url);
   }
 
   /**
@@ -259,7 +254,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the search result id
    */
   public void setId(String id) {
-    this.id = id;
+    this.id = StrgUtils.getNonNullString(id);
   }
 
   /**
@@ -318,9 +313,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    *          the poster url
    */
   public void setPosterUrl(String posterUrl) {
-    if (posterUrl != null) {
-      this.posterUrl = posterUrl;
-    }
+    this.posterUrl = StrgUtils.getNonNullString(posterUrl);
   }
 
   @Override

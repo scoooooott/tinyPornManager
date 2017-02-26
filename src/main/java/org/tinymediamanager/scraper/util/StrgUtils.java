@@ -387,4 +387,18 @@ public class StrgUtils {
     }
     return longestString;
   }
+
+  /**
+   * check the given String not to be null - returning always a not null String
+   * 
+   * @param originalString
+   *          the string to be checked
+   * @return the originalString or an empty String
+   */
+  public static String getNonNullString(String originalString) {
+    if (originalString == null) {
+      return "";
+    }
+    return originalString;
+  }
 }

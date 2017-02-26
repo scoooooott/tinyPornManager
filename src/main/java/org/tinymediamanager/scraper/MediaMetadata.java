@@ -33,6 +33,7 @@ import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaTrailer;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
@@ -481,6 +482,10 @@ public class MediaMetadata {
    *          add the given production company if it is not yet present
    */
   public void addProductionCompany(String productionCompany) {
+    if (StringUtils.isBlank(productionCompany)) {
+      return;
+    }
+
     if (!productionCompanies.contains(productionCompany)) {
       productionCompanies.add(productionCompany);
     }
@@ -525,6 +530,10 @@ public class MediaMetadata {
    *          the language to be set
    */
   public void addSpokenLanguage(String language) {
+    if (StringUtils.isBlank(language)) {
+      return;
+    }
+
     if (!spokenLanguages.contains(language)) {
       spokenLanguages.add(language);
     }
@@ -569,6 +578,10 @@ public class MediaMetadata {
    *          the country to be added
    */
   public void addCountry(String country) {
+    if (StringUtils.isBlank(country)) {
+      return;
+    }
+
     if (!countries.contains(country)) {
       countries.add(country);
     }
@@ -600,9 +613,7 @@ public class MediaMetadata {
    *          the title to be set
    */
   public void setTitle(String title) {
-    if (title != null) {
-      this.title = title;
-    }
+    this.title = StrgUtils.getNonNullString(title);
   }
 
   /**
@@ -621,9 +632,7 @@ public class MediaMetadata {
    *          the origial title to be set
    */
   public void setOriginalTitle(String originalTitle) {
-    if (originalTitle != null) {
-      this.originalTitle = originalTitle;
-    }
+    this.originalTitle = StrgUtils.getNonNullString(originalTitle);
   }
 
   /**
@@ -704,9 +713,7 @@ public class MediaMetadata {
    *          the plot to be set
    */
   public void setPlot(String plot) {
-    if (plot != null) {
-      this.plot = plot;
-    }
+    this.plot = StrgUtils.getNonNullString(plot);
   }
 
   /**
@@ -725,9 +732,7 @@ public class MediaMetadata {
    *          the tagline to be set
    */
   public void setTagline(String tagline) {
-    if (tagline != null) {
-      this.tagline = tagline;
-    }
+    this.tagline = StrgUtils.getNonNullString(tagline);
   }
 
   /**
@@ -746,9 +751,7 @@ public class MediaMetadata {
    *          the collection name to be set
    */
   public void setCollectionName(String collectionName) {
-    if (collectionName != null) {
-      this.collectionName = collectionName;
-    }
+    this.collectionName = StrgUtils.getNonNullString(collectionName);
   }
 
   /**
@@ -1130,9 +1133,7 @@ public class MediaMetadata {
    *          the airing status to be set
    */
   public void setStatus(String status) {
-    if (status != null) {
-      this.status = status;
-    }
+    this.status = StrgUtils.getNonNullString(status);
   }
 
   /**
@@ -1198,7 +1199,11 @@ public class MediaMetadata {
    *          the tag
    */
   public void addTag(String tag) {
-    if (tag != null && !tags.contains(tag)) {
+    if (StringUtils.isBlank(tag)) {
+      return;
+    }
+
+    if (!tags.contains(tag)) {
       tags.add(tag);
     }
   }

@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.entities;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The class MediaTrailer. This is used for holding data about trailer
@@ -37,7 +38,7 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.name = StrgUtils.getNonNullString(name);
   }
 
   public String getUrl() {
@@ -45,7 +46,7 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   }
 
   public void setUrl(String url) {
-    this.url = url;
+    this.url = StrgUtils.getNonNullString(url);
   }
 
   public String getQuality() {
@@ -53,7 +54,7 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   }
 
   public void setQuality(String quality) {
-    this.quality = quality;
+    this.quality = StrgUtils.getNonNullString(quality);
   }
 
   public String getProvider() {
@@ -61,7 +62,7 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   }
 
   public void setProvider(String provider) {
-    this.provider = provider;
+    this.provider = StrgUtils.getNonNullString(provider);
   }
 
   public String getDate() {
@@ -69,7 +70,7 @@ public class MediaTrailer implements Comparable<MediaTrailer> {
   }
 
   public void setDate(String date) {
-    this.date = date;
+    this.date = StrgUtils.getNonNullString(date);
   }
 
   /**

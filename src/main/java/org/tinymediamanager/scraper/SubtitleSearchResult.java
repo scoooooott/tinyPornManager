@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The class SubtitleSearchResult.
@@ -76,9 +77,7 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the release name
    */
   public void setReleaseName(String releaseName) {
-    if (releaseName != null) {
-      this.releaseName = releaseName;
-    }
+    this.releaseName = StrgUtils.getNonNullString(releaseName);
   }
 
   /**
@@ -116,9 +115,7 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the title
    */
   public void setTitle(String title) {
-    if (title != null) {
-      this.title = title;
-    }
+    this.title = StrgUtils.getNonNullString(title);
   }
 
   /**
@@ -168,9 +165,7 @@ public class SubtitleSearchResult implements Comparable<SubtitleSearchResult> {
    *          the url
    */
   public void setUrl(String url) {
-    if (url != null) {
-      this.url = url;
-    }
+    this.url = StrgUtils.getNonNullString(url);
   }
 
   @Override
