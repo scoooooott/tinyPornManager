@@ -284,6 +284,8 @@ public class TvShowList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.warn("problem decoding TV show json string: ", e);
+        LOGGER.info("dropping corrupt TV show");
+        tvShowMap.remove(uuid);
       }
     }
     LOGGER.info("found " + tvShowList.size() + " TV shows in database");
@@ -314,6 +316,8 @@ public class TvShowList extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.warn("problem decoding episode json string: ", e);
+        LOGGER.info("dropping corrupt episode");
+        episodesMap.remove(uuid);
       }
     }
     LOGGER.info("found " + episodeCount + " episodes in database");
