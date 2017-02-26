@@ -1187,7 +1187,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     long h = TimeUnit.SECONDS.toHours(this.durationInSecs);
     long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
     long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
-    if (h > 0 && m > 0) {
+    if (h > 0) {
       return String.format("%d:%02d:%02d", h, m, s);
     }
     else if (m > 0) {
