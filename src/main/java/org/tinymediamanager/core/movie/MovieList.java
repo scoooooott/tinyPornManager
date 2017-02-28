@@ -298,7 +298,7 @@ public class MovieList extends AbstractModelObject {
     movieList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     ObjectReader movieObjectReader = objectMapper.readerFor(Movie.class);
 
-    for (UUID uuid : movieMap.keyList()) {
+    for (UUID uuid : new ArrayList<>(movieMap.keyList())) {
       String json = "";
       try {
         json = movieMap.get(uuid);
@@ -308,7 +308,7 @@ public class MovieList extends AbstractModelObject {
         movieList.add(movie);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding movie json string: ", e);
+        LOGGER.warn("problem decoding movie json string: " + e.getMessage());
         LOGGER.info("dropping corrupt movie");
         movieMap.remove(uuid);
       }
@@ -321,7 +321,7 @@ public class MovieList extends AbstractModelObject {
     movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>()));
     ObjectReader movieSetObjectReader = objectMapper.readerFor(MovieSet.class);
 
-    for (UUID uuid : movieSetMap.keyList()) {
+    for (UUID uuid : new ArrayList<>(movieSetMap.keyList())) {
       try {
         MovieSet movieSet = movieSetObjectReader.readValue(movieSetMap.get(uuid));
         movieSet.setDbId(uuid);
@@ -329,7 +329,7 @@ public class MovieList extends AbstractModelObject {
         movieSetList.add(movieSet);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding movie set json string: ", e);
+        LOGGER.warn("problem decoding movie set json string: " + e.getMessage());
         LOGGER.info("dropping corrupt movie set");
         movieSetMap.remove(uuid);
       }

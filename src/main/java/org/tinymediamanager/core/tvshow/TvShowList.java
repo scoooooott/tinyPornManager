@@ -274,7 +274,7 @@ public class TvShowList extends AbstractModelObject {
     // load all TV shows from the database
     ObjectReader tvShowObjectReader = objectMapper.readerFor(TvShow.class);
 
-    for (UUID uuid : tvShowMap.keyList()) {
+    for (UUID uuid : new ArrayList<>(tvShowMap.keyList())) {
       try {
         TvShow tvShow = tvShowObjectReader.readValue(tvShowMap.get(uuid));
         tvShow.setDbId(uuid);
@@ -283,7 +283,7 @@ public class TvShowList extends AbstractModelObject {
         tvShowList.add(tvShow);
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding TV show json string: ", e);
+        LOGGER.warn("problem decoding TV show json string: " + e.getMessage());
         LOGGER.info("dropping corrupt TV show");
         tvShowMap.remove(uuid);
       }
@@ -299,7 +299,7 @@ public class TvShowList extends AbstractModelObject {
     ObjectReader episodeObjectReader = objectMapper.readerFor(TvShowEpisode.class);
     int episodeCount = 0;
 
-    for (UUID uuid : episodesMap.keyList()) {
+    for (UUID uuid : new ArrayList<>(episodesMap.keyList())) {
       try {
         episodeCount++;
         TvShowEpisode episode = episodeObjectReader.readValue(episodesMap.get(uuid));
@@ -315,7 +315,7 @@ public class TvShowList extends AbstractModelObject {
         }
       }
       catch (Exception e) {
-        LOGGER.warn("problem decoding episode json string: ", e);
+        LOGGER.warn("problem decoding episode json string: " + e.getMessage());
         LOGGER.info("dropping corrupt episode");
         episodesMap.remove(uuid);
       }
