@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -208,7 +207,7 @@ public abstract class MediaEntityExporter {
     }
 
     @Override
-    public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
+    public String render(Object o, String pattern, Locale locale) {
       String patternToUse = pattern != null ? pattern : DEFAULT_PATTERN;
       try {
         DateFormat dateFormat = new SimpleDateFormat(patternToUse);
