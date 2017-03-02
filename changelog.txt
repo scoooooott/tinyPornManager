@@ -7,6 +7,7 @@ x fixed stacking detection #132
 x fixed searching for movie set id in movie set editor
 x fixed display of runtime
 x automatically drop corrupt entries from the database
+x fix movie renamer token $1/$2 to use first alpha numeric character 
 x fixed searching for TV show actors in the UI filter
   you may need to restart tinyMediaManager once after the update
 

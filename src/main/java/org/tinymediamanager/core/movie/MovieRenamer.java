@@ -59,7 +59,8 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final Logger  LOGGER   = LoggerFactory.getLogger(MovieRenamer.class);
+  private static final Pattern ALPHANUM = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");  // to not use posix
 
   private static void renameSubtitles(Movie m) {
     // build language lists
@@ -1021,10 +1022,10 @@ public class MovieRenamer {
         ret = movie.getTitle();
         break;
       case "$1":
-        ret = StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase(Locale.ROOT) : "";
+        ret = getFirstAlphaNum(movie.getTitle());
         break;
       case "$2":
-        ret = StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase(Locale.ROOT) : "";
+        ret = getFirstAlphaNum(movie.getTitleSortable());
         break;
       case "$Y":
         ret = movie.getYear().equals("0") ? "" : movie.getYear();
@@ -1111,6 +1112,22 @@ public class MovieRenamer {
     }
 
     return ret;
+  }
+
+  /**
+   * gets the first alpha-numeric character
+   * 
+   * @param text
+   * @return A-Z0-9 or empty
+   */
+  protected static String getFirstAlphaNum(String text) {
+    if (StringUtils.isNotBlank(text)) {
+      Matcher m = ALPHANUM.matcher(text);
+      if (m.find()) {
+        return m.group(1).toUpperCase(Locale.ROOT);
+      }
+    }
+    return ""; // text empty/null/no alphanum
   }
 
   /**

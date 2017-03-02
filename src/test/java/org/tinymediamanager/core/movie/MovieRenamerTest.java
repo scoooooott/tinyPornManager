@@ -68,6 +68,16 @@ public class MovieRenamerTest {
   }
 
   @Test
+  public void testFirstAlphaNum() {
+    Assert.assertEquals("A", MovieRenamer.getFirstAlphaNum("... and then came Polly"));
+    Assert.assertEquals("5", MovieRenamer.getFirstAlphaNum("(500) days of summer"));
+    Assert.assertEquals("3", MovieRenamer.getFirstAlphaNum("300"));
+    Assert.assertEquals("B", MovieRenamer.getFirstAlphaNum("Batman"));
+    Assert.assertEquals("", MovieRenamer.getFirstAlphaNum(""));
+    Assert.assertEquals("", MovieRenamer.getFirstAlphaNum(null));
+  }
+
+  @Test
   public void testPattern() {
     testAll(getRegexForPattern("$T($Y)"));
     testAll(getRegexForPattern("$T.($Y)"));
