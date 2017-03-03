@@ -16,8 +16,9 @@ ui.hide_decorations = true
 code = tmm.jar
 %CODELIBS%
 
-# strings added to classpath
+# strings added 1:1 to classpath
 plugin = locale/*
+classpath = locale/*
 
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
 resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
