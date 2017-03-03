@@ -76,7 +76,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final String                        FILESIZE           = "filesize";
   private static final String                        FILESIZE_IN_MB     = "filesizeInMegabytes";
   private static final List<String>                  PLEX_EXTRA_FOLDERS = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
-      "deletedscenes", "featurettes", "interviews", "scenes", "shorts", "trailers");
+      "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
 
   private static Pattern                             moviesetPattern    = Pattern
       .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
@@ -336,7 +336,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.VIDEO_EXTRA;
       }
 
-      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer")) {
+      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
         return MediaFileType.TRAILER;
       }
 
