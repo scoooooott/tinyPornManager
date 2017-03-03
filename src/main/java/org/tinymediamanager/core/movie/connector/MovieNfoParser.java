@@ -44,6 +44,7 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -82,6 +83,7 @@ public class MovieNfoParser {
   public int                 playcount           = 0;
   public String              languages           = "";
   public MediaSource         source              = MediaSource.UNKNOWN;
+  public MovieEdition        edition             = MovieEdition.NONE;
   public String              trailer             = "";
 
   public Map<String, Object> ids                 = new HashMap<>();
@@ -153,6 +155,7 @@ public class MovieNfoParser {
     parseFileinfo();
     parseLanguages();
     parseSource();
+    parseEdition();
     parseTrailer();
 
     parseEpbookmark();
@@ -1076,6 +1079,22 @@ public class MovieNfoParser {
   }
 
   /**
+   * the edition is usually in the edition tag
+   */
+  private void parseEdition() {
+    supportedElements.add("edition");
+
+    Element element = getSingleElement(root, "edition");
+    if (element != null) {
+      try {
+        edition = MovieEdition.getMovieEditionFromString(element.ownText());
+      }
+      catch (Exception ignored) {
+      }
+    }
+  }
+
+  /**
    * a trailer is usually in the trailer tag
    */
   private void parseTrailer() {
@@ -1251,6 +1270,7 @@ public class MovieNfoParser {
     }
     movie.setSpokenLanguages(languages);
     movie.setMediaSource(source);
+    movie.setEdition(edition);
 
     // movieset
     if (set != null && StringUtils.isNotEmpty(set.name)) {

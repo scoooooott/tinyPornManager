@@ -154,15 +154,16 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         addTags();
         addActors();
         addProducers();
-        addLanguages();
         addTrailer();
-        addSource();
 
         // add connector specific tags
         addOwnTags();
 
         // add unsupported tags
         addUnsupportedTags();
+
+        // add tinyMediaManagers own data
+        addTinyMediaManagerTags();
 
         // serialize to string
         Writer out = new StringWriter();
@@ -564,6 +565,25 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
         }
       }
     }
+  }
+
+  /**
+   * add the missing meta data for tinyMediaManager to this NFO
+   */
+  protected void addTinyMediaManagerTags() {
+    root.appendChild(document.createComment("tinyMediaManager meta data"));
+    addLanguages();
+    addSource();
+    addEdition();
+  }
+
+  /**
+   * add the edition in <edition>xxx</edition>
+   */
+  protected void addEdition() {
+    Element edition = document.createElement("edition");
+    edition.setTextContent(movie.getEdition().name());
+    root.appendChild(edition);
   }
 
   /**

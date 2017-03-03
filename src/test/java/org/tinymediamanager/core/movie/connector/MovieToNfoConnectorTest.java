@@ -38,6 +38,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.movie.entities.MovieTrailer;
@@ -189,6 +190,7 @@ public class MovieToNfoConnectorTest {
     assertThat(newMovie.getProducers().get(0)).isEqualTo(movie.getProducers().get(0));
     assertThat(newMovie.getSpokenLanguages()).isEqualTo(movie.getSpokenLanguages());
     assertThat(newMovie.getMediaSource()).isEqualTo(movie.getMediaSource());
+    assertThat(newMovie.getEdition()).isEqualTo(movie.getEdition());
   }
 
   private Movie createMovie(String path) throws Exception {
@@ -268,6 +270,7 @@ public class MovieToNfoConnectorTest {
 
     movie.setSpokenLanguages("en");
     movie.setMediaSource(MediaSource.BLURAY);
+    movie.setEdition(MovieEdition.DIRECTORS_CUT);
     return movie;
   }
 
