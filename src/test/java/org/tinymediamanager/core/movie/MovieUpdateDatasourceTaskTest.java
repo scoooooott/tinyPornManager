@@ -37,7 +37,6 @@ public class MovieUpdateDatasourceTaskTest {
     // just a copy; we might have another movie test which uses these files
     FileUtils.copyDirectory(new File("target/test-classes/testmovies"), new File("target/movietest"));
     MovieModuleManager.SETTINGS.addMovieDataSources("target/movietest");
-    MovieModuleManager.SETTINGS.setDetectMovieMultiDir(true); // parse MMD
   }
 
   @AfterClass

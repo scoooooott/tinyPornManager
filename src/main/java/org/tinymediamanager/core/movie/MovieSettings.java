@@ -109,7 +109,6 @@ public class MovieSettings extends AbstractSettings {
   private final static String              SUBTITLE_SCRAPER_LANGU               = "subtitleScraperLanguage";
   private final static String              CERTIFICATION_COUNTRY                = "certificationCountry";
   private final static String              SCRAPER_THRESHOLD                    = "scraperThreshold";
-  private final static String              DETECT_MOVIE_MULTI_DIR               = "detectMovieMultiDir";
   private final static String              BUILD_IMAGE_CACHE_ON_IMPORT          = "buildImageCacheOnImport";
   private final static String              BAD_WORDS                            = "badWords";
   private final static String              ENTRY                                = "entry";
@@ -188,7 +187,6 @@ public class MovieSettings extends AbstractSettings {
   private final List<String>               movieTableHiddenColumns              = ObservableCollections.observableList(new ArrayList<String>());
 
   // data sources / NFO settings
-  private boolean                          detectMovieMultiDir                  = false;
   private boolean                          buildImageCacheOnImport              = false;
   private MovieConnectors                  movieConnector                       = MovieConnectors.KODI;
   private CertificationStyle               certificationStyle                   = CertificationStyle.LARGE;
@@ -912,31 +910,6 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.renamerNfoCleanup;
     this.renamerNfoCleanup = newValue;
     firePropertyChange(RENAMER_NFO_CLEANUP, oldValue, newValue);
-  }
-
-  /**
-   * Should we detect (and create) movies from directories containing more than one movie?
-   *
-   * @return true/false
-   * @Deprecated obsolete with UDS2
-   */
-  @Deprecated
-  public boolean isDetectMovieMultiDir() {
-    return detectMovieMultiDir;
-  }
-
-  /**
-   * Should we detect (and create) movies from directories containing more than one movie?
-   *
-   * @param newValue
-   *          true/false
-   * @Deprecated obsolete with UDS2
-   */
-  @Deprecated
-  public void setDetectMovieMultiDir(boolean newValue) {
-    boolean oldValue = this.detectMovieMultiDir;
-    this.detectMovieMultiDir = newValue;
-    firePropertyChange(DETECT_MOVIE_MULTI_DIR, oldValue, newValue);
   }
 
   public boolean isBuildImageCacheOnImport() {
