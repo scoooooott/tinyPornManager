@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.ApiResourceBundle;
@@ -123,7 +124,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     return name;
   }
 
-  @JsonGetter
+  @JsonValue
   public String getEnumName() {
     return name();
   }
@@ -195,7 +196,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @return the genre
    */
   @JsonCreator
-  public static MediaGenres getGenre(@JsonProperty("enumName") String name) {
+  public static MediaGenres getGenre(String name) {
     String cleanedName = name.replaceAll("[._-]", " ");
     for (MediaGenres genre : values()) {
       // check if the "enum" name matches
