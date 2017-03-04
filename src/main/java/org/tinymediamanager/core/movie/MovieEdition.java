@@ -48,6 +48,10 @@ public enum MovieEdition {
     }
   }
 
+  public String getTitle() {
+    return title;
+  }
+
   public String toString() {
     return title;
   }
@@ -65,6 +69,16 @@ public enum MovieEdition {
     for (MovieEdition edition : MovieEdition.values()) {
       if (edition == NONE) {
         continue;
+      }
+
+      if (edition.name().equalsIgnoreCase(stringToParse)) {
+        foundEdition = edition;
+        break;
+      }
+
+      if (edition.title.equalsIgnoreCase(stringToParse)) {
+        foundEdition = edition;
+        break;
       }
 
       Matcher matcher = edition.pattern.matcher(stringToParse);

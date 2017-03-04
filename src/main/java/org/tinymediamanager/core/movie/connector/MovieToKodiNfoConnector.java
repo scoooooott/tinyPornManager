@@ -70,6 +70,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -96,7 +97,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "fanart", "mpaa", "certification", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
-    "keywords", "poster", "url", "languages", "source", "unsupportedElements" })
+    "keywords", "poster", "url", "languages", "source", "edition", "unsupportedElements" })
 public class MovieToKodiNfoConnector {
   private static final Logger  LOGGER                = LoggerFactory.getLogger(MovieToKodiNfoConnector.class);
   private static final Pattern PATTERN_NFO_MOVIE_TAG = Pattern.compile("<movie.*?>");
@@ -143,6 +144,7 @@ public class MovieToKodiNfoConnector {
   private List<Object>         producers;
   public String                languages;
   public String                source;
+  public String                edition;
 
   @XmlAnyElement(lax = true)
   private List<Object>         unsupportedElements;
@@ -408,6 +410,9 @@ public class MovieToKodiNfoConnector {
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       kodi.source = movie.getMediaSource().name();
     }
+    if (movie.getEdition() != MovieEdition.NONE) {
+      kodi.edition = movie.getEdition().getTitle();
+    }
 
     // fileinfo
     for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
@@ -649,6 +654,11 @@ public class MovieToKodiNfoConnector {
         }
         catch (Exception ignored) {
         }
+      }
+
+      if (StringUtils.isNotBlank(kodi.edition)) {
+        MovieEdition edition = MovieEdition.getMovieEditionFromString(kodi.edition);
+        movie.setEdition(edition);
       }
 
       // movieset

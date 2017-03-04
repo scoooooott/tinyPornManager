@@ -596,8 +596,10 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
     if (matcher.find()) {
       movie.setVideoIn3D(true);
     }
-    // get edition from name
-    movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
+    // get edition from name if no edition has been set via NFO
+    if (movie.getEdition() == MovieEdition.NONE) {
+      movie.setEdition(MovieEdition.getMovieEditionFromString(movieDir.getFileName().toString()));
+    }
 
     movie.setPath(movieDir.toAbsolutePath().toString());
     movie.setDataSource(dataSource.toString());

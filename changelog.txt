@@ -3,6 +3,7 @@ Version 2.9.3
 + changed display of runtime in media files tab to a shorter version with seconds
 + updated Trakt, now being able to scrape in user language (if available)
 + correct wrong TVDB entries, where year is specified in title
++ added movie edition to the NFOs
 x fixed stacking detection #132
 x fixed searching for movie set id in movie set editor
 x fixed display of runtime

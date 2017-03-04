@@ -60,6 +60,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieHelpers;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -83,7 +84,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "set", "rating", "year", "votes", "outline", "plot", "tagline", "runtime",
     "thumb", "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors",
-    "producers", "watched", "playcount", "source" })
+    "producers", "watched", "playcount", "source", "edition" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -131,6 +132,7 @@ public class MovieToMpNfoConnector {
   public boolean              watched       = false;
   public int                  playcount     = 0;
   public String               source        = "";
+  public String               edition;
 
   private static JAXBContext initContext() {
     try {
@@ -264,6 +266,9 @@ public class MovieToMpNfoConnector {
 
     if (movie.getMediaSource() != MediaSource.UNKNOWN) {
       mp.source = movie.getMediaSource().name();
+    }
+    if (movie.getEdition() != MovieEdition.NONE) {
+      mp.edition = movie.getEdition().getTitle();
     }
 
     mp.director = movie.getDirector();
@@ -424,6 +429,11 @@ public class MovieToMpNfoConnector {
         }
         catch (Exception ignored) {
         }
+      }
+
+      if (StringUtils.isNotBlank(mp.edition)) {
+        MovieEdition edition = MovieEdition.getMovieEditionFromString(mp.edition);
+        movie.setEdition(edition);
       }
 
       // movieset (old style)

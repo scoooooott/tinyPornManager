@@ -224,9 +224,9 @@ public class Movie extends MediaEntity {
     this.top250 = this.top250 == 0 ? other.getTop250() : this.top250;
     this.releaseDate = this.releaseDate == null ? other.getReleaseDate() : this.releaseDate;
     this.movieSet = this.movieSet == null ? other.getMovieSet() : this.movieSet;
-    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : MediaSource.UNKNOWN;
-    this.certification = this.certification == Certification.NOT_RATED ? other.getCertification() : Certification.NOT_RATED;
-    this.edition = this.edition == MovieEdition.NONE ? other.getEdition() : MovieEdition.NONE;
+    this.mediaSource = this.mediaSource == MediaSource.UNKNOWN ? other.getMediaSource() : this.mediaSource;
+    this.certification = this.certification == Certification.NOT_RATED ? other.getCertification() : this.certification;
+    this.edition = this.edition == MovieEdition.NONE ? other.getEdition() : this.edition;
 
     for (MediaGenres genre : other.getGenres()) {
       addGenre(genre); // already checks dupes
