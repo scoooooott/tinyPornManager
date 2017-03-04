@@ -24,8 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.DynaEnum;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * This enum represents all different types of movie editions
@@ -71,7 +70,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
     return title;
   }
 
-  @JsonGetter
+  @JsonValue
   public String getName() {
     return name();
   }
@@ -119,7 +118,7 @@ public class MovieEdition extends DynaEnum<MovieEdition> {
    * @return the genre
    */
   @JsonCreator
-  public static MovieEdition getMovieEdition(@JsonProperty("name") String name) {
+  public static MovieEdition getMovieEdition(String name) {
     for (MovieEdition edition : values()) {
       // check if the "enum" name matches
       if (edition.name().equals(name)) {
