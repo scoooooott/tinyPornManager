@@ -100,11 +100,13 @@ public class MovieUIModule implements ITmmUIModule {
   private Action                         editAction;
   private Action                         updateAction;
   private Action                         exportAction;
+  private Action                         renameAction;
 
   private JPopupMenu                     popupMenu;
   private JPopupMenu                     updatePopupMenu;
   private JPopupMenu                     searchPopupMenu;
   private JPopupMenu                     editPopupMenu;
+  private JPopupMenu                     renamePopupMenu;
 
   private TmmSettingsNode                settingsNode;
 
@@ -198,6 +200,7 @@ public class MovieUIModule implements ITmmUIModule {
     editAction = createAndRegisterAction(MovieEditAction.class);
     updateAction = createAndRegisterAction(MovieUpdateDatasourceAction.class);
     exportAction = createAndRegisterAction(MovieExportAction.class);
+    renameAction = createAndRegisterAction(MovieRenameAction.class);
   }
 
   /**
@@ -293,6 +296,11 @@ public class MovieUIModule implements ITmmUIModule {
     editPopupMenu.addSeparator();
     editPopupMenu.add(createAndRegisterAction(MovieSyncTraktTvAction.class));
     editPopupMenu.add(createAndRegisterAction(MovieSyncWatchedTraktTvAction.class));
+
+    // rename popup menu
+    renamePopupMenu = new JPopupMenu();
+    renamePopupMenu.add(createAndRegisterAction(MovieRenameAction.class));
+    renamePopupMenu.add(createAndRegisterAction(MovieRenamePreviewAction.class));
   }
 
   /**
@@ -365,6 +373,16 @@ public class MovieUIModule implements ITmmUIModule {
   @Override
   public JPopupMenu getUpdateMenu() {
     return updatePopupMenu;
+  }
+
+  @Override
+  public Action getRenameAction() {
+    return renameAction;
+  }
+
+  @Override
+  public JPopupMenu getRenameMenu() {
+    return renamePopupMenu;
   }
 
   @Override

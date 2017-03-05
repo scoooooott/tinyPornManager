@@ -26,14 +26,12 @@ import javax.swing.plaf.UIResource;
 
 import org.tinymediamanager.ui.MainWindow;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
 import com.jtattoo.plaf.BaseTitleButton;
 import com.jtattoo.plaf.DecorationHelper;
 import com.jtattoo.plaf.JTattooUtilities;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * 
@@ -83,12 +81,11 @@ public class TmmWindowDecorationPanel extends JPanel {
 
     createActions();
     createButtons();
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("center:12dlu"), }, new RowSpec[] { RowSpec.decode("12dlu"),
-        FormFactory.GLUE_ROWSPEC, RowSpec.decode("12dlu"), FormFactory.GLUE_ROWSPEC, RowSpec.decode("12dlu"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    setLayout(new MigLayout("insets 5 3 5 3", "[]", "[]push[]push[]"));
 
-    add(closeButton, "1, 1, center, center");
-    add(maxButton, "1, 3, center, center");
-    add(iconifyButton, "1, 5, center, center");
+    add(closeButton, "cell 0 0, center");
+    add(maxButton, "cell 0 1, center");
+    add(iconifyButton, "cell 0 2, center");
   }
 
   public void iconify() {
@@ -255,8 +252,8 @@ public class TmmWindowDecorationPanel extends JPanel {
       final Frame frame = getFrame();
       if (frame != null) {
 
-        if (((state & BaseRootPaneUI.MAXIMIZED_BOTH) != 0)
-            && (getRootPane().getBorder() == null || (getRootPane().getBorder() instanceof UIResource)) && frame.isShowing()) {
+        if (((state & BaseRootPaneUI.MAXIMIZED_BOTH) != 0) && (getRootPane().getBorder() == null || (getRootPane().getBorder() instanceof UIResource))
+            && frame.isShowing()) {
           getRootPane().setBorder(null);
         }
 

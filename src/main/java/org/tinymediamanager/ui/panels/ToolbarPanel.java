@@ -18,11 +18,10 @@ package org.tinymediamanager.ui.panels;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -65,19 +64,21 @@ import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
+import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
+import org.tinymediamanager.ui.actions.ForumAction;
+import org.tinymediamanager.ui.actions.HomepageAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.actions.WikiAction;
 import org.tinymediamanager.ui.components.TaskListPopup;
 import org.tinymediamanager.ui.components.TmmWindowDecorationPanel;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.images.LoadingSpinner;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 import com.jtattoo.plaf.BaseRootPaneUI;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The Class ToolbarPanel.
@@ -92,15 +93,17 @@ public class ToolbarPanel extends JPanel {
   private JButton                     btnSearch;
   private JButton                     btnEdit;
   private JButton                     btnUpdate;
+  private JButton                     btnRename;
   private JButton                     btnTasks;
   private JButton                     btnExport;
   private JButton                     btnTools;
   private JButton                     btnSettings;
-  private JButton                     btnAbout;
+  private JButton                     btnInfo;
   private JButton                     btnDonate;
 
   private JLabel                      lblSearch;
   private JLabel                      lblEdit;
+  private JLabel                      lblRename;
   private JLabel                      lblUpdate;
   private JLabel                      lblDownload;
   private JLabel                      lblExport;
@@ -112,16 +115,18 @@ public class ToolbarPanel extends JPanel {
   private Action                      searchAction;
   private Action                      editAction;
   private Action                      updateAction;
+  private Action                      renameAction;
   private Action                      exportAction;
   private Action                      settingsAction    = new SettingsAction();
-  private Action                      aboutAction       = new AboutAction();
   private Action                      donateAction      = new DonateAction();
 
   private JPopupMenu                  updatePopupMenu;
   private JPopupMenu                  searchPopupMenu;
   private JPopupMenu                  editPopupMenu;
+  private JPopupMenu                  renamePopupMenu;
   private JPopupMenu                  toolsPopupMenu    = buildToolsMenu();
   private JPopupMenu                  taskListPopupMenu = new TaskListPopup();
+  private JPopupMenu                  infoPopupMenu     = buildInfoMenu();
 
   private int                         arrowSize         = 10;
   private Color                       arrowColor        = Color.GRAY;
@@ -139,81 +144,80 @@ public class ToolbarPanel extends JPanel {
     panelCenter = new JPanel();
     add(panelCenter, BorderLayout.CENTER);
     panelCenter.setOpaque(false);
-    panelCenter.setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("13dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("10dlu"), ColumnSpec.decode("default:grow"), ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("10dlu"), FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("10dlu"), },
-        new RowSpec[] { RowSpec.decode("fill:default"), FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    panelCenter.setLayout(new MigLayout("insets 0", "20lp[]20lp[]20lp[]20lp[]20lp[][grow][]15lp[]15lp[]15lp[]15lp[]15lp[]10lp", "[]1lp[]5lp"));
 
-    panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "2, 1, 1, 3, center, center");
+    panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "cell 0 0 1 2,alignx center");
 
     btnUpdate = createButton("", IconManager.TOOLBAR_REFRESH, IconManager.TOOLBAR_REFRESH_HOVER);
-    panelCenter.add(btnUpdate, "4, 1, center, center");
+    panelCenter.add(btnUpdate, "cell 1 0, center");
 
     btnSearch = createButton("", IconManager.TOOLBAR_SEARCH, IconManager.TOOLBAR_SEARCH_HOVER);
-    panelCenter.add(btnSearch, "6, 1, center, center");
+    panelCenter.add(btnSearch, "cell 2 0, center");
 
     btnEdit = createButton("", IconManager.TOOLBAR_EDIT, IconManager.TOOLBAR_EDIT_HOVER);
-    panelCenter.add(btnEdit, "8, 1, center, center");
+    panelCenter.add(btnEdit, "cell 3 0, center");
+
+    btnRename = createButton("", IconManager.TOOLBAR_RENAME, IconManager.TOOLBAR_RENAME_HOVER);
+    panelCenter.add(btnRename, "cell 4 0, center");
 
     btnTasks = createTaskButton();
-    panelCenter.add(btnTasks, "12, 1, center, bottom");
+    panelCenter.add(btnTasks, "cell 6 0, alignx center, aligny bottom");
 
     btnSettings = createButton("", IconManager.TOOLBAR_SETTINGS, IconManager.TOOLBAR_SETTINGS_HOVER);
-    panelCenter.add(btnSettings, "14, 1, center, bottom");
+    panelCenter.add(btnSettings, "cell 7 0, alignx center, aligny bottom");
 
     btnTools = createButton("", IconManager.TOOLBAR_TOOLS, IconManager.TOOLBAR_TOOLS_HOVER);
-    panelCenter.add(btnTools, "16, 1, center, bottom");
+    panelCenter.add(btnTools, "cell 8 0, alignx center, aligny bottom");
 
     btnExport = createButton("", IconManager.TOOLBAR_EXPORT, IconManager.TOOLBAR_EXPORT_HOVER);
-    panelCenter.add(btnExport, "18, 1, center, bottom");
+    panelCenter.add(btnExport, "cell 9 0, alignx center, aligny bottom");
 
-    btnAbout = createButton("", IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER);
-    panelCenter.add(btnAbout, "20, 1, center, bottom");
+    btnInfo = createButton("", IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER);
+    panelCenter.add(btnInfo, "cell 10 0, alignx center, aligny bottom");
 
     btnDonate = createButton("", IconManager.TOOLBAR_DONATE, IconManager.TOOLBAR_DONATE_HOVER);
-    panelCenter.add(btnDonate, "22, 1, center, bottom");
+    panelCenter.add(btnDonate, "cell 11 0, alignx center, aligny bottom");
 
     lblUpdate = createMenu("Refresh source");
-    panelCenter.add(lblUpdate, "4, 2, center, default");
+    panelCenter.add(lblUpdate, "cell 1 1, center");
 
     lblSearch = createMenu("Search & Scrape");
-    panelCenter.add(lblSearch, "6, 2, center, default");
+    panelCenter.add(lblSearch, "cell 2 1, center");
 
     lblEdit = createMenu("Edit");
-    panelCenter.add(lblEdit, "8, 2, center, default");
+    panelCenter.add(lblEdit, "cell 3 1, center");
+
+    lblRename = createMenu("Rename");
+    panelCenter.add(lblRename, "cell 4 1, center");
 
     lblDownload = new JLabel("Progress");
     lblDownload.setForeground(arrowColor);
-    panelCenter.add(lblDownload, "12, 2, center, default");
+    panelCenter.add(lblDownload, "cell 6 1, center");
 
     lblSettings = new JLabel("Settings");
     lblSettings.setForeground(arrowColor);
-    panelCenter.add(lblSettings, "14, 2, center, default");
+    panelCenter.add(lblSettings, "cell 7 1, center");
 
     lblTools = new JLabel("Tools");
     lblTools.setForeground(arrowColor);
-    panelCenter.add(lblTools, "16, 2, center, default");
+    panelCenter.add(lblTools, "cell 8 1, center");
 
     lblExport = new JLabel("Export");
     lblExport.setForeground(arrowColor);
-    panelCenter.add(lblExport, "18, 2, center, default");
+    panelCenter.add(lblExport, "cell 9 1, center");
 
-    lblAbout = new JLabel("About");
+    lblAbout = new JLabel("Help/Info");
     lblAbout.setForeground(arrowColor);
-    panelCenter.add(lblAbout, "20, 2, center, default");
+    panelCenter.add(lblAbout, "cell 10 1, center");
 
     lblDonate = new JLabel("Donate");
     lblDonate.setForeground(arrowColor);
-    panelCenter.add(lblDonate, "22, 2, center, default");
+    panelCenter.add(lblDonate, "cell 11 1, center");
 
     panelEast = new JPanel();
     add(panelEast, BorderLayout.EAST);
     panelEast.setOpaque(false);
-    panelEast.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    panelEast.setLayout(new MigLayout("insets 0", "[]", "[grow]"));
     // if we use our window decoration, place the window buttons here
     if (MainWindow.getActiveInstance().getRootPane().getUI() instanceof BaseRootPaneUI) {
       createWindowButtons();
@@ -232,6 +236,10 @@ public class ToolbarPanel extends JPanel {
     updateAction = module.getUpdateAction();
     setTooltipFromAction(btnEdit, updateAction);
     updatePopupMenu = module.getUpdateMenu();
+
+    renameAction = module.getRenameAction();
+    setTooltipFromAction(btnRename, renameAction);
+    renamePopupMenu = module.getRenameMenu();
 
     exportAction = module.getExportAction();
     setTooltipFromAction(btnExport, exportAction);
@@ -274,11 +282,13 @@ public class ToolbarPanel extends JPanel {
       @Override
       public void mouseExited(MouseEvent arg0) {
         button.setIcon(icon);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
 
       @Override
       public void mouseEntered(MouseEvent arg0) {
         button.setIcon(hoverIcon);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
 
       @Override
@@ -312,11 +322,13 @@ public class ToolbarPanel extends JPanel {
       @Override
       public void mouseExited(MouseEvent arg0) {
         iconSpinner.resetCustomColor();
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
 
       @Override
       public void mouseEntered(MouseEvent arg0) {
         iconSpinner.setCustomColors(new Color(255, 161, 0), new Color(255, 122, 0));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
 
       @Override
@@ -330,32 +342,29 @@ public class ToolbarPanel extends JPanel {
       @Override
       public void processTaskEvent(final TmmTaskHandle task) {
         // run the updates in EDT
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            // track the task states
-            switch (task.getState()) {
-              case CREATED:
-              case QUEUED:
-              case STARTED:
-                activeHandles.add(task);
-                break;
+        SwingUtilities.invokeLater(() -> {
+          // track the task states
+          switch (task.getState()) {
+            case CREATED:
+            case QUEUED:
+            case STARTED:
+              activeHandles.add(task);
+              break;
 
-              case CANCELLED:
-              case FINISHED:
-                activeHandles.remove(task);
-                break;
-            }
+            case CANCELLED:
+            case FINISHED:
+              activeHandles.remove(task);
+              break;
+          }
 
-            // change the buttons if needed
-            if (!activeHandles.isEmpty()) {
-              // yes -> change the icon to the running icon
-              iconSpinner.start();
-            }
-            else if (activeHandles.isEmpty()) {
-              // no -> change the icon to the idle icon
-              iconSpinner.stop();
-            }
+          // change the buttons if needed
+          if (!activeHandles.isEmpty()) {
+            // yes -> change the icon to the running icon
+            iconSpinner.start();
+          }
+          else if (activeHandles.isEmpty()) {
+            // no -> change the icon to the idle icon
+            iconSpinner.stop();
           }
         });
       }
@@ -388,12 +397,14 @@ public class ToolbarPanel extends JPanel {
       public void mouseExited(MouseEvent arg0) {
         label.setForeground(arrowColor);
         label.setIcon(getMenuIndicatorImage());
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
 
       @Override
       public void mouseEntered(MouseEvent arg0) {
         label.setForeground(arrowColorHover);
         label.setIcon(getMenuIndicatorHoverImage());
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
 
       @Override
@@ -419,14 +430,14 @@ public class ToolbarPanel extends JPanel {
     else if (sender == btnUpdate && updateAction != null) {
       updateAction.actionPerformed(null);
     }
+    else if (sender == btnRename && renameAction != null) {
+      renameAction.actionPerformed(null);
+    }
     else if (sender == btnExport && exportAction != null) {
       exportAction.actionPerformed(null);
     }
     else if (sender == btnSettings && settingsAction != null) {
       settingsAction.actionPerformed(null);
-    }
-    else if (sender == btnAbout && aboutAction != null) {
-      aboutAction.actionPerformed(null);
     }
     else if (sender == btnDonate && donateAction != null) {
       donateAction.actionPerformed(null);
@@ -439,6 +450,10 @@ public class ToolbarPanel extends JPanel {
     else if (sender == btnTasks && taskListPopupMenu != null) {
       taskListPopupMenu.show(btnTasks, btnTasks.getWidth() - (int) taskListPopupMenu.getPreferredSize().getWidth(), btnTasks.getHeight());
     }
+    else if (sender == btnInfo && infoPopupMenu != null) {
+      infoPopupMenu.show(btnInfo, btnInfo.getWidth() - (int) infoPopupMenu.getPreferredSize().getWidth(), btnInfo.getHeight());
+    }
+
   }
 
   /**
@@ -461,6 +476,11 @@ public class ToolbarPanel extends JPanel {
         showPopupMenu(lblEdit, editPopupMenu);
       }
     }
+    else if (sender == lblRename) {
+      if (renamePopupMenu != null) {
+        showPopupMenu(lblRename, renamePopupMenu);
+      }
+    }
   }
 
   private JPopupMenu buildToolsMenu() {
@@ -470,8 +490,6 @@ public class ToolbarPanel extends JPanel {
     menu.add(new RebuildImageCacheAction());
 
     menu.addSeparator();
-    menu.add(new BugReportAction());
-    menu.add(new FeedbackAction());
 
     // debug menu
     JMenu debug = new JMenu(BUNDLE.getString("tmm.debug")); //$NON-NLS-1$
@@ -481,36 +499,48 @@ public class ToolbarPanel extends JPanel {
 
     JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
     debug.add(tmmFolder);
-    tmmFolder.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        Path path = Paths.get(System.getProperty("user.dir"));
-        try {
-          // check whether this location exists
-          if (Files.exists(path)) {
-            TmmUIHelper.openFile(path);
-          }
+    tmmFolder.addActionListener(arg0 -> {
+      Path path = Paths.get(System.getProperty("user.dir"));
+      try {
+        // check whether this location exists
+        if (Files.exists(path)) {
+          TmmUIHelper.openFile(path);
         }
-        catch (Exception ex) {
-          LOGGER.error("open filemanager", ex);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-        }
+      }
+      catch (Exception ex) {
+        LOGGER.error("open filemanager", ex);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
       }
     });
 
     JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
     debug.add(tmmLogs);
-    tmmLogs.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        JDialog logDialog = new LogDialog();
-        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        logDialog.setVisible(true);
-      }
+    tmmLogs.addActionListener(arg0 -> {
+      JDialog logDialog = new LogDialog();
+      logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      logDialog.setVisible(true);
     });
 
     menu.add(debug);
+
+    return menu;
+  }
+
+  private JPopupMenu buildInfoMenu() {
+    JPopupMenu menu = new JPopupMenu();
+
+    menu.add(new FaqAction());
+    menu.add(new WikiAction());
+    menu.add(new ForumAction());
+    menu.addSeparator();
+
+    menu.add(new BugReportAction());
+    menu.add(new FeedbackAction());
+
+    menu.addSeparator();
+    menu.add(new HomepageAction());
+    menu.add(new AboutAction());
 
     return menu;
   }
@@ -579,6 +609,6 @@ public class ToolbarPanel extends JPanel {
 
   private void createWindowButtons() {
     panelEast.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(60, 60, 60)));
-    panelEast.add(new TmmWindowDecorationPanel(), "1, 1, fill, fill");
+    panelEast.add(new TmmWindowDecorationPanel(), "cell 0 0, center, growy");
   }
 }

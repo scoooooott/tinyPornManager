@@ -122,7 +122,6 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   @Override
   public JPopupMenu getEditMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -133,6 +132,16 @@ public class MovieSetUIModule implements ITmmUIModule {
 
   @Override
   public JPopupMenu getUpdateMenu() {
+    return null;
+  }
+
+  @Override
+  public Action getRenameAction() {
+    return null;
+  }
+
+  @Override
+  public JPopupMenu getRenameMenu() {
     return null;
   }
 

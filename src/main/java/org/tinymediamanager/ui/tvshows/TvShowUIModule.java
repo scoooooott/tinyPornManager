@@ -102,11 +102,13 @@ public class TvShowUIModule implements ITmmUIModule {
   private Action                          editAction;
   private Action                          updateAction;
   private Action                          exportAction;
+  private Action                          renameAction;
 
   private JPopupMenu                      popupMenu;
   private JPopupMenu                      updatePopupMenu;
   private JPopupMenu                      scrapePopupMenu;
   private JPopupMenu                      editPopupMenu;
+  private JPopupMenu                      renamePopupMenu;
 
   private TmmSettingsNode                 settingsNode;
 
@@ -254,6 +256,16 @@ public class TvShowUIModule implements ITmmUIModule {
     return exportAction;
   }
 
+  @Override
+  public Action getRenameAction() {
+    return renameAction;
+  }
+
+  @Override
+  public JPopupMenu getRenameMenu() {
+    return null;
+  }
+
   public TvShowSelectionModel getSelectionModel() {
     return tvShowSelectionModel;
   }
@@ -268,6 +280,7 @@ public class TvShowUIModule implements ITmmUIModule {
     editAction = createAndRegisterAction(TvShowEditAction.class);
     updateAction = createAndRegisterAction(TvShowUpdateDatasourcesAction.class);
     exportAction = createAndRegisterAction(TvShowExportAction.class);
+    renameAction = createAndRegisterAction(TvShowRenameAction.class);
   }
 
   private void createPopupMenu() {

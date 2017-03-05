@@ -28,27 +28,101 @@ import org.tinymediamanager.ui.settings.TmmSettingsNode;
  */
 public interface ITmmUIModule {
 
+  /**
+   * get the module id
+   * 
+   * @return the module id
+   */
   String getModuleId();
 
+  /**
+   * get the tab panel (left panel in the main view)
+   * 
+   * @return the tab panel
+   */
   JPanel getTabPanel();
 
+  /**
+   * get the tab title
+   * 
+   * @return the tab title
+   */
   String getTabTitle();
 
+  /**
+   * get the detail panel (right panel in the main view)
+   * 
+   * @return the detail panel
+   */
   JPanel getDetailPanel();
 
+  /**
+   * get the search action (which will be triggered when pressing the search button in the toolbar)
+   * 
+   * @return the search action
+   */
   Action getSearchAction();
 
+  /**
+   * get the search popup menu (which will be shown when clicking on the search text)
+   * 
+   * @return the search popup menu
+   */
   JPopupMenu getSearchMenu();
 
+  /**
+   * get the edit action (which will be triggered when pressing the edit button in the toolbar)
+   * 
+   * @return the edit action
+   */
   Action getEditAction();
 
+  /**
+   * get the edit popup menu (which will be shown when clicking on the edit text)
+   * 
+   * @return the edit popup menu
+   */
   JPopupMenu getEditMenu();
 
+  /**
+   * get the update action (which will be triggered when pressing the update button in the toolbar)
+   * 
+   * @return the update action
+   */
   Action getUpdateAction();
 
+  /**
+   * get the update popup menu (which will be shown when clicking on the update text)
+   * 
+   * @return the update popup menu
+   */
   JPopupMenu getUpdateMenu();
 
+  /**
+   * get the rename action (which will be triggered when pressing the rename button in the toolbar)
+   * 
+   * @return the rename action
+   */
+  Action getRenameAction();
+
+  /**
+   * get the rename popup menu (which will be shown when clicking on the rename text)
+   * 
+   * @return the rename popup menu
+   */
+  JPopupMenu getRenameMenu();
+
+  /**
+   * get the export action (which will be triggered when pressing the export button in the toolbar)
+   * 
+   * @return the export action
+   */
   Action getExportAction();
 
+  /**
+   * get the settings node for the settings dialog
+   * 
+   * @return the settings node
+   */
   TmmSettingsNode getSettingsNode();
 }

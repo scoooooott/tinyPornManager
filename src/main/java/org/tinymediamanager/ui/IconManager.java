@@ -45,6 +45,8 @@ public class IconManager {
   public final static ImageIcon            TOOLBAR_LOGO           = loadImage("icn_logo_toolbar.png");
   public final static ImageIcon            TOOLBAR_REFRESH        = loadImage("icn_refresh.png");
   public final static ImageIcon            TOOLBAR_REFRESH_HOVER  = loadImage("icn_refresh_hover.png");
+  public final static ImageIcon            TOOLBAR_RENAME         = loadImage("icn_rename.png");
+  public final static ImageIcon            TOOLBAR_RENAME_HOVER   = loadImage("icn_rename_hover.png");
   public final static ImageIcon            TOOLBAR_SEARCH         = loadImage("icn_search.png");
   public final static ImageIcon            TOOLBAR_SEARCH_HOVER   = loadImage("icn_search_hover.png");
   public final static ImageIcon            TOOLBAR_SETTINGS       = loadImage("icn_settings.png");
