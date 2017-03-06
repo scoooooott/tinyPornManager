@@ -188,7 +188,6 @@ public class TvShowDetailsPanel extends JPanel {
       JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
       setBoldLabel(lblCertificationT);
       add(lblCertificationT, "cell 0 3");
-      lblCertificationT.setLabelFor(lblCertification);
 
       lblCertification = new JLabel("");
       add(lblCertification, "cell 1 3");
@@ -205,7 +204,6 @@ public class TvShowDetailsPanel extends JPanel {
       JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       setBoldLabel(lblGenresT);
       add(lblGenresT, "cell 0 4");
-      lblGenresT.setLabelFor(lblGenres);
 
       lblGenres = new JLabel("");
       add(lblGenres, "cell 1 4 3 1");
@@ -224,8 +222,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblPathT, "cell 0 6");
 
       lblPath = new LinkLabel("");
-      lblPathT.setLabelFor(lblPath);
-      add(lblPath, "cell 1 6 3 1");
+      add(lblPath, "cell 1 6 3 1,growx");
     }
   }
 
@@ -260,7 +257,7 @@ public class TvShowDetailsPanel extends JPanel {
         tvShowSelectionModelBeanProperty_1, lblGenres, jLabelBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.studios");
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.productionCompany");
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_6, lblStudio, jLabelBeanProperty);
     autoBinding_6.bind();
