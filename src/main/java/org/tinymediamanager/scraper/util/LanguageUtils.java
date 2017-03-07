@@ -33,12 +33,14 @@ import java.util.Map;
 public class LanguageUtils {
   // Map of all known English/UserLocalized String to base locale, key is LOWERCASE
   public final static LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP;
+  public final static LinkedHashMap<String, Locale> KEY_TO_COUNTRY_LOCALE_MAP;
 
   private final static Map<Locale, String>          ISO_639_2B_EXCEPTIONS;
 
   static {
     ISO_639_2B_EXCEPTIONS = createIso6392BExceptions();
     KEY_TO_LOCALE_MAP = generateLanguageArray();
+    KEY_TO_COUNTRY_LOCALE_MAP = generateCountryArray();
   }
 
   private static Map<Locale, String> createIso6392BExceptions() {
@@ -91,21 +93,36 @@ public class LanguageUtils {
       langArray.put(langu, base);
     }
 
-    // add localized countries, but only if we not already have the key (not overwriting language)!!!
+    // sort from long to short
+    List<String> keys = new LinkedList<>(langArray.keySet());
+    Collections.sort(keys, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        return s2.length() - s1.length();
+      }
+    });
+
+    // all lowercase (!)
+    for (String key : keys) {
+      if (!key.isEmpty()) {
+        sortedMap.put(key.toLowerCase(Locale.ROOT), langArray.get(key));
+      }
+    }
+
+    return sortedMap;
+  }
+
+  private static LinkedHashMap<String, Locale> generateCountryArray() {
+    Map<String, Locale> langArray = new HashMap<>();
+    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<>();
+    Locale intl = Locale.ENGLISH;
+
     for (String cc : Locale.getISOCountries()) {
       Locale l = new Locale("", cc);
-      if (!langArray.containsKey(l.getDisplayCountry(intl))) {
-        langArray.put(l.getDisplayCountry(intl), l); // english name
-      }
-      if (!langArray.containsKey(l.getDisplayCountry())) {
-        langArray.put(l.getDisplayCountry(), l); // localized name
-      }
-      if (!langArray.containsKey(l.getCountry().toLowerCase(Locale.ROOT))) {
-        langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code 2 char - lowercase to overwrite possible language key (!)
-      }
-      if (!langArray.containsKey(l.getISO3Country().toLowerCase(Locale.ROOT))) {
-        langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code 3 char - lowercase to overwrite possible language key (!)
-      }
+      langArray.put(l.getDisplayCountry(intl), l); // english name
+      langArray.put(l.getDisplayCountry(), l); // localized name
+      langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code 2 char - lowercase to overwrite possible language key (!)
+      langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code 3 char - lowercase to overwrite possible language key (!)
     }
 
     // sort from long to short
@@ -279,6 +296,7 @@ public class LanguageUtils {
    * @return localized country name, or first country param 1:1 if we cannot translate
    */
   public static String getLocalizedCountryForLanguage(String language, String... countries) {
+    // KEY_TO_LOCALE_MAP is correct here, we want to get the language locale!!!
     return getLocalizedCountryForLanguage(KEY_TO_LOCALE_MAP.get(language.toLowerCase(Locale.ROOT)), countries);
   }
 
@@ -295,7 +313,7 @@ public class LanguageUtils {
       language = Locale.getDefault();
     }
     for (String c : countries) {
-      Locale l = KEY_TO_LOCALE_MAP.get(c.toLowerCase(Locale.ROOT));
+      Locale l = KEY_TO_COUNTRY_LOCALE_MAP.get(c.toLowerCase(Locale.ROOT));
       if (l != null) {
         ret = l.getDisplayCountry(language); // auto fallback to english
         if (!ret.isEmpty()) {
