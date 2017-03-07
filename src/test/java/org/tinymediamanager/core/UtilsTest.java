@@ -241,15 +241,16 @@ public class UtilsTest {
     Utils.deleteOldBackupFile(Paths.get("pom.xml"), 2);
   }
 
+  @SuppressWarnings("rawtypes")
   @Test
   public void env() {
     Map<String, String> env = System.getenv();
     for (String envName : env.keySet()) {
       System.out.format("%s=%s%n", envName, env.get(envName));
     }
+
     Properties props = System.getProperties();
     Enumeration e = props.propertyNames();
-
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
       System.out.println(key + " -- " + props.getProperty(key));
@@ -258,14 +259,21 @@ public class UtilsTest {
 
   @Test
   public void locale() {
-    for (String s : Locale.getISOLanguages()) {
-      Locale l = new Locale(s);
-      System.out.println(l.getISO3Language());
-    }
-    System.out.println();
     for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
       System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
     }
+  }
+
+  @Test
+  public void localeCountry() {
+    for (String s : LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.keySet()) {
+      System.out.println(s + " - " + LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.get(s));
+    }
+    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "United States of America", "US"));
+    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage("fr", "United States of America", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRENCH, "United States of America", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRANCE, "United States of America", "US"));
   }
 
   @Test
