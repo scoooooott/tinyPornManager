@@ -140,7 +140,7 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
             try {
               TraktTv.refreshAccessToken();
               JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.good"),
-                  BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.ERROR_MESSAGE);//$NON-NLS-1$
+                  BUNDLE.getString("Settings.trakt.testconnection"), JOptionPane.INFORMATION_MESSAGE);//$NON-NLS-1$
             }
             catch (Exception e1) {
               JOptionPane.showMessageDialog(MainWindow.getFrame(), BUNDLE.getString("Settings.trakt.testconnection.bad"),
