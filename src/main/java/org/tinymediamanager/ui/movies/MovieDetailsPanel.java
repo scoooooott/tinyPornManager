@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -177,17 +175,14 @@ public class MovieDetailsPanel extends JPanel {
 
     btnPlay = new JButton("");
     btnPlay.setIcon(IconManager.PLAY);
-    btnPlay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
-        try {
-          TmmUIHelper.openFile(mf.getFileAsPath());
-        }
-        catch (Exception e) {
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    btnPlay.addActionListener(arg0 -> {
+      MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
+      try {
+        TmmUIHelper.openFile(mf.getFileAsPath());
+      }
+      catch (Exception e) {
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(btnPlay, "12, 2, 1, 5");
@@ -263,17 +258,15 @@ public class MovieDetailsPanel extends JPanel {
     add(lblImdbIdT, "2, 20");
 
     lblImdbId = new LinkLabel("");
-    lblImdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to imdbid", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblImdbId.addActionListener(arg0 -> {
+      String url = "http://www.imdb.com/title/" + lblImdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
 
@@ -284,17 +277,15 @@ public class MovieDetailsPanel extends JPanel {
     add(lblTmdbIdT, "8, 20");
 
     lblTmdbId = new LinkLabel("");
-    lblTmdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to tmdbid", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblTmdbId.addActionListener(arg0 -> {
+      String url = "http://www.themoviedb.org/movie/" + lblTmdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to tmdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(lblTmdbId, "10, 20, 3, 1, left, default");
@@ -304,22 +295,20 @@ public class MovieDetailsPanel extends JPanel {
     add(lblMoviePathT, "2, 22");
 
     lblMoviePath = new LinkLabel("");
-    lblMoviePath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblMoviePath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblMoviePath.addActionListener(arg0 -> {
+      if (StringUtils.isNotBlank(lblMoviePath.getText())) {
+        // get the location from the label
+        Path path = Paths.get(lblMoviePath.getText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });

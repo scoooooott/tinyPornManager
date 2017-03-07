@@ -81,7 +81,7 @@ public class TvShowDetailsPanel extends JPanel {
     initDataBindings();
 
     lblImdbId.addActionListener(arg0 -> {
-      String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
+      String url = "http://www.imdb.com/title/" + lblImdbId.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
@@ -93,7 +93,7 @@ public class TvShowDetailsPanel extends JPanel {
     });
 
     lblThetvdbId.addActionListener(arg0 -> {
-      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
+      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
@@ -105,7 +105,7 @@ public class TvShowDetailsPanel extends JPanel {
     });
 
     lblTraktTvId.addActionListener(arg0 -> {
-      String url = "https://trakt.tv/shows/" + lblTraktTvId.getNormalText();
+      String url = "https://trakt.tv/shows/" + lblTraktTvId.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
@@ -116,9 +116,9 @@ public class TvShowDetailsPanel extends JPanel {
       }
     });
     lblPath.addActionListener(arg0 -> {
-      if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+      if (StringUtils.isNotBlank(lblPath.getText())) {
         // get the location from the label
-        Path path = Paths.get(lblPath.getNormalText());
+        Path path = Paths.get(lblPath.getText());
         try {
           // check whether this location exists
           if (Files.exists(path)) {

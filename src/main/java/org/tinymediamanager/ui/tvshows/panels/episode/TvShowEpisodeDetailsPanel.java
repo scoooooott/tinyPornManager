@@ -76,9 +76,9 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     initDataBindings();
 
     lblPath.addActionListener(arg0 -> {
-      if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+      if (!StringUtils.isEmpty(lblPath.getText())) {
         // get the location from the label
-        Path path = Paths.get(lblPath.getNormalText());
+        Path path = Paths.get(lblPath.getText());
         try {
           // check whether this location exists
           if (Files.exists(path)) {

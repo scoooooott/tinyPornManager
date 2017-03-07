@@ -15,11 +15,15 @@
  */
 package org.tinymediamanager.ui.components;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 import javax.swing.JLabel;
 
@@ -32,10 +36,6 @@ import javax.swing.JLabel;
 
 public class LinkLabel extends JLabel {
   private static final long serialVersionUID = 3762584745632060187L;
-  /**
-   * The normal text set by the user.
-   */
-  private String            text;
 
   /**
    * Creates a new LinkLabel with the given text.
@@ -47,35 +47,15 @@ public class LinkLabel extends JLabel {
     super(text);
 
     if (Desktop.isDesktopSupported()) {
+      Font font = getFont();
+      Map attributes = font.getAttributes();
+      attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+      attributes.put(TextAttribute.FOREGROUND, Color.BLUE);
+      setFont(font.deriveFont(attributes));
+
       setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       enableEvents(MouseEvent.MOUSE_EVENT_MASK);
     }
-  }
-
-  /**
-   * Sets the text of the label.
-   * 
-   * @param text
-   *          the new text
-   */
-  @Override
-  public void setText(String text) {
-    if (Desktop.isDesktopSupported()) {
-      super.setText("<html><font color=\"#0000CF\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    else {
-      super.setText(text);
-    }
-    this.text = text;
-  }
-
-  /**
-   * Returns the text set by the user.
-   * 
-   * @return the normal text
-   */
-  public String getNormalText() {
-    return text;
   }
 
   /**
@@ -88,7 +68,7 @@ public class LinkLabel extends JLabel {
   protected void processMouseEvent(MouseEvent evt) {
     super.processMouseEvent(evt);
     if (evt.getID() == MouseEvent.MOUSE_CLICKED)
-      fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getNormalText()));
+      fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText()));
   }
 
   /**

@@ -151,22 +151,20 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
-    lblPath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblPath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblPath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblPath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblPath.getText())) {
+        // get the location from the label
+        Path path = Paths.get(lblPath.getText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });

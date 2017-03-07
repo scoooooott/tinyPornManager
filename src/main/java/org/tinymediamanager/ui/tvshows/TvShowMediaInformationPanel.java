@@ -15,9 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -110,7 +107,7 @@ public class TvShowMediaInformationPanel extends JPanel {
    */
   public TvShowMediaInformationPanel(TvShowSelectionModel model) {
     this.selectionModel = model;
-    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+    mediaFileEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()),
         GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(
@@ -204,22 +201,20 @@ public class TvShowMediaInformationPanel extends JPanel {
     add(lblTvShowPathT, "2, 4");
 
     lblTvShowPath = new LinkLabel("");
-    lblTvShowPath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblTvShowPath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblTvShowPath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblTvShowPath.getText())) {
+        // get the location from the label
+        Path path = Paths.get(lblTvShowPath.getText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });
@@ -233,25 +228,23 @@ public class TvShowMediaInformationPanel extends JPanel {
     initDataBindings();
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a tv show and change of media files
-        if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
-            || (source.getClass() == TvShow.class && "mediaFiles".equals(property))) {
-          try {
-            mediaFileEventList.getReadWriteLock().writeLock().lock();
-            mediaFileEventList.clear();
-            mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
-          }
-          catch (Exception e) {
-          }
-          finally {
-            mediaFileEventList.getReadWriteLock().writeLock().unlock();
-          }
-          panelMediaFiles.adjustColumns();
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a tv show and change of media files
+      if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
+          || (source.getClass() == TvShow.class && "mediaFiles".equals(property))) {
+        try {
+          mediaFileEventList.getReadWriteLock().writeLock().lock();
+          mediaFileEventList.clear();
+          mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
         }
+        catch (Exception e) {
+        }
+        finally {
+          mediaFileEventList.getReadWriteLock().writeLock().unlock();
+        }
+        panelMediaFiles.adjustColumns();
       }
     };
 

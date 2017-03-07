@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,6 +77,7 @@ public class TvShowDetailsPanel extends JPanel {
    * @param selectionModel
    *          the selection model
    */
+  @Deprecated
   public TvShowDetailsPanel(TvShowSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
     setLayout(new FormLayout(
@@ -115,17 +114,15 @@ public class TvShowDetailsPanel extends JPanel {
     add(lblImdbIdT, "5, 4");
 
     lblImdbId = new LinkLabel("");
-    lblImdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to imdbid", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblImdbId.addActionListener(arg0 -> {
+      String url = "http://www.imdb.com/title/" + lblImdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(lblImdbId, "7, 4");
@@ -143,17 +140,15 @@ public class TvShowDetailsPanel extends JPanel {
     add(lblThetvdbIdT, "5, 6");
 
     lblThetvdbId = new LinkLabel("");
-    lblThetvdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to thetvdb", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
-        }
+    lblThetvdbId.addActionListener(arg0 -> {
+      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to thetvdb", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
     });
     add(lblThetvdbId, "7, 6");
@@ -189,22 +184,20 @@ public class TvShowDetailsPanel extends JPanel {
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
-    lblPath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblPath.getNormalText())) {
-          // get the location from the label
-          Path path = Paths.get(lblPath.getNormalText());
-          try {
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblPath.addActionListener(arg0 -> {
+      if (!StringUtils.isEmpty(lblPath.getText())) {
+        // get the location from the label
+        Path path = Paths.get(lblPath.getText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });

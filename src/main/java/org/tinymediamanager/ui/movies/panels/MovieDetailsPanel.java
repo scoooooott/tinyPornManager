@@ -80,9 +80,9 @@ public class MovieDetailsPanel extends JPanel {
     initDataBindings();
 
     lblMoviePath.addActionListener(arg0 -> {
-      if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+      if (!StringUtils.isEmpty(lblMoviePath.getText())) {
         // get the location from the label
-        Path path = Paths.get(lblMoviePath.getNormalText());
+        Path path = Paths.get(lblMoviePath.getText());
         try {
           // check whether this location exists
           if (Files.exists(path)) {

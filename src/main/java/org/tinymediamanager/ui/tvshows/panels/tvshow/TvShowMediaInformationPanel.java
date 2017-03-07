@@ -77,9 +77,9 @@ public class TvShowMediaInformationPanel extends JPanel {
     initDataBindings();
 
     lblTvShowPath.addActionListener(arg0 -> {
-      if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
+      if (StringUtils.isNotBlank(lblTvShowPath.getText())) {
         // get the location from the label
-        Path path = Paths.get(lblTvShowPath.getNormalText());
+        Path path = Paths.get(lblTvShowPath.getText());
         try {
           // check whether this location exists
           if (Files.exists(path)) {

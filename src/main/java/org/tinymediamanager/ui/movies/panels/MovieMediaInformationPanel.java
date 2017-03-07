@@ -323,8 +323,8 @@ public class MovieMediaInformationPanel extends JPanel {
   private class LinkLabelListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
-      if (!StringUtils.isBlank(lblMoviePath.getNormalText())) {
-        Path path = Paths.get(lblMoviePath.getNormalText());
+      if (StringUtils.isNotBlank(lblMoviePath.getText())) {
+        Path path = Paths.get(lblMoviePath.getText());
         try {
           // get the location from the label
           // check whether this location exists

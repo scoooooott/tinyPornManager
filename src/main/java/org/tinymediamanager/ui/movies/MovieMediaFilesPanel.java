@@ -17,9 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -184,22 +181,20 @@ public class MovieMediaFilesPanel extends JPanel {
     add(lblMoviePathT, "2, 4");
 
     lblMoviePath = new LinkLabel("");
-    lblMoviePath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-          Path path = Paths.get(lblMoviePath.getNormalText());
-          try {
-            // get the location from the label
-            // check whether this location exists
-            if (Files.exists(path)) {
-              TmmUIHelper.openFile(path);
-            }
+    lblMoviePath.addActionListener(arg0 -> {
+      if (StringUtils.isNotBlank(lblMoviePath.getText())) {
+        Path path = Paths.get(lblMoviePath.getText());
+        try {
+          // get the location from the label
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
         }
       }
     });
@@ -216,26 +211,24 @@ public class MovieMediaFilesPanel extends JPanel {
     initDataBindings();
 
     // install the propertychangelistener
-    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        String property = propertyChangeEvent.getPropertyName();
-        Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of media files
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
-          // this does sometimes not work. simply wrap it
-          try {
-            mediaFileEventList.getReadWriteLock().writeLock().lock();
-            mediaFileEventList.clear();
-            mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
-          }
-          catch (Exception e) {
-          }
-          finally {
-            mediaFileEventList.getReadWriteLock().writeLock().unlock();
-          }
-          panelMediaFiles.adjustColumns();
+    PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+      String property = propertyChangeEvent.getPropertyName();
+      Object source = propertyChangeEvent.getSource();
+      // react on selection of a movie and change of media files
+      if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+          || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
+        // this does sometimes not work. simply wrap it
+        try {
+          mediaFileEventList.getReadWriteLock().writeLock().lock();
+          mediaFileEventList.clear();
+          mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
         }
+        catch (Exception e) {
+        }
+        finally {
+          mediaFileEventList.getReadWriteLock().writeLock().unlock();
+        }
+        panelMediaFiles.adjustColumns();
       }
     };
 

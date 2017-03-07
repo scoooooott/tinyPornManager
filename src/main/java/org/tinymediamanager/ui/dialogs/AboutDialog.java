@@ -97,12 +97,12 @@ public class AboutDialog extends TmmDialog {
       final LinkLabel lblHomepage = new LinkLabel("http://www.tinymediamanager.org/"); //$NON-NLS-1$
       lblHomepage.addActionListener(arg0 -> {
         try {
-          TmmUIHelper.browseUrl(lblHomepage.getNormalText());
+          TmmUIHelper.browseUrl(lblHomepage.getText());
         }
         catch (Exception e) {
           LOGGER.error(e.getMessage());
           MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
+              new Message(MessageLevel.ERROR, lblHomepage.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
         }
       });
       contentPanel.add(lblHomepage, "cell 2 7 3 1");

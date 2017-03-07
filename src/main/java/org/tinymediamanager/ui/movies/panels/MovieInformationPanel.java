@@ -217,7 +217,7 @@ public class MovieInformationPanel extends JPanel {
 
           lblImdbid = new LinkLabel("");
           lblImdbid.addActionListener(arg0 -> {
-            String url = "http://www.imdb.com/title/" + lblImdbid.getNormalText();
+            String url = "http://www.imdb.com/title/" + lblImdbid.getText();
             try {
               TmmUIHelper.browseUrl(url);
             }
@@ -246,7 +246,7 @@ public class MovieInformationPanel extends JPanel {
 
           lblTmdbid = new LinkLabel("");
           lblTmdbid.addActionListener(arg0 -> {
-            String url = "http://www.themoviedb.org/movie/" + lblTmdbid.getNormalText();
+            String url = "http://www.themoviedb.org/movie/" + lblTmdbid.getText();
             try {
               TmmUIHelper.browseUrl(url);
             }
@@ -275,7 +275,7 @@ public class MovieInformationPanel extends JPanel {
 
           lblTraktId = new LinkLabel("");
           lblTraktId.addActionListener(arg0 -> {
-            String url = "https://trakt.tv/movies/" + lblTraktId.getNormalText();
+            String url = "https://trakt.tv/movies/" + lblTraktId.getText();
             try {
               TmmUIHelper.browseUrl(url);
             }

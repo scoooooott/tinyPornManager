@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -102,12 +102,12 @@ public class UiSettingsPanel extends JPanel {
 
     lblLinkTransifex.addActionListener(arg0 -> {
       try {
-        TmmUIHelper.browseUrl(lblLinkTransifex.getNormalText());
+        TmmUIHelper.browseUrl(lblLinkTransifex.getText());
       }
       catch (Exception e) {
         LOGGER.error(e.getMessage());
         MessageManager.instance.pushMessage(
-            new Message(MessageLevel.ERROR, lblLinkTransifex.getNormalText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-2$
+            new Message(MessageLevel.ERROR, lblLinkTransifex.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-2$
       }
     });
 
