@@ -22,6 +22,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
@@ -290,6 +292,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
                 }
                 catch (Exception ex) {
                   LOGGER.warn(ex.getMessage());
+                }
+              }
+            });
+            tableSearchResults.addMouseListener(new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
+                  actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
                 }
               }
             });

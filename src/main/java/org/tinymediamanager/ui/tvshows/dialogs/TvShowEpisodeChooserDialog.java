@@ -19,8 +19,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -210,33 +210,14 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     SearchTask task = new SearchTask();
     task.execute();
 
-    MouseListener mouseListener = new MouseListener() {
-
-      @Override
-      public void mouseReleased(MouseEvent e) {
-      }
-
-      @Override
-      public void mousePressed(MouseEvent e) {
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent e) {
-      }
-
+    table.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() >= 2 && !e.isConsumed() && e.getButton() == MouseEvent.BUTTON1) {
           actionPerformed(new ActionEvent(okButton, ActionEvent.ACTION_PERFORMED, "OK"));
         }
       }
-
-    };
-    table.addMouseListener(mouseListener);
+    });
   }
 
   @Override
