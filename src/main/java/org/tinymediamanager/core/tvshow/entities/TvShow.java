@@ -1045,7 +1045,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * 
    * @return the tag as string
    */
-  public String getTagAsString() {
+  public String getTagsAsString() {
     StringBuilder sb = new StringBuilder();
     for (String tag : tags) {
       if (!StringUtils.isEmpty(sb)) {
