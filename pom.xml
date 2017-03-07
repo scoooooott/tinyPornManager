@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.uwetrottmann.trakt5</groupId>
 			<artifactId>trakt-java</artifactId>
-			<version>5.5.0</version>
+			<version>5.5.1</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

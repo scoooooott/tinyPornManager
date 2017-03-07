@@ -94,11 +94,13 @@ class TraktTVShowMetadataProvider {
     synchronized (api) {
       try {
         if (year != 0) {
-          searchResults = api.search().textQueryShow(searchString, String.valueOf(year), null, lang, null, null, null, null, null, null, 1, 25)
-              .execute().body();
+          searchResults = api.search()
+              .textQueryShow(searchString, String.valueOf(year), null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25).execute()
+              .body();
         }
         else {
-          searchResults = api.search().textQueryShow(searchString, null, null, lang, null, null, null, null, null, null, 1, 25).execute().body();
+          searchResults = api.search().textQueryShow(searchString, null, null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25)
+              .execute().body();
         }
       }
       catch (Exception e) {

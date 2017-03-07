@@ -91,10 +91,11 @@ class TraktMovieMetadataProvider {
     try {
       Response<List<SearchResult>> response;
       if (year != 0) {
-        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, lang, null, null, null, null, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, String.valueOf(year), null, lang, null, null, null, null, Extended.FULL, 1, 25)
+            .execute();
       }
       else {
-        response = api.search().textQueryMovie(searchString, null, null, lang, null, null, null, null, 1, 25).execute();
+        response = api.search().textQueryMovie(searchString, null, null, lang, null, null, null, null, Extended.FULL, 1, 25).execute();
       }
       searchResults = response.body();
     }
