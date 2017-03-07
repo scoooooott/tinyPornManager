@@ -90,6 +90,24 @@ public class LanguageUtils {
       // ISO 639-1
       langArray.put(langu, base);
     }
+
+    // add localized countries, but only if we not already have the key (not overwriting language)!!!
+    for (String cc : Locale.getISOCountries()) {
+      Locale l = new Locale("", cc);
+      if (!langArray.containsKey(l.getDisplayCountry(intl))) {
+        langArray.put(l.getDisplayCountry(intl), l); // english name
+      }
+      if (!langArray.containsKey(l.getDisplayCountry())) {
+        langArray.put(l.getDisplayCountry(), l); // localized name
+      }
+      if (!langArray.containsKey(l.getCountry().toLowerCase(Locale.ROOT))) {
+        langArray.put(l.getCountry().toLowerCase(Locale.ROOT), l); // country code 2 char - lowercase to overwrite possible language key (!)
+      }
+      if (!langArray.containsKey(l.getISO3Country().toLowerCase(Locale.ROOT))) {
+        langArray.put(l.getISO3Country().toLowerCase(Locale.ROOT), l); // country code 3 char - lowercase to overwrite possible language key (!)
+      }
+    }
+
     // sort from long to short
     List<String> keys = new LinkedList<>(langArray.keySet());
     Collections.sort(keys, new Comparator<String>() {
