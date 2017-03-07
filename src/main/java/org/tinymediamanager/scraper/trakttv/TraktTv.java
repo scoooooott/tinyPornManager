@@ -279,7 +279,7 @@ public class TraktTv {
       LOGGER.info("Adding " + movies.size() + " movies to Trakt.tv collection");
       SyncItems items = new SyncItems().movies(movies);
       Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
-      if (response.isSuccessful()) {
+      if (!response.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + response.message());
         return;
       }
@@ -359,7 +359,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().movies(movieToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }
@@ -382,7 +382,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().movies(movieToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }
@@ -521,7 +521,7 @@ public class TraktTv {
       LOGGER.info("Marking " + movies.size() + " movies as 'watched' to Trakt.tv collection");
       SyncItems items = new SyncItems().movies(movies);
       Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
-      if (response.isSuccessful()) {
+      if (!response.isSuccessful()) {
         LOGGER.error("failed syncing trakt: " + response.message());
         return;
       }
@@ -655,7 +655,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(show);
         Response<SyncResponse> response = TRAKT.sync().addItemsToCollection(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }
@@ -767,7 +767,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(sync);
         Response<SyncResponse> response = TRAKT.sync().addItemsToWatchedHistory(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }
@@ -843,7 +843,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromCollection(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }
@@ -866,7 +866,7 @@ public class TraktTv {
       try {
         SyncItems items = new SyncItems().shows(showToRemove);
         Response<SyncResponse> response = TRAKT.sync().deleteItemsFromWatchedHistory(items).execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
           LOGGER.error("failed syncing trakt: " + response.message());
           return;
         }

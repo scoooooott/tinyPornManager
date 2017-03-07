@@ -5,6 +5,7 @@ Version 2.9.3
 + correct wrong TVDB entries, where year is specified in title
 + added movie edition to the NFOs
 x fixed stacking detection #132
+x fixed some Trakt.tv syncing issues #137
 x fixed searching for movie set id in movie set editor
 x fixed display of runtime
 x automatically drop corrupt entries from the database
