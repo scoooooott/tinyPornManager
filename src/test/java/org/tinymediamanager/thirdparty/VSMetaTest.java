@@ -5,8 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 
-public class VSMetaTest {
+public class VSMetaTest extends BasicTest {
 
   @Test
   public void parseVSMeta() throws IOException {

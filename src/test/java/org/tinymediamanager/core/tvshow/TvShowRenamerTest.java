@@ -2,14 +2,14 @@ package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
-public class TvShowRenamerTest {
+public class TvShowRenamerTest extends BasicTest {
 
   private static TvShow single = new TvShow();
   private static TvShow multi  = new TvShow();
@@ -110,17 +110,4 @@ public class TvShowRenamerTest {
     System.out.println(new File(sh, se + File.separator + ep).toString());
     return new File(sh, se + File.separator + ep).toString();
   }
-
-  // own method to get some logging ;)
-  public static void assertEqual(Object expected, Object actual) {
-    try {
-      Assert.assertEquals(expected, actual);
-      // System.out.println(expected + " - passed");
-    }
-    catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
-      throw e;
-    }
-  }
-
 }

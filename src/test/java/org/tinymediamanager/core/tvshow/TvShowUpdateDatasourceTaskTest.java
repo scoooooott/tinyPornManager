@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
@@ -23,13 +24,13 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
-public class TvShowUpdateDatasourceTaskTest {
-  private static final String FOLDER = "target/testdata/udsTvShow";
+public class TvShowUpdateDatasourceTaskTest extends BasicTest {
+  private static final String FOLDER = getSettingsFolder();
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     MediaInfoUtils.loadMediaInfo();
-    Settings.getInstance(FOLDER); // can only instantiate ONCE, so recycle folder
+    Settings.getInstance(FOLDER);
   }
 
   @Before

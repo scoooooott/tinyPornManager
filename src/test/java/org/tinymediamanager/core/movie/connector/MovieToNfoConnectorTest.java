@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
@@ -30,17 +31,16 @@ import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
 
-public class MovieToNfoConnectorTest {
+public class MovieToNfoConnectorTest extends BasicTest {
 
   @BeforeClass
   public static void setup() {
-    // create a default config file for config access
-    Settings.getInstance("target/test-classes/");
+    Settings.getInstance(getSettingsFolder());
   }
 
   @Test
   public void testXbmcNfo() {
-    FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));
+    FileUtils.deleteQuietly(new File("target/test-classes/xbmc_nfo/"));// FIXME:
     try {
       Movie movie = createXbmcMovie();
 

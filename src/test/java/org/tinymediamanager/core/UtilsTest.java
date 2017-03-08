@@ -12,35 +12,22 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-public class UtilsTest {
+public class UtilsTest extends BasicTest {
 
   @BeforeClass
   public static void setup() {
     // create a fresh default config
-    Settings.getInstance("target/UtilsTest");
-  }
-
-  // own method to get some logging ;)
-  public static void assertEqual(Object expected, Object actual) {
-    try {
-      Assert.assertEquals(expected, actual);
-      System.out.println(expected + " - passed");
-    }
-    catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
-      throw e;
-    }
+    Settings.getInstance(getSettingsFolder());
   }
 
   @Test
   public void parseIp() throws UnknownHostException, SecurityException {
-
     System.out.println(getIP("localhost"));
     System.out.println(getIP("localhost:22"));
     System.out.println(getIP("::1"));
