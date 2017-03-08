@@ -18,7 +18,7 @@ public class CertificationTest extends BasicTest {
   @Test
   public void testCertificationTemplate() {
     // assertEqual(expected, actual);
-    assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.SHORT)).isEqualTo("FdSK 16");
+    assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.SHORT)).isEqualTo("FSK 16");
     assertThat(CertificationStyle.formatCertification(Certification.US_PG13, CertificationStyle.MEDIUM)).isEqualTo("US: PG-13");
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.LARGE))
         .isEqualTo("DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16");
