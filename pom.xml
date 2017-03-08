@@ -289,6 +289,12 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <skipITs>true</skipITs><!-- always skip ITs, even when skipTests=false -->
+                </configuration>
+            </plugin>
+            <plugin>
                 <!-- copies our dependencies WITHOUT version number for packaging -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

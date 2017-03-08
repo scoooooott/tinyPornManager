@@ -18,11 +18,11 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
 
     MovieExporter exporter = new MovieExporter(Paths.get("templates", "ListExampleHtml"));
-    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleHtml"));
+    exporter.export(ml.getMovies(), Paths.get("target", "export", "ListExampleHtml"));
     exporter = new MovieExporter(Paths.get("templates", "ListExampleCsv"));
-    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleCsv"));
+    exporter.export(ml.getMovies(), Paths.get("target", "export", "ListExampleCsv"));
     exporter = new MovieExporter(Paths.get("templates", "ListExampleXml"));
-    exporter.export(ml.getMovies(), Paths.get("export", "ListExampleXml"));
+    exporter.export(ml.getMovies(), Paths.get("target", "export", "ListExampleXml"));
 
     MovieModuleManager.getInstance().shutDown();
   }
@@ -33,9 +33,9 @@ public class JmteTest {
     MovieModuleManager.getInstance().startUp();
     MovieList ml = MovieList.getInstance();
     MovieExporter exporter = new MovieExporter(Paths.get("templates", "DetailExampleHtml"));
-    exporter.export(ml.getMovies(), Paths.get("export", "DetailExampleHtml"));
+    exporter.export(ml.getMovies(), Paths.get("target", "export", "DetailExampleHtml"));
     exporter = new MovieExporter(Paths.get("templates", "DetailExample2Html"));
-    exporter.export(ml.getMovies(), Paths.get("export", "DetailExample2Html"));
+    exporter.export(ml.getMovies(), Paths.get("target", "export", "DetailExample2Html"));
 
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();

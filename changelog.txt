@@ -8,6 +8,7 @@ x fixed stacking detection #132
 x fixed some Trakt.tv syncing issues #137
 x fixed searching for movie set id in movie set editor
 x fixed display of runtime
+x fixed scraping localized countries #110
 x automatically drop corrupt entries from the database
 x fix movie renamer token $1/$2 to use first alpha numeric character 
 x fix Plex trailers wrongly detected as extras
