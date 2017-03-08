@@ -1,17 +1,21 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
+import org.assertj.core.util.Files;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
-import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 /**
@@ -23,39 +27,41 @@ import org.tinymediamanager.thirdparty.MediaInfoUtils;
  */
 public class MovieUpdateDatasourceTaskTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 31;
-  private static final int NUMBER_OF_STACKED_MOVIES  = 7;
-  private static final int NUMBER_OF_DISC_MOVIES     = 6;
+  private static final int    NUMBER_OF_EXPECTED_MOVIES = 31;
+  private static final int    NUMBER_OF_STACKED_MOVIES  = 7;
+  private static final int    NUMBER_OF_DISC_MOVIES     = 6;
 
-  public void setUpBeforeClass() throws Exception {
+  private static final String FOLDER                    = "target/testdata/udsMovie";
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
     MediaInfoUtils.loadMediaInfo();
+    Settings.getInstance(FOLDER); // can only instantiate ONCE, so recycle folder
+  }
 
+  @Before
+  public void setUpBeforeTest() throws Exception {
     // do not use @BeforeClass b/c of static settings
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
-    TvShowModuleManager.getInstance().startUp();
 
     // just a copy; we might have another movie test which uses these files
-    FileUtils.copyDirectory(new File("target/test-classes/testmovies"), new File("target/movietest"));
-    MovieModuleManager.MOVIE_SETTINGS.addMovieDataSources("target/movietest");
+    FileUtils.copyDirectory(new File("target/test-classes/testmovies"), new File(FOLDER, "testmovies"));
+    MovieModuleManager.MOVIE_SETTINGS.addMovieDataSources(FOLDER + "/testmovies");
     MovieModuleManager.MOVIE_SETTINGS.setDetectMovieMultiDir(true); // parse MMD
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-    TvShowModuleManager.getInstance().shutDown();
+  @After
+  public void tearDownAfterClass() throws Exception {
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
+    Utils.deleteDirectoryRecursive(Paths.get(FOLDER, "testmovies"));
+    Files.delete(new File(FOLDER, "movies.db"));
   }
 
   @SuppressWarnings("deprecation")
   @Test
   public void udsOld() throws Exception {
-    // clean DB & settings
-    FileUtils.deleteQuietly(new File("target/udsOldSettings"));
-    Settings.getInstance("target/udsOldSettings");
-    setUpBeforeClass();
-
     MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
     task.run();
     showEntries();
@@ -63,11 +69,6 @@ public class MovieUpdateDatasourceTaskTest {
 
   @Test
   public void udsNew() throws Exception {
-    // clean DB & settings
-    FileUtils.deleteQuietly(new File("target/udsNewSettings"));
-    Settings.getInstance("target/udsNewSettings");
-    setUpBeforeClass();
-
     MovieUpdateDatasourceTask2 task = new MovieUpdateDatasourceTask2();
     task.run();
     showEntries();

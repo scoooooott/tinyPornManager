@@ -3,75 +3,61 @@ package org.tinymediamanager.core.tvshow;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
+import org.assertj.core.util.Files;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
+import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 public class TvShowUpdateDatasourceTaskTest {
-  private static String DATA_PATH         = "target/data";
-  private static String DATASOURCE_SOURCE = "target/test-classes/testtvshows";
-  private static String DATASOURCE_DEST   = "target/tvshowtest";
+  private static final String FOLDER = "target/testdata/udsTvShow";
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    FileUtils.deleteQuietly(new File(DATA_PATH));
-    // create a default config file for config access
-    Settings.getInstance(DATA_PATH);
+    MediaInfoUtils.loadMediaInfo();
+    Settings.getInstance(FOLDER); // can only instantiate ONCE, so recycle folder
+  }
+
+  @Before
+  public void setUpBeforeTest() throws Exception {
     TmmModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
+
+    // just a copy; we might have another tv test which uses these files
+    FileUtils.copyDirectory(new File("target/test-classes/testtvshows"), new File(FOLDER, "testtvshows"));
+    TvShowModuleManager.SETTINGS.addTvShowDataSources(FOLDER + "/testtvshows");
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-    TvShowModuleManager.getInstance().shutDown();
-    TmmModuleManager.getInstance().shutDown();
-  }
-
-  @Test
-  public void udsNew() throws Exception {
-    // just a copy; we might have another test which uses these files
-    // FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), new File(DATASOURCE_DEST));
-    TvShowModuleManager.SETTINGS.addTvShowDataSources(DATASOURCE_SOURCE);
-    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
-    task.run();
-  }
-
-  @Test
-  public void testUds() throws Exception {
+  @After
+  public void tearDownAfterTest() throws Exception {
+    // do some checks before shutting down the database
+    TvShowList tvShowList = TvShowList.getInstance();
+    assertThat(tvShowList.getTvShows().size()).isEqualTo(5);
     Comparator<TvShowSeason> seasonComparator = new Comparator<TvShowSeason>() {
       @Override
       public int compare(TvShowSeason o1, TvShowSeason o2) {
         return o1.getSeason() - o2.getSeason();
       }
     };
-    File destDir = new File(DATASOURCE_DEST);
-    FileUtils.deleteQuietly(destDir);
-
-    // just a copy; we might have another test which uses these files
-    FileUtils.copyDirectory(new File(DATASOURCE_SOURCE), destDir);
-    TvShowModuleManager.SETTINGS.addTvShowDataSources(DATASOURCE_DEST);
-
-    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
-    task.run();
-
-    TvShowList tvShowList = TvShowList.getInstance();
-    assertThat(tvShowList.getTvShows().size()).isEqualTo(3);
 
     ///////////////////////////////////////////////////////////////////////////////////////
     // Breaking Bad
     ///////////////////////////////////////////////////////////////////////////////////////
-    TvShow show = tvShowList.getTvShowByPath(new File(DATASOURCE_DEST + "/Breaking Bad"));
+    TvShow show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Breaking Bad"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Breaking Bad");
     assertThat(show.getEpisodes().size()).isEqualTo(62);
@@ -93,7 +79,7 @@ public class TvShowUpdateDatasourceTaskTest {
     ///////////////////////////////////////////////////////////////////////////////////////
     // Firefly
     ///////////////////////////////////////////////////////////////////////////////////////
-    show = tvShowList.getTvShowByPath(new File(DATASOURCE_DEST + "/Firefly"));
+    show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Firefly"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Firefly");
     assertThat(show.getEpisodes().size()).isEqualTo(14);
@@ -107,7 +93,7 @@ public class TvShowUpdateDatasourceTaskTest {
     ///////////////////////////////////////////////////////////////////////////////////////
     // Futurama
     ///////////////////////////////////////////////////////////////////////////////////////
-    show = tvShowList.getTvShowByPath(new File(DATASOURCE_DEST + "/Futurama (1999)"));
+    show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Futurama (1999)"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Futurama");
     assertThat(show.getEpisodes().size()).isEqualTo(44);
@@ -121,5 +107,22 @@ public class TvShowUpdateDatasourceTaskTest {
     assertThat(seasons.get(1).getEpisodes().size()).isEqualTo(20);
     assertThat(seasons.get(2).getSeason()).isEqualTo(3);
     assertThat(seasons.get(2).getEpisodes().size()).isEqualTo(15);
+
+    TvShowModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
+    Utils.deleteDirectoryRecursive(Paths.get(FOLDER, "testtvshows"));
+    Files.delete(new File(FOLDER, "tvshows.db"));
+  }
+
+  @Test
+  public void udsNew() throws Exception {
+    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
+    task.run();
+  }
+
+  @Test
+  public void udsOld() throws Exception {
+    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
+    task.run();
   }
 }

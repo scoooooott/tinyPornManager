@@ -13,11 +13,18 @@ import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class UtilsTest {
+
+  @BeforeClass
+  public static void setup() {
+    // create a fresh default config
+    Settings.getInstance("target/UtilsTest");
+  }
 
   // own method to get some logging ;)
   public static void assertEqual(Object expected, Object actual) {
