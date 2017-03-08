@@ -1,6 +1,5 @@
 package org.tinymediamanager.core;
 
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -8,10 +7,6 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 
 public class MediaSearchResultTest {
-
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-  }
 
   @Test
   public void test() {

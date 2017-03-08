@@ -129,7 +129,7 @@ public class ParserUtilsTest {
 
   @Test
   public void getTitle() {
-    File f = new File("/media/Daten/Test_Filme");
+    File f = new File("src/test/resources/testmovies");
     File[] fileArray = f.listFiles();
     for (File file : fileArray) {
       if (file.isDirectory()) {
