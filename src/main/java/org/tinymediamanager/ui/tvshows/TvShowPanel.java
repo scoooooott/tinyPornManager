@@ -157,7 +157,8 @@ public class TvShowPanel extends JPanel {
   private final Action                actionScrapeEpisodes2            = new TvShowScrapeEpisodesAction(false);
   private final Action                actionRewriteTvShowNfo           = new TvShowRewriteNfoAction();
   private final Action                actionRewriteTvShowEpisodeNfo    = new TvShowRewriteEpisodeNfoAction();
-  private final Action                actionRename                     = new TvShowRenameAction();
+  private final Action                actionRename                     = new TvShowRenameAction(true);
+  private final Action                actionRenameIcon                 = new TvShowRenameAction(false);
   private final Action                actionMediaInformation           = new TvShowMediaInformationAction(false);
   private final Action                actionMediaInformation2          = new TvShowMediaInformationAction(true);
   private final Action                actionClearImageCache            = new TvShowClearImageCacheAction();
@@ -317,6 +318,10 @@ public class TvShowPanel extends JPanel {
     buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
+
+    JButton btnRen = new JButton();
+    btnRen.setAction(actionRenameIcon);
+    toolBar.add(btnRen);
 
     JButton btnMediaInformation = new JButton();
     btnMediaInformation.setAction(actionMediaInformation);
