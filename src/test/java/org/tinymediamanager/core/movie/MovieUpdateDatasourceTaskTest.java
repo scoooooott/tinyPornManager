@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.util.Files;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +16,6 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
-import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 /**
  * This class cannot run, since Settings() is STATIC<br>
@@ -28,19 +26,18 @@ import org.tinymediamanager.thirdparty.MediaInfoUtils;
  */
 public class MovieUpdateDatasourceTaskTest extends BasicTest {
 
-  private static final int NUMBER_OF_EXPECTED_MOVIES = 31;
-  private static final int NUMBER_OF_STACKED_MOVIES  = 7;
+  private static final int NUMBER_OF_EXPECTED_MOVIES = 45;
+  private static final int NUMBER_OF_STACKED_MOVIES  = 9;
   private static final int NUMBER_OF_DISC_MOVIES     = 6;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    MediaInfoUtils.loadMediaInfo();
+    // MediaInfoUtils.loadMediaInfo(); // unneeded here for UDS. does not work on buildserver
     Settings.getInstance(getSettingsFolder());
   }
 
   @Before
   public void setUpBeforeTest() throws Exception {
-    // do not use @BeforeClass b/c of static settings
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
 
@@ -51,7 +48,7 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
   }
 
   @After
-  public void tearDownAfterClass() throws Exception {
+  public void tearDownAfterTest() throws Exception {
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
     Utils.deleteDirectoryRecursive(Paths.get(getSettingsFolder(), "testmovies"));
@@ -77,7 +74,7 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
     int stack = 0;
     int disc = 0;
     for (Movie m : MovieList.getInstance().getMovies()) {
-      System.out.println(m.getTitle() + " - " + m.getPathNIO());
+      System.out.println(m.getTitle() + " (Disc:" + m.isDisc() + " Stack:" + m.isStacked() + ") " + m.getPathNIO());
       if (m.isStacked()) {
         stack++;
       }
@@ -85,8 +82,8 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
         disc++;
       }
     }
-    Assert.assertEquals("Amount of movies does not match!", NUMBER_OF_EXPECTED_MOVIES, MovieList.getInstance().getMovieCount());
-    Assert.assertEquals("Amount of stacked movies does not match!", NUMBER_OF_STACKED_MOVIES, stack);
-    Assert.assertEquals("Amount of disc folders does not match!", NUMBER_OF_DISC_MOVIES, disc);
+    assertEqual("Amount of movies does not match!", NUMBER_OF_EXPECTED_MOVIES, MovieList.getInstance().getMovieCount());
+    assertEqual("Amount of stacked movies does not match!", NUMBER_OF_STACKED_MOVIES, stack);
+    assertEqual("Amount of disc folders does not match!", NUMBER_OF_DISC_MOVIES, disc);
   }
 }

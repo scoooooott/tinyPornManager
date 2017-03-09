@@ -22,14 +22,13 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
-import org.tinymediamanager.thirdparty.MediaInfoUtils;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private static final String FOLDER = getSettingsFolder();
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    MediaInfoUtils.loadMediaInfo();
+    // MediaInfoUtils.loadMediaInfo(); // unneeded here for UDS. does not work on buildserver
     Settings.getInstance(FOLDER);
   }
 
@@ -37,14 +36,33 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   public void setUpBeforeTest() throws Exception {
     TmmModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
-
-    // just a copy; we might have another tv test which uses these files
     FileUtils.copyDirectory(new File("target/test-classes/testtvshows"), new File(FOLDER, "testtvshows"));
     TvShowModuleManager.SETTINGS.addTvShowDataSources(FOLDER + "/testtvshows");
   }
 
   @After
   public void tearDownAfterTest() throws Exception {
+    TvShowModuleManager.getInstance().shutDown();
+    TmmModuleManager.getInstance().shutDown();
+    Utils.deleteDirectoryRecursive(Paths.get(FOLDER, "testtvshows"));
+    Files.delete(new File(FOLDER, "tvshows.db"));
+  }
+
+  @Test
+  public void udsNew() throws Exception {
+    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
+    task.run();
+    check();
+  }
+
+  @Test
+  public void udsOld() throws Exception {
+    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
+    task.run();
+    check();
+  }
+
+  private void check() {
     // do some checks before shutting down the database
     TvShowList tvShowList = TvShowList.getInstance();
     assertThat(tvShowList.getTvShows().size()).isEqualTo(5);
@@ -61,7 +79,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     TvShow show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Breaking Bad"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Breaking Bad");
-    assertThat(show.getEpisodes().size()).isEqualTo(62);
+    assertThat(show.getEpisodes().size()).isEqualTo(64);
     assertThat(show.getSeasons().size()).isEqualTo(5);
 
     List<TvShowSeason> seasons = show.getSeasons();
@@ -108,22 +126,5 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     assertThat(seasons.get(1).getEpisodes().size()).isEqualTo(20);
     assertThat(seasons.get(2).getSeason()).isEqualTo(3);
     assertThat(seasons.get(2).getEpisodes().size()).isEqualTo(15);
-
-    TvShowModuleManager.getInstance().shutDown();
-    TmmModuleManager.getInstance().shutDown();
-    Utils.deleteDirectoryRecursive(Paths.get(FOLDER, "testtvshows"));
-    Files.delete(new File(FOLDER, "tvshows.db"));
-  }
-
-  @Test
-  public void udsNew() throws Exception {
-    TvShowUpdateDatasourceTask2 task = new TvShowUpdateDatasourceTask2();
-    task.run();
-  }
-
-  @Test
-  public void udsOld() throws Exception {
-    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
-    task.run();
   }
 }

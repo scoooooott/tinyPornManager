@@ -3,8 +3,7 @@ package org.tinymediamanager.thirdparty;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.BasicTest;
@@ -15,18 +14,10 @@ import ch.qos.logback.classic.LoggerContext;
 
 public class MediaInfoTest extends BasicTest {
 
-  private MediaInfo mi = null;
-
-  @Before
-  public void setUp() throws Exception {
+  @BeforeClass
+  public static void setUp() throws Exception {
     MediaInfoUtils.loadMediaInfo();
 
-    mi = new MediaInfo();
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    mi.close();
   }
 
   @Test

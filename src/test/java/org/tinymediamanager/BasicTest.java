@@ -20,6 +20,17 @@ public class BasicTest {
     }
   }
 
+  public static void assertEqual(String message, Object expected, Object actual) {
+    try {
+      Assert.assertEquals(message, expected, actual);
+      System.out.println(expected + " - passed");
+    }
+    catch (AssertionError e) {
+      System.err.println(expected + " - FAILED: " + message + "(" + e.getMessage() + ")");
+      throw e;
+    }
+  }
+
   public static String getSettingsFolder() {
     StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
     return "target/testdata/" + ste.getClassName();

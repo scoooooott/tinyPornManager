@@ -12,10 +12,11 @@ import org.tinymediamanager.thirdparty.MediaInfoUtils;
 public class MovieRenamerTest extends BasicTest {
   @Test
   public void special() {
-    System.out.println(MovieRenamer.replaceInvalidCharacters("jb: the bla"));
-    System.out.println(MovieRenamer.replaceInvalidCharacters("jb : the bla"));
-    System.out.println(MovieRenamer.replaceInvalidCharacters("2:22"));
-    System.out.println(MovieRenamer.replaceInvalidCharacters("2 :22"));
+    assertEqual("jb - the bla", MovieRenamer.replaceInvalidCharacters("jb: the bla"));
+    assertEqual("jb  - the bla", MovieRenamer.replaceInvalidCharacters("jb : the bla"));
+    assertEqual("2-22", MovieRenamer.replaceInvalidCharacters("2:22"));
+    assertEqual("2 -22", MovieRenamer.replaceInvalidCharacters("2 :22"));
+    assertEqual("weird - movie", MovieRenamer.replaceInvalidCharacters("weird \"\\\\:<>|/?* movie"));
   }
 
   @Test

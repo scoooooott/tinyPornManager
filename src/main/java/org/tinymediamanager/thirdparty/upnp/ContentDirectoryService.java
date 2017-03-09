@@ -136,10 +136,15 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
             // create EPISODE items
             UUID uuid = UUID.fromString(path[1]);
             org.tinymediamanager.core.tvshow.entities.TvShow show = TvShowList.getInstance().lookupTvShow(uuid);
-            for (TvShowEpisode ep : show.getEpisodes()) {
-              didl.addItem(Metadata.getUpnpTvShowEpisode(show, ep, false));
+            if (show != null) {
+              for (TvShowEpisode ep : show.getEpisodes()) {
+                didl.addItem(Metadata.getUpnpTvShowEpisode(show, ep, false));
+              }
+              return returnResult(didl);
             }
-            return returnResult(didl);
+            else {
+              throw new ContentDirectoryException(ContentDirectoryErrorCode.NO_SUCH_OBJECT, "cannot get metadata for " + objectID);
+            }
           }
         }
         else {
