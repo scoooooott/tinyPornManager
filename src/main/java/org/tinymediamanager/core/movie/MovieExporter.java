@@ -200,7 +200,10 @@ public class MovieExporter extends MediaEntityExporter {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
 
-        Map<String, Object> parameters = parseParameters(pattern);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (pattern != null) {
+          parameters = parseParameters(pattern);
+        }
 
         String filename = getMovieFilename(movie);
         if (parameters.get("escape") == Boolean.TRUE) {

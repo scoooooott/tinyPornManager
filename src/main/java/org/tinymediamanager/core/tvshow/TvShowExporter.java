@@ -245,7 +245,10 @@ public class TvShowExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof TvShow || o instanceof TvShowEpisode) {
         MediaEntity entity = (MediaEntity) o;
-        Map<String, Object> parameters = parseParameters(pattern);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (pattern != null) {
+          parameters = parseParameters(pattern);
+        }
 
         MediaFile mf = entity.getArtworkMap().get(parameters.get("type"));
         if (mf == null || !mf.isGraphic()) {
