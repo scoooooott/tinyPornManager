@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -23,6 +24,7 @@ public class JmteTest extends BasicTest {
     MovieModuleManager.getInstance().startUp();
 
     createFakeMovie("JmteTest");
+    Utils.extractTemplates();
   }
 
   @AfterClass
