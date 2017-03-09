@@ -42,7 +42,7 @@ import org.tinymediamanager.core.entities.MediaFile;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSeason extends AbstractModelObject {
+public class TvShowSeason extends AbstractModelObject implements Comparable<TvShowSeason> {
   private int                    season      = -1;
   private TvShow                 tvShow;
   private List<TvShowEpisode>    episodes    = new CopyOnWriteArrayList<>();
@@ -154,5 +154,13 @@ public class TvShowSeason extends AbstractModelObject {
 
   public void setLastWatched(Date lastWatched) {
     this.lastWatched = lastWatched;
+  }
+
+  @Override
+  public int compareTo(TvShowSeason o) {
+    if (getTvShow() != o.getTvShow()) {
+      return getTvShow().getTitle().compareTo(o.getTvShow().getTitle());
+    }
+    return getSeason() > o.getSeason() ? +1 : getSeason() < o.getSeason() ? -1 : 0;
   }
 }
