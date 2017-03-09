@@ -21,8 +21,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.thirdparty.upnp.ContentDirectoryService;
 
@@ -30,6 +33,14 @@ public class ContentDirectoryBrowseTest extends BasicTest {
 
   private static final String                  KODI_FILTER = "dc:date,dc:description,upnp:longDescription,upnp:genre,res,res@duration,res@size,upnp:albumArtURI,upnp:rating,upnp:lastPlaybackPosition,upnp:lastPlaybackTime,upnp:playbackCount,upnp:originalTrackNumber,upnp:episodeNumber,upnp:programTitle,upnp:seriesTitle,upnp:album,upnp:artist,upnp:author,upnp:director,dc:publisher,searchable,childCount,dc:title,dc:creator,upnp:actor,res@resolution,upnp:episodeCount,upnp:episodeSeason,xbmc:dateadded,xbmc:rating,xbmc:votes,xbmc:artwork,xbmc:uniqueidentifier,xbmc:country,xbmc:userrating";
   private static final ContentDirectoryService CDS         = new ContentDirectoryService();
+
+  private String getValidMovieID() {
+    return MovieList.getInstance().getMovies().get(0).getDbId().toString();
+  }
+
+  private String getValidShowID() {
+    return TvShowList.getInstance().getTvShows().get(0).getDbId().toString();
+  }
 
   // =====================================================
   // directory browsing
@@ -51,7 +62,7 @@ public class ContentDirectoryBrowseTest extends BasicTest {
 
   @Test
   public void browseEpisode() throws ContentDirectoryException {
-    browse("2/d5e46aef-e85a-4a30-a486-9343d1060f7a", BrowseFlag.DIRECT_CHILDREN);
+    browse("2/" + getValidShowID(), BrowseFlag.DIRECT_CHILDREN);
   }
 
   // =====================================================
@@ -59,12 +70,12 @@ public class ContentDirectoryBrowseTest extends BasicTest {
   // =====================================================
   @Test
   public void metadataMovie() throws ContentDirectoryException {
-    browse("1/2a46cf62-df0e-4fb5-86d4-0ce4d67325e2", BrowseFlag.METADATA);
+    browse("1/" + getValidMovieID(), BrowseFlag.METADATA);
   }
 
   @Test
   public void metadataEpisode() throws ContentDirectoryException {
-    browse("2/d5e46aef-e85a-4a30-a486-9343d1060f7a/1/6", BrowseFlag.METADATA);
+    browse("2/" + getValidShowID() + "/1/2", BrowseFlag.METADATA);
   }
 
   // =====================================================
@@ -106,9 +117,15 @@ public class ContentDirectoryBrowseTest extends BasicTest {
 
   @BeforeClass
   public static void init() throws Exception {
+    deleteSettingsFolder();
+    Settings.getInstance(getSettingsFolder());
+
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
+
+    createFakeMovie("UPNPMovie");
+    createFakeShow("UPNPShow");
   }
 
   @AfterClass

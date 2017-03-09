@@ -77,7 +77,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
           if (path.length > 1) {
             org.tinymediamanager.core.tvshow.entities.TvShow t = TvShowList.getInstance().lookupTvShow(UUID.fromString(path[1]));
             if (t != null) {
-              TvShowEpisode ep = t.getEpisode(getInt(path[2]), getInt(path[2]));
+              TvShowEpisode ep = t.getEpisode(getInt(path[2]), getInt(path[3]));
               if (ep != null) {
                 didl.addItem(Metadata.getUpnpTvShowEpisode(t, ep, true));
                 return returnResult(didl);

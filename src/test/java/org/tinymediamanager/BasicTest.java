@@ -5,6 +5,11 @@ import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 public class BasicTest {
 
@@ -45,4 +50,27 @@ public class BasicTest {
       e.printStackTrace();
     }
   }
+
+  public static void createFakeMovie(String title) {
+    Movie m = new Movie();
+    m.setTitle(title);
+    MovieList.getInstance().getMovies(); // FIXME: instantiate
+    MovieList.getInstance().addMovie(m);
+    m.saveToDb();
+    System.out.println("Created movie " + m.getDbId());
+  }
+
+  public static void createFakeShow(String title) {
+    TvShow s = new TvShow();
+    s.setTitle(title);
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle(title + "-EP");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    s.addEpisode(ep);
+    TvShowList.getInstance().addTvShow(s);
+    s.saveToDb();
+    System.out.println("Created show " + s.getDbId());
+  }
+
 }
