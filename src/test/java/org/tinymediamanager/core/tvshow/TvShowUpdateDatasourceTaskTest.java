@@ -20,7 +20,6 @@ import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
@@ -29,6 +28,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     // MediaInfoUtils.loadMediaInfo(); // unneeded here for UDS. does not work on buildserver
+    deleteSettingsFolder();
     Settings.getInstance(FOLDER);
   }
 
@@ -55,12 +55,12 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     check();
   }
 
-  @Test
-  public void udsOld() throws Exception {
-    TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
-    task.run();
-    check();
-  }
+  // @Test
+  // public void udsOld() throws Exception {
+  // TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
+  // task.run();
+  // check();
+  // }
 
   private void check() {
     // do some checks before shutting down the database

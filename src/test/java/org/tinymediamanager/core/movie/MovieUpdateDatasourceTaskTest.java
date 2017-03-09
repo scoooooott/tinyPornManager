@@ -14,7 +14,6 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
 
 /**
@@ -33,6 +32,7 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     // MediaInfoUtils.loadMediaInfo(); // unneeded here for UDS. does not work on buildserver
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
   }
 
@@ -55,13 +55,12 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
     Files.delete(new File(getSettingsFolder(), "movies.db"));
   }
 
-  @SuppressWarnings("deprecation")
-  @Test
-  public void udsOld() throws Exception {
-    MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
-    task.run();
-    showEntries();
-  }
+  // @Test
+  // public void udsOld() throws Exception {
+  // MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
+  // task.run();
+  // showEntries();
+  // }
 
   @Test
   public void udsNew() throws Exception {
