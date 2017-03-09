@@ -22,8 +22,8 @@ public class MovieMediaFileTest extends BasicTest {
   @Test
   public void testUpdateMediaFilePath() {
     Movie movie = new Movie();
-    movie.setPath("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1");
-    Path mediaFile = Paths.get("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1\\asdf\\jklö\\VIDEO_TS\\VIDEO_TS.IFO");
+    movie.setPath("/private/Test_Filme/Alien Collecion/Alien 1");
+    Path mediaFile = Paths.get("/private/Test_Filme/Alien Collecion/Alien 1/asdf/jklö/VIDEO_TS/VIDEO_TS.IFO");
     MediaFile mf = new MediaFile(mediaFile);
     movie.addToMediaFiles(mf);
 
@@ -31,7 +31,7 @@ public class MovieMediaFileTest extends BasicTest {
     System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFileAsPath());
 
     Path oldPath = movie.getPathNIO();
-    Path newPath = Paths.get("C:\\private\\Test_Filme\\Alien 1");
+    Path newPath = Paths.get("/private/Test_Filme/Alien 1");
     movie.updateMediaFilePath(oldPath, newPath);
     movie.setPath(newPath.toAbsolutePath().toString());
 
