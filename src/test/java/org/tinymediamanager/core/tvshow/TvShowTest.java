@@ -17,8 +17,10 @@ package org.tinymediamanager.core.tvshow;
 
 import java.nio.file.Paths;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
@@ -33,14 +35,20 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
  */
 public class TvShowTest extends BasicTest {
 
-  /**
-   * Test tv shows.
-   */
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    Settings.getInstance(getSettingsFolder());
+  }
+
   @Test
   public void testTvShows() {
     try {
       TmmModuleManager.getInstance().startUp();
       TvShowModuleManager.getInstance().startUp();
+      createFakeShow("Show 1");
+      createFakeShow("Show 2");
+      createFakeShow("Show 3");
+
       TvShowList instance = TvShowList.getInstance();
 
       for (TvShow show : instance.getTvShows()) {
@@ -113,6 +121,8 @@ public class TvShowTest extends BasicTest {
 
     // ************************************************************************
     // various real world examples
+    assertEqual("S:5 E:1", detectEpisode("Breaking Bad S05E01 S05E02 HDTV XViD-xyz\\E01 - Live Free or Die.avi"));
+    assertEqual("S:5 E:1", detectEpisode("Breaking Bad S05E01 S05E02 HDTV XViD-xyz\\S05E01 - Live Free or Die.avi"));
     assertEqual("S:2 E:13", detectEpisode("Simon & Simon\\Season 2\\Simon & Simon - S02E13\\VIDEO_TS\\VTS_01_1.VOB"));
     assertEqual("S:1 E:1 E:2 E:3", detectEpisode("Dexter S01E01 S01E02 S01E03\\VIDEO_TS\\VIDEO_TS.VOB"));
     assertEqual("S:1 E:1", detectEpisode("TheShowName S01E01 Episode Name (1920x1080) [UploaderTag].mp4"));

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private void check() {
     // do some checks before shutting down the database
     TvShowList tvShowList = TvShowList.getInstance();
-    assertThat(tvShowList.getTvShows().size()).isEqualTo(5);
+    assertThat(tvShowList.getTvShows().size()).isEqualTo(6);
     Comparator<TvShowSeason> seasonComparator = new Comparator<TvShowSeason>() {
       @Override
       public int compare(TvShowSeason o1, TvShowSeason o2) {
@@ -79,11 +79,17 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     TvShow show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Breaking Bad"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Breaking Bad");
-    assertThat(show.getEpisodes().size()).isEqualTo(64);
+    assertThat(show.getEpisodes().size()).isEqualTo(62);
     assertThat(show.getSeasons().size()).isEqualTo(5);
 
     List<TvShowSeason> seasons = show.getSeasons();
-    Collections.sort(seasons, seasonComparator);
+    // Collections.sort(seasons, seasonComparator);
+    Object[] a = seasons.toArray();
+    Arrays.sort(a);
+    for (int i = 0; i < a.length; i++) {
+      seasons.set(i, (TvShowSeason) a[i]);
+    }
+
     assertThat(seasons.get(0).getSeason()).isEqualTo(1);
     assertThat(seasons.get(0).getEpisodes().size()).isEqualTo(7);
     assertThat(seasons.get(1).getSeason()).isEqualTo(2);
@@ -105,7 +111,13 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     assertThat(show.getSeasons().size()).isEqualTo(1);
 
     seasons = show.getSeasons();
-    Collections.sort(seasons, seasonComparator);
+    // Collections.sort(seasons, seasonComparator);
+    a = seasons.toArray();
+    Arrays.sort(a);
+    for (int i = 0; i < a.length; i++) {
+      seasons.set(i, (TvShowSeason) a[i]);
+    }
+
     assertThat(seasons.get(0).getSeason()).isEqualTo(1);
     assertThat(seasons.get(0).getEpisodes().size()).isEqualTo(14);
 
@@ -119,7 +131,13 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     assertThat(show.getSeasons().size()).isEqualTo(3);
 
     seasons = show.getSeasons();
-    Collections.sort(seasons, seasonComparator);
+    // Collections.sort(seasons, seasonComparator);
+    a = seasons.toArray();
+    Arrays.sort(a);
+    for (int i = 0; i < a.length; i++) {
+      seasons.set(i, (TvShowSeason) a[i]);
+    }
+
     assertThat(seasons.get(0).getSeason()).isEqualTo(1);
     assertThat(seasons.get(0).getEpisodes().size()).isEqualTo(9);
     assertThat(seasons.get(1).getSeason()).isEqualTo(2);

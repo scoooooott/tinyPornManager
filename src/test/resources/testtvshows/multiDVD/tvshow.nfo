@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2016-07-27 10:22:03 - tinyMediaManager 2.8.2 -->
+<tvshow>
+    <title>Barenboim On Beethoven</title>
+    <sorttitle></sorttitle>
+    <year>2005</year>
+    <rating>0.0</rating>
+    <votes>0</votes>
+    <plot>All 32 of the sonatas were performed live in June and July 2006 at the Staatsoper Unter den Linden in Berlin. The masterclasses took place in Chicago in January 2005, in front of a small audience.</plot>
+    <mpaa>U</mpaa>
+    <episodeguide>
+        <url></url>
+    </episodeguide>
+    <id></id>
+    <imdbid></imdbid>
+    <genre>Concert</genre>
+    <genre>Documentary</genre>
+    <premiered>2005-01-01</premiered>
+    <status>Ended</status>
+    <actor>
+        <name>Daniel Barenboim</name>
+        <role>unknown role</role>
+        <thumb></thumb>
+    </actor>
+</tvshow>

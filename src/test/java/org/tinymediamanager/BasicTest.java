@@ -17,10 +17,10 @@ public class BasicTest {
   public static void assertEqual(Object expected, Object actual) {
     try {
       Assert.assertEquals(expected, actual);
-      System.out.println(expected + " - passed");
+      System.out.println(actual + " - passed");
     }
     catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
+      System.err.println(actual + " - FAILED: " + e.getMessage());
       throw e;
     }
   }
