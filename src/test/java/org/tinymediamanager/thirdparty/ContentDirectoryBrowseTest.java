@@ -108,7 +108,7 @@ public class ContentDirectoryBrowseTest extends BasicTest {
 
   @Test(expected = ContentDirectoryException.class)
   public void invalidEpisodeSE() throws ContentDirectoryException {
-    browse("2/d5e46aef-e85a-4a30-a486-9343d1060f7a/17/23", BrowseFlag.METADATA);
+    browse("2/" + getValidShowID() + "/10/20", BrowseFlag.METADATA);
   }
 
   private void browse(String s, BrowseFlag b) throws ContentDirectoryException {

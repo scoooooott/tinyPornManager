@@ -17,7 +17,7 @@ public class BasicTest {
   public static void assertEqual(Object expected, Object actual) {
     try {
       Assert.assertEquals(expected, actual);
-      System.out.println(actual + " - passed");
+      // System.out.println(actual + " - passed");
     }
     catch (AssertionError e) {
       System.err.println(actual + " - FAILED: " + e.getMessage());
@@ -54,7 +54,6 @@ public class BasicTest {
   public static void createFakeMovie(String title) {
     Movie m = new Movie();
     m.setTitle(title);
-    MovieList.getInstance().getMovies(); // FIXME: instantiate
     MovieList.getInstance().addMovie(m);
     m.saveToDb();
     System.out.println("Created movie " + m.getDbId());
