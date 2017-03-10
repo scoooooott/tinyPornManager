@@ -68,14 +68,14 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger    LOGGER     = LoggerFactory.getLogger(TvShowList.class);
-  private static TvShowList      instance   = null;
+  private static final Logger    LOGGER   = LoggerFactory.getLogger(TvShowList.class);
+  private static TvShowList      instance = null;
 
-  private List<TvShow>           tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
-  private List<String>           tvShowTagsObservable;
-  private List<String>           episodeTagsObservable;
-  private List<String>           videoCodecsObservable;
-  private List<String>           audioCodecsObservable;
+  private final List<TvShow>     tvShowList;
+  private final List<String>     tvShowTagsObservable;
+  private final List<String>     episodeTagsObservable;
+  private final List<String>     videoCodecsObservable;
+  private final List<String>     audioCodecsObservable;
 
   private PropertyChangeListener propertyChangeListener;
 
@@ -84,6 +84,7 @@ public class TvShowList extends AbstractModelObject {
    */
   private TvShowList() {
     // create the lists
+    tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
     tvShowTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
     episodeTagsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());
     videoCodecsObservable = ObservableCollections.observableList(new CopyOnWriteArrayList<String>());

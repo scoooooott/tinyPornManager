@@ -109,6 +109,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
@@ -189,7 +190,7 @@ public class MoviePanel extends JPanel {
     // load movielist
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
-    sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
+    sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
