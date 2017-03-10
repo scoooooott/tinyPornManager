@@ -51,7 +51,8 @@
         </dependency>
         <dependency>
             <!-- own patched artifacts -->
-            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
+            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
+                -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
                 -DartifactId=JTattoo -Dversion=1.6.12.1 -->
             <groupId>org.tinymediamanager</groupId>
             <artifactId>JTattoo</artifactId>
@@ -113,8 +114,8 @@
             <version>1.3</version>
             <scope>provided</scope>
         </dependency>
-        <!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> <version>1.0-SNAPSHOT</version><scope>provided</scope> 
-            </dependency -->
+        <!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> 
+            <version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-tmdb</artifactId>
@@ -139,7 +140,8 @@
             <version>1.6</version>
             <scope>provided</scope>
         </dependency>
-        <!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> <version>1.0-SNAPSHOT</version> </dependency> -->
+        <!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> 
+            <version>1.0-SNAPSHOT</version> </dependency> -->
         <dependency>
             <groupId>com.uwetrottmann.trakt5</groupId>
             <artifactId>trakt-java</artifactId>
@@ -289,9 +291,21 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- spawn one jvm per test class per cpu core -->
+                    <!-- needed for static settings per test -->
+                    <parallel>classes</parallel>
+                    <forkCount>1C</forkCount>
+                    <threadCount>1</threadCount>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <skipITs>true</skipITs><!-- always skip ITs, even when skipTests=false -->
+                    <skipITs>true</skipITs><!-- always skip ITs, even when 
+                        skipTests=false -->
                 </configuration>
             </plugin>
             <plugin>
@@ -342,7 +356,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- call our ant file, since it's too complicated to do our packaging solely in maven -->
+                <!-- call our ant file, since it's too complicated to do 
+                    our packaging solely in maven -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
@@ -422,12 +437,14 @@
                         <artifactId>forbiddenapis</artifactId>
                         <version>2.2</version>
                         <configuration>
-                            <!-- if the used Java version is too new, don't fail, just do nothing: -->
+                            <!-- if the used Java version is too new, don't 
+                                fail, just do nothing: -->
                             <failOnUnsupportedJava>false</failOnUnsupportedJava>
                             <failOnViolation>false</failOnViolation>
                             <!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
                             <bundledSignatures>
-                                <!-- This will automatically choose the right signatures based on 'maven.compiler.target': -->
+                                <!-- This will automatically choose the right 
+                                    signatures based on 'maven.compiler.target': -->
                                 <bundledSignature>jdk-deprecated</bundledSignature>
                                 <bundledSignature>jdk-non-portable</bundledSignature>
                                 <bundledSignature>jdk-system-out</bundledSignature>
@@ -437,7 +454,8 @@
                                 <!-- bundledSignature>jdk-unsafe</bundledSignature -->
                             </bundledSignatures>
                             <signaturesFiles>
-                                <!-- use ours b/c of resourcebundle without locale -->
+                                <!-- use ours b/c of resourcebundle without 
+                                    locale -->
                                 <signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
                             </signaturesFiles>
                         </configuration>

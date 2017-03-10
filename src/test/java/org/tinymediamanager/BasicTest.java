@@ -28,7 +28,7 @@ public class BasicTest {
   public static void assertEqual(String message, Object expected, Object actual) {
     try {
       Assert.assertEquals(message, expected, actual);
-      System.out.println(expected + " - passed");
+      // System.out.println(expected + " - passed");
     }
     catch (AssertionError e) {
       System.err.println(expected + " - FAILED: " + message + "(" + e.getMessage() + ")");
