@@ -100,6 +100,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 
@@ -133,6 +134,7 @@ public class MoviePanel extends JPanel {
 
   private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
   private final Action                  actionUpdateDataSources2     = new MovieUpdateDatasourceAction(true);
+  private final Action                  actionUpdateMovie            = new MovieUpdateAction();
   private final Action                  actionScrape                 = new MovieSingleScrapeAction(false);
   private final Action                  actionScrape2                = new MovieSingleScrapeAction(true);
   private final Action                  actionEditMovie              = new MovieEditAction(false);
@@ -243,7 +245,8 @@ public class MoviePanel extends JPanel {
         for (String ds : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new MovieUpdateSingleDatasourceAction(ds)));
         }
-
+        buttonUpdateDatasource.getPopupMenu().addSeparator();
+        buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateMovie));
         buttonUpdateDatasource.getPopupMenu().pack();
       }
     });
@@ -550,6 +553,8 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionScrapeUnscraped);
     popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.add(actionAssignMovieSets);
+    popupMenu.addSeparator();
+    popupMenu.add(actionUpdateMovie);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);
