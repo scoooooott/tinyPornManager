@@ -265,8 +265,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         }
         waitForCompletionOrCancel();
 
-        // FIXME: cleanup
-        // cleanup(ds);
+        // cleanup
+        cleanup(movieFolders);
 
         // mediainfo
         gatherMediainfo(movieFolders);
@@ -1014,12 +1014,8 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           moviesToRemove.add(movie);
         }
         else {
-          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!"); // can
-                                                                           // be;
-                                                                           // MMD
-                                                                           // and/or
-                                                                           // dir=DS
-                                                                           // root
+          // can be; MMD and/or dir=DS root
+          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
         }
       }
 
@@ -1035,11 +1031,69 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
               movie.removeFromMediaFiles(mf);
             }
             else {
-              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!"); // hmm...
-                                                                                          // this
-                                                                                          // should
-                                                                                          // not
-                                                                                          // happen
+              // hmm...this should not happen
+              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
+            }
+          }
+        }
+        if (movie.getMediaFiles(MediaFileType.VIDEO).isEmpty()) {
+          LOGGER.debug("Movie (" + movie.getTitle() + ") without VIDEO files detected, removing from DB...");
+          moviesToRemove.add(movie);
+        }
+        else {
+          movie.saveToDb();
+        }
+      }
+      else {
+        LOGGER.info("Movie (" + movie.getTitle() + ") is new - no need for cleanup");
+      }
+    }
+    movieList.removeMovies(moviesToRemove);
+  }
+
+  private void cleanup(List<Movie> movies) {
+    setTaskName(BUNDLE.getString("update.cleanup"));
+    setTaskDescription(null);
+    setProgressDone(0);
+    setWorkUnits(0);
+    publishState();
+
+    LOGGER.info("removing orphaned movies/files...");
+    List<Movie> moviesToRemove = new ArrayList<>();
+    for (int i = movies.size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+
+      Movie movie = movies.get(i);
+
+      Path movieDir = movie.getPathNIO();
+      if (!filesFound.contains(movieDir)) {
+        // dir is not in hashset - check with exists to be sure it is not here
+        if (!Files.exists(movieDir)) {
+          LOGGER.debug("movie directory '" + movieDir + "' not found, removing from DB...");
+          moviesToRemove.add(movie);
+        }
+        else {
+          // can be; MMD and/or dir=DS root
+          LOGGER.warn("dir " + movieDir + " not in hashset, but on hdd!");
+        }
+      }
+
+      // have a look if that movie has just been added -> so we don't need any
+      // cleanup
+      if (!movie.isNewlyAdded()) {
+        // check and delete all not found MediaFiles
+        List<MediaFile> mediaFiles = new ArrayList<>(movie.getMediaFiles());
+        for (MediaFile mf : mediaFiles) {
+          if (!filesFound.contains(mf.getFileAsPath())) {
+            if (!mf.exists()) {
+              LOGGER.debug("removing orphaned file from DB: " + mf.getFileAsPath());
+              movie.removeFromMediaFiles(mf);
+            }
+            else {
+              // hmm...this should not happen
+              LOGGER.warn("file " + mf.getFileAsPath() + " not in hashset, but on hdd!");
             }
           }
         }
