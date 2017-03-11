@@ -206,7 +206,7 @@ public class TmmUIHelper {
       // try all different starters
       boolean started = false;
       try {
-        Runtime.getRuntime().exec(new String[] { "gnome-open", abs });
+        Runtime.getRuntime().exec(new String[] { "xdg-open", abs });
         started = true;
       }
       catch (IOException e) {
@@ -223,7 +223,7 @@ public class TmmUIHelper {
 
       if (!started) {
         try {
-          Runtime.getRuntime().exec(new String[] { "xdg-open", abs });
+          Runtime.getRuntime().exec(new String[] { "gnome-open", abs });
           started = true;
         }
         catch (IOException e) {
