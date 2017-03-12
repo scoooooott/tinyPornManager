@@ -136,7 +136,7 @@ public class Upnp {
       LOGGER.warn("No player set - did you call setPlayer(Device) ?");
       return;
     }
-    if (me == null || mf == null) {
+    if (mf == null) {
       LOGGER.warn("parameters empty!");
       return;
     }
@@ -144,24 +144,26 @@ public class Upnp {
     String url = "";
     String meta = "NO METADATA";
 
-    try {
-      DIDLContent didl = new DIDLContent();
-      DIDLParser dip = new DIDLParser();
-      if (me instanceof Movie) {
-        didl.addItem(Metadata.getUpnpMovie((Movie) me, true));
-      }
-      else if (me instanceof TvShowEpisode) {
-        didl.addItem(Metadata.getUpnpTvShowEpisode(((TvShowEpisode) me).getTvShow(), (TvShowEpisode) me, true));
-      }
+    if (me != null) {
+      try {
+        DIDLContent didl = new DIDLContent();
+        DIDLParser dip = new DIDLParser();
+        if (me instanceof Movie) {
+          didl.addItem(Metadata.getUpnpMovie((Movie) me, true));
+        }
+        else if (me instanceof TvShowEpisode) {
+          didl.addItem(Metadata.getUpnpTvShowEpisode(((TvShowEpisode) me).getTvShow(), (TvShowEpisode) me, true));
+        }
 
-      // get url from didl, no need to regenerate this
-      url = didl.getItems().get(0).getResources().get(0).getValue();
+        // get url from didl, no need to regenerate this
+        url = didl.getItems().get(0).getResources().get(0).getValue();
 
-      meta = dip.generate(didl);
-    }
-    catch (Exception e) {
-      LOGGER.warn("Could not generate metadata / url");
-      return;
+        meta = dip.generate(didl);
+      }
+      catch (Exception e) {
+        LOGGER.warn("Could not generate metadata / url");
+        return;
+      }
     }
 
     ActionCallback setAVTransportURIAction = new SetAVTransportURI(this.playerService, url, meta) {
