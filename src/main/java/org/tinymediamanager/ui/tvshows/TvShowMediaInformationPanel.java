@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -226,7 +227,12 @@ public class TvShowMediaInformationPanel extends JPanel {
     lblTvShowPathT.setLabelFor(lblTvShowPath);
     add(lblTvShowPath, "4, 4, 5, 1");
 
-    panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+    panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+      @Override
+      public MediaEntity getMediaEntity() {
+        return selectionModel.getSelectedTvShow();
+      }
+    };
     add(panelMediaFiles, "2, 6, 9, 1, fill, fill");
 
     initDataBindings();

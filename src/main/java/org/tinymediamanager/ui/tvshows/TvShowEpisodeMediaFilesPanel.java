@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
@@ -63,7 +64,12 @@ public class TvShowEpisodeMediaFilesPanel extends JPanel {
             ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
         new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+    panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+      @Override
+      public MediaEntity getMediaEntity() {
+        return selectionModel.getSelectedTvShowEpisode();
+      }
+    };
     add(panelMediaFiles, "2, 2, 9, 1, fill, fill");
 
     initDataBindings();

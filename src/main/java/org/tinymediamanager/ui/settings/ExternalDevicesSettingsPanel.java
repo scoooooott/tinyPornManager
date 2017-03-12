@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -46,6 +47,7 @@ import org.tinymediamanager.ui.panels.ScrollablePanel;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -66,11 +68,13 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private JTextField                  tfXbmcHost;
   private JTextField                  tfXbmcUsername;
   private JPasswordField              tfXbmcPassword;
+  private JCheckBox                   chckbxUpnpRemotePlay;
+  private JCheckBox                   chckbxUpnpShareLibrary;
 
   public ExternalDevicesSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelWol = new JPanel();
     panelWol.setBorder(new TitledBorder(null, BUNDLE.getString("tmm.wakeonlan"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -136,8 +140,20 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
 
     JPanel panelXBMC = new JPanel();
     panelXBMC.setVisible(false);
+
+    JPanel panelUpnp = new JPanel();
+    panelUpnp.setBorder(new TitledBorder(null, "UPnP", TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelUpnp, "2, 4, fill, fill");
+    panelUpnp.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+    chckbxUpnpShareLibrary = new JCheckBox(BUNDLE.getString("Settings.upnp.share")); //$NON-NLS-1$
+    panelUpnp.add(chckbxUpnpShareLibrary, "2, 1");
+
+    chckbxUpnpRemotePlay = new JCheckBox(BUNDLE.getString("Settings.upnp.play")); //$NON-NLS-1$
+    panelUpnp.add(chckbxUpnpRemotePlay, "2, 3");
     panelXBMC.setBorder(new TitledBorder(null, "Kodi / XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    add(panelXBMC, "2, 4, fill, fill");
+    add(panelXBMC, "2, 6, fill, fill");
     panelXBMC.setLayout(new FormLayout(
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
@@ -202,5 +218,16 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, String, JPasswordField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, tfXbmcPassword, jPasswordFieldBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("upnpRemotePlay");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, chckbxUpnpRemotePlay, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("upnpShareLibrary");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxUpnpShareLibrary, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }

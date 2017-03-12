@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -209,7 +210,12 @@ public class MovieMediaFilesPanel extends JPanel {
     lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
 
-    panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+    panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+      @Override
+      public MediaEntity getMediaEntity() {
+        return movieSelectionModel.getSelectedMovie();
+      }
+    };
     add(panelMediaFiles, "4, 6, 1, 1, fill, fill");
 
     initDataBindings();

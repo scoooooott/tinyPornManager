@@ -17,27 +17,37 @@ package org.tinymediamanager.ui.panels;
 
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.fourthline.cling.model.meta.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.thirdparty.upnp.Upnp;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -59,7 +69,7 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  * 
  * @author Manuel Laggner
  */
-public class MediaFilesPanel extends JPanel {
+public abstract class MediaFilesPanel extends JPanel {
   private static final long                 serialVersionUID    = -4929581173434859034L;
   private static final Logger               LOGGER              = LoggerFactory.getLogger(MediaFilesPanel.class);
   private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -96,6 +106,13 @@ public class MediaFilesPanel extends JPanel {
   public void adjustColumns() {
     TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
   }
+
+  /**
+   * get the actual media entity holding this list of media files
+   * 
+   * @return the media entity
+   */
+  abstract public MediaEntity getMediaEntity();
 
   private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {
     @Override
@@ -213,14 +230,7 @@ public class MediaFilesPanel extends JPanel {
         MediaFile mf = mediaFileEventList.get(row);
         // open the video file in the desired player
         if (mf.isVideo()) {
-          try {
-            TmmUIHelper.openFile(mf.getFileAsPath());
-          }
-          catch (Exception e) {
-            LOGGER.error("open file", e);
-            MessageManager.instance
-                .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
-          }
+          playVideo(mf, arg0);
         }
         // open the graphic in the lightbox
         if (mf.isGraphic()) {
@@ -269,6 +279,76 @@ public class MediaFilesPanel extends JPanel {
 
     @Override
     public void mouseDragged(MouseEvent arg0) {
+    }
+
+    private void playVideo(MediaFile mediaFile, MouseEvent arg0) {
+      // do we want to play via UPNP?
+      if (!Globals.settings.isUpnpRemotePlay()) {
+        playLocal(mediaFile);
+      }
+      else {
+        // show a popup with upnp devices if some are found in the network
+        List<Device> upnpDevices = Upnp.getInstance().getAvailablePlayers();
+        if (upnpDevices.isEmpty()) {
+          playLocal(mediaFile);
+        }
+        else {
+          JPopupMenu menu = new JPopupMenu();
+          menu.add(new DeviceAction("System player", null, mediaFile));
+          menu.add(new JSeparator());
+
+          for (Device device : upnpDevices) {
+            menu.add(new DeviceAction(device.getDetails().getFriendlyName(), device, mediaFile));
+          }
+
+          // show popup menu
+
+          int col = tableFiles.columnAtPoint(arg0.getPoint());
+          int row = tableFiles.rowAtPoint(arg0.getPoint());
+          row = tableFiles.convertRowIndexToModel(row);
+          Rectangle cellRect = tableFiles.getCellRect(row, col, true);
+          menu.show(arg0.getComponent(), cellRect.x, cellRect.y + cellRect.height);
+        }
+      }
+    }
+
+    private void playLocal(MediaFile mediaFile) {
+      try {
+        TmmUIHelper.openFile(mediaFile.getFileAsPath());
+      }
+      catch (Exception e) {
+        LOGGER.error("open file", e);
+        MessageManager.instance
+            .pushMessage(new Message(MessageLevel.ERROR, mediaFile, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    }
+
+    private void playViaUpnp(Device device, MediaFile mediaFile) {
+      Upnp instance = Upnp.getInstance();
+      instance.setPlayer(device);
+      instance.playFile(getMediaEntity(), mediaFile);
+    }
+
+    private class DeviceAction extends AbstractAction {
+      private Device    device;
+      private MediaFile mediaFile;
+
+      private DeviceAction(String title, Device device, MediaFile mediaFile) {
+        putValue(NAME, title);
+        this.device = device;
+        this.mediaFile = mediaFile;
+      }
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // play on local media player
+        if (device == null) {
+          playLocal(mediaFile);
+        }
+        else {
+          playViaUpnp(device, mediaFile);
+        }
+      }
     }
   }
 }
