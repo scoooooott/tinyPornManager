@@ -1002,7 +1002,9 @@ public class Settings extends AbstractModelObject {
    * @param upnpShareLibrary
    */
   public void setUpnpShareLibrary(boolean upnpShareLibrary) {
+    boolean old = this.upnpShareLibrary;
     this.upnpShareLibrary = upnpShareLibrary;
+    firePropertyChange(UPNP_SHARE_LIBRARY, old, upnpShareLibrary);
   }
 
   /**
@@ -1020,7 +1022,9 @@ public class Settings extends AbstractModelObject {
    * @param upnpRemotePlay
    */
   public void setUpnpRemotePlay(boolean upnpRemotePlay) {
+    boolean old = this.upnpRemotePlay;
     this.upnpRemotePlay = upnpRemotePlay;
+    firePropertyChange(UPNP_PLAY_ON_REMOTE, old, upnpRemotePlay);
   }
 
   /**
