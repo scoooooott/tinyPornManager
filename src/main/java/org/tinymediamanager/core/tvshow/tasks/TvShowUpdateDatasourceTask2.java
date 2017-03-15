@@ -645,8 +645,8 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               continue;
             }
           }
-          if (result.episodes.size() == 0) {
-            // try to parse out episodes/season from parent directory
+          if (result.episodes.size() == 0 && result.date == null) {
+            // try to parse out episodes/season from parent directory (but only if we haven't detected an ared date!)
             result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(showDir.toFile(), tvShow.getPath());
           }
           if (result.season == -1) {
