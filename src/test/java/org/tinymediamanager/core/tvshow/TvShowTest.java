@@ -121,6 +121,8 @@ public class TvShowTest extends BasicTest {
 
     // ************************************************************************
     // various real world examples
+    assertEqual("S:2011", detectEpisode("Game of Thrones\\2011-04-17 - Winter Is Coming.avi"));
+    assertEqual("S:2011", detectEpisode("Game of Thrones\\17.04.2011 - Winter Is Coming.avi"));
     assertEqual("S:5 E:1", detectEpisode("Breaking Bad S05E01 S05E02 HDTV XViD-xyz\\E01 - Live Free or Die.avi"));
     assertEqual("S:5 E:1", detectEpisode("Breaking Bad S05E01 S05E02 HDTV XViD-xyz\\S05E01 - Live Free or Die.avi"));
     assertEqual("S:2 E:13", detectEpisode("Simon & Simon\\Season 2\\Simon & Simon - S02E13\\VIDEO_TS\\VTS_01_1.VOB"));

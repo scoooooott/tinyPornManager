@@ -411,26 +411,6 @@ public class TvShowEpisodeAndSeasonParser {
       return result;
     }
 
-    // Episode-only parsing, when previous styles didn't find anything!
-    // this is a VERY generic pattern!!!
-    if (result.episodes.isEmpty()) {
-      regex = episodePattern;
-      m = regex.matcher(basename);
-      while (m.find()) {
-        int ep = 0;
-        try {
-          ep = Integer.parseInt(m.group(1));
-        }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-      }
-    }
-
     // parse Roman only when not found anything else!!
     if (result.episodes.isEmpty()) {
       regex = romanPattern;
@@ -458,7 +438,8 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with max 2 numeric chars
         }
         result.season = s;
-        LOGGER.trace("add found year as season " + s);
+        LOGGER.trace("add found year as season " + s + " date: " + result.date);
+        return result; // since we have a matching year, we wont find episodes solely by number
       }
     }
 
@@ -475,7 +456,30 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with max 2 numeric chars
         }
         result.season = s;
-        LOGGER.trace("add found year as season " + s);
+        LOGGER.trace("add found year as season " + s + " date: " + result.date);
+        return result; // since we have a matching year, we wont find episodes solely by number
+      }
+    }
+
+    // Episode-only parsing, when previous styles didn't find anything!
+    // this is a VERY generic pattern AND SHOULD BE EXECUTED AS LAST CHANCE!!!
+    // might produce many fals positives, so be careful!
+    basename = basename.replaceAll("\\[.*?\\]", "");// remove all optional [xyz] tags
+    if (result.episodes.isEmpty()) {
+      regex = episodePattern;
+      m = regex.matcher(basename);
+      while (m.find()) {
+        int ep = 0;
+        try {
+          ep = Integer.parseInt(m.group(1));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
       }
     }
 
