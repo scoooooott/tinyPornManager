@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
+import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
+
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ import org.tinymediamanager.scraper.entities.MediaEpisode;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.TvUtils;
 
 import com.uwetrottmann.tmdb2.Tmdb;
 import com.uwetrottmann.tmdb2.entities.AppendToResponse;
@@ -189,6 +193,10 @@ class TmdbTvShowMetadataProvider {
                 if (episode.vote_average != null) {
                   ep.rating = episode.vote_average.floatValue();
                 }
+                if (episode.air_date != null) {
+                  Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+                  ep.firstAired = formatter.format(episode.air_date);
+                }
                 ep.voteCount = episode.vote_count;
                 ep.ids.put(TmdbMetadataProvider.providerInfo.getId(), episode.id);
                 episodes.add(ep);
@@ -309,16 +317,17 @@ class TmdbTvShowMetadataProvider {
     }
 
     // external IDs
-    if (complete.external_ids != null && complete.external_ids.tvdb_id != null) {
-      md.setId(MediaMetadata.TVDB, complete.external_ids.tvdb_id);
+    if (complete.external_ids != null) {
+      if (complete.external_ids.tvdb_id != null && complete.external_ids.tvdb_id > 0) {
+        md.setId(TVDB, complete.external_ids.tvdb_id);
+      }
+      if (StringUtils.isNotBlank(complete.external_ids.imdb_id)) {
+        md.setId(IMDB, complete.external_ids.imdb_id);
+      }
+      if (complete.external_ids.tvrage_id != null && complete.external_ids.tvrage_id > 0) {
+        md.setId("tvrage", complete.external_ids.tvrage_id);
+      }
     }
-    if (complete.external_ids != null && complete.external_ids.imdb_id != null) {
-      md.setId(MediaMetadata.IMDB, complete.external_ids.imdb_id);
-    }
-    // not yet used
-    // if (complete.external_ids != null && complete.external_ids.tvrage_id!= null) {
-    // md.setId(MediaMetadata.TV_RAGE, complete.external_ids.tvdb_id);
-    // }
 
     // content ratings
     if (complete.content_ratings != null) {
@@ -372,14 +381,13 @@ class TmdbTvShowMetadataProvider {
 
     // parsed valid episode number/season number?
     String aired = "";
-    boolean useAiredOrder = false;
     if (seasonNr == -1 || episodeNr == -1) {
-      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
-        return md; // not even date set? return
-      }
-      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-      aired = formatter.format(options.getMetadata().getReleaseDate());
-      useAiredOrder = true;
+      // TODO: does not work; TMDB cannot "search" w/o seasonNr
+      // if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
+      return md; // not even date set? return
+      // }
+      // Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+      // aired = formatter.format(options.getMetadata().getReleaseDate());
     }
 
     String language = options.getLanguage().getLanguage();
@@ -395,18 +403,14 @@ class TmdbTvShowMetadataProvider {
         TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null).execute().body();
         if (fullSeason != null) {
           for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
-            if (useAiredOrder) {
-              if (ep.air_date != null) {
-                Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-                String epAired = formatter.format(ep.air_date);
-                if (epAired.equals(aired)) {
-                  episode = ep;
-                  break;
-                }
-              }
+            if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
+              episode = ep;
+              break;
             }
-            else {
-              if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
+            if (ep.air_date != null) {
+              Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+              String epAired = formatter.format(ep.air_date);
+              if (epAired.equals(aired)) {
                 episode = ep;
                 break;
               }
@@ -423,9 +427,23 @@ class TmdbTvShowMetadataProvider {
       return md;
     }
 
-    md.setEpisodeNumber(episode.episode_number);
-    md.setSeasonNumber(episode.season_number);
+    md.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.episode_number));
+    md.setSeasonNumber(TvUtils.getSeasonNumber(episode.season_number));
     md.setId(TmdbMetadataProvider.providerInfo.getId(), episode.id);
+
+    // external IDs
+    if (episode.external_ids != null) {
+      if (episode.external_ids.tvdb_id != null && episode.external_ids.tvdb_id > 0) {
+        md.setId(TVDB, episode.external_ids.tvdb_id);
+      }
+      if (StringUtils.isNotBlank(episode.external_ids.imdb_id)) {
+        md.setId(IMDB, episode.external_ids.imdb_id);
+      }
+      if (episode.external_ids.tvrage_id != null && episode.external_ids.tvrage_id > 0) {
+        md.setId("tvrage", episode.external_ids.tvrage_id);
+      }
+    }
+
     md.setTitle(episode.name);
     md.setPlot(episode.overview);
     md.setRating(episode.vote_average);
