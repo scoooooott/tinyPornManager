@@ -1225,7 +1225,7 @@ public class TvShow extends MediaEntity {
   public List<TvShowEpisode> getEpisodesToScrape() {
     List<TvShowEpisode> episodes = new ArrayList<>();
     for (TvShowEpisode episode : new ArrayList<>(this.episodes)) {
-      if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
+      if (episode.getFirstAired() != null || (episode.getSeason() > -1 && episode.getEpisode() > -1)) {
         episodes.add(episode);
       }
     }
