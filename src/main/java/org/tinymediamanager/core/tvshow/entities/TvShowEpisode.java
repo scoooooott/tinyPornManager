@@ -345,7 +345,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setFirstAired(String aired) {
     try {
-      this.firstAired = StrgUtils.parseDate(aired);
+      setFirstAired(StrgUtils.parseDate(aired));
     }
     catch (ParseException e) {
     }

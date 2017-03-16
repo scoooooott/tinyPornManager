@@ -2,7 +2,6 @@ package org.tinymediamanager.thirdparty.upnp;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -39,12 +38,12 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
   public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderby)
       throws ContentDirectoryException {
     try {
-      LOGGER.debug("ObjectId:" + objectID);
-      LOGGER.debug("BrowseFlag:" + browseFlag);
-      LOGGER.debug("Filter:" + filter);
-      LOGGER.debug("FirstResult:" + firstResult);
-      LOGGER.debug("MaxResults:" + maxResults);
-      LOGGER.debug("OrderBy:" + Arrays.toString(orderby));
+      LOGGER.debug("ObjectId: " + objectID);
+      LOGGER.debug("BrowseFlag: " + browseFlag);
+      LOGGER.debug("Filter: " + filter);
+      LOGGER.debug("FirstResult: " + firstResult);
+      LOGGER.debug("MaxResults: " + maxResults);
+      LOGGER.debug("OrderBy: " + SortCriterion.toString(orderby));
 
       DIDLContent didl = new DIDLContent();
 

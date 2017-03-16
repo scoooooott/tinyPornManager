@@ -83,6 +83,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaCastMember;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -886,8 +887,12 @@ public class TvShow extends MediaEntity {
    * @throws ParseException
    *           if string cannot be parsed!
    */
-  public void setFirstAired(String aired) throws ParseException {
-    setFirstAired(org.tinymediamanager.scraper.util.StrgUtils.parseDate(aired));
+  public void setFirstAired(String aired) {
+    try {
+      setFirstAired(StrgUtils.parseDate(aired));
+    }
+    catch (ParseException e) {
+    }
   }
 
   /**
