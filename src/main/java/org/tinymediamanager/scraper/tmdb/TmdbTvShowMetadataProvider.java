@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -369,8 +371,15 @@ class TmdbTvShowMetadataProvider {
     }
 
     // parsed valid episode number/season number?
+    String aired = "";
+    boolean useAiredOrder = false;
     if (seasonNr == -1 || episodeNr == -1) {
-      return md;
+      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
+        return md; // not even date set? return
+      }
+      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+      aired = formatter.format(options.getMetadata().getReleaseDate());
+      useAiredOrder = true;
     }
 
     String language = options.getLanguage().getLanguage();
@@ -386,9 +395,21 @@ class TmdbTvShowMetadataProvider {
         TvSeason fullSeason = api.tvSeasonsService().season(tmdbId, seasonNr, language, null).execute().body();
         if (fullSeason != null) {
           for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
-            if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
-              episode = ep;
-              break;
+            if (useAiredOrder) {
+              if (ep.air_date != null) {
+                Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String epAired = formatter.format(ep.air_date);
+                if (epAired.equals(aired)) {
+                  episode = ep;
+                  break;
+                }
+              }
+            }
+            else {
+              if (ep.season_number == seasonNr && ep.episode_number == episodeNr) {
+                episode = ep;
+                break;
+              }
             }
           }
         }
