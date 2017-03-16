@@ -19,6 +19,8 @@ import static org.tinymediamanager.scraper.MediaMetadata.IMDB;
 import static org.tinymediamanager.scraper.MediaMetadata.TMDB;
 import static org.tinymediamanager.scraper.MediaMetadata.TVDB;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,6 +168,10 @@ class TraktTVShowMetadataProvider {
           ep.rating = episode.rating.floatValue();
         }
         ep.voteCount = episode.votes;
+        if (episode.first_aired != null) {
+          Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+          ep.firstAired = formatter.format(episode.first_aired);
+        }
 
         ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
         if (episode.ids.tvdb > 0) {
@@ -244,6 +250,9 @@ class TraktTVShowMetadataProvider {
     }
     if (show.ids.tmdb != null && show.ids.tmdb > 0) {
       md.setId(TMDB, show.ids.tmdb);
+    }
+    if (show.ids.tvrage != null && show.ids.tvrage > 0) {
+      md.setId("tvrage", show.ids.tvrage);
     }
     if (StringUtils.isNotBlank(show.ids.imdb)) {
       md.setId(IMDB, show.ids.imdb);
@@ -365,8 +374,15 @@ class TraktTVShowMetadataProvider {
     }
 
     // parsed valid episode number/season number?
+    String aired = "";
+    boolean useAiredOrder = false;
     if (seasonNr == -1 || episodeNr == -1) {
-      return md;
+      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
+        return md; // not even date set? return
+      }
+      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+      aired = formatter.format(options.getMetadata().getReleaseDate());
+      useAiredOrder = true;
     }
 
     // fetch all episode data - this results in less connections, but the initial connection is _bigger_
@@ -383,9 +399,21 @@ class TraktTVShowMetadataProvider {
 
     for (Season season : ListUtils.nullSafe(seasons)) {
       for (Episode ep : season.episodes) {
-        if (ep.season == seasonNr && ep.number == episodeNr) {
-          episode = ep;
-          break;
+        if (useAiredOrder) {
+          if (ep.first_aired != null) {
+            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String epAired = formatter.format(ep.first_aired);
+            if (epAired.equals(aired)) {
+              episode = ep;
+              break;
+            }
+          }
+        }
+        else {
+          if (ep.season == seasonNr && ep.number == episodeNr) {
+            episode = ep;
+            break;
+          }
         }
       }
       if (episode != null) {
@@ -408,6 +436,9 @@ class TraktTVShowMetadataProvider {
     }
     if (StringUtils.isNotBlank(episode.ids.imdb)) {
       md.setId(IMDB, episode.ids.imdb);
+    }
+    if (episode.ids.tvrage != null && episode.ids.tvrage > 0) {
+      md.setId("tvrage", episode.ids.tvrage);
     }
 
     md.setTitle(episode.title);
