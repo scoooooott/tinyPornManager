@@ -15,7 +15,9 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
+import java.text.Format;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -341,6 +343,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     boolean useDvdOrder = false;
+    boolean useAiredOrder = false;
     String id = "";
 
     // id from result
@@ -382,8 +385,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       LOGGER.warn("error parsing season/episode number");
     }
 
+    String aired = "";
     if (seasonNr == -1 || episodeNr == -1) {
-      return md;
+      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
+        return md; // not even date set? return
+      }
+
+      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+      aired = formatter.format(options.getMetadata().getReleaseDate());
+      useAiredOrder = true;
     }
 
     List<Episode> episodes = new ArrayList<>();
@@ -409,6 +419,14 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           }
         }
         catch (Exception e) {
+          LOGGER.warn("error parsing season/episode DVD number");
+        }
+      }
+      else if (useAiredOrder) {
+        // match by date
+        if (ep.getFirstAired().equals(aired)) {
+          episode = ep;
+          break;
         }
       }
       else {
