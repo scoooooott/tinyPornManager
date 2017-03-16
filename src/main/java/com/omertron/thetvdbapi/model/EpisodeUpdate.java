@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -21,43 +21,18 @@ package com.omertron.thetvdbapi.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+public class EpisodeUpdate extends BaseUpdate implements Serializable {
 
-public class EpisodeUpdate implements Serializable {
+  // Default serial UID
+  private static final long serialVersionUID = 1L;
+  private String            episodeId;
 
-    // Default serial UID
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String series;
-    private String time;
+  public String getEpisodeId() {
+    return episodeId;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public void setEpisodeId(String episodeId) {
+    this.episodeId = episodeId;
+  }
 
-    public String getSeries() {
-        return series;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setSeries(String series) {
-        this.series = series;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
 }

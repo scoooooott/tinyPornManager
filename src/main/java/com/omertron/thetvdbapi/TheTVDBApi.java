@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.omertron.thetvdbapi.model.Actor;
 import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
+import com.omertron.thetvdbapi.model.Language;
 import com.omertron.thetvdbapi.model.Series;
 import com.omertron.thetvdbapi.model.TVDBUpdates;
 import com.omertron.thetvdbapi.tools.TvdbParser;
@@ -48,8 +49,7 @@ public class TheTVDBApi {
 
   private static final Logger LOG                = LoggerFactory.getLogger(TheTVDBApi.class);
   private String              apiKey             = null;
-  private static final String URL_XML            = "http://thetvdb.com/api/";
-  private static final String URL_BANNER         = "http://thetvdb.com/banners/";
+  private static final String BASE_URL           = "http://thetvdb.com/api/";
   private static final String XML_EXTENSION      = ".xml";
   private static final String SERIES_URL         = "/series/";
   private static final String ALL_URL            = "/all/";
@@ -66,7 +66,6 @@ public class TheTVDBApi {
     if (StringUtils.isBlank(apiKey)) {
       return;
     }
-
     this.apiKey = apiKey;
   }
 
@@ -80,17 +79,13 @@ public class TheTVDBApi {
    */
   public Series getSeries(String id, String language) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(id);
-    urlBuilder.append("/");
-    if (language != null) {
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(id).append("/");
+    if (StringUtils.isNotBlank(language)) {
       urlBuilder.append(language).append(XML_EXTENSION);
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    List<Series> seriesList = TvdbParser.getSeriesList(urlBuilder.toString(), getBannerMirror(apiKey));
+    List<Series> seriesList = TvdbParser.getSeriesList(urlBuilder.toString());
     if (seriesList.isEmpty()) {
       return null;
     }
@@ -112,17 +107,13 @@ public class TheTVDBApi {
 
     if (isValidNumber(id)) {
       StringBuilder urlBuilder = new StringBuilder();
-      urlBuilder.append(getXmlMirror(apiKey));
-      urlBuilder.append(apiKey);
-      urlBuilder.append(SERIES_URL);
-      urlBuilder.append(id);
-      urlBuilder.append(ALL_URL);
+      urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(id).append(ALL_URL);
       if (StringUtils.isNotBlank(language)) {
         urlBuilder.append(language).append(XML_EXTENSION);
       }
 
       LOG.trace(URL, urlBuilder.toString());
-      episodeList = TvdbParser.getAllEpisodes(urlBuilder.toString(), -1, getBannerMirror(apiKey));
+      episodeList = TvdbParser.getAllEpisodes(urlBuilder.toString(), -1);
     }
     return episodeList;
   }
@@ -138,17 +129,13 @@ public class TheTVDBApi {
    */
   public List<Episode> getSeasonEpisodes(String id, int season, String language) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(id);
-    urlBuilder.append(ALL_URL);
-    if (language != null) {
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(id).append(ALL_URL);
+    if (StringUtils.isNotBlank(language)) {
       urlBuilder.append(language).append(XML_EXTENSION);
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getAllEpisodes(urlBuilder.toString(), season, getBannerMirror(apiKey));
+    return TvdbParser.getAllEpisodes(urlBuilder.toString(), season);
   }
 
   /**
@@ -197,21 +184,14 @@ public class TheTVDBApi {
     }
 
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(seriesId);
-    urlBuilder.append(episodeType);
-    urlBuilder.append(seasonNbr);
-    urlBuilder.append("/");
-    urlBuilder.append(episodeNbr);
-    urlBuilder.append("/");
-    if (language != null) {
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(seriesId).append(episodeType).append(seasonNbr).append("/")
+        .append(episodeNbr).append("/");
+    if (StringUtils.isNotBlank(language)) {
       urlBuilder.append(language).append(XML_EXTENSION);
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getEpisode(urlBuilder.toString(), getBannerMirror(apiKey));
+    return TvdbParser.getEpisode(urlBuilder.toString());
   }
 
   /**
@@ -225,19 +205,13 @@ public class TheTVDBApi {
    */
   public Episode getAbsoluteEpisode(String seriesId, int episodeNbr, String language) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(seriesId);
-    urlBuilder.append("/absolute/");
-    urlBuilder.append(episodeNbr);
-    urlBuilder.append("/");
-    if (language != null) {
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(seriesId).append("/absolute/").append(episodeNbr).append("/");
+    if (StringUtils.isNotBlank(language)) {
       urlBuilder.append(language).append(XML_EXTENSION);
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getEpisode(urlBuilder.toString(), getBannerMirror(apiKey));
+    return TvdbParser.getEpisode(urlBuilder.toString());
   }
 
   /**
@@ -284,14 +258,10 @@ public class TheTVDBApi {
    */
   public Banners getBanners(String seriesId) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(seriesId);
-    urlBuilder.append("/banners.xml");
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(seriesId).append("/banners.xml");
 
     LOG.trace(URL, urlBuilder.toString());
-    Banners b = TvdbParser.getBanners(urlBuilder.toString(), getBannerMirror(apiKey));
+    Banners b = TvdbParser.getBanners(urlBuilder.toString());
 
     if (b != null) {
       b.setSeriesId(NumberUtils.toInt(seriesId));
@@ -309,14 +279,10 @@ public class TheTVDBApi {
    */
   public List<Actor> getActors(String seriesId) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(SERIES_URL);
-    urlBuilder.append(seriesId);
-    urlBuilder.append("/actors.xml");
+    urlBuilder.append(BASE_URL).append(apiKey).append(SERIES_URL).append(seriesId).append("/actors.xml");
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getActors(urlBuilder.toString(), getBannerMirror(apiKey));
+    return TvdbParser.getActors(urlBuilder.toString());
   }
 
   /**
@@ -331,10 +297,8 @@ public class TheTVDBApi {
     StringBuilder urlBuilder = new StringBuilder();
 
     try {
-      urlBuilder.append(getXmlMirror(apiKey));
-      urlBuilder.append("GetSeries.php?seriesname=");
-      urlBuilder.append(URLEncoder.encode(title, "UTF-8"));
-      if (language != null) {
+      urlBuilder.append(BASE_URL).append("GetSeries.php?seriesname=").append(URLEncoder.encode(title, "UTF-8"));
+      if (StringUtils.isNotBlank(language)) {
         urlBuilder.append("&language=").append(language);
       }
     }
@@ -345,7 +309,7 @@ public class TheTVDBApi {
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getSeriesList(urlBuilder.toString(), getBannerMirror(apiKey));
+    return TvdbParser.getSeriesList(urlBuilder.toString());
   }
 
   /**
@@ -359,18 +323,14 @@ public class TheTVDBApi {
   public Episode getEpisodeById(String episodeId, String language) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
 
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append("/episodes/");
-    urlBuilder.append(episodeId);
-    urlBuilder.append("/");
+    urlBuilder.append(BASE_URL).append(apiKey).append("/episodes/").append(episodeId).append("/");
     if (StringUtils.isNotBlank(language)) {
       urlBuilder.append(language);
       urlBuilder.append(XML_EXTENSION);
     }
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getEpisode(urlBuilder.toString(), getBannerMirror(apiKey));
+    return TvdbParser.getEpisode(urlBuilder.toString());
   }
 
   /**
@@ -380,34 +340,39 @@ public class TheTVDBApi {
    * @throws com.omertron.thetvdbapi.TvDbException
    */
   public TVDBUpdates getWeeklyUpdates() throws TvDbException {
+    return getWeeklyUpdates(0);
+  }
+
+  /**
+   * Get the weekly updates limited by Series ID
+   *
+   * @param seriesId
+   *          0 (zero) gets all series
+   * @return
+   * @throws com.omertron.thetvdbapi.TvDbException
+   */
+  public TVDBUpdates getWeeklyUpdates(int seriesId) throws TvDbException {
     StringBuilder urlBuilder = new StringBuilder();
 
-    urlBuilder.append(getXmlMirror(apiKey));
-    urlBuilder.append(apiKey);
-    urlBuilder.append(WEEKLY_UPDATES_URL);
+    urlBuilder.append(BASE_URL).append(apiKey).append(WEEKLY_UPDATES_URL);
 
     LOG.trace(URL, urlBuilder.toString());
-    return TvdbParser.getUpdates(urlBuilder.toString());
+    return TvdbParser.getUpdates(urlBuilder.toString(), seriesId);
   }
 
   /**
-   * Get the XML Mirror URL
+   * Gets the languages.
    *
-   * @param apiKey
-   * @return
+   * @return the languages
+   * @throws com.omertron.thetvdbapi.TvDbException
    */
-  public static String getXmlMirror(String apiKey) {
-    return URL_XML;
-  }
+  public List<Language> getLanguages() throws TvDbException {
+    StringBuilder urlBuilder = new StringBuilder();
 
-  /**
-   * Get the Banner Mirror URL
-   *
-   * @param apiKey
-   * @return
-   */
-  public static String getBannerMirror(String apiKey) {
-    return URL_BANNER;
+    urlBuilder.append(BASE_URL).append(apiKey).append("/languages").append(XML_EXTENSION);
+
+    LOG.trace(URL, urlBuilder.toString());
+    return TvdbParser.getLanguages(urlBuilder.toString());
   }
 
   /**

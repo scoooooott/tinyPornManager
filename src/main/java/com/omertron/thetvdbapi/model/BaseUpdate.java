@@ -20,49 +20,35 @@
 package com.omertron.thetvdbapi.model;
 
 import java.io.Serializable;
-import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.math.NumberUtils;
 
-public class TVDBUpdates implements Serializable {
+public class BaseUpdate implements Serializable {
 
   // Default serial UID
-  private static final long   serialVersionUID = 1L;
-  private String              time;
-  private List<SeriesUpdate>  seriesUpdates;
-  private List<EpisodeUpdate> episodeUpdates;
-  private List<BannerUpdate>  bannerUpdates;
+  private static final long serialVersionUID = 1L;
+  private Integer           seriesId;
+  private String            time;
+
+  public Integer getSeriesId() {
+    return seriesId;
+  }
 
   public String getTime() {
     return time;
   }
 
-  public List<SeriesUpdate> getSeriesUpdates() {
-    return seriesUpdates;
+  public void setSeriesId(int id) {
+    this.seriesId = id;
   }
 
-  public List<EpisodeUpdate> getEpisodeUpdates() {
-    return episodeUpdates;
-  }
-
-  public List<BannerUpdate> getBannerUpdates() {
-    return bannerUpdates;
+  public void setSeriesId(String id) {
+    this.seriesId = NumberUtils.toInt(id, 0);
   }
 
   public void setTime(String time) {
     this.time = time;
-  }
-
-  public void setSeriesUpdates(List<SeriesUpdate> seriesUpdates) {
-    this.seriesUpdates = seriesUpdates;
-  }
-
-  public void setEpisodeUpdates(List<EpisodeUpdate> episodeUpdates) {
-    this.episodeUpdates = episodeUpdates;
-  }
-
-  public void setBannerUpdates(List<BannerUpdate> bannerUpdates) {
-    this.bannerUpdates = bannerUpdates;
   }
 
   @Override

@@ -26,44 +26,44 @@ package com.omertron.thetvdbapi;
  */
 public enum ApiExceptionType {
 
-    /**
-     * Unknown error occurred
-     */
-    UNKNOWN_CAUSE,
-    /**
-     * URL is invalid
-     */
-    INVALID_URL,
-    /**
-     * The ID was not found
-     */
-    ID_NOT_FOUND,
-    /**
-     * Mapping failed from target to internal objects
-     */
-    MAPPING_FAILED,
-    /**
-     * Error connecting to the service
-     */
-    CONNECTION_ERROR,
-    /**
-     * Image was invalid
-     */
-    INVALID_IMAGE,
-    /**
-     * Auth error
-     */
-    AUTH_FAILURE,
-    /**
-     * Page not found
-     */
-    HTTP_404_ERROR,
-    /**
-     * Service Unavailable, usually temporary
-     */
-    HTTP_503_ERROR,
-    /**
-     * HTTP client is missing
-     */
-    HTTP_CLIENT_MISSING;
+  /**
+   * Unknown error occurred
+   */
+  UNKNOWN_CAUSE,
+  /**
+   * URL is invalid
+   */
+  INVALID_URL,
+  /**
+   * The ID was not found
+   */
+  ID_NOT_FOUND,
+  /**
+   * Mapping failed from target to internal objects
+   */
+  MAPPING_FAILED,
+  /**
+   * Error connecting to the service
+   */
+  CONNECTION_ERROR,
+  /**
+   * Image was invalid
+   */
+  INVALID_IMAGE,
+  /**
+   * Auth error
+   */
+  AUTH_FAILURE,
+  /**
+   * Page not found
+   */
+  HTTP_404_ERROR,
+  /**
+   * Service Unavailable, usually temporary
+   */
+  HTTP_503_ERROR,
+  /**
+   * HTTP client is missing
+   */
+  HTTP_CLIENT_MISSING;
 }

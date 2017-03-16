@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -71,6 +71,8 @@ public class DOMHelper {
   // Constants
   private static final String  ERROR_WRITING         = "Error writing the document to {}";
   private static final String  ERROR_UNABLE_TO_PARSE = "Unable to parse TheTVDb response, please try again later.";
+  private static final int     HTTP_STATUS_300       = 300;
+  private static final int     HTTP_STATUS_500       = 500;
 
   // Hide the constructor
   protected DOMHelper() {
@@ -112,39 +114,26 @@ public class DOMHelper {
    * @throws com.omertron.thetvdbapi.TvDbException
    */
   public static synchronized Document getEventDocFromUrl(String url) throws TvDbException {
-    InputStream in = null;
     Document doc = null;
 
-    try {
-      String webPage = getValidWebpage(url);
+    String webPage = getValidWebpage(url);
 
-      if (StringUtils.isNotBlank(webPage)) {
-        in = new ByteArrayInputStream(webPage.getBytes(CHARSET));
+    // If the webpage returned is null or empty, quit
+    if (StringUtils.isBlank(webPage)) {
+      return null;
+    }
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-
-        doc = db.parse(in);
-        in.close();
-        doc.getDocumentElement().normalize();
-      }
+    try (InputStream in = new ByteArrayInputStream(webPage.getBytes(CHARSET))) {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      doc = db.parse(in);
+      doc.getDocumentElement().normalize();
     }
     catch (UnsupportedEncodingException ex) {
       throw new TvDbException(ApiExceptionType.INVALID_URL, "Unable to encode URL", url, ex);
     }
-    catch (ParserConfigurationException | IOException | SAXException error) {
+    catch (ParserConfigurationException | SAXException | IOException error) {
       throw new TvDbException(ApiExceptionType.MAPPING_FAILED, ERROR_UNABLE_TO_PARSE, url, error);
-    }
-    finally {
-      try {
-        if (in != null) {
-          in.close();
-        }
-      }
-      catch (IOException ex) {
-        // Input Stream was already closed or null
-        LOG.trace("Failed to close InputStream", ex);
-      }
     }
 
     return doc;
@@ -196,6 +185,7 @@ public class DOMHelper {
       if (!valid) {
         throw new TvDbException(ApiExceptionType.UNKNOWN_CAUSE, content, cachedUrl != null ? cachedUrl.getStatusCode() : -1, url);
       }
+
       return content;
     }
 
@@ -207,7 +197,7 @@ public class DOMHelper {
    *
    * @param doc
    * @return
-   * @throws javax.xml.transform.TransformerException
+   * @throws TransformerException
    */
   public static String convertDocToString(Document doc) throws TransformerException {
     // set up a transformer

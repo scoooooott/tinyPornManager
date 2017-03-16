@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -29,55 +29,40 @@ import java.util.Locale;
  */
 public enum BannerType {
 
-    GRAPHICAL("graphical"),
-    SEASON("season"),
-    SEASONWIDE("seasonwide"),
-    BLANK("blank"),
-    TEXT("text"),
-    FANART_HD("1920x1080"),
-    FANART_SD("1280x720"),
-    POSTER("680x1000"),
-    ARTWORK("artwork");
+  GRAPHICAL("graphical"), SEASON("season"), SEASONWIDE("seasonwide"), BLANK("blank"), TEXT("text"), FANART_HD("1920x1080"), FANART_SD("1280x720"),
+  POSTER("680x1000"), ARTWORK("artwork");
 
-    private final String type;
+  private final String type;
 
-    private BannerType(String type) {
-        this.type = type;
-    }
+  private BannerType(String type) {
+    this.type = type;
+  }
 
-    public String getType() {
-        return this.type;
-    }
+  public String getType() {
+    return this.type;
+  }
 
-    /**
-     * Set the banner type from a string. If the banner type isn't found, but the type contains an "x" as in 1920x1080 then the type
- will be set to ARTWORK
-     *
-     * @param type
-     * @return
-     */
-    public static BannerType fromString(String type) {
-        if (type != null) {
-            try {
-                for (BannerType bannerType : BannerType.values()) {
-                    if (type.equalsIgnoreCase(bannerType.type)) {
-                        return bannerType;
-                    }
-                }
-
-                // If we've not found the type, then try a generic ARTWORK for the 1920x1080, 1280x720 or 680x1000 values
-        if (type.toLowerCase(Locale.ROOT).contains("x")) {
-                    return BannerType.ARTWORK;
-                }
-            } catch (IllegalArgumentException ex) {
-        if (type.toLowerCase(Locale.ROOT).contains("x")) {
-                    return BannerType.ARTWORK;
-                } else {
-                    throw new IllegalArgumentException("BannerType '" + type + "' does not exist", ex);
-                }
-            }
+  /**
+   * Set the banner type from a string. If the banner type isn't found, but the type contains an "x" as in 1920x1080 then the type will be set to
+   * ARTWORK
+   *
+   * @param type
+   * @return
+   */
+  public static BannerType fromString(String type) {
+    if (type != null) {
+      for (BannerType bannerType : BannerType.values()) {
+        if (type.equalsIgnoreCase(bannerType.type)) {
+          return bannerType;
         }
-        throw new IllegalArgumentException("BannerType is null");
+      }
+
+      // If we've not found the type, then try a generic ARTWORK for the 1920x1080, 1280x720 or 680x1000 values
+      if (type.toLowerCase(Locale.ROOT).contains("x")) {
+        return BannerType.ARTWORK;
+      }
     }
+    throw new IllegalArgumentException("BannerType is empty/null");
+  }
 
 }

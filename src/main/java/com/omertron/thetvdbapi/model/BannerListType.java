@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -29,20 +29,18 @@ import java.util.Locale;
  */
 public enum BannerListType {
 
-    SERIES,
-    SEASON,
-    POSTER,
-    FANART;
+  SERIES, SEASON, POSTER, FANART;
 
-    public static BannerListType fromString(String type) {
-        if (type != null) {
-            try {
+  public static BannerListType fromString(String type) {
+    if (type != null) {
+      try {
         return BannerListType.valueOf(type.trim().toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException ex) {
-                throw new IllegalArgumentException("BannerListType " + type + " does not exist", ex);
-            }
-        }
-        throw new IllegalArgumentException("BannerListType is null");
+      }
+      catch (IllegalArgumentException ex) {
+        throw new IllegalArgumentException("BannerListType " + type + " does not exist", ex);
+      }
     }
+    throw new IllegalArgumentException("BannerListType is null");
+  }
 
 }

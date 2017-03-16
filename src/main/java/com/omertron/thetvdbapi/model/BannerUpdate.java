@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2004-2015 Matthew Altman & Stuart Boston
+ *      Copyright (c) 2004-2016 Matthew Altman & Stuart Boston
  *
  *      This file is part of TheTVDB API.
  *
@@ -21,79 +21,54 @@ package com.omertron.thetvdbapi.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+public class BannerUpdate extends BaseUpdate implements Serializable {
 
-public class BannerUpdate implements Serializable {
+  // Default serial UID
+  private static final long serialVersionUID = 1L;
+  private String            seasonNum;
+  private String            format;
+  private String            language;
+  private String            path;
+  private String            type;
 
-    // Default serial UID
-    private static final long serialVersionUID = 1L;
-    private String seasonNum;
-    private String series;
-    private String format;
-    private String language;
-    private String path;
-    private String time;
-    private String type;
+  public String getSeasonNum() {
+    return seasonNum;
+  }
 
-    public String getSeasonNum() {
-        return seasonNum;
-    }
+  public String getFormat() {
+    return format;
+  }
 
-    public String getSeries() {
-        return series;
-    }
+  public String getLanguage() {
+    return language;
+  }
 
-    public String getFormat() {
-        return format;
-    }
+  public String getPath() {
+    return path;
+  }
 
-    public String getLanguage() {
-        return language;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public String getPath() {
-        return path;
-    }
+  public void setSeasonNum(String seasonNum) {
+    this.seasonNum = seasonNum;
+  }
 
-    public String getTime() {
-        return time;
-    }
+  public void setFormat(String format) {
+    this.format = format;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public void setLanguage(String language) {
+    this.language = language;
+  }
 
-    public void setSeasonNum(String seasonNum) {
-        this.seasonNum = seasonNum;
-    }
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-    public void setSeries(String series) {
-        this.series = series;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
 }
