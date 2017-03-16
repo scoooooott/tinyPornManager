@@ -39,6 +39,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
+import org.tinymediamanager.scraper.util.TvUtils;
 
 import com.uwetrottmann.trakt5.TraktV2;
 import com.uwetrottmann.trakt5.entities.CastMember;
@@ -161,8 +162,8 @@ class TraktTVShowMetadataProvider {
     for (Season season : ListUtils.nullSafe(seasons)) {
       for (Episode episode : season.episodes) {
         MediaEpisode ep = new MediaEpisode(TraktMetadataProvider.providerInfo.getId());
-        ep.episode = episode.number;
-        ep.season = episode.season;
+        ep.episode = TvUtils.getEpisodeNumber(episode.number);
+        ep.season = TvUtils.getSeasonNumber(episode.season);
         ep.title = episode.title;
         if (episode.rating != null) {
           ep.rating = episode.rating.floatValue();
@@ -170,18 +171,23 @@ class TraktTVShowMetadataProvider {
         ep.voteCount = episode.votes;
         if (episode.first_aired != null) {
           Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-          ep.firstAired = formatter.format(episode.first_aired);
+          ep.firstAired = formatter.format(episode.first_aired.toDate());
         }
 
-        ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
-        if (episode.ids.tvdb > 0) {
-          ep.ids.put(TVDB, episode.ids.tvdb);
-        }
-        if (episode.ids.tmdb > 0) {
-          ep.ids.put(TMDB, episode.ids.tmdb);
-        }
-        if (StringUtils.isNotBlank(episode.ids.imdb)) {
-          ep.ids.put(IMDB, episode.ids.imdb);
+        if (episode.ids != null) {
+          ep.ids.put(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
+          if (episode.ids.tvdb != null && episode.ids.tvdb > 0) {
+            ep.ids.put(TVDB, episode.ids.tvdb);
+          }
+          if (episode.ids.tvdb != null && episode.ids.tmdb > 0) {
+            ep.ids.put(TMDB, episode.ids.tmdb);
+          }
+          if (episode.ids.tvrage != null && episode.ids.tvrage > 0) {
+            ep.ids.put("tvrage", episode.ids.tvrage);
+          }
+          if (StringUtils.isNotBlank(episode.ids.imdb)) {
+            ep.ids.put(IMDB, episode.ids.imdb);
+          }
         }
 
         episodes.add(ep);
@@ -375,14 +381,12 @@ class TraktTVShowMetadataProvider {
 
     // parsed valid episode number/season number?
     String aired = "";
-    boolean useAiredOrder = false;
     if (seasonNr == -1 || episodeNr == -1) {
       if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
         return md; // not even date set? return
       }
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
-      useAiredOrder = true;
     }
 
     // fetch all episode data - this results in less connections, but the initial connection is _bigger_
@@ -399,25 +403,19 @@ class TraktTVShowMetadataProvider {
 
     for (Season season : ListUtils.nullSafe(seasons)) {
       for (Episode ep : season.episodes) {
-        if (useAiredOrder) {
-          if (ep.first_aired != null) {
-            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String epAired = formatter.format(ep.first_aired);
-            if (epAired.equals(aired)) {
-              episode = ep;
-              break;
-            }
-          }
+        if (ep.season == seasonNr && ep.number == episodeNr) {
+          episode = ep;
+          break;
         }
-        else {
-          if (ep.season == seasonNr && ep.number == episodeNr) {
+
+        if (ep.first_aired != null) {
+          Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+          String epAired = formatter.format(ep.first_aired.toDate());
+          if (epAired.equals(aired)) {
             episode = ep;
             break;
           }
         }
-      }
-      if (episode != null) {
-        break;
       }
     }
 
@@ -425,8 +423,9 @@ class TraktTVShowMetadataProvider {
       return md;
     }
 
-    md.setEpisodeNumber(episode.number);
-    md.setSeasonNumber(episode.season);
+    md.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.number));
+    md.setAbsoluteNumber(TvUtils.getEpisodeNumber(episode.number_abs));
+    md.setSeasonNumber(TvUtils.getSeasonNumber(episode.season));
     md.setId(TraktMetadataProvider.providerInfo.getId(), episode.ids.trakt);
     if (episode.ids.tvdb != null && episode.ids.tvdb > 0) {
       md.setId(TVDB, episode.ids.tvdb);
