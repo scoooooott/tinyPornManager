@@ -51,6 +51,7 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.util.TvUtils;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
@@ -284,7 +285,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     try {
       md.setRating(Float.parseFloat(show.getRating()));
-      md.setVoteCount(Integer.parseInt(show.getRatingCount()));
+      // md.setVoteCount(Integer.parseInt(show.getContentRating()));
     }
     catch (NumberFormatException e) {
       md.setRating(0);
@@ -343,7 +344,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     boolean useDvdOrder = false;
-    boolean useAiredOrder = false;
     String id = "";
 
     // id from result
@@ -371,7 +371,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     try {
       String option = options.getId(MediaMetadata.SEASON_NR);
-      if (option != null && !("-1".equals(option))) {
+      if (option != null) {
         seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
         episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
       }
@@ -393,7 +393,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
-      useAiredOrder = true;
     }
 
     List<Episode> episodes = new ArrayList<>();
@@ -405,45 +404,27 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     Episode episode = null;
 
-    // filter out the episode
+    // filter out the matching episode
     for (Episode ep : episodes) {
       if (useDvdOrder) {
-        try {
-          int s = Integer.parseInt(ep.getDvdSeason());
-
-          // TVDB provides the EP number as e.g. 2.0
-          int e = (int) Math.floor(Double.parseDouble(ep.getDvdEpisodeNumber()));
-          if (s == seasonNr && e == episodeNr) {
-            episode = ep;
-            break;
-          }
-        }
-        catch (Exception e) {
-          LOGGER.warn("error parsing season/episode DVD number");
-        }
-      }
-      else if (useAiredOrder) {
-        // match by date
-        if (ep.getFirstAired().equals(aired)) {
+        int s = TvUtils.getSeasonNumber(ep.getDvdSeason());
+        int e = TvUtils.getEpisodeNumber(ep.getDvdEpisodeNumber());
+        if (s == seasonNr && e == episodeNr) {
           episode = ep;
           break;
         }
       }
       else {
-        if (ep.getSeasonNumber() == seasonNr && ep.getEpisodeNumber() == episodeNr) {
+        if (TvUtils.getSeasonNumber(ep.getSeasonNumber()) == seasonNr && TvUtils.getEpisodeNumber(ep.getEpisodeNumber()) == episodeNr) {
           episode = ep;
           break;
         }
       }
-    }
 
-    // we have not found an episode with dvd ordering; look for that with aired ordering
-    if (episode == null && useDvdOrder) {
-      for (Episode ep : episodes) {
-        if (ep.getSeasonNumber() == seasonNr && ep.getEpisodeNumber() == episodeNr) {
-          episode = ep;
-          break;
-        }
+      // not found? try to match by date
+      if (!aired.isEmpty() && ep.getFirstAired().equals(aired)) {
+        episode = ep;
+        break;
       }
     }
 
@@ -451,25 +432,17 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       return md;
     }
 
-    md.setEpisodeNumber(episode.getEpisodeNumber());
-    md.setSeasonNumber(episode.getSeasonNumber());
-
-    // TVDB provides the EP number as e.g. 2.0
-    try {
-      int s = Integer.parseInt(episode.getDvdSeason());
-      int e = (int) Math.floor(Double.parseDouble(episode.getDvdEpisodeNumber()));
-      md.setDvdEpisodeNumber(e);
-      md.setDvdSeasonNumber(s);
-      md.setAbsoluteNumber(Integer.parseInt(episode.getAbsoluteNumber()));
-    }
-    catch (Exception e) {
-    }
+    md.setEpisodeNumber(TvUtils.getEpisodeNumber(episode.getEpisodeNumber()));
+    md.setSeasonNumber(TvUtils.getSeasonNumber(episode.getSeasonNumber()));
+    md.setDvdEpisodeNumber(TvUtils.getEpisodeNumber(episode.getDvdEpisodeNumber()));
+    md.setDvdSeasonNumber(TvUtils.getSeasonNumber(episode.getDvdSeason()));
+    md.setAbsoluteNumber(TvUtils.getSeasonNumber(episode.getAbsoluteNumber()));
 
     md.setTitle(episode.getEpisodeName());
     md.setPlot(episode.getOverview());
     try {
       md.setRating(Float.parseFloat(episode.getRating()));
-      md.setVoteCount(Integer.parseInt(episode.getRatingCount()));
+      // md.setVoteCount(Integer.parseInt(episode.getRatingCount()));
     }
     catch (NumberFormatException e) {
       md.setRating(0);
@@ -693,7 +666,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       try {
         episode.rating = Float.parseFloat(ep.getRating());
-        episode.voteCount = Integer.parseInt(ep.getRatingCount());
+        // episode.voteCount = Integer.parseInt(ep.getRatingCount());
       }
       catch (NumberFormatException e) {
         episode.rating = 0f;
