@@ -382,13 +382,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     String aired = "";
-    if (seasonNr == -1 || episodeNr == -1) {
-      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
-        return md; // not even date set? return
-      }
-
+    if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
+    }
+    if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
+      return md; // not even date set? return
     }
 
     List<Episode> episodes = new ArrayList<>();
