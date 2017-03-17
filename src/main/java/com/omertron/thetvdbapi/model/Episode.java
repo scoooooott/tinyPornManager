@@ -51,6 +51,7 @@ public class Episode implements Serializable {
   private String            overview;
   private String            productionCode;
   private String            rating;
+  private String            ratingCount;
   private int               seasonNumber;
   private List<String>      writers          = new ArrayList<>();
   private String            absoluteNumber;
@@ -156,6 +157,10 @@ public class Episode implements Serializable {
 
   public String getRating() {
     return rating;
+  }
+
+  public String getRatingCount(){
+    return ratingCount;
   }
 
   public String getSeasonId() {
@@ -270,6 +275,10 @@ public class Episode implements Serializable {
     this.rating = rating;
   }
 
+  public void setRatingCount(String ratingCount){
+    this.ratingCount = ratingCount;
+  }
+    
   public void setSeasonId(String seasonId) {
     this.seasonId = seasonId;
   }

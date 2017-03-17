@@ -517,6 +517,7 @@ public class TvdbParser {
     episode.setOverview(DOMHelper.getValueFromElement(eEpisode, OVERVIEW));
     episode.setProductionCode(DOMHelper.getValueFromElement(eEpisode, "ProductionCode"));
     episode.setRating(DOMHelper.getValueFromElement(eEpisode, RATING));
+    episode.setRatingCount(DOMHelper.getValueFromElement(eEpisode, "RatingCount"));
 
     episode.setSeasonNumber(getEpisodeValue(eEpisode, "SeasonNumber"));
 
@@ -580,6 +581,7 @@ public class TvdbParser {
     series.setNetwork(DOMHelper.getValueFromElement(eSeries, "Network"));
     series.setOverview(DOMHelper.getValueFromElement(eSeries, OVERVIEW));
     series.setRating(DOMHelper.getValueFromElement(eSeries, RATING));
+    series.setRatingCount(DOMHelper.getValueFromElement(eSeries, "RatingCount"));
     series.setRuntime(DOMHelper.getValueFromElement(eSeries, "Runtime"));
     series.setSeriesId(DOMHelper.getValueFromElement(eSeries, "SeriesID"));
     series.setSeriesName(DOMHelper.getValueFromElement(eSeries, SERIES_NAME));

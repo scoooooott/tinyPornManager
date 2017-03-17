@@ -283,14 +283,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     ma.setLanguage(options.getLanguage().getLanguage());
     md.addMediaArt(ma);
 
-    try {
-      md.setRating(Float.parseFloat(show.getRating()));
-      // md.setVoteCount(Integer.parseInt(show.getContentRating()));
-    }
-    catch (NumberFormatException e) {
-      md.setRating(0);
-      md.setVoteCount(0);
-    }
+    md.setRating(TvUtils.parseInt(show.getRating()));
+    md.setVoteCount(TvUtils.parseInt(show.getRatingCount()));
+
     try {
       md.setReleaseDate(StrgUtils.parseDate(show.getFirstAired()));
     }
@@ -436,18 +431,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     md.setSeasonNumber(TvUtils.getSeasonNumber(episode.getSeasonNumber()));
     md.setDvdEpisodeNumber(TvUtils.getEpisodeNumber(episode.getDvdEpisodeNumber()));
     md.setDvdSeasonNumber(TvUtils.getSeasonNumber(episode.getDvdSeason()));
-    md.setAbsoluteNumber(TvUtils.getSeasonNumber(episode.getAbsoluteNumber()));
+    md.setAbsoluteNumber(TvUtils.getEpisodeNumber(episode.getAbsoluteNumber()));
 
     md.setTitle(episode.getEpisodeName());
     md.setPlot(episode.getOverview());
-    try {
-      md.setRating(Float.parseFloat(episode.getRating()));
-      // md.setVoteCount(Integer.parseInt(episode.getRatingCount()));
-    }
-    catch (NumberFormatException e) {
-      md.setRating(0);
-      md.setVoteCount(0);
-    }
+    md.setRating(TvUtils.parseInt(episode.getRating()));
+    md.setVoteCount(TvUtils.parseInt(episode.getRatingCount()));
+
     try {
       md.setReleaseDate(StrgUtils.parseDate(episode.getFirstAired()));
     }
@@ -663,16 +653,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
       episode.title = ep.getEpisodeName();
       episode.plot = ep.getOverview();
-
-      try {
-        episode.rating = Float.parseFloat(ep.getRating());
-        // episode.voteCount = Integer.parseInt(ep.getRatingCount());
-      }
-      catch (NumberFormatException e) {
-        episode.rating = 0f;
-        episode.voteCount = 0;
-      }
-
+      episode.rating = TvUtils.parseInt(ep.getRating());
+      episode.voteCount = TvUtils.parseInt(ep.getRatingCount());
       episode.firstAired = ep.getFirstAired();
       episode.ids.put(providerInfo.getId(), ep.getId());
 
