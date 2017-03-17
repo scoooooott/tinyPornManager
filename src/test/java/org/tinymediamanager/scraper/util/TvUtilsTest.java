@@ -33,4 +33,18 @@ public class TvUtilsTest {
     Assert.assertEquals(2, TvUtils.getSeasonNumber("", null, -1, 2, new Float(-2.2), new Double(-2.2), 0));
   }
 
+  @Test
+  public void testIntParsing() {
+    Assert.assertEquals(2, TvUtils.parseInt(new Double(2.2)));
+    Assert.assertEquals(0, TvUtils.parseInt(0));
+    Assert.assertEquals(0, TvUtils.parseInt((Object[]) null));
+
+    Assert.assertEquals(2, TvUtils.parseInt(new Float(2.2)));
+    Assert.assertEquals(2, TvUtils.parseInt(new Integer(2)));
+    Assert.assertEquals(2, TvUtils.parseInt("2"));
+    Assert.assertEquals(2, TvUtils.parseInt(2));
+
+    Assert.assertEquals(2, TvUtils.parseInt("", null, -1, 0, new Float(-2.2), new Double(-2.2), 2));
+  }
+
 }

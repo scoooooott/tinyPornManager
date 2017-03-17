@@ -11,7 +11,7 @@ public class TvUtils {
    * @return episode number >0, or -1
    */
   public static int getEpisodeNumber(Object... numbers) {
-    return getFirstValidNumber(1, numbers);
+    return getFirstValidNumber(-1, 1, numbers);
   }
 
   /**
@@ -23,17 +23,29 @@ public class TvUtils {
    * @return season number 0+, or -1
    */
   public static int getSeasonNumber(Object... numbers) {
-    return getFirstValidNumber(0, numbers);
+    return getFirstValidNumber(-1, 0, numbers);
   }
 
-  static int getFirstValidNumber(int minimumValue, Object... numbers) {
-    int nr = -1;
+  /**
+   * parses the parameters for first valid number from all supplied parameters, in a safe way<br>
+   * order matters!
+   * 
+   * @param numbers
+   *          epNr, DVDnr, aired, combined
+   * @return number >0, or 0 as default
+   */
+  public static int parseInt(Object... numbers) {
+    return getFirstValidNumber(0, 0, numbers);
+  }
+
+  static int getFirstValidNumber(int defaultValue, int minimumValue, Object... numbers) {
+    int nr = defaultValue;
     if (numbers != null) {
       for (Object o : numbers) {
         if (o == null) {
           continue;
         }
-        if (nr < minimumValue) {
+        if (nr <= minimumValue) {
           if (o instanceof String) {
             String s = (String) o;
             if (!s.isEmpty()) {
@@ -58,7 +70,7 @@ public class TvUtils {
       }
     }
     if (nr < minimumValue) {
-      nr = -1;
+      nr = defaultValue;
     }
     return nr;
   }
