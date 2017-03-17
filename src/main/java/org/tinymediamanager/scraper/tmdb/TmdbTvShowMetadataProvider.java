@@ -381,13 +381,14 @@ class TmdbTvShowMetadataProvider {
 
     // parsed valid episode number/season number?
     String aired = "";
+    if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
+      Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+      aired = formatter.format(options.getMetadata().getReleaseDate());
+    }
+    // does not work - we cannot scrape w/o season
+    // if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
     if (seasonNr == -1 || episodeNr == -1) {
-      // TODO: does not work; TMDB cannot "search" w/o seasonNr
-      // if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
       return md; // not even date set? return
-      // }
-      // Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-      // aired = formatter.format(options.getMetadata().getReleaseDate());
     }
 
     String language = options.getLanguage().getLanguage();
