@@ -381,12 +381,12 @@ class TraktTVShowMetadataProvider {
 
     // parsed valid episode number/season number?
     String aired = "";
-    if (seasonNr == -1 || episodeNr == -1) {
-      if (options.getMetadata() == null || options.getMetadata().getReleaseDate() == null) {
-        return md; // not even date set? return
-      }
+    if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
       Format formatter = new SimpleDateFormat("yyyy-MM-dd");
       aired = formatter.format(options.getMetadata().getReleaseDate());
+    }
+    if (aired.isEmpty() && (seasonNr == -1 || episodeNr == -1)) {
+      return md; // not even date set? return
     }
 
     // fetch all episode data - this results in less connections, but the initial connection is _bigger_
