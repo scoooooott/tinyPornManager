@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -283,7 +284,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     ma.setLanguage(options.getLanguage().getLanguage());
     md.addMediaArt(ma);
 
-    md.setRating(TvUtils.parseInt(show.getRating()));
+    md.setRating(NumberUtils.toFloat(show.getRating()));
     md.setVoteCount(TvUtils.parseInt(show.getRatingCount()));
 
     try {
@@ -435,7 +436,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     md.setTitle(episode.getEpisodeName());
     md.setPlot(episode.getOverview());
-    md.setRating(TvUtils.parseInt(episode.getRating()));
+    md.setRating(NumberUtils.toFloat(episode.getRating()));
     md.setVoteCount(TvUtils.parseInt(episode.getRatingCount()));
 
     try {
@@ -640,20 +641,14 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
 
     for (Episode ep : eps) {
       MediaEpisode episode = new MediaEpisode(providerInfo.getId());
-      episode.season = ep.getSeasonNumber();
-      episode.episode = ep.getEpisodeNumber();
-      try {
-        episode.dvdSeason = Integer.parseInt(ep.getDvdSeason());
-        episode.dvdEpisode = Integer.parseInt(ep.getDvdEpisodeNumber());
-      }
-      catch (Exception e) {
-        episode.dvdSeason = -1;
-        episode.dvdEpisode = -1;
-      }
+      episode.season = TvUtils.getSeasonNumber(ep.getSeasonNumber());
+      episode.episode = TvUtils.getEpisodeNumber(ep.getEpisodeNumber());
+      episode.dvdSeason = TvUtils.getSeasonNumber(ep.getDvdSeason());
+      episode.dvdEpisode = TvUtils.getEpisodeNumber(ep.getDvdEpisodeNumber());
 
       episode.title = ep.getEpisodeName();
       episode.plot = ep.getOverview();
-      episode.rating = TvUtils.parseInt(ep.getRating());
+      episode.rating = NumberUtils.toFloat(ep.getRating());
       episode.voteCount = TvUtils.parseInt(ep.getRatingCount());
       episode.firstAired = ep.getFirstAired();
       episode.ids.put(providerInfo.getId(), ep.getId());
