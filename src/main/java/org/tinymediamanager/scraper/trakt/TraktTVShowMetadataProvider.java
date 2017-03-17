@@ -168,7 +168,7 @@ class TraktTVShowMetadataProvider {
         if (episode.rating != null) {
           ep.rating = episode.rating.floatValue();
         }
-        ep.voteCount = episode.votes;
+        ep.voteCount = TvUtils.parseInt(episode.votes);
         if (episode.first_aired != null) {
           Format formatter = new SimpleDateFormat("yyyy-MM-dd");
           ep.firstAired = formatter.format(episode.first_aired.toDate());
