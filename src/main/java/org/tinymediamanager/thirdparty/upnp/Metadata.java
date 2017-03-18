@@ -34,7 +34,7 @@ public class Metadata {
    */
   public static Movie getUpnpMovie(org.tinymediamanager.core.movie.entities.Movie tmmMovie, boolean full) {
 
-    LOGGER.debug(tmmMovie.getTitle());
+    LOGGER.trace(tmmMovie.getTitle());
     Movie m = new Movie();
     try {
       m.setId(Upnp.ID_MOVIES + "/" + tmmMovie.getDbId().toString());
@@ -43,6 +43,13 @@ public class Metadata {
         m.addProperty(new DC.DATE(tmmMovie.getYear())); // no setDate on Movie (but on other items)???
       }
       m.setTitle(tmmMovie.getTitle());
+
+      for (MediaFile mf : tmmMovie.getMediaFiles(MediaFileType.VIDEO)) {
+        String rel = tmmMovie.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
+        String url = "http://" + Upnp.IP + ":8008/upnp/movies/" + tmmMovie.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
+        Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
+        m.addResource(r);
+      }
 
       if (full) {
         // TODO: m.setDirectors();
@@ -76,13 +83,6 @@ public class Metadata {
           PersonWithRole[] arr = persons.toArray(new PersonWithRole[persons.size()]);
           m.setProducers(arr);
         }
-
-        for (MediaFile mf : tmmMovie.getMediaFiles(MediaFileType.VIDEO)) {
-          String rel = tmmMovie.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
-          String url = "http://" + Upnp.IP + ":8008/upnp/movies/" + tmmMovie.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
-          Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
-          m.addResource(r);
-        }
       }
 
     }
@@ -95,7 +95,7 @@ public class Metadata {
   /**
    * wraps a TMM TvShowEpisode into a UPNP tvshow/video item object
    * 
-   * @param tmmTvShow
+   * @param show
    *          our TvShow
    * @param full
    *          full details, or when false just the mandatory for a directory listing (title, and a few others)
@@ -103,7 +103,7 @@ public class Metadata {
    */
   public static Movie getUpnpTvShowEpisode(org.tinymediamanager.core.tvshow.entities.TvShow show,
       org.tinymediamanager.core.tvshow.entities.TvShowEpisode ep, boolean full) {
-    LOGGER.debug(ep.getTitle());
+    LOGGER.trace(ep.getTitle());
     Movie m = new Movie(); // yes, it is a UPNP movie object!
 
     try {
@@ -114,6 +114,13 @@ public class Metadata {
         m.addProperty(new DC.DATE(ep.getYear())); // no setDate on Movie (but on other items)???
       }
       m.setTitle("S" + lz(ep.getSeason()) + "E" + lz(ep.getEpisode()) + " " + ep.getTitle());
+
+      for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
+        String rel = show.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
+        String url = "http://" + Upnp.IP + ":8008/upnp/tvshows/" + show.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
+        Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
+        m.addResource(r);
+      }
 
       if (full) {
         m.setDescription(ep.getPlot());
@@ -135,13 +142,6 @@ public class Metadata {
         if (!persons.isEmpty()) {
           PersonWithRole[] arr = persons.toArray(new PersonWithRole[persons.size()]);
           m.setActors(arr);
-        }
-
-        for (MediaFile mf : ep.getMediaFiles(MediaFileType.VIDEO)) {
-          String rel = show.getPathNIO().relativize(mf.getFileAsPath()).toString().replaceAll("\\\\", "/");
-          String url = "http://" + Upnp.IP + ":8008/upnp/tvshows/" + show.getDbId().toString() + "/" + URLEncoder.encode(rel, "UTF-8");
-          Res r = new Res(MimeTypes.getMimeType(mf.getExtension()), mf.getFilesize(), url);
-          m.addResource(r);
         }
       }
 

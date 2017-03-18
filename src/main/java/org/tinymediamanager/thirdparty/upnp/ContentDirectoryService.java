@@ -162,7 +162,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
     DIDLParser dip = new DIDLParser();
     int count = didl.getItems().size() + didl.getContainers().size();
     String ret = dip.generate(didl);
-    LOGGER.debug(prettyFormat(ret, 2));
+    LOGGER.trace(prettyFormat(ret, 2));
     return new BrowseResult(ret, count, count);
   }
 
