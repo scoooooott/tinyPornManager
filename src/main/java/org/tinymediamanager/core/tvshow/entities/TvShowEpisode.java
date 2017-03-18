@@ -872,6 +872,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * get the first video file for this episode
+   *
+   * @return the first video file
+   */
+  public MediaFile getFirstVideoFile() {
+    List<MediaFile> videoFiles = getVideoFiles();
+    if (!videoFiles.isEmpty()) {
+      return videoFiles.get(0);
+    }
+    return null;
+  }
+
+  /**
    * Gets the images to cache.
    * 
    * @return the images to cache

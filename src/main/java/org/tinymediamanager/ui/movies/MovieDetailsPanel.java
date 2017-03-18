@@ -33,7 +33,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -178,7 +177,7 @@ public class MovieDetailsPanel extends JPanel {
     btnPlay = new UpnpPlayButton() {
       @Override
       public MediaFile getMediaFile() {
-        return movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
+        return movieSelectionModel.getSelectedMovie().getFirstVideoFile();
       }
 
       @Override

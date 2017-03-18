@@ -195,6 +195,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @return the selected movie
    */
   public Movie getSelectedMovie() {
+    if (selectedMovie == null) {
+      return initialMovie;
+    }
     return selectedMovie;
   }
 

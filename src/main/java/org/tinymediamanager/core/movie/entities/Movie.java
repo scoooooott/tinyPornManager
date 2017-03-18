@@ -1939,8 +1939,26 @@ public class Movie extends MediaEntity {
     }
   }
 
+  /**
+   * get all video files for that movie
+   *
+   * @return a list of all video files
+   */
   public List<MediaFile> getVideoFiles() {
     return getMediaFiles(MediaFileType.VIDEO);
+  }
+
+  /**
+   * get the first video file for this entity
+   * 
+   * @return the first video file
+   */
+  public MediaFile getFirstVideoFile() {
+    List<MediaFile> videoFiles = getVideoFiles();
+    if (!videoFiles.isEmpty()) {
+      return videoFiles.get(0);
+    }
+    return null;
   }
 
   /**

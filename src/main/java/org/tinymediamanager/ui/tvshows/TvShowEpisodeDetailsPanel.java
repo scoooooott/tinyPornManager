@@ -34,7 +34,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -101,7 +100,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     btnPlay = new UpnpPlayButton() {
       @Override
       public MediaFile getMediaFile() {
-        return selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
+        return selectionModel.getSelectedTvShowEpisode().getFirstVideoFile();
       }
 
       @Override

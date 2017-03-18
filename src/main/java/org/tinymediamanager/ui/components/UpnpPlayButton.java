@@ -64,6 +64,9 @@ public abstract class UpnpPlayButton extends JButton {
    */
   private void playLocal() {
     MediaFile mf = getMediaFile();
+    if (mf == null) {
+      return;
+    }
     try {
       TmmUIHelper.openFile(mf.getFileAsPath());
     }

@@ -5,6 +5,7 @@ Version 2.9.3
 + correct wrong TVDB entries, where year is specified in title
 + added movie edition to the NFOs
 + EXPERIMENTAL: UPnP support -
+x fixed several crashes when pressing the play button
 x fixed stacking detection #132
 x fixed some Trakt.tv syncing issues #137
 x fixed searching for movie set id in movie set editor
