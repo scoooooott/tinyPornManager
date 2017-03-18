@@ -255,7 +255,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         panelButtons.setLayout(layout);
         panelBottom.add(panelButtons, "5, 2, fill, fill");
 
-        JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
+        JButton btnDone = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
         btnDone.setIcon(IconManager.APPLY);
         btnDone.addActionListener(new ActionListener() {
           @Override
