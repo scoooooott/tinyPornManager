@@ -54,27 +54,6 @@ public class ActorImageLabel extends ImageLabel {
     }
   }
 
-  // @Override
-  // public void setImagePath(String newValue) {
-  // String oldValue = this.imagePath;
-  //
-  // if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
-  // return;
-  // }
-  //
-  // this.imagePath = newValue;
-  // firePropertyChange("imagePath", oldValue, newValue);
-  //
-  // // stop previous worker
-  // if (worker != null && !worker.isDone()) {
-  // worker.cancel(true);
-  // }
-  //
-  // // load image in separate worker -> performance
-  // worker = new ImageLoader(this.imagePath, this.getSize());
-  // worker.execute();
-  // }
-
   @Override
   public void setImageUrl(String newValue) {
     String oldValue = this.imageUrl;

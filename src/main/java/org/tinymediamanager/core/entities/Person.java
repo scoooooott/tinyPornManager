@@ -104,6 +104,7 @@ public abstract class Person extends AbstractModelObject {
    * 
    * @return path or NULL
    */
+  @Deprecated
   public Path getStoragePath() {
     if (StringUtils.isEmpty(entityRoot) || StringUtils.isEmpty(name)) {
       return null;
@@ -156,6 +157,7 @@ public abstract class Person extends AbstractModelObject {
    * 
    * @return
    */
+  @Deprecated
   public String getEntityRoot() {
     return entityRoot;
   }
@@ -165,8 +167,16 @@ public abstract class Person extends AbstractModelObject {
    * 
    * @param entityRoot
    */
+  @Deprecated
   public void setEntityRoot(String entityRoot) {
     this.entityRoot = entityRoot;
+  }
+
+  @Deprecated
+  public void setEntityRoot(Path entityRoot) {
+    if (entityRoot != null) {
+      this.entityRoot = entityRoot.toString();
+    }
   }
 
   /**

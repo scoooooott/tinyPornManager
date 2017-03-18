@@ -197,6 +197,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public Path getPathNIO() {
+    if (StringUtils.isBlank(path)) {
+      return null;
+    }
     return Paths.get(path).toAbsolutePath();
   }
 

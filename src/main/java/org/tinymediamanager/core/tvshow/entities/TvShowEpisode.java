@@ -681,7 +681,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void addActor(TvShowActor obj) {
     // and re-set episode path to the actor
     if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+      obj.setEntityRoot(getPathNIO());
     }
 
     actors.add(obj);
@@ -754,7 +754,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // and re-set episode path to the actors
     for (TvShowActor actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
+        actor.setEntityRoot(getPathNIO());
       }
     }
 

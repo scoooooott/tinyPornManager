@@ -427,7 +427,7 @@ public class Movie extends MediaEntity {
   public void addActor(MovieActor obj) {
     // and re-set movie path the actors
     if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+      obj.setEntityRoot(getPathNIO());
     }
 
     actors.add(obj);
@@ -1214,7 +1214,7 @@ public class Movie extends MediaEntity {
     // and re-set movie path to the actors
     for (MovieActor actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
+        actor.setEntityRoot(getPathNIO());
       }
     }
 
@@ -2001,7 +2001,7 @@ public class Movie extends MediaEntity {
   public void addProducer(MovieProducer obj) {
     // and re-set movie path of the producer
     if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+      obj.setEntityRoot(getPathNIO());
     }
 
     producers.add(obj);
@@ -2054,7 +2054,7 @@ public class Movie extends MediaEntity {
     // and re-set movie path to the producers
     for (MovieProducer producer : producers) {
       if (StringUtils.isBlank(producer.getEntityRoot())) {
-        producer.setEntityRoot(getPathNIO().toString());
+        producer.setEntityRoot(getPathNIO());
       }
     }
 

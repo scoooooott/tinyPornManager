@@ -1076,7 +1076,7 @@ public class TvShow extends MediaEntity {
   public void addActor(TvShowActor obj) {
     // and re-set TV show path to the actor
     if (StringUtils.isBlank(obj.getEntityRoot())) {
-      obj.setEntityRoot(getPathNIO().toString());
+      obj.setEntityRoot(getPathNIO());
     }
 
     actors.add(obj);
@@ -1132,7 +1132,7 @@ public class TvShow extends MediaEntity {
     // and re-set TV show path to the actors
     for (TvShowActor actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
+        actor.setEntityRoot(getPathNIO());
       }
     }
 

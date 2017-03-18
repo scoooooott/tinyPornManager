@@ -43,6 +43,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSetArtworkHelper;
@@ -491,7 +492,14 @@ public class UpgradeTasks {
       LOGGER.info("Performing database upgrade tasks to version 2.9.3");
 
       // rewrite all NFOs to get rid of null strings
+      // and update all actor paths
       for (Movie movie : movieList.getMovies()) {
+        for (Person person : movie.getActors()) {
+          person.setEntityRoot(movie.getPathNIO());
+        }
+        for (Person person : movie.getProducers()) {
+          person.setEntityRoot(movie.getPathNIO());
+        }
         movie.saveToDb();
       }
       for (MovieSet movieSet : movieList.getMovieSetList()) {
@@ -499,8 +507,14 @@ public class UpgradeTasks {
       }
 
       for (TvShow show : tvShowList.getTvShows()) {
+        for (Person person : show.getActors()) {
+          person.setEntityRoot(show.getPathNIO());
+        }
         show.saveToDb();
         for (TvShowEpisode episode : show.getEpisodes()) {
+          for (Person person : episode.getGuests()) {
+            person.setEntityRoot(episode.getPathNIO());
+          }
           episode.saveToDb();
         }
       }
