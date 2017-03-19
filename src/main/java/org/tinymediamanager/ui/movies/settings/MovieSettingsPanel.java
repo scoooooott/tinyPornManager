@@ -50,6 +50,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -247,9 +248,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("movie.datasource.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
           settings.addMovieDataSources(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty("movie.datasource.path", file.toAbsolutePath().toString());
         }
       }
     });
@@ -296,9 +299,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnAddIgnore.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("movie.ignore.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
           settings.addMovieSkipFolder(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty("movie.ignore.path", file.toAbsolutePath().toString());
         }
       }
     });

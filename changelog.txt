@@ -4,6 +4,8 @@ Version 2.9.3
 + updated Trakt, now being able to scrape in user language (if available)
 + correct wrong TVDB entries, where year is specified in title
 + added movie edition to the NFOs
++ remember some choices you do in the UI (like chosen export folder, export template, ...)
++ added warning when exporting to a non empty directory
 + EXPERIMENTAL: UPnP support -
 x fixed several crashes when pressing the play button
 x fixed stacking detection #132

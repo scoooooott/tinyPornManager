@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -44,6 +45,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -60,17 +62,17 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class BugReportDialog extends TmmDialog {
   private static final long           serialVersionUID = 1992385114573899815L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
+
+  private static final String         DIALOG_ID        = "bugReportdialog";
 
   /**
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    super(BUNDLE.getString("BugReport"), "bugReportdialog");
+    super(BUNDLE.getString("BugReport"), DIALOG_ID);
     getContentPane().setLayout(new BorderLayout(0, 0));
 
     JPanel panelContent = new JPanel();
@@ -96,9 +98,12 @@ public class BugReportDialog extends TmmDialog {
       public void actionPerformed(ActionEvent e) {
         // open the log download window
         try {
-          Path file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), "tmm_logs.zip", new FileNameExtensionFilter("Zip files", ".zip")); //$NON-NLS-1$
-          if (file != null) {
+          String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+          Path file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), path, "tmm_logs.zip", //$NON-NLS-1$
+              new FileNameExtensionFilter("Zip files", ".zip"));
+          if (Files.exists(file)) {
             writeLogsFile(file.toFile());
+            TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
           }
         }
         catch (Exception ex) {

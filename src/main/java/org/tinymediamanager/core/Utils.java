@@ -71,7 +71,6 @@ import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.TmmWindowSaver;
 
 /**
  * The Class Utils.
@@ -505,7 +504,7 @@ public class Utils {
                   + "&je=1"
                   + session
                   + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
-                  + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
+                  + "&vp=" + TmmProperties.getInstance().getPropertyAsInteger("mainWindowW") + "x" + TmmProperties.getInstance().getPropertyAsInteger("mainWindowH")
                   + "&cd1=" + getEncProp("os.name") 
                   + "&cd2=" + getEncProp("os.arch") 
                   + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
@@ -1298,6 +1297,20 @@ public class Utils {
       }
 
     });
+  }
+
+  /**
+   * check whether a folder is empty or not
+   * 
+   * @param folder
+   *          the folder to be checked
+   * @return true/false
+   * @throws IOException
+   */
+  public static boolean isFolderEmpty(final Path folder) throws IOException {
+    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(folder)) {
+      return !dirStream.iterator().hasNext();
+    }
   }
 
   /**

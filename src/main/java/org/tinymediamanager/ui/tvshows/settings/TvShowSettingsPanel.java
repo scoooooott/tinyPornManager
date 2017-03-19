@@ -45,6 +45,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -227,9 +228,11 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAdd.setMargin(new Insets(2, 2, 2, 2));
       btnAdd.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
-          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+          String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path");
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
           if (file != null && Files.isDirectory(file)) {
             settings.addTvShowDataSources(file.toAbsolutePath().toString());
+            TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
           }
         }
       });
@@ -276,9 +279,11 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       btnAddSkipFolder.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+          String path = TmmProperties.getInstance().getProperty("tvshow.ignore.path");
+          Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
           if (file != null && Files.isDirectory(file)) {
             settings.addTvShowSkipFolder(file.toAbsolutePath().toString());
+            TmmProperties.getInstance().putProperty("tvshow.ignore.path", file.toAbsolutePath().toString());
           }
         }
       });

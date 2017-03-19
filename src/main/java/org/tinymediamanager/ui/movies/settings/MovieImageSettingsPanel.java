@@ -57,14 +57,15 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -93,9 +94,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieImageSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 7312645402037806284L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.MOVIE_SETTINGS;
@@ -357,9 +356,11 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelExtraArtwork.add(btnSelectFolder, "10, 24");
     btnSelectFolder.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("movieset.folderchooser.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser"), path); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
           tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty("movieset.folderchooser.path", file.toAbsolutePath().toString());
         }
       }
     });

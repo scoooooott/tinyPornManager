@@ -62,6 +62,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -83,9 +84,7 @@ import com.sun.jna.Platform;
  */
 public class GeneralSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID   = 500841588272296493L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
@@ -333,9 +332,11 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     btnSearchMediaPlayer.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("chooseplayer.path");
+        Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer"), path); //$NON-NLS-1$
         if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
           tfMediaPlayer.setText(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty("chooseplayer.path", file.toAbsolutePath().toString());
         }
       }
     });

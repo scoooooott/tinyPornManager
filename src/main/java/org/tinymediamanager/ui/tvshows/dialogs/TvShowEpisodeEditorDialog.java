@@ -68,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -110,12 +111,12 @@ import ca.odell.glazedlists.swing.AutoCompleteSupport;
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
   private static final long                                     serialVersionUID = 7702248909791283043L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
   private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Date                                     INITIAL_DATE     = new Date(0);
+
+  private static final String                                   DIALOG_ID        = "tvShowEpisodeScraper";
 
   private TvShowList                                            tvShowList       = TvShowList.getInstance();
   private TvShowEpisode                                         episodeToEdit;
@@ -162,7 +163,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
    *          the in queue
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
-    super(BUNDLE.getString("tvshowepisode.scrape"), "tvShowEpisodeScraper"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowepisode.scrape"), DIALOG_ID); //$NON-NLS-1$
     setBounds(5, 5, 964, 632);
 
     for (MediaFile mf : episode.getMediaFiles()) {
@@ -309,10 +310,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       lblThumb.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
+          String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+          Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path); //$NON-NLS-1$
           if (file != null && Utils.isRegularFile(file)) {
             String fileName = file.toAbsolutePath().toString();
             lblThumb.setImageUrl("file:/" + fileName);
+            TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);
           }
         }
       });

@@ -20,6 +20,7 @@ import java.awt.FileDialog;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -41,19 +42,15 @@ import org.tinymediamanager.ui.components.NativeFileChooser;
  */
 public class TmmUIHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(TmmUIHelper.class);
-  private static Path         lastDir;
 
-  public static Path selectDirectory(String title) {
+  public static Path selectDirectory(String title, String initialPath) {
     // on mac try to take the AWT FileDialog
     if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
       try {
         // open directory chooser
-        return openDirectoryDialog(title);
+        return openDirectoryDialog(title, initialPath);
       }
-      catch (Exception e) {
-        LOGGER.warn("cannot open AWT directory chooser" + e.getMessage());
-      }
-      catch (Error e) {
+      catch (Exception | Error e) {
         LOGGER.warn("cannot open AWT directory chooser" + e.getMessage());
       }
       finally {
@@ -63,16 +60,19 @@ public class TmmUIHelper {
     }
 
     // open JFileChooser
-    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, true, null, null);
+    return openJFileChooser(JFileChooser.DIRECTORIES_ONLY, title, initialPath, true, null, null);
   }
 
-  private static Path openDirectoryDialog(String title) throws Exception, Error {
+  private static Path openDirectoryDialog(String title, String initialPath) throws Exception, Error {
     // set system property to choose directories
     System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
     FileDialog chooser = new FileDialog(MainWindow.getFrame(), title);
-    if (lastDir != null) {
-      chooser.setDirectory(lastDir.toFile().getAbsolutePath());
+    if (StringUtils.isNotBlank(initialPath)) {
+      Path path = Paths.get(initialPath);
+      if (Files.exists(path)) {
+        chooser.setDirectory(path.toFile().getAbsolutePath());
+      }
     }
     chooser.setVisible(true);
 
@@ -80,7 +80,6 @@ public class TmmUIHelper {
     System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
-      lastDir = Paths.get(chooser.getDirectory());
       return Paths.get(chooser.getDirectory(), chooser.getFile());
     }
     else {
@@ -88,20 +87,25 @@ public class TmmUIHelper {
     }
   }
 
-  private static Path openJFileChooser(int mode, String dialogTitle, boolean open, String filename, FileNameExtensionFilter filter) {
-    JFileChooser fileChooser;
+  private static Path openJFileChooser(int mode, String dialogTitle, String initialPath, boolean open, String filename,
+      FileNameExtensionFilter filter) {
+    JFileChooser fileChooser = null;
     // are we forced to open the legacy file chooser?
     if ("true".equals(System.getProperty("tmm.legacy.filechooser"))) {
       fileChooser = new JFileChooser();
     }
-    else {
+    else if (StringUtils.isNotBlank(initialPath)) {
+      Path path = Paths.get(initialPath);
+      if (Files.exists(path)) {
+        fileChooser = new NativeFileChooser(path.toFile());
+      }
+    }
+
+    if (fileChooser == null) {
       fileChooser = new NativeFileChooser();
     }
 
     fileChooser.setFileSelectionMode(mode);
-    if (lastDir != null) {
-      fileChooser.setCurrentDirectory(lastDir.toFile());
-    }
     fileChooser.setDialogTitle(dialogTitle);
 
     int result = -1;
@@ -117,24 +121,18 @@ public class TmmUIHelper {
     }
 
     if (result == JFileChooser.APPROVE_OPTION) {
-      if (mode == JFileChooser.DIRECTORIES_ONLY) {
-        lastDir = fileChooser.getSelectedFile().toPath();
-      }
-      else {
-        lastDir = fileChooser.getSelectedFile().getParentFile().toPath();
-      }
       return fileChooser.getSelectedFile().toPath();
     }
 
     return null;
   }
 
-  public static Path selectFile(String title) {
+  public static Path selectFile(String title, String initialPath) {
     // try to open AWT dialog on OSX
     if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
       try {
         // open file chooser
-        return openFileDialog(title, FileDialog.LOAD, null);
+        return openFileDialog(title, initialPath, FileDialog.LOAD, null);
       }
       catch (Exception e) {
         LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
@@ -145,13 +143,16 @@ public class TmmUIHelper {
     }
 
     // open JFileChooser
-    return openJFileChooser(JFileChooser.FILES_ONLY, title, true, null, null);
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, true, null, null);
   }
 
-  private static Path openFileDialog(String title, int mode, String filename) throws Exception, Error {
+  private static Path openFileDialog(String title, String initialPath, int mode, String filename) throws Exception, Error {
     FileDialog chooser = new FileDialog(MainWindow.getFrame(), title, mode);
-    if (lastDir != null) {
-      chooser.setDirectory(lastDir.toFile().getAbsolutePath());
+    if (StringUtils.isNotBlank(initialPath)) {
+      Path path = Paths.get(initialPath);
+      if (Files.exists(path)) {
+        chooser.setDirectory(path.toFile().getAbsolutePath());
+      }
     }
     if (mode == FileDialog.SAVE) {
       chooser.setFile(filename);
@@ -159,7 +160,6 @@ public class TmmUIHelper {
     chooser.setVisible(true);
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
-      lastDir = Paths.get(chooser.getDirectory());
       return Paths.get(chooser.getDirectory(), chooser.getFile());
     }
     else {
@@ -167,12 +167,12 @@ public class TmmUIHelper {
     }
   }
 
-  public static Path saveFile(String title, String filename, FileNameExtensionFilter filter) {
+  public static Path saveFile(String title, String initialPath, String filename, FileNameExtensionFilter filter) {
     // try to open AWT dialog on OSX
     if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
       try {
         // open file chooser
-        return openFileDialog(title, FileDialog.SAVE, filename);
+        return openFileDialog(title, initialPath, FileDialog.SAVE, filename);
       }
       catch (Exception e) {
         LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
@@ -182,7 +182,7 @@ public class TmmUIHelper {
       }
     }
 
-    return openJFileChooser(JFileChooser.FILES_ONLY, title, false, filename, filter);
+    return openJFileChooser(JFileChooser.FILES_ONLY, title, initialPath, false, filename, filter);
   }
 
   public static void openFile(Path file) throws Exception {

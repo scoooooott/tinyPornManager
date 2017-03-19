@@ -79,7 +79,6 @@ public abstract class TmmDialog extends JDialog {
   public void setVisible(boolean visible) {
     if (visible) {
       TmmWindowSaver.getInstance().loadSettings(this);
-      pack();
       setLocationRelativeTo(MainWindow.getActiveInstance());
       super.setVisible(true);
     }

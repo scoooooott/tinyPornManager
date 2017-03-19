@@ -109,6 +109,20 @@ public class UpgradeTasks {
         }
       }
     }
+
+    // upgrade to v2.9.3
+    if (StrgUtils.compareVersion(v, "2.9.3") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.9.3");
+      // rename data/tmm_ui.prop to data/tmm.prop
+      Path uiProp = Paths.get(Settings.getInstance().getSettingsFolder(), "tmm_ui.prop");
+      if (Files.exists(uiProp)) {
+        try {
+          FileUtils.moveFile(uiProp.toFile(), new File(Settings.getInstance().getSettingsFolder(), "tmm.prop"));
+        }
+        catch (Exception ignored) {
+        }
+      }
+    }
   }
 
   private static void moveToConfigFolder(Path file) {
