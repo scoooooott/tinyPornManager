@@ -1767,12 +1767,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
         }
         else {
-          // do some sanity check, to see, if we have an invalid DVD structure
-          // eg when the sum(filesize) way higher than ISO size
-          LOGGER.trace("ISO size:" + filesize + "  dataSize:" + discFilesSizes + "  = diff:" + Math.abs(discFilesSizes - filesize));
           if (discFilesSizes > 0 && filesize > 0) {
-            long gig = 1024 * 1024 * 1024;
-            if (Math.abs(discFilesSizes - filesize) > gig) {
+            // do some sanity check, to see, if we have an invalid DVD structure
+            // eg when the sum(filesize) way higher than ISO size
+            long diff = Math.abs(filesize - discFilesSizes);
+            Double ratio = diff * 100.0 / filesize;
+            LOGGER.debug("ISO size:" + filesize + "  reportedDataSize:" + discFilesSizes + "  = diff:" + diff + " ~" + ratio.intValue() + "%");
+            if (ratio > 10) {
               LOGGER.error("ISO file seems to have an invalid structure - ignore duration");
               // we set the ISO duration to zero,
               // so the standard getDuration() will always get the scraped duration

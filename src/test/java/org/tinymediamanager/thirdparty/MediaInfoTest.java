@@ -5,12 +5,8 @@ import java.util.Date;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.entities.MediaFile;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 
 public class MediaInfoTest extends BasicTest {
 
@@ -48,8 +44,7 @@ public class MediaInfoTest extends BasicTest {
 
   @Test
   public void mediaFile() {
-    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-    lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+    setTraceLogging();
 
     MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
     mf.gatherMediaInformation();

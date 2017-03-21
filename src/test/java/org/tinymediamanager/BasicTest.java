@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 public class BasicTest {
 
@@ -34,6 +38,11 @@ public class BasicTest {
       System.err.println(expected + " - FAILED: " + message + "(" + e.getMessage() + ")");
       throw e;
     }
+  }
+
+  public static void setTraceLogging() {
+    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+    lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
   }
 
   public static String getSettingsFolder() {
