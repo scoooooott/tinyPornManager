@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,7 +171,11 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
           fallback += "/getdown.txt";
         }
         Url upd = new Url(fallback);
-        String gd = IOUtils.toString(upd.getInputStream(), "UTF-8");
+        InputStream is = upd.getInputStream();
+        if (is == null) {
+          throw new Exception("Server returned " + upd.getStatusCode() + "\nIf this error persists, please check forum!");
+        }
+        String gd = IOUtils.toString(is, "UTF-8");
         if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
           throw new Exception("could not even download our fallback");
         }
@@ -178,9 +183,8 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         return true;
       }
       catch (Exception e2) {
-        LOGGER.error("Update fallback failed!" + e.getMessage());
-        MessageManager.instance
-            .pushMessage(new Message(MessageLevel.ERROR, "Please reinstal tinyMediaManager!", "Update check failed very badly :("));
+        LOGGER.error("Update fallback failed!" + e2.getMessage());
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Update check failed :(", e2.getMessage()));
       }
     }
     return false;
