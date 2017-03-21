@@ -76,20 +76,4 @@ public class TvShowMergeTest {
     Assert.assertEquals(3, show1.getEpisodeCount());
   }
 
-  @Test
-  public void testEquals() {
-    TvShowEpisode e1 = new TvShowEpisode();
-    e1.setAiredSeason(1);
-    e1.setAiredEpisode(2);
-
-    TvShowEpisode e2 = new TvShowEpisode();
-    e2.setAiredSeason(1);
-    e2.setAiredEpisode(2);
-
-    Assert.assertEquals(e1, e2);
-
-    e2.setDvdEpisode(2);
-    Assert.assertEquals(e1, e2);
-  }
-
 }

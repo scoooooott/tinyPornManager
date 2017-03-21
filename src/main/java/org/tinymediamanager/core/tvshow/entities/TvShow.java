@@ -215,9 +215,10 @@ public class TvShow extends MediaEntity {
       ep.merge(otherEP);
     }
     // get others, and simply add
-    for (TvShowEpisode ep : other.getEpisodes()) {
-      if (!episodes.contains(ep)) {
-        TvShowEpisode clone = new TvShowEpisode(ep);
+    for (TvShowEpisode otherEp : other.getEpisodes()) {
+      TvShowEpisode ourEP = getEpisode(otherEp.getSeason(), otherEp.getEpisode()); // do not do a contains check!
+      if (ourEP == null) {
+        TvShowEpisode clone = new TvShowEpisode(otherEp);
         clone.setTvShow(this); // yes!
         addEpisode(clone);
       }
