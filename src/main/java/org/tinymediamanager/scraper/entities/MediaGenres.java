@@ -23,15 +23,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.ApiResourceBundle;
 import org.tinymediamanager.scraper.DynaEnum;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * The class/dynaenum MediaGenres. This class stores all default known genres along with some different parsing informations
@@ -73,7 +72,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres              REALITY_TV      = new MediaGenres("REALITY_TV", 27, "Reality TV");
   public final static MediaGenres              ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie");
   public final static MediaGenres              ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance");
-  public final static MediaGenres              SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction");
+  public final static MediaGenres              SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction", new String[] { "Sci-Fi" });
   public final static MediaGenres              SERIES          = new MediaGenres("SERIES", 31, "Series");
   public final static MediaGenres              SHORT           = new MediaGenres("SHORT", 32, "Short");
   public final static MediaGenres              SILENT_MOVIE    = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie");
@@ -104,6 +103,24 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     super(enumName, ordinal);
     this.name = name;
     this.alternateNames = loadAlternateNames(enumName);
+  }
+
+  /**
+   * Instantiates a new genres.
+   *
+   * @param enumName
+   *          the enum name
+   * @param ordinal
+   *          the ordinal
+   * @param name
+   *          the name
+   * @param alternates
+   *          extra alternate names
+   */
+  private MediaGenres(String enumName, int ordinal, String name, String[] alternates) {
+    super(enumName, ordinal);
+    this.name = name;
+    this.alternateNames = ArrayUtils.addAll(loadAlternateNames(enumName), alternates);
   }
 
   @Override
