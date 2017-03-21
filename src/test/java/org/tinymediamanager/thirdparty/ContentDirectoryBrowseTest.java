@@ -112,11 +112,12 @@ public class ContentDirectoryBrowseTest extends BasicTest {
   }
 
   private void browse(String s, BrowseFlag b) throws ContentDirectoryException {
-    CDS.browse(s, b, "", 0, 200, new SortCriterion[] {});
+    CDS.browse(s, b, "", 0, 200, SortCriterion.valueOf("+dc:date,+dc:title"));
   }
 
   @BeforeClass
   public static void init() throws Exception {
+    setTraceLogging();
     deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
 
@@ -124,8 +125,14 @@ public class ContentDirectoryBrowseTest extends BasicTest {
     MovieModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
 
-    createFakeMovie("UPNPMovie");
-    createFakeShow("UPNPShow");
+    createFakeMovie("UPNPMovie3");
+    createFakeMovie("UPNPMovie2");
+    createFakeMovie("UPNPMovie1");
+    createFakeMovie("Another");
+    createFakeShow("UPNPShow3");
+    createFakeShow("UPNPShow2");
+    createFakeShow("UPNPShow1");
+    createFakeShow("Another");
   }
 
   @AfterClass

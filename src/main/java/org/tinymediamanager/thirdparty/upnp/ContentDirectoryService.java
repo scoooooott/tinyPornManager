@@ -2,6 +2,8 @@ package org.tinymediamanager.thirdparty.upnp;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.DynaComparator;
 import org.tinymediamanager.ui.UTF8Control;
 
 public class ContentDirectoryService extends AbstractContentDirectoryService {
@@ -44,6 +47,13 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
       LOGGER.debug("FirstResult: " + firstResult);
       LOGGER.debug("MaxResults: " + maxResults);
       LOGGER.debug("OrderBy: " + SortCriterion.toString(orderby));
+
+      String orderMovie = "getTitle";
+      String orderShow = "getTitle";
+      // if (SortCriterion.toString(orderby).contains("dc:date")) {
+      // orderMovie = "getReleaseDateFormatted";
+      // orderShow = "getFirstAired";
+      // }
 
       DIDLContent didl = new DIDLContent();
 
@@ -112,7 +122,9 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
         }
         else if (path[0].equals(Upnp.ID_MOVIES)) {
           // create MOVIE folder structure -> items
-          for (org.tinymediamanager.core.movie.entities.Movie m : MovieList.getInstance().getMovies()) {
+          List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = MovieList.getInstance().getMovies();
+          Collections.sort(tmmMovies, new DynaComparator(orderMovie));
+          for (org.tinymediamanager.core.movie.entities.Movie m : tmmMovies) {
             didl.addItem(Metadata.getUpnpMovie(m, false));
           }
           return returnResult(didl);
@@ -121,7 +133,9 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
           if (path.length == 1) {
             // create TVSHOW folder structure -> container
             StorageFolder cont;
-            for (org.tinymediamanager.core.tvshow.entities.TvShow t : TvShowList.getInstance().getTvShows()) {
+            List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = TvShowList.getInstance().getTvShows();
+            Collections.sort(tmmShows, new DynaComparator(orderShow));
+            for (org.tinymediamanager.core.tvshow.entities.TvShow t : tmmShows) {
               cont = new StorageFolder();
               cont.setId(Upnp.ID_TVSHOWS + "/" + t.getDbId());
               cont.setParentID(Upnp.ID_ROOT);
