@@ -201,6 +201,29 @@ public class TvShow extends MediaEntity {
     }
   }
 
+  /**
+   * Overwrites all null/empty elements with "other" value (but might be empty also)<br>
+   * For lists, check with 'contains' and add.<br>
+   * Do NOT merge path, dateAdded, scraped, mediaFiles and other crucial properties!
+   */
+  public void merge(TvShow other) {
+    super.merge(other);
+
+    // get ours, and merge other values
+    for (TvShowEpisode ep : episodes) {
+      TvShowEpisode otherEP = other.getEpisode(ep.getSeason(), ep.getEpisode());
+      ep.merge(otherEP);
+    }
+    // get others, and simply add
+    for (TvShowEpisode ep : other.getEpisodes()) {
+      if (!episodes.contains(ep)) {
+        TvShowEpisode clone = new TvShowEpisode(ep);
+        clone.setTvShow(this); // yes!
+        addEpisode(clone);
+      }
+    }
+  }
+
   @Override
   public void setTitle(String newValue) {
     String oldValue = this.title;
