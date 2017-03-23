@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.assertj.core.util.Files;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,7 +21,8 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 
 public class TvShowUpdateDatasourceTaskTest extends BasicTest {
-  private static final String FOLDER = getSettingsFolder();
+  private static final String FOLDER                   = getSettingsFolder();
+  private static final int    NUMBER_OF_EXPECTED_SHOWS = 7;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
@@ -36,7 +35,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   public void setUpBeforeTest() throws Exception {
     TmmModuleManager.getInstance().startUp();
     TvShowModuleManager.getInstance().startUp();
-    FileUtils.copyDirectory(new File("target/test-classes/testtvshows"), new File(FOLDER, "testtvshows"));
+    Utils.copyDirectoryRecursive(Paths.get("target/test-classes/testtvshows"), Paths.get(FOLDER, "testtvshows"));
     TvShowModuleManager.SETTINGS.addTvShowDataSources(FOLDER + "/testtvshows");
   }
 
@@ -44,8 +43,6 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   public void tearDownAfterTest() throws Exception {
     TvShowModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
-    Utils.deleteDirectoryRecursive(Paths.get(FOLDER, "testtvshows"));
-    Files.delete(new File(FOLDER, "tvshows.db"));
   }
 
   @Test
@@ -65,7 +62,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   private void check() {
     // do some checks before shutting down the database
     TvShowList tvShowList = TvShowList.getInstance();
-    assertThat(tvShowList.getTvShows().size()).isEqualTo(6);
+    assertThat(tvShowList.getTvShows().size()).isEqualTo(NUMBER_OF_EXPECTED_SHOWS);
     Comparator<TvShowSeason> seasonComparator = new Comparator<TvShowSeason>() {
       @Override
       public int compare(TvShowSeason o1, TvShowSeason o2) {
