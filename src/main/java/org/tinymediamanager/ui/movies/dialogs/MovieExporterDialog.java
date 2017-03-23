@@ -192,11 +192,7 @@ public class MovieExporterDialog extends TmmDialog {
               String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
               int decision = JOptionPane.showConfirmDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
                   JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
-              if (decision == JOptionPane.YES_OPTION) {
-                Utils.deleteDirectoryRecursive(exportPath);
-                Files.createDirectories(exportPath);
-              }
-              else {
+              if (decision == JOptionPane.NO_OPTION) {
                 return;
               }
             }

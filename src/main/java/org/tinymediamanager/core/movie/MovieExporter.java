@@ -114,9 +114,10 @@ public class MovieExporter extends MediaEntityExporter {
     // create details for
     if (StringUtils.isNotBlank(detailTemplate)) {
       Path detailsDir = exportDir.resolve("movies");
-      if (Files.isDirectory(detailsDir)) {
-        Utils.deleteDirectoryRecursive(detailsDir);
-      }
+      // nah - to dangerous if you choose some root folder!
+      // if (Files.isDirectory(detailsDir)) {
+      // Utils.deleteDirectoryRecursive(detailsDir);
+      // }
       Files.createDirectory(detailsDir);
 
       for (MediaEntity me : moviesToExport) {

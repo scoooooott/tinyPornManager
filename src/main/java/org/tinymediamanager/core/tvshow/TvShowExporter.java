@@ -121,9 +121,10 @@ public class TvShowExporter extends MediaEntityExporter {
         TvShow show = (TvShow) me;
         // create a TV show dir
         Path showDir = exportDir.resolve(getFilename(show));
-        if (Files.isDirectory(showDir)) {
-          Utils.deleteDirectoryRecursive(showDir);
-        }
+        // nah - to dangerous if you choose some root folder!
+        // if (Files.isDirectory(showDir)) {
+        // Utils.deleteDirectoryRecursive(showDir);
+        // }
         Files.createDirectory(showDir);
 
         Path detailsExportFile = showDir.resolve("tvshow." + fileExtension);
