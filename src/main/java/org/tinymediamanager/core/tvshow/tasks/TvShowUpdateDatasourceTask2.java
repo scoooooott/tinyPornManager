@@ -486,6 +486,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       }
       allFiles.clear();
 
+      if (getMediaFiles(mfs, MediaFileType.VIDEO).size() == 0) {
+        LOGGER.info("no video file found in directory " + showDir);
+        return "";
+      }
+
       // ******************************
       // STEP 1 - get (or create) TvShow object
       // ******************************
