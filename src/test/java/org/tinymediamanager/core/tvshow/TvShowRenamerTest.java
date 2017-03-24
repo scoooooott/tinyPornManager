@@ -21,6 +21,7 @@ public class TvShowRenamerTest extends BasicTest {
   private static TvShow       single = new TvShow();
   private static TvShow       multi  = new TvShow();
   private static TvShow       disc   = new TvShow();
+  private static TvShow       discEP = new TvShow();
 
   @Test
   public void tvRenamerPatterns() {
@@ -72,9 +73,9 @@ public class TvShowRenamerTest extends BasicTest {
 
   @Test
   public void testDiscEpisode() throws IOException {
-    Utils.copyDirectoryRecursive(Paths.get("target/test-classes/testtvshows/Janosik DVD"), Paths.get(FOLDER, "tv/Janosik DVD"));
+    Utils.copyDirectoryRecursive(Paths.get("target/test-classes/testtvshows"), Paths.get(FOLDER, "tv"));
+    TvShowRenamer.renameEpisode(discEP.getEpisode(1, 1));
     TvShowRenamer.renameEpisode(disc.getEpisode(1, 2));
-
   }
 
   /**
@@ -128,7 +129,7 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(multi);
     multi.addEpisode(ep);
 
-    disc.setTitle("disc");
+    disc.setTitle("Janosik");
     disc.setYear("2009");
     disc.setPath(FOLDER + "/tv/Janosik DVD");
     ep = new TvShowEpisode();
@@ -136,13 +137,24 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(disc);
     ep.setDisc(true);
     ep.setTitle("discfile");
-    ep.setSeason(1);
-    ep.setEpisode(2);
-    ep.setDvdSeason(3);
-    ep.setDvdEpisode(4);
+    ep.setAiredSeason(1);
+    ep.setAiredEpisode(2);
     ep.addToMediaFiles(new MediaFile(Paths.get(FOLDER, "/tv/Janosik DVD", "Janosik S01E07E08E09", "VIDEO_TS", "VTS_01_1.VOB").toAbsolutePath()));
     ep.addToMediaFiles(new MediaFile(Paths.get(FOLDER, "/tv/Janosik DVD", "Janosik S01E07E08E09", "VIDEO_TS-thumb.jpg").toAbsolutePath()));
     disc.addEpisode(ep);
+
+    discEP.setTitle("DVDEpisodeInRoot");
+    discEP.setYear("2009");
+    discEP.setPath(FOLDER + "/tv/DVDEpisodeInRoot");
+    ep = new TvShowEpisode();
+    ep.setPath(FOLDER + "/tv/DVDEpisodeInRoot/S01EP01 title");
+    ep.setTvShow(discEP);
+    ep.setDisc(true);
+    ep.setTitle("disc ep");
+    ep.setAiredSeason(1);
+    ep.setAiredEpisode(1);
+    ep.addToMediaFiles(new MediaFile(Paths.get(FOLDER, "/tv/DVDEpisodeInRoot", "S01EP01 title", "VTS_01_1.VOB").toAbsolutePath()));
+    discEP.addEpisode(ep);
   }
 
   private Path gen(TvShow show, String showPattern, String seasonPattern, String filePattern, boolean recommended) {

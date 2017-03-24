@@ -168,18 +168,36 @@ public class TvShowRenamer {
       }
     }
 
-    // sanity check
-    // if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")) {
-    // LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
-    // return;
-    // }
+    // sanity checks
+    // DVD files in show root - NO, keep everything
+    if (show.getPathNIO().toString().equals(episode.getPathNIO().toString())) {
+      LOGGER.error("Episode is labeled as 'on BD/DVD', but files are in show root. Cannot rename episode o_O");
+      return;
+    }
+
+    // find DISC root folder
     MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
-    Path disc = show.getPathNIO().resolve(mf.getFileAsPath().getParent()); // VIDEO_TS or BDMV (opr empty)
+    Path disc = mf.getFileAsPath().getParent().toAbsolutePath(); // folder
+    String folder = show.getPathNIO().relativize(disc).toString().toUpperCase(Locale.ROOT); // relative
+    while (folder.contains("BDMV") || folder.contains("VIDEO_TS")) {
+      disc = disc.getParent();
+      folder = show.getPathNIO().relativize(disc).toString().toUpperCase(Locale.ROOT); // reevaluate
+    }
+
+    if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")) {
+      LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
+      // return;
+    }
 
     String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
     if (newFoldername != null && !newFoldername.isEmpty()) {
       Path newEpFolder = seasonDir.resolve(newFoldername);
+
       Path newDisc = newEpFolder.resolve(disc.getFileName()); // old disc name
+      // disc root files same as episode root - no DISC folder
+      if (disc.toAbsolutePath().toString().equals(episode.getPathNIO().toString())) {
+        newDisc = newEpFolder;
+      }
 
       try {
         // if (!epFolder.equals(newEpFolder)) {
@@ -214,7 +232,7 @@ public class TvShowRenamer {
 
         // rename thumb files (we wrote them wrong / old style)
         List<MediaFile> thumbs = episode.getMediaFiles(MediaFileType.THUMB);
-        if (thumbs != null) {
+        if (thumbs != null && !thumbs.isEmpty()) {
           MediaFile th = thumbs.get(0);
           MediaFile th2 = new MediaFile(thumbs.get(0)); // clone
           th2.setFilename("thumb." + th2.getExtension());
