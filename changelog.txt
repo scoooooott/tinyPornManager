@@ -17,6 +17,8 @@ x automatically drop corrupt entries from the database
 x fixed actor image writing
 x fixed movie renamer token $1/$2 to use first alpha numeric character
 x fixed Plex trailers wrongly detected as extras
+x fix thumb image naming for disc style episodes
+x fix renaming of disc style episodes 
 x fixed searching for TV show actors in the UI filter
   you may need to restart tinyMediaManager once after the update
 

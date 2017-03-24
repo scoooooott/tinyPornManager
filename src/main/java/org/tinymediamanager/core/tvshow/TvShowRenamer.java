@@ -137,9 +137,95 @@ public class TvShowRenamer {
       return;
     }
 
-    LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
-    for (MediaFile mf : new ArrayList<>(episode.getMediaFiles())) {
-      renameMediaFile(mf, episode.getTvShow());
+    if (episode.isDisc()) {
+      renameDiscEpisode(episode);
+    }
+    else {
+      LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
+      for (MediaFile mf : new ArrayList<>(episode.getMediaFiles())) {
+        renameMediaFile(mf, episode.getTvShow());
+      }
+    }
+  }
+
+  private static void renameDiscEpisode(TvShowEpisode episode) {
+    // \Season 1\S01E02E03\VIDEO_TS\VIDEO_TS.VOB
+    // seasonDir \epFolder \disc... \ file
+    Path epFolder = episode.getPathNIO();
+    TvShow show = episode.getTvShow();
+
+    // gen season dir
+    String seasonName = generateSeasonDir(SETTINGS.getRenamerSeasonFoldername(), episode);
+    Path seasonDir = show.getPathNIO();
+    if (StringUtils.isNotBlank(seasonName)) {
+      seasonDir = show.getPathNIO().resolve(seasonName);
+      if (!Files.exists(seasonDir)) {
+        try {
+          Files.createDirectory(seasonDir);
+        }
+        catch (IOException e) {
+        }
+      }
+    }
+
+    // sanity check
+    // if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")) {
+    // LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
+    // return;
+    // }
+    MediaFile mf = episode.getMediaFiles(MediaFileType.VIDEO).get(0);
+    Path disc = show.getPathNIO().resolve(mf.getFileAsPath().getParent()); // VIDEO_TS or BDMV (opr empty)
+
+    String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
+    if (newFoldername != null && !newFoldername.isEmpty()) {
+      Path newEpFolder = seasonDir.resolve(newFoldername);
+      Path newDisc = newEpFolder.resolve(disc.getFileName()); // old disc name
+
+      try {
+        // if (!epFolder.equals(newEpFolder)) {
+        if (!epFolder.toAbsolutePath().toString().equals(newEpFolder.toAbsolutePath().toString())) {
+          boolean ok = false;
+          try {
+            // create parent if needed
+            if (!Files.exists(newEpFolder.getParent())) {
+              Files.createDirectory(newEpFolder.getParent());
+            }
+            ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
+          }
+          catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, epFolder, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
+          }
+          if (ok) {
+            // iterate over all EPs & MFs and fix new path
+            LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
+            episode.updateMediaFilePath(disc, newDisc); // update path for files in disc root
+            episode.updateMediaFilePath(epFolder, newEpFolder);// update path for files in episode root
+            episode.setPath(newEpFolder.toAbsolutePath().toString());
+            episode.saveToDb();
+          }
+          // and cleanup
+          cleanEmptyDir(epFolder);
+        }
+        else {
+          // old and new folder are equal, do nothing
+        }
+
+        // rename thumb files (we wrote them wrong / old style)
+        List<MediaFile> thumbs = episode.getMediaFiles(MediaFileType.THUMB);
+        if (thumbs != null) {
+          MediaFile th = thumbs.get(0);
+          MediaFile th2 = new MediaFile(thumbs.get(0)); // clone
+          th2.setFilename("thumb." + th2.getExtension());
+          Utils.moveFileSafe(th.getFileAsPath(), th2.getFileAsPath());
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("error moving video file " + disc + " to " + newFoldername, e);
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
+      }
     }
   }
 
@@ -221,133 +307,74 @@ public class TvShowRenamer {
       }
     }
 
-    // rename epFolder accordingly
-    if (ep.isDisc() || mf.isDiscFile()) {
-      // \Season 1\S01E02E03\VIDEO_TS\VIDEO_TS.VOB
-      // ........ \epFolder \disc... \ file
-      Path disc = mf.getFileAsPath().getParent();
-      Path epFolder = disc.getParent();
-
-      // sanity check
-      if (!disc.getFileName().toString().equalsIgnoreCase("BDMV") && !disc.getFileName().toString().equalsIgnoreCase("VIDEO_TS")) {
-        LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
-        return;
-      }
-
-      String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
-      if (newFoldername != null && !newFoldername.isEmpty()) {
-        Path newEpFolder = seasonDir.resolve(newFoldername);
-        Path newDisc = newEpFolder.resolve(disc.getFileName()); // old disc name
-
+    MediaFile newMF = new MediaFile(mf); // clone MF
+    if (mf.getType().equals(MediaFileType.TRAILER)) {
+      // move trailer into separate dir - not supported by XBMC
+      Path sample = seasonDir.resolve("sample");
+      if (!Files.exists(sample)) {
         try {
-          // if (!epFolder.equals(newEpFolder)) {
-          if (!epFolder.toAbsolutePath().toString().equals(newEpFolder.toAbsolutePath().toString())) {
-            boolean ok = false;
-            try {
-              // create parent if needed
-              if (!Files.exists(newEpFolder.getParent())) {
-                Files.createDirectory(newEpFolder.getParent());
-              }
-              ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
-            }
-            catch (Exception e) {
-              LOGGER.error(e.getMessage());
-              MessageManager.instance.pushMessage(
-                  new Message(MessageLevel.ERROR, epFolder, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
-            }
-            if (ok) {
-              // iterate over all EPs & MFs and fix new path
-              LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
-              for (TvShowEpisode e : eps) {
-                e.updateMediaFilePath(disc, newDisc);
-                e.setPath(newEpFolder.toAbsolutePath().toString());
-                e.saveToDb();
-              }
-            }
-            // and cleanup
-            cleanEmptyDir(epFolder);
-          }
-          else {
-            // old and new folder are equal, do nothing
-          }
+          Files.createDirectory(sample);
         }
-        catch (Exception e) {
-          LOGGER.error("error moving video file " + disc + " to " + newFoldername, e);
-          MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
+        catch (IOException e) {
         }
       }
-    } // end isDisc
-    else {
-      MediaFile newMF = new MediaFile(mf); // clone MF
-      if (mf.getType().equals(MediaFileType.TRAILER)) {
-        // move trailer into separate dir - not supported by XBMC
-        Path sample = seasonDir.resolve("sample");
-        if (!Files.exists(sample)) {
+      seasonDir = sample; // change directory storage
+    }
+    String filename = generateFilename(show, mf);
+    LOGGER.debug("new filename should be " + filename);
+    if (StringUtils.isNotBlank(filename)) {
+      Path newFile = seasonDir.resolve(filename);
+
+      try {
+        // if (!mf.getFile().equals(newFile)) {
+        if (!mf.getFileAsPath().toString().equals(newFile.toString())) {
+          Path oldMfFile = mf.getFileAsPath();
+          boolean ok = false;
           try {
-            Files.createDirectory(sample);
+            // create parent if needed
+            if (!Files.exists(newFile.getParent())) {
+              Files.createDirectory(newFile.getParent());
+            }
+            ok = Utils.moveFileSafe(oldMfFile, newFile);
           }
-          catch (IOException e) {
+          catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            MessageManager.instance.pushMessage(
+                new Message(MessageLevel.ERROR, oldMfFile, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
           }
+          if (ok) {
+            if (mf.getFilename().endsWith(".sub")) {
+              // when having a .sub, also rename .idx (don't care if error)
+              try {
+                Path oldidx = mf.getFileAsPath().resolveSibling(mf.getFilename().toString().replaceFirst("sub$", "idx"));
+                Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
+                Utils.moveFileSafe(oldidx, newidx);
+              }
+              catch (Exception e) {
+                // no idx found or error - ignore
+              }
+            }
+            newMF.setPath(seasonDir.toString());
+            newMF.setFilename(filename);
+            // iterate over all EPs and delete old / set new MF
+            for (TvShowEpisode e : eps) {
+              e.removeFromMediaFiles(mf);
+              e.addToMediaFiles(newMF);
+              e.setPath(seasonDir.toString());
+              e.saveToDb();
+            }
+          }
+          // and cleanup
+          cleanEmptyDir(oldMfFile.getParent());
         }
-        seasonDir = sample; // change directory storage
+        else {
+          // old and new file are equal, keep MF
+        }
       }
-      String filename = generateFilename(show, mf);
-      LOGGER.debug("new filename should be " + filename);
-      if (StringUtils.isNotBlank(filename)) {
-        Path newFile = seasonDir.resolve(filename);
-
-        try {
-          // if (!mf.getFile().equals(newFile)) {
-          if (!mf.getFileAsPath().toString().equals(newFile.toString())) {
-            Path oldMfFile = mf.getFileAsPath();
-            boolean ok = false;
-            try {
-              // create parent if needed
-              if (!Files.exists(newFile.getParent())) {
-                Files.createDirectory(newFile.getParent());
-              }
-              ok = Utils.moveFileSafe(oldMfFile, newFile);
-            }
-            catch (Exception e) {
-              LOGGER.error(e.getMessage());
-              MessageManager.instance.pushMessage(
-                  new Message(MessageLevel.ERROR, oldMfFile, "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
-            }
-            if (ok) {
-              if (mf.getFilename().endsWith(".sub")) {
-                // when having a .sub, also rename .idx (don't care if error)
-                try {
-                  Path oldidx = mf.getFileAsPath().resolveSibling(mf.getFilename().toString().replaceFirst("sub$", "idx"));
-                  Path newidx = newFile.resolveSibling(newFile.getFileName().toString().replaceFirst("sub$", "idx"));
-                  Utils.moveFileSafe(oldidx, newidx);
-                }
-                catch (Exception e) {
-                  // no idx found or error - ignore
-                }
-              }
-              newMF.setPath(seasonDir.toString());
-              newMF.setFilename(filename);
-              // iterate over all EPs and delete old / set new MF
-              for (TvShowEpisode e : eps) {
-                e.removeFromMediaFiles(mf);
-                e.addToMediaFiles(newMF);
-                e.setPath(seasonDir.toString());
-                e.saveToDb();
-              }
-            }
-            // and cleanup
-            cleanEmptyDir(oldMfFile.getParent());
-          }
-          else {
-            // old and new file are equal, keep MF
-          }
-        }
-        catch (Exception e) {
-          LOGGER.error("error moving video file " + mf.getFilename() + " to " + newFile, e);
-          MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
-        }
+      catch (Exception e) {
+        LOGGER.error("error moving video file " + mf.getFilename() + " to " + newFile, e);
+        MessageManager.instance.pushMessage(
+            new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
   }
@@ -447,6 +474,10 @@ public class TvShowRenamer {
           case FILENAME_THUMB: // filename as is
           default:
             break;
+        }
+        TvShowEpisode ep = eps.get(0);
+        if (ep.isDisc()) {
+          filename = "thumb";
         }
       }
       if (mf.getType().equals(MediaFileType.FANART)) {

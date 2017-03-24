@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tvshow>
+    <title>Janosik</title>
+    <showtitle>Janosik</showtitle>
+    <ratings>
+        <rating name="default" max="10" default="true">
+            <value>9.300000</value>
+            <votes>3</votes>
+        </rating>
+    </ratings>
+    <userrating>0</userrating>
+    <top250>0</top250>
+    <season>1</season>
+    <episode>3</episode>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <outline></outline>
+    <plot></plot>
+    <tagline></tagline>
+    <runtime>45</runtime>
+    <thumb aspect="banner">http://thetvdb.com/banners/graphical/81286-g2.jpg</thumb>
+    <thumb aspect="banner">http://thetvdb.com/banners/graphical/81286-g.jpg</thumb>
+    <thumb aspect="poster" type="season" season="0">http://thetvdb.com/banners/seasons/81286-0.jpg</thumb>
+    <thumb aspect="poster" type="season" season="1">http://thetvdb.com/banners/seasons/81286-1.jpg</thumb>
+    <thumb aspect="poster">http://thetvdb.com/banners/posters/81286-2.jpg</thumb>
+    <thumb aspect="poster">http://thetvdb.com/banners/posters/81286-1.jpg</thumb>
+    <thumb aspect="poster" type="season" season="-1">http://thetvdb.com/banners/posters/81286-2.jpg</thumb>
+    <thumb aspect="poster" type="season" season="-1">http://thetvdb.com/banners/posters/81286-1.jpg</thumb>
+    <fanart url="http://thetvdb.com/banners/">
+        <thumb dim="1280x720" colors="|221,196,174|0,0,0|60,40,31|" preview="_cache/fanart/original/81286-1.jpg">fanart/original/81286-1.jpg</thumb>
+        <thumb dim="1920x1080" colors="|91,158,249|29,38,19|122,136,57|" preview="_cache/fanart/original/81286-2.jpg">fanart/original/81286-2.jpg</thumb>
+    </fanart>
+    <mpaa></mpaa>
+    <playcount>0</playcount>
+    <lastplayed></lastplayed>
+    <episodeguide>
+        <url cache="81286-en.xml">http://thetvdb.com/api/1D62F2F90030C444/series/81286/all/en.zip</url>
+    </episodeguide>
+    <id>81286</id>
+    <uniqueid type="unknown" default="true">81286</uniqueid>
+    <genre>Action</genre>
+    <genre>Adventure</genre>
+    <premiered>1974-07-26</premiered>
+    <year>1974</year>
+    <status></status>
+    <code></code>
+    <aired></aired>
+    <studio>TVP</studio>
+    <trailer></trailer>
+    <actor>
+        <name>Marek Perepeczko</name>
+        <role>Janosik</role>
+        <order>0</order>
+        <thumb>http://thetvdb.com/banners/actors/75629.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Ewa Lemańska</name>
+        <role>Maryna</role>
+        <order>1</order>
+        <thumb>http://thetvdb.com/banners/actors/75630.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Witold Pyrkosz</name>
+        <role>Jędruś Pyzdra</role>
+        <order>2</order>
+        <thumb>http://thetvdb.com/banners/actors/75632.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Bogusz Bilewski</name>
+        <role>Waluś Kwiczoł</role>
+        <order>3</order>
+        <thumb>http://thetvdb.com/banners/actors/75631.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Mieczysław Czechowicz</name>
+        <role>Hrabia Horvath</role>
+        <order>4</order>
+        <thumb>http://thetvdb.com/banners/actors/263171.jpg</thumb>
+    </actor>
+    <actor>
+        <name>Marian Kociniak</name>
+        <role>Murgrabia</role>
+        <order>5</order>
+        <thumb>http://thetvdb.com/banners/actors/263151.jpg</thumb>
+    </actor>
+    <resume>
+        <position>0.000000</position>
+        <total>0.000000</total>
+    </resume>
+    <dateadded>2017-03-16 23:28:08</dateadded>
+</tvshow>

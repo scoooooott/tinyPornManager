@@ -1,6 +1,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -9,14 +10,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 public class TvShowRenamerTest extends BasicTest {
+  private static final String FOLDER = getSettingsFolder();
 
-  private static TvShow single = new TvShow();
-  private static TvShow multi  = new TvShow();
+  private static TvShow       single = new TvShow();
+  private static TvShow       multi  = new TvShow();
+  private static TvShow       disc   = new TvShow();
 
   @Test
   public void tvRenamerPatterns() {
@@ -66,6 +70,13 @@ public class TvShowRenamerTest extends BasicTest {
 
   }
 
+  @Test
+  public void testDiscEpisode() throws IOException {
+    Utils.copyDirectoryRecursive(Paths.get("target/test-classes/testtvshows/Janosik DVD"), Paths.get(FOLDER, "tv/Janosik DVD"));
+    TvShowRenamer.renameEpisode(disc.getEpisode(1, 2));
+
+  }
+
   /**
    * string to path for unix/linux comparison
    * 
@@ -78,7 +89,8 @@ public class TvShowRenamerTest extends BasicTest {
 
   @BeforeClass
   public static void init() {
-    Settings.getInstance(getSettingsFolder());
+    deleteSettingsFolder();
+    Settings.getInstance(FOLDER);
 
     // setup dummy
     MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
@@ -116,6 +128,21 @@ public class TvShowRenamerTest extends BasicTest {
     ep.setTvShow(multi);
     multi.addEpisode(ep);
 
+    disc.setTitle("disc");
+    disc.setYear("2009");
+    disc.setPath(FOLDER + "/tv/Janosik DVD");
+    ep = new TvShowEpisode();
+    ep.setPath(FOLDER + "/tv/Janosik DVD/Janosik S01E07E08E09");
+    ep.setTvShow(disc);
+    ep.setDisc(true);
+    ep.setTitle("discfile");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.setDvdSeason(3);
+    ep.setDvdEpisode(4);
+    ep.addToMediaFiles(new MediaFile(Paths.get(FOLDER, "/tv/Janosik DVD", "Janosik S01E07E08E09", "VIDEO_TS", "VTS_01_1.VOB").toAbsolutePath()));
+    ep.addToMediaFiles(new MediaFile(Paths.get(FOLDER, "/tv/Janosik DVD", "Janosik S01E07E08E09", "VIDEO_TS-thumb.jpg").toAbsolutePath()));
+    disc.addEpisode(ep);
   }
 
   private Path gen(TvShow show, String showPattern, String seasonPattern, String filePattern, boolean recommended) {
