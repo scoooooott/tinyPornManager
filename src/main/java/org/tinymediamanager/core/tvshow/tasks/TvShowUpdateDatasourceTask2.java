@@ -470,6 +470,10 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
       }
 
       HashSet<Path> allFiles = getAllFilesRecursive(showDir, Integer.MAX_VALUE);
+      if (allFiles != null && allFiles.isEmpty()) {
+        LOGGER.info("skip empty directory " + showDir);
+        return "";
+      }
       filesFound.add(showDir.toAbsolutePath()); // our global cache
       filesFound.addAll(allFiles); // our global cache
 
