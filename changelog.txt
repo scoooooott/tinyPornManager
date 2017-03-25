@@ -1,24 +1,34 @@
 Version 2.9.3
 =======================
++ EXPERIMENTAL: UPnP support - https://goo.gl/NieeJ8
 + changed display of runtime in media files tab to a shorter version with seconds
 + updated Trakt, now being able to scrape in user language (if available)
 + correct wrong TVDB entries, where year is specified in title
 + added movie edition to the NFOs
 + remember some choices you do in the UI (like chosen export folder, export template, ...)
 + added warning when exporting to a non empty directory
-+ EXPERIMENTAL: UPnP support -
-x fixed several crashes when pressing the play button
++ added button for TV show renamer in the top bar
++ enhanced video format detection #131
++ added "update single movie" (in addition of update datasource)
++ movie list: the indicator for missing artwork now respects your settings (poster/fanart only!)
++ some scraper can now scrape with the first aired date in addition to season/episode number
+x enhanced season/episode parser
+x fixed several crashes when pressing the play button #139
 x fixed stacking detection #132
 x fixed some Trakt.tv syncing issues #137
 x fixed searching for movie set id in movie set editor
-x fixed display of runtime
 x fixed scraping localized countries #110
 x automatically drop corrupt entries from the database
 x fixed actor image writing
 x fixed movie renamer token $1/$2 to use first alpha numeric character
-x fixed Plex trailers wrongly detected as extras
+x fixed Plex trailers wrongly detected as extras #135
 x fix thumb image naming for disc style episodes
-x fix renaming of disc style episodes 
+x fix renaming of disc style episodes
+x fixed start of playback on several linux systems
+x fixed movie renamer where trailing dots have been truncated for folders
+x fixed writing of .actors thumbs
+x fixed reading of mediainfo.xml
+x changed appearance of the subtitle download button #140 #119
 x fixed searching for TV show actors in the UI filter
   you may need to restart tinyMediaManager once after the update
 
