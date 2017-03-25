@@ -355,14 +355,15 @@ public class Movie extends MediaEntity {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    boolean images = true;
     if (!MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER))) {
-      images = false;
+      return false;
     }
+
     if (!MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      images = false;
+      return false;
     }
-    return images;
+
+    return true;
   }
 
   /**
