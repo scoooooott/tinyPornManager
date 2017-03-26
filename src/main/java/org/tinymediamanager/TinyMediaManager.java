@@ -198,7 +198,7 @@ public class TinyMediaManager {
     // start EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/svn considered as "new", for upgrades
+        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/git considered as "new", for upgrades
         try {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
           if (!GraphicsEnvironment.isHeadless()) {
@@ -295,7 +295,7 @@ public class TinyMediaManager {
           }
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
-          if (ReleaseInfo.isSvnBuild()) {
+          if (ReleaseInfo.isGitBuild()) {
             PluginManager.loadClasspathPlugins();
           }
 
@@ -354,7 +354,7 @@ public class TinyMediaManager {
 
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
-              // special case nightly/svn: if same snapshot version, do not display changelog
+              // special case nightly/git: if same snapshot version, do not display changelog
               Utils.trackEvent("updated");
               showChangelog();
             }

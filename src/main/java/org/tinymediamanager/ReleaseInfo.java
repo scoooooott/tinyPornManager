@@ -65,13 +65,13 @@ public class ReleaseInfo {
         Properties releaseInfoProp = new Properties();
         releaseInfoProp.load(fileInputStream);
         version = releaseInfoProp.getProperty("version");
-        build = "svn";
+        build = "git";
         Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         buildDate = formatter.format(new Date());
       }
       catch (IOException e2) {
         version = "";
-        build = "svn"; // no file - we must be in SVN
+        build = "git"; // no file - we must be in GIT
         buildDate = "";
       }
     }
@@ -102,22 +102,22 @@ public class ReleaseInfo {
         v = "PRE-RELEASE";
       }
       else {
-        v = "SVN";
+        v = "GIT";
       }
     }
     return v;
   }
 
   /**
-   * Gets the live version or nightly/prerel/svn build string<br>
+   * Gets the live version or nightly/prerel/git build string<br>
    * useful for reporting
    * 
    * @return the version
    */
   public static String getVersionForReporting() {
     String v = version;
-    if (isSvnBuild()) {
-      v = "SVN";
+    if (isGitBuild()) {
+      v = "GIT";
     }
     else if (isNightly()) {
       v = "NIGHTLY";
@@ -179,12 +179,12 @@ public class ReleaseInfo {
   }
 
   /**
-   * are we a SVN version?
+   * are we a GIT version?
    * 
-   * @return true/false if SVN build
+   * @return true/false if GIT build
    */
-  public static boolean isSvnBuild() {
-    return getBuild().equalsIgnoreCase("svn") ? true : false;
+  public static boolean isGitBuild() {
+    return getBuild().equalsIgnoreCase("git") ? true : false;
   }
 
   /**
@@ -193,7 +193,7 @@ public class ReleaseInfo {
    * @return true/false if release build
    */
   public static boolean isReleaseBuild() {
-    return !isNightly() && !isPreRelease() && !isSvnBuild();
+    return !isNightly() && !isPreRelease() && !isGitBuild();
   }
 
   /**
@@ -205,8 +205,8 @@ public class ReleaseInfo {
   public static String getRealVersion() {
     String v = getManifestEntry(ReleaseInfo.class, "Implementation-Version");
     if (v.isEmpty()) {
-      // no manifest? only happens on svn builds - get the version from special file
-      v = getVersion() + " - SVN";
+      // no manifest? only happens on git builds - get the version from special file
+      v = getVersion() + " - GIT";
     }
     if (isNightly()) {
       v += " - NIGHTLY";
@@ -226,7 +226,7 @@ public class ReleaseInfo {
   public static String getRealBuildDate() {
     String b = getManifestEntry(ReleaseInfo.class, "Build-Date");
     if (b.isEmpty()) {
-      b = getBuildDate(); // SVN, actual date
+      b = getBuildDate(); // GIT, actual date
     }
     return b;
   }

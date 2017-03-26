@@ -496,7 +496,7 @@ public class Utils {
                   + "&tid=UA-35564534-5"
                   + "&cid=" + uuid 
                   + "&an=tinyMediaManager" 
-                  + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR svn/nightly/prerel string
+                  + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR git/nightly/prerel string
                   + "&t=event"
                   + "&ec=" + event
                   + "&ea=" + event 
@@ -1204,7 +1204,7 @@ public class Utils {
     Path f = Paths.get("tmm.jar");
     if (!Files.exists(f)) {
       LOGGER.error("cannot restart TMM - tmm.jar not found.");
-      return null; // when we are in SVN, return null = normal close
+      return null; // when we are in GIT, return null = normal close
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
@@ -1226,7 +1226,7 @@ public class Utils {
     Path f = Paths.get("getdown.jar");
     if (!Files.exists(f)) {
       LOGGER.error("cannot start updater - getdown.jar not found.");
-      return null; // when we are in SVN, return null = normal close
+      return null; // when we are in GIT, return null = normal close
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args

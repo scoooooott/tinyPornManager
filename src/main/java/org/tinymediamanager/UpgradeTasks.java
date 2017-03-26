@@ -78,7 +78,7 @@ public class UpgradeTasks {
     // ****************************************************
     // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
     // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
-    // SVN BUILD IS ALSO CONSIDERED AS LOWER !!!
+    // GIT BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
     // upgrade to v2.7 (OR DO THIS IF WE ARE INSIDE IDE)
@@ -157,7 +157,7 @@ public class UpgradeTasks {
     // ****************************************************
     // PLEASE MAKE THIS TO RUN MULTIPLE TIMES WITHOUT ERROR
     // NEEDED FOR NIGHTLY SNAPSHOTS ET ALL
-    // SVN BUILD IS ALSO CONSIDERED AS LOWER !!!
+    // GIT BUILD IS ALSO CONSIDERED AS LOWER !!!
     // ****************************************************
 
     // upgrade to v2.7
@@ -577,8 +577,8 @@ public class UpgradeTasks {
    * Windows: windows-x86 windows-x64 Linux: linux-x86 linux-x64 Mac OSX: mac-x86 mac-x64
    */
   private static void cleanupNativeFolder() {
-    // no cleanup in SVN
-    if (ReleaseInfo.isSvnBuild()) {
+    // no cleanup in GIT
+    if (ReleaseInfo.isGitBuild()) {
       return;
     }
 

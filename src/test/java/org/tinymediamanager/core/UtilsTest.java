@@ -73,8 +73,8 @@ public class UtilsTest extends BasicTest {
 
   @Test
   public void compareVersions() {
-    assertEqual(true, StrgUtils.compareVersion("SVN", "SVN") < 0); // SVN always "lower"
-    assertEqual(true, StrgUtils.compareVersion("SVN", "2.7.2") < 0); // SVN always "lower"
+    assertEqual(true, StrgUtils.compareVersion("GIT", "GIT") < 0); // GIT always "lower"
+    assertEqual(true, StrgUtils.compareVersion("GIT", "2.7.2") < 0); // GIT always "lower"
     assertEqual(true, StrgUtils.compareVersion("2.7.2-SNAPSHOT", "2.7.2") < 0);
     assertEqual(true, StrgUtils.compareVersion("2.7.2", "2.7.2") == 0);
     assertEqual(true, StrgUtils.compareVersion("2.7.3-SNMAPSHOT", "2.7.2") > 0);
