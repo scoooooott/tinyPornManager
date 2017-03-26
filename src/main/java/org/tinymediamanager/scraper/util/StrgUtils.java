@@ -332,7 +332,7 @@ public class StrgUtils {
   /**
    * compares the given version (v1) against another one (v2)<br>
    * Special case:<br>
-   * if we have SNAPSHOT or SVN version, and both are the same, return -1
+   * if we have SNAPSHOT, SVN or GIT version, and both are the same, return -1
    * 
    * @param v1
    *          given version
@@ -343,9 +343,9 @@ public class StrgUtils {
    *         = 0 if equal
    */
   public static int compareVersion(String v1, String v2) {
-    if (v1.contains("-SNAPSHOT") && v1.equals(v2) || v1.equals("SVN")) {
+    if (v1.contains("-SNAPSHOT") && v1.equals(v2) || v1.equals("SVN") || v1.equals("GIT")) {
       // we have the same snapshot version - consider as potential lower (for nightly)
-      // same for SVN - always "lower" to trigger update scripts!
+      // same for GIT - always "lower" to trigger update scripts!
       return -1;
     }
     String s1 = normalisedVersion(v1);
