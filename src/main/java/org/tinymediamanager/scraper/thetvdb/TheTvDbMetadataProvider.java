@@ -419,9 +419,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     }
 
     // not found? try to match by date
-    if (episode == null) {
+    if (episode == null && !aired.isEmpty()) {
       for (Episode ep : episodes) {
-        if (!aired.isEmpty() && ep.getFirstAired().equals(aired)) {
+        if (ep.getFirstAired().equals(aired)) {
           episode = ep;
           break;
         }
