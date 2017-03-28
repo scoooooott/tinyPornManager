@@ -44,6 +44,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     SORT_TITLE(BUNDLE.getString("metatag.sorttitle")), //$NON-NLS-1$ ,
     YEAR(BUNDLE.getString("metatag.year")), //$NON-NLS-1$ ,
     DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$ ,
+    RELEASE_DATE(BUNDLE.getString("metatag.releasedate")), //$NON-NLS-1$ ,
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$ ,
     RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$ ,
     RUNTIME(BUNDLE.getString("metatag.runtime")), //$NON-NLS-1$ ,
@@ -132,7 +133,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   @Override
   public int compare(Movie movie1, Movie movie2) {
-    int sortOrder = 0;
+    Integer sortOrder = 0;
 
     try {
       // try to sort the chosen column
@@ -148,41 +149,65 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case YEAR:
-          sortOrder = stringCollator.compare(movie1.getYear(), movie2.getYear());
+          sortOrder = compareNullFirst(movie1.getYear(), movie2.getYear());
+          if (sortOrder == 0) {
+            sortOrder = stringCollator.compare(movie1.getYear(), movie2.getYear());
+          }
           break;
 
         case DATE_ADDED:
-          sortOrder = movie1.getDateAdded().compareTo(movie2.getDateAdded());
+          sortOrder = compareNullFirst(movie1.getDateAdded(), movie2.getDateAdded());
+          if (sortOrder == 0) {
+            sortOrder = movie1.getDateAdded().compareTo(movie2.getDateAdded());
+          }
           break;
 
         case WATCHED:
           Boolean watched1 = movie1.isWatched();
           Boolean watched2 = movie2.isWatched();
-          sortOrder = watched1.compareTo(watched2);
+          sortOrder = compareNullFirst(watched1, watched2);
+          if (sortOrder == 0) {
+            sortOrder = watched1.compareTo(watched2);
+          }
           break;
 
         case RATING:
-          sortOrder = Float.compare(movie1.getRating(), movie2.getRating());
+          sortOrder = compareNullFirst(movie1.getRating(), movie2.getRating());
+          if (sortOrder == 0) {
+            sortOrder = Float.compare(movie1.getRating(), movie2.getRating());
+          }
           break;
 
         case RUNTIME:
           Integer runtime1 = movie1.getRuntime();
           Integer runtime2 = movie2.getRuntime();
-          sortOrder = runtime1.compareTo(runtime2);
+          sortOrder = compareNullFirst(runtime1, runtime2);
+          if (sortOrder == 0) {
+            sortOrder = runtime1.compareTo(runtime2);
+          }
           break;
 
         case VIDEO_BITRATE:
           Integer videoBitrate1 = movie1.getMediaInfoVideoBitrate();
           Integer videoBitrate2 = movie2.getMediaInfoVideoBitrate();
-          sortOrder = videoBitrate1.compareTo(videoBitrate2);
+          sortOrder = compareNullFirst(videoBitrate1, videoBitrate2);
+          if (sortOrder == 0) {
+            sortOrder = videoBitrate1.compareTo(videoBitrate2);
+          }
+          break;
+        case RELEASE_DATE:
+          sortOrder = compareNullFirst(movie1.getReleaseDate(), movie2.getReleaseDate());
+          if (sortOrder == 0) {
+            sortOrder = movie1.getReleaseDate().compareTo(movie2.getReleaseDate());
+          }
           break;
       }
     }
-    catch (NullPointerException e) {
-      // do nothing here. there could be
-    }
     catch (Exception e) {
       LOGGER.warn(e.getMessage());
+    }
+    if (sortOrder == null) {
+      sortOrder = 0;
     }
 
     // sort ascending or descending
@@ -192,5 +217,22 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     else {
       return sortOrder * -1;
     }
+  }
+
+  private Integer compareNullFirst(Object o1, Object o2) {
+    Integer sort = 0;
+    if (o1 == null && o2 == null) {
+      sort = null;
+    }
+    else if (o1 == null) {
+      sort = -1;
+    }
+    else if (o2 == null) {
+      sort = 1;
+    }
+    else {
+      sort = 0;
+    }
+    return sort;
   }
 }
