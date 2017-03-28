@@ -380,6 +380,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     catch (Exception e) {
       LOGGER.warn("error parsing season/episode number");
     }
+    System.out.println("search for " + seasonNr + " " + episodeNr);
 
     String aired = "";
     if (options.getMetadata() != null && options.getMetadata().getReleaseDate() != null) {
@@ -415,11 +416,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           break;
         }
       }
+    }
 
-      // not found? try to match by date
-      if (!aired.isEmpty() && ep.getFirstAired().equals(aired)) {
-        episode = ep;
-        break;
+    // not found? try to match by date
+    if (episode == null) {
+      for (Episode ep : episodes) {
+        if (!aired.isEmpty() && ep.getFirstAired().equals(aired)) {
+          episode = ep;
+          break;
+        }
       }
     }
 
