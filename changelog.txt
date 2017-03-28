@@ -12,6 +12,7 @@ Version 2.9.3
 + added "update single movie" (in addition of update datasource)
 + movie list: the indicator for missing artwork now respects your settings (poster/fanart only!)
 + some scraper can now scrape with the first aired date in addition to season/episode number
++ added movie sorting by release date
 x enhanced season/episode parser
 x fixed several crashes when pressing the play button #139
 x fixed stacking detection #132
@@ -28,6 +29,7 @@ x fixed start of playback on several linux systems
 x fixed movie renamer where trailing dots have been truncated for folders
 x fixed writing of .actors thumbs
 x fixed reading of mediainfo.xml
+x fixed movie sorting
 x changed appearance of the subtitle download button #140 #119
 x fixed searching for TV show actors in the UI filter
   you may need to restart tinyMediaManager once after the update
