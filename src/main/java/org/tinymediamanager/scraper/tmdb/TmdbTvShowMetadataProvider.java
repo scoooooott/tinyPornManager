@@ -408,12 +408,18 @@ class TmdbTvShowMetadataProvider {
               episode = ep;
               break;
             }
-            if (ep.air_date != null) {
-              Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-              String epAired = formatter.format(ep.air_date);
-              if (epAired.equals(aired)) {
-                episode = ep;
-                break;
+          }
+
+          // not found? try to match by date
+          if (episode == null && !aired.isEmpty()) {
+            for (TvEpisode ep : ListUtils.nullSafe(fullSeason.episodes)) {
+              if (ep.air_date != null) {
+                Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String epAired = formatter.format(ep.air_date);
+                if (epAired.equals(aired)) {
+                  episode = ep;
+                  break;
+                }
               }
             }
           }
