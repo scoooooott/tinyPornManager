@@ -407,13 +407,20 @@ class TraktTVShowMetadataProvider {
           episode = ep;
           break;
         }
+      }
+    }
 
-        if (ep.first_aired != null) {
-          Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-          String epAired = formatter.format(ep.first_aired.toDate());
-          if (epAired.equals(aired)) {
-            episode = ep;
-            break;
+    // not found? try to match by date
+    if (episode == null && !aired.isEmpty()) {
+      for (Season season : ListUtils.nullSafe(seasons)) {
+        for (Episode ep : season.episodes) {
+          if (ep.first_aired != null) {
+            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String epAired = formatter.format(ep.first_aired.toDate());
+            if (epAired.equals(aired)) {
+              episode = ep;
+              break;
+            }
           }
         }
       }
