@@ -13,6 +13,7 @@ Version 2.9.3
 + movie list: the indicator for missing artwork now respects your settings (poster/fanart only!)
 + some scraper can now scrape with the first aired date in addition to season/episode number
 + added movie sorting by release date
++ added spoken languages to MediaPortal NFO
 x enhanced season/episode parser
 x fixed several crashes when pressing the play button #139
 x fixed stacking detection #132

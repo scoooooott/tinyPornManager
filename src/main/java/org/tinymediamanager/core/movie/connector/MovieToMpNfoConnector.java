@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -73,6 +74,7 @@ import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
@@ -84,7 +86,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "set", "rating", "year", "votes", "outline", "plot", "tagline", "runtime",
     "thumb", "fanart", "mpaa", "imdb", "ids", "genres", "genresNoWrap", "studio", "country", "premiered", "credits", "director", "actors",
-    "producers", "watched", "playcount", "source", "edition" })
+    "producers", "language", "watched", "playcount", "source", "edition" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -129,6 +131,7 @@ public class MovieToMpNfoConnector {
   private List<Object>        actors;
   @XmlAnyElement(lax = true)
   private List<Object>        producers;
+  public String               language      = "";
   public boolean              watched       = false;
   public int                  playcount     = 0;
   public String               source        = "";
@@ -249,6 +252,22 @@ public class MovieToMpNfoConnector {
     mp.ids.putAll(movie.getIds());
     mp.studio = movie.getProductionCompany();
     mp.country = movie.getCountry();
+
+    // prepare spoken language for MP - try to extract the iso codes to the UI language separated by a pipe
+    Locale uiLanguage = Locale.getDefault();
+    List<String> languages = new ArrayList<>();
+    for (String langu : movie.getSpokenLanguages().split(",")) {
+      langu = langu.trim();
+      Locale locale = new Locale(langu);
+      String languageLocalized = locale.getDisplayLanguage(uiLanguage);
+      if (StringUtils.isNotBlank(languageLocalized) && !langu.equalsIgnoreCase(languageLocalized)) {
+        languages.add(languageLocalized);
+      }
+      else {
+        languages.add(langu);
+      }
+    }
+    mp.language = StringUtils.join(languages.toArray(), '|');
 
     mp.watched = movie.isWatched();
     if (mp.watched) {
@@ -415,6 +434,20 @@ public class MovieToMpNfoConnector {
       if (mp.playcount > 0) {
         movie.setWatched(true);
       }
+
+      // language parsing from language tag (separated by a pipe)
+      List<String> languages = new ArrayList<>();
+      for (String langu : mp.language.split("\\|")) {
+        langu = langu.trim();
+        String languIso = LanguageUtils.getIso2LanguageFromLocalizedString(langu);
+        if (StringUtils.isNotBlank(languIso)) {
+          languages.add(languIso);
+        }
+        else {
+          languages.add(langu);
+        }
+      }
+      movie.setSpokenLanguages(StringUtils.join(languages.toArray(), ", "));
 
       if (!StringUtils.isEmpty(mp.mpaa)) {
         movie.setCertification(MovieHelpers.parseCertificationStringForMovieSetupCountry(mp.mpaa));
