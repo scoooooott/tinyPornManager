@@ -128,6 +128,7 @@ public class MediaArtwork {
   private MediaArtworkType      type;
   private int                   sizeOrder  = 0;
   private int                   likes      = 0;
+  private boolean               animated   = false;
 
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<>();
 
@@ -389,6 +390,24 @@ public class MediaArtwork {
    */
   public void setLikes(int likes) {
     this.likes = likes;
+  }
+
+  /**
+   * is this an animated graphic?
+   * 
+   * @return
+   */
+  public boolean isAnimated() {
+    return animated;
+  }
+
+  /**
+   * set this graphic as animated
+   * 
+   * @param animated
+   */
+  public void setAnimated(boolean animated) {
+    this.animated = animated;
   }
 
   /**
