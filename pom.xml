@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.tinymediamanager</groupId>
             <artifactId>api-scraper</artifactId>
-            <version>2.5-SNAPSHOT</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager</groupId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-fanarttv</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -120,19 +120,19 @@
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-tmdb</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-trakt</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>
             <artifactId>scraper-tvdb</artifactId>
-            <version>1.8-SNAPSHOT</version>
+            <version>1.8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
