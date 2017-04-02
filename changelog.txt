@@ -1,6 +1,7 @@
 Version 2.9.3
 =======================
 + EXPERIMENTAL: UPnP support - https://goo.gl/NieeJ8
++ updated libmediainfo to 0.7.94
 + changed display of runtime in media files tab to a shorter version with seconds
 + updated Trakt, now being able to scrape in user language (if available)
 + correct wrong TVDB entries, where year is specified in title
