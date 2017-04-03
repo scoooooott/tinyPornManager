@@ -21,6 +21,7 @@ public class TvShowExportTest extends BasicTest {
     TvShowModuleManager.getInstance().startUp();
 
     createFakeShow("ExportShow");
+    createFakeShow("ExportShow 2");
     Utils.extractTemplates();
   }
 
@@ -34,7 +35,7 @@ public class TvShowExportTest extends BasicTest {
   public void testList() throws Exception {
     TvShowList list = TvShowList.getInstance();
 
-    TvShowExporter exporter = new TvShowExporter(Paths.get("templates", "TvShowDetailExampleHtml"));
-    exporter.export(list.getTvShows(), Paths.get(getSettingsFolder(), "TvShowDetailExampleHtml"));
+    TvShowExporter exporter = new TvShowExporter(Paths.get("templates", "TvShowDetailExampleXml"));
+    exporter.export(list.getTvShows(), Paths.get(getSettingsFolder(), "TvShowDetailExampleXml"));
   }
 }
