@@ -1,5 +1,6 @@
 Version 2.9.3
 =======================
++ HOTFIX: use 0.7.93 MediaInfo lib, latest one crashes on ISO files!
 + EXPERIMENTAL: UPnP support - https://goo.gl/NieeJ8
 + updated libmediainfo to 0.7.94
 + changed display of runtime in media files tab to a shorter version with seconds
