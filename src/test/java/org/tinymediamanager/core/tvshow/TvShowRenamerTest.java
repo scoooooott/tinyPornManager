@@ -39,6 +39,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     single.setTitle("singleshow");
     single.setYear("2009");
+    single.setPath("singleshow");
     TvShowEpisode ep = new TvShowEpisode();
     ep.setTitle("singleEP");
     ep.setSeason(1);
@@ -51,6 +52,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     multi.setTitle("multishow");
     multi.setYear("2009");
+    multi.setPath("multishow");
     ep = new TvShowEpisode();
     ep.setTitle("multiEP2");
     ep.setSeason(1);
