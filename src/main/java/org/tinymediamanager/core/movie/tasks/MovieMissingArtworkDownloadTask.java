@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,7 +117,9 @@ public class MovieMissingArtworkDownloadTask extends TmmThreadPool {
         }
 
         // now set & download the artwork
-        MovieArtworkHelper.downloadMissingArtwork(movie, artwork);
+        if (!artwork.isEmpty()) {
+          MovieArtworkHelper.downloadMissingArtwork(movie, artwork);
+        }
       }
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);

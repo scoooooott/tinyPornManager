@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask2;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask2;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -171,6 +177,14 @@ public class TinyMediaManagerWizard extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       TinyMediaManagerWizard.this.setVisible(false);
+      if (!MovieModuleManager.SETTINGS.getMovieDataSource().isEmpty()) {
+        TmmThreadPool task = new MovieUpdateDatasourceTask2();
+        TmmTaskManager.getInstance().addMainTask(task);
+      }
+      if (!TvShowModuleManager.SETTINGS.getTvShowDataSource().isEmpty()) {
+        TmmThreadPool task = new TvShowUpdateDatasourceTask2();
+        TmmTaskManager.getInstance().addMainTask(task);
+      }
     }
   }
 }

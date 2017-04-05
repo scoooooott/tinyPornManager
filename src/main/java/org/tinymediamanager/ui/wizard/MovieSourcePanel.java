@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -59,9 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 class MovieSourcePanel extends JPanel {
   private static final long           serialVersionUID = -8346420911623937902L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
@@ -114,7 +113,8 @@ class MovieSourcePanel extends JPanel {
     btnAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("movie.datasource.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
           MovieModuleManager.SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
         }

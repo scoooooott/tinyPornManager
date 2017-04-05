@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.CustomNullStringSerializerProvider;
 import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
@@ -102,6 +103,7 @@ public class TvShowModuleManager implements ITmmModule {
     objectMapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
     objectMapper.setTimeZone(TimeZone.getDefault());
     objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+    objectMapper.setSerializerProvider(new CustomNullStringSerializerProvider());
 
     tvShowObjectWriter = objectMapper.writerFor(TvShow.class);
     episodeObjectWriter = objectMapper.writerFor(TvShowEpisode.class);

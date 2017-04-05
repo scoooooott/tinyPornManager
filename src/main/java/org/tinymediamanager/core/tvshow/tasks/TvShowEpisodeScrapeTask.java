@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.tinymediamanager.core.tvshow.tasks;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +34,9 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
-import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
@@ -47,7 +47,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask extends TmmTask {
-  private static final ResourceBundle BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER   = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
   private final List<TvShowEpisode>   episodes;
@@ -100,6 +100,10 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.TV_EPISODE);
       options.setLanguage(LocaleUtils.toLocale(language.name()));
       options.setCountry(TvShowModuleManager.SETTINGS.getCertificationCountry());
+
+      MediaMetadata md = new MediaMetadata(mediaScraper.getMediaProvider().getProviderInfo().getId());
+      md.setReleaseDate(episode.getFirstAired());
+      options.setMetadata(md);
 
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());

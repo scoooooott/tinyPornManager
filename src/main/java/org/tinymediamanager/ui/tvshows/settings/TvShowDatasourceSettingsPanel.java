@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.IconManager;
@@ -78,7 +79,8 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
 
     // logic initializations
     btnAddDatasource.addActionListener(arg0 -> {
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("movie.datasource.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addTvShowDataSources(file.toAbsolutePath().toString());
       }
@@ -99,7 +101,8 @@ public class TvShowDatasourceSettingsPanel extends JPanel {
       }
     });
     btnAddSkipFolder.addActionListener(e -> {
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("movie.ignore.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addTvShowSkipFolder(file.toAbsolutePath().toString());
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -274,7 +274,7 @@ public class TvShowArtworkHelper {
    */
   private static void setBestArtwork(TvShow tvShow, List<MediaArtwork> artwork, MediaArtwork.MediaArtworkType type) {
     for (MediaArtwork art : artwork) {
-      if (art.getType() == type) {
+      if (art.getType() == type && StringUtils.isNotBlank(art.getDefaultUrl())) {
         tvShow.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
         downloadArtwork(tvShow, MediaFileType.getMediaFileType(type));
         break;

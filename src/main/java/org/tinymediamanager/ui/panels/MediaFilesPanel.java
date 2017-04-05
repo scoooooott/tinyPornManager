@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -54,7 +55,7 @@ import net.miginfocom.swing.MigLayout;
  * 
  * @author Manuel Laggner
  */
-public class MediaFilesPanel extends JPanel {
+public abstract class MediaFilesPanel extends JPanel {
   private static final long                 serialVersionUID = -4929581173434859034L;
   private static final Logger               LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
   private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -96,6 +97,13 @@ public class MediaFilesPanel extends JPanel {
     catch (Exception ignored) {
     }
   }
+
+  /**
+   * get the actual media entity holding this list of media files
+   *
+   * @return the media entity
+   */
+  abstract public MediaEntity getMediaEntity();
 
   private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {
     @Override

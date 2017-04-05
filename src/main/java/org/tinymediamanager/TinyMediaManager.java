@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.util.PluginManager;
 import org.tinymediamanager.thirdparty.MediaInfoUtils;
+import org.tinymediamanager.thirdparty.upnp.Upnp;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUILogCollector;
@@ -192,7 +193,7 @@ public class TinyMediaManager {
     // start EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/svn considered as "new", for upgrades
+        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/git considered as "new", for upgrades
         try {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
           if (!GraphicsEnvironment.isHeadless()) {
@@ -283,7 +284,6 @@ public class TinyMediaManager {
             updateProgress(g2, "loading TV show module", 40);
             splash.update();
           }
-
           TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
           TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
 
@@ -291,11 +291,26 @@ public class TinyMediaManager {
             updateProgress(g2, "loading plugins", 50);
             splash.update();
           }
-
           // just instantiate static - will block (takes a few secs)
           PluginManager.getInstance();
-          if (ReleaseInfo.isSvnBuild()) {
+          if (ReleaseInfo.isGitBuild()) {
             PluginManager.loadClasspathPlugins();
+          }
+
+          if (g2 != null) {
+            updateProgress(g2, "starting services", 60);
+            splash.update();
+          }
+          Upnp u = Upnp.getInstance();
+          if (Globals.settings.isUpnpShareLibrary()) {
+            u.startWebServer();
+            u.createUpnpService();
+            u.startMediaServer();
+          }
+          if (Globals.settings.isUpnpRemotePlay()) {
+            u.createUpnpService();
+            u.sendPlayerSearchRequest();
+            u.startWebServer();
           }
 
           // do upgrade tasks after database loading
@@ -336,7 +351,7 @@ public class TinyMediaManager {
 
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
-              // special case nightly/svn: if same snapshot version, do not display changelog
+              // special case nightly/git: if same snapshot version, do not display changelog
               Utils.trackEvent("updated");
               showChangelog();
             }

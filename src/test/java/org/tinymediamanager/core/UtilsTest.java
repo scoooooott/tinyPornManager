@@ -12,28 +12,22 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
-public class UtilsTest {
+public class UtilsTest extends BasicTest {
 
-  // own method to get some logging ;)
-  public static void assertEqual(Object expected, Object actual) {
-    try {
-      Assert.assertEquals(expected, actual);
-      System.out.println(expected + " - passed");
-    }
-    catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
-      throw e;
-    }
+  @BeforeClass
+  public static void setup() {
+    // create a fresh default config
+    Settings.getInstance(getSettingsFolder());
   }
 
   @Test
   public void parseIp() throws UnknownHostException, SecurityException {
-
     System.out.println(getIP("localhost"));
     System.out.println(getIP("localhost:22"));
     System.out.println(getIP("::1"));
@@ -79,8 +73,8 @@ public class UtilsTest {
 
   @Test
   public void compareVersions() {
-    assertEqual(true, StrgUtils.compareVersion("SVN", "SVN") < 0); // SVN always "lower"
-    assertEqual(true, StrgUtils.compareVersion("SVN", "2.7.2") < 0); // SVN always "lower"
+    assertEqual(true, StrgUtils.compareVersion("GIT", "GIT") < 0); // GIT always "lower"
+    assertEqual(true, StrgUtils.compareVersion("GIT", "2.7.2") < 0); // GIT always "lower"
     assertEqual(true, StrgUtils.compareVersion("2.7.2-SNAPSHOT", "2.7.2") < 0);
     assertEqual(true, StrgUtils.compareVersion("2.7.2", "2.7.2") == 0);
     assertEqual(true, StrgUtils.compareVersion("2.7.3-SNMAPSHOT", "2.7.2") > 0);
@@ -152,10 +146,10 @@ public class UtilsTest {
 
   @Test
   public void detectStackingMarkers() {
-
     assertEqual("Easy A", FilenameUtils.getBaseName(Utils.cleanStackingMarkers("Easy A.avi"))); // not a stacking format!
     assertEqual("", Utils.getStackingMarker("2 Guns (2013) x264-720p DTS-6ch.mkv"));
 
+    assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd0.mkv"), "");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt1.mkv"), "PaRt1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013) DvD1.mkv"), "DvD1");
@@ -215,15 +209,24 @@ public class UtilsTest {
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-a.mkv"), "Movie Name (2013).mkv");
     assertEqual(Utils.cleanStackingMarkers("Movie Name (2013)-b.mkv"), "Movie Name (2013).mkv");
 
-    // FOLDER
-    assertEqual(Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"), "dvd1"); // folder - check without extension
-    assertEqual(Utils.getFolderStackingMarker("moviename CD1"), "CD1");
-    assertEqual(Utils.getFolderStackingMarker("CD1"), "CD1");
-    assertEqual(Utils.getFolderStackingMarker("moviename CD1 whatever"), "CD1 whatever"); // there "should" be nothing after pattern
-    assertEqual(Utils.cleanFolderStackingMarkers("CD1"), "");
-    assertEqual(Utils.cleanFolderStackingMarkers("moviename CD1"), "moviename");
-    assertEqual(Utils.cleanFolderStackingMarkers("moviename CD1 whatever"), "moviename whatever");
+    // FOLDER - stacking MUST be the last part of name !!
+    assertEqual("dvd1", Utils.getFolderStackingMarker("Movie Name (2013)-dvd1"));
+    assertEqual("CD1", Utils.getFolderStackingMarker("moviename CD1"));
+    assertEqual("", Utils.getFolderStackingMarker("CD0"));
+    assertEqual("CD1", Utils.getFolderStackingMarker("CD1"));
+    assertEqual("", Utils.getFolderStackingMarker("CD1 whatever"));
+    assertEqual("PT1", Utils.getFolderStackingMarker("PT1"));
+    assertEqual("PT1", Utils.getFolderStackingMarker("asdf PT1"));
+    assertEqual("", Utils.getFolderStackingMarker("asdf PT1asdf"));
+    assertEqual("", Utils.getFolderStackingMarker("PT109"));
 
+    assertEqual("CD0", Utils.cleanFolderStackingMarkers("CD0"));
+    assertEqual("", Utils.cleanFolderStackingMarkers("CD1"));
+    assertEqual("moviename", Utils.cleanFolderStackingMarkers("moviename CD1"));
+    assertEqual("moviename CD0", Utils.cleanFolderStackingMarkers("moviename CD0"));
+    assertEqual("moviename CD1 whatever", Utils.cleanFolderStackingMarkers("moviename CD1 whatever")); // there must be nothing after pattern
+    assertEqual("", Utils.cleanFolderStackingMarkers("PT1"));
+    assertEqual("PT109", Utils.cleanFolderStackingMarkers("PT109"));
   }
 
   @Test
@@ -232,15 +235,16 @@ public class UtilsTest {
     Utils.deleteOldBackupFile(Paths.get("pom.xml"), 2);
   }
 
+  @SuppressWarnings("rawtypes")
   @Test
   public void env() {
     Map<String, String> env = System.getenv();
     for (String envName : env.keySet()) {
       System.out.format("%s=%s%n", envName, env.get(envName));
     }
+
     Properties props = System.getProperties();
     Enumeration e = props.propertyNames();
-
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
       System.out.println(key + " -- " + props.getProperty(key));
@@ -249,14 +253,21 @@ public class UtilsTest {
 
   @Test
   public void locale() {
-    for (String s : Locale.getISOLanguages()) {
-      Locale l = new Locale(s);
-      System.out.println(l.getISO3Language());
-    }
-    System.out.println();
     for (String s : LanguageUtils.KEY_TO_LOCALE_MAP.keySet()) {
       System.out.println(s + " - " + LanguageUtils.KEY_TO_LOCALE_MAP.get(s));
     }
+  }
+
+  @Test
+  public void localeCountry() {
+    for (String s : LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.keySet()) {
+      System.out.println(s + " - " + LanguageUtils.KEY_TO_COUNTRY_LOCALE_MAP.get(s));
+    }
+    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "United States of America", "US"));
+    assertEqual("Vereinigte Staaten von Amerika", LanguageUtils.getLocalizedCountryForLanguage("de", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage("fr", "United States of America", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRENCH, "United States of America", "US"));
+    assertEqual("Etats-Unis", LanguageUtils.getLocalizedCountryForLanguage(Locale.FRANCE, "United States of America", "US"));
   }
 
   @Test

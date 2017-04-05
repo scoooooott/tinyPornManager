@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -350,11 +350,23 @@ public class MovieSet extends MediaEntity {
     }
   }
 
+  /**
+   * Gets the check mark for images.<br>
+   * Assumes true, but when PosterFilename is set and we do not have a poster, return false<br>
+   * same for fanarts.
+   * 
+   * @return the checks for images
+   */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER)) && !StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
-      return true;
+    if (!MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.POSTER))) {
+      return false;
     }
-    return false;
+
+    if (!MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty() && StringUtils.isEmpty(getArtworkFilename(MediaFileType.FANART))) {
+      return false;
+    }
+
+    return true;
   }
 
   public Boolean getHasMetadata() {

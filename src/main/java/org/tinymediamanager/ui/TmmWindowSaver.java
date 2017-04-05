@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,6 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.TreeSet;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -41,6 +30,8 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmProperties;
+import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
  * The Class TmmWindowSaver. To save window/dialog settings (like size/position)
@@ -48,72 +39,25 @@ import org.tinymediamanager.core.Settings;
  * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
-  private final static Logger   LOGGER          = LoggerFactory.getLogger(TmmWindowSaver.class);
-  private final static String   PROPERTIES_FILE = "tmm_ui.prop";
+  private final static Logger   LOGGER = LoggerFactory.getLogger(TmmWindowSaver.class);
   private static TmmWindowSaver instance;
 
-  private Properties            properties;
+  private final TmmProperties   properties;
 
   private TmmWindowSaver() {
-    properties = new Properties();
-
-    InputStream input = null;
-    try {
-      input = new FileInputStream(new File(Settings.getInstance().getSettingsFolder(), PROPERTIES_FILE));
-      properties.load(input);
-    }
-    catch (FileNotFoundException e) {
-    }
-    catch (Exception e) {
-      LOGGER.warn("unable to read window config: " + e.getMessage());
-    }
-    finally {
-      if (input != null) {
-        try {
-          input.close();
-        }
-        catch (IOException e) {
-        }
-      }
-    }
+    properties = TmmProperties.getInstance();
   }
 
-  public static TmmWindowSaver getInstance() {
+  /**
+   * get an instance of this class
+   *
+   * @return an instance of this class
+   */
+  public synchronized static TmmWindowSaver getInstance() {
     if (instance == null) {
       instance = new TmmWindowSaver();
     }
     return instance;
-  }
-
-  private void writeProperties() {
-    OutputStream output = null;
-    try {
-      output = new FileOutputStream(new File(Settings.getInstance().getSettingsFolder(), PROPERTIES_FILE));
-      Properties tmp = new Properties() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public synchronized Enumeration<Object> keys() {
-          return Collections.enumeration(new TreeSet<>(super.keySet()));
-        }
-      };
-      tmp.putAll(properties);
-      tmp.store(output, null);
-      // properties.store(output, null);
-    }
-    catch (IOException e) {
-      LOGGER.warn("failed to store window config: " + e.getMessage());
-    }
-    finally {
-      if (output != null) {
-        try {
-          output.close();
-        }
-        catch (IOException e) {
-          LOGGER.warn("failed to store window config: " + e.getMessage());
-        }
-      }
-    }
   }
 
   @Override
@@ -141,7 +85,7 @@ public class TmmWindowSaver implements AWTEventListener {
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
       // was the main window maximized?
-      if (getBoolean("mainWindowMaximized")) {
+      if (properties.getPropertyAsBoolean("mainWindowMaximized")) {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.validate();
       }
@@ -171,6 +115,9 @@ public class TmmWindowSaver implements AWTEventListener {
       if (rect.width > 0) {
         dialog.setBounds(rect);
       }
+      else {
+        dialog.pack();
+      }
     }
   }
 
@@ -185,7 +132,6 @@ public class TmmWindowSaver implements AWTEventListener {
     if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
       addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
       storeWindowBounds("mainWindow", frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
-      writeProperties();
     }
   }
 
@@ -198,47 +144,7 @@ public class TmmWindowSaver implements AWTEventListener {
   public void saveSettings(JDialog dialog) {
     if (!dialog.getName().contains("dialog")) {
       storeWindowBounds(dialog.getName(), dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
-      writeProperties();
     }
-  }
-
-  public boolean getBoolean(String name) {
-    boolean b = false;
-
-    Object param = properties.get(name);
-
-    if (param != null && param instanceof Boolean) {
-      Boolean bool = (Boolean) param;
-      b = bool;
-    }
-    else if (param != null) {
-      try {
-        b = Boolean.parseBoolean(param.toString());
-      }
-      catch (Exception e) {
-      }
-    }
-
-    return b;
-  }
-
-  public int getInteger(String name) {
-    int i = 0;
-    Object param = properties.get(name);
-
-    if (param != null && param instanceof Integer) {
-      Integer integer = (Integer) param;
-      i = integer;
-    }
-    else if (param != null) {
-      try {
-        i = Integer.parseInt(param.toString());
-      }
-      catch (Exception e) {
-      }
-    }
-
-    return i;
   }
 
   private void storeWindowBounds(String name, int x, int y, int width, int height) {
@@ -251,17 +157,16 @@ public class TmmWindowSaver implements AWTEventListener {
   private Rectangle getWindowBounds(String name) {
     Rectangle rect = new Rectangle();
 
-    rect.x = getInteger(name + "X");
-    rect.y = getInteger(name + "Y");
-    rect.width = getInteger(name + "W");
-    rect.height = getInteger(name + "H");
+    rect.x = properties.getPropertyAsInteger(name + "X");
+    rect.y = properties.getPropertyAsInteger(name + "Y");
+    rect.width = properties.getPropertyAsInteger(name + "W");
+    rect.height = properties.getPropertyAsInteger(name + "H");
 
     // check if the stored sizes fit the actual screen
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     // screen insets / taskbar
-    Insets scnMax = null;
     if (MainWindow.getActiveInstance() != null) {
-      scnMax = Toolkit.getDefaultToolkit().getScreenInsets(MainWindow.getActiveInstance().getGraphicsConfiguration());
+      Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(MainWindow.getActiveInstance().getGraphicsConfiguration());
       if ((rect.x + rect.width) > (screenSize.getWidth() - scnMax.left - scnMax.right)) {
         rect.x = scnMax.left;
         rect.width = (int) screenSize.getWidth() - scnMax.right;
@@ -277,10 +182,6 @@ public class TmmWindowSaver implements AWTEventListener {
   }
 
   private void addParam(String key, Object value) {
-    if (properties.containsKey(key)) {
-      properties.remove(key);
-    }
-
-    properties.put(key, value.toString());
+    properties.putProperty(key, value.toString());
   }
 }

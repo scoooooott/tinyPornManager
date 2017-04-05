@@ -19,7 +19,7 @@ import org.tinymediamanager.scraper.SubtitleSearchOptions;
 import org.tinymediamanager.scraper.SubtitleSearchResult;
 import org.tinymediamanager.scraper.mediaprovider.IMediaSubtitleProvider;
 
-public class MovieSubtitleSearchTest {
+public class ITMovieSubtitleSearchTest {
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Point;
@@ -40,8 +41,10 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -225,6 +228,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     panelContent.add(scrollPaneSubs, "2, 12, 9, 1, fill, fill");
 
     tableSubs = new JTable(subtitleTableModel);
+    tableSubs.setDefaultRenderer(ImageIcon.class, new Renderer());
     scrollPaneSubs.setViewportView(tableSubs);
 
     {
@@ -248,7 +252,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         panelButtons.setLayout(layout);
         panelBottom.add(panelButtons, "5, 2, fill, fill");
 
-        JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
+        JButton btnDone = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
         btnDone.setIcon(IconManager.APPLY_INV);
         btnDone.addActionListener(new ActionListener() {
           @Override
@@ -384,7 +388,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
         if (!subtitleEventList.isEmpty()) {
           tableSubs.setRowSelectionInterval(0, 0); // select first row
         }
-        TableColumnResizer.adjustColumnPreferredWidths(tableSubs, 7);
+        TableColumnResizer.adjustColumnPreferredWidths(tableSubs, 15);
       }
       stopProgressBar();
     }
@@ -448,6 +452,23 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     @Override
     public Comparator getColumnComparator(int arg0) {
       return null;
+    }
+  }
+
+  private class Renderer extends DefaultTableCellRenderer {
+
+    private final JLabel downloadLabel;
+
+    public Renderer() {
+      downloadLabel = new JLabel(BUNDLE.getString("Button.download"), IconManager.DOWNLOAD, SwingConstants.CENTER); //$NON-NLS-1$
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      if (value == IconManager.DOWNLOAD) {
+        return downloadLabel;
+      }
+      return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
   }
 

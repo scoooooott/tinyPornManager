@@ -1,6 +1,7 @@
 package org.tinymediamanager.core;
 
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IKodiMetadataProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMediaProvider;
@@ -11,7 +12,7 @@ import org.tinymediamanager.scraper.mediaprovider.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.util.PluginManager;
 
-public class Plugins {
+public class Plugins extends BasicTest {
 
   @Test
   public void load() {

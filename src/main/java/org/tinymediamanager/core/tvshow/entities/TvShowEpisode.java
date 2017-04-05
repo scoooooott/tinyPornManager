@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -374,7 +374,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setFirstAired(String aired) {
     try {
-      this.firstAired = StrgUtils.parseDate(aired);
+      setFirstAired(StrgUtils.parseDate(aired));
     }
     catch (ParseException e) {
     }
@@ -500,9 +500,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       // create correct filename
       MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String basename = FilenameUtils.getBaseName(mf.getFilename());
-      if (isDisc()) {
-        basename = "VIDEO_TS"; // FIXME: BluRay?
-      }
 
       int i = 0;
       for (TvShowEpisodeThumbNaming thumbNaming : TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames()) {
@@ -510,6 +507,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         if (StringUtils.isBlank(filename)) {
           continue;
         }
+      if (isDisc()) {
+        filename = "thumb." + FilenameUtils.getExtension(thumbUrl); // DVD/BluRay fixate to thumb.ext
+      }
 
         if (++i == 1) {
           firstImage = true;
@@ -671,7 +671,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void addActor(Person newActor) {
     // and re-set episode path to the actor
     if (StringUtils.isBlank(newActor.getEntityRoot())) {
-      newActor.setEntityRoot(getPathNIO().toString());
+      newActor.setEntityRoot(getPathNIO());
     }
 
     actors.add(newActor);
@@ -691,7 +691,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * get the actors. These are the main actors of the TV show inclusive the guests of this episode
-   * 
+   *
    * @return the actors of this episode
    */
   public List<Person> getActors() {
@@ -734,7 +734,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // and re-set episode path to the actors
     for (Person actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
+        actor.setEntityRoot(getPathNIO());
       }
     }
 
@@ -938,6 +938,19 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public List<MediaFile> getVideoFiles() {
     return getMediaFiles(MediaFileType.VIDEO);
+  }
+
+  /**
+   * get the first video file for this episode
+   *
+   * @return the first video file
+   */
+  public MediaFile getFirstVideoFile() {
+    List<MediaFile> videoFiles = getVideoFiles();
+    if (!videoFiles.isEmpty()) {
+      return videoFiles.get(0);
+    }
+    return null;
   }
 
   /**
@@ -1388,7 +1401,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * get the runtime. Just a wrapper to tvShow.getRuntime() until we support separate runtimes for episodes
-   * 
+   *
    * @return the runtime in minutes
    */
   public int getRuntime() {
@@ -1397,7 +1410,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   /**
    * return the TV shows production company if no one is filled for this episode
-   * 
+   *
    * @return the production company
    */
   @Override

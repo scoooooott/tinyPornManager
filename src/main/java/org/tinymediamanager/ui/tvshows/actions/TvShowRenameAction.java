@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,12 @@ public class TvShowRenameAction extends AbstractAction {
   private static final long           serialVersionUID = -8988748633666277616L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowRenameAction() {
+  public TvShowRenameAction(boolean withTitle) {
     putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-    putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
+    if (withTitle) {
+      putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
+    }
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
   }

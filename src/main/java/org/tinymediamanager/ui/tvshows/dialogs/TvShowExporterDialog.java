@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -26,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -43,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
+import org.tinymediamanager.core.TmmProperties;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -63,11 +68,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowExporterDialog extends TmmDialog {
   private static final long           serialVersionUID = -2197076428245222349L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
+
+  private static final String         DIALOG_ID        = "tvShowExporter";
 
   private List<TvShow>                tvShows;
   private List<ExportTemplate>        templatesFound;
@@ -86,7 +91,7 @@ public class TvShowExporterDialog extends TmmDialog {
    *          the movies to export
    */
   public TvShowExporterDialog(List<TvShow> tvShowsToExport) {
-    super(BUNDLE.getString("tvshow.export"), "tvShowExporter"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshow.export"), DIALOG_ID); //$NON-NLS-1$
     setBounds(5, 5, 600, 300);
 
     getContentPane().setLayout(
@@ -146,9 +151,11 @@ public class TvShowExporterDialog extends TmmDialog {
     panel.add(btnSetDestination, "3, 1");
     btnSetDestination.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), path); //$NON-NLS-1$
         if (file != null) {
           tfExportDir.setText(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", file.toAbsolutePath().toString());
         }
       }
     });
@@ -172,9 +179,32 @@ public class TvShowExporterDialog extends TmmDialog {
 
         ExportTemplate selectedTemplate = templatesFound.get(index);
         if (selectedTemplate != null) {
+          // check whether the chosen export path exists/is empty or not
+          Path exportPath = Paths.get(tfExportDir.getText());
+          if (!Files.exists(exportPath)) {
+            // export dir does not exist
+            JOptionPane.showMessageDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
+            return;
+          }
+
+          try {
+            if (!Utils.isFolderEmpty(exportPath)) {
+              String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+              int decision = JOptionPane.showConfirmDialog(TvShowExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
+                  JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
+              if (decision == JOptionPane.NO_OPTION) {
+                return;
+              }
+            }
+          }
+          catch (IOException e) {
+            LOGGER.warn("could not open folder: " + e.getMessage());
+            return;
+          }
+
           try {
             TvShowExporter exporter = new TvShowExporter(Paths.get(selectedTemplate.getPath()));
-            exporter.export(tvShows, Paths.get(tfExportDir.getText()));
+            exporter.export(tvShows, exportPath);
           }
           catch (Exception e) {
             LOGGER.error("Error exporting tv shows: ", e);

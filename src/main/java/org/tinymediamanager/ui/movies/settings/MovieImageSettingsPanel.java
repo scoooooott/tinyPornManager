@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -206,7 +207,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     ((HTMLDocument) tpScraperDescription.getDocument()).getStyleSheet().addRule(bodyRule);
 
     btnSelectFolder.addActionListener(arg0 -> {
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("movieset.folderchooser.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
       }

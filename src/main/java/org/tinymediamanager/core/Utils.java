@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,6 @@ import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.TmmWindowSaver;
 
 /**
  * The Class Utils.
@@ -84,7 +83,7 @@ public class Utils {
   private static final Pattern localePattern         = Pattern.compile("messages_(.{2})_?(.{2}){0,1}\\.properties", Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+)(\\.[^.]+)$",
+  private static final Pattern stackingPattern1      = Pattern.compile("(.*?)[ _.-]+((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
   // <cd/dvd/part/pt/disk/disc> <a-d>
@@ -95,11 +94,11 @@ public class Utils {
   private static final Pattern stackingPattern3      = Pattern.compile("(.*?)[_.-]+([a-d])(\\.[^.]+)$", Pattern.CASE_INSENSITIVE);
 
   // moviename-1of2.avi, moviename-1 of 2.avi
-  private static final Pattern stackingPattern4      = Pattern.compile("(.*?)[ \\(_.-]+([0-9][ .]?of[ .]?[0-9])[ \\)_-]?(\\.[^.]+)$",
+  private static final Pattern stackingPattern4      = Pattern.compile("(.*?)[ \\(_.-]+([1-9][ .]?of[ .]?[1-9])[ \\)_-]?(\\.[^.]+)$",
       Pattern.CASE_INSENSITIVE);
 
-  // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N>
-  private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[0-9]+(.*?))$",
+  // folder stacking marker <cd/dvd/part/pt/disk/disc> <0-N> - must be last part
+  private static final Pattern folderStackingPattern = Pattern.compile("(.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*[1-9]{1})$",
       Pattern.CASE_INSENSITIVE);
 
   /**
@@ -298,7 +297,7 @@ public class Utils {
     if (!StringUtils.isEmpty(filename)) {
       Matcher m = folderStackingPattern.matcher(filename);
       if (m.matches()) {
-        return m.group(1) + m.group(3); // just return String w/o stacking
+        return m.group(1); // just return String w/o stacking
       }
     }
     return filename;
@@ -498,7 +497,7 @@ public class Utils {
                   + "&tid=UA-35564534-5"
                   + "&cid=" + uuid 
                   + "&an=tinyMediaManager" 
-                  + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR svn/nightly/prerel string
+                  + "&av=" + ReleaseInfo.getVersionForReporting() // project version OR git/nightly/prerel string
                   + "&t=event"
                   + "&ec=" + event
                   + "&ea=" + event 
@@ -506,7 +505,7 @@ public class Utils {
                   + "&je=1"
                   + session
                   + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
-                  + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
+                  + "&vp=" + TmmProperties.getInstance().getPropertyAsInteger("mainWindowW") + "x" + TmmProperties.getInstance().getPropertyAsInteger("mainWindowH")
                   + "&cd1=" + getEncProp("os.name") 
                   + "&cd2=" + getEncProp("os.arch") 
                   + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
@@ -1205,7 +1204,7 @@ public class Utils {
     Path f = Paths.get("tmm.jar");
     if (!Files.exists(f)) {
       LOGGER.error("cannot restart TMM - tmm.jar not found.");
-      return null; // when we are in SVN, return null = normal close
+      return null; // when we are in GIT, return null = normal close
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
@@ -1227,7 +1226,7 @@ public class Utils {
     Path f = Paths.get("getdown.jar");
     if (!Files.exists(f)) {
       LOGGER.error("cannot start updater - getdown.jar not found.");
-      return null; // when we are in SVN, return null = normal close
+      return null; // when we are in GIT, return null = normal close
     }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
@@ -1298,6 +1297,20 @@ public class Utils {
       }
 
     });
+  }
+
+  /**
+   * check whether a folder is empty or not
+   * 
+   * @param folder
+   *          the folder to be checked
+   * @return true/false
+   * @throws IOException
+   */
+  public static boolean isFolderEmpty(final Path folder) throws IOException {
+    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(folder)) {
+      return !dirStream.iterator().hasNext();
+    }
   }
 
   /**

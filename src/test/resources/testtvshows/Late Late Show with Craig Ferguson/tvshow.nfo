@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-03-16 16:33:17 - tinyMediaManager 2.9.3-SNAPSHOT -->
+<tvshow>
+    <title>The Late Late Show with Craig Ferguson</title>
+    <sorttitle></sorttitle>
+    <year>2005</year>
+    <rating>0.0</rating>
+    <votes>0</votes>
+    <plot></plot>
+    <mpaa>not rated</mpaa>
+    <episodeguide>
+        <url cache="73387.xml">http://www.thetvdb.com/api/1D62F2F90030C444/series/73387/all/de.xml</url>
+    </episodeguide>
+    <id>73387</id>
+    <imdbid>tt0437729</imdbid>
+    <premiered></premiered>
+    <status></status>
+</tvshow>

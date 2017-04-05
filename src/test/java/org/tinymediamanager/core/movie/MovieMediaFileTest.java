@@ -3,40 +3,27 @@ package org.tinymediamanager.core.movie;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.entities.Movie;
 
-public class MovieMediaFileTest {
+public class MovieMediaFileTest extends BasicTest {
 
   @BeforeClass
   public static void beforeClass() {
-    // preload seetings for log alignment ;)
-    Globals.isDebug();
-  }
-
-  // own method to get some logging ;)
-  public static void assertEqual(Object expected, Object actual) {
-    try {
-      Assert.assertEquals(expected, actual);
-      System.out.println(expected + " - passed");
-    }
-    catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
-      throw e;
-    }
+    Settings.getInstance(getSettingsFolder());
   }
 
   @Test
   public void testUpdateMediaFilePath() {
     Movie movie = new Movie();
-    movie.setPath("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1");
-    Path mediaFile = Paths.get("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1\\asdf\\jklö\\VIDEO_TS\\VIDEO_TS.IFO");
+    movie.setPath("/private/Test_Filme/Alien Collecion/Alien 1");
+    Path mediaFile = Paths.get("/private/Test_Filme/Alien Collecion/Alien 1/asdf/jklö/VIDEO_TS/VIDEO_TS.IFO");
     MediaFile mf = new MediaFile(mediaFile);
     movie.addToMediaFiles(mf);
 
@@ -44,7 +31,7 @@ public class MovieMediaFileTest {
     System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFileAsPath());
 
     Path oldPath = movie.getPathNIO();
-    Path newPath = Paths.get("C:\\private\\Test_Filme\\Alien 1");
+    Path newPath = Paths.get("/private/Test_Filme/Alien 1");
     movie.updateMediaFilePath(oldPath, newPath);
     movie.setPath(newPath.toAbsolutePath().toString());
 

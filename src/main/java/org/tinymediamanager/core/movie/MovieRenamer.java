@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 public class MovieRenamer {
   private final static Logger       LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
   private static final List<String> KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
+  private static final Pattern ALPHANUM = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");  // to not use posix
 
   private static void renameSubtitles(Movie m) {
     // build language lists
@@ -1024,10 +1025,10 @@ public class MovieRenamer {
         ret = movie.getTitle();
         break;
       case "$1":
-        ret = StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase(Locale.ROOT) : "";
+        ret = getFirstAlphaNum(movie.getTitle());
         break;
       case "$2":
-        ret = StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1).toUpperCase(Locale.ROOT) : "";
+        ret = getFirstAlphaNum(movie.getTitleSortable());
         break;
       case "$Y":
         ret = movie.getYear().equals("0") ? "" : movie.getYear();
@@ -1119,6 +1120,22 @@ public class MovieRenamer {
   }
 
   /**
+   * gets the first alpha-numeric character
+   *
+   * @param text
+   * @return A-Z0-9 or empty
+   */
+  protected static String getFirstAlphaNum(String text) {
+    if (StringUtils.isNotBlank(text)) {
+      Matcher m = ALPHANUM.matcher(text);
+      if (m.find()) {
+        return m.group(1).toUpperCase(Locale.ROOT);
+      }
+    }
+    return ""; // text empty/null/no alphanum
+  }
+
+  /**
    * Creates the new file/folder name according to template string
    * 
    * @param template
@@ -1192,8 +1209,10 @@ public class MovieRenamer {
       newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
-    // replace trailing dots and spaces
-    newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    // replace trailing dots and spaces (filename only!)
+    if (forFilename) {
+      newDestination = newDestination.replaceAll("[ \\.]+$", "");
+    }
 
     return newDestination.trim();
   }

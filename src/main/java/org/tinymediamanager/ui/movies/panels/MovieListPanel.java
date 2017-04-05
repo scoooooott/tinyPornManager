@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 
+import ca.odell.glazedlists.ObservableElementList;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -85,7 +86,7 @@ public class MovieListPanel extends JPanel implements ITmmTabItem {
 
     // build the list (wrap it with all necessary glazedlists types), build the tablemodel and the selectionmodel
     MovieList movieList = MovieList.getInstance();
-    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
+    SortedList<Movie> sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList)movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     setLayout(new MigLayout("", "[300lp:300lp,grow][fill]", "[][200lp,grow][]"));

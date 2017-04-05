@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
   protected int                      workUnits;
   protected int                      progressDone;
   protected boolean                  cancel;
+  private long                       uniqueId;
 
   protected TmmTask(String taskName, int workUnits, TaskType type) {
     this.taskName = taskName;
@@ -43,6 +44,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
     this.taskDescription = "";
     this.progressDone = 0;
     this.type = type;
+    uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
   @Override
@@ -116,6 +118,7 @@ public abstract class TmmTask implements Runnable, TmmTaskHandle {
     if (cancel) {
       return;
     }
+    Thread.currentThread().setName(Thread.currentThread().getName() + "-G" + uniqueId);
 
     start();
     try {

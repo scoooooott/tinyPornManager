@@ -3,29 +3,17 @@ package org.tinymediamanager.thirdparty;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.entities.MediaFile;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
+public class MediaInfoTest extends BasicTest {
 
-public class MediaInfoTest {
-
-  private MediaInfo mi = null;
-
-  @Before
-  public void setUp() throws Exception {
+  @BeforeClass
+  public static void setUp() throws Exception {
     MediaInfoUtils.loadMediaInfo();
 
-    mi = new MediaInfo();
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    mi.close();
   }
 
   @Test
@@ -56,8 +44,7 @@ public class MediaInfoTest {
 
   @Test
   public void mediaFile() {
-    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-    lc.getLogger("org.tinymediamanager").setLevel(Level.TRACE);
+    setTraceLogging();
 
     MediaFile mf = new MediaFile(Paths.get("src/test/resources/testmovies/MediainfoXML/MediaInfo-BD-mpls.iso"));
     mf.gatherMediaInformation();

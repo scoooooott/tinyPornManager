@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,9 @@ public class Settings extends AbstractSettings {
   private final static String    WOL_DEVICES           = "wolDevices";
   private final static String    ENABLE_ANALYTICS      = "enableAnalytics";
 
+  private final static String         UPNP_SHARE_LIBRARY          = "upnpShareLibrary";
+  private final static String         UPNP_PLAY_ON_REMOTE         = "upnpRemotePlay";
+
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
   private final List<String>     titlePrefix           = ObservableCollections.observableList(new ArrayList<String>());
@@ -128,6 +131,9 @@ public class Settings extends AbstractSettings {
   private boolean                enableAnalytics       = true;
 
   private PropertyChangeListener propertyChangeListener;
+
+  private boolean                     upnpShareLibrary            = false;
+  private boolean                     upnpRemotePlay              = false;
 
   /**
    * Instantiates a new settings.
@@ -296,7 +302,7 @@ public class Settings extends AbstractSettings {
    * 
    * @return single instance of Settings
    */
-  public synchronized static Settings getInstance() {
+  public static synchronized Settings getInstance() {
     return getInstance(DEFAULT_CONFIG_FOLDER);
   }
 
@@ -752,6 +758,46 @@ public class Settings extends AbstractSettings {
     CacheType oldValue = this.imageCacheType;
     this.imageCacheType = newValue;
     firePropertyChange(IMAGE_CACHE_TYPE, oldValue, newValue);
+  }
+
+  /**
+   * is our library shared via UPNP?
+   *
+   * @return
+   */
+  public boolean isUpnpShareLibrary() {
+    return upnpShareLibrary;
+  }
+
+  /**
+   * share library via UPNP?
+   *
+   * @param upnpShareLibrary
+   */
+  public void setUpnpShareLibrary(boolean upnpShareLibrary) {
+    boolean old = this.upnpShareLibrary;
+    this.upnpShareLibrary = upnpShareLibrary;
+    firePropertyChange(UPNP_SHARE_LIBRARY, old, upnpShareLibrary);
+  }
+
+  /**
+   * should we search for rendering devices like Kodi, TVs, et all?
+   *
+   * @return
+   */
+  public boolean isUpnpRemotePlay() {
+    return upnpRemotePlay;
+  }
+
+  /**
+   * should we search for rendering devices like Kodi, TVs, et all?
+   *
+   * @param upnpRemotePlay
+   */
+  public void setUpnpRemotePlay(boolean upnpRemotePlay) {
+    boolean old = this.upnpRemotePlay;
+    this.upnpRemotePlay = upnpRemotePlay;
+    firePropertyChange(UPNP_PLAY_ON_REMOTE, old, upnpRemotePlay);
   }
 
   /**

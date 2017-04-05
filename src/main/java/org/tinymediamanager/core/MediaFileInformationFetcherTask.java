@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
@@ -39,6 +40,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
 
   private List<MediaFile>     mediaFiles;
   private MediaEntity         mediaEntity;
+  private long                uniqueId;
   private boolean             forceUpdate = false;
 
   /**
@@ -56,6 +58,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     this.mediaFiles.add(mediaFile);
     this.mediaEntity = mediaEntity;
     this.forceUpdate = forceUpdate;
+    this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
   /**
@@ -74,12 +77,20 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     this.mediaFiles = mediaFiles;
     this.mediaEntity = mediaEntity;
     this.forceUpdate = forceUpdate;
+    this.uniqueId = TmmTaskManager.getInstance().GLOB_THRD_CNT.incrementAndGet();
   }
 
   @Override
   public String call() {
     // try/catch block in the root of the thread to log crashes
     try {
+      String name = Thread.currentThread().getName();
+      if (!name.contains("-G")) {
+        name = name + "-G0";
+      }
+      name = name.replaceAll("\\-G\\d+", "-G" + uniqueId);
+      Thread.currentThread().setName(name);
+
       for (MediaFile mediaFile : mediaFiles) {
         mediaFile.gatherMediaInformation(forceUpdate);
         if (mediaEntity != null && mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -585,7 +585,7 @@ public class MovieSetEditorDialog extends TmmDialog {
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 
           for (Movie movie : moviesInSet) {
-            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE_SET);
+            MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
             if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
               options.setTmdbId(movie.getTmdbId());
               options.setImdbId(movie.getImdbId());

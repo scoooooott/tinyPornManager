@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,27 +48,6 @@ public class ActorImageLabel extends ImageLabel {
       this.repaint();
     }
   }
-
-  // @Override
-  // public void setImagePath(String newValue) {
-  // String oldValue = this.imagePath;
-  //
-  // if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
-  // return;
-  // }
-  //
-  // this.imagePath = newValue;
-  // firePropertyChange("imagePath", oldValue, newValue);
-  //
-  // // stop previous worker
-  // if (worker != null && !worker.isDone()) {
-  // worker.cancel(true);
-  // }
-  //
-  // // load image in separate worker -> performance
-  // worker = new ImageLoader(this.imagePath, this.getSize());
-  // worker.execute();
-  // }
 
   @Override
   public void setImageUrl(String newValue) {

@@ -2,14 +2,14 @@ package org.tinymediamanager.core;
 
 import java.util.Iterator;
 
-import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * StringCleaner provides a method for normalizing a string to generally ASCII-compatible form.
  */
-public class StringCleanerTest {
+public class StringCleanerTest extends BasicTest {
 
   /***********************************/
   @Test
@@ -19,7 +19,7 @@ public class StringCleanerTest {
     while (it.hasNext()) {
       Object[] data = it.next();
       String result = StrgUtils.convertToAscii((String) data[0], false);
-      Assert.assertEquals(result, data[1]);
+      assertEqual(result, data[1]);
     }
   }
 

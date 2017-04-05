@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.util.ParserUtils;
@@ -28,7 +29,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner
  * 
  */
-public class MovieTest {
+public class MovieTest extends BasicTest {
   private Movie m = new Movie();
 
   @Test

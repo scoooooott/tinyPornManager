@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final String                        FILESIZE             = "filesize";
   private static final String                        FILESIZE_IN_MB       = "filesizeInMegabytes";
   private static final List<String>                  PLEX_EXTRA_FOLDERS   = Arrays.asList("behind the scenes", "behindthescenes", "deleted scenes",
-      "deletedscenes", "featurettes", "interviews", "scenes", "shorts", "trailers");
+      "deletedscenes", "featurettes", "interviews", "scenes", "shorts");
 
   private static Pattern                             moviesetPattern      = Pattern
       .compile("(?i)movieset-(poster|fanart|banner|disc|discart|logo|clearlogo|clearart|thumb)\\..{2,4}");
@@ -339,7 +339,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.VIDEO_EXTRA;
       }
 
-      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer")) {
+      if (basename.matches("(?i).*[_.-]*trailer?$") || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
         return MediaFileType.TRAILER;
       }
 
@@ -495,9 +495,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isDiscFile() {
+    return isBlurayFile() || isDVDFile();
+  }
+
+  /**
+   * is this a BLURAY "disc file"? (video_ts, vts...) for movierenamer
+   *
+   * @return true/false
+   */
+  public boolean isDVDFile() {
     String name = getFilename().toLowerCase(Locale.ROOT);
-    return (name.matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
-        name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
+    return name.matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)");
+  }
+
+  /**
+   * is this a DVD "disc file"? (index, movieobject, bdmv, ...) for movierenamer
+   *
+   * @return true/false
+   */
+  public boolean isBlurayFile() {
+    String name = getFilename().toLowerCase(Locale.ROOT);
+    return name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)");
   }
 
   @Deprecated
@@ -933,33 +951,38 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int w = getVideoWidth();
     int h = getVideoHeight();
 
-    // use XBMC implementation https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L514
+    // use XBMC implementation https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L559
     if (w == 0 || h == 0) {
       return "";
     }
-    else if (w <= 720 && h <= 480) {
+    else if (w <= blur(720) && h <= blur(480)) {
       return VIDEO_FORMAT_480P;
     }
     // else if (w <= 768 && h <= 576) {
-    else if (w <= 776 && h <= 592) {
+    else if (w <= blur(776) && h <= blur(592)) {
       // 720x576 (PAL) (handbrake sometimes encode it to a max of 776 x 592)
       return VIDEO_FORMAT_576P;
     }
-    else if (w <= 960 && h <= 544) {
+    else if (w <= blur(960) && h <= blur(544)) {
       // 960x540 (sometimes 544 which is multiple of 16)
       return VIDEO_FORMAT_540P;
     }
-    else if (w <= 1280 && h <= 720) {
+    else if (w <= blur(1280) && h <= blur(720)) {
       return VIDEO_FORMAT_720P;
     }
-    else if (w <= 1920 && h <= 1080) {
+    else if (w <= blur(1920) && h <= blur(1080)) {
       return VIDEO_FORMAT_1080P;
     }
-    else if (w <= 3840 && h <= 2160) {
+    else if (w <= blur(3840) && h <= blur(2160)) {
       return VIDEO_FORMAT_4K;
     }
 
     return VIDEO_FORMAT_8K;
+  }
+
+  // add 1%
+  private int blur(int res) {
+    return res + (res / 100);
   }
 
   /**
@@ -1175,6 +1198,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
     long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
     return String.format("%02d:%02d:%02d", h, m, s);
+  }
+
+  /**
+   * returns the duration / runtime formatted - human readable<br>
+   * eg 1:05:12 or 35:12
+   *
+   * @return the duration
+   */
+  public String getDurationShort() {
+    if (this.durationInSecs == 0) {
+      return "";
+    }
+    long h = TimeUnit.SECONDS.toHours(this.durationInSecs);
+    long m = TimeUnit.SECONDS.toMinutes(this.durationInSecs - TimeUnit.HOURS.toSeconds(h));
+    long s = TimeUnit.SECONDS.toSeconds(this.durationInSecs - TimeUnit.HOURS.toSeconds(h) - TimeUnit.MINUTES.toSeconds(m));
+    if (h > 0) {
+      return String.format("%d:%02d:%02d", h, m, s);
+    }
+    else if (m > 0) {
+      return String.format("%d:%02d", m, s);
+    }
+    else {
+      return String.format("%d", s);
+    }
   }
 
   /**
@@ -1746,12 +1793,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
         }
         else {
-          // do some sanity check, to see, if we have an invalid DVD structure
-          // eg when the sum(filesize) way higher than ISO size
-          LOGGER.trace("ISO size:" + filesize + "  dataSize:" + discFilesSizes + "  = diff:" + Math.abs(discFilesSizes - filesize));
           if (discFilesSizes > 0 && filesize > 0) {
-            long gig = 1024 * 1024 * 1024;
-            if (Math.abs(discFilesSizes - filesize) > gig) {
+            // do some sanity check, to see, if we have an invalid DVD structure
+            // eg when the sum(filesize) way higher than ISO size
+            long diff = Math.abs(filesize - discFilesSizes);
+            Double ratio = diff * 100.0 / filesize;
+            LOGGER.debug("ISO size:" + filesize + "  reportedDataSize:" + discFilesSizes + "  = diff:" + diff + " ~" + ratio.intValue() + "%");
+            if (ratio > 10) {
               LOGGER.error("ISO file seems to have an invalid structure - ignore duration");
               // we set the ISO duration to zero,
               // so the standard getDuration() will always get the scraped duration

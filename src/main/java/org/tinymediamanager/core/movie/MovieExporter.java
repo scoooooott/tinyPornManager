@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,9 +114,10 @@ public class MovieExporter extends MediaEntityExporter {
     // create details for
     if (StringUtils.isNotBlank(detailTemplate)) {
       Path detailsDir = exportDir.resolve("movies");
-      if (Files.isDirectory(detailsDir)) {
-        Utils.deleteDirectoryRecursive(detailsDir);
-      }
+      // nah - to dangerous if you choose some root folder!
+      // if (Files.isDirectory(detailsDir)) {
+      // Utils.deleteDirectoryRecursive(detailsDir);
+      // }
       Files.createDirectory(detailsDir);
 
       for (MediaEntity me : moviesToExport) {
@@ -200,7 +201,10 @@ public class MovieExporter extends MediaEntityExporter {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
 
-        Map<String, Object> parameters = parseParameters(pattern);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (pattern != null) {
+          parameters = parseParameters(pattern);
+        }
 
         String filename = getMovieFilename(movie);
         if (parameters.get("escape") == Boolean.TRUE) {

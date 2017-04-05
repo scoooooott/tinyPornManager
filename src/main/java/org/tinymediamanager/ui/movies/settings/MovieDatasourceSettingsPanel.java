@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.CertificationStyle;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.entities.Certification;
@@ -95,14 +96,16 @@ public class MovieDatasourceSettingsPanel extends JPanel {
       }
     });
     btnAddDatasource.addActionListener(arg0 -> {
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("movie.datasource.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addMovieDataSources(file.toAbsolutePath().toString());
       }
     });
 
     btnAddIgnore.addActionListener(e -> {
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("movie.ignore.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.ignore"), path); //$NON-NLS-1$
       if (file != null && Files.isDirectory(file)) {
         settings.addSkipFolder(file.toAbsolutePath().toString());
       }

@@ -3,9 +3,10 @@ package org.tinymediamanager.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.entities.Certification;
 
-public class CertificationTest {
+public class CertificationTest extends BasicTest {
 
   @Test
   public void testCertificationNames() {
@@ -16,6 +17,7 @@ public class CertificationTest {
 
   @Test
   public void testCertificationTemplate() {
+    // assertEqual(expected, actual);
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.SHORT)).isEqualTo("FSK 16");
     assertThat(CertificationStyle.formatCertification(Certification.US_PG13, CertificationStyle.MEDIUM)).isEqualTo("US: PG-13");
     assertThat(CertificationStyle.formatCertification(Certification.DE_FSK16, CertificationStyle.LARGE))

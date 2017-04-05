@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -94,7 +95,8 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     // data init
     btnSearchMediaPlayer.addActionListener(arg0 -> {
-      Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty("chooseplayer.path"); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("Button.chooseplayer"), path); //$NON-NLS-1$
       if (file != null && Utils.isRegularFile(file) || Platform.isMac()) {
         tfMediaPlayer.setText(file.toAbsolutePath().toString());
       }

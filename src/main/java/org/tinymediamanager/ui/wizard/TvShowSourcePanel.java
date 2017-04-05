@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.IconManager;
@@ -57,9 +58,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 class TvShowSourcePanel extends JPanel {
   private static final long           serialVersionUID = -7126616245313008341L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
@@ -112,9 +111,11 @@ class TvShowSourcePanel extends JPanel {
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+        String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path");
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
         if (file != null && Files.isDirectory(file)) {
           settings.addTvShowDataSources(file.toAbsolutePath().toString());
+          TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
         }
       }
     });

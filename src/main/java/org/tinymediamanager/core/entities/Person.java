@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,6 +168,7 @@ public class Person extends AbstractModelObject {
    * 
    * @return path or NULL
    */
+  @Deprecated
   public Path getStoragePath() {
     if (StringUtils.isEmpty(entityRoot) || StringUtils.isEmpty(name)) {
       return null;
@@ -222,6 +223,7 @@ public class Person extends AbstractModelObject {
    * 
    * @return the root folder for that entity
    */
+  @Deprecated
   public String getEntityRoot() {
     return entityRoot;
   }
@@ -232,8 +234,16 @@ public class Person extends AbstractModelObject {
    * @param entityRoot
    *          the root folder for that entity
    */
+  @Deprecated
   public void setEntityRoot(String entityRoot) {
     this.entityRoot = entityRoot;
+  }
+
+  @Deprecated
+  public void setEntityRoot(Path entityRoot) {
+    if (entityRoot != null) {
+      this.entityRoot = entityRoot.toString();
+    }
   }
 
   /**

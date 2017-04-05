@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,6 +100,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieTrailerDownloadAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 
@@ -109,6 +110,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
@@ -133,6 +135,7 @@ public class MoviePanel extends JPanel {
 
   private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
   private final Action                  actionUpdateDataSources2     = new MovieUpdateDatasourceAction(true);
+  private final Action                  actionUpdateMovie            = new MovieUpdateAction();
   private final Action                  actionScrape                 = new MovieSingleScrapeAction(false);
   private final Action                  actionScrape2                = new MovieSingleScrapeAction(true);
   private final Action                  actionEditMovie              = new MovieEditAction(false);
@@ -190,7 +193,7 @@ public class MoviePanel extends JPanel {
     // load movielist
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
-    sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
+    sortedMovies = new SortedList<>(GlazedListsSwing.swingThreadProxyList((ObservableElementList) movieList.getMovies()), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
@@ -243,7 +246,8 @@ public class MoviePanel extends JPanel {
         for (String ds : MovieModuleManager.SETTINGS.getMovieDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new MovieUpdateSingleDatasourceAction(ds)));
         }
-
+        buttonUpdateDatasource.getPopupMenu().addSeparator();
+        buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateMovie));
         buttonUpdateDatasource.getPopupMenu().pack();
       }
     });
@@ -550,6 +554,8 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionScrapeUnscraped);
     popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.add(actionAssignMovieSets);
+    popupMenu.addSeparator();
+    popupMenu.add(actionUpdateMovie);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);

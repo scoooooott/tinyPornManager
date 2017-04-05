@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -896,7 +896,7 @@ public class MovieArtworkHelper {
    */
   private static void setBestArtwork(Movie movie, List<MediaArtwork> artwork, MediaArtworkType type, boolean download) {
     for (MediaArtwork art : artwork) {
-      if (art.getType() == type) {
+      if (art.getType() == type && StringUtils.isNotBlank(art.getDefaultUrl())) {
         movie.setArtworkUrl(art.getDefaultUrl(), MediaFileType.getMediaFileType(type));
         if (download) {
           downloadArtwork(movie, MediaFileType.getMediaFileType(type));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,16 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
+import org.tinymediamanager.ui.components.UpnpPlayButton;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -98,22 +98,17 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     TmmFontHelper.changeFont(lblSeason, 1.166);
     add(lblSeason, "4, 1");
 
-    btnPlay = new JButton("");
-    btnPlay.setIcon(IconManager.PLAY);
-    btnPlay.addActionListener(new ActionListener() {
+    btnPlay = new UpnpPlayButton() {
       @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MediaFile mf = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
-        try {
-          TmmUIHelper.openFile(mf.getFileAsPath());
-        }
-        catch (Exception e) {
-          LOGGER.error("open file", e);
-          MessageManager.instance
-              .pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":", e.getLocalizedMessage() }));
-        }
+      public MediaFile getMediaFile() {
+        return selectionModel.getSelectedTvShowEpisode().getFirstVideoFile();
       }
-    });
+
+      @Override
+      public MediaEntity getMediaEntity() {
+        return selectionModel.getSelectedTvShowEpisode();
+      }
+    };
     add(btnPlay, "6, 1, 1, 4");
 
     JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$

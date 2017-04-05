@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -93,11 +94,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ImageChooserDialog extends TmmDialog {
   private static final long           serialVersionUID = 8193355920006275933L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
+
+  private static final String         DIALOG_ID        = "imageChooser";
 
   public enum ImageType {
     POSTER,
@@ -154,7 +155,7 @@ public class ImageChooserDialog extends TmmDialog {
    */
   public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
-    super("", "imageChooser");
+    super("", DIALOG_ID);
     this.imageLabel = imageLabel;
     this.type = type;
     this.mediaType = mediaType;
@@ -914,12 +915,14 @@ public class ImageChooserDialog extends TmmDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
+      String path = TmmProperties.getInstance().getProperty(DIALOG_ID + ".path");
+      Path file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose"), path); //$NON-NLS-1$
       if (file != null && Utils.isRegularFile(file)) {
         String fileName = file.toAbsolutePath().toString();
         imageLabel.clearImage();
         imageLabel.setImageUrl("file:/" + fileName);
         task.cancel(true);
+        TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", fileName);
         setVisible(false);
       }
     }

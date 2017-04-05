@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -367,7 +367,6 @@ public class TvShowRenamer {
     }
 
     // rename epFolder accordingly
-
     String newFoldername = FilenameUtils.getBaseName(generateFoldername(episode.getTvShow(), mf)); // w/o extension
     if (StringUtils.isBlank(newFoldername)) {
       LOGGER.warn("empty disc folder name - exiting");

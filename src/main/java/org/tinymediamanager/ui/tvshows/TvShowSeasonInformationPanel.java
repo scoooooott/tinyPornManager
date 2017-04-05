@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
@@ -103,7 +104,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
    * @param tvShowSeasonSelectionModel
    *          the tv show selection model
    */
-  public TvShowSeasonInformationPanel(TvShowSeasonSelectionModel tvShowSeasonSelectionModel) {
+  public TvShowSeasonInformationPanel(final TvShowSeasonSelectionModel tvShowSeasonSelectionModel) {
     this.tvShowSeasonSelectionModel = tvShowSeasonSelectionModel;
     episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisode>()),
         GlazedLists.beanConnector(TvShowEpisode.class));
@@ -196,7 +197,12 @@ public class TvShowSeasonInformationPanel extends JPanel {
     lblMediaFiles = new JLabel(BUNDLE.getString("metatag.mediafiles")); //$NON-NLS-1$
     panelBottom.add(lblMediaFiles, "2, 2");
 
-    panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+    panelMediaFiles = new MediaFilesPanel(mediaFileEventList) {
+      @Override
+      public MediaEntity getMediaEntity() {
+        return null;
+      }
+    };
     panelBottom.add(panelMediaFiles, "2, 4, fill, fill");
     scrollPaneEpisodes.setViewportView(tableEpisodes);
 

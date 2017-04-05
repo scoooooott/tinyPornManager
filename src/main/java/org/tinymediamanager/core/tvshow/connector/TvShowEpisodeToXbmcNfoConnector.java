@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -64,7 +65,7 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "displayseason", "displayepisode", "plot", "thumb",
-    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "fileinfo",
+    "mpaa", "tags", "playcount", "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "source", "actors", "fileinfo",
     "unsupportedElements" })
 @Deprecated
 public class TvShowEpisodeToXbmcNfoConnector {
@@ -86,6 +87,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private String              mpaa           = "";
   private String              aired          = "";
   private String              premiered      = "";
+  private String              source;
 
   @XmlElement
   private int                 playcount      = 0;
@@ -162,7 +164,12 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
     String nfoFilename = mf.getBasename() + ".nfo";
     if (episode.isDisc()) {
-      nfoFilename = "VIDEO_TS.nfo"; // FIXME: BluRay?
+      if (mf.isBlurayFile()) {
+        nfoFilename = "BDMV.nfo"; // dunno, but more correct
+      }
+      if (mf.isDVDFile()) {
+        nfoFilename = "VIDEO_TS.nfo";
+      }
     }
 
     File nfoFile = new File(episode.getPath(), nfoFilename);
@@ -209,6 +216,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setPlot(episode.getPlot());
       xbmc.setAired(episode.getFirstAiredFormatted());
       xbmc.setPremiered(episode.getFirstAiredFormatted());
+      xbmc.setSource(episode.getMediaSource().name());
       if (StringUtils.isNotEmpty(episode.getTvShow().getProductionCompany())) {
         xbmc.studio = Arrays.asList(episode.getTvShow().getProductionCompany().split("\\s*[,\\/]\\s*")); // split on , or / and remove whitespace
                                                                                                          // around
@@ -436,6 +444,17 @@ public class TvShowEpisodeToXbmcNfoConnector {
         episode.addToTags(tag);
       }
 
+      if (StringUtils.isNotBlank(xbmc.getSource())) {
+        try {
+          MediaSource source = MediaSource.valueOf(xbmc.getSource());
+          if (source != null) {
+            episode.setMediaSource(source);
+          }
+        }
+        catch (Exception ignored) {
+        }
+      }
+
       episode.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));
       episodes.add(episode);
     }
@@ -592,6 +611,14 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
   public void addCredits(String credits) {
     this.credits.add(credits);
+  }
+
+  public String getSource() {
+    return source;
+  }
+
+  public void setSource(String source) {
+    this.source = source;
   }
 
   // inner class actor to represent actors

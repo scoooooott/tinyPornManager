@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,9 +121,10 @@ public class TvShowExporter extends MediaEntityExporter {
         TvShow show = (TvShow) me;
         // create a TV show dir
         Path showDir = exportDir.resolve(getFilename(show));
-        if (Files.isDirectory(showDir)) {
-          Utils.deleteDirectoryRecursive(showDir);
-        }
+        // nah - to dangerous if you choose some root folder!
+        // if (Files.isDirectory(showDir)) {
+        // Utils.deleteDirectoryRecursive(showDir);
+        // }
         Files.createDirectory(showDir);
 
         Path detailsExportFile = showDir.resolve("tvshow." + fileExtension);
@@ -245,7 +246,10 @@ public class TvShowExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof TvShow || o instanceof TvShowEpisode) {
         MediaEntity entity = (MediaEntity) o;
-        Map<String, Object> parameters = parseParameters(pattern);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (pattern != null) {
+          parameters = parseParameters(pattern);
+        }
 
         MediaFile mf = entity.getArtworkMap().get(parameters.get("type"));
         if (mf == null || !mf.isGraphic()) {

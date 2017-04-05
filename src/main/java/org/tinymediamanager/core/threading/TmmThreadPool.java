@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@ public abstract class TmmThreadPool extends TmmTask {
     TmmThreadFactory(String poolname) {
       SecurityManager s = System.getSecurityManager();
       group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-      namePrefix = "tmmpool-" + poolname + "-thread-";
+      namePrefix = "tmmpool-" + poolname + "-T";
     }
 
     @Override

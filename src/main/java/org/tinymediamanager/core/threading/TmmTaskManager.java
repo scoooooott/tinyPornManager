@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2016 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.threading.TmmTaskHandle.TaskState;
@@ -36,6 +37,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TmmTaskManager implements TmmTaskListener {
+  public final AtomicLong                GLOB_THRD_CNT    = new AtomicLong(1);
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static TmmTaskManager    instance         = new TmmTaskManager();
   private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<>();
@@ -56,14 +58,13 @@ public class TmmTaskManager implements TmmTaskListener {
 
   // fake task handles to manage queues
   private TmmTaskHandle                  imageQueueHandle;
-                                         // private TmmTaskHandle unnamedQueueHandle;
+  // private TmmTaskHandle unnamedQueueHandle;
 
   // scheduled threads
   private final ScheduledExecutorService scheduler        = Executors.newScheduledThreadPool(1);
 
   private TmmTaskManager() {
     imageQueueHandle = new ImageQueueTaskHandle();
-    // unnamedQueueHandle = new UnnamedQueueTaskHandle();
 
     // GA session keep-alive every 20 min
     scheduler.scheduleWithFixedDelay(new Runnable() {
@@ -412,66 +413,4 @@ public class TmmTaskManager implements TmmTaskListener {
       return getType().name() + " image " + getState().name() + " " + getProgressDone() + "/" + getWorkUnits();
     }
   }
-
-  // private class UnnamedQueueTaskHandle implements TmmTaskHandle {
-  // @Override
-  // public String getTaskName() {
-  // return BUNDLE.getString("task.othertasks");
-  // }
-  //
-  // @Override
-  // public int getWorkUnits() {
-  // int unit = 0;
-  // if (unnamedTaskExecutor != null) {
-  // unit = (int) unnamedTaskExecutor.getTaskCount();
-  // }
-  // return unit;
-  // }
-  //
-  // @Override
-  // public int getProgressDone() {
-  // int done = 0;
-  // if (unnamedTaskExecutor != null) {
-  // done = (int) unnamedTaskExecutor.getCompletedTaskCount();
-  // }
-  // return done;
-  // }
-  //
-  // @Override
-  // public String getTaskDescription() {
-  // return getOpenTasks() + " " + BUNDLE.getString("task.remaining");
-  // }
-  //
-  // private int getOpenTasks() {
-  // int openTasks = 0;
-  // if (unnamedTaskExecutor != null) {
-  // openTasks = unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
-  // }
-  // return openTasks;
-  // }
-  //
-  // @Override
-  // public TaskState getState() {
-  // if (unnamedTaskExecutor != null && getOpenTasks() > 0) {
-  // return TaskState.STARTED;
-  // }
-  // return TaskState.FINISHED;
-  // }
-  //
-  // @Override
-  // public TaskType getType() {
-  // return TaskType.BACKGROUND_TASK;
-  // }
-  //
-  // @Override
-  // public void cancel() {
-  // cancelUnnamedTasks();
-  // processTaskEvent(unnamedQueueHandle);
-  // }
-  //
-  // @Override
-  // public String toString() {
-  // return getType().name() + " unnamed " + getState().name() + " " + getProgressDone() + "/" + getWorkUnits();
-  // }
-  // }
 }

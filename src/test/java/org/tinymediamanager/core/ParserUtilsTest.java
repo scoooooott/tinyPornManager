@@ -2,11 +2,11 @@ package org.tinymediamanager.core;
 
 import java.io.File;
 
-import org.junit.Assert;
 import org.junit.Test;
+import org.tinymediamanager.BasicTest;
 import org.tinymediamanager.scraper.util.ParserUtils;
 
-public class ParserUtilsTest {
+public class ParserUtilsTest extends BasicTest {
 
   @Test
   public void testNamingDetection() {
@@ -129,7 +129,7 @@ public class ParserUtilsTest {
 
   @Test
   public void getTitle() {
-    File f = new File("/media/Daten/Test_Filme");
+    File f = new File("src/test/resources/testmovies");
     File[] fileArray = f.listFiles();
     for (File file : fileArray) {
       if (file.isDirectory()) {
@@ -149,17 +149,4 @@ public class ParserUtilsTest {
     File f = new File("/media/Daten/Test_Filme/xxx.avi");
     System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
   }
-
-  // own method to get some logging ;)
-  public static void assertEqual(Object expected, Object actual) {
-    try {
-      Assert.assertEquals(expected, actual);
-      System.out.println(expected + " - passed");
-    }
-    catch (AssertionError e) {
-      System.err.println(expected + " - FAILED: " + e.getMessage());
-      throw e;
-    }
-  }
-
 }

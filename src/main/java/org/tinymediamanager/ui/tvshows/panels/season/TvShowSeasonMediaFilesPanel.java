@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 Manuel Laggner
+ * Copyright 2012 - 2017 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.panels.MediaFilesPanel;
@@ -80,7 +81,12 @@ public class TvShowSeasonMediaFilesPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[grow]"));
     {
-      panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
+      panelMediaFiles = new MediaFilesPanel(mediaFileEventList){
+        @Override
+        public MediaEntity getMediaEntity() {
+          return null;
+        }
+      };
       add(panelMediaFiles, "cell 0 0,grow");
     }
   }
