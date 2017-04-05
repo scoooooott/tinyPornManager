@@ -1740,7 +1740,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // and re-set movie path the actors
     if (StringUtils.isBlank(actor.getEntityRoot())) {
-      actor.setEntityRoot(getPathNIO().toString());
+      actor.setEntityRoot(getPathNIO());
     }
 
     actors.add(actor);
@@ -1772,7 +1772,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // and re-set movie path to the actors
     for (Person actor : actors) {
       if (StringUtils.isBlank(actor.getEntityRoot())) {
-        actor.setEntityRoot(getPathNIO().toString());
+        actor.setEntityRoot(getPathNIO());
       }
     }
 
@@ -1886,7 +1886,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // and re-set movie path the directors
     if (StringUtils.isBlank(director.getEntityRoot())) {
-      director.setEntityRoot(getPathNIO().toString());
+      director.setEntityRoot(getPathNIO());
     }
 
     directors.add(director);
@@ -1920,7 +1920,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // and re-set movie path to the actors
     for (Person director : directors) {
       if (StringUtils.isBlank(director.getEntityRoot())) {
-        director.setEntityRoot(getPathNIO().toString());
+        director.setEntityRoot(getPathNIO());
       }
     }
 
@@ -1963,7 +1963,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // and re-set movie path the writers
     if (StringUtils.isBlank(writer.getEntityRoot())) {
-      writer.setEntityRoot(getPathNIO().toString());
+      writer.setEntityRoot(getPathNIO());
     }
 
     writers.add(writer);
@@ -1997,7 +1997,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     // and re-set movie path to the actors
     for (Person writer : writers) {
       if (StringUtils.isBlank(writer.getEntityRoot())) {
-        writer.setEntityRoot(getPathNIO().toString());
+        writer.setEntityRoot(getPathNIO());
       }
     }
 
