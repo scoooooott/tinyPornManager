@@ -279,10 +279,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       actors.add(new Person(actor));
     }
     for (Person director : source.getDirectors()) {
-      actors.add(new Person(director));
+      directors.add(new Person(director));
     }
     for (Person writer : source.getWriters()) {
-      actors.add(new Person(writer));
+      writers.add(new Person(writer));
     }
   }
 
@@ -507,9 +507,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         if (StringUtils.isBlank(filename)) {
           continue;
         }
-      if (isDisc()) {
-        filename = "thumb." + FilenameUtils.getExtension(thumbUrl); // DVD/BluRay fixate to thumb.ext
-      }
+        if (isDisc()) {
+          filename = "thumb." + FilenameUtils.getExtension(thumbUrl); // DVD/BluRay fixate to thumb.ext
+        }
 
         if (++i == 1) {
           firstImage = true;
@@ -750,7 +750,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void addDirector(Person director) {
     // and re-set movie path the directors
     if (StringUtils.isBlank(director.getEntityRoot())) {
-      director.setEntityRoot(getPathNIO().toString());
+      director.setEntityRoot(getPathNIO());
     }
 
     directors.add(director);
@@ -784,7 +784,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // and re-set movie path to the actors
     for (Person director : directors) {
       if (StringUtils.isBlank(director.getEntityRoot())) {
-        director.setEntityRoot(getPathNIO().toString());
+        director.setEntityRoot(getPathNIO());
       }
     }
 
@@ -823,7 +823,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void addWriter(Person writer) {
     // and re-set movie path the writers
     if (StringUtils.isBlank(writer.getEntityRoot())) {
-      writer.setEntityRoot(getPathNIO().toString());
+      writer.setEntityRoot(getPathNIO());
     }
 
     writers.add(writer);
@@ -857,7 +857,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // and re-set movie path to the actors
     for (Person writer : writers) {
       if (StringUtils.isBlank(writer.getEntityRoot())) {
-        writer.setEntityRoot(getPathNIO().toString());
+        writer.setEntityRoot(getPathNIO());
       }
     }
 
