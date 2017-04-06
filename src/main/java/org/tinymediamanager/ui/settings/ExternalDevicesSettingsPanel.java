@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -27,9 +28,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -62,6 +63,8 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private JButton                     btnRemoveWolDevice;
   private JButton                     btnAddWolDevice;
   private JButton                     btnEditWolDevice;
+  private JCheckBox                   chckbxUpnpShareLibrary;
+  private JCheckBox                   chckbxUpnpRemotePlay;
 
   public ExternalDevicesSettingsPanel() {
 
@@ -106,7 +109,7 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("", "[25lp][][150lp][]", "[][200lp][20lp][][][][][]"));
+    setLayout(new MigLayout("", "[25lp][][150lp][]", "[][200lp][20lp][][][][][20lp][][][]"));
     {
       final JLabel lblWolT = new JLabel(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblWolT, 1.16667, Font.BOLD);
@@ -119,41 +122,53 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
       tableWolDevices = new JTable();
       spWolDevices.setViewportView(tableWolDevices);
 
-      btnAddWolDevice = new JButton(BUNDLE.getString("Button.add"));
+      btnAddWolDevice = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
       add(btnAddWolDevice, "flowy,cell 3 1,growx,aligny top");
 
-      btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit"));
+      btnEditWolDevice = new JButton(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
       add(btnEditWolDevice, "cell 3 1,growx");
 
-      btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove"));
+      btnRemoveWolDevice = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
       add(btnRemoveWolDevice, "cell 3 1,growx");
     }
     {
-      final JLabel lblKodiT = new JLabel("Kodi / XBMC");
+      final JLabel lblKodiT = new JLabel("Kodi / XBMC"); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblKodiT, 1.16667, Font.BOLD);
       add(lblKodiT, "cell 0 3 2 1");
     }
     {
-      JLabel lblXbmcHostT = new JLabel(BUNDLE.getString("Settings.proxyhost"));
+      JLabel lblXbmcHostT = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
       add(lblXbmcHostT, "cell 1 4");
 
       tfXbmcHost = new JTextField();
       add(tfXbmcHost, "cell 2 4");
       tfXbmcHost.setColumns(20);
 
-      JLabel lblXbmcUsernameT = new JLabel(BUNDLE.getString("Settings.proxyuser"));
+      JLabel lblXbmcUsernameT = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
       add(lblXbmcUsernameT, "cell 1 5");
 
       tfXbmcUsername = new JTextField();
       add(tfXbmcUsername, "cell 2 5");
       tfXbmcUsername.setColumns(20);
 
-      JLabel lblXbmcPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass"));
+      JLabel lblXbmcPasswordT = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
       add(lblXbmcPasswordT, "cell 1 6");
 
       tfXbmcPassword = new JPasswordField();
       add(tfXbmcPassword, "cell 2 6");
       tfXbmcPassword.setColumns(20);
+    }
+    {
+      final JLabel lblUpnpT = new JLabel("UPnP");
+      TmmFontHelper.changeFont(lblUpnpT, 1.16667, Font.BOLD);
+      add(lblUpnpT, "cell 0 8 3 1");
+    }
+    {
+      chckbxUpnpShareLibrary = new JCheckBox(BUNDLE.getString("Settings.upnp.share")); //$NON-NLS-1$
+      add(chckbxUpnpShareLibrary, "cell 1 9 2 1");
+
+      chckbxUpnpRemotePlay = new JCheckBox(BUNDLE.getString("Settings.upnp.play")); //$NON-NLS-1$
+      add(chckbxUpnpRemotePlay, "cell 1 10 2 1");
     }
   }
 
@@ -188,5 +203,16 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, String, JPasswordField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, tfXbmcPassword, jPasswordFieldBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("upnpRemotePlay");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, chckbxUpnpRemotePlay, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("upnpShareLibrary");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxUpnpShareLibrary, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }
