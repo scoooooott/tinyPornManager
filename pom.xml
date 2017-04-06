@@ -22,9 +22,9 @@
         <version>1.0</version>
     </parent>
 
-	<artifactId>tinyMediaManager</artifactId>
-	<version>3.0-SNAPSHOT</version>
-	<name>tinyMediaManager</name>
+    <artifactId>tinyMediaManager</artifactId>
+    <version>3.0-SNAPSHOT</version>
+    <name>tinyMediaManager</name>
 
     <scm>
         <url>https://github.com/tinyMediaManager/${project.artifactId}</url>
@@ -35,8 +35,9 @@
 
     <properties>
         <transifexURL>https://www.transifex.com/api/2/project/tinymediamanager/resource/</transifexURL>
-    <maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target><surefire-plugin.version>2.19.1</surefire-plugin.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <surefire-plugin.version>2.19.1</surefire-plugin.version>
     </properties>
 
     <dependencies>
@@ -53,158 +54,158 @@
         </dependency>
         <dependency>
             <!-- own patched artifacts -->
-            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true
-                -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager
+            <!-- mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true 
+                -Dpackaging=jar -Dfile=JTattoo-1.6.12.1.jar -DgroupId=org.tinymediamanager 
                 -DartifactId=JTattoo -Dversion=1.6.12.1 -->
             <groupId>org.tinymediamanager</groupId>
             <artifactId>JTattoo</artifactId>
             <version>1.6.12.1</version>
         </dependency>
 
-		<!-- our plugins - all provided for dependency resolution -->
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-anidb</artifactId>
-			<version>1.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-fanarttv</artifactId>
-			<version>1.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-hdtrailers</artifactId>
-			<version>1.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-imdb</artifactId>
-			<version>1.8</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-kodi</artifactId>
-			<version>1.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-moviemeter</artifactId>
-			<version>1.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-ofdb</artifactId>
-			<version>1.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-opensubtitles</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-rottentomatoes</artifactId>
-			<version>1.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId>
-			<version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-tmdb</artifactId>
-			<version>1.9</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-trakt</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-tvdb</artifactId>
-			<version>1.8</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tinymediamanager.plugins</groupId>
-			<artifactId>scraper-zelluloid</artifactId>
-			<version>1.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId>
-			<version>1.0-SNAPSHOT</version> </dependency> -->
-		<dependency>
-			<groupId>com.uwetrottmann.trakt5</groupId>
-			<artifactId>trakt-java</artifactId>
-			<version>5.5.1</version>
-		</dependency>
-		<dependency>
-			<groupId>it.tidalwave.betterbeansbinding</groupId>
-			<artifactId>betterbeansbinding-swingbinding</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.java.dev.glazedlists</groupId>
-			<artifactId>glazedlists_java15</artifactId>
-			<version>1.9.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.imgscalr</groupId>
-			<artifactId>imgscalr-lib</artifactId>
-			<version>4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>net.java.dev.jna</groupId>
-			<artifactId>jna-platform</artifactId>
-			<version>4.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.floreysoft</groupId>
-			<artifactId>jmte</artifactId>
+        <!-- our plugins - all provided for dependency resolution -->
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-anidb</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-fanarttv</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-hdtrailers</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-imdb</artifactId>
+            <version>1.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-kodi</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-moviemeter</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-ofdb</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-opensubtitles</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-rottentomatoes</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--dependency> <groupId>org.tinymediamanager.plugins</groupId> <artifactId>scraper-thesubdb</artifactId> 
+            <version>1.0-SNAPSHOT</version><scope>provided</scope> </dependency -->
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-tmdb</artifactId>
+            <version>1.9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-trakt</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-tvdb</artifactId>
+            <version>1.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinymediamanager.plugins</groupId>
+            <artifactId>scraper-zelluloid</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- <dependency> <groupId>org.tinymediamanager</groupId> <artifactId>kodi-json-rpc</artifactId> 
+            <version>1.0-SNAPSHOT</version> </dependency> -->
+        <dependency>
+            <groupId>com.uwetrottmann.trakt5</groupId>
+            <artifactId>trakt-java</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>it.tidalwave.betterbeansbinding</groupId>
+            <artifactId>betterbeansbinding-swingbinding</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.glazedlists</groupId>
+            <artifactId>glazedlists_java15</artifactId>
+            <version>1.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>4.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.floreysoft</groupId>
+            <artifactId>jmte</artifactId>
             <version>3.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>hu.kazocsaba</groupId>
-			<artifactId>image-viewer</artifactId>
-			<version>1.2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.miglayout</groupId>
-			<artifactId>miglayout-swing</artifactId>
-			<version>5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>jgoodies-forms</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2-mvstore</artifactId>
-			<version>1.4.191</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jtidy</groupId>
-			<artifactId>jtidy</artifactId>
-			<version>r938</version>
+        </dependency>
+        <dependency>
+            <groupId>hu.kazocsaba</groupId>
+            <artifactId>image-viewer</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>jgoodies-forms</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2-mvstore</artifactId>
+            <version>1.4.191</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jtidy</groupId>
+            <artifactId>jtidy</artifactId>
+            <version>r938</version>
 
-		</dependency>
-		<dependency>
-			<groupId>com.github.stephenc.java-iso-tools</groupId>
-			<artifactId>loop-fs-iso-impl</artifactId>
-			<version>2.0.1-TMM</version>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stephenc.java-iso-tools</groupId>
+            <artifactId>loop-fs-iso-impl</artifactId>
+            <version>2.0.1-TMM</version>
+        </dependency>
         <dependency>
             <groupId>org.nanohttpd</groupId>
             <artifactId>nanohttpd</artifactId>
@@ -215,7 +216,7 @@
             <artifactId>cling-support</artifactId>
             <version>2.1.1</version>
         </dependency>
-	</dependencies>
+    </dependencies>
 
     <build>
         <resources>
@@ -307,8 +308,20 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <skipITs>true</skipITs><!-- always skip ITs, even when
+                    <skipITs>true</skipITs><!-- always skip ITs, even when 
                         skipTests=false -->
+                </configuration>
+            </plugin>
+            <plugin><!-- override from parent -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java18</artifactId>
+                        <version>1.0</version>
+                    </signature>
+                    <!-- ignoreDependencies>false</ignoreDependencies -->
                 </configuration>
             </plugin>
             <plugin>
@@ -359,7 +372,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- call our ant file, since it's too complicated to do
+                <!-- call our ant file, since it's too complicated to do 
                     our packaging solely in maven -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -451,13 +464,13 @@
                         <artifactId>forbiddenapis</artifactId>
                         <version>2.2</version>
                         <configuration>
-                            <!-- if the used Java version is too new, don't
+                            <!-- if the used Java version is too new, don't 
                                 fail, just do nothing: -->
                             <failOnUnsupportedJava>false</failOnUnsupportedJava>
                             <failOnViolation>false</failOnViolation>
                             <!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
                             <bundledSignatures>
-                                <!-- This will automatically choose the right
+                                <!-- This will automatically choose the right 
                                     signatures based on 'maven.compiler.target': -->
                                 <bundledSignature>jdk-deprecated</bundledSignature>
                                 <bundledSignature>jdk-non-portable</bundledSignature>
@@ -468,7 +481,7 @@
                                 <!-- bundledSignature>jdk-unsafe</bundledSignature -->
                             </bundledSignatures>
                             <signaturesFiles>
-                                <!-- use ours b/c of resourcebundle without
+                                <!-- use ours b/c of resourcebundle without 
                                     locale -->
                                 <signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
                             </signaturesFiles>
