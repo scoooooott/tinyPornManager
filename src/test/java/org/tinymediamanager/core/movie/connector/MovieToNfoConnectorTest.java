@@ -268,7 +268,7 @@ public class MovieToNfoConnectorTest {
     movie.addProducer(new Person(Person.Type.PRODUCER, "Ron Clements", "Producer"));
     movie.addProducer(new Person(Person.Type.PRODUCER, "Donald W. Ernst", "Producer"));
 
-    movie.setSpokenLanguages("en");
+    movie.setSpokenLanguages("de, fr, Englirsch");
     movie.setMediaSource(MediaSource.BLURAY);
     movie.setEdition(MovieEdition.DIRECTORS_CUT);
     return movie;

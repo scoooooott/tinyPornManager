@@ -16,6 +16,10 @@
 
 package org.tinymediamanager.core.movie.connector;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,5 +133,30 @@ public class MovieToMediaportalConnector extends MovieGenericXmlConnector {
     Element director = document.createElement("director");
     director.setTextContent(movie.getDirectorsAsString());
     root.appendChild(director);
+  }
+
+  /**
+   * languages are print in the UI language in a single <language>xxx</language> tagseparated by |
+   */
+  @Override
+  protected void addLanguages() {
+    // prepare spoken language for MP - try to extract the iso codes to the UI language separated by a pipe
+    Locale uiLanguage = Locale.getDefault();
+    List<String> languages = new ArrayList<>();
+    for (String langu : movie.getSpokenLanguages().split(",")) {
+      langu = langu.trim();
+      Locale locale = new Locale(langu);
+      String languageLocalized = locale.getDisplayLanguage(uiLanguage);
+      if (StringUtils.isNotBlank(languageLocalized) && !langu.equalsIgnoreCase(languageLocalized)) {
+        languages.add(languageLocalized);
+      }
+      else {
+        languages.add(langu);
+      }
+    }
+
+    Element element = document.createElement("languages");
+    element.setTextContent(StringUtils.join(languages.toArray(), '|'));
+    root.appendChild(element);
   }
 }

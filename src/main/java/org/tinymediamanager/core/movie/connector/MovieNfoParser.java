@@ -53,6 +53,7 @@ import org.tinymediamanager.core.movie.entities.MovieTrailer;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.entities.Certification;
 import org.tinymediamanager.scraper.entities.MediaGenres;
+import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -1059,6 +1060,22 @@ public class MovieNfoParser {
     Element element = getSingleElement(root, "languages");
     if (element != null) {
       languages = element.ownText();
+    }
+
+    // if the languages are in MediaPortal style, parse them and prepare them for tmm
+    if (StringUtils.isNotBlank(languages)) {
+      List<String> languages = new ArrayList<>();
+      for (String langu : this.languages.split("\\|")) {
+        langu = langu.trim();
+        String languIso = LanguageUtils.getIso2LanguageFromLocalizedString(langu);
+        if (StringUtils.isNotBlank(languIso)) {
+          languages.add(languIso);
+        }
+        else {
+          languages.add(langu);
+        }
+      }
+      this.languages = StringUtils.join(languages.toArray(), ", ");
     }
   }
 
