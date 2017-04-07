@@ -34,6 +34,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.entities.Person;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -55,6 +56,7 @@ public class MovieJmteTests {
     TOKEN_MAP.put("originalTitle", "movie.originalTitle");
     TOKEN_MAP.put("sorttitle", "movie.sortTitle");
     TOKEN_MAP.put("year", "movie.year");
+    TOKEN_MAP.put("releaseDate", "movie.releaseDate;date(yyyy-MM-dd)");
     TOKEN_MAP.put("titleSortable", "movie.titleSortable");
     TOKEN_MAP.put("rating", "movie.rating");
     TOKEN_MAP.put("movieset", "movie.movieSet");
@@ -86,6 +88,7 @@ public class MovieJmteTests {
       Movie movie = createMovie();
 
       engine = Engine.createEngine();
+      engine.registerNamedRenderer(new NamedDateRenderer());
       engine.setModelAdaptor(new TmmModelAdaptor());
       root = new HashMap<>();
       root.put("movie", movie);
@@ -97,6 +100,7 @@ public class MovieJmteTests {
       compare("${originalTitle}", "Disneys Aladdin");
       compare("${sortTitle}", "Aladdin");
       compare("${year}", "1992");
+      compare("${releaseDate}", "1992-11-25");
       compare("${rating}", "7.2");
       compare("${movieset.title}", "Aladdin Collection");
       compare("${movieset.title[0]}", "A");
@@ -135,6 +139,9 @@ public class MovieJmteTests {
 
       // tests that should not failure
       compare("${tags[100]}", "");
+
+      // test empty brackets
+      compare("{ ${tags[100]} }", "{  }");
     }
     catch (Exception e) {
       e.printStackTrace();

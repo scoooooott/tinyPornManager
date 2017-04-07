@@ -32,6 +32,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.jmte.NamedNumberRenderer;
 import org.tinymediamanager.core.jmte.TmmModelAdaptor;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -62,7 +63,7 @@ public class TvShowJmteTests {
     TOKEN_MAP.put("seasonNrDvd", "episode.dvdSeason");
     TOKEN_MAP.put("title", "episode.title");
     TOKEN_MAP.put("year", "episode.year");
-    // TOKEN_MAP.put("airedDate", "episode.firstAired");
+    TOKEN_MAP.put("airedDate", "episode.firstAired;date(yyyy-MM-dd)");
 
     TOKEN_MAP.put("videoCodec", "episode.mediaInfoVideoCodec");
     TOKEN_MAP.put("videoFormat", "episode.mediaInfoVideoFormat");
@@ -85,9 +86,19 @@ public class TvShowJmteTests {
       root.put("tvShow", tvShow);
 
       // test single tokens
-      compare("${showTitle}", "21 Jump Street");
-      compare("${showTitleSortable}", "21 Jump Street");
+      compare("${showTitle}", "The 4400");
+      compare("${showTitleSortable}", "4400, The");
       compare("${showYear}", "1987");
+
+      // test combined tokens
+      compare("${showTitle} (${showYear})", "The 4400 (1987)");
+
+      // test empty brackets
+      compare("{ ${showTitle[100]} }", "{  }");
+
+      // direct access
+      compare("${tvShow.year}/${tvShow.title}", "1987/The 4400");
+      compare("${showYear[2,2]}/${showTitle[0,2]}", "87/Th");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -103,6 +114,7 @@ public class TvShowJmteTests {
       engine = Engine.createEngine();
       engine.setModelAdaptor(new TmmModelAdaptor());
       engine.registerNamedRenderer(new NamedNumberRenderer());
+      engine.registerNamedRenderer(new NamedDateRenderer());
       root = new HashMap<>();
       root.put("episode", episode);
       root.put("tvShow", episode.getTvShow());
@@ -121,7 +133,7 @@ public class TvShowJmteTests {
       compare("${seasonNrDvd}", "1");
       compare("${title}", "Don't Pet the Teacher");
       compare("${year}", "1987");
-      // compare("${airedDate}", "1987-04-26");
+      compare("${airedDate}", "1987-04-26");
 
       compare("${videoResolution}", "1280x720");
       compare("${videoFormat}", "720p");
@@ -131,6 +143,16 @@ public class TvShowJmteTests {
 
       compare("${mediaSource}", "Bluray");
       compare("${mediaSource.name}", "BLURAY");
+
+      // test combined tokens
+      compare("${showTitle} - S${seasonNr2}E${episodeNr2} - ${title}", "The 4400 - S01E03 - Don't Pet the Teacher");
+
+      // test empty brackets
+      compare("{ ${showTitle[100]} }", "{  }");
+
+      // test direct access
+      compare("${episode.firstAired;date(yyyy - MM - dd)} - ${episode.title}", "1987 - 04 - 26 - Don't Pet the Teacher");
+      compare("S${episode.season}E${episodeNr} - ${title[0,2]}", "S1E3 - Do");
     }
     catch (Exception e) {
       e.printStackTrace();
