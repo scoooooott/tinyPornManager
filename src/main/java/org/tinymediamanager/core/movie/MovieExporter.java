@@ -38,6 +38,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.movie.entities.Movie;
 
 import com.floreysoft.jmte.NamedRenderer;
@@ -180,7 +181,7 @@ public class MovieExporter extends MediaEntityExporter {
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  public static class MovieFilenameRenderer implements NamedRenderer {
+  private static class MovieFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -197,7 +198,7 @@ public class MovieExporter extends MediaEntityExporter {
     }
 
     @Override
-    public String render(Object o, String pattern, Locale locale) {
+    public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
 
@@ -263,10 +264,10 @@ public class MovieExporter extends MediaEntityExporter {
 
   /**
    * this renderer is used to copy artwork into the exported template
-   * 
+   *
    * @author Manuel Laggner
    */
-  private class ArtworkCopyRenderer implements NamedRenderer {
+  private static class ArtworkCopyRenderer implements NamedRenderer {
     private Path pathToExport;
 
     public ArtworkCopyRenderer(Path pathToExport) {
@@ -289,7 +290,7 @@ public class MovieExporter extends MediaEntityExporter {
     }
 
     @Override
-    public String render(Object o, String pattern, Locale locale) {
+    public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
         Map<String, Object> parameters = parseParameters(pattern);
@@ -349,7 +350,7 @@ public class MovieExporter extends MediaEntityExporter {
 
     /**
      * parse the parameters out of the parameters string
-     * 
+     *
      * @param parameters
      *          the parameters as string
      * @return a map containing all parameters

@@ -1495,11 +1495,6 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return "";
   }
 
-  public String getMediaInfoVideoResolution() {
-
-    return "";
-  }
-
   public void setSpokenLanguages(String newValue) {
     String oldValue = this.spokenLanguages;
     this.spokenLanguages = newValue;
@@ -2085,6 +2080,17 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public String getMediaInfoVideoResolution() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      return mediaFile.getVideoResolution();
+    }
+
+    return "";
+  }
+
+  @Override
   public String getMediaInfoVideoFormat() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (videos.size() > 0) {
@@ -2142,6 +2148,22 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     return 0;
+  }
+
+  public String getVideo3DFormat() {
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      if (StringUtils.isNotBlank(mediaFile.getVideo3DFormat())) {
+        return mediaFile.getVideo3DFormat();
+      }
+
+    }
+    else if (isVideoIn3D()) { // no MI info, but flag set from user
+      return "3D";
+    }
+
+    return "";
   }
 
   public MovieEdition getEdition() {

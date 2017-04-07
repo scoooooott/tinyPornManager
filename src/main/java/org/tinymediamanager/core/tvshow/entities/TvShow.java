@@ -1466,7 +1466,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public String getMediaInfoVideoFormat() {
-    return null;
+    return "";
+  }
+
+  @Override
+  public String getMediaInfoVideoResolution() {
+    return "";
   }
 
   @Override
@@ -1476,7 +1481,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public String getMediaInfoVideoCodec() {
-    return null;
+    return "";
   }
 
   @Override
@@ -1486,7 +1491,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public String getMediaInfoAudioCodec() {
-    return null;
+    return "";
   }
 
   @Override

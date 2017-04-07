@@ -39,6 +39,13 @@ public interface IMediaInformation {
   public String getMediaInfoVideoFormat();
 
   /**
+   * get the video resolution (e.g. 1920x1080)
+   *
+   * @return the video resolution
+   */
+  public String getMediaInfoVideoResolution();
+
+  /**
    * gets the aspect ratio (e.g. 1.33).
    * 
    * @return the aspect ratio

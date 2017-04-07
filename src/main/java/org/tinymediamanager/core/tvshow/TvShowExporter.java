@@ -37,6 +37,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.jmte.NamedDateRenderer;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
@@ -189,7 +190,7 @@ public class TvShowExporter extends MediaEntityExporter {
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  public static class TvShowFilenameRenderer implements NamedRenderer {
+  private static class TvShowFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -206,7 +207,7 @@ public class TvShowExporter extends MediaEntityExporter {
     }
 
     @Override
-    public String render(Object o, String pattern, Locale locale) {
+    public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
       if (o instanceof TvShow) {
         TvShow show = (TvShow) o;
         return TvShowRenamer.getTvShowFoldername(show);
@@ -220,7 +221,7 @@ public class TvShowExporter extends MediaEntityExporter {
    * 
    * @author Manuel Laggner
    */
-  private class ArtworkCopyRenderer implements NamedRenderer {
+  private static class ArtworkCopyRenderer implements NamedRenderer {
     private Path pathToExport;
 
     public ArtworkCopyRenderer(Path pathToExport) {
@@ -243,7 +244,7 @@ public class TvShowExporter extends MediaEntityExporter {
     }
 
     @Override
-    public String render(Object o, String pattern, Locale locale) {
+    public String render(Object o, String pattern, Locale locale, Map<String, Object> model) {
       if (o instanceof TvShow || o instanceof TvShowEpisode) {
         MediaEntity entity = (MediaEntity) o;
         Map<String, Object> parameters = new HashMap<String, Object>();

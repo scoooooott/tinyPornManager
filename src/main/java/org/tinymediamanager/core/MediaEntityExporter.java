@@ -22,26 +22,18 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.jmte.HtmlEncoder;
 
 import com.floreysoft.jmte.Engine;
-import com.floreysoft.jmte.NamedRenderer;
-import com.floreysoft.jmte.RenderFormatInfo;
-import com.floreysoft.jmte.encoder.Encoder;
 import com.floreysoft.jmte.encoder.XMLEncoder;
-import com.floreysoft.jmte.message.ParseException;
 
 public abstract class MediaEntityExporter {
   private final static Logger   LOGGER             = LoggerFactory.getLogger(MediaEntityExporter.class);
@@ -183,70 +175,5 @@ public abstract class MediaEntityExporter {
     }
 
     return templatesFound;
-  }
-
-  public static class NamedDateRenderer implements NamedRenderer {
-    private static final String DEFAULT_PATTERN = "dd.MM.yyyy HH:mm:ss Z";
-
-    private Date convert(Object o, DateFormat dateFormat) {
-      if (o instanceof Date) {
-        return (Date) o;
-      }
-      else if (o instanceof Number) {
-        long longValue = ((Number) o).longValue();
-        return new Date(longValue);
-      }
-      else if (o instanceof String) {
-        try {
-          try {
-            return dateFormat.parse((String) o);
-          }
-          catch (java.text.ParseException e) {
-            LOGGER.warn("cannot convert date format", e);
-          }
-        }
-        catch (ParseException e) {
-        }
-      }
-      return null;
-    }
-
-    @Override
-    public String getName() {
-      return "date";
-    }
-
-    @Override
-    public Class<?>[] getSupportedClasses() {
-      return new Class[] { Date.class, String.class, Integer.class, Long.class };
-    }
-
-    @Override
-    public String render(Object o, String pattern, Locale locale) {
-      String patternToUse = pattern != null ? pattern : DEFAULT_PATTERN;
-      try {
-        DateFormat dateFormat = new SimpleDateFormat(patternToUse);
-        Date value = convert(o, dateFormat);
-        if (value != null) {
-          String format = dateFormat.format(value);
-          return format;
-        }
-      }
-      catch (IllegalArgumentException | NullPointerException iae) {
-      }
-      return null;
-    }
-
-    @Override
-    public RenderFormatInfo getFormatInfo() {
-      return null;
-    }
-  }
-
-  public static class HtmlEncoder implements Encoder {
-    @Override
-    public String encode(String arg0) {
-      return StringEscapeUtils.escapeHtml4(arg0);
-    }
   }
 }
