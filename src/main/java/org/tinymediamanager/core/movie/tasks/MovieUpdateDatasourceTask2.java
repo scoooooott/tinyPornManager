@@ -592,7 +592,11 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
       String[] video = ParserUtils.detectCleanMovienameAndYear(movieDir.getFileName().toString());
       movie.setTitle(video[0]);
       if (!video[1].isEmpty()) {
-        movie.setYear(video[1]);
+        try {
+          movie.setYear(Integer.parseInt(video[1]));
+        }
+        catch (Exception ignored) {
+        }
       }
     }
 
@@ -765,7 +769,11 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
           String[] ty = ParserUtils.detectCleanMovienameAndYear(basename);
           movie.setTitle(ty[0]);
           if (!ty[1].isEmpty()) {
-            movie.setYear(ty[1]);
+            try {
+              movie.setYear(Integer.parseInt(ty[1]));
+            }
+            catch (Exception ignored) {
+            }
           }
           // get edition from name
           movie.setEdition(MovieEdition.getMovieEditionFromString(basename));

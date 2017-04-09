@@ -632,12 +632,7 @@ public class TvShowEditorDialog extends TmmDialog {
       lblClearart.setImagePath(tvShowToEdit.getArtworkFilename(MediaFileType.CLEARART));
       tfStudio.setText(tvShow.getProductionCompany());
 
-      int year = 0;
-      try {
-        year = Integer.parseInt(tvShow.getYear());
-      }
-      catch (Exception e) {
-      }
+      int year = tvShow.getYear();
       spYear.setValue(year);
       spDateAdded.setValue(tvShow.getDateAdded());
 
@@ -748,7 +743,7 @@ public class TvShowEditorDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       tvShowToEdit.setTitle(tfTitle.getText());
       tvShowToEdit.setSortTitle(tfSorttitle.getText());
-      tvShowToEdit.setYear(String.valueOf(spYear.getValue()));
+      tvShowToEdit.setYear((Integer) spYear.getValue());
       tvShowToEdit.setPlot(tpPlot.getText());
       tvShowToEdit.setRuntime((Integer) spRuntime.getValue());
       // sync of media ids

@@ -374,7 +374,12 @@ public class VSMeta {
     m.setTagline(title3);
     m.setPlot(description);
     m.setReleaseDate(date);
-    m.setYear(year);
+    try {
+      m.setYear(Integer.parseInt(year));
+    }
+    catch (Exception e) {
+      m.setYear(0);
+    }
     m.setRating(rating);
     m.setCertification(certification);
 
@@ -420,7 +425,12 @@ public class VSMeta {
 
     ep.setPlot(description);
     ep.setFirstAired(date);
-    ep.setYear(year);
+    try {
+      ep.setYear(Integer.parseInt(year));
+    }
+    catch (Exception e) {
+      ep.setYear(0);
+    }
     ep.setRating(rating);
     // tv.setCertification(certification);
 

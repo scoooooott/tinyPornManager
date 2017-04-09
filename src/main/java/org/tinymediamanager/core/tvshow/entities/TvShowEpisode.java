@@ -1429,7 +1429,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     if (StringUtils.isNotBlank(productionCompany)) {
       return productionCompany;
     }
-    return tvShow.getProductionCompany();
+    if (tvShow != null) {
+      return tvShow.getProductionCompany();
+    }
+    return "";
   }
 
   /**

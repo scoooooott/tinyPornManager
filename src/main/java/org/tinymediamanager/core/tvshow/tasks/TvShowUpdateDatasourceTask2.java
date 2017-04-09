@@ -514,7 +514,11 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           String[] ty = ParserUtils.detectCleanMovienameAndYear(showDir.getFileName().toString());
           tvShow.setTitle(ty[0]);
           if (!ty[1].isEmpty()) {
-            tvShow.setYear(ty[1]);
+            try {
+              tvShow.setYear(Integer.parseInt(ty[1]));
+            }
+            catch (Exception ignored) {
+            }
           }
         }
 

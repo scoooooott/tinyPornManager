@@ -264,7 +264,7 @@ public class MovieToXbmcNfoConnector {
     else {
       xbmc.top250 = String.valueOf(movie.getTop250());
     }
-    xbmc.year = movie.getYear();
+    xbmc.year = Integer.toString(movie.getYear());
     xbmc.premiered = movie.getReleaseDateFormatted();
     xbmc.plot = movie.getPlot();
 
@@ -517,7 +517,7 @@ public class MovieToXbmcNfoConnector {
       movie.setOriginalTitle(xbmc.originaltitle);
       movie.setRating(xbmc.rating);
       movie.setVotes(xbmc.votes);
-      movie.setYear(xbmc.year);
+      movie.setYear(Integer.parseInt(xbmc.year));
       if (StringUtils.isNotBlank(xbmc.top250)) {
         try {
           movie.setTop250(Integer.parseInt(xbmc.top250));

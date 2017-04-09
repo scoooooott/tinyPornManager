@@ -177,7 +177,7 @@ public class TvShowToXbmcNfoConnector {
     xbmc.setRating(tvShow.getRating());
     xbmc.setVotes(tvShow.getVotes());
     xbmc.setPlot(tvShow.getPlot());
-    xbmc.setYear(tvShow.getYear());
+    xbmc.setYear(Integer.toString(tvShow.getYear()));
     if (tvShow.getCertification() != null) {
       xbmc.setMpaa(tvShow.getCertification().getName());
     }
@@ -259,7 +259,7 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setSortTitle(xbmc.getSorttitle());
       tvShow.setRating(xbmc.getRating());
       tvShow.setVotes(xbmc.getVotes());
-      tvShow.setYear(xbmc.getYear());
+      tvShow.setYear(Integer.parseInt(xbmc.getYear()));
       tvShow.setPlot(xbmc.getPlot());
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
       tvShow.setFirstAired(xbmc.getPremiered());

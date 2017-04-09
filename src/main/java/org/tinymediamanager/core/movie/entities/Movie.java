@@ -353,7 +353,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return true/false
    */
   public Boolean getHasMetadata() {
-    if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0"))) {
+    if (!plot.isEmpty() && !(year == 0)) {
       return true;
     }
     return false;
@@ -403,7 +403,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public String getTitleForUi() {
     String titleForUi = title;
-    if (StringUtils.isNotBlank(year)) {
+    if (year > 0) {
       titleForUi += " (" + year + ")";
     }
     return titleForUi;
@@ -756,12 +756,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     }
 
     if (config.isYear()) {
-      if (metadata.getYear() != 0) {
-        setYear(Integer.toString(metadata.getYear()));
-      }
-      else {
-        setYear("");
-      }
+      setYear(metadata.getYear());
       setReleaseDate(metadata.getReleaseDate());
     }
 
@@ -1014,11 +1009,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     md.setOriginalTitle(originalTitle);
     md.setTagline(tagline);
     md.setPlot(plot);
-    try {
-      md.setYear(Integer.parseInt(year));
-    }
-    catch (Exception ignored) {
-    }
+    md.setYear(year);
     md.setRating(rating);
     md.setVoteCount(votes);
     md.setRuntime(runtime);
@@ -1096,8 +1087,8 @@ public class Movie extends MediaEntity implements IMediaInformation {
    *          the new year
    */
   @Override
-  public void setYear(String newValue) {
-    String oldValue = year;
+  public void setYear(int newValue) {
+    int oldValue = year;
     super.setYear(newValue);
 
     firePropertyChange(TITLE_FOR_UI, oldValue, newValue);

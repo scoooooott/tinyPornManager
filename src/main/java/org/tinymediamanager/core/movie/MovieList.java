@@ -528,13 +528,8 @@ public class MovieList extends AbstractModelObject {
           idFound = true;
         }
         options.setQuery(movie.getTitle());
-        if (!movie.getYear().isEmpty()) {
-          try {
-            options.setYear(Integer.parseInt(movie.getYear()));
-          }
-          catch (Exception ignored) {
-          }
-        }
+        options.setYear(movie.getYear());
+
       }
       if (!searchTerm.isEmpty()) {
         if (idFound) {

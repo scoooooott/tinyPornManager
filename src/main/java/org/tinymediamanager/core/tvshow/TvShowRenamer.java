@@ -778,7 +778,7 @@ public class TvShowRenamer {
         ret = show.getTitleSortable();
         break;
       case "$Y":
-        ret = show.getYear().equals("0") ? "" : show.getYear();
+        ret = show.getYear() == 0 ? "" : Integer.toString(show.getYear());
         break;
 
       // EPISODE

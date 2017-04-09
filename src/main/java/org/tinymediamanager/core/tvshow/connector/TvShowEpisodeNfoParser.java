@@ -1139,7 +1139,7 @@ public class TvShowEpisodeNfoParser {
         episode.setRating(rating.rating);
         episode.setVotes(rating.votes);
       }
-      episode.setYear(String.valueOf(year));
+      episode.setYear(year);
       episode.setFirstAired(releaseDate);
       episode.setPlot(plot);
 

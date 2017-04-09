@@ -223,7 +223,7 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addYear() {
     Element year = document.createElement("year");
-    year.setTextContent(movie.getYear());
+    year.setTextContent(movie.getYear() == 0 ? "" : Integer.toString(movie.getYear()));
     root.appendChild(year);
   }
 

@@ -38,7 +38,7 @@ public class TvShowRenamerTest extends BasicTest {
     MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
 
     single.setTitle("singleshow");
-    single.setYear("2009");
+    single.setYear(2009);
     single.setPath("singleshow");
     TvShowEpisode ep = new TvShowEpisode();
     ep.setTitle("singleEP");
@@ -51,7 +51,7 @@ public class TvShowRenamerTest extends BasicTest {
     single.addEpisode(ep);
 
     multi.setTitle("multishow");
-    multi.setYear("2009");
+    multi.setYear(2009);
     multi.setPath("multishow");
     ep = new TvShowEpisode();
     ep.setTitle("multiEP2");
@@ -73,7 +73,7 @@ public class TvShowRenamerTest extends BasicTest {
     multi.addEpisode(ep);
 
     disc.setTitle("Janosik");
-    disc.setYear("2009");
+    disc.setYear(2009);
     disc.setPath(FOLDER + "/tv/Janosik DVD");
     ep = new TvShowEpisode();
     ep.setPath(FOLDER + "/tv/Janosik DVD/Janosik S01E07E08E09");
@@ -87,7 +87,7 @@ public class TvShowRenamerTest extends BasicTest {
     disc.addEpisode(ep);
 
     discEP.setTitle("DVDEpisodeInRoot");
-    discEP.setYear("2009");
+    discEP.setYear(2009);
     discEP.setPath(FOLDER + "/tv/DVDEpisodeInRoot");
     ep = new TvShowEpisode();
     ep.setPath(FOLDER + "/tv/DVDEpisodeInRoot/S01EP01 title");
@@ -201,7 +201,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     TvShow show = new TvShow();
     show.setTitle("Breaking Bad");
-    show.setYear("2008");
+    show.setYear(2008);
     show.setDataSource(destination.getParent().toAbsolutePath().toString());
     show.setPath(destination.toAbsolutePath().toString());
 
@@ -264,7 +264,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     TvShow show = new TvShow();
     show.setTitle("Breaking Bad");
-    show.setYear("2008");
+    show.setYear(2008);
     show.setDataSource(destination.getParent().toAbsolutePath().toString());
     show.setPath(destination.toAbsolutePath().toString());
 
@@ -349,7 +349,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     TvShow show = new TvShow();
     show.setTitle("Breaking Bad");
-    show.setYear("2008");
+    show.setYear(2008);
     show.setDataSource(destination.getParent().toAbsolutePath().toString());
     show.setPath(destination.toAbsolutePath().toString());
 
@@ -418,7 +418,7 @@ public class TvShowRenamerTest extends BasicTest {
 
     TvShow show = new TvShow();
     show.setTitle("Breaking Bad");
-    show.setYear("2008");
+    show.setYear(2008);
     show.setDataSource(destination.getParent().toAbsolutePath().toString());
     show.setPath(destination.toAbsolutePath().toString());
 

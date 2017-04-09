@@ -195,13 +195,7 @@ public class MovieEditorDialog extends TmmDialog {
     initDataBindings();
 
     {
-      int year = 0;
-      try {
-        year = Integer.parseInt(movieToEdit.getYear());
-      }
-      catch (Exception ignored) {
-      }
-
+      int year = movieToEdit.getYear();
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
       for (Certification cert : Certification.getCertificationsforCountry(MovieModuleManager.SETTINGS.getCertificationCountry())) {
@@ -966,7 +960,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setOriginalTitle(tfOriginalTitle.getText());
       movieToEdit.setTagline(tfTagline.getText());
       movieToEdit.setPlot(tpPlot.getText());
-      movieToEdit.setYear(spYear.getValue().equals(0) ? "" : String.valueOf(spYear.getValue())); // set empty on 0
+      movieToEdit.setYear((Integer) spYear.getValue());
       movieToEdit.setReleaseDate(dpReleaseDate.getDate());
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
       movieToEdit.setTop250((Integer) spTop250.getValue());

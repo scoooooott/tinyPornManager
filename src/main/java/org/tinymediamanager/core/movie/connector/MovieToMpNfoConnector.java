@@ -208,7 +208,7 @@ public class MovieToMpNfoConnector {
 
     mp.rating = movie.getRating();
     mp.votes = movie.getVotes();
-    mp.year = movie.getYear();
+    mp.year = Integer.toString(movie.getYear());
     mp.premiered = movie.getReleaseDateFormatted();
     mp.plot = movie.getPlot();
 
@@ -372,7 +372,7 @@ public class MovieToMpNfoConnector {
 
       movie.setRating(mp.rating);
       movie.setVotes(mp.votes);
-      movie.setYear(mp.year);
+      movie.setYear(Integer.parseInt(mp.year));
       movie.setReleaseDate(mp.premiered);
       movie.setPlot(mp.plot);
       movie.setTagline(mp.tagline);

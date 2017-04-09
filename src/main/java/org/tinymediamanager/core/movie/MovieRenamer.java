@@ -1031,7 +1031,7 @@ public class MovieRenamer {
         ret = getFirstAlphaNum(movie.getTitleSortable());
         break;
       case "$Y":
-        ret = movie.getYear().equals("0") ? "" : movie.getYear();
+        ret = movie.getYear() == 0 ? "" : Integer.toString(movie.getYear());
         break;
       case "$O":
         ret = movie.getOriginalTitle();

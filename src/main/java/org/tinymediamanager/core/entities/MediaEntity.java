@@ -81,7 +81,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   @JsonProperty
   protected String                     originalTitle     = "";
   @JsonProperty
-  protected String                     year              = "";
+  protected int                        year              = 0;
   @JsonProperty
   protected String                     plot              = "";
   @JsonProperty
@@ -123,7 +123,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
     this.title = StringUtils.isEmpty(this.title) ? other.getTitle() : this.title;
     this.originalTitle = StringUtils.isEmpty(this.originalTitle) ? other.getOriginalTitle() : this.originalTitle;
-    this.year = StringUtils.isEmpty(this.year) ? other.getYear() : this.year;
+    this.year = this.year == 0 ? other.getYear() : this.year;
     this.plot = StringUtils.isEmpty(this.plot) ? other.getPlot() : this.plot;
     this.productionCompany = StringUtils.isEmpty(this.productionCompany) ? other.getProductionCompany() : this.productionCompany;
 
@@ -172,18 +172,38 @@ public abstract class MediaEntity extends AbstractModelObject {
     this.dbId = id;
   }
 
-  public HashMap<String, Object> getIds() {
+  /**
+   * get all ID for this object. These are the IDs from the various scraper
+   * 
+   * @return a map of all IDs
+   */
+  public Map<String, Object> getIds() {
     return ids;
   }
 
+  /**
+   * get the title of this entity
+   * 
+   * @return the title or an empty string
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * get the original title of this entity
+   * 
+   * @return the original title or an empty string
+   */
   public String getOriginalTitle() {
     return originalTitle;
   }
 
+  /**
+   * get the plot of this entity
+   * 
+   * @return the plot or an empty string
+   */
   public String getPlot() {
     return plot;
   }
@@ -238,7 +258,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     return rating;
   }
 
-  public String getYear() {
+  public int getYear() {
     return year;
   }
 
@@ -291,9 +311,9 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(VOTES, oldValue, newValue);
   }
 
-  public void setYear(String newValue) {
-    String oldValue = year;
-    year = newValue == null ? "" : newValue.trim();
+  public void setYear(int newValue) {
+    int oldValue = year;
+    year = newValue;
     firePropertyChange(YEAR, oldValue, newValue);
   }
 
@@ -642,8 +662,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   /**
    * From all MediaFiles of specified type, get the newest one (according to MI filedate)
    * 
-   * @param type
-   *          the MediaFileType to get the MediaFile for
+   * @param types
+   *          the MediaFileTypes to get the MediaFile for
    * @return NULL or MF
    */
   public MediaFile getNewestMediaFilesOfType(MediaFileType... types) {

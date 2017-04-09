@@ -1251,7 +1251,7 @@ public class MovieNfoParser {
       movie.setRating(rating.rating);
       movie.setVotes(rating.votes);
     }
-    movie.setYear(String.valueOf(year));
+    movie.setYear(year);
     movie.setTop250(top250);
     movie.setReleaseDate(releaseDate);
     movie.setPlot(plot);

@@ -98,7 +98,7 @@ public class TvShowJmteTests {
 
       // direct access
       compare("${tvShow.year}/${tvShow.title}", "1987/The 4400");
-      compare("${showYear[2,2]}/${showTitle[0,2]}", "87/Th");
+      compare("${tvShow.year}/${showTitle[0,2]}", "1987/Th");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -181,7 +181,7 @@ public class TvShowJmteTests {
     TvShow tvShow = new TvShow();
     tvShow.setPath("/media/tvshows/21 Jump Street");
     tvShow.setTitle("The 4400");
-    tvShow.setYear("1987");
+    tvShow.setYear(1987);
     tvShow.setRating(7.4f);
     tvShow.setVotes(8);
     tvShow.setCertification(Certification.US_TVPG);
@@ -201,7 +201,7 @@ public class TvShowJmteTests {
     episode.setDvdSeason(1);
     episode.setDvdEpisode(5);
     episode.setTitle("Don't Pet the Teacher");
-    episode.setYear("1987");
+    episode.setYear(1987);
     episode.setFirstAired("1987-04-26");
     episode.setMediaSource(MediaSource.BLURAY);
 

@@ -202,7 +202,7 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addYear() {
     Element year = document.createElement("year");
-    year.setTextContent(tvShow.getYear());
+    year.setTextContent(tvShow.getYear() == 0 ? "" : Integer.toString(tvShow.getYear()));
     root.appendChild(year);
   }
 

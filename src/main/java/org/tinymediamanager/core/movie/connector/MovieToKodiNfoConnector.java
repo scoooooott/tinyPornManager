@@ -271,7 +271,7 @@ public class MovieToKodiNfoConnector {
     else {
       kodi.top250 = String.valueOf(movie.getTop250());
     }
-    kodi.year = movie.getYear();
+    kodi.year = movie.getYear() == 0 ? "" : Integer.toString(movie.getYear());
     kodi.premiered = movie.getReleaseDateFormatted();
     kodi.plot = movie.getPlot();
 
@@ -534,7 +534,8 @@ public class MovieToKodiNfoConnector {
       movie.setOriginalTitle(kodi.originaltitle);
       movie.setRating(kodi.rating);
       movie.setVotes(kodi.votes);
-      movie.setYear(kodi.year);
+      movie.setYear(Integer.parseInt(kodi.year));
+
       if (StringUtils.isNotBlank(kodi.top250)) {
         try {
           movie.setTop250(Integer.parseInt(kodi.top250));

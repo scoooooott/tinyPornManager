@@ -200,7 +200,7 @@ public class MovieToNfoConnectorTest {
     movie.setOriginalTitle("Disneys Aladdin");
     movie.setSortTitle("Aladdin");
     movie.setRating(7.2f);
-    movie.setYear("1992");
+    movie.setYear(1992);
     movie.setTop250(199);
     movie.setVotes(5987);
     movie.setPlot("Princess Jasmine grows tired of being forced to remain in the...");

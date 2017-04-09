@@ -441,10 +441,10 @@ public class MovieSet extends MediaEntity {
       }
 
       // sort with year if available
-      if (StringUtils.isNotBlank(o1.getYear()) && StringUtils.isNotBlank(o2.getYear())) {
+      if (o1.getYear() > 0 && o2.getYear() > 0) {
         try {
-          int year1 = Integer.parseInt(o1.getYear());
-          int year2 = Integer.parseInt(o2.getYear());
+          int year1 = o1.getYear();
+          int year2 = o2.getYear();
           return year1 - year2;
         }
         catch (Exception ignored) {

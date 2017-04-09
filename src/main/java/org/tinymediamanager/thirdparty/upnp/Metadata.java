@@ -37,8 +37,8 @@ public class Metadata {
     try {
       m.setId(Upnp.ID_MOVIES + "/" + tmmMovie.getDbId().toString());
       m.setParentID(Upnp.ID_MOVIES);
-      if (!tmmMovie.getYear().isEmpty()) {
-        m.addProperty(new DC.DATE(tmmMovie.getYear())); // no setDate on Movie (but on other items)???
+      if (tmmMovie.getYear() > 0) {
+        m.addProperty(new DC.DATE(Integer.toString(tmmMovie.getYear()))); // no setDate on Movie (but on other items)???
       }
       m.setTitle(tmmMovie.getTitle());
 
@@ -108,8 +108,8 @@ public class Metadata {
       // 2/UUID/S/E
       m.setId(Upnp.ID_TVSHOWS + "/" + show.getDbId().toString() + "/" + ep.getSeason() + "/" + ep.getEpisode());
       m.setParentID(Upnp.ID_TVSHOWS + "/" + show.getDbId().toString());
-      if (!ep.getYear().isEmpty()) {
-        m.addProperty(new DC.DATE(ep.getYear())); // no setDate on Movie (but on other items)???
+      if (ep.getYear() > 0) {
+        m.addProperty(new DC.DATE(Integer.toString(ep.getYear()))); // no setDate on Movie (but on other items)???
       }
       m.setTitle("S" + lz(ep.getSeason()) + "E" + lz(ep.getEpisode()) + " " + ep.getTitle());
 

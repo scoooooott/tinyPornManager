@@ -906,7 +906,7 @@ public class TvShowNfoParser {
       show.setRating(rating.rating);
       show.setVotes(rating.votes);
     }
-    show.setYear(String.valueOf(year));
+    show.setYear(year);
     show.setFirstAired(releaseDate);
     show.setPlot(plot);
     show.setRuntime(runtime);

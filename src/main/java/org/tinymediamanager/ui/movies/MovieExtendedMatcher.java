@@ -196,7 +196,7 @@ public class MovieExtendedMatcher implements Matcher<Movie> {
     // check against year
     if (searchOptions.containsKey(MovieSearchOptions.YEAR)) {
       Integer year = (Integer) searchOptions.get(MovieSearchOptions.YEAR);
-      if (!movie.getYear().equals(year.toString())) {
+      if (movie.getYear() != year) {
         return false;
       }
     }

@@ -156,7 +156,7 @@ public class TvShowEpisodeToNfoConnectorTest {
     tvShow.setPath(path);
     tvShow.setTitle("21 Jump Street");
     tvShow.setRating(9.0f);
-    tvShow.setYear("1987");
+    tvShow.setYear(1987);
     tvShow.setVotes(8);
     tvShow.setPlot(
         "21 Jump Street was a FOX action/drama series that ran for five seasons (1987-1991). The show revolved around a group of young cops who would use their youthful appearance to go undercover and solve crimes involving teenagers and young adults. 21 Jump Street propelled Johnny Depp to stardom and was the basis for a 2012 comedy/action film of the same name.");

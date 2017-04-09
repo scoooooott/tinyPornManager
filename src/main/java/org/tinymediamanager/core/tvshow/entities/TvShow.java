@@ -645,12 +645,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     }
 
     if (config.isYear()) {
-      if (metadata.getYear() != 0) {
-        setYear(Integer.toString(metadata.getYear()));
-      }
-      else {
-        setYear("");
-      }
+      setYear(metadata.getYear());
     }
 
     if (config.isRating()) {
@@ -1448,7 +1443,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public boolean isScraped() {
     if (!scraped) {
-      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+      if (!plot.isEmpty() && !(year == 0) && !(genres == null || genres.size() == 0)
           && !(actors == null || actors.size() == 0)) {
         return true;
       }

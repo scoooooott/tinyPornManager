@@ -14,14 +14,18 @@ public class TvShowMergeTest {
 
   @Test
   public void testEPmerge() {
+    TvShow show = new TvShow();
+
     TvShowEpisode e1 = new TvShowEpisode();
     e1.setAiredSeason(1);
     e1.setAiredEpisode(2);
+    e1.setTvShow(show);
 
     TvShowEpisode e2 = new TvShowEpisode();
     e2.setTitle("title2");
     e2.setDvdSeason(1);
     e2.setDvdEpisode(2);
+    e2.setTvShow(show);
 
     e1.merge(e2);
     System.out.println(e1);
@@ -35,7 +39,7 @@ public class TvShowMergeTest {
     // ---------------------------------------
     TvShow show1 = new TvShow();
     show1.setTitle("show1");
-    show1.setYear("2009");
+    show1.setYear(2009);
 
     TvShowEpisode ep1 = new TvShowEpisode();
     ep1.setAiredSeason(1);
@@ -52,7 +56,7 @@ public class TvShowMergeTest {
     // ---------------------------------------
     TvShow show2 = new TvShow();
     show2.setTitle("show2");
-    show2.setYear("2009");
+    show2.setYear(2009);
 
     TvShowEpisode ep3 = new TvShowEpisode();
     ep3.setAiredSeason(1);

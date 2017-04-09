@@ -28,8 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
@@ -153,7 +153,7 @@ public class ImageChooserDialog extends TmmDialog {
    * @param mediaType
    *          the media for for which artwork has to be chosen
    */
-  public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
+  public ImageChooserDialog(final Map<String, Object> ids, ImageType type, List<MediaScraper> artworkScrapers, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
     super("", DIALOG_ID);
     this.imageLabel = imageLabel;
@@ -737,11 +737,11 @@ public class ImageChooserDialog extends TmmDialog {
   }
 
   private class DownloadTask extends SwingWorker<Void, DownloadChunk> {
-    private HashMap<String, Object> ids;
+    private Map<String, Object> ids;
     private List<MediaScraper>      artworkScrapers;
     private boolean                 imagesFound = false;
 
-    public DownloadTask(HashMap<String, Object> ids, List<MediaScraper> artworkScrapers) {
+    public DownloadTask(Map<String, Object> ids, List<MediaScraper> artworkScrapers) {
       this.ids = ids;
       this.artworkScrapers = artworkScrapers;
     }

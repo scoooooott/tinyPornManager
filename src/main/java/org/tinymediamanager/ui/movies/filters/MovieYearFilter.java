@@ -75,7 +75,7 @@ public class MovieYearFilter extends AbstractMovieUIFilter {
   @Override
   public boolean accept(Movie movie) {
     Integer year = (Integer) spinner.getValue();
-    if (movie.getYear().equals(year.toString())) {
+    if (movie.getYear() == year) {
       return true;
     }
 

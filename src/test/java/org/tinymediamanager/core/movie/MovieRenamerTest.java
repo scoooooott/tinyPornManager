@@ -26,7 +26,7 @@ public class MovieRenamerTest extends BasicTest {
 
     Movie m = new Movie();
     m.setTitle("The Dish");
-    m.setYear("2000");
+    m.setYear(2000);
     MediaFile mf = new MediaFile(Paths.get("target/test-classes/samples", "thx_scarface-DWEU.vob"));
 
     // mf.gatherMediaInformation();

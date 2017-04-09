@@ -56,7 +56,7 @@ public class MovieTest extends BasicTest {
   @Test
   public void renamerPattern() {
     m.setTitle(" Abraham Lincoln - Vapire Hunter");
-    m.setYear("");
+    m.setYear(0);
     m.setOriginalTitle("OrigTit");
 
     String str = "$T {($Y)}      {$F} $M   $O ";
