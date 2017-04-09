@@ -182,7 +182,9 @@ public class MovieEditorDialog extends TmmDialog {
    */
   public MovieEditorDialog(Movie movie, boolean inQueue) {
     super(BUNDLE.getString("movie.edit") + "  < " + movie.getPath() + " >", "movieEditor"); //$NON-NLS-1$
-    // setBounds(5, 5, 950, 600);
+
+    // default size - NEEDED, since we do not use pack() here
+    setBounds(5, 5, 950, 600);
 
     this.movieToEdit = movie;
     this.inQueue = inQueue;
