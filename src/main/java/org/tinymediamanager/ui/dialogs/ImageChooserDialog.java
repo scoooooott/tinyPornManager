@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -442,8 +443,15 @@ public class ImageChooserDialog extends TmmDialog {
     button.setBackground(Color.white);
     button.setUI(toggleButtonUI);
     button.setMargin(new Insets(10, 10, 10, 10));
-    ImageIcon imageIcon = new ImageIcon(Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS));
-    button.setIcon(imageIcon);
+    if (artwork.isAnimated()) {
+      button.setText("<html><img width=\"" + size.x + "\" height=\"" + size.y + "\" src='" + artwork.getPreviewUrl() + "'/></html>");
+      button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+    }
+    else {
+      ImageIcon imageIcon = new ImageIcon(
+          Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS));
+      button.setIcon(imageIcon);
+    }
     button.putClientProperty("MediaArtwork", artwork);
 
     buttonGroup.add(button);
@@ -738,8 +746,8 @@ public class ImageChooserDialog extends TmmDialog {
 
   private class DownloadTask extends SwingWorker<Void, DownloadChunk> {
     private Map<String, Object> ids;
-    private List<MediaScraper>      artworkScrapers;
-    private boolean                 imagesFound = false;
+    private List<MediaScraper>  artworkScrapers;
+    private boolean             imagesFound = false;
 
     public DownloadTask(Map<String, Object> ids, List<MediaScraper> artworkScrapers) {
       this.ids = ids;
