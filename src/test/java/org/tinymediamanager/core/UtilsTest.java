@@ -61,6 +61,9 @@ public class UtilsTest extends BasicTest {
     Path sub = Paths.get("cache\\image");
     Path fil = Paths.get("C:\\Users\\User\\workspaceGIT\\tinyMediaManager\\cache\\image\\yyy");
     System.out.println(sub.resolve(fil));
+
+    Path p = Paths.get("C:\\Users\\User").resolve("").resolve("file.ext");
+    System.out.println(p);
   }
 
   @Test

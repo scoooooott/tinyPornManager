@@ -23,7 +23,7 @@ import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -114,7 +114,7 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return episodes;
   }
 
-  public void setPoster(File newValue) {
+  public void setPoster(Path newValue) {
     String oldValue = tvShow.getSeasonPoster(season);
     tvShow.setSeasonPoster(season, newValue);
     firePropertyChange(POSTER, oldValue, newValue);

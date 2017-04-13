@@ -617,7 +617,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
                 episode.setTvShow(tvShow);
                 episode.setDateAddedFromMediaFile(mf);
                 if (episode.getMediaSource() == MediaSource.UNKNOWN) {
-                  episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+                  episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
                 }
                 episode.setNewlyAdded(true);
                 episode.addToMediaFiles(epFiles); // all found EP MFs
@@ -671,7 +671,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
           }
           if (result.episodes.size() == 0 && result.date == null) {
             // try to parse out episodes/season from parent directory (but only if we haven't detected an ared date!)
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(showDir.toFile(), tvShow.getPath());
+            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(showDir.toFile(), tvShow.getPathNIO().toString());
           }
           if (result.season == -1) {
             // did the search find a season?
@@ -696,7 +696,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
               episode.addToMediaFiles(epFiles); // all found EP MFs
               episode.setDateAddedFromMediaFile(mf);
               if (episode.getMediaSource() == MediaSource.UNKNOWN) {
-                episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+                episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
               }
               episode.setNewlyAdded(true);
 
@@ -754,7 +754,7 @@ public class TvShowUpdateDatasourceTask2 extends TmmThreadPool {
             episode.addToMediaFiles(epFiles); // all found EP MFs
             episode.setDateAddedFromMediaFile(mf);
             if (episode.getMediaSource() == MediaSource.UNKNOWN) {
-              episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+              episode.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
             }
             episode.setNewlyAdded(true);
             episode.merge(vsMetaEP); // merge VSmeta infos

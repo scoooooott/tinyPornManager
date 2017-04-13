@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.core.tvshow.connector;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
     }
 
-    File nfoFile = new File(episode.getPath(), nfoFilename);
+    Path nfoFile = episode.getPathNIO().resolve(nfoFilename);
 
     // parse out all episodes from the nfo
     List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = parseNfo(nfoFile);
@@ -345,14 +346,14 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
       }
       catch (Exception e) {
-        LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
+        LOGGER.error("setData " + nfoFile, e.getMessage());
         MessageManager.instance.pushMessage(
             new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
       }
     }
 
     try {
-      FileUtils.write(nfoFile, outputXml, "UTF-8");
+      FileUtils.write(nfoFile.toFile(), outputXml, "UTF-8");
       for (TvShowEpisode e : tvShowEpisodes) {
         e.removeAllMediaFiles(MediaFileType.NFO);
         MediaFile nfo = new MediaFile(nfoFile);
@@ -361,7 +362,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
     }
     catch (Exception e) {
-      LOGGER.error("setData " + nfoFile.getAbsolutePath(), e.getMessage());
+      LOGGER.error("setData " + nfoFile, e.getMessage());
       MessageManager.instance.pushMessage(
           new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
     }
@@ -374,7 +375,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
    *          the nfo file
    * @return the data
    */
-  public static List<TvShowEpisode> getData(File nfo) {
+  public static List<TvShowEpisode> getData(Path nfo) {
     // try to parse XML
     List<TvShowEpisode> episodes = new ArrayList<>(1);
 
@@ -665,16 +666,16 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
   }
 
-  private static List<TvShowEpisodeToXbmcNfoConnector> parseNfo(File nfoFile) {
+  private static List<TvShowEpisodeToXbmcNfoConnector> parseNfo(Path nfoFile) {
     List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<>(1);
 
     // tv show episode NFO is a bit weird. There can be stored multiple
     // episodes inside one XML (in a non valid manner); so we have
     // to read the NFO, split it into some smaller NFOs and parse them
-    if (nfoFile.exists()) {
+    if (Files.exists(nfoFile)) {
       String completeNFO;
       try {
-        completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8");
+        completeNFO = FileUtils.readFileToString(nfoFile.toFile(), "UTF-8");
         Pattern pattern = Pattern.compile("<\\?xml.*\\?>");
         Matcher matcher = pattern.matcher(completeNFO);
         String xmlHeader = "";
@@ -694,7 +695,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
             xbmcConnectors.add(xbmc);
           }
           catch (Exception e) {
-            LOGGER.error("failed to parse " + nfoFile.getAbsolutePath(), e);
+            LOGGER.error("failed to parse " + nfoFile, e);
           }
         }
       }

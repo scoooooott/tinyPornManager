@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -450,7 +449,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape);
 
-      lblPath.setText(movieToScrape.getPath() + File.separatorChar + movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+      lblPath.setText(movieToScrape.getPathNIO().resolve(movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()).toString());
     }
 
   }

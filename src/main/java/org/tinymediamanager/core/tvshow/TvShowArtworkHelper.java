@@ -379,7 +379,7 @@ public class TvShowArtworkHelper {
           break;
       }
 
-      filename = show.getPath() + File.separator + filename + "." + Utils.getArtworkExtension(seasonPosterUrl);
+      filename = show.getPathNIO() + File.separator + filename + "." + Utils.getArtworkExtension(seasonPosterUrl);
 
       SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(show, filename, tvShowSeason, seasonPosterUrl);
       TmmTaskManager.getInstance().addImageDownloadTask(task);
@@ -427,14 +427,14 @@ public class TvShowArtworkHelper {
 
         ImageCache.invalidateCachedImage(Paths.get(filename));
         if (tvShowSeason != null) {
-          tvShowSeason.setPoster(new File(filename));
+          tvShowSeason.setPoster(Paths.get(filename));
         }
       }
       catch (IOException e) {
         LOGGER.debug("fetch image", e);
         // fallback
         if (tvShowSeason != null && !oldFilename.isEmpty()) {
-          tvShowSeason.setPoster(new File(oldFilename));
+          tvShowSeason.setPoster(Paths.get(oldFilename));
         }
       }
       catch (Exception e) {

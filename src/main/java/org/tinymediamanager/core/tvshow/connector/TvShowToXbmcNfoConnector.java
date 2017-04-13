@@ -15,13 +15,14 @@
  */
 package org.tinymediamanager.core.tvshow.connector;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -136,17 +137,17 @@ public class TvShowToXbmcNfoConnector {
     List<Object> unsupportedTags = new ArrayList<>();
 
     String nfoFilename = "tvshow.nfo";
-    File nfoFile = new File(tvShow.getPath(), nfoFilename);
+    Path nfoFile = tvShow.getPathNIO().resolve(nfoFilename);
 
     // load existing NFO if possible
-    if (nfoFile.exists()) {
+    if (Files.exists(nfoFile)) {
       try {
         Unmarshaller um = context.createUnmarshaller();
-        Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+        Reader in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
         xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
       }
       catch (Exception e) {
-        LOGGER.error("failed to parse " + nfoFile.getAbsolutePath() + "; " + e.getMessage());
+        LOGGER.error("failed to parse " + nfoFile + "; " + e.getMessage());
       }
     }
 
@@ -227,19 +228,19 @@ public class TvShowToXbmcNfoConnector {
         sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
       }
 
-      FileUtils.write(nfoFile, sb, "UTF-8");
+      FileUtils.write(nfoFile.toFile(), sb, "UTF-8");
       tvShow.removeAllMediaFiles(MediaFileType.NFO);
       tvShow.addToMediaFiles(new MediaFile(nfoFile));
     }
     catch (Exception e) {
       e.printStackTrace();
-      LOGGER.error(nfoFile.getAbsolutePath() + " " + e.getMessage());
+      LOGGER.error(nfoFile + " " + e.getMessage());
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", e.getLocalizedMessage() }));
     }
   }
 
-  public static TvShow getData(File nfo) {
+  public static TvShow getData(Path nfo) {
     if (context == null) {
       return null;
     }
@@ -301,12 +302,12 @@ public class TvShowToXbmcNfoConnector {
       tvShow.addToMediaFiles(mf);
     }
     catch (UnmarshalException e) {
-      LOGGER.error("failed to parse " + nfo.getAbsolutePath() + " " + e.getMessage());
+      LOGGER.error("failed to parse " + nfo + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
-      LOGGER.error(nfo.getAbsolutePath() + " " + e.getMessage());
+      LOGGER.error(nfo + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
@@ -318,7 +319,7 @@ public class TvShowToXbmcNfoConnector {
     return tvShow;
   }
 
-  private static TvShowToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+  private static TvShowToXbmcNfoConnector parseNFO(Path nfoFile) throws Exception {
     Unmarshaller um = context.createUnmarshaller();
     if (um == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
@@ -326,7 +327,7 @@ public class TvShowToXbmcNfoConnector {
     }
 
     try {
-      Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      Reader in = new InputStreamReader(new FileInputStream(nfoFile.toFile()), "UTF-8");
       return (TvShowToXbmcNfoConnector) um.unmarshal(in);
     }
     catch (UnmarshalException e) {
@@ -334,7 +335,7 @@ public class TvShowToXbmcNfoConnector {
     }
 
     // now trying to parse it via string
-    String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+    String completeNFO = FileUtils.readFileToString(nfoFile.toFile(), "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
     Reader in = new StringReader(ParserUtils.cleanNfo(completeNFO));
     return (TvShowToXbmcNfoConnector) um.unmarshal(in);
   }

@@ -621,7 +621,7 @@ public class TvShowEditorDialog extends TmmDialog {
     initDataBindings();
 
     {
-      lvlTvShowPath.setText(tvShow.getPath());
+      lvlTvShowPath.setText(tvShow.getPathNIO().toString());
       tfTitle.setText(tvShow.getTitle());
       tfSorttitle.setText(tvShow.getSortTitle());
       tpPlot.setText(tvShow.getPlot());
@@ -1191,7 +1191,7 @@ public class TvShowEditorDialog extends TmmDialog {
     public String getMediaFilename() {
       List<MediaFile> mfs = tvShowEpisode.getMediaFiles(MediaFileType.VIDEO);
       if (mfs != null && mfs.size() > 0) {
-        return mfs.get(0).getFile().getAbsolutePath();
+        return mfs.get(0).getFile().toString();
       }
       else {
         return "";

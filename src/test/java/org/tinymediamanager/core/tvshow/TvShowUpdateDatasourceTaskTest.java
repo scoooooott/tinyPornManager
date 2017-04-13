@@ -2,13 +2,11 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -69,7 +67,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     ///////////////////////////////////////////////////////////////////////////////////////
     // Breaking Bad
     ///////////////////////////////////////////////////////////////////////////////////////
-    TvShow show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Breaking Bad"));
+    TvShow show = tvShowList.getTvShowByPath(Paths.get(FOLDER + "/testtvshows/Breaking Bad"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Breaking Bad");
     assertThat(show.getEpisodes().size()).isEqualTo(62);
@@ -97,7 +95,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     ///////////////////////////////////////////////////////////////////////////////////////
     // Firefly
     ///////////////////////////////////////////////////////////////////////////////////////
-    show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Firefly"));
+    show = tvShowList.getTvShowByPath(Paths.get(FOLDER + "/testtvshows/Firefly"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Firefly");
     assertThat(show.getEpisodes().size()).isEqualTo(14);
@@ -117,7 +115,7 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
     ///////////////////////////////////////////////////////////////////////////////////////
     // Futurama
     ///////////////////////////////////////////////////////////////////////////////////////
-    show = tvShowList.getTvShowByPath(new File(FOLDER + "/testtvshows/Futurama (1999)"));
+    show = tvShowList.getTvShowByPath(Paths.get(FOLDER + "/testtvshows/Futurama (1999)"));
     assertThat(show).isNotNull();
     assertThat(show.getTitle()).isEqualTo("Futurama");
     assertThat(show.getEpisodes().size()).isEqualTo(44);

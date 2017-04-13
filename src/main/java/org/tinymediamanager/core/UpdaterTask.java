@@ -16,17 +16,17 @@
 package org.tinymediamanager.core;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -59,8 +59,8 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       return false;
     }
 
-    File getdownFile = new File("getdown.txt");
-    File digestFile = new File("digest.txt");
+    Path getdownFile = Paths.get("getdown.txt");
+    Path digestFile = Paths.get("digest.txt");
 
     ArrayList<String> updateUrls = new ArrayList<>();
     try {
@@ -68,7 +68,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       LOGGER.info("Checking for updates...");
 
       // read getdown.txt (IOEx on any error)
-      for (String line : readLines(new FileReader(getdownFile))) {
+      for (String line : readLines(new FileReader(getdownFile.toFile()))) {
         String[] kv = line.split("=");
         if ("appbase".equals(kv[0].trim()) || "mirror".equals(kv[0].trim())) {
           updateUrls.add(kv[1].trim());
@@ -125,7 +125,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
 
       // compare with our local
-      String localDigest = FileUtils.readFileToString(digestFile, "UTF-8");
+      String localDigest = Utils.readFileToString(digestFile);
       localDigest = localDigest.trim();
       if (!localDigest.equals(remoteDigest)) {
         LOGGER.info("Update needed...");
@@ -138,8 +138,8 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         if (changeReleasePath) {
           // we're up/downgrading dist - DL txts..
           LOGGER.debug("Switching distribution due to java versoin, preloading correct files.");
-          FileUtils.writeStringToFile(getdownFile, remoteGD, "UTF-8");
-          FileUtils.writeStringToFile(digestFile, remoteDigest, "UTF-8");
+          Utils.writeStringToFile(getdownFile, remoteGD);
+          Utils.writeStringToFile(digestFile, remoteDigest);
         }
 
         // download changelog.txt for preview
@@ -179,7 +179,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
         if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
           throw new Exception("could not even download our fallback");
         }
-        FileUtils.writeStringToFile(getdownFile, gd);
+        Utils.writeStringToFile(getdownFile, gd);
         return true;
       }
       catch (Exception e2) {

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,12 +40,6 @@ public class ImageCacheTask extends TmmTask {
   public ImageCacheTask(String pathToFile) {
     super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
     filesToCache.add(Paths.get(pathToFile));
-  }
-
-  @Deprecated
-  public ImageCacheTask(File file) {
-    super(BUNDLE.getString("tmm.rebuildimagecache"), 1, TaskType.BACKGROUND_TASK);
-    filesToCache.add(file.toPath());
   }
 
   public ImageCacheTask(Path file) {

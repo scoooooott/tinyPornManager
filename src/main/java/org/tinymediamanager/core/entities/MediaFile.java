@@ -16,7 +16,6 @@
 package org.tinymediamanager.core.entities;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -190,37 +189,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * Instantiates a new media file.
    * 
-   * @deprecated use Java 7 Path() instead of File()
-   * @param f
-   *          the file
-   */
-  @Deprecated
-  public MediaFile(File f) {
-    this(f.toPath(), null);
-  }
-
-  /**
-   * Instantiates a new media file.
-   * 
    * @param f
    *          the file
    */
   public MediaFile(Path f) {
     this(f, null);
-  }
-
-  /**
-   * Instantiates a new media file.
-   * 
-   * @deprecated use Java 7 Path() instead of File()
-   * @param f
-   *          the file
-   * @param type
-   *          the MediaFileType
-   */
-  @Deprecated
-  public MediaFile(File f, MediaFileType type) {
-    this(f.toPath(), type);
   }
 
   /**
@@ -261,8 +234,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // not found in name, try to parse from idx
       BufferedReader br;
       try {
-        File idx = new File(this.path, this.filename.replaceFirst("sub$", "idx"));
-        br = new BufferedReader(new FileReader(idx));
+        Path idx = Paths.get(this.path, this.filename.replaceFirst("sub$", "idx"));
+        br = new BufferedReader(new FileReader(idx.toFile()));
         String line;
         while ((line = br.readLine()) != null) {
           String lang = "";
@@ -518,12 +491,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)");
   }
 
-  @Deprecated
-  public File getFile() {
-    if (file == null) {
-      file = getFileAsPath();
-    }
-    return file.toFile();
+  public Path getFile() {
+    return getFileAsPath();
   }
 
   public Path getFileAsPath() {

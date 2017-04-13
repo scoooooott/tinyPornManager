@@ -797,7 +797,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFileAsPath().toString()));
       }
       if (movie.getMediaSource() == MediaSource.UNKNOWN) {
-        movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+        movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
       }
       LOGGER.debug("| parsing video file " + mf.getFilename());
       // movie.addToMediaFiles(mf);
@@ -880,7 +880,7 @@ public class MovieUpdateDatasourceTask2 extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             movie.setDateAddedFromMediaFile(mf);
             if (movie.getMediaSource() == MediaSource.UNKNOWN) {
-              movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+              movie.setMediaSource(MediaSource.parseMediaSource(mf.getFile().toString()));
             }
             break;
 

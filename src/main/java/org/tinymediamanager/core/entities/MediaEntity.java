@@ -208,14 +208,6 @@ public abstract class MediaEntity extends AbstractModelObject {
     return plot;
   }
 
-  /**
-   * @deprecated use getPathNIO()
-   */
-  @Deprecated
-  public String getPath() {
-    return path;
-  }
-
   public Path getPathNIO() {
     if (StringUtils.isBlank(path)) {
       return null;
@@ -249,7 +241,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   public String getArtworkFilename(MediaFileType type) {
     List<MediaFile> thumbs = getMediaFiles(type);
     if (thumbs.size() > 0) {
-      return thumbs.get(0).getFile().getPath();
+      return thumbs.get(0).getFile().getParent().toString();
     }
     return "";
   }
@@ -547,22 +539,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
     switch (mediaFile.getType()) {
       case FANART:
-        firePropertyChange(FANART, null, mediaFile.getFile().getPath());
+        firePropertyChange(FANART, null, mediaFile.getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case POSTER:
-        firePropertyChange(POSTER, null, mediaFile.getFile().getPath());
+        firePropertyChange(POSTER, null, mediaFile.getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case BANNER:
-        firePropertyChange(BANNER, null, mediaFile.getFile().getPath());
+        firePropertyChange(BANNER, null, mediaFile.getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case THUMB:
-        firePropertyChange(THUMB, null, mediaFile.getFile().getPath());
+        firePropertyChange(THUMB, null, mediaFile.getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 

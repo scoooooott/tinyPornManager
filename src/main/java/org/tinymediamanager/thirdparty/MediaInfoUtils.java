@@ -1,12 +1,13 @@
 package org.tinymediamanager.thirdparty;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Utils;
 
 import com.sun.jna.Platform;
 
@@ -52,12 +53,12 @@ public class MediaInfoUtils {
         // MI does not load over UNC, so copy to temp
         if (System.getProperty("user.dir", "").startsWith("\\\\") || System.getProperty("user.dir", "").startsWith("//")) {
           LOGGER.debug("We're on a network UNC path!");
-          File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmm");
-          File nativeDir = new File(tmpDir, nativepath);
-          FileUtils.copyDirectory(new File(nativepath), nativeDir);
+          Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"), "tmm");
+          Path nativeDir = tmpDir.resolve(nativepath).toAbsolutePath();
+          Utils.copyDirectoryRecursive(Paths.get(nativepath), nativeDir);
 
-          System.setProperty("jna.library.path", nativeDir.getAbsolutePath());
-          LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.getAbsolutePath());
+          System.setProperty("jna.library.path", nativeDir.toString());
+          LOGGER.debug("Loading native mediainfo lib from: {}", nativeDir.toString());
           miv = MediaInfo.version(); // load class
         }
         else {

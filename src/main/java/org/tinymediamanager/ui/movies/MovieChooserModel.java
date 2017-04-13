@@ -375,7 +375,7 @@ public class MovieChooserModel extends AbstractModelObject {
         mt.setProvider("downloaded");
         mt.setQuality(mf.getVideoFormat());
         mt.setInNfo(false);
-        mt.setUrl(mf.getFile().toURI().toString());
+        mt.setUrl(mf.getFile().toUri().toString());
         trailer.add(0, mt); // add as first
       }
 

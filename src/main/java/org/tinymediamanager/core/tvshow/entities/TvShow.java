@@ -42,9 +42,7 @@ import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1293,7 +1291,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     if (poster == null) {
       return "";
     }
-    return poster.getFile().getAbsolutePath();
+    return poster.getFile().toString();
   }
 
   Dimension getSeasonPosterSize(int season) {
@@ -1313,7 +1311,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @param file
    *          the file
    */
-  public void setSeasonPoster(int season, File file) {
+  public void setSeasonPoster(int season, Path file) {
     MediaFile mf = new MediaFile(file, MediaFileType.SEASON_POSTER);
     setSeasonPoster(season, mf);
   }
@@ -1443,8 +1441,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public boolean isScraped() {
     if (!scraped) {
-      if (!plot.isEmpty() && !(year == 0) && !(genres == null || genres.size() == 0)
-          && !(actors == null || actors.size() == 0)) {
+      if (!plot.isEmpty() && !(year == 0) && !(genres == null || genres.size() == 0) && !(actors == null || actors.size() == 0)) {
         return true;
       }
     }
@@ -1456,7 +1453,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * DS\.backup\&lt;moviename&gt;
    */
   public boolean deleteFilesSafely() {
-    return Utils.deleteDirectorySafely(Paths.get(getPath()), getDataSource());
+    return Utils.deleteDirectorySafely(getPathNIO(), getDataSource());
   }
 
   @Override

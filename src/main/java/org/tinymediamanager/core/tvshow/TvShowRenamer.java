@@ -90,9 +90,9 @@ public class TvShowRenamer {
    */
   public static void renameTvShowRoot(TvShow show) {
     LOGGER.debug("TV show year: " + show.getYear());
-    LOGGER.debug("TV show path: " + show.getPath());
+    LOGGER.debug("TV show path: " + show.getPathNIO());
     String newPathname = getTvShowFoldername(SETTINGS.getRenamerTvShowFoldername(), show);
-    String oldPathname = show.getPath();
+    String oldPathname = show.getPathNIO().toString();
 
     if (!newPathname.isEmpty()) {
       // newPathname = show.getDataSource() + File.separator + newPathname;
@@ -737,10 +737,10 @@ public class TvShowRenamer {
     String newPathname;
 
     if (StringUtils.isNotBlank(SETTINGS.getRenamerTvShowFoldername())) {
-      newPathname = tvShow.getDataSource() + File.separator + createDestination(template, tvShow);
+      newPathname = Paths.get(tvShow.getDataSource(), createDestination(template, tvShow)).toString();
     }
     else {
-      newPathname = tvShow.getPath();
+      newPathname = tvShow.getPathNIO().toString();
     }
 
     return newPathname;

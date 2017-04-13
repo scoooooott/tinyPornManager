@@ -35,7 +35,7 @@ public class TvShowRenamerTest extends BasicTest {
     Settings.getInstance(FOLDER);
 
     // setup dummy
-    MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
+    MediaFile dmf = new MediaFile(Paths.get("/path/to", "video.avi"));
 
     single.setTitle("singleshow");
     single.setYear(2009);

@@ -372,7 +372,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
       // set column name - windowbuilder pro crashes otherwise
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult")); //$NON-NLS-1$
-      lblPath.setText(tvShowToScrape.getPath());
+      lblPath.setText(tvShowToScrape.getPathNIO().toString());
       textFieldSearchString.setText(tvShowToScrape.getTitle());
       searchTvShow(textFieldSearchString.getText());
     }

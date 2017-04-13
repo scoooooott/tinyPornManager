@@ -27,8 +27,8 @@ import static org.tinymediamanager.core.Constants.VIDEO_CODEC;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -183,7 +183,7 @@ public class TvShowList extends AbstractModelObject {
 
     for (int i = tvShowList.size() - 1; i >= 0; i--) {
       TvShow tvShow = tvShowList.get(i);
-      if (new File(path).equals(new File(tvShow.getDataSource()))) {
+      if (Paths.get(path).equals(Paths.get(tvShow.getDataSource()))) {
         removeTvShow(tvShow);
       }
     }
@@ -670,19 +670,6 @@ public class TvShowList extends AbstractModelObject {
    * Gets the TV show by path.
    * 
    * @param path
-   *          the path
-   * @return the TV show by path
-   * @deprecated use getTvShowByPath(Path path)
-   */
-  @Deprecated
-  public TvShow getTvShowByPath(File path) {
-    return getTvShowByPath(path.toPath());
-  }
-
-  /**
-   * Gets the TV show by path.
-   * 
-   * @param path
    *          path
    * @return the TV show by path
    */
@@ -705,7 +692,7 @@ public class TvShowList extends AbstractModelObject {
    *          the file
    * @return the tv episodes by file
    */
-  public List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, File file) {
+  public List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, Path file) {
     List<TvShowEpisode> episodes = new ArrayList<>(1);
     // validy check
     if (file == null) {

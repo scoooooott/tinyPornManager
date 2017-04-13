@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -77,8 +76,8 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
             continue;
           }
 
-          File destination = new File(file.getParent().toFile(), basename + "." + extension);
-          FileOutputStream os = new FileOutputStream(destination);
+          Path destination = file.getParent().resolve(basename + "." + extension);
+          FileOutputStream os = new FileOutputStream(destination.toFile());
 
           int len;
           while ((len = is.read(buffer)) > 0) {
@@ -86,7 +85,7 @@ public class MovieSubtitleDownloadTask extends DownloadTask {
           }
 
           os.close();
-          mf = new MediaFile(destination.toPath());
+          mf = new MediaFile(destination);
 
           // only take the first subtitle
           break;

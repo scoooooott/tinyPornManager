@@ -291,7 +291,7 @@ public class MovieScrapeTask extends TmmThreadPool {
         mt.setProvider("downloaded");
         mt.setQuality(mf.getVideoFormat());
         mt.setInNfo(false);
-        mt.setUrl(mf.getFile().toURI().toString());
+        mt.setUrl(mf.getFile().toUri().toString());
         trailers.add(mt);
       }
 

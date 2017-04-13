@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,10 +89,10 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   @Deprecated
-  public static EpisodeMatchingResult detectEpisodeFromFilename(File file) {
-    LOGGER.debug("Detect episodes/seasons from file " + file.getName());
+  public static EpisodeMatchingResult detectEpisodeFromFilename(Path file) {
+    LOGGER.debug("Detect episodes/seasons from file " + file);
     EpisodeMatchingResult result = new EpisodeMatchingResult();
-    String fileName = file.getName();
+    String fileName = file.getFileName().toString();
 
     result = parseString(fileName);
     Collections.sort(result.episodes);

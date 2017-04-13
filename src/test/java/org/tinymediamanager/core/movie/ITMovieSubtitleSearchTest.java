@@ -44,7 +44,7 @@ public class ITMovieSubtitleSearchTest {
 
       for (Movie movie : MovieList.getInstance().getMovies()) {
         for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
-          SubtitleSearchOptions options = new SubtitleSearchOptions(mediaFile.getFile());
+          SubtitleSearchOptions options = new SubtitleSearchOptions(mediaFile.getFile().toFile());
           List<SubtitleSearchResult> results = ((IMediaSubtitleProvider) scraper.getMediaProvider()).search(options);
           if (!results.isEmpty()) {
             System.out.println("Subtitle for hash found: " + results.get(0).getUrl());

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -72,7 +71,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 public class MovieRenamer {
   private final static Logger       LOGGER                      = LoggerFactory.getLogger(MovieRenamer.class);
   private static final List<String> KNOWN_IMAGE_FILE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "bmp", "tbn", "gif");
-  private static final Pattern ALPHANUM = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");  // to not use posix
+  private static final Pattern      ALPHANUM                    = Pattern.compile(".*?([a-zA-Z0-9]{1}).*$");               // to not use posix
 
   private static void renameSubtitles(Movie m) {
     // build language lists
@@ -234,7 +233,7 @@ public class MovieRenamer {
     String oldPathname = movie.getPathNIO().toString();
 
     if (!newPathname.isEmpty()) {
-      newPathname = movie.getDataSource() + File.separator + newPathname;
+      newPathname = Paths.get(movie.getDataSource(), newPathname).toString();
       Path srcDir = movie.getPathNIO();
       Path destDir = Paths.get(newPathname);
       if (!srcDir.toAbsolutePath().equals(destDir.toAbsolutePath())) {
