@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -126,7 +127,12 @@ public class TvShowExporter extends MediaEntityExporter {
         // if (Files.isDirectory(showDir)) {
         // Utils.deleteDirectoryRecursive(showDir);
         // }
-        Files.createDirectory(showDir);
+        try {
+          Files.createDirectory(showDir);
+        }
+        catch (FileAlreadyExistsException e) {
+          LOGGER.debug("Folder already exists...");
+        }
 
         Path detailsExportFile = showDir.resolve("tvshow." + fileExtension);
         root = new HashMap<>();

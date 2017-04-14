@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -119,7 +120,12 @@ public class MovieExporter extends MediaEntityExporter {
       // if (Files.isDirectory(detailsDir)) {
       // Utils.deleteDirectoryRecursive(detailsDir);
       // }
-      Files.createDirectory(detailsDir);
+      try {
+        Files.createDirectory(detailsDir);
+      }
+      catch (FileAlreadyExistsException e) {
+        LOGGER.debug("Folder already exists...");
+      }
 
       for (MediaEntity me : moviesToExport) {
         Movie movie = (Movie) me;
