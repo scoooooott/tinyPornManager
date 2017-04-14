@@ -61,6 +61,7 @@ import org.tinymediamanager.thirdparty.MediaInfoXMLParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
+import com.madgag.gif.fmsware.GifDecoder;
 
 /**
  * The Class MediaFile.
@@ -154,6 +155,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private Map<StreamKind, List<Map<String, String>>> miSnapshot           = null;
   private Path                                       file                 = null;
   private boolean                                    isISO                = false;
+  private boolean                                    isAnimatedGraphic    = false;
 
   /**
    * "clones" a new media file.
@@ -1247,6 +1249,46 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = video3DFormat;
   }
 
+  /**
+   * is this an animated graphic?<br>
+   * (intended usage for ImageCache, to not scale this...)
+   * 
+   * @return
+   */
+  public boolean isAnimatedGraphic() {
+    return isAnimatedGraphic;
+  }
+
+  /**
+   * sets the animation flag by hand<br>
+   * use {@link #checkForAnimation()} to get from GIF file
+   * 
+   * @param isAnimatedGraphic
+   */
+  public void setAnimatedGraphic(boolean isAnimatedGraphic) {
+    this.isAnimatedGraphic = isAnimatedGraphic;
+  }
+
+  /**
+   * checks GRAPHIC file for animation, and sets animated flag<br>
+   * currently supported only .GIF<br>
+   * Direct file access - should be only used in mediaInfo method!
+   */
+  public void checkForAnimation() {
+    if (type == MediaFileType.GRAPHIC && getExtension().equalsIgnoreCase("gif")) {
+      try {
+        GifDecoder decoder = new GifDecoder();
+        decoder.read(getFileAsPath().toString());
+        if (decoder.getFrameCount() > 1) {
+          setAnimatedGraphic(true);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("error checking GIF for animation");
+      }
+    }
+  }
+
   private long getMediaInfoSnapshotFromISO() {
     // check if we have a snapshot xml
     Path xmlFile = Paths.get(this.path, this.filename.replaceFirst("\\.iso$", "-mediainfo.xml"));
@@ -1671,6 +1713,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         width = getMediaInfo(StreamKind.Image, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Image, 0, "CodecID/Hint", "Format");
         // System.out.println(height + "-" + width + "-" + videoCodec);
+        checkForAnimation();
         break;
 
       case NFO: // do nothing here, but do not display default warning (since we got the filedate)
