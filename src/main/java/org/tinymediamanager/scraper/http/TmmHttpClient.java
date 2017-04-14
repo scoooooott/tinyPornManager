@@ -39,7 +39,7 @@ import okhttp3.Route;
  * @since 1.0
  */
 public class TmmHttpClient {
-  public static final String  CACHE_DIR = "cache";
+  public static final String  CACHE_DIR = "cache/http";
   private static Cache        CACHE     = new Cache(new File(CACHE_DIR), 5 * 1024 * 1024);
   private static OkHttpClient client    = createHttpClient();
 
