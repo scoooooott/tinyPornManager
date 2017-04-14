@@ -29,15 +29,7 @@ import org.tinymediamanager.scraper.entities.MediaGenres;
 public class TvShowEpisodeNfoParserTest {
 
   @Test
-  public void testNfoParser() {
-    // live NFOs from different Kodi versions
-    testKodi14_2();
-    testKodi15_2();
-    testKodi16_1();
-    testKodi17_0();
-  }
-
-  private void testKodi17_0() {
+  public void testKodi17_0() {
     // Kodi version 17.0
     try {
       TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(Paths.get("target/test-classes/tvshowepisode_nfo/kodi17.0.nfo"));
@@ -115,7 +107,8 @@ public class TvShowEpisodeNfoParserTest {
     }
   }
 
-  private void testKodi16_1() {
+  @Test
+  public void testKodi16_1() {
     // Kodi version 16.1
     try {
       TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(Paths.get("target/test-classes/tvshowepisode_nfo/kodi16.1.nfo"));
@@ -193,7 +186,8 @@ public class TvShowEpisodeNfoParserTest {
     }
   }
 
-  private void testKodi15_2() {
+  @Test
+  public void testKodi15_2() {
     // Kodi version 15.2
     try {
       TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(Paths.get("target/test-classes/tvshowepisode_nfo/kodi15.2.nfo"));
@@ -271,7 +265,8 @@ public class TvShowEpisodeNfoParserTest {
     }
   }
 
-  private void testKodi14_2() {
+  @Test
+  public void testKodi14_2() {
     // Kodi version 14.2
     try {
       TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(Paths.get("target/test-classes/tvshowepisode_nfo/kodi14.2.nfo"));
