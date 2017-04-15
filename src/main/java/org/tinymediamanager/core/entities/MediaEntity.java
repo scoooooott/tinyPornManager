@@ -208,6 +208,19 @@ public abstract class MediaEntity extends AbstractModelObject {
     return plot;
   }
 
+  /**
+   * needed as getter<br>
+   * better use {@link #getPathNIO()}<br>
+   * 
+   * @return
+   */
+  public String getPath() {
+    return this.path;
+  }
+
+  /**
+   * @return filesystem path or NULL
+   */
   public Path getPathNIO() {
     if (StringUtils.isBlank(path)) {
       return null;
@@ -241,7 +254,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   public String getArtworkFilename(MediaFileType type) {
     List<MediaFile> thumbs = getMediaFiles(type);
     if (thumbs.size() > 0) {
-      return thumbs.get(0).getFile().getParent().toString();
+      return thumbs.get(0).getFile().toString();
     }
     return "";
   }
