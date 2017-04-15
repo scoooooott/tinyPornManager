@@ -138,6 +138,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @JsonProperty
   private int                                        videoHeight          = 0;
   @JsonProperty
+  private float                                      aspectRatio          = 0f;
+  @JsonProperty
   private int                                        overallBitRate       = 0;
   @JsonProperty
   private int                                        durationInSecs       = 0;
@@ -171,6 +173,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.video3DFormat = new String(clone.video3DFormat);
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
+    this.aspectRatio = clone.aspectRatio;
     this.overallBitRate = clone.overallBitRate;
     this.durationInSecs = clone.durationInSecs;
     this.stacking = clone.stacking;
@@ -1035,12 +1038,49 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f ? true : false;
   }
 
-  public Float getAspectRatio() {
-    Float ret = 0F;
+  /**
+   * override the calculated aspect ratio with this value (only if the values differ)
+   * 
+   * @param newValue
+   *          the aspect ratio to be forced
+   */
+  public void setAspectRatio(float newValue) {
+    if (newValue == getAspectRatioCalculated()) {
+      return;
+    }
+
+    float oldValue = this.aspectRatio;
+    this.aspectRatio = newValue;
+    firePropertyChange("aspectRatio", oldValue, newValue);
+  }
+
+  /**
+   * get the aspect ratio.<br />
+   * if the aspect ratio has been overridden before - this value will be used. otherwise the calculated one will be used
+   * 
+   * @return the aspect ratio
+   */
+  public float getAspectRatio() {
+    // check whether the aspect ratio has been overridden
+    if (aspectRatio > 0) {
+      return aspectRatio;
+    }
+
+    // no -> calculate it
+    return getAspectRatioCalculated();
+  }
+
+  /**
+   * get the calculated aspect ratio
+   * 
+   * @return the calculated aspect ratio
+   */
+  public float getAspectRatioCalculated() {
+    float ret = 0f;
     if (this.videoWidth == 0 || this.videoHeight == 0) {
       return ret;
     }
-    Float ar = (float) this.videoWidth / (float) this.videoHeight;
+    float ar = (float) this.videoWidth / (float) this.videoHeight;
 
     // https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L538
     // Given that we're never going to be able to handle every single possibility in
