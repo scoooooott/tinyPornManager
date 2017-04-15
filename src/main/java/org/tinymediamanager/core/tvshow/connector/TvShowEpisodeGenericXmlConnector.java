@@ -173,6 +173,9 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
           // add unsupported tags
           addUnsupportedTags(episode, parserEpisode);
 
+          // add tinyMediaManagers own data
+          addTinyMediaManagerTags(episode, parserEpisode);
+
           first = false;
           // serialize to string
           Writer out = new StringWriter();
@@ -461,6 +464,23 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
       trailer.setTextContent(parser.trailer);
     }
     root.appendChild(trailer);
+  }
+
+  /**
+   * add the missing meta data for tinyMediaManager to this NFO
+   */
+  protected void addTinyMediaManagerTags(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    root.appendChild(document.createComment("tinyMediaManager meta data"));
+    addSource(episode, parser);
+  }
+
+  /**
+   * add the media source <source>xxx</source>
+   */
+  protected void addSource(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element source = document.createElement("source");
+    source.setTextContent(episode.getMediaSource().name());
+    root.appendChild(source);
   }
 
   /**
