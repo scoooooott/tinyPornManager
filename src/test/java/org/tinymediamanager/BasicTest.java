@@ -115,7 +115,7 @@ public class BasicTest {
     movieSet.setPlot(title + " plot");
     movie.setMovieSet(movieSet);
 
-    // ToDo fileinfo
+    // MF video
     MediaFile mf = new MediaFile();
     mf.setType(MediaFileType.VIDEO);
     mf.setFilename(title + ".mkv");
@@ -135,7 +135,13 @@ public class BasicTest {
     MediaFileSubtitle sub = new MediaFileSubtitle();
     sub.setLanguage("de");
     mf.addSubtitle(sub);
+    movie.addToMediaFiles(mf);
 
+    // MF poster
+    mf = new MediaFile(Paths.get("target/test-classes/dummy-poster.jpg"));
+    movie.addToMediaFiles(mf);
+    // MF fanart
+    mf = new MediaFile(Paths.get("target/test-classes/dummy-fanart.jpg"));
     movie.addToMediaFiles(mf);
 
     movie.setWatched(true);
