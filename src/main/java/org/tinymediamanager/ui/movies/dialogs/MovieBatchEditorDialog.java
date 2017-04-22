@@ -19,11 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -64,9 +61,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = -8515248604267310279L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieList                   movieList        = MovieList.getInstance();
@@ -115,48 +110,42 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnAddGenre = new JButton("");
       btnAddGenre.setIcon(IconManager.ADD_INV);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnAddGenre.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres genre = null;
-          Object item = cbGenres.getSelectedItem();
+      btnAddGenre.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        MediaGenres genre = null;
+        Object item = cbGenres.getSelectedItem();
 
-          // genre
-          if (item instanceof MediaGenres) {
-            genre = (MediaGenres) item;
-          }
-
-          // newly created genre?
-          if (item instanceof String) {
-            genre = MediaGenres.getGenre((String) item);
-          }
-          // MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
-          if (genre != null) {
-            for (Movie movie : moviesToEdit) {
-              movie.addGenre(genre);
-            }
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        // genre
+        if (item instanceof MediaGenres) {
+          genre = (MediaGenres) item;
         }
+
+        // newly created genre?
+        if (item instanceof String) {
+          genre = MediaGenres.getGenre((String) item);
+        }
+        // MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
+        if (genre != null) {
+          for (Movie movie : moviesToEdit) {
+            movie.addGenre(genre);
+          }
+        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnAddGenre, "7, 2");
 
       JButton btnRemoveGenre = new JButton("");
       btnRemoveGenre.setIcon(IconManager.REMOVE_INV);
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            movie.removeGenre(genre);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnRemoveGenre.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
+        for (Movie movie : moviesToEdit) {
+          movie.removeGenre(genre);
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnRemoveGenre, "9, 2");
 
@@ -170,38 +159,32 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnAddTag = new JButton("");
       btnAddTag.setIcon(IconManager.ADD_INV);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
-      btnAddTag.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          String tag = (String) cbTags.getSelectedItem();
-          if (StringUtils.isBlank(tag)) {
-            return;
-          }
-
-          for (Movie movie : moviesToEdit) {
-            movie.addToTags(tag);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnAddTag.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String tag = (String) cbTags.getSelectedItem();
+        if (StringUtils.isBlank(tag)) {
+          return;
         }
+
+        for (Movie movie : moviesToEdit) {
+          movie.addToTags(tag);
+        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnAddTag, "7, 4");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setIcon(IconManager.REMOVE_INV);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveTag.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          String tag = (String) cbTags.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            movie.removeFromTags(tag);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnRemoveTag.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String tag = (String) cbTags.getSelectedItem();
+        for (Movie movie : moviesToEdit) {
+          movie.removeFromTags(tag);
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnRemoveTag, "9, 4");
 
@@ -217,18 +200,15 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnCertification = new JButton("");
       btnCertification.setMargin(new Insets(2, 2, 2, 2));
       btnCertification.setIcon(IconManager.APPLY_INV);
-      btnCertification.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          Certification cert = (Certification) cbCertification.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            movie.setCertification(cert);
-            ;
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnCertification.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        Certification cert = (Certification) cbCertification.getSelectedItem();
+        for (Movie movie : moviesToEdit) {
+          movie.setCertification(cert);
+          ;
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnCertification, "7, 6");
 
@@ -241,29 +221,26 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnSetMovieSet = new JButton("");
       btnSetMovieSet.setMargin(new Insets(2, 2, 2, 2));
       btnSetMovieSet.setIcon(IconManager.APPLY_INV);
-      btnSetMovieSet.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          // movie set
-          Object obj = cbMovieSet.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            if (obj instanceof String) {
-              movie.removeFromMovieSet();
-            }
-            if (obj instanceof MovieSet) {
-              MovieSet movieSet = (MovieSet) obj;
+      btnSetMovieSet.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        // movie set
+        Object obj = cbMovieSet.getSelectedItem();
+        for (Movie movie : moviesToEdit) {
+          if (obj instanceof String) {
+            movie.removeFromMovieSet();
+          }
+          if (obj instanceof MovieSet) {
+            MovieSet movieSet = (MovieSet) obj;
 
-              if (movie.getMovieSet() != movieSet) {
-                movie.removeFromMovieSet();
-                movie.setMovieSet(movieSet);
-                movieSet.insertMovie(movie);
-              }
+            if (movie.getMovieSet() != movieSet) {
+              movie.removeFromMovieSet();
+              movie.setMovieSet(movieSet);
+              movieSet.insertMovie(movie);
             }
           }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnSetMovieSet, "7, 8");
 
@@ -281,16 +258,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
       btnWatched.setIcon(IconManager.APPLY_INV);
-      btnWatched.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (Movie movie : moviesToEdit) {
-            movie.setWatched(chckbxWatched.isSelected());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnWatched.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (Movie movie : moviesToEdit) {
+          movie.setWatched(chckbxWatched.isSelected());
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnWatched, "7, 10");
 
@@ -303,16 +277,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnVideo3D = new JButton("");
       btnVideo3D.setMargin(new Insets(2, 2, 2, 2));
       btnVideo3D.setIcon(IconManager.APPLY_INV);
-      btnVideo3D.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (Movie movie : moviesToEdit) {
-            movie.setVideoIn3D(chckbxVideo3D.isSelected());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnVideo3D.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (Movie movie : moviesToEdit) {
+          movie.setVideoIn3D(chckbxVideo3D.isSelected());
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnVideo3D, "7, 12");
 
@@ -325,19 +296,16 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnMediaSource = new JButton("");
       btnMediaSource.setMargin(new Insets(2, 2, 2, 2));
       btnMediaSource.setIcon(IconManager.APPLY_INV);
-      btnMediaSource.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          Object obj = cbMediaSource.getSelectedItem();
-          if (obj instanceof MediaSource) {
-            MediaSource mediaSource = (MediaSource) obj;
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (Movie movie : moviesToEdit) {
-              movie.setMediaSource(mediaSource);
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnMediaSource.addActionListener(e -> {
+        changed = true;
+        Object obj = cbMediaSource.getSelectedItem();
+        if (obj instanceof MediaSource) {
+          MediaSource mediaSource = (MediaSource) obj;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setMediaSource(mediaSource);
           }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
       });
       panelContent.add(btnMediaSource, "7, 14");
@@ -352,16 +320,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
       JButton btnLanguage = new JButton("");
       btnLanguage.setMargin(new Insets(2, 2, 2, 2));
       btnLanguage.setIcon(IconManager.APPLY_INV);
-      btnLanguage.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          changed = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (Movie movie : moviesToEdit) {
-            movie.setSpokenLanguages(tfLanguage.getText());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnLanguage.addActionListener(e -> {
+        changed = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (Movie movie : moviesToEdit) {
+          movie.setSpokenLanguages(tfLanguage.getText());
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelContent.add(btnLanguage, "7, 16");
       {
@@ -370,16 +335,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
         panelContent.add(lblSorttitleT, "2, 18, right, default");
 
         JButton btnSetSorttitle = new JButton(BUNDLE.getString("edit.setsorttitle")); //$NON-NLS-1$
-        btnSetSorttitle.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            changed = true;
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (Movie movie : moviesToEdit) {
-              movie.setSortTitle(movie.getTitleSortable());
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        btnSetSorttitle.addActionListener(e -> {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSortTitle(movie.getTitleSortable());
           }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
 
         JLabel lblSorttitleInfo = new JLabel(IconManager.HINT);
@@ -388,16 +350,13 @@ public class MovieBatchEditorDialog extends TmmDialog {
         panelContent.add(btnSetSorttitle, "5, 18");
 
         JButton btnClearSorttitle = new JButton(BUNDLE.getString("edit.clearsorttitle")); //$NON-NLS-1$
-        btnClearSorttitle.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            changed = true;
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (Movie movie : moviesToEdit) {
-              movie.setSortTitle("");
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        btnClearSorttitle.addActionListener(e -> {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setSortTitle("");
           }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
         panelContent.add(btnClearSorttitle, "5, 20");
       }
@@ -411,22 +370,20 @@ public class MovieBatchEditorDialog extends TmmDialog {
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.setIcon(IconManager.APPLY_INV);
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          // rewrite movies, if anything changed
-          if (changed) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (Movie movie : moviesToEdit) {
-              movie.writeNFO();
-              movie.saveToDb();
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnClose.addActionListener(arg0 -> {
+        // rewrite movies, if anything changed
+        if (changed) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.writeNFO();
+            movie.saveToDb();
           }
-          setVisible(false);
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+        setVisible(false);
       });
       panelButtons.add(btnClose);
+      getRootPane().setDefaultButton(btnClose);
 
       // add window listener to write changes (if the window close button "X" is
       // pressed)
@@ -453,12 +410,9 @@ public class MovieBatchEditorDialog extends TmmDialog {
       setMovieSets();
       moviesToEdit = movies;
 
-      PropertyChangeListener listener = new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-          if ("addedMovieSet".equals(evt.getPropertyName())) {
-            setMovieSets();
-          }
+      PropertyChangeListener listener = evt -> {
+        if ("addedMovieSet".equals(evt.getPropertyName())) {
+          setMovieSets();
         }
       };
       movieList.addPropertyChangeListener(listener);

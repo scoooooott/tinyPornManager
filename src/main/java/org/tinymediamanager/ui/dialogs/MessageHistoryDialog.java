@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -51,14 +49,11 @@ import ca.odell.glazedlists.event.ListEventListener;
  */
 public class MessageHistoryDialog extends TmmDialog implements ListEventListener<Message> {
   private static final long           serialVersionUID = -5054005564554148578L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static MessageHistoryDialog instance;
   private Map<Message, JPanel>        messageMap;
   private JPanel                      messagesPanel;
-  private JScrollPane                 scrollPane;
 
   private MessageHistoryDialog() {
     super(MainWindow.getActiveInstance(), BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
@@ -72,7 +67,7 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
             new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("150dlu:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
                 FormSpecs.RELATED_GAP_ROWSPEC, }));
 
-    scrollPane = new JScrollPane();
+    JScrollPane scrollPane = new JScrollPane();
     getContentPane().add(scrollPane, "2, 2, fill, fill");
 
     messagesPanel = new JPanel();
@@ -89,12 +84,8 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
 
     JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
     panelButtons.add(btnClose);
-    btnClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        setVisible(false);
-      }
-    });
+    btnClose.addActionListener(arg0 -> setVisible(false));
+    getRootPane().setDefaultButton(btnClose);
 
     TmmUIMessageCollector.instance.getMessages().addListEventListener(this);
     updatePanel();
@@ -130,8 +121,7 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
     EventList<Message> list = TmmUIMessageCollector.instance.getMessages();
     list.getReadWriteLock().readLock().lock();
     try {
-      for (int i = 0; i < list.size(); i++) {
-        Message message = list.get(i);
+      for (Message message : list) {
         if (!messageMap.containsKey(message)) {
           MessagePanel panel = new MessagePanel(message);
           messageMap.put(message, panel);

@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,26 +116,19 @@ public class UpdateDialog extends TmmDialog {
       panel.add(buttonPanel, "8, 2");
 
       JButton btnUpdate = new JButton(BUNDLE.getString("Button.update")); //$NON-NLS-1$
-      btnUpdate.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          setVisible(false);
-          LOGGER.info("Updating...");
+      btnUpdate.addActionListener(arg0 -> {
+        setVisible(false);
+        LOGGER.info("Updating...");
 
-          // spawn getdown and exit TMM
-          MainWindow.getActiveInstance().closeTmmAndStart(Utils.getPBforTMMupdate());
-        }
+        // spawn getdown and exit TMM
+        MainWindow.getActiveInstance().closeTmmAndStart(Utils.getPBforTMMupdate());
       });
       buttonPanel.add(btnUpdate);
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          setVisible(false);
-        }
-      });
+      btnClose.addActionListener(arg0 -> setVisible(false));
       buttonPanel.add(btnClose);
+      getRootPane().setDefaultButton(btnClose);
     }
 
   }

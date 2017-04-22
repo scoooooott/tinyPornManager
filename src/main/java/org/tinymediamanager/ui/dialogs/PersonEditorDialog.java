@@ -126,6 +126,7 @@ public class PersonEditorDialog extends TmmDialog {
           setVisible(false);
         });
         panel.add(btnOk);
+        getRootPane().setDefaultButton(btnOk);
 
         JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
         btnCancel.addActionListener(e -> setVisible(false));

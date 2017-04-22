@@ -18,10 +18,7 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,8 +36,6 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -79,18 +74,14 @@ import ca.odell.glazedlists.swing.GlazedListsSwing;
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
   private static final long                                    serialVersionUID = -8162631708278089277L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer>              results;
   private DefaultEventTableModel<MovieRenamerPreviewContainer> movieTableModel;
   private ResultSelectionModel                                 resultSelectionModel;
   private EventList<MediaFileContainer>                        oldMediaFileEventList;
-  private DefaultEventTableModel<MediaFileContainer>           oldMediaFileTableModel;
   private EventList<MediaFileContainer>                        newMediaFileEventList;
-  private DefaultEventTableModel<MediaFileContainer>           newMediaFileTableModel;
 
   /** UI components */
   private JTable                                               tableMovies;
@@ -127,17 +118,14 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           resultSelectionModel.selectedResults = tableSelectionModel.getSelected();
           tableMovies.setSelectionModel(tableSelectionModel);
 
-          movieTableModel.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent arg0) {
-              // select first movie if nothing is selected
-              ListSelectionModel selectionModel = tableMovies.getSelectionModel();
-              if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
-                selectionModel.setSelectionInterval(0, 0);
-              }
-              if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() == 0) {
-                resultSelectionModel.setSelectedResult(null);
-              }
+          movieTableModel.addTableModelListener(arg0 -> {
+            // select first movie if nothing is selected
+            ListSelectionModel selectionModel = tableMovies.getSelectionModel();
+            if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
+              selectionModel.setSelectionInterval(0, 0);
+            }
+            if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() == 0) {
+              resultSelectionModel.setSelectedResult(null);
             }
           });
 
@@ -197,8 +185,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             }
             {
               oldMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
-              oldMediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(oldMediaFileEventList),
-                  new MediaFileTableFormat());
+              DefaultEventTableModel<MediaFileContainer> oldMediaFileTableModel = new DefaultEventTableModel<>(
+                  GlazedListsSwing.swingThreadProxyList(oldMediaFileEventList), new MediaFileTableFormat());
               tableMediaFilesOld = new ZebraJTable(oldMediaFileTableModel);
               JScrollPane scrollPaneMediaFilesOld = ZebraJTable.createStripedJScrollPane(tableMediaFilesOld);
               panelMediaFiles.add(scrollPaneMediaFilesOld, "1, 3, fill, fill");
@@ -208,8 +196,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             }
             {
               newMediaFileEventList = GlazedLists.eventList(new ArrayList<MediaFileContainer>());
-              newMediaFileTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(newMediaFileEventList),
-                  new MediaFileTableFormat());
+              DefaultEventTableModel<MediaFileContainer> newMediaFileTableModel = new DefaultEventTableModel<>(
+                  GlazedListsSwing.swingThreadProxyList(newMediaFileEventList), new MediaFileTableFormat());
               tableMediaFilesNew = new ZebraJTable(newMediaFileTableModel);
               JScrollPane scrollPaneMediaFilesNew = ZebraJTable.createStripedJScrollPane(tableMediaFilesNew);
               panelMediaFiles.add(scrollPaneMediaFilesNew, "3, 3, fill, fill");
@@ -231,24 +219,21 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       {
         JButton btnRename = new JButton(BUNDLE.getString("Button.rename")); //$NON-NLS-1$
         btnRename.setToolTipText(BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-        btnRename.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent arg0) {
-            List<Movie> selectedMovies = new ArrayList<>();
-            List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
-            for (MovieRenamerPreviewContainer result : selectedResults) {
-              selectedMovies.add(result.getMovie());
-            }
+        btnRename.addActionListener(arg0 -> {
+          List<Movie> selectedMovies1 = new ArrayList<>();
+          List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
+          for (MovieRenamerPreviewContainer result : selectedResults) {
+            selectedMovies1.add(result.getMovie());
+          }
 
-            // rename
-            TmmThreadPool renameTask = new MovieRenameTask(selectedMovies);
-            if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
-              JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-            }
-            else {
-              for (MovieRenamerPreviewContainer result : selectedResults) {
-                results.remove(result);
-              }
+          // rename
+          TmmThreadPool renameTask = new MovieRenameTask(selectedMovies1);
+          if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+          }
+          else {
+            for (MovieRenamerPreviewContainer result : selectedResults) {
+              results.remove(result);
             }
           }
         });
@@ -257,13 +242,9 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       {
         JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
         btnClose.setIcon(IconManager.APPLY_INV);
-        btnClose.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent arg0) {
-            setVisible(false);
-          }
-        });
+        btnClose.addActionListener(arg0 -> setVisible(false));
         panelButtons.add(btnClose);
+        getRootPane().setDefaultButton(btnClose);
       }
     }
 
@@ -362,7 +343,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     @Override
     protected Void doInBackground() throws Exception {
       // sort movies
-      Collections.sort(moviesToProcess, new MovieComparator());
+      moviesToProcess.sort(new MovieComparator());
       // rename them
       for (Movie movie : moviesToProcess) {
         MovieRenamerPreviewContainer container = MovieRenamerPreview.renameMovie(movie);
@@ -379,11 +360,11 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     private List<MovieRenamerPreviewContainer> selectedResults;
     private MovieRenamerPreviewContainer       emptyResult;
 
-    public ResultSelectionModel() {
+    ResultSelectionModel() {
       emptyResult = new MovieRenamerPreviewContainer(new Movie());
     }
 
-    public synchronized void setSelectedResult(MovieRenamerPreviewContainer newValue) {
+    synchronized void setSelectedResult(MovieRenamerPreviewContainer newValue) {
       if (newValue == null) {
         selectedResult = emptyResult;
       }
@@ -446,7 +427,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           newMediaFileEventList.add(container);
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
       finally {
         oldMediaFileEventList.getReadWriteLock().writeLock().unlock();

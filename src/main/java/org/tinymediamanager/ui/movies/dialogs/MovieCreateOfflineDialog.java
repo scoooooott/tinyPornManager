@@ -16,8 +16,6 @@
 package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -90,15 +88,12 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     panelContent.add(cbDatasource, "4, 6, fill, default");
 
     JButton btnAdd = new JButton(IconManager.ADD_INV);
-    btnAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        String title = tfMovieName.getText();
-        String datasource = (String) cbDatasource.getSelectedItem();
-        MediaSource mediaSource = (MediaSource) cbMediaSource.getSelectedItem();
-        if (StringUtils.isNoneBlank(title, datasource)) {
-          movieList.addOfflineMovie(title, datasource, mediaSource);
-        }
+    btnAdd.addActionListener(e -> {
+      String title = tfMovieName.getText();
+      String datasource = (String) cbDatasource.getSelectedItem();
+      MediaSource mediaSource = (MediaSource) cbMediaSource.getSelectedItem();
+      if (StringUtils.isNoneBlank(title, datasource)) {
+        movieList.addOfflineMovie(title, datasource, mediaSource);
       }
     });
     panelContent.add(btnAdd, "6, 2, right, default");
@@ -117,12 +112,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
       panelBottom.add(panelButtons, "2, 2, right, fill");
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          setVisible(false);
-        }
-      });
+      btnClose.addActionListener(e -> setVisible(false));
       panelButtons.add(btnClose);
     }
 

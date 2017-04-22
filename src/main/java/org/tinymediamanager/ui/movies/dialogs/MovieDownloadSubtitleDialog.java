@@ -17,8 +17,6 @@ package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -103,23 +101,18 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
     btnStart.setIcon(IconManager.APPLY_INV);
-    btnStart.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        startDownload = true;
-        setVisible(false);
-      }
+    btnStart.addActionListener(e -> {
+      startDownload = true;
+      setVisible(false);
     });
     panelButtons.add(btnStart);
+    getRootPane().setDefaultButton(btnStart);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCancel.setIcon(IconManager.CANCEL);
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        startDownload = false;
-        setVisible(false);
-      }
+    btnCancel.addActionListener(e -> {
+      startDownload = false;
+      setVisible(false);
     });
     panelButtons.add(btnCancel);
 

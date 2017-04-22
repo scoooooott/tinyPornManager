@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +48,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WhatsNewDialog extends TmmDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 
@@ -71,16 +66,13 @@ public class WhatsNewDialog extends TmmDialog {
       textPane.setText(prepareTextAsHtml(changelog));
       textPane.setEditable(false);
       textPane.setCaretPosition(0);
-      textPane.addHyperlinkListener(new HyperlinkListener() {
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent hle) {
-          if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-            try {
-              TmmUIHelper.browseUrl(hle.getURL().toString());
-            }
-            catch (Exception e) {
-              LOGGER.error("error browsing to " + hle.getURL().toString() + " :" + e.getMessage());
-            }
+      textPane.addHyperlinkListener(hle -> {
+        if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+          try {
+            TmmUIHelper.browseUrl(hle.getURL().toString());
+          }
+          catch (Exception e) {
+            LOGGER.error("error browsing to " + hle.getURL().toString() + " :" + e.getMessage());
           }
         }
       });
@@ -98,26 +90,19 @@ public class WhatsNewDialog extends TmmDialog {
       panel.add(lblHint, "2, 2");
 
       LinkLabel lblLink = new LinkLabel("http://www.tinymediamanager.org");
-      lblLink.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          try {
-            TmmUIHelper.browseUrl("http://www.tinymediamanager.org/index.php/changelog/");
-          }
-          catch (Exception e) {
-          }
+      lblLink.addActionListener(arg0 -> {
+        try {
+          TmmUIHelper.browseUrl("http://www.tinymediamanager.org/index.php/changelog/");
+        }
+        catch (Exception ignored) {
         }
       });
       panel.add(lblLink, "4, 2");
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          setVisible(false);
-        }
-      });
+      btnClose.addActionListener(arg0 -> setVisible(false));
       panel.add(btnClose, "8, 2");
+      getRootPane().setDefaultButton(btnClose);
     }
   }
 

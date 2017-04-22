@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -57,9 +55,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
   private static final long           serialVersionUID           = 3826984454317979241L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
@@ -146,23 +142,18 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
     btnStart.setIcon(IconManager.APPLY_INV);
-    btnStart.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        startScrape = true;
-        setVisible(false);
-      }
+    btnStart.addActionListener(e -> {
+      startScrape = true;
+      setVisible(false);
     });
     panelButtons.add(btnStart);
+    getRootPane().setDefaultButton(btnStart);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCancel.setIcon(IconManager.CANCEL_INV);
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        startScrape = false;
-        setVisible(false);
-      }
+    btnCancel.addActionListener(e -> {
+      startScrape = false;
+      setVisible(false);
     });
     panelButtons.add(btnCancel);
 

@@ -107,9 +107,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private static final long              serialVersionUID      = -3104541519073924724L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE                = ResourceBundle.getBundle("messages",                                     //$NON-NLS-1$
       new UTF8Control());
   private static final Logger            LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
@@ -124,7 +122,6 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private boolean                        continueQueue         = true;
 
   private EventList<Person>              castMemberEventList   = null;
-  private DefaultEventTableModel<Person> castMemberTableModel  = null;
   private MovieChooserModel              selectedResult        = null;
 
   private SearchTask                     activeSearchTask;
@@ -182,7 +179,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
     // table format for the castmembers
     castMemberEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
-    castMemberTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(castMemberEventList), new CastMemberTableFormat());
+    DefaultEventTableModel<Person> castMemberTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(castMemberEventList),
+        new CastMemberTableFormat());
 
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -385,6 +383,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           buttonPane.add(okButton);
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
+          getRootPane().setDefaultButton(okButton);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           cancelButton.setIcon(IconManager.CANCEL_INV);

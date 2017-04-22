@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,17 +44,13 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WolDeviceDialog extends TmmDialog {
   private static final long           serialVersionUID = -8293021735704401080L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private WolDevice                   device           = null;
 
   private JTextField                  tfName;
   private JTextField                  tfMacAddress;
-  private final Action                actionSave       = new SaveAction();
-  private final Action                actionCancel     = new CancelAction();
 
   /**
    * constructor for creating a device
@@ -86,11 +81,12 @@ public class WolDeviceDialog extends TmmDialog {
     tfMacAddress.setColumns(10);
 
     JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
-    btnSave.setAction(actionSave);
+    btnSave.setAction(new SaveAction());
     getContentPane().add(btnSave, "6, 6");
+    getRootPane().setDefaultButton(btnSave);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setAction(actionCancel);
+    btnCancel.setAction(new CancelAction());
     getContentPane().add(btnCancel, "8, 6");
   }
 
@@ -103,7 +99,7 @@ public class WolDeviceDialog extends TmmDialog {
   private class SaveAction extends AbstractAction {
     private static final long serialVersionUID = 1740130137146252281L;
 
-    public SaveAction() {
+    SaveAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
@@ -141,7 +137,7 @@ public class WolDeviceDialog extends TmmDialog {
   private class CancelAction extends AbstractAction {
     private static final long serialVersionUID = -8416641526799936831L;
 
-    public CancelAction() {
+    CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
       putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);

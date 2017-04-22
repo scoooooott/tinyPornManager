@@ -15,8 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.dialogs;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -150,13 +148,11 @@ public class MovieExporterDialog extends TmmDialog {
 
     JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination")); //$NON-NLS-1$
     panelDestination.add(btnSetDestination, "3, 1");
-    btnSetDestination.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), tfExportDir.getText()); //$NON-NLS-1$
-        if (file != null) {
-          tfExportDir.setText(file.toAbsolutePath().toString());
-          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", tfExportDir.getText()); //$NON-NLS-1$
-        }
+    btnSetDestination.addActionListener(e -> {
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), tfExportDir.getText()); //$NON-NLS-1$
+      if (file != null) {
+        tfExportDir.setText(file.toAbsolutePath().toString());
+        TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", tfExportDir.getText()); //$NON-NLS-1$
       }
     });
 
@@ -166,63 +162,58 @@ public class MovieExporterDialog extends TmmDialog {
 
     JButton btnExport = new JButton("Export");
     btnExport.setIcon(IconManager.EXPORT);
-    btnExport.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (StringUtils.isBlank(tfExportDir.getText())) {
-          return;
-        }
-        // check selected template
-        int index = list.getSelectedIndex();
-        if (index < 0) {
+    btnExport.addActionListener(arg0 -> {
+      if (StringUtils.isBlank(tfExportDir.getText())) {
+        return;
+      }
+      // check selected template
+      int index = list.getSelectedIndex();
+      if (index < 0) {
+        return;
+      }
+
+      ExportTemplate selectedTemplate = templatesFound.get(index);
+      if (selectedTemplate != null) {
+        // check whether the chosen export path exists/is empty or not
+        Path exportPath = Paths.get(tfExportDir.getText());
+        if (!Files.exists(exportPath)) {
+          // export dir does not exist
+          JOptionPane.showMessageDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
           return;
         }
 
-        ExportTemplate selectedTemplate = templatesFound.get(index);
-        if (selectedTemplate != null) {
-          // check whether the chosen export path exists/is empty or not
-          Path exportPath = Paths.get(tfExportDir.getText());
-          if (!Files.exists(exportPath)) {
-            // export dir does not exist
-            JOptionPane.showMessageDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
-            return;
-          }
-
-          try {
-            if (!Utils.isFolderEmpty(exportPath)) {
-              String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-              int decision = JOptionPane.showConfirmDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
-                  JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
-              if (decision == JOptionPane.NO_OPTION) {
-                return;
-              }
+        try {
+          if (!Utils.isFolderEmpty(exportPath)) {
+            String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+            int decision = JOptionPane.showConfirmDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotempty"), "",
+                JOptionPane.YES_NO_OPTION);// $NON-NLS-1$
+            if (decision == JOptionPane.NO_OPTION) {
+              return;
             }
           }
-          catch (IOException e) {
-            LOGGER.warn("could not open folder: " + e.getMessage());
-            return;
-          }
-
-          try {
-            MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
-            exporter.export(movies, exportPath);
-            TmmProperties.getInstance().putProperty(DIALOG_ID + ".template", selectedTemplate.getName()); //$NON-NLS-1$
-          }
-          catch (Exception e) {
-            LOGGER.error("Error exporting movies: ", e);
-          }
-          setVisible(false);
         }
-      }
-    });
-    panelButtons.add(btnExport);
+        catch (IOException e) {
+          LOGGER.warn("could not open folder: " + e.getMessage());
+          return;
+        }
 
-    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-    btnCancel.setIcon(IconManager.CANCEL_INV);
-    btnCancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
+        try {
+          MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
+          exporter.export(movies, exportPath);
+          TmmProperties.getInstance().putProperty(DIALOG_ID + ".template", selectedTemplate.getName()); //$NON-NLS-1$
+        }
+        catch (Exception e) {
+          LOGGER.error("Error exporting movies: ", e);
+        }
         setVisible(false);
       }
     });
+    panelButtons.add(btnExport);
+    getRootPane().setDefaultButton(btnExport);
+
+    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCancel.setIcon(IconManager.CANCEL_INV);
+    btnCancel.addActionListener(arg0 -> setVisible(false));
     panelButtons.add(btnCancel);
 
     movies = moviesToExport;

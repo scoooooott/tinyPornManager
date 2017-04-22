@@ -41,8 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -84,9 +82,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID = -1023959850452480592L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
@@ -153,27 +149,25 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           tableMovieSets.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
           tableMovieSets.setBorder(new LineBorder(new Color(0, 0, 0)));
           ListSelectionModel rowSM = tableMovieSets.getSelectionModel();
-          rowSM.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-              // Ignore extra messages.
-              if (e.getValueIsAdjusting())
-                return;
+          rowSM.addListSelectionListener(e -> {
+            // Ignore extra messages.
+            if (e.getValueIsAdjusting())
+              return;
 
-              ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-              if (!lsm.isSelectionEmpty()) {
-                int selectedRow = lsm.getMinSelectionIndex();
-                selectedRow = tableMovieSets.convertRowIndexToModel(selectedRow);
-                try {
-                  MovieSetChooserModel model = movieSetsFound.get(selectedRow);
-                  if (model != MovieSetChooserModel.emptyResult && !model.isScraped()) {
-                    ScrapeTask task = new ScrapeTask(model);
-                    task.execute();
+            ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+            if (!lsm.isSelectionEmpty()) {
+              int selectedRow = lsm.getMinSelectionIndex();
+              selectedRow = tableMovieSets.convertRowIndexToModel(selectedRow);
+              try {
+                MovieSetChooserModel model = movieSetsFound.get(selectedRow);
+                if (model != MovieSetChooserModel.emptyResult && !model.isScraped()) {
+                  ScrapeTask task = new ScrapeTask(model);
+                  task.execute();
 
-                  }
                 }
-                catch (Exception ex) {
-                  LOGGER.warn(ex.getMessage());
-                }
+              }
+              catch (Exception ex) {
+                LOGGER.warn(ex.getMessage());
               }
             }
           });
@@ -254,6 +248,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
           btnOk.setIcon(IconManager.APPLY_INV);
           btnOk.addActionListener(this);
           buttonPane.add(btnOk);
+          getRootPane().setDefaultButton(btnOk);
 
           JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.setActionCommand("Cancel");
@@ -337,7 +332,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private class SearchAction extends AbstractAction {
     private static final long serialVersionUID = -6561883838396668177L;
 
-    public SearchAction() {
+    SearchAction() {
       putValue(NAME, BUNDLE.getString("Button.search")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.SEARCH);
@@ -416,7 +411,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   private class ScrapeTask extends SwingWorker<Void, Void> {
     private MovieSetChooserModel model;
 
-    public ScrapeTask(MovieSetChooserModel model) {
+    ScrapeTask(MovieSetChooserModel model) {
       this.model = model;
     }
 
@@ -439,24 +434,18 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
   }
 
   private void startProgressBar(final String description) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText(description);
-        progressBar.setVisible(true);
-        progressBar.setIndeterminate(true);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText(description);
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
     });
   }
 
   private void stopProgressBar() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText("");
-        progressBar.setVisible(false);
-        progressBar.setIndeterminate(false);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText("");
+      progressBar.setVisible(false);
+      progressBar.setIndeterminate(false);
     });
   }
 

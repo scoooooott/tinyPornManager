@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
@@ -50,9 +48,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MessageDialog extends JDialog {
   private static final long           serialVersionUID = -9035402766767310658L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private JLabel                      lblImage;
@@ -122,13 +118,9 @@ public class MessageDialog extends JDialog {
         panelBottom.add(panelButtons, "4, 2, right, fill");
         {
           JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
-          btnClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-              setVisible(false);
-            }
-          });
+          btnClose.addActionListener(arg0 -> setVisible(false));
           panelButtons.add(btnClose);
+          getRootPane().setDefaultButton(btnClose);
         }
       }
     }

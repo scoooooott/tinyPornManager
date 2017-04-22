@@ -35,8 +35,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SwingWorker;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
@@ -80,9 +78,7 @@ import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
   private static final long                                serialVersionUID = 3317576458848699068L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisode                                    episode;
@@ -103,7 +99,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     this.episode = ep;
     this.mediaScraper = mediaScraper;
     this.metadata = new MediaEpisode(mediaScraper.getId());
-    episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<TvShowEpisodeChooserModel>()),
+    episodeEventList = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()),
         GlazedLists.beanConnector(TvShowEpisodeChooserModel.class));
     sortedEpisodes = new SortedList<>(GlazedListsSwing.swingThreadProxyList(episodeEventList), new EpisodeComparator());
 
@@ -138,22 +134,19 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
       DefaultEventSelectionModel<TvShowEpisodeChooserModel> selectionModel = new DefaultEventSelectionModel<>(textFilteredEpisodes);
       selectedEpisodes = selectionModel.getSelected();
 
-      selectionModel.addListSelectionListener(new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-          if (e.getValueIsAdjusting()) {
-            return;
-          }
-          // display first selected episode
-          if (!selectedEpisodes.isEmpty()) {
-            TvShowEpisodeChooserModel episode = selectedEpisodes.get(0);
-            taPlot.setText(episode.getOverview());
-          }
-          else {
-            taPlot.setText("");
-          }
-          taPlot.setCaretPosition(0);
+      selectionModel.addListSelectionListener(e -> {
+        if (e.getValueIsAdjusting()) {
+          return;
         }
+        // display first selected episode
+        if (!selectedEpisodes.isEmpty()) {
+          TvShowEpisodeChooserModel episode = selectedEpisodes.get(0);
+          taPlot.setText(episode.getOverview());
+        }
+        else {
+          taPlot.setText("");
+        }
+        taPlot.setCaretPosition(0);
       });
 
       table = new JTable(episodeTableModel);
@@ -195,6 +188,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     buttonPane.add(okButton);
     okButton.setActionCommand("OK");
     okButton.addActionListener(this);
+    getRootPane().setDefaultButton(okButton);
 
     JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
@@ -259,7 +253,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
           episodeEventList.add(new TvShowEpisodeChooserModel(mediaScraper, episode));
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
       return null;
     }

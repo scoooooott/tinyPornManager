@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -80,19 +79,17 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetEditorDialog extends TmmDialog {
-  private static final long           serialVersionUID   = -4446433759280691976L;
-  private static final Logger         LOGGER             = LoggerFactory.getLogger(MovieSetEditorDialog.class);
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
-  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
+  private static final long           serialVersionUID = -4446433759280691976L;
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetEditorDialog.class);
+  /** @wbp.nls.resourceBundle messages */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
 
-  private MovieList                   movieList          = MovieList.getInstance();
+  private MovieList                   movieList        = MovieList.getInstance();
   private MovieSet                    movieSetToEdit;
-  private List<Movie>                 moviesInSet        = ObservableCollections.observableList(new ArrayList<Movie>());
-  private List<Movie>                 removedMovies      = new ArrayList<>();
-  private List<MediaScraper>          artworkScrapers    = new ArrayList<>();
-  private boolean                     continueQueue      = true;
+  private List<Movie>                 moviesInSet      = ObservableCollections.observableList(new ArrayList<Movie>());
+  private List<Movie>                 removedMovies    = new ArrayList<>();
+  private List<MediaScraper>          artworkScrapers  = new ArrayList<>();
+  private boolean                     continueQueue    = true;
 
   /** UI components */
   private JTextField                  tfName;
@@ -105,12 +102,6 @@ public class MovieSetEditorDialog extends TmmDialog {
   private ImageLabel                  lblClearlogo;
   private ImageLabel                  lblBanner;
   private ImageLabel                  lblClearart;
-
-  private final Action                actionRemoveMovie  = new RemoveMovieAction();
-  private final Action                actionOk           = new OkAction();
-  private final Action                actionCancel       = new CancelAction();
-  private final Action                actionAbort        = new AbortAction();
-  private final Action                actionSearchTmdbId = new SwingAction();
 
   /**
    * Instantiates a new movie set editor.
@@ -192,7 +183,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     tfTmdbId.setColumns(10);
 
     JButton btnSearchTmdbId = new JButton("");
-    btnSearchTmdbId.setAction(actionSearchTmdbId);
+    btnSearchTmdbId.setAction(new SearchIdAction());
     panelContent.add(btnSearchTmdbId, "6, 4, left, default");
 
     JLabel lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
@@ -214,7 +205,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     scrollPaneMovies.setViewportView(tableMovies);
 
     JButton btnRemoveMovie = new JButton("");
-    btnRemoveMovie.setAction(actionRemoveMovie);
+    btnRemoveMovie.setAction(new RemoveMovieAction());
     panelContent.add(btnRemoveMovie, "2, 10, right, top");
 
     lblFanart = new ImageLabel();
@@ -225,7 +216,7 @@ public class MovieSetEditorDialog extends TmmDialog {
         try {
           tmdbId = Integer.parseInt(tfTmdbId.getText());
         }
-        catch (Exception e1) {
+        catch (Exception ignored) {
         }
         HashMap<String, Object> ids = new HashMap<>(movieSetToEdit.getIds());
         ids.put(Constants.TMDB, tmdbId);
@@ -338,18 +329,18 @@ public class MovieSetEditorDialog extends TmmDialog {
       buttonPane.setLayout(layout);
       {
         JButton btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-        btnOk.setAction(actionOk);
+        btnOk.setAction(new OkAction());
         buttonPane.add(btnOk);
         getRootPane().setDefaultButton(btnOk);
 
         JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-        btnCancel.setAction(actionCancel);
+        btnCancel.setAction(new CancelAction());
         buttonPane.add(btnCancel);
 
         if (inQueue) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           buttonPane.add(abortButton);
-          abortButton.setAction(actionAbort);
+          abortButton.setAction(new AbortAction());
         }
       }
 
@@ -406,7 +397,7 @@ public class MovieSetEditorDialog extends TmmDialog {
   private class RemoveMovieAction extends AbstractAction {
     private static final long serialVersionUID = 8013039811395731218L;
 
-    public RemoveMovieAction() {
+    RemoveMovieAction() {
       putValue(LARGE_ICON_KEY, IconManager.REMOVE_INV);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.remove")); //$NON-NLS-1$
     }
@@ -429,7 +420,7 @@ public class MovieSetEditorDialog extends TmmDialog {
   private class OkAction extends AbstractAction {
     private static final long serialVersionUID = -7322270015667230646L;
 
-    public OkAction() {
+    OkAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$ );
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.save")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.APPLY_INV);
@@ -505,7 +496,7 @@ public class MovieSetEditorDialog extends TmmDialog {
 
         tmdbId = Integer.parseInt(tfTmdbId.getText());
       }
-      catch (Exception e1) {
+      catch (Exception ignored) {
       }
       movieSetToEdit.setTmdbId(tmdbId);
       movieSetToEdit.saveToDb();
@@ -517,7 +508,7 @@ public class MovieSetEditorDialog extends TmmDialog {
   private class CancelAction extends AbstractAction {
     private static final long serialVersionUID = -6214112833170817002L;
 
-    public CancelAction() {
+    CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
@@ -533,7 +524,7 @@ public class MovieSetEditorDialog extends TmmDialog {
   private class AbortAction extends AbstractAction {
     private static final long serialVersionUID = 1215596133205394653L;
 
-    public AbortAction() {
+    AbortAction() {
       putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SMALL_ICON, IconManager.PROCESS_STOP);
@@ -567,10 +558,10 @@ public class MovieSetEditorDialog extends TmmDialog {
     jTableBinding.bind();
   }
 
-  private class SwingAction extends AbstractAction {
+  private class SearchIdAction extends AbstractAction {
     private static final long serialVersionUID = -8980803676368394987L;
 
-    public SwingAction() {
+    SearchIdAction() {
       putValue(NAME, BUNDLE.getString("movieset.tmdb.find")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.tmdb.desc")); //$NON-NLS-1$
     }

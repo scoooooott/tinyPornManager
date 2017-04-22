@@ -46,8 +46,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -102,9 +100,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID      = 2371518113606870230L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
@@ -201,12 +197,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         btnSearch.setIcon(IconManager.SEARCH);
         panelSearchField.add(btnSearch, "8, 1");
-        btnSearch.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent arg0) {
-            searchTvShow(textFieldSearchString.getText());
-          }
-        });
+        btnSearch.addActionListener(arg0 -> searchTvShow(textFieldSearchString.getText()));
         getRootPane().setDefaultButton(btnSearch);
       }
       {
@@ -217,12 +208,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         cbLanguage = new JComboBox<>();
         cbLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.values()));
         cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getScraperLanguage());
-        cbLanguage.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            searchTvShow(textFieldSearchString.getText());
-          }
-        });
+        cbLanguage.addActionListener(e -> searchTvShow(textFieldSearchString.getText()));
         panelSearchField.add(cbLanguage, "4, 3, fill, default");
       }
     }
@@ -245,26 +231,24 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.setBorder(new LineBorder(new Color(0, 0, 0)));
             ListSelectionModel rowSM = table.getSelectionModel();
-            rowSM.addListSelectionListener(new ListSelectionListener() {
-              public void valueChanged(ListSelectionEvent e) {
-                // Ignore extra messages.
-                if (e.getValueIsAdjusting())
-                  return;
+            rowSM.addListSelectionListener(e -> {
+              // Ignore extra messages.
+              if (e.getValueIsAdjusting())
+                return;
 
-                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-                if (!lsm.isSelectionEmpty()) {
-                  int selectedRow = lsm.getMinSelectionIndex();
-                  selectedRow = table.convertRowIndexToModel(selectedRow);
-                  try {
-                    TvShowChooserModel model = tvShowsFound.get(selectedRow);
-                    if (model != TvShowChooserModel.emptyResult && !model.isScraped()) {
-                      ScrapeTask task = new ScrapeTask(model);
-                      task.execute();
-                    }
+              ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+              if (!lsm.isSelectionEmpty()) {
+                int selectedRow = lsm.getMinSelectionIndex();
+                selectedRow = table.convertRowIndexToModel(selectedRow);
+                try {
+                  TvShowChooserModel model = tvShowsFound.get(selectedRow);
+                  if (model != TvShowChooserModel.emptyResult && !model.isScraped()) {
+                    ScrapeTask task = new ScrapeTask(model);
+                    task.execute();
                   }
-                  catch (Exception ex) {
-                    LOGGER.warn(ex.getMessage());
-                  }
+                }
+                catch (Exception ex) {
+                  LOGGER.warn(ex.getMessage());
                 }
               }
             });
@@ -347,6 +331,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           okButton.setActionCommand("OK");
           okButton.setIcon(IconManager.APPLY_INV);
           okButton.addActionListener(this);
+          getRootPane().setDefaultButton(okButton);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           buttonPane.add(cancelButton);
@@ -495,24 +480,18 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   }
 
   private void startProgressBar(final String description) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText(description);
-        progressBar.setVisible(true);
-        progressBar.setIndeterminate(true);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText(description);
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
     });
   }
 
   private void stopProgressBar() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText("");
-        progressBar.setVisible(false);
-        progressBar.setIndeterminate(false);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText("");
+      progressBar.setVisible(false);
+      progressBar.setIndeterminate(false);
     });
   }
 
@@ -560,7 +539,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private class ScrapeTask extends SwingWorker<Void, Void> {
     private TvShowChooserModel model;
 
-    public ScrapeTask(TvShowChooserModel model) {
+    ScrapeTask(TvShowChooserModel model) {
       this.model = model;
     }
 
@@ -630,7 +609,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private class ChangeScraperAction extends AbstractAction {
     private static final long serialVersionUID = -3537728352474538431L;
 
-    public ChangeScraperAction() {
+    ChangeScraperAction() {
     }
 
     @Override

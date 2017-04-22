@@ -20,8 +20,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -121,10 +119,9 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     this.fileToScrape = mediaFile;
     this.inQueue = inQueue;
 
-    subtitleEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieSubtitleChooserModel>(
-        new BasicEventList<MovieSubtitleChooserModel>(), GlazedLists.beanConnector(MovieSubtitleChooserModel.class)));
-    subtitleTableModel = new DefaultEventTableModel<MovieSubtitleChooserModel>(GlazedListsSwing.swingThreadProxyList(subtitleEventList),
-        new SubtitleTableFormat());
+    subtitleEventList = GlazedLists
+        .threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(MovieSubtitleChooserModel.class)));
+    subtitleTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(subtitleEventList), new SubtitleTableFormat());
 
     initComponents();
 
@@ -204,24 +201,14 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     tfSearchQuery.setColumns(10);
 
     final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-    btnSearch.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        searchSubtitle(null, "", tfSearchQuery.getText());
-      }
-    });
+    btnSearch.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
     panelContent.add(btnSearch, "10, 8");
 
     final JLabel lblLanguageT = new JLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
     panelContent.add(lblLanguageT, "2, 10, right, default");
 
     cbLanguage = new JComboBox<>();
-    cbLanguage.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        searchSubtitle(null, "", tfSearchQuery.getText());
-      }
-    });
+    cbLanguage.addActionListener(e -> searchSubtitle(null, "", tfSearchQuery.getText()));
     panelContent.add(cbLanguage, "4, 10, fill, default");
 
     final JScrollPane scrollPaneSubs = new JScrollPane();
@@ -254,23 +241,16 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
         JButton btnDone = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
         btnDone.setIcon(IconManager.APPLY_INV);
-        btnDone.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            setVisible(false);
-          }
-        });
+        btnDone.addActionListener(e -> setVisible(false));
         panelButtons.add(btnDone);
+        getRootPane().setDefaultButton(btnDone);
 
         if (inQueue) {
           JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
-          btnAbortQueue.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              continueQueue = false;
-              setVisible(false);
-            }
+          btnAbortQueue.addActionListener(e -> {
+            continueQueue = false;
+            setVisible(false);
           });
           panelButtons.add(btnAbortQueue);
         }
@@ -294,24 +274,18 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
   }
 
   private void startProgressBar(final String description) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText(description);
-        progressBar.setVisible(true);
-        progressBar.setIndeterminate(true);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText(description);
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
     });
   }
 
   private void stopProgressBar() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText("");
-        progressBar.setVisible(false);
-        progressBar.setIndeterminate(false);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText("");
+      progressBar.setVisible(false);
+      progressBar.setIndeterminate(false);
     });
   }
 
@@ -357,7 +331,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
           options.setLanguage(LocaleUtils.toLocale(language.name()));
           searchResults.addAll(subtitleProvider.search(options));
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
       }
 
@@ -459,7 +433,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
     private final JLabel downloadLabel;
 
-    public Renderer() {
+    Renderer() {
       downloadLabel = new JLabel(BUNDLE.getString("Button.download"), IconManager.DOWNLOAD, SwingConstants.CENTER); //$NON-NLS-1$
     }
 
@@ -486,8 +460,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
 
         if (StringUtils.isNotBlank(model.getDownloadUrl())) {
           // the right language tag from the renamer settings
-          String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(),
-              MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
+          String lang = LanguageStyle.getLanguageCodeForStyle(model.getLanguage().name(), MovieModuleManager.SETTINGS.getSubtitleLanguageStyle());
           if (StringUtils.isBlank(lang)) {
             lang = model.getLanguage().name();
           }

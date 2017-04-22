@@ -19,8 +19,6 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -201,13 +199,8 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     panelContent.add(cbLanguage, "4, 12, fill, default");
 
     final JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-    btnSearch.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(), episodeToScrape.getSeason(),
-            episodeToScrape.getEpisode());
-      }
-    });
+    btnSearch.addActionListener(e -> searchSubtitle(fileToScrape.getFileAsPath().toFile(), episodeToScrape.getTvShow().getImdbId(),
+        episodeToScrape.getSeason(), episodeToScrape.getEpisode()));
     panelContent.add(btnSearch, "8, 12");
 
     final JScrollPane scrollPaneSubs = new JScrollPane();
@@ -239,23 +232,16 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
 
         JButton btnDone = new JButton(BUNDLE.getString("Button.done")); //$NON-NLS-1$
         btnDone.setIcon(IconManager.APPLY_INV);
-        btnDone.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            setVisible(false);
-          }
-        });
+        btnDone.addActionListener(e -> setVisible(false));
         panelButtons.add(btnDone);
+        getRootPane().setDefaultButton(btnDone);
 
         if (inQueue) {
           JButton btnAbortQueue = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           btnAbortQueue.setIcon(IconManager.PROCESS_STOP);
-          btnAbortQueue.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              continueQueue = false;
-              setVisible(false);
-            }
+          btnAbortQueue.addActionListener(e -> {
+            continueQueue = false;
+            setVisible(false);
           });
           panelButtons.add(btnAbortQueue);
         }
@@ -279,24 +265,18 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
   }
 
   private void startProgressBar(final String description) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText(description);
-        progressBar.setVisible(true);
-        progressBar.setIndeterminate(true);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText(description);
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
     });
   }
 
   private void stopProgressBar() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        lblProgressAction.setText("");
-        progressBar.setVisible(false);
-        progressBar.setIndeterminate(false);
-      }
+    SwingUtilities.invokeLater(() -> {
+      lblProgressAction.setText("");
+      progressBar.setVisible(false);
+      progressBar.setIndeterminate(false);
     });
   }
 

@@ -20,8 +20,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -65,9 +63,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = 3527478264068979388L;
-  /**
-   * @wbp.nls.resourceBundle messages
-   */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowList                  tvShowList       = TvShowList.getInstance();
@@ -143,67 +139,55 @@ public class TvShowBatchEditorDialog extends TmmDialog {
     panelTvShows.add(btnRemoveTag, "8, 4");
     btnRemoveTag.setIcon(IconManager.REMOVE_INV);
     btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-    btnRemoveTag.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        tvShowsChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String tag = (String) cbTags.getSelectedItem();
-        for (TvShow tvShow : tvShowsToEdit) {
-          tvShow.removeFromTags(tag);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    btnRemoveTag.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTags.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.removeFromTags(tag);
       }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
-    btnAddTag.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        tvShowsChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String tag = (String) cbTags.getSelectedItem();
-        for (TvShow tvShow : tvShowsToEdit) {
-          tvShow.addToTags(tag);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    btnAddTag.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      String tag = (String) cbTags.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.addToTags(tag);
       }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
-    btnRemoveGenre.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        tvShowsChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
-        for (TvShow tvShow : tvShowsToEdit) {
-          tvShow.removeGenre(genre);
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    btnRemoveGenre.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
+      for (TvShow tvShow : tvShowsToEdit) {
+        tvShow.removeGenre(genre);
       }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
-    btnAddGenre.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        tvShowsChanged = true;
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        MediaGenres genre = null;
-        Object item = cbGenres.getSelectedItem();
+    btnAddGenre.addActionListener(e -> {
+      tvShowsChanged = true;
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      MediaGenres genre = null;
+      Object item = cbGenres.getSelectedItem();
 
-        // genre
-        if (item instanceof MediaGenres) {
-          genre = (MediaGenres) item;
-        }
-
-        // newly created genre?
-        if (item instanceof String) {
-          genre = MediaGenres.getGenre((String) item);
-        }
-
-        if (genre != null) {
-          for (TvShow tvShow : tvShowsToEdit) {
-            tvShow.addGenre(genre);
-          }
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      // genre
+      if (item instanceof MediaGenres) {
+        genre = (MediaGenres) item;
       }
+
+      // newly created genre?
+      if (item instanceof String) {
+        genre = MediaGenres.getGenre((String) item);
+      }
+
+      if (genre != null) {
+        for (TvShow tvShow : tvShowsToEdit) {
+          tvShow.addGenre(genre);
+        }
+      }
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     });
 
     {
@@ -227,16 +211,13 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
       btnWatched.setIcon(IconManager.APPLY_INV);
-      btnWatched.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          episodesChanged = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            episode.setWatched(chckbxWatched.isSelected());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnWatched.addActionListener(e -> {
+        episodesChanged = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          episode.setWatched(chckbxWatched.isSelected());
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelTvShowEpisodes.add(btnWatched, "6, 2");
 
@@ -251,17 +232,14 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       JButton btnSeason = new JButton("");
       btnSeason.setIcon(IconManager.APPLY_INV);
       btnSeason.setMargin(new Insets(2, 2, 2, 2));
-      btnSeason.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          episodesChanged = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            Integer season = (Integer) spSeason.getValue();
-            episode.setSeason(season);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnSeason.addActionListener(arg0 -> {
+        episodesChanged = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          Integer season = (Integer) spSeason.getValue();
+          episode.setSeason(season);
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelTvShowEpisodes.add(btnSeason, "6, 4");
 
@@ -274,16 +252,13 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       JButton btnDvdOrder = new JButton("");
       btnDvdOrder.setIcon(IconManager.APPLY_INV);
       btnDvdOrder.setMargin(new Insets(2, 2, 2, 2));
-      btnDvdOrder.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          episodesChanged = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            episode.setDvdOrder(cbDvdOrder.isSelected());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnDvdOrder.addActionListener(arg0 -> {
+        episodesChanged = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          episode.setDvdOrder(cbDvdOrder.isSelected());
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
       panelTvShowEpisodes.add(btnDvdOrder, "6, 6");
 
@@ -304,29 +279,23 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       btnRemoveTagEpisode.setIcon(IconManager.REMOVE_INV);
       btnRemoveTagEpisode.setMargin(new Insets(2, 2, 2, 2));
 
-      btnRemoveTagEpisode.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          episodesChanged = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          String tag = (String) cbTagsEpisode.getSelectedItem();
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            episode.removeFromTags(tag);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnRemoveTagEpisode.addActionListener(e -> {
+        episodesChanged = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String tag = (String) cbTagsEpisode.getSelectedItem();
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          episode.removeFromTags(tag);
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
-      btnAddTagEpisode.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          episodesChanged = true;
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          String tag = (String) cbTagsEpisode.getSelectedItem();
-          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-            episode.addToTags(tag);
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnAddTagEpisode.addActionListener(e -> {
+        episodesChanged = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String tag = (String) cbTagsEpisode.getSelectedItem();
+        for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+          episode.addToTags(tag);
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       });
 
       JLabel lblMediasourceEpisode = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
@@ -338,19 +307,16 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       JButton btnMediaSourceEpisode = new JButton("");
       btnMediaSourceEpisode.setMargin(new Insets(2, 2, 2, 2));
       btnMediaSourceEpisode.setIcon(IconManager.APPLY_INV);
-      btnMediaSourceEpisode.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          episodesChanged = true;
-          Object obj = cbMediaSourceEpisode.getSelectedItem();
-          if (obj instanceof MediaSource) {
-            MediaSource mediaSource = (MediaSource) obj;
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-              episode.setMediaSource(mediaSource);
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnMediaSourceEpisode.addActionListener(e -> {
+        episodesChanged = true;
+        Object obj = cbMediaSourceEpisode.getSelectedItem();
+        if (obj instanceof MediaSource) {
+          MediaSource mediaSource = (MediaSource) obj;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+            episode.setMediaSource(mediaSource);
           }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
       });
       panelTvShowEpisodes.add(btnMediaSourceEpisode, "6, 10");
@@ -364,43 +330,41 @@ public class TvShowBatchEditorDialog extends TmmDialog {
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.setIcon(IconManager.APPLY_INV);
-      btnClose.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          // rewrite tv show if anything changed
-          if (tvShowsChanged) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (TvShow tvShow : tvShowsToEdit) {
-              tvShow.writeNFO();
-              tvShow.saveToDb();
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      btnClose.addActionListener(arg0 -> {
+        // rewrite tv show if anything changed
+        if (tvShowsChanged) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (TvShow tvShow : tvShowsToEdit) {
+            tvShow.writeNFO();
+            tvShow.saveToDb();
           }
-
-          // rewrite episodes if anything changed
-          if (episodesChanged) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-              episode.writeNFO();
-              episode.saveToDb();
-            }
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          }
-
-          if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
-            Set<TvShow> tvShows = new HashSet<>();
-            for (TvShowEpisode episode : tvShowEpisodesToEdit) {
-              tvShows.add(episode.getTvShow());
-            }
-            tvShows.addAll(tvShowsToEdit);
-            TmmTask task = new SyncTraktTvTask(null, new ArrayList<>(tvShows));
-            TmmTaskManager.getInstance().addUnnamedTask(task);
-          }
-
-          setVisible(false);
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+
+        // rewrite episodes if anything changed
+        if (episodesChanged) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+            episode.writeNFO();
+            episode.saveToDb();
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+
+        if (TvShowModuleManager.SETTINGS.getSyncTrakt()) {
+          Set<TvShow> tvShows1 = new HashSet<>();
+          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+            tvShows1.add(episode.getTvShow());
+          }
+          tvShows1.addAll(tvShowsToEdit);
+          TmmTask task = new SyncTraktTvTask(null, new ArrayList<>(tvShows1));
+          TmmTaskManager.getInstance().addUnnamedTask(task);
+        }
+
+        setVisible(false);
       });
       panelButtons.add(btnClose);
+      getRootPane().setDefaultButton(btnClose);
 
       // add window listener to write changes (if the window close button "X" is pressed)
       addWindowListener(new WindowAdapter() {

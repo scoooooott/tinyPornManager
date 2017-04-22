@@ -56,8 +56,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -446,6 +444,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         buttonPane.add(okButton);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
+        getRootPane().setDefaultButton(okButton);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
@@ -483,12 +482,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
 
       lblThumb.setImagePath(episodeToEdit.getArtworkFilename(MediaFileType.THUMB));
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
-      spRating.addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          voteCount = 1;
-        }
-      });
+      spRating.addChangeListener(e -> voteCount = 1);
       voteCount = episodeToEdit.getVotes();
       chckbxWatched.setSelected(episodeToEdit.isWatched());
       taPlot.setText(episodeToEdit.getPlot());
@@ -609,7 +603,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private class ScrapeTask extends SwingWorker<Void, Void> {
     MediaScraper mediaScraper;
 
-    public ScrapeTask(MediaScraper mediaScraper) {
+    ScrapeTask(MediaScraper mediaScraper) {
       this.mediaScraper = mediaScraper;
     }
 
@@ -733,7 +727,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private class AddTagAction extends AbstractAction {
     private static final long serialVersionUID = 5968029647764173330L;
 
-    public AddTagAction() {
+    AddTagAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add")); //$NON-NLS-1$
     }
 
@@ -784,7 +778,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private class RemoveTagAction extends AbstractAction {
     private static final long serialVersionUID = -4799506776650330500L;
 
-    public RemoveTagAction() {
+    RemoveTagAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove")); //$NON-NLS-1$
     }
 
@@ -800,7 +794,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private class AddActorAction extends AbstractAction {
     private static final long serialVersionUID = -5879601617842300526L;
 
-    public AddActorAction() {
+    AddActorAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
     }
 
@@ -819,7 +813,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private class RemoveActorAction extends AbstractAction {
     private static final long serialVersionUID = 6970920169867315771L;
 
-    public RemoveActorAction() {
+    RemoveActorAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
     }
 
