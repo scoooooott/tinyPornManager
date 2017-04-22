@@ -53,6 +53,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,11 +88,14 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.components.datepicker.YearSpinner;
+import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -102,6 +106,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 
 /**
@@ -116,7 +122,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
   private TvShow                             tvShowToEdit;
   private TvShowList                         tvShowList       = TvShowList.getInstance();
-  private List<Person>                       actors           = ObservableCollections.observableList(new ArrayList<Person>());
+  private EventList<Person>                  actors;
   private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
   private EventList<MediaId>                 ids              = new BasicEventList<>();
   private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
@@ -132,7 +138,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private JTextField                         tfTitle;
   private YearSpinner                        spYear;
   private JTextPane                          tpPlot;
-  private JTable                             tableActors;
+  private TmmTable                           tableActors;
   private JLabel                             lvlTvShowPath;
   private ImageLabel                         lblPoster;
   private ImageLabel                         lblFanart;
@@ -174,6 +180,9 @@ public class TvShowEditorDialog extends TmmDialog {
 
     tvShowToEdit = tvShow;
     ids = MediaIdTable.convertIdMapToEventList(tvShowToEdit.getIds());
+
+    // creation of lists
+    actors = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
 
     getContentPane().setLayout(new BorderLayout());
     {
@@ -382,11 +391,10 @@ public class TvShowEditorDialog extends TmmDialog {
     {
       JScrollPane scrollPane = new JScrollPane();
       details2Panel.add(scrollPane, "4, 2, 1, 7");
-      {
-        tableActors = new JTable();
-        tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        scrollPane.setViewportView(tableActors);
-      }
+
+      tableActors = new PersonTable(actors, true);
+      tableActors.configureScrollPane(scrollPane);
+
     }
     {
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
@@ -709,9 +717,6 @@ public class TvShowEditorDialog extends TmmDialog {
     lblFanart.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
 
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
-    tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
-
     tableEpisodes.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(1).setCellRenderer(new LeftDotTableCellRenderer());
@@ -950,7 +955,12 @@ public class TvShowEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Person actor = new Person(ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
-      actors.add(0, actor);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableActors), BUNDLE.getString("cast.actor.add"), actor);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(actor.getName()) && !actor.getName().equals(BUNDLE.getString("cast.actor.unknown"))) {
+        actors.add(0, actor);
+      }
     }
   }
 
@@ -1224,17 +1234,6 @@ public class TvShowEditorDialog extends TmmDialog {
   }
 
   protected void initDataBindings() {
-    JTableBinding<Person, List<Person>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, actors, tableActors);
-    //
-    BeanProperty<Person, String> castBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(castBeanProperty);
-    //
-    BeanProperty<Person, String> castBeanProperty_1 = BeanProperty.create("role");
-    jTableBinding.addColumnBinding(castBeanProperty_1);
-    //
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-    //
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     bindings.add(jListBinding);
     jListBinding.bind();

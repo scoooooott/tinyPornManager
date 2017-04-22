@@ -51,6 +51,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -84,17 +85,21 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.MediaIdTable;
 import org.tinymediamanager.ui.components.MediaIdTable.MediaId;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
 import org.tinymediamanager.ui.components.datepicker.YearSpinner;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import net.miginfocom.swing.MigLayout;
 
@@ -111,10 +116,7 @@ public class MovieEditorDialog extends TmmDialog {
 
   private Movie                              movieToEdit;
   private MovieList                          movieList        = MovieList.getInstance();
-  private List<Person>                       cast             = ObservableCollections.observableList(new ArrayList<Person>());
-  private List<Person>                       producers        = ObservableCollections.observableList(new ArrayList<Person>());
-  private List<Person>                       directors        = ObservableCollections.observableList(new ArrayList<Person>());
-  private List<Person>                       writers          = ObservableCollections.observableList(new ArrayList<Person>());
+
   private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
   private List<MovieTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MovieTrailer>());
   private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
@@ -124,6 +126,11 @@ public class MovieEditorDialog extends TmmDialog {
   private List<String>                       extrafanarts     = new ArrayList<>();
   private boolean                            continueQueue    = true;
   private boolean                            inQueue;
+
+  private EventList<Person>                  cast;
+  private EventList<Person>                  producers;
+  private EventList<Person>                  directors;
+  private EventList<Person>                  writers;
 
   private JTextField                         tfTitle;
   private JTextField                         tfOriginalTitle;
@@ -185,6 +192,12 @@ public class MovieEditorDialog extends TmmDialog {
 
     // default size - NEEDED, since we do not use pack() here
     setBounds(5, 5, 950, 600);
+
+    // creation of lists
+    cast = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
+    producers = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
+    directors = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
+    writers = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
 
     this.movieToEdit = movie;
     this.inQueue = inQueue;
@@ -278,8 +291,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
-    tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
     tableProducers.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
     tableProducers.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
     tableDirectors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
@@ -667,10 +678,8 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPane = new JScrollPane();
         crewPanel.add(scrollPane, "cell 1 0,grow");
 
-        tableActors = new TmmTable();
-        tableActors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableActors = new PersonTable(cast, true);
         tableActors.configureScrollPane(scrollPane);
-        scrollPane.setViewportView(tableActors);
       }
       {
         JLabel lblProducers = new JLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
@@ -679,10 +688,8 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPane = new JScrollPane();
         crewPanel.add(scrollPane, "cell 4 0,grow");
 
-        tableProducers = new TmmTable();
-        tableProducers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableProducers = new PersonTable(producers, true);
         tableProducers.configureScrollPane(scrollPane);
-        scrollPane.setViewportView(tableProducers);
       }
       {
         JLabel lblDirectorsT = new JLabel(BUNDLE.getString("metatag.directors")); //$NON-NLS-1$
@@ -691,10 +698,8 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPane = new JScrollPane();
         crewPanel.add(scrollPane, "cell 1 2,grow");
 
-        tableDirectors = new TmmTable();
-        tableDirectors.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableDirectors = new PersonTable(directors, true);
         tableDirectors.configureScrollPane(scrollPane);
-        scrollPane.setViewportView(tableDirectors);
       }
       {
         JLabel lblWritersT = new JLabel(BUNDLE.getString("metatag.writers")); //$NON-NLS-1$
@@ -703,10 +708,8 @@ public class MovieEditorDialog extends TmmDialog {
         JScrollPane scrollPane = new JScrollPane();
         crewPanel.add(scrollPane, "cell 4 2,grow");
 
-        tableWriters = new TmmTable();
-        tableWriters.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tableWriters = new PersonTable(writers, true);
         tableWriters.configureScrollPane(scrollPane);
-        scrollPane.setViewportView(tableWriters);
       }
       {
         JButton btnAddActor = new JButton(new AddActorAction());
@@ -1191,7 +1194,12 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Person actor = new Person(Person.Type.ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
-      cast.add(0, actor);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableActors), BUNDLE.getString("cast.actor.add"), actor);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(actor.getName()) && !actor.getName().equals(BUNDLE.getString("cast.actor.unknown"))) {
+        cast.add(0, actor);
+      }
     }
   }
 
@@ -1224,7 +1232,13 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Person producer = new Person(Person.Type.PRODUCER, BUNDLE.getString("producer.name.unknown"), BUNDLE.getString("producer.role.unknown")); //$NON-NLS-1$
-      producers.add(0, producer);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableProducers), BUNDLE.getString("cast.producer.add"),
+          producer);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(producer.getName()) && !producer.getName().equals(BUNDLE.getString("producer.name.unknown"))) {
+        producers.add(0, producer);
+      }
     }
   }
 
@@ -1603,7 +1617,13 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("director.name.unknown"), "Director"); //$NON-NLS-1$
-      directors.add(0, person);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableDirectors), BUNDLE.getString("cast.director.add"),
+          person);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(person.getName()) && !person.getName().equals(BUNDLE.getString("director.name.unknown"))) {
+        directors.add(0, person);
+      }
     }
   }
 
@@ -1672,7 +1692,12 @@ public class MovieEditorDialog extends TmmDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("writer.name.unknown"), "Writer"); //$NON-NLS-1$
-      writers.add(0, person);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableWriters), BUNDLE.getString("cast.writer.add"), person);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(person.getName()) && !person.getName().equals(BUNDLE.getString("writer.name.unknown"))) {
+        writers.add(0, person);
+      }
     }
   }
 
@@ -1744,19 +1769,7 @@ public class MovieEditorDialog extends TmmDialog {
   }
 
   protected void initDataBindings() {
-    JTableBinding<Person, List<Person>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
-    //
-    BeanProperty<Person, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty);
-    //
-    BeanProperty<Person, String> movieCastBeanProperty_1 = BeanProperty.create("role");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1);
-    //
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-    //
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
-    bindings.add(jListBinding);
     jListBinding.bind();
     //
     JTableBinding<MovieTrailer, List<MovieTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
@@ -1777,44 +1790,9 @@ public class MovieEditorDialog extends TmmDialog {
     BeanProperty<MovieTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
-    bindings.add(jTableBinding_1);
     jTableBinding_1.bind();
     //
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
-    bindings.add(jListBinding_1);
     jListBinding_1.bind();
-    //
-    JTableBinding<Person, List<Person>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(UpdateStrategy.READ, producers, tableProducers);
-    //
-    BeanProperty<Person, String> movieProducerBeanProperty = BeanProperty.create("name");
-    jTableBinding_2.addColumnBinding(movieProducerBeanProperty);
-    //
-    BeanProperty<Person, String> movieProducerBeanProperty_1 = BeanProperty.create("role");
-    jTableBinding_2.addColumnBinding(movieProducerBeanProperty_1);
-    //
-    bindings.add(jTableBinding_2);
-    jTableBinding_2.bind();
-    //
-    JTableBinding<Person, List<Person>, JTable> jTableBinding_3 = SwingBindings.createJTableBinding(UpdateStrategy.READ, directors, tableDirectors);
-    //
-    BeanProperty<Person, String> personBeanProperty = BeanProperty.create("name");
-    jTableBinding_3.addColumnBinding(personBeanProperty);
-    //
-    BeanProperty<Person, String> personBeanProperty_1 = BeanProperty.create("role");
-    jTableBinding_3.addColumnBinding(personBeanProperty_1);
-    //
-    bindings.add(jTableBinding_3);
-    jTableBinding_3.bind();
-    //
-    JTableBinding<Person, List<Person>, JTable> jTableBinding_4 = SwingBindings.createJTableBinding(UpdateStrategy.READ, writers, tableWriters);
-    //
-    BeanProperty<Person, String> personBeanProperty_2 = BeanProperty.create("name");
-    jTableBinding_4.addColumnBinding(personBeanProperty_2);
-    //
-    BeanProperty<Person, String> personBeanProperty_3 = BeanProperty.create("role");
-    jTableBinding_4.addColumnBinding(personBeanProperty_3);
-    //
-    bindings.add(jTableBinding_4);
-    jTableBinding_4.bind();
   }
 }

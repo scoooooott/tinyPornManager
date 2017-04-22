@@ -20,7 +20,6 @@ import static org.tinymediamanager.core.Constants.PRODUCERS;
 
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -37,6 +36,7 @@ import org.tinymediamanager.ui.BorderTableCellRenderer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 
@@ -44,9 +44,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -55,32 +52,27 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class MovieCastPanel extends JPanel {
-  private static final long              serialVersionUID   = 2972207353452870494L;
+  private static final long           serialVersionUID  = 2972207353452870494L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel            selectionModel;
-  private EventList<Person>              actorEventList     = null;
-  private DefaultEventTableModel<Person> actorTableModel    = null;
-  private EventList<Person>              producerEventList  = null;
-  private DefaultEventTableModel<Person> producerTableModel = null;
+  private MovieSelectionModel         selectionModel;
+  private EventList<Person>           actorEventList    = null;
+  private EventList<Person>           producerEventList = null;
 
   /**
    * UI elements
    */
-  private JLabel                         lblDirector;
-  private JLabel                         lblWriter;
-  private ActorImageLabel                lblActorThumb;
-  private TmmTable                       tableProducer;
-  private TmmTable                       tableActors;
+  private JLabel                      lblDirector;
+  private JLabel                      lblWriter;
+  private ActorImageLabel             lblActorThumb;
+  private TmmTable                    tableProducer;
+  private TmmTable                    tableActors;
 
   public MovieCastPanel(MovieSelectionModel model) {
     selectionModel = model;
     producerEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
-    producerTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(producerEventList), new ProducerTableFormat());
-
     actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
-    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     initComponents();
     initDataBindings();
@@ -154,22 +146,20 @@ public class MovieCastPanel extends JPanel {
       TmmFontHelper.changeFont(lblProducersT, Font.BOLD);
       add(lblProducersT, "cell 0 2,alignx right,aligny top");
 
-      tableProducer = new TmmTable(producerTableModel);
+      tableProducer = new PersonTable(producerEventList);
       JScrollPane scrollPanePerson = new JScrollPane(tableProducer);
       tableProducer.configureScrollPane(scrollPanePerson);
       add(scrollPanePerson, "cell 1 2,grow");
-      scrollPanePerson.setViewportView(tableProducer);
     }
     {
       JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
       add(lblActorsT, "cell 0 3,alignx right,aligny top");
 
-      tableActors = new TmmTable(actorTableModel);
+      tableActors = new PersonTable(actorEventList);
       JScrollPane scrollPanePersons = new JScrollPane(tableActors);
       tableActors.configureScrollPane(scrollPanePersons);
       add(scrollPanePersons, "cell 1 3,grow");
-      scrollPanePersons.setViewportView(tableActors);
     }
     {
       lblActorThumb = new ActorImageLabel();
@@ -188,104 +178,5 @@ public class MovieCastPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSelectionModelBeanProperty_1, lblWriter, jLabelBeanProperty);
     autoBinding_1.bind();
-  }
-
-  /**
-   * inner class for representing the table
-   */
-  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
-    @Override
-    public int getColumnCount() {
-      return 2;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
-
-        case 1:
-          return BUNDLE.getString("metatag.role");//$NON-NLS-1$
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public Object getColumnValue(Person actor, int column) {
-      switch (column) {
-        case 0:
-          return actor.getName();
-
-        case 1:
-          return actor.getRole();
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-          return String.class;
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int column) {
-      return null;
-    }
-  }
-
-  private static class ProducerTableFormat implements AdvancedTableFormat<Person> {
-    @Override
-    public int getColumnCount() {
-      return 2;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
-
-        case 1:
-          return "";
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public Object getColumnValue(Person producer, int column) {
-      switch (column) {
-        case 0:
-          return producer.getName();
-
-        case 1:
-          return producer.getRole();
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-          return String.class;
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int column) {
-      return null;
-    }
   }
 }

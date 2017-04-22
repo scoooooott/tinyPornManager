@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,6 +53,24 @@ public abstract class TmmDialog extends JDialog {
   }
 
   public TmmDialog(JFrame owner, String title, String id) {
+    super(owner);
+    setTitle(title);
+    setName(id);
+    setIconImages(MainWindow.LOGOS);
+    setModal(true);
+    setModalityType(ModalityType.APPLICATION_MODAL);
+  }
+
+  public TmmDialog(JDialog owner, String title, String id) {
+    super(owner);
+    setTitle(title);
+    setName(id);
+    setIconImages(MainWindow.LOGOS);
+    setModal(true);
+    setModalityType(ModalityType.APPLICATION_MODAL);
+  }
+
+  public TmmDialog(Window owner, String title, String id) {
     super(owner);
     setTitle(title);
     setName(id);

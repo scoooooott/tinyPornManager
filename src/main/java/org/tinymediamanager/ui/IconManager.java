@@ -94,6 +94,7 @@ public class IconManager {
   public final static ImageIcon            ARROW_UP_INV           = createMaterialFontIcon('\uE5D8', 16, true);
   public final static ImageIcon            ARROW_DOWN_INV         = createMaterialFontIcon('\uE5DB', 16, true);
   public final static ImageIcon            APPLY_INV              = createMaterialFontIcon('\uE876', 16, true);
+  public final static ImageIcon            IMAGE_INV              = createMaterialFontIcon('\uE3F4', 16, true);
   public final static ImageIcon            CANCEL_INV             = createMaterialFontIcon('\uE14C', 16, true);
   public final static ImageIcon            REMOVE_INV             = createMaterialFontIcon('\uE15B', 16, true);
 

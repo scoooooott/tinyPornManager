@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -35,6 +34,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 
@@ -42,9 +42,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -59,7 +56,6 @@ public class TvShowEpisodeCastPanel extends JPanel {
 
   private final TvShowEpisodeSelectionModel selectionModel;
   private EventList<Person>                 actorEventList   = null;
-  private DefaultEventTableModel<Person>    actorTableModel  = null;
 
   /**
    * UI elements
@@ -78,7 +74,6 @@ public class TvShowEpisodeCastPanel extends JPanel {
   public TvShowEpisodeCastPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
     actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
-    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     initComponents();
     initDataBindings();
@@ -138,10 +133,9 @@ public class TvShowEpisodeCastPanel extends JPanel {
       TmmFontHelper.changeFont(lblActorsT, Font.BOLD);
       add(lblActorsT, "cell 0 2,alignx right,aligny top");
 
-      tableActors = new TmmTable(actorTableModel);
+      tableActors = new PersonTable(actorEventList);
       JScrollPane scrollPaneActors = new JScrollPane(tableActors);
       tableActors.configureScrollPane(scrollPaneActors);
-      scrollPaneActors.setViewportView(tableActors);
       add(scrollPaneActors, "cell 1 2 1 2,grow");
     }
     {
@@ -163,53 +157,5 @@ public class TvShowEpisodeCastPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowEpisodeSelectionModelBeanProperty_1, lblWriter, jLabelBeanProperty);
     autoBinding_1.bind();
-  }
-
-  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
-    @Override
-    public int getColumnCount() {
-      return 2;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
-
-        case 1:
-          return BUNDLE.getString("metatag.role");//$NON-NLS-1$
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public Object getColumnValue(Person actor, int column) {
-      switch (column) {
-        case 0:
-          return actor.getName();
-
-        case 1:
-          return actor.getRole();
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-          return String.class;
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int column) {
-      return null;
-    }
   }
 }

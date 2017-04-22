@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.ACTORS;
 
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -31,6 +30,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
 
@@ -38,9 +38,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -49,19 +46,18 @@ import net.miginfocom.swing.MigLayout;
  * @author Manuel Laggner
  */
 public class TvShowCastPanel extends JPanel {
-  private static final long                   serialVersionUID = 2374973082749248956L;
+  private static final long           serialVersionUID = 2374973082749248956L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private final TvShowSelectionModel          selectionModel;
-  private EventList<Person>              actorEventList   = null;
-  private DefaultEventTableModel<Person> actorTableModel  = null;
+  private final TvShowSelectionModel  selectionModel;
+  private EventList<Person>           actorEventList   = null;
 
   /**
    * UI elements
    */
-  private TmmTable                            tableActors;
-  private ImageLabel                          lblActorImage;
+  private TmmTable                    tableActors;
+  private ImageLabel                  lblActorImage;
 
   /**
    * Instantiates a new tv show cast panel.
@@ -72,7 +68,6 @@ public class TvShowCastPanel extends JPanel {
   public TvShowCastPanel(TvShowSelectionModel model) {
     selectionModel = model;
     actorEventList = GlazedLists.threadSafeList(new ObservableElementList<>(new BasicEventList<>(), GlazedLists.beanConnector(Person.class)));
-    actorTableModel = new DefaultEventTableModel<>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     initComponents();
 
@@ -118,59 +113,11 @@ public class TvShowCastPanel extends JPanel {
       lblActorImage = new ImageLabel();
       add(lblActorImage, "cell 2 0,grow");
 
-      tableActors = new TmmTable(actorTableModel);
+      tableActors = new PersonTable(actorEventList);
       JScrollPane scrollPaneActors = new JScrollPane(tableActors);
       tableActors.configureScrollPane(scrollPaneActors);
       scrollPaneActors.setViewportView(tableActors);
       add(scrollPaneActors, "cell 1 0 1 2,grow");
-    }
-  }
-
-  private static class ActorTableFormat implements AdvancedTableFormat<Person> {
-    @Override
-    public int getColumnCount() {
-      return 2;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
-
-        case 1:
-          return BUNDLE.getString("metatag.role");//$NON-NLS-1$
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public Object getColumnValue(Person actor, int column) {
-      switch (column) {
-        case 0:
-          return actor.getName();
-
-        case 1:
-          return actor.getRole();
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-          return String.class;
-      }
-      throw new IllegalStateException();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int column) {
-      return null;
     }
   }
 }

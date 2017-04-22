@@ -48,13 +48,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -62,10 +62,8 @@ import javax.swing.event.ChangeListener;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +91,12 @@ import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.PersonTable;
 import org.tinymediamanager.ui.components.combobox.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.combobox.MediaScraperComboBox;
 import org.tinymediamanager.ui.components.datepicker.DatePicker;
+import org.tinymediamanager.ui.components.table.TmmTable;
+import org.tinymediamanager.ui.dialogs.PersonEditorDialog;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.panels.MediaFileEditorPanel;
 
@@ -105,6 +106,10 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 
 /**
@@ -119,11 +124,11 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private static final Logger          LOGGER           = LoggerFactory.getLogger(TvShowEpisodeEditorDialog.class);
   private static final Date            INITIAL_DATE     = new Date(0);
 
-  private static final String                                   DIALOG_ID        = "tvShowEpisodeScraper";
+  private static final String          DIALOG_ID        = "tvShowEpisodeScraper";
 
   private TvShowList                   tvShowList       = TvShowList.getInstance();
   private TvShowEpisode                episodeToEdit;
-  private List<Person>                 cast             = ObservableCollections.observableList(new ArrayList<Person>());
+  private EventList<Person>            cast;
   private List<String>                 tags             = ObservableCollections.observableList(new ArrayList<String>());
   private List<MediaFile>              mediaFiles       = new ArrayList<>();
   private boolean                      continueQueue    = true;
@@ -146,7 +151,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private JTextArea                    taPlot;
   private JTextField                   tfDirector;
   private JTextField                   tfWriter;
-  private JTable                       tableGuests;
+  private TmmTable                     tableGuests;
   private AutocompleteComboBox<String> cbTags;
   private AutoCompleteSupport<String>  cbTagsAutoCompleteSupport;
   private JList<String>                listTags;
@@ -165,6 +170,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
     super(BUNDLE.getString("tvshowepisode.scrape"), DIALOG_ID); //$NON-NLS-1$
     setBounds(5, 5, 964, 632);
+
+    // creation of lists
+    cast = new ObservableElementList<>(GlazedLists.threadSafeList(new BasicEventList<>()), GlazedLists.beanConnector(Person.class));
 
     for (MediaFile mf : episode.getMediaFiles()) {
       mediaFiles.add(new MediaFile(mf));
@@ -345,9 +353,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       JScrollPane scrollPaneGuests = new JScrollPane();
       detailsPanel.add(scrollPaneGuests, "4, 24, 13, 7, fill, fill");
 
-      tableGuests = new JTable();
-      tableGuests.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-      scrollPaneGuests.setViewportView(tableGuests);
+      tableGuests = new PersonTable(cast, true);
+      tableGuests.configureScrollPane(scrollPaneGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
       detailsPanel.add(lblTags, "20, 24, default, top");
@@ -500,11 +507,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         tags.add(tag);
       }
     }
-
-    // adjust table columns
-    tableGuests.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableGuests.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
-
   }
 
   /**
@@ -709,17 +711,6 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   }
 
   protected void initDataBindings() {
-    JTableBinding<Person, List<Person>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
-    //
-    BeanProperty<Person, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty);
-    //
-    BeanProperty<Person, String> movieCastBeanProperty_1 = BeanProperty.create("role");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1);
-    //
-    bindings.add(jTableBinding);
-    jTableBinding.bind();
-    //
     JListBinding<String, List<String>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     bindings.add(jListBinding);
     jListBinding.bind();
@@ -816,7 +807,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     @Override
     public void actionPerformed(ActionEvent e) {
       Person actor = new Person(ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
-      cast.add(0, actor);
+      PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableGuests), BUNDLE.getString("cast.actor.add"), actor);
+      dialog.setVisible(true);
+
+      if (StringUtils.isNotBlank(actor.getName()) && !actor.getName().equals(BUNDLE.getString("cast.actor.unknown"))) {
+        cast.add(0, actor);
+      }
     }
   }
 
