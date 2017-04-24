@@ -28,6 +28,7 @@ public enum MediaLanguages {
   cs("Český"),
   de("Deutsch"),
   da("Dansk"),
+  el("Ελληνικά"),
   en("English"),
   es("Español"),
   fa("Persian"),
