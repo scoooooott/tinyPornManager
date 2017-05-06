@@ -267,13 +267,8 @@ public class MovieEditorDialog extends TmmDialog {
         writers.add(writer);
       }
 
-      for (MediaGenres genre : movieToEdit.getGenres()) {
-        genres.add(genre);
-      }
-
-      for (MovieTrailer trailer : movieToEdit.getTrailer()) {
-        trailers.add(trailer);
-      }
+      genres.addAll(movieToEdit.getGenres());
+      trailers.addAll(movieToEdit.getTrailer());
 
       for (String tag : movieToEdit.getTags()) {
         if (StringUtils.isNotBlank(tag)) {
@@ -291,13 +286,6 @@ public class MovieEditorDialog extends TmmDialog {
       }
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
-    tableProducers.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableProducers.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
-    tableDirectors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableDirectors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
-    tableWriters.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableWriters.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
-
     tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
     tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
     tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
@@ -933,13 +921,11 @@ public class MovieEditorDialog extends TmmDialog {
       JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       buttonPane.add(okButton, "2, 1, fill, top");
       okButton.setAction(new ChangeMovieAction());
-      okButton.setActionCommand("OK");
       getRootPane().setDefaultButton(okButton);
 
       JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       buttonPane.add(cancelButton, "4, 1, fill, top");
       cancelButton.setAction(new DiscardAction());
-      cancelButton.setActionCommand("Cancel");
 
       if (inQueue) {
         JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
